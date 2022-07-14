@@ -14,7 +14,8 @@ public enum MessageType {
 	AttackEventEE(4, "attack_event_element-element"),
 	AttackEventEA(5, "attack_event_element-area"),
 	AttackEffect(6, "attack_effect"),
-	NodeStatus(7, "link_status");
+	NodeStatus(7, "link_status"),
+	AttackSchedule(8,"attack_schedule");
 
 	@Getter
 	private Integer code;

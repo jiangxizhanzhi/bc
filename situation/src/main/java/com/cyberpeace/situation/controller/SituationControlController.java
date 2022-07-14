@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -109,7 +110,7 @@ public class SituationControlController {
         String fileName = multipartFile.getName();
         FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+","+DynamicSchemeServiceImpl.VIDEO_TYPE);
         AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), false, multipartFile, false);
-        return new BaseRsp<>(attachmentBo.getFilePath());
+        return new BaseRsp<>(ConfigUtil.getContextProperty("cr.local.file.prefix")+attachmentBo.getFilePath());
     }
 
 }

@@ -26,6 +26,7 @@ import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsAttackEffectDynamic;
+import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.AttackMessageService;
@@ -118,8 +119,13 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
+                    HashSet<String> description = new HashSet<>(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getDescription).collect(Collectors.toList()));
+                    if (description.size()<dynamicStage.getAttackMessageReqList().size()){
+                        throw new BusinessException(CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
+                    }
                     for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
                         if(attackMessageReq.getResourceId() == null || attackMessageReq.getResourceId().equals("")){
+                            attackMessageReq.setSceneId(dynamicSchemeReq.getSceneId());
                             attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));
                         }else {
                             attackMessageService.updateAttackMessage(attackMessageReq);
@@ -164,7 +170,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
     @Override
     public void getLocalOption(OptionsRes optionsRes) {
-        optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()), attackType -> new LocalType(attackType.getKeyWord(),attackType.getMsg())));
+        optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()), attackType ->
+                new WebAttackType(attackType.getKeyWord(),attackType.getMsg(),
+                        attackType.getActionType().getType(),attackType.getActionType().isSource(),attackType.getActionType().isDurationTime())));
         optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),lineType -> new LocalType(lineType.getCode(),lineType.getMsg())));
         optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),color -> new LocalType(color.getCode(),color.getMsg())));
     }
@@ -267,35 +275,59 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     @Override
     public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
         SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId());
-
+        if(sceneConfig == null){
+            sceneConfig = new SceneConfig();
+            sceneConfig.setSchemeCode(dynamicSchemeReq.getResourceId());
+            sceneConfigMapper.insert(sceneConfig);
+        }else {
+            sceneConfig.setSchemeCode(dynamicSchemeReq.getResourceId());
+            sceneConfigMapper.updateById(sceneConfig);
+        }
 
         Thread thread = new Thread(new Runnable() {
             @SneakyThrows
             @Override
             public void run() {
-                List<DynamicStage> dynamicStageList = new ArrayList<>();
+                List<WsAttackSchedule> wsAttackScheduleList = new ArrayList<>();
+                boolean state = true;
                 for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
-                    DynamicStage dynamicStageMessage = new DynamicStage();
-                    dynamicStageMessage.setName(dynamicStage.getName());
-                    List<AttackMessageReq> attackMessageReqMessageList = new ArrayList<>();
-                    dynamicStageMessage.setAttackMessageReqList(attackMessageReqMessageList);
-                    dynamicStageList.add(dynamicStageMessage);
-                    List<AttackMessageReq> attackMessageReqList = dynamicStage.getAttackMessageReqList();
-                    for(AttackMessageReq attackMessageReq:attackMessageReqList){
-                        DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(dynamicSchemeReq.getResourceId());
-                        if(!dynamicScheme.getCode().equals("123")){
+                    if (!state)
+                        break;
+
+                    WsAttackSchedule wsAttackSchedule = new WsAttackSchedule(dynamicStage.getName(),true,"");
+                    wsAttackScheduleList.add(wsAttackSchedule);
+                    //动效序号
+                    int number = 1;
+
+                    for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+                        SceneConfig nowSceneConfig = sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId());
+                        if(!nowSceneConfig.getSchemeCode().equals(dynamicSchemeReq.getResourceId())){
+                            state = false;
                             break;
                         }
+
+                        wsAttackSchedule.setRunAttackMessage(number+++attackMessageReq.getDescription());
+                        pushAttackScheduleToRoom(wsAttackScheduleList,dynamicSchemeReq.getSceneId());
+                        dynamicSchemeMapper.updateScheduleById(JSONObject.toJSONString(wsAttackScheduleList),dynamicSchemeReq.getResourceId());
+
                         if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-                            attackMessageReqMessageList.add(attackMessageReq);
                             pushMediaToRoom(attackMessageReq);
                         }else{
-                            attackMessageReqMessageList.add(attackMessageReq);
                             pushAttackToRoom(attackMessageReq);
                         }
                         Thread.sleep(attackMessageReq.getIntervalTime()*1000);
                     }
+                    if (state){
+                        wsAttackSchedule.setRun(false);
+                        wsAttackSchedule.setRunAttackMessage("");
+                        pushAttackScheduleToRoom(wsAttackScheduleList,dynamicSchemeReq.getSceneId());
+                        dynamicSchemeMapper.updateScheduleById(JSONObject.toJSONString(wsAttackScheduleList),dynamicSchemeReq.getResourceId());
+                    }
                 }
+                if (state){
+                    sceneConfigMapper.deleteBySceneId(dynamicSchemeReq.getSceneId());
+                }
+                dynamicSchemeMapper.updateScheduleById(JSONObject.toJSONString(new ArrayList<WsAttackSchedule>()),dynamicSchemeReq.getResourceId());
             }
         });
         thread.start();
@@ -318,4 +350,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
         return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
     }
+
+    public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,String sceneId){
+        WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
+        JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage), JSONObject.class);
+        situationHandlerService.pushDataToRoom(data, sceneId);
+    }
+
 }

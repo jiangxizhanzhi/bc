@@ -21,4 +21,6 @@ public class DynamicScheme extends BaseTable {
 
     private String code;
 
+    private String schedule;
+
 }

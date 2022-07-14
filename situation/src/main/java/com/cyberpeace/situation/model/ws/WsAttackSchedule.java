@@ -15,12 +15,12 @@ public class WsAttackSchedule implements Serializable {
     private Boolean run;
 
     @ApiModelProperty("当前运行动效")
-    private String runAttackMessageName;
+    private String runAttackMessage;
 
-    public WsAttackSchedule(String stageName, Boolean run, String runAttackMessageName) {
+    public WsAttackSchedule(String stageName, Boolean run, String runAttackMessage) {
         this.stageName = stageName;
         this.run = run;
-        this.runAttackMessageName = runAttackMessageName;
+        this.runAttackMessage = runAttackMessage;
     }
 
     public WsAttackSchedule() {

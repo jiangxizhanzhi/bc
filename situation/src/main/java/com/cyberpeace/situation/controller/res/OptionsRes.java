@@ -1,21 +1,19 @@
 package com.cyberpeace.situation.controller.res;
 
-import com.cyberpeace.situation.model.AreaInfo;
-import com.cyberpeace.situation.model.ElementInfo;
 import com.cyberpeace.situation.model.ElementType;
 import com.cyberpeace.situation.model.LocalType;
+import com.cyberpeace.situation.model.WebAttackType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class OptionsRes implements Serializable {
 
     @ApiModelProperty("动效类型")
-    private List<LocalType> attackTypeList;
+    private List<WebAttackType> attackTypeList;
 
     @ApiModelProperty("线型")
     private List<LocalType> lineTypeList;

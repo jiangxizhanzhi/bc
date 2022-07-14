@@ -119,4 +119,11 @@ public interface ErrorCode {
 
 	/** shell执行失败*/
 	String LOCAL_SHELL_EXEC_FAILED = "100041";
+
+	/** 场景未启动*/
+	String SCENE_NOT_RUNNING = "100042";
+
+	/** 新建快照失败*/
+	String NODE_SNAPSHOT_FAILED = "100043";
+
 }

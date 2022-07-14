@@ -13,6 +13,7 @@ import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.service.AttackMessageService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,14 +42,15 @@ public class SituationControlController {
     @ApiOperation("新增动效方案")
     @PostMapping("/scheme")
     public BaseRsp<String> addDynamicEffectScheme(@RequestBody @Validated AddDynamicSchemeReq addDynamicSchemeReq){
+        dynamicSchemeService.validDynamicSchemeName(addDynamicSchemeReq);
         String resourceId = dynamicSchemeService.addDynamicScheme(addDynamicSchemeReq);
         return new BaseRsp<>(resourceId);
     }
 
     @ApiOperation("查看动效方案")
     @GetMapping("/scheme")
-    public BaseRsp<DynamicSchemeRes> getDynamicEffectScheme(@ApiParam("resourceId")String dynamicSchemeId){
-        DynamicSchemeRes dynamicSchemeRes = dynamicSchemeService.getDynamicSchemeById(dynamicSchemeId);
+    public BaseRsp<DynamicSchemeRes> getDynamicEffectScheme(@ApiParam("resourceId")String resourceId){
+        DynamicSchemeRes dynamicSchemeRes = dynamicSchemeService.getDynamicSchemeById(resourceId);
         return new BaseRsp<>(dynamicSchemeRes);
     }
 
@@ -60,8 +62,8 @@ public class SituationControlController {
     }
 
     @ApiOperation("删除动效方案")
-    @DeleteMapping("/scheme")
-    public BaseRsp<?> deleteDynamicEffectScheme(@ApiParam("resourceId")String dynamicSchemeId){
+    @DeleteMapping("/scheme/{resourceId}")
+    public BaseRsp<?> deleteDynamicEffectScheme(@PathVariable("resourceId")String dynamicSchemeId){
         dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
         return new BaseRsp<>();
     }
@@ -86,7 +88,7 @@ public class SituationControlController {
     @PostMapping("/runAttackMessage")
     public BaseRsp<?> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq){
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
-        if(runAttackMessageReq.getName().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+        if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
             dynamicSchemeService.pushMediaToRoom(attackMessageBo);
         }else{
             dynamicSchemeService.pushAttackToRoom(attackMessageBo);
@@ -103,10 +105,11 @@ public class SituationControlController {
 
     @ApiOperation("上传媒体文件")
     @PostMapping("/uploadMedia")
-    public BaseRsp<String> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile)throws Exception{
+    public BaseRsp<String> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile){
         String fileName = multipartFile.getName();
-        FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+DynamicSchemeServiceImpl.VIDEO_TYPE);
+        FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+","+DynamicSchemeServiceImpl.VIDEO_TYPE);
         AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), false, multipartFile, false);
         return new BaseRsp<>(attachmentBo.getFilePath());
     }
+
 }

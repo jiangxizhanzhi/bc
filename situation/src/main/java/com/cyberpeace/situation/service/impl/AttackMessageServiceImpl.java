@@ -33,7 +33,7 @@ public class AttackMessageServiceImpl implements AttackMessageService {
 
     public AttackMessage attackMessageBoToAttackMessage(AttackMessageReq attackMessageBo){
         AttackMessage attackMessage = BeanUtils.copy(attackMessageBo,AttackMessage.class);
-        attackMessage.setLineStyle(JSON.toJSONString(attackMessageBo.getLineStyle()));
+//        attackMessage.setLineStyle(JSON.toJSONString(attackMessageBo.getLineStyle()));
         attackMessage.setMediaAnimation(JSON.toJSONString(attackMessageBo.getMediaAnimationList()));
         return attackMessage;
     }

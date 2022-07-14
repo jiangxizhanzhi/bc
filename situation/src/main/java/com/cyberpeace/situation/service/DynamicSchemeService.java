@@ -31,4 +31,6 @@ public interface DynamicSchemeService {
     void pushAttackToRoom(AttackMessageReq attackMessageBo);
 
     void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
+
+    void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq);
 }

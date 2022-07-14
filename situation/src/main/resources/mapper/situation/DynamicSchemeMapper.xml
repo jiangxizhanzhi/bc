@@ -23,5 +23,18 @@
                 scene_id = #{sceneId}
             </if>
         </where>
+        order by update_time
+    </select>
+    <select id="selectByName" resultType="com.cyberpeace.situation.dao.entity.DynamicScheme">
+        select * from situation_dynamic_scheme
+        <where>
+            name = #{name} and scene_id = #{scene_id}
+        </where>
+    </select>
+    <select id="selectByResourceId" resultType="com.cyberpeace.situation.dao.entity.DynamicScheme">
+        select * from situation_dynamic_scheme
+        <where>
+            resource_id = #{resourceId}
+        </where>
     </select>
 </mapper>

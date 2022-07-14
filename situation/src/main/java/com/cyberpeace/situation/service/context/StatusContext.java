@@ -15,7 +15,7 @@ public class StatusContext implements Serializable {
 	private String status;
 
 	public void setStatus(Integer status) {
-		this.status = status.equals(0) ? ElementStatus.OFFLINE.getCode()
+		this.status = status == null || status.equals(0) ? ElementStatus.OFFLINE.getCode()
 				: ElementStatus.RUNNING.getCode();
 	}
 

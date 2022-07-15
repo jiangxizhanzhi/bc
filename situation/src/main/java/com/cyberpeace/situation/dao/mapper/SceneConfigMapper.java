@@ -10,4 +10,6 @@ public interface SceneConfigMapper extends BaseMapper<SceneConfig> {
     SceneConfig selectBySceneId(String sceneId);
 
     void deleteBySceneId(String sceneId);
+
+    void clearCodeBySceneId(String sceneId);
 }

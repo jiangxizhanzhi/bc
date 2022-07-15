@@ -40,7 +40,7 @@
     <select id="getScheduleBySceneId" resultType="java.lang.String">
         select schedule from situation_dynamic_scheme
         <where>
-            scene_id = #{sceneId} and schedule != null
+            scene_id = #{sceneId} and schedule is not null
         </where>
     </select>
 </mapper>

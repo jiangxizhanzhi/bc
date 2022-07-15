@@ -1,8 +1,10 @@
 package com.cyberpeace.situation.controller;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -12,11 +14,12 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
-import com.cyberpeace.situation.service.AttackMessageService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +30,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipException;
 
 
 @Api(tags = "态势编排")
 @RestController
+@Slf4j
 @RequestMapping("/situation/control")
 public class SituationControlController {
 
@@ -51,7 +59,7 @@ public class SituationControlController {
 
     @ApiOperation("查看动效方案")
     @GetMapping("/scheme")
-    public BaseRsp<DynamicSchemeRes> getDynamicEffectScheme(@ApiParam("resourceId")String resourceId){
+    public BaseRsp<DynamicSchemeRes> getDynamicEffectScheme(@ApiParam("动效方案id")String resourceId){
         DynamicSchemeRes dynamicSchemeRes = dynamicSchemeService.getDynamicSchemeById(resourceId);
         return new BaseRsp<>(dynamicSchemeRes);
     }
@@ -64,15 +72,15 @@ public class SituationControlController {
     }
 
     @ApiOperation("删除动效方案")
-    @DeleteMapping("/scheme/{resourceId}")
-    public BaseRsp<?> deleteDynamicEffectScheme(@PathVariable("resourceId")String dynamicSchemeId){
+    @DeleteMapping("/scheme/{resource_id}")
+    public BaseRsp<?> deleteDynamicEffectScheme(@PathVariable("resource_id")String dynamicSchemeId){
         dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
         return new BaseRsp<>();
     }
 
     @ApiOperation("所有动效方案名称")
-    @GetMapping("/schemeNames")
-    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam("scene_id")String sceneId){
+    @GetMapping("/scheme_names")
+    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam("场景id")String sceneId){
         List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName(sceneId);
         return new BaseRsp<>(names);
     }
@@ -87,7 +95,7 @@ public class SituationControlController {
     }
 
     @ApiOperation("运行单个动效")
-    @PostMapping("/runAttackMessage")
+    @PostMapping("/run_attack_message")
     public BaseRsp<?> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq){
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
         if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
@@ -99,19 +107,20 @@ public class SituationControlController {
     }
 
     @ApiOperation("运行动效方案")
-    @PostMapping("/runDynamicScheme")
+    @PostMapping("/run_dynamic_scheme")
     public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
         dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
         return new BaseRsp<>();
     }
 
     @ApiOperation("上传媒体文件")
-    @PostMapping("/uploadMedia")
-    public BaseRsp<String> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile){
+    @PostMapping("/upload_media")
+    public BaseRsp<AttachmentBo> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile){
         String fileName = multipartFile.getName();
         FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+","+DynamicSchemeServiceImpl.VIDEO_TYPE);
-        AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), false, multipartFile, false);
-        return new BaseRsp<>(ConfigUtil.getContextProperty("cr.local.file.prefix")+attachmentBo.getFilePath());
+        AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), true, multipartFile, true);
+        attachmentBo.setFilePath(attachmentBo.getFilePath());
+        return new BaseRsp<>(attachmentBo);
     }
 
     @ApiOperation("获取当前进程")
@@ -121,4 +130,40 @@ public class SituationControlController {
         return new BaseRsp<>(schedule);
     }
 
+    @ApiOperation("导出动效方案")
+    @PostMapping("/scheme/export")
+    public void exportScheme(HttpServletResponse response,@ApiParam("资源id") String resourceId){
+        // 1. generate dump file
+        String tempDir = ZipUtil.generatePath();
+        try {
+            String zipPath = dynamicSchemeService.makeExportFile(resourceId, tempDir);
+            // 2. generate file response
+            File zip = new File(zipPath);
+            FileUtil.setResponse(zip, false, response);
+        } catch (Exception e) {
+            log.error("failed to dump combat techs", e);
+            throw new BusinessException(CrBusinessErrorCode.FAILED_TO_DUMP_COMBAT_TECH);
+        } finally {
+            // 3. delete temp dir
+            if (!FileUtil.deleteDir(new File(tempDir))) {
+                log.error("failed to remove temp dir :{}", tempDir);
+            }
+        }
+    }
+
+//    @ApiOperation("导入动效方案")
+//    @PostMapping("/scheme/import")
+//    public BaseRsp importScheme(@RequestParam("file") MultipartFile file) throws IOException, ZipException, ZipException {
+//        // 1. save file to temp dir
+//        File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+//        // 2. unzip file
+//        String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+//        // 3. load resources
+//        dynamicSchemeService.importDynamicScheme(unZipPath);
+//        // 4. delete temp dir
+//        if (!FileUtil.deleteDir(new File(unZipPath))) {
+//            log.error("failed to delete temp dir");
+//        }
+//        return new BaseRsp();
+//    }
 }

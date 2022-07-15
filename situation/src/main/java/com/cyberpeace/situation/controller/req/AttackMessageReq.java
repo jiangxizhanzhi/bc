@@ -17,9 +17,6 @@ public class AttackMessageReq implements Serializable {
     @ApiModelProperty("场景id")
     private String sceneId;
 
-//    @ApiModelProperty("动效名称")
-//    private String name;
-
     @ApiModelProperty("动效类型")
     private String type;
 
@@ -29,14 +26,8 @@ public class AttackMessageReq implements Serializable {
     @ApiModelProperty("源节点id")
     private String sourceId;
 
-//    @ApiModelProperty("源节点名称")
-//    private String sourceName;
-
     @ApiModelProperty("目标节点id")
     private String targetId;
-
-//    @ApiModelProperty("目标节点名称")
-//    private String targetName;
 
     @ApiModelProperty("间隔时间")
     private Integer intervalTime;
@@ -46,9 +37,6 @@ public class AttackMessageReq implements Serializable {
 
     @ApiModelProperty("是否聚焦")
     private Boolean lookAtTarget;
-
-//    @ApiModelProperty("线型")
-//    private LineStyle lineStyle;
 
     @ApiModelProperty("线型")
     private String lineType;

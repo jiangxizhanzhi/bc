@@ -249,4 +249,8 @@ public interface CrBusinessErrorCode {
 
 	/** 训练已暂停，不能删除场景 */
 	String TRAINING_PAUSED = "101080";
+
+	/** 动效方案名称重复 */
+	String DUPLICATED_DYNAMIC_SCHEME_NAME = "101081";
+
 }

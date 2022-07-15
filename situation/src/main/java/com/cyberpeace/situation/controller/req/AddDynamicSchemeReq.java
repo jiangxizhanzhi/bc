@@ -17,7 +17,8 @@ public class AddDynamicSchemeReq implements Serializable {
     @NotBlank
     private String name;
 
-//    @ApiModelProperty("动效方案数据")
-//    private List<DynamicStage> schemeData;
-
+    public AddDynamicSchemeReq(String sceneId, String name) {
+        this.sceneId = sceneId;
+        this.name = name;
+    }
 }

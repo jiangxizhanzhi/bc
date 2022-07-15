@@ -9,6 +9,7 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface DynamicSchemeService {
@@ -38,4 +39,8 @@ public interface DynamicSchemeService {
     List<WsAttackSchedule> getSchedule(String sceneId);
 
     void clearSceneData(String sceneId);
+
+    String makeExportFile(String resourceId, String tempDir) throws IOException;
+
+    void importDynamicScheme(String unZipPath);
 }

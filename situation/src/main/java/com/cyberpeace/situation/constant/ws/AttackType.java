@@ -51,7 +51,8 @@ public enum AttackType {
     UNUSUAL_CLIENT_PORT_CONNECTION(ActionType.NORMAL, "异常客户端攻击", "A client was using an unusual port", "unusual-client-port-connection"),
     WEB_APPLICATION_ACTIVITY(ActionType.TRY_ATTACK, "web漏洞尝试利用", "access to a potentially vulnerable web application", "web-application-activity"),
     WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack"),
-    MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media animation","media-animation");
+    MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media animation","media-animation"),
+    HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight area","highlight-area");
 
     @Getter
     private ActionType actionType;

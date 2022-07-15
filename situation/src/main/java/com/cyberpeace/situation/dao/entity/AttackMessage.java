@@ -14,8 +14,6 @@ public class AttackMessage extends BaseTable {
 
     private String sceneId;
 
-//    private String name;
-
     private String type;
 
     private String description;
@@ -30,9 +28,9 @@ public class AttackMessage extends BaseTable {
 
     private Integer intervalTime;
 
-    private Boolean lookAtTarget;
+    private Integer durationTime;
 
-//    private String lineStyle;
+    private Boolean lookAtTarget;
 
     private String lineType;
 
@@ -41,7 +39,5 @@ public class AttackMessage extends BaseTable {
     private Integer lineWidth;
 
     private String mediaAnimation;
-
-    private String durationTime;
 
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class ToolFileController {
 
 		// 文件类型校验
 		FileUtil.validateFileSuffix(file.getOriginalFilename(), FileTypeContant.TOOL_ATTACHMENT);
+
+		// 限制上传附件大小为500M
+		if(file.getSize() > CommonConstant.TOOL_ATTACHMENT_FILE_SIZE){
+			throw new BusinessException(ErrorCode.FILE_SIZE_EXCEED_UPPER_LIMIT);
+		}
 
 		ToolFile toolFile = toolFileService.saveFile(file);
 		return new BaseRsp<>(toolFile);

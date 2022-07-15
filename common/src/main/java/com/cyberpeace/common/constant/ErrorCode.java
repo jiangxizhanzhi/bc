@@ -126,4 +126,6 @@ public interface ErrorCode {
 	/** 新建快照失败*/
 	String NODE_SNAPSHOT_FAILED = "100043";
 
+	/** 文件大小超限制*/
+	String FILE_SIZE_EXCEED_UPPER_LIMIT = "100044";
 }

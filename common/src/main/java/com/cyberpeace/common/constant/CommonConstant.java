@@ -89,4 +89,6 @@ public interface CommonConstant {
 
 	String SPACE = " ";
 
+	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
+
 }

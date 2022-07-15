@@ -1025,7 +1025,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 break;
             }
         }
-        if (result.getMessage() != null) {
+        if (!StringUtils.isEmpty(result.getMessage())) {
             List<String> msgNow = Lists.newArrayList();
             List<String> msgList = Arrays.asList(result.getMessage().split("\n"));
             for (int i = 0; i < msgList.size(); i++) {

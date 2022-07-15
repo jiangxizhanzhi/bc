@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service.context.scene;
+package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 
@@ -20,7 +20,7 @@ public class ElementFlow implements Serializable {
 
 	private Integer interactiveType;
 
-	private Integer commonStatus = 0 ;
+	private Integer commonStatus = 0;
 
 	private Integer status;
 

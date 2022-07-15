@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import org.apache.tomcat.jni.Local;
 
 public interface LocalSceneService extends IService<LocalScene> {
 

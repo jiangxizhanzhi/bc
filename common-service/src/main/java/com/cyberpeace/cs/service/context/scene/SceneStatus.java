@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service.context.scene;
+package com.cyberpeace.cs.service.context.scene;
 
 import java.io.Serializable;
 

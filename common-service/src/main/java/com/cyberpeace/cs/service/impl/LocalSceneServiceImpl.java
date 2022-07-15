@@ -350,19 +350,21 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName) {
+	public Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName,
+			String desc) {
 		NodeSnapshotContext snapshotContext = getNodeSnapshotContext(localScene, nodeId,
-				snapshotName);
+				snapshotName, desc);
 
 		return remoteSceneService.nodeSnapshot(snapshotContext);
 	}
 
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene, String nodeId,
-			String snapshotName) {
+			String snapshotName, String desc) {
 		SceneOpsContext opsContext = getSceneOpsContext(localScene);
 		NodeSnapshotContext snapshotContext = BeanUtils.copy(opsContext, NodeSnapshotContext.class);
 		snapshotContext.setSnapshotName(snapshotName);
 		snapshotContext.setNodeId(nodeId);
+		snapshotContext.setDescription(desc);
 
 		return snapshotContext;
 	}

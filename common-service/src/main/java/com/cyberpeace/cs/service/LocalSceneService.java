@@ -94,6 +94,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param snapshotName
 	 * @return
 	 */
-	Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName);
+	Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName, String desc);
 
 }

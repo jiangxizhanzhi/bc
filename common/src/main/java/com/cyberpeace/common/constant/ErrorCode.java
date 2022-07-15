@@ -109,4 +109,10 @@ public interface ErrorCode {
 	/** 新建快照失败*/
 	String NODE_SNAPSHOT_FAILED = "100038";
 
+	/** 动效方案名称重复 */
+	String DUPLICATED_DYNAMIC_SCHEME_NAME = "100039";
+
+	/** 阶段内动效描述重复 */
+	String DUPLICATED_DYNAMIC_DESCRIPTION = "100040";
+
 }

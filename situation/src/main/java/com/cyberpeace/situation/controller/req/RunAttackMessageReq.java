@@ -14,9 +14,6 @@ public class RunAttackMessageReq implements Serializable {
     @ApiModelProperty("场景id")
     private String sceneId;
 
-//    @ApiModelProperty("动效名称")
-//    private String name;
-
     @ApiModelProperty("动效类型")
     private String type;
 
@@ -43,9 +40,6 @@ public class RunAttackMessageReq implements Serializable {
 
     @ApiModelProperty("是否聚焦")
     private Boolean lookAtTarget;
-
-//    @ApiModelProperty("线型")
-//    private LineStyle lineStyle;
 
     @ApiModelProperty("线型")
     private String lineType;

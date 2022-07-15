@@ -40,7 +40,5 @@ public interface DynamicSchemeService {
 
     void clearSceneData(String sceneId);
 
-    String makeExportFile(String resourceId, String tempDir) throws IOException;
-
-    void importDynamicScheme(String unZipPath);
+    void clearMedia(String sceneId);
 }

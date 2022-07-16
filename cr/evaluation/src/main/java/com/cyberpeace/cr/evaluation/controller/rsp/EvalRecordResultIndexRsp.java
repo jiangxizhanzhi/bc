@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.rsp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -25,4 +26,10 @@ public class EvalRecordResultIndexRsp implements Serializable {
 
     @ApiModelProperty("下一级指标/变量项信息")
     private List<EvalRecordResultIndexRsp> children;
+
+    @JsonIgnore
+    private Integer level;
+
+    @JsonIgnore
+    private String nextIds;
 }

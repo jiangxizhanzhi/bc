@@ -18,6 +18,8 @@ import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -208,14 +210,49 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             throw new BusinessException();
         }
 
-        List<EvalIndexRef> evalIndexRefs;
+        Map<String, EvalRecordResultIndexRsp> evalRecordResultIndexRspMap = this.getBaseMapper().selectResultIndexes(
+                recordId, evalIndexRef.getLevel()
+        ).stream().collect(Collectors.toMap(EvalRecordResultIndexRsp::getResourceId, evalRecordResultIndexRsp -> evalRecordResultIndexRsp));
+
+        EvalRecordResultIndexRsp firstIndex = evalRecordResultIndexRspMap.get(evalIndexRef.getResourceId());
+
         if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
-
+            firstIndex.setChildren(collectionIndexes(firstIndex, 3, evalRecordResultIndexRspMap));
         } else if (evalIndexRef.getLevel().equals(EvalIndex.Level.SECOND.getCode())) {
-
+            firstIndex.setChildren(collectionIndexes(firstIndex, 2, evalRecordResultIndexRspMap));
         } else if (evalIndexRef.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
-
+            firstIndex.setChildren(collectionIndexes(firstIndex, 3, evalRecordResultIndexRspMap));
+        } else if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
+            firstIndex.setChildren(collectionIndexes(firstIndex, 2, evalRecordResultIndexRspMap));
+        } else {
+            throw new BusinessException();
         }
-        return null;
+        return firstIndex;
+    }
+
+    private List<EvalRecordResultIndexRsp> collectionIndexes(EvalRecordResultIndexRsp evalRecordResultIndexRsp,
+                                                             Integer depth,
+                                                             Map<String, EvalRecordResultIndexRsp> evalRecordResultIndexRspMap) {
+        List<EvalRecordResultIndexRsp> results = Lists.newArrayList();
+        if (depth.equals(1) || StringUtils.isEmpty(evalRecordResultIndexRsp.getNextIds())) {
+            return results;
+        }
+        List<String> nextLevelIdList = JsonUtil.toJsonObjectArray(evalRecordResultIndexRsp.getNextIds(), String.class);
+
+        if (evalRecordResultIndexRsp.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
+            evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, nextLevelIdList).list().forEach(evalVariableRef -> {
+                EvalRecordResultIndexRsp evalRecordResultIndexRsp1 = new EvalRecordResultIndexRsp();
+                BeanUtils.copyProperties(evalVariableRef, evalRecordResultIndexRsp1);
+                results.add(evalRecordResultIndexRsp1);
+            });
+        } else {
+            nextLevelIdList.forEach(nextLevelId -> {
+                EvalRecordResultIndexRsp evalRecordResultIndexRsp1 = evalRecordResultIndexRspMap.get(nextLevelId);
+                evalRecordResultIndexRsp1.setChildren(collectionIndexes(evalRecordResultIndexRsp1, depth - 1, evalRecordResultIndexRspMap));
+                results.add(evalRecordResultIndexRsp1);
+            });
+        }
+
+        return results;
     }
 }

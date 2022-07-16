@@ -172,7 +172,7 @@ public class EvalRecordController {
         return new BaseRsp<>(evalVariableRefService.originData(queryParams.toPageParam(), queryParams.getVariableId()));
     }
 
-    @ApiOperation("评估任务结果（指标项信息）#待确认是否使用")
+    @ApiOperation("评估任务结果（指标项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/index")
     public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("record_id") String recordId, @RequestParam("index_id") String indexId) {

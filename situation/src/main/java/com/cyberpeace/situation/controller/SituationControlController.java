@@ -25,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 
@@ -58,6 +59,7 @@ public class SituationControlController {
     @ApiOperation("更新动效方案")
     @PatchMapping("/scheme")
     public BaseRsp<DynamicSchemeReq> updateDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
+        dynamicSchemeService.validStage(dynamicSchemeReq);
         DynamicSchemeReq dynamicSchemeReq1 = dynamicSchemeService.updateDynamicScheme(dynamicSchemeReq);
         return new BaseRsp<>(dynamicSchemeReq1);
     }
@@ -71,7 +73,7 @@ public class SituationControlController {
 
     @ApiOperation("所有动效方案名称")
     @GetMapping("/scheme_names")
-    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam("场景id")String sceneId){
+    public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam("场景id")@Validated @NotBlank String sceneId){
         List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName(sceneId);
         return new BaseRsp<>(names);
     }
@@ -101,6 +103,7 @@ public class SituationControlController {
     @ApiOperation("运行动效方案")
     @PostMapping("/run_dynamic_scheme")
     public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
+        dynamicSchemeService.validStage(dynamicSchemeReq);
         dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
         dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
         return new BaseRsp<>();

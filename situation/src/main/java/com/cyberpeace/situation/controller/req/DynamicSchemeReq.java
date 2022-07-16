@@ -16,6 +16,7 @@ public class DynamicSchemeReq implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("场景id")
+    @NotBlank
     private String sceneId;
 
     @ApiModelProperty("动效方案名称")

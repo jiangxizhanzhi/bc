@@ -115,4 +115,13 @@ public interface ErrorCode {
 	/** 阶段内动效描述重复 */
 	String DUPLICATED_DYNAMIC_DESCRIPTION = "100040";
 
+	/** 阶段名称不能为空 */
+	String EMPTY_STAGE_NAME = "100041";
+
+	/** 动效方案名称不能为空 */
+	String EMPTY_SCHEME_NAME = "100042";
+
+	/** 阶段为空 */
+	String EMPTY_DYNAMIC_STAGE = "100043";
+
 }

@@ -208,6 +208,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         for(MediaAnimation mediaAnimation:attackMessageBo.getMediaAnimationList()){
             AttackEffect attackEffect = BeanUtils.copy(mediaAnimation,AttackEffect.class);
             attackEffect.setElementId(mediaAnimation.getSourceId());
+
             //判断是图片还是视频
             String fileSuffix = FileUtil.getFileSuffix(mediaAnimation.getUrl()).toLowerCase();
             List<String> pictureTypeList = Arrays.asList(PICTURE_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
@@ -290,6 +291,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
             public void run() {
                 //进程信息
                 List<WsAttackSchedule> wsAttackScheduleList = new ArrayList<>();
+                //当前动效方案是否正常运行
                 boolean state = true;
                 for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
                     if (!state){
@@ -367,22 +369,6 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         return JsonUtil.toJsonObjectArray(schedule,WsAttackSchedule.class);
     }
 
-    @Cacheable(cacheNames = "getElementIds", key = "#sceneId")
-    public List<String> getElementIds(String sceneId){
-        SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
-        SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
-        List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
-        return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
-    }
-
-    /**
-     * 推送进程消息
-     */
-    public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,String sceneId){
-        WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
-        situationHandlerService.pushDataToRoom(wsMessage, sceneId);
-    }
-
     @Override
     public void clearSceneData(String sceneId){
         sceneConfigMapper.deleteBySceneId(sceneId);
@@ -401,6 +387,39 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         wsAttackEffectDynamicBlank.setCategory("attack");
         wsAttackEffectDynamicBlank.setEffectList(new ArrayList<>());
         WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(MessageType.AttackEffect.getDesc(), wsAttackEffectDynamicBlank);
+        situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+    }
+
+    /**
+     * 校验阶段
+     */
+    @Override
+    public void validStage(DynamicSchemeReq dynamicSchemeReq){
+        for (DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
+            if(dynamicStage.getName() == null || dynamicStage.getName().equals("")){
+                throw new BusinessException(ErrorCode.EMPTY_STAGE_NAME);
+            }
+            if(dynamicStage.getAttackMessageReqList() == null || dynamicStage.getAttackMessageReqList().size()==0){
+                throw new BusinessException(ErrorCode.EMPTY_DYNAMIC_STAGE,dynamicStage.getName());
+            }
+
+        }
+
+    }
+
+    @Cacheable(cacheNames = "getElementIds", key = "#sceneId")
+    public List<String> getElementIds(String sceneId){
+        SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+        SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+        List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements().values());
+        return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
+    }
+
+    /**
+     * 推送进程消息
+     */
+    public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,String sceneId){
+        WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
         situationHandlerService.pushDataToRoom(wsMessage, sceneId);
     }
 

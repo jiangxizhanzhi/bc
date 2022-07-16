@@ -41,4 +41,6 @@ public interface DynamicSchemeService {
     void clearSceneData(String sceneId);
 
     void clearMedia(String sceneId);
+
+    void validStage(DynamicSchemeReq dynamicSchemeReq);
 }

@@ -161,14 +161,28 @@ public class EvalRecordController {
     @ApiOperation("变量项采集信息（折线图）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/graph")
-    public BaseRsp<EvalVariableGraphRsp> VariableGraph(@RequestParam("variable_id") String variableId) {
+    public BaseRsp<EvalVariableGraphRsp> variableGraph(@RequestParam("variable_id") String variableId) {
         return new BaseRsp<>(evalVariableRefService.graph(variableId));
     }
 
     @ApiOperation("变量项采集信息（原始数据）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/data")
-    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> VariableData(EvalVariableProbeDataReq queryParams) {
+    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> variableData(EvalVariableProbeDataReq queryParams) {
         return new BaseRsp<>(evalVariableRefService.originData(queryParams.toPageParam(), queryParams.getVariableId()));
+    }
+
+    @ApiOperation("评估任务结果（指标项信息）#待确认是否使用")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/result/index")
+    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("record_id") String recordId, @RequestParam("index_id") String indexId) {
+        return new BaseRsp<>(evalIndexRefService.resultIndex(recordId, indexId));
+    }
+
+    @ApiOperation("评估任务结果（变量项信息）")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/result/variable")
+    public BaseRsp<EvalRecordResultVariableRsp> resultVariable(@RequestParam("variable_id") String variableId) {
+        return new BaseRsp<>(evalVariableRefService.resultVariable(variableId));
     }
 }

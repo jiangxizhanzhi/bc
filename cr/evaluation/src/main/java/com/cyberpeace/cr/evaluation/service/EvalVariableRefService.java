@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultVariableRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
@@ -42,4 +43,11 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
     EvalVariableGraphRsp graph(String variableId);
 
     ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId);
+
+    /**
+     * 评估结果变量项信息
+     * @param variableId 变量项id
+     * @return
+     */
+    EvalRecordResultVariableRsp resultVariable(String variableId);
 }

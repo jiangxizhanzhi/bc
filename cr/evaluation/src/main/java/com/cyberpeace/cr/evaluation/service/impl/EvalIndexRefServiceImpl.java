@@ -8,6 +8,7 @@ import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
@@ -198,5 +199,23 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
                 .forEach(evalIndexRef -> results.addAll(JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class)));
 
         return results;
+    }
+
+    @Override
+    public EvalRecordResultIndexRsp resultIndex(String recordId, String indexId) {
+        EvalIndexRef evalIndexRef = getById(indexId);
+        if (evalIndexRef == null) {
+            throw new BusinessException();
+        }
+
+        List<EvalIndexRef> evalIndexRefs;
+        if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
+
+        } else if (evalIndexRef.getLevel().equals(EvalIndex.Level.SECOND.getCode())) {
+
+        } else if (evalIndexRef.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
+
+        }
+        return null;
     }
 }

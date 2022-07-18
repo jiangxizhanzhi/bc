@@ -100,4 +100,6 @@ public interface JsonKeyConstant {
 	String PARENT = "parent";
 
 	String SCENE_NAME = "scene_name";
+
+	String IMAGE_IDS = "image_ids";
 }

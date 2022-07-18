@@ -86,6 +86,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_SNAPSHOT_URL;
 
+	private String SNAPSHOT_HISTORY_URL;
+
+	private String SNAPSHOT_MERGE_URL;
+
+	private String SNAPSHOT_DELETE_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -143,6 +149,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		FLOW_RETRIEVE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.flow.retrieve");
 
 		NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
+		SNAPSHOT_HISTORY_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.history");
+		SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
+		SNAPSHOT_DELETE_URL = MP_HOST
+				+ ConfigUtil.getContextProperty("/api/mp/devops/cluster/images/page");
 	}
 
 	@Override
@@ -359,5 +369,28 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.post(NODE_SNAPSHOT_URL,
 				JsonUtil.toJsonString(snapshotContext, PropertyNamingStrategy.SnakeCase),
 				Boolean.class);
+	}
+
+	@Override
+	public JSONArray snapshotHistory(String imageId) {
+		String requestUrl = String.format(SNAPSHOT_HISTORY_URL, imageId);
+		return HttpClientUtil.rawGet(requestUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext) {
+
+		HttpClientUtil.post(SNAPSHOT_MERGE_URL,
+				JsonUtil.toJsonString(mergeSnapshotContext, PropertyNamingStrategy.SnakeCase),
+				String.class);
+		return null;
+	}
+
+	@Override
+	public JSONObject deleteSnapshot(List<String> imageIds) {
+		JSONObject body = new JSONObject();
+		body.put(JsonKeyConstant.IMAGE_IDS, imageIds);
+		HttpClientUtil.delete(SNAPSHOT_DELETE_URL, body, String.class);
+		return null;
 	}
 }

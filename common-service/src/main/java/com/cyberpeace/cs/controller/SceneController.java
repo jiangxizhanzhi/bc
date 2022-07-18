@@ -2,8 +2,6 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -11,16 +9,21 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cs.controller.req.MergeSnapshotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
-import com.cyberpeace.cs.controller.res.SnapshotPathRes;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.CreateSnapshotContext;
+import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -64,8 +67,11 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
-		return new BaseRsp<>(Boolean.TRUE);
+	public BaseRsp<JSONObject> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
+
+		JSONObject result = localSceneService.deleteSnapshot(deleteReq.getSceneId(),
+				deleteReq.getImageIds());
+		return new BaseRsp<>(result);
 	}
 
 	@GetMapping("/node/snapshot")
@@ -74,11 +80,12 @@ public class SceneController {
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "scene_id", value = "场景编号", required = true),
-			@ApiImplicitParam(name = "node_id", value = "节点编号", required = true) })
-	public BaseRsp<SnapshotPathRes> snapshotPath(@RequestParam("scene_id") String sceneId,
-			@Param("node_id") String nodeId) {
+			@ApiImplicitParam(name = "id", value = "镜像编号", required = true) })
+	public BaseRsp<JSONArray> snapshotPath(@RequestParam("scene_id") String sceneId,
+			@RequestParam("id") String imageId) {
 
-		return new BaseRsp<>();
+		JSONArray result = localSceneService.snapshotHistory(sceneId, imageId);
+		return new BaseRsp<>(result);
 	}
 
 	@PutMapping("/node/snapshot")
@@ -86,8 +93,14 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<Boolean> mergeSnapshot(@Valid @RequestBody NodeSnapShotReq nodeSnapShotReq) {
+	public BaseRsp<JSONObject>
+			mergeSnapshot(@Valid @RequestBody MergeSnapshotReq mergeSnapshotReq) {
 
-		return new BaseRsp<>(true);
+		MergeSnapshotContext snapshotContext = BeanUtils.copy(mergeSnapshotReq,
+				MergeSnapshotContext.class);
+
+		JSONObject object = localSceneService.mergeSnapshot(mergeSnapshotReq.getSceneId(),
+				snapshotContext);
+		return new BaseRsp<>(object);
 	}
 }

@@ -1,6 +1,7 @@
 package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import org.apache.commons.lang3.StringUtils;
@@ -356,6 +357,36 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		NodeSnapshotContext snapshotContext = getNodeSnapshotContext(localScene, shotContext);
 
 		return remoteSceneService.nodeSnapshot(snapshotContext);
+	}
+
+	@Override
+	public JSONArray snapshotHistory(String sceneId, String imageId) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		return remoteSceneService.snapshotHistory(imageId);
+	}
+
+	@Override
+	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		return remoteSceneService.mergeSnapshot(snapshotContext);
+	}
+
+	@Override
+	public JSONObject deleteSnapshot(String sceneId, List<String> imageIds) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		return remoteSceneService.deleteSnapshot(imageIds);
 	}
 
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,

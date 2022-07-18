@@ -166,4 +166,25 @@ public interface RemoteSceneService {
 	 * @return
 	 */
 	Boolean nodeSnapshot(NodeSnapshotContext snapshotContext);
+
+	/**
+	 * 快照历史记录
+	 * @param imageId
+	 * @return
+	 */
+	JSONArray snapshotHistory(String imageId);
+
+	/**
+	 * 快照合并
+	 * @param mergeSnapshotContext
+	 * @return
+	 */
+	JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext);
+
+	/**
+	 * 快照删除
+	 * @param imageIds
+	 * @return
+	 */
+	JSONObject deleteSnapshot(List<String> imageIds);
 }

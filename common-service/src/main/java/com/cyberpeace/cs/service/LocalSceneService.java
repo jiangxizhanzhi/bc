@@ -5,6 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
+import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
+
+import java.util.List;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -95,4 +98,27 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext context);
 
+	/**
+	 * 场景快照历史记录
+	 * @param sceneId
+	 * @param imageId
+	 * @return
+	 */
+	JSONArray snapshotHistory(String sceneId, String imageId);
+
+	/**
+	 * 场景节点快照合并
+	 * @param sceneId
+	 * @param snapshotContext
+	 * @return
+	 */
+	JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext);
+
+	/**
+	 * 删除快照
+	 * @param sceneId
+	 * @param imageIds
+	 * @return
+	 */
+	JSONObject deleteSnapshot(String sceneId, List<String> imageIds);
 }

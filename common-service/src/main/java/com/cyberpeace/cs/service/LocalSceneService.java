@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -89,10 +90,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	/**
 	 * 节点快照
 	 * @param localScene
-	 * @param nodeId
-	 * @param snapshotName
+	 * @param context
 	 * @return
 	 */
-	Boolean nodeSnapshot(LocalScene localScene, String nodeId, String snapshotName);
+	Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext context);
 
 }

@@ -14,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -355,6 +356,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public Boolean nodeSnapshot(NodeSnapshotContext snapshotContext) {
-		return HttpClientUtil.post(NODE_SNAPSHOT_URL, snapshotContext, Boolean.class);
+		return HttpClientUtil.post(NODE_SNAPSHOT_URL,
+				JsonUtil.toJsonString(snapshotContext, PropertyNamingStrategy.SnakeCase),
+				Boolean.class);
 	}
 }

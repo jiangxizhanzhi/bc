@@ -23,4 +23,6 @@ public class NodeSnapShotReq implements Serializable {
 	@NotBlank
 	private String snapshotName;
 
+	@ApiModelProperty("快照描述")
+	private String description;
 }

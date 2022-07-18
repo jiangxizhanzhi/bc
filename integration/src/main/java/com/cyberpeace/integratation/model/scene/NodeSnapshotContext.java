@@ -12,4 +12,6 @@ public class NodeSnapshotContext extends SceneOpsContext {
 
 	private String snapshotName;
 
+	private String description;
+
 }

@@ -2,6 +2,8 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -52,8 +54,8 @@ public class SceneController {
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
-		Boolean result = localSceneService.nodeSnapshot(localScene, snapShotReq.getNodeId(),
-				snapShotReq.getSnapshotName());
+		Boolean result = localSceneService.nodeSnapshot(localScene,
+				BeanUtils.copy(snapShotReq, CreateSnapshotContext.class));
 		return new BaseRsp(result);
 	}
 

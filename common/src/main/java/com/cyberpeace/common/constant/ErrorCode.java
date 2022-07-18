@@ -124,4 +124,7 @@ public interface ErrorCode {
 	/** 阶段为空 */
 	String EMPTY_DYNAMIC_STAGE = "100043";
 
+	/** 源节点为空 */
+	String EMPTY_SOURCE_NODE = "100044";
+
 }

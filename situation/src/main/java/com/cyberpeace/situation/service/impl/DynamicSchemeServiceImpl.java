@@ -402,6 +402,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
             if(dynamicStage.getAttackMessageReqList() == null || dynamicStage.getAttackMessageReqList().size()==0){
                 throw new BusinessException(ErrorCode.EMPTY_DYNAMIC_STAGE,dynamicStage.getName());
             }
+            for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+                if(!attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())&&attackMessageReq.getSourceId().equals("")){
+                    throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE);
+                }
+            }
 
         }
 

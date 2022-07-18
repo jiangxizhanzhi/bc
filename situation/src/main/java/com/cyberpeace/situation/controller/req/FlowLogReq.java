@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class FlowLogReq implements Serializable {
 
-	@ApiModelProperty("场景id")
+	@ApiModelProperty(value = "场景id", required = true)
 	@NotEmpty
 	private String sceneId;
 

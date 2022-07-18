@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 
 /**
@@ -102,7 +103,7 @@ public interface SituationHandlerService {
 	 * @param sceneId
 	 * @return List<WsMultiNodeDynamic>
 	 */
-	List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId);
+	List<WsMessage> getAttackEventList(List<JSONObject> flowLogs, String sceneId);
 
 	/**
 	 * 随机获取动态消息
@@ -118,7 +119,7 @@ public interface SituationHandlerService {
 	 * @param sceneId 场景id
 	 * @return 无
 	 */
-	void pushDataToRoom(JSONObject data, String sceneId);
+	<T> void pushDataToRoom(T data, String sceneId);
 
 	/**
 	 * 批量推送消息至房间
@@ -128,7 +129,7 @@ public interface SituationHandlerService {
 	 * @param interval 批次间隔时间
 	 * @return 无
 	 */
-	void batchPushDataToRoom(String sceneId, List<JSONObject> datas, Integer number,
+	void batchPushDataToRoom(String sceneId, List<WsMessage> datas, Integer number,
 			Integer interval);
 
 }

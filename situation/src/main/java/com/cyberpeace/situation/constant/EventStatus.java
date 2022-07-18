@@ -9,11 +9,11 @@ public enum EventStatus {
 	 */
 
 	INITIAL(0, "初始化"),
-    START(1, "开始"),
-    IN_PROGRESS(2, "进行中"),
-    PAUSE(3, "暂停"),
-    OVER(4, "已结束"),
-    ABNORMAL(5, "异常");
+	START(1, "开始"),
+	IN_PROGRESS(2, "进行中"),
+	PAUSE(3, "暂停"),
+	OVER(4, "已结束"),
+	ABNORMAL(5, "异常");
 
 	@Getter
 	private Integer code;

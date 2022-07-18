@@ -17,7 +17,7 @@ import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "态势配置")
+@Api(tags = "态势自定义配置")
 @RestController
 @RequestMapping("/situation/config")
 public class SituationConfigController {

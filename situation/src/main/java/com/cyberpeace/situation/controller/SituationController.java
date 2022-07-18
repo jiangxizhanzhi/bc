@@ -2,18 +2,21 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
-import com.cyberpeace.situation.controller.res.ElementStateRes;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +35,7 @@ public class SituationController {
 	private TopoHandlerService topoHandlerService;
 
 	@CrossOrigin("*")
-	@ApiOperation("拓扑解析")
+	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
 	public BaseRsp<SituationTopo> topology(
 			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
@@ -49,15 +52,15 @@ public class SituationController {
 		return new BaseRsp<>(situationTopo);
 	}
 
-	@ApiOperation("攻击动态")
+	@ApiOperation("获取流量攻击事件")
 	@GetMapping("/dynamic/attack")
-	public List<JSONObject> attackDynamic(FlowLogReq flowLogReq) {
+	public List<WsMessage> attackDynamic(FlowLogReq flowLogReq) {
 
 		// 获取流量日志
 		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
 
 		// 处理流量日志
-		List<JSONObject> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
+		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
 				flowLogReq.getSceneId());
 
 		// 分批推送消息
@@ -67,14 +70,30 @@ public class SituationController {
 		return wsMultiNodeDynamics;
 	}
 
-	@ApiOperation("节点信息")
+	@ApiOperation("获取节点监控信息")
 	@GetMapping("element")
-	public BaseRsp<ElementStateRes> element(
-			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
-			@ApiParam(name = "element_id", value = "节点编号") @RequestParam(value = "element_id") String elementId) {
+	public BaseRsp<ElementStateRes>
+			element(@ApiParam(name = "scene_id",
+					value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
+					@ApiParam(name = "element_id",
+							value = "节点编号") @RequestParam(value = "element_id") String elementId) {
 
 		ElementStateRes elementStateRes = topoHandlerService.getElementState(sceneId, elementId);
 
 		return new BaseRsp<>(elementStateRes);
+	}
+
+	@ApiOperation("获取节点链路状态")
+	@GetMapping("link_status")
+	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
+			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+
+		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
+
+		// 推送ws消息
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+				wsNodeStatus);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(wsMessage);
 	}
 }

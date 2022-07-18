@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SNAPSHOT_DELETE_URL;
 
+	private String CONNECTION_STATUS_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -153,6 +156,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
 		SNAPSHOT_DELETE_URL = MP_HOST
 				+ ConfigUtil.getContextProperty("/api/mp/devops/cluster/images/page");
+
+		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.node.connection.status");
+
 	}
 
 	@Override
@@ -392,5 +399,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		body.put(JsonKeyConstant.IMAGE_IDS, imageIds);
 		HttpClientUtil.delete(SNAPSHOT_DELETE_URL, body, String.class);
 		return null;
+	}
+
+	@Override
+	public List<MpNodeStatus> getConnectionStatus(String mpSceneId) {
+		String url = CONNECTION_STATUS_URL + mpSceneId;
+
+		JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
+		String mpNodeStatus = JsonUtil.toJsonString(
+				jsonObject.getOrDefault("node_link_status_list", Lists.newArrayList()));
+		List<MpNodeStatus> nodeStatusList = JsonUtil.toJsonObjectArray(mpNodeStatus,
+				MpNodeStatus.class);
+
+		return nodeStatusList;
 	}
 }

@@ -3,12 +3,14 @@ package com.cyberpeace.situation.service.impl;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
@@ -62,8 +64,23 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		situationTopo.setElements(elementsInfo);
 		situationTopo.setConnections(connectionsInfo);
 		situationTopo.setScene(sceneInfo);
+		situationTopo.setPieces(getPieces(sceneData));
 
 		return situationTopo;
+	}
+
+	private Map<String, PieceInfo> getPieces(SceneData sceneData) {
+
+		List<PieceInfo> pieces = JsonUtil.toJsonObjectArray(sceneData.getPieces().toString(),
+				PieceInfo.class);
+
+		Map<String, PieceInfo> piecesInfo = Maps.newHashMap();
+
+		for (PieceInfo pieceInfo : pieces) {
+			piecesInfo.put(pieceInfo.getPieceId(), pieceInfo);
+		}
+
+		return piecesInfo;
 	}
 
 	private Map<String, AreaInfo> getAreas(SceneData sceneData) {
@@ -97,16 +114,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			scope.add(new PlaneCoordinate(x + width, y + height));
 			scope.add(new PlaneCoordinate(x + width, y));
 
-			// 获取区域名称
-			String areaName = area.getString("name");
-			if (areaName.isEmpty()) {
-				areaName = "区域" + (i + 1);
-			}
-
 			// 构造区域数据
 			AreaInfo areaInfo = new AreaInfo();
 			areaInfo.setAreaId(area.getString("id"));
-			areaInfo.setName(areaName);
 			areaInfo.setDesc(area.getString("description"));
 			areaInfo.setShape(getAreaShape(area));
 			areaInfo.setStatus(getAreaStatus(area));
@@ -151,7 +161,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Integer category2 = elementExtendedInfo.getInteger("category2");
 			String firstType = categorieMap.getFirstCategorie().getOrDefault(category, "其他");
 			String secondType = categorieMap.getSecondCategorie().getOrDefault(category2, "其他");
-			String type = firstType + "-" + secondType;
+
+			String icon3 = (String) element.getOrDefault("icon3", "");
+			String type = StringUtils.isEmpty(icon3) ? firstType + "-" + secondType : "定制-" + icon3;
 
 			// 处理角色数据
 			Integer roleId = elementExtendedInfo.getInteger("role");
@@ -263,6 +275,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 构造返回连线数据
 			ConnectionInfo connectionInfo = new ConnectionInfo();
+			connectionInfo.setConnectionId(connection.getString("id"));
 			connectionInfo.setSource(source);
 			connectionInfo.setTarget(target);
 			connectionInfo.setStyle(getLineStyle());
@@ -432,9 +445,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@SneakyThrows
 	@Override
-	public List<JSONObject> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
+	public List<WsMessage> getAttackEventList(List<JSONObject> flowLogs, String sceneId) {
 
-		List<JSONObject> arrayObjects = Lists.newArrayList();
+		List<WsMessage> arrayObjects = Lists.newArrayList();
 
 		Date lastTime = lastTimeCache.getIfPresent(sceneId);
 
@@ -457,7 +470,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 设置基础信息
 			attackEvent.setSceneId(sceneId);
-			attackEvent.setTime(time);
+			attackEvent.setTime(time.getTime());
 			attackEvent.setCategory("attack");
 
 			// 设置事件类型
@@ -466,7 +479,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
 			attackEvent.setType(attackType.getActionType().getCode());
 
-			attackEvent.setName(enDesc);
+			// attackEvent.setName(enDesc);
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -486,9 +499,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// ws推送消息
 			WsMessage<WsMultiElementDynamic> wsMessage = new WsMessage<>(
 					MessageType.AttackEventEE.getDesc(), attackEvent);
-			JSONObject data = JsonUtil.toJsonObject(JsonUtil.toJsonString(wsMessage),
-					JSONObject.class);
-			arrayObjects.add(data);
+			arrayObjects.add(wsMessage);
 		}
 
 		return arrayObjects;
@@ -505,7 +516,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			actionType = ActionType.getRandom(ActionType.values());
 		}
 
-		JSONObject sceneTopo = topoHandlerService.getsceneTopoBySceneId(sceneId);
+		JSONObject sceneTopo = topoHandlerService.getSceneTopoBySceneId(sceneId);
 		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
 				JSONArray.parseArray(Lists.newArrayList().toString()));
@@ -523,11 +534,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		}
 
 		wsEvent.setSceneId(sceneId);
-		wsEvent.setTime((new Date()));
+		wsEvent.setTime(System.currentTimeMillis());
 		wsEvent.setCategory("attack");
 
 		wsEvent.setType(actionType.getCode());
-		wsEvent.setName(actionType.getDesc());
+		// wsEvent.setName(actionType.getDesc());
 
 		// 设置动效配置
 		wsEvent.setLineStyle(new LineStyle(Color.getRandomValue(Color.values()), 5,
@@ -570,13 +581,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	}
 
 	@Override
-	public void pushDataToRoom(JSONObject data, String sceneId) {
+	public <T> void pushDataToRoom(T data, String sceneId) {
 
 		SituationWsMessageIdentifier identifier = new SituationWsMessageIdentifier();
 		identifier.setPath(WsPath.SITUATION);
 		identifier.setSceneId(sceneId);
 
-		WebSocketMessageContext messageContext = WebSocketMessageContext.builder().data(data)
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+				.data(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase))
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
@@ -585,7 +597,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@SneakyThrows
 	@Async
 	@Override
-	public void batchPushDataToRoom(String sceneId, List<JSONObject> datas, Integer number,
+	public void batchPushDataToRoom(String sceneId, List<WsMessage> datas, Integer number,
 			Integer interval) {
 
 		Integer circle = (int) Math.ceil((double) datas.size() / number);

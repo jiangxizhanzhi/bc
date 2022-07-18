@@ -1,13 +1,17 @@
 package com.cyberpeace.situation.constant.ws;
 
-import lombok.Getter;
-
 import java.util.Arrays;
 
+import com.cyberpeace.common.model.CommonContext;
+
+import lombok.Getter;
+
 public enum AttackType {
-    /**
-     * 攻击类型
-     */
+
+	/**
+	 * 攻击类型
+	 */
+
     ATTEMPTED_ADMIN(ActionType.TRY_ATTACK, "ROOT提权攻击尝试", "Attempted Administrator Privilege Gain", "attempted-admin"),
     ATTEMPTED_DOS(ActionType.TRY_ATTACK, "尝试拒绝服务攻击", "Attempted Denial of Service", "attempted-dos"),
     ATTEMPTED_RECON(ActionType.TRY_ATTACK, "信息泄露", "Attempted Information Leak", "attempted-recon"),
@@ -49,34 +53,39 @@ public enum AttackType {
     UNSUCCESSFUL_USER(ActionType.TRY_ATTACK, "提权攻击失败", "Unsuccessful User Privilege Gain", "unsuccessful-user"),
     UNUSUAL_CLIENT_PORT_CONNECTION(ActionType.NORMAL, "异常客户端攻击", "A client was using an unusual port", "unusual-client-port-connection"),
     WEB_APPLICATION_ACTIVITY(ActionType.TRY_ATTACK, "web漏洞尝试利用", "access to a potentially vulnerable web application", "web-application-activity"),
-    WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack");
+    WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack"),
+    MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media animation","media-animation"),
+    HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight area","highlight-area");
 
-    @Getter
-    private ActionType actionType;
+	@Getter
+	private ActionType actionType;
 
-    @Getter
-    private String cnDesc;
+	@Getter
+	private String cnDesc;
 
-    @Getter
-    private String enDesc;
+	@Getter
+	private String enDesc;
 
-    @Getter
-    private String keyWord;
+	@Getter
+	private String keyWord;
 
-    AttackType(ActionType actionType, String cnDesc, String enDesc, String keyWord) {
-        this.actionType = actionType;
-        this.cnDesc = cnDesc;
-        this.enDesc = enDesc;
-        this.keyWord = keyWord;
-    }
+	AttackType(ActionType actionType, String cnDesc, String enDesc, String keyWord) {
+		this.actionType = actionType;
+		this.cnDesc = cnDesc;
+		this.enDesc = enDesc;
+		this.keyWord = keyWord;
+	}
 
-    /**
-     * 根据enDesc获取枚举
-     */
-    public static <T extends AttackType> T getEnumByEnDesc(String enDesc, Class<T> enumClass) {
-        return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getEnDesc().equals(enDesc))
-                .findFirst().orElse(null);
-    }
+	/**
+	 * 根据enDesc获取枚举
+	 */
+	public static <T extends AttackType> T getEnumByEnDesc(String enDesc, Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getEnDesc().equals(enDesc))
+				.findFirst().orElse(null);
+	}
 
+	public String getMsg() {
+		return CommonContext.isChinese() ? cnDesc : enDesc;
+	}
 
 }

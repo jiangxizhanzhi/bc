@@ -187,4 +187,12 @@ public interface RemoteSceneService {
 	 * @return
 	 */
 	JSONObject deleteSnapshot(List<String> imageIds);
+
+	/**
+	 * 获取场景下节点及链路状态
+	 * @param mpSceneId
+	 * @return JSONObject
+	 */
+	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
+
 }

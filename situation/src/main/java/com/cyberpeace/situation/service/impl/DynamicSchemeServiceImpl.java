@@ -97,7 +97,14 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                 List<AttackMessage> attackMessageList = attackMessageMapper.selectBatchIds(dynamicStageBo.getAttackMessageIds());
                 for (AttackMessage attackMessage : attackMessageList) {
                     AttackMessageReq attackMessageBo = BeanUtils.copy(attackMessage, AttackMessageReq.class);
-                    attackMessageBo.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessage.getMediaAnimation(), MediaAnimation.class));
+                    if(attackMessage.getMediaAnimation() == null){
+                        MediaAnimation mediaAnimation = new MediaAnimation();
+                        List<MediaAnimation> emptyMediaAnimation = new ArrayList<>();
+                        emptyMediaAnimation.add(mediaAnimation);
+                        attackMessageBo.setMediaAnimationList(emptyMediaAnimation);
+                    }else {
+                        attackMessageBo.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessage.getMediaAnimation(), MediaAnimation.class));
+                    }
                     attackMessageBoList.add(attackMessageBo);
                     dynamicStageRes.setAttackMessageReqList(attackMessageBoList);
                 }
@@ -324,7 +331,10 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                         }else{
                             pushAttackToRoom(attackMessageReq);
                         }
-                        Thread.sleep(attackMessageReq.getIntervalTime()*1000);
+                        if(attackMessageReq.getIntervalTime() != null){
+                            Thread.sleep(attackMessageReq.getIntervalTime()*1000);
+                        }
+
                     }
                     if (state){
                         wsAttackScheduleStage.setStatus(0);
@@ -399,12 +409,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
             if(dynamicStage.getName() == null || dynamicStage.getName().equals("")){
                 throw new BusinessException(ErrorCode.EMPTY_STAGE_NAME);
             }
-            if(dynamicStage.getAttackMessageReqList() == null || dynamicStage.getAttackMessageReqList().size()==0){
-                throw new BusinessException(ErrorCode.EMPTY_DYNAMIC_STAGE,dynamicStage.getName());
-            }
             for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
                 if(!attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())&&attackMessageReq.getSourceId().equals("")){
-                    throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE);
+                    throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE,attackMessageReq.getDescription());
                 }
             }
 

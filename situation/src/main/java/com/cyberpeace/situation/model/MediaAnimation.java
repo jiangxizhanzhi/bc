@@ -17,7 +17,4 @@ public class MediaAnimation implements Serializable {
     @ApiModelProperty("源节点id")
     private String sourceId;
 
-    @ApiModelProperty("区域id")
-    private String areaId;
-
 }

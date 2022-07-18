@@ -20,11 +20,7 @@ public class AttackMessage extends BaseTable {
 
     private String sourceId;
 
-    private String sourceName;
-
     private String targetId;
-
-    private String targetName;
 
     private Integer intervalTime;
 

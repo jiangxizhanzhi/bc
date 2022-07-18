@@ -121,10 +121,7 @@ public interface ErrorCode {
 	/** 动效方案名称不能为空 */
 	String EMPTY_SCHEME_NAME = "100042";
 
-	/** 阶段为空 */
-	String EMPTY_DYNAMIC_STAGE = "100043";
-
 	/** 源节点为空 */
-	String EMPTY_SOURCE_NODE = "100044";
+	String EMPTY_SOURCE_NODE = "100043";
 
 }

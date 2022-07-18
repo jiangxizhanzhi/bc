@@ -3,6 +3,7 @@ package com.cyberpeace.situation.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.controller.req.UpdateAttackMessageReq;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
@@ -31,10 +32,12 @@ public class AttackMessageServiceImpl implements AttackMessageService {
         attackMessageMapper.updateById(attackMessage);
     }
 
-    public AttackMessage attackMessageBoToAttackMessage(AttackMessageReq attackMessageBo){
-        AttackMessage attackMessage = BeanUtils.copy(attackMessageBo,AttackMessage.class);
-//        attackMessage.setLineStyle(JSON.toJSONString(attackMessageBo.getLineStyle()));
-        attackMessage.setMediaAnimation(JSON.toJSONString(attackMessageBo.getMediaAnimationList()));
+    public AttackMessage attackMessageBoToAttackMessage(AttackMessageReq attackMessageReq){
+        AttackMessage attackMessage = BeanUtils.copy(attackMessageReq,AttackMessage.class);
+        attackMessage.setMediaAnimation(JSON.toJSONString(attackMessageReq.getMediaAnimationList()));
+        if(!attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+            attackMessage.setMediaAnimation(null);
+        }
         return attackMessage;
     }
 }

@@ -25,11 +25,17 @@ public class OrgRankingBo implements Serializable {
 	@ApiModelProperty("合计")
 	private Integer sum;
 
+	/**
+	 * 排序用，优秀人数>合格人数>优秀人员的匹配度合计
+	 */
+	private Integer excellentMatchSum;
+
 	public OrgRankingBo(RtksMatch match) {
 		this.orgId = match.getOrgId();
 		this.orgName = match.getOrgName();
 		this.qualified = 0;
 		this.excellent = 0;
+		this.excellentMatchSum = 0;
 	}
 
 	public void addQualified() {
@@ -38,5 +44,9 @@ public class OrgRankingBo implements Serializable {
 
 	public void addExcellent() {
 		this.excellent++;
+	}
+
+	public void addMatchSum(Integer match) {
+		this.excellentMatchSum += match;
 	}
 }

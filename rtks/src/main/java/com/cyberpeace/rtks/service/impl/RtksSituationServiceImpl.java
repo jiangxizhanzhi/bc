@@ -112,6 +112,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			for (RtksMatch match : entry.getValue()) {
 				if (match.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
 					orgRankingBo.addExcellent();
+					orgRankingBo.addMatchSum(match.getMatch());
 					continue;
 				}
 				if (match.getMatch() >= RtksCommonConstants.QUALIFIED_MATCH) {
@@ -138,6 +139,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				multiRoleRankingBo = userMultiMap.get(userId);
 				if (recordContext.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
 					multiRoleRankingBo.addExcellent();
+					multiRoleRankingBo.addMatchSum(recordContext.getMatch());
 					continue;
 				}
 				if (recordContext.getMatch() >= RtksCommonConstants.QUALIFIED_MATCH) {
@@ -145,6 +147,14 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				}
 			}
 		}
+		// remove students with no qualified role
+		List<String> mUserIds = new ArrayList<>(userMultiMap.keySet());
+		mUserIds.forEach(uId -> {
+			if (userMultiMap.get(uId).getExcellent() == 0
+					&& userMultiMap.get(uId).getQualified() == 0) {
+				userMultiMap.remove(uId);
+			}
+		});
 		// sort
 		multiRoleRankingBoList = new ArrayList<>(userMultiMap.values());
 		multiRoleRankingBoList.sort(new MultiRoleComparator());
@@ -294,23 +304,17 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	}
 }
 
-class UserComparator implements Comparator<RtksMatch> {
-
-	@Override
-	public int compare(RtksMatch o1, RtksMatch o2) {
-		return o2.getMatch() - o1.getMatch();
-	}
-}
-
 class OrgComparator implements Comparator<OrgRankingBo> {
 
 	@Override
 	public int compare(OrgRankingBo o1, OrgRankingBo o2) {
-		if (o1.getExcellent().intValue() == o2.getExcellent().intValue()) {
-			return o2.getQualified() - o1.getQualified();
-		} else {
+		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
 			return o2.getExcellent() - o1.getExcellent();
 		}
+		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
+			return o2.getQualified() - o1.getQualified();
+		}
+		return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
 	}
 }
 
@@ -318,10 +322,12 @@ class MultiRoleComparator implements Comparator<MultiRoleRankingBo> {
 
 	@Override
 	public int compare(MultiRoleRankingBo o1, MultiRoleRankingBo o2) {
-		if (o1.getExcellent().intValue() == o2.getExcellent().intValue()) {
-			return o2.getQualified() - o1.getQualified();
-		} else {
+		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
 			return o2.getExcellent() - o1.getExcellent();
 		}
+		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
+			return o2.getQualified() - o1.getQualified();
+		}
+		return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
 	}
 }

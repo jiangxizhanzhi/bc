@@ -20,11 +20,14 @@ public class MultiRoleRankingBo implements Serializable {
 	@ApiModelProperty("合格岗位数")
 	private Integer qualified;
 
+	private Integer excellentMatchSum;
+
 	public MultiRoleRankingBo(String userId, String name) {
 		this.userId = userId;
 		this.name = name;
 		this.excellent = 0;
 		this.qualified = 0;
+		this.excellentMatchSum = 0;
 	}
 
 	public void addQualified() {
@@ -33,5 +36,9 @@ public class MultiRoleRankingBo implements Serializable {
 
 	public void addExcellent() {
 		this.excellent++;
+	}
+
+	public void addMatchSum(Integer match) {
+		this.excellentMatchSum += match;
 	}
 }

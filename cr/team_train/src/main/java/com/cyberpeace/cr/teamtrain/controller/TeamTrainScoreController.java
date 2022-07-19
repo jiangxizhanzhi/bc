@@ -368,7 +368,7 @@ public class TeamTrainScoreController {
 
 		if (teamRoomdata.getSceneStartTime() == null) {
 			// 暂无
-			trainingReport.setTrainingTime(null);
+			trainingReport.setTrainingTime(0);
 		} else {
 			trainingReport.setTrainingTime(timeSeconds);
 		}

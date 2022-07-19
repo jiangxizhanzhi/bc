@@ -69,9 +69,24 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		}
 		userRankingBoList.sort(Comparator.comparing(UserRankingBo::getMatch).reversed());
 		// star of role
-		for (int i = 0; i < 3 && i < userRankingBoList.size(); i++) {
-			if (userRankingBoList.get(i).getMatch() >= RtksCommonConstants.OUTSTANDING_MATCH) {
-				userRankingBoList.get(i).setStar(true);
+		int temp = 0;
+		int sMatch;
+		for (int i = 0; i < userRankingBoList.size(); i++) {
+			sMatch = userRankingBoList.get(i).getMatch();
+			if (i < 3) {
+				if (sMatch < RtksCommonConstants.OUTSTANDING_MATCH) {
+					break;
+				} else {
+					temp = sMatch;
+					userRankingBoList.get(i).setStar(true);
+				}
+			} else {
+				// 同分处理
+				if (temp == sMatch) {
+					userRankingBoList.get(i).setStar(true);
+				} else {
+					break;
+				}
 			}
 		}
 		result.setUserRanking(userRankingBoList);

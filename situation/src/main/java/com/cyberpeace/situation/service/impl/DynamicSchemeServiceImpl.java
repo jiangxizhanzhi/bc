@@ -322,7 +322,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                             break;
                         }
 
-                        wsAttackMessageSchedule.setName(number+++attackMessageReq.getDescription());
+                        wsAttackMessageSchedule.setName(number+++"."+attackMessageReq.getDescription());
                         pushAttackScheduleToRoom(wsAttackScheduleList,dynamicSchemeReq.getSceneId());
                         dynamicSchemeMapper.updateScheduleById(JSONObject.toJSONString(wsAttackScheduleList),dynamicSchemeReq.getResourceId());
 
@@ -336,7 +336,8 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                         }
 
                     }
-                    if (state){
+                    if (state&&
+                            sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId()).getSchemeCode().equals(code)){
                         wsAttackScheduleStage.setStatus(0);
                         wsAttackMessageSchedule.setStatus(2);
                         wsAttackMessageSchedule.setName("");

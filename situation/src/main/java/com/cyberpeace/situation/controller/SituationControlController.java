@@ -1,9 +1,15 @@
 package com.cyberpeace.situation.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.ZipUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +32,7 @@ import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
+import net.lingala.zip4j.exception.ZipException;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +50,7 @@ public class SituationControlController {
 
 	@Autowired
 	private AttachmentService attachmentService;
+
 
 	@ApiOperation("新增动效方案")
 	@PostMapping("/scheme")
@@ -137,6 +145,43 @@ public class SituationControlController {
 	public BaseRsp<List<WsAttackSchedule>> getSchedule(@ApiParam("场景id") String sceneId) {
 		List<WsAttackSchedule> schedule = dynamicSchemeService.getSchedule(sceneId);
 		return new BaseRsp<>(schedule);
+	}
+
+	@ApiOperation("导出动效方案")
+	@PostMapping("/scheme/export")
+	public void exportScheme(HttpServletResponse response, @ApiParam("资源id") @NotBlank @Validated String resourceId){
+		// 1. generate dump file
+		String tempDir = ZipUtil.generatePath();
+		try {
+			String zipPath = dynamicSchemeService.makeExportFile(resourceId, tempDir);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump combat techs", e);
+			throw new BusinessException(ErrorCode.FAILED_TO_EXPORT_DYNAMIC_SCHEME);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
+	}
+
+	@ApiOperation("导入动效方案")
+	@PostMapping("/scheme/import")
+	public BaseRsp importScheme(@RequestParam("file") MultipartFile file) throws IOException, ZipException {
+		// 1. save file to temp dir
+		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+		// 2. unzip file
+		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		// 3. load resources
+		dynamicSchemeService.importDynamicScheme(unZipPath);
+		// 4. delete temp dir
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+		return new BaseRsp();
 	}
 
 }

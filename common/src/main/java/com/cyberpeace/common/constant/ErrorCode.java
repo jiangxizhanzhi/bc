@@ -143,4 +143,7 @@ public interface ErrorCode {
 
 	/** 源节点为空 */
 	String EMPTY_SOURCE_NODE = "100049";
+
+	/** 导出动效方案失败 */
+	String FAILED_TO_EXPORT_DYNAMIC_SCHEME = "100050";
 }

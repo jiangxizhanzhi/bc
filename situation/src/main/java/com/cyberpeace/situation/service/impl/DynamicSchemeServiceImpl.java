@@ -1,5 +1,10 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -76,6 +81,8 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
 	public static String VIDEO_TYPE = "MP4";
+
+	private static String RESOURCE_FILE_NAME = "data.json";
 
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
@@ -488,6 +495,63 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 		WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(
 				MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+	}
+
+	@Override
+	public String makeExportFile(String resourceId, String tempDir) throws IOException {
+		// 1. make temp dir
+		FileUtil.mkdirs(tempDir);
+		DynamicSchemeRes dynamicSchemeRes = getDynamicSchemeById(resourceId);
+		for(DynamicStage dynamicStage:dynamicSchemeRes.getSchemeData()){
+			for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+				attackMessageReq.setResourceId(null);
+			}
+		}
+		String data = JSONObject.toJSONString(dynamicSchemeRes);
+		// 4. generate data.json
+		String jsonPath = tempDir + File.separator + RESOURCE_FILE_NAME;
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
+				StandardCharsets.UTF_8);
+		FileUtil.writeString(data, osw);
+		// 5. generate zip file, return zip file path
+		return ZipUtil.toZip(tempDir);
+	}
+
+	@Override
+	public void importDynamicScheme(String unZipPath) {
+		String dataJson = FileUtil.getContent(
+				new File(unZipPath + File.separator + RESOURCE_FILE_NAME));
+		DynamicSchemeRes dynamicSchemeRes = JsonUtil.toJsonObject(dataJson, DynamicSchemeRes.class);
+		validDynamicSchemeName(new AddDynamicSchemeReq(dynamicSchemeRes.getSceneId(),dynamicSchemeRes.getName()));
+		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				for(DynamicStage dynamicStage : dynamicSchemeRes.getSchemeData()){
+
+					HashSet<String> description = new HashSet<>(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getDescription).collect(Collectors.toList()));
+					if (description.size()<dynamicStage.getAttackMessageReqList().size()){
+						throw new BusinessException(ErrorCode.DUPLICATED_DYNAMIC_SCHEME_NAME);
+					}
+
+					for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+						attackMessageReq.setSceneId(dynamicSchemeRes.getSceneId());
+						attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));
+					}
+
+					DynamicStageBo dynamicStageBo = new DynamicStageBo();
+					dynamicStageBo.setName(dynamicStage.getName());
+					dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
+					dynamicStageBoList.add(dynamicStageBo);
+				}
+				DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeRes,DynamicScheme.class);
+				dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
+				dynamicSchemeMapper.insert(dynamicScheme);
+			}
+		});
+
 	}
 
 }

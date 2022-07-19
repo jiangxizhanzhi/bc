@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeReq;
@@ -41,4 +42,8 @@ public interface DynamicSchemeService {
 	void clearMedia(String sceneId);
 
 	void validStage(DynamicSchemeReq dynamicSchemeReq);
+
+	String makeExportFile(String resourceId, String tempDir) throws IOException;
+
+	void importDynamicScheme(String unZipPath);
 }

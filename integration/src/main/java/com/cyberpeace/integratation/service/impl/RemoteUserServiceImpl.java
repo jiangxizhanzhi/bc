@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,13 +17,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -205,7 +203,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				idsSet.remove(info.getUserId());
 			}
 			log.error("invalid user_id: " + idsSet);
-			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
 		}
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 	}

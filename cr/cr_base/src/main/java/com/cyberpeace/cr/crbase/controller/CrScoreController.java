@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.controller;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
@@ -38,6 +40,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -348,7 +351,10 @@ public class CrScoreController {
 		}
 
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-
+		Set<String> userIdSet = Sets.newHashSet(userIds);
+		if (userIdSet.size() != userInfoMap.size()) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
 		// 获取每个学员的任务信息
 		List<CrScore> studentScoreList = crScoreService.selectByRoomIdAndUserIds(resource_id,
 				userIds);

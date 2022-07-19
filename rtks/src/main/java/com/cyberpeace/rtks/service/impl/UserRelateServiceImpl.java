@@ -1,11 +1,10 @@
 package com.cyberpeace.rtks.service.impl;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.UserRole;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -53,6 +52,8 @@ public class UserRelateServiceImpl implements UserRelateService {
 		if (null == role) {
 			return null;
 		}
+		// 获取实时的岗位名称
+		userRole.setRoleName(role.getName());
         return userRole;
     }
 }

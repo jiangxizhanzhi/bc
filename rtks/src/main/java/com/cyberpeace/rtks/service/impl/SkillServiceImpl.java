@@ -76,6 +76,11 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	private static final Integer FULL_MARKS = 100;
 
+	/**
+	 * 任务完成
+	 */
+	private static final Integer DONE = 1;
+
 	@Override
 	public ListRsp<SkillRes> page(PageReqBase skillListReq) {
 		Page page = skillListReq.toPageParam();
@@ -311,7 +316,6 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 				sum += missionProcessBo.getProcess();
 			}
 			record.setProcess(MathUtils.roundDivide(sum, record.getMissions().size()));
-
 		}
 
 		return PageUtil.getListResult(result);
@@ -443,6 +447,8 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 			process = FINISHED;
 		}
 		missionProcessBo.setProcess(process);
+		missionProcessBo
+				.setStatus(process.intValue() == UNSUBMITTED.intValue() ? UNSUBMITTED : DONE);
 		return missionProcessBo;
 	}
 

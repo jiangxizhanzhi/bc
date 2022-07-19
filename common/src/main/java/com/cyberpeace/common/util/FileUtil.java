@@ -246,18 +246,24 @@ public class FileUtil {
 	 * @param destFilePath
 	 */
 	public static void writeToDestFile(String data, String destFilePath) {
+
+		File file = new File(destFilePath);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+
 		BufferedWriter out = null;
 		try {
 			out = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(destFilePath), "UTF-8"));
 			out.write(data);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("File write failed! dest_file_path=[{}], catch error:", destFilePath, e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
 		} finally {
 			try {
 				out.close();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// 关不掉算了
 			}
 

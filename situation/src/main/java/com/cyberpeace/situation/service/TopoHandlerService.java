@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -64,9 +65,9 @@ public interface TopoHandlerService {
 
 	/**
 	 * 获取场景节点/区域的id列表
-	 * @param sceneId
-	 * @return List<String>
+	 * @param sceneIds
+	 * @return Map<String, List<String>>
 	 */
-	List<String> getSceneNodeIds(String sceneId);
+	Map<String, List<String>> getSceneNodeIds(List<String> sceneIds);
 
 }

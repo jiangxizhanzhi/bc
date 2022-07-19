@@ -289,21 +289,26 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	}
 
 	@Override
-	public List<String> getSceneNodeIds(String sceneId){
+	public Map<String, List<String>> getSceneNodeIds(List<String> sceneIds){
 
-		JSONObject sceneTopo = getSceneTopoBySceneId(sceneId);
-		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
-		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
-				JSONArray.parseArray(Lists.newArrayList().toString()));
-		JSONArray areas = (JSONArray) topology.getOrDefault("areas",
-				JSONArray.parseArray(Lists.newArrayList().toString()));
+		Map<String, List<String>> sceneNodeMap = Maps.newHashMap();
 
-		List<String> nodeIds = Lists.newArrayList();
+		for (String sceneId : sceneIds){
+			JSONObject sceneTopo = getSceneTopoBySceneId(sceneId);
+			JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
+			JSONArray elements = (JSONArray) topology.getOrDefault("elements",
+					JSONArray.parseArray(Lists.newArrayList().toString()));
+			JSONArray areas = (JSONArray) topology.getOrDefault("areas",
+					JSONArray.parseArray(Lists.newArrayList().toString()));
 
-		for (int i = 0; i < elements.size(); i++){nodeIds.add(elements.getJSONObject(i).getString("id"));}
-		for (int i = 0; i < areas.size(); i++){nodeIds.add(areas.getJSONObject(i).getString("id"));}
+			List<String> nodeIds = Lists.newArrayList();
 
-		return nodeIds;
+			for (int i = 0; i < elements.size(); i++){nodeIds.add(elements.getJSONObject(i).getString("id"));}
+			for (int i = 0; i < areas.size(); i++){nodeIds.add(areas.getJSONObject(i).getString("id"));}
 
+			sceneNodeMap.put(sceneId, nodeIds);
+
+		}
+		return sceneNodeMap;
 	}
 }

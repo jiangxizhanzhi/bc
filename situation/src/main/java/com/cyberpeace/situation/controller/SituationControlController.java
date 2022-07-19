@@ -93,9 +93,9 @@ public class SituationControlController {
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
         dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
         if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null);
+            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null, null);
         }else{
-            dynamicSchemeService.pushAttackToRoom(attackMessageBo);
+            dynamicSchemeService.pushAttackToRoom(attackMessageBo, null);
         }
         return new BaseRsp<>();
     }
@@ -104,7 +104,6 @@ public class SituationControlController {
     @PostMapping("/run_dynamic_scheme")
     public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
         dynamicSchemeService.validStage(dynamicSchemeReq);
-        dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
         dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
         return new BaseRsp<>();
     }

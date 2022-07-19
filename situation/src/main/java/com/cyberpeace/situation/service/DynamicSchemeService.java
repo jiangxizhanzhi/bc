@@ -28,9 +28,9 @@ public interface DynamicSchemeService {
 
     void getRemoteOption(OptionsRes optionsRes, String sceneId);
 
-    void pushMediaToRoom(AttackMessageReq attackMessageBo, List<String> nodeIds);
+    void pushMediaToRoom(AttackMessageReq attackMessageBo, List<String> nodeIds, String sceneId);
 
-    void pushAttackToRoom(AttackMessageReq attackMessageBo);
+    void pushAttackToRoom(AttackMessageReq attackMessageBo, String sceneId);
 
     void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
 

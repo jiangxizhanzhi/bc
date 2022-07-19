@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller.req;
 
 import com.cyberpeace.situation.model.DynamicStage;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -25,4 +26,7 @@ public class DynamicSchemeReq implements Serializable {
 
     @ApiModelProperty("动效方案数据")
     private List<DynamicStage> schemeData;
+
+    @ApiModelProperty("副场景Ids")
+    private List<String> subSceneIds = Lists.newArrayList();
 }

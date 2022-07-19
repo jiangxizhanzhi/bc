@@ -410,7 +410,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                 throw new BusinessException(ErrorCode.EMPTY_STAGE_NAME);
             }
             for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
-                if(!attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())&&attackMessageReq.getSourceId().equals("")){
+                if(!(attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())||
+                        attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
+                        &&attackMessageReq.getSourceId().equals("")){
                     throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE,attackMessageReq.getDescription());
                 }
             }

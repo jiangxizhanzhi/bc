@@ -366,9 +366,14 @@ public class TeamTrainScoreController {
 
 		TrainingReport trainingReport = new TrainingReport();
 
+		if (teamRoomdata.getSceneStartTime() == null) {
+			// 暂无
+			trainingReport.setTrainingTime(null);
+		} else {
+			trainingReport.setTrainingTime(timeSeconds);
+		}
 		trainingReport.setSceneStartTime(startTime);
 		trainingReport.setTeacherName(UserInfoContext.getUserContext().getUserName());
-		trainingReport.setTrainingTime(timeSeconds);
 		trainingReport.setUsers(userReportList);
 
 		return new BaseRsp<>(trainingReport);

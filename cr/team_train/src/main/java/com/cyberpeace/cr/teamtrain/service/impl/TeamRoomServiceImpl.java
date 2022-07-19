@@ -324,6 +324,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 					teamRoom.getCreateUserId(),
 					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		} else if (teamRoom.isEnded()) {
+			trainRecordService.updateEndDate(roomId, UserInfoContext.getUserContext().getUserId(),
+					BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 		}
 
 		return teamRoom.getTrainingStatus();

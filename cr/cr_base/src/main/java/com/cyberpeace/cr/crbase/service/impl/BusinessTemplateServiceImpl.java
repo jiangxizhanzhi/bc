@@ -425,6 +425,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public SceneViewContext viewScene(BusinessTemplate template) {
 		SceneViewContext ret = new SceneViewContext();
 		ret.setRoomId(template.getResourceId());
+		ret.setTopoId(template.getTopoId());
 		// 1、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(template);
 		if (sceneData != null) {

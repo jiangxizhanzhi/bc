@@ -287,4 +287,23 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		return wsNodeStatus;
 
 	}
+
+	@Override
+	public List<String> getSceneNodeIds(String sceneId){
+
+		JSONObject sceneTopo = getSceneTopoBySceneId(sceneId);
+		JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
+		JSONArray elements = (JSONArray) topology.getOrDefault("elements",
+				JSONArray.parseArray(Lists.newArrayList().toString()));
+		JSONArray areas = (JSONArray) topology.getOrDefault("areas",
+				JSONArray.parseArray(Lists.newArrayList().toString()));
+
+		List<String> nodeIds = Lists.newArrayList();
+
+		for (int i = 0; i < elements.size(); i++){nodeIds.add(elements.getJSONObject(i).getString("id"));}
+		for (int i = 0; i < areas.size(); i++){nodeIds.add(areas.getJSONObject(i).getString("id"));}
+
+		return nodeIds;
+
+	}
 }

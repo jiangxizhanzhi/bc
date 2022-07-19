@@ -93,7 +93,7 @@ public class SituationControlController {
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
         dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
         if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-            dynamicSchemeService.pushMediaToRoom(attackMessageBo);
+            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null);
         }else{
             dynamicSchemeService.pushAttackToRoom(attackMessageBo);
         }

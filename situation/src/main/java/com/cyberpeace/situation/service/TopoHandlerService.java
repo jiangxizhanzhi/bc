@@ -62,4 +62,11 @@ public interface TopoHandlerService {
 	 */
 	WsNodeStatus getNodeStatusMessage(String sceneId);
 
+	/**
+	 * 获取场景节点/区域的id列表
+	 * @param sceneId
+	 * @return List<String>
+	 */
+	List<String> getSceneNodeIds(String sceneId);
+
 }

@@ -34,6 +34,7 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import lombok.SneakyThrows;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -204,7 +205,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
      * 推送多媒体动效消息
      */
     @Override
-    public void pushMediaToRoom(AttackMessageReq attackMessageBo) {
+    public void pushMediaToRoom(AttackMessageReq attackMessageBo, List<String> nodeIds) {
         WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
         wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
         wsAttackEffectDynamic.setCategory("attack");
@@ -230,7 +231,10 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
             attackEffect.setMediaUrl(mediaAnimation.getUrl());
             attackEffect.setLineStyle(new LineStyle("#FFFFFF",3,"straight"));
-            attackEffectList.add(attackEffect);
+
+            if (nodeIds == null || nodeIds.contains(mediaAnimation.getSourceId())){
+                attackEffectList.add(attackEffect);
+            }
         }
         wsAttackEffectDynamic.setEffectList(attackEffectList);
 
@@ -282,6 +286,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
         SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId());
         String code = IDGeneratorUtil.getID();
+        List<String> nodeIds = topoHandlerService.getSceneNodeIds(dynamicSchemeReq.getSceneId());
         if(sceneConfig == null){
             sceneConfig = new SceneConfig();
             sceneConfig.setSchemeCode(code);
@@ -327,9 +332,16 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                         dynamicSchemeMapper.updateScheduleById(JSONObject.toJSONString(wsAttackScheduleList),dynamicSchemeReq.getResourceId());
 
                         if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-                            pushMediaToRoom(attackMessageReq);
-                        }else{
-                            pushAttackToRoom(attackMessageReq);
+                            pushMediaToRoom(attackMessageReq, nodeIds);
+                        }else {
+                            String sourceId = attackMessageReq.getSourceId();
+                            String targetId = attackMessageReq.getTargetId();
+                            Boolean includeSourceNode = StringUtils.isEmpty(sourceId) || nodeIds.contains(sourceId);
+                            Boolean includeTargetNode = StringUtils.isEmpty(targetId) || nodeIds.contains(targetId);
+
+                            if (includeSourceNode && includeTargetNode){
+                                pushAttackToRoom(attackMessageReq);
+                            }
                         }
                         if(attackMessageReq.getIntervalTime() != null){
                             Thread.sleep(attackMessageReq.getIntervalTime()*1000);

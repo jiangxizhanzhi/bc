@@ -154,8 +154,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		NODE_SNAPSHOT_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot");
 		SNAPSHOT_HISTORY_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.history");
 		SNAPSHOT_MERGE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.merge");
-		SNAPSHOT_DELETE_URL = MP_HOST
-				+ ConfigUtil.getContextProperty("/api/mp/devops/cluster/images/page");
+		SNAPSHOT_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.snapshot.delete");
 
 		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.connection.status");
@@ -394,11 +393,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONObject deleteSnapshot(List<String> imageIds) {
-		JSONObject body = new JSONObject();
-		body.put(JsonKeyConstant.IMAGE_IDS, imageIds);
-		HttpClientUtil.delete(SNAPSHOT_DELETE_URL, body, String.class);
-		return null;
+	public Boolean deleteSnapshot(SnapshotDeleteContext deleteContext) {
+		return HttpClientUtil.delete(SNAPSHOT_DELETE_URL,
+				JsonUtil.toJsonString(deleteContext, PropertyNamingStrategy.SnakeCase),
+				Boolean.class);
 	}
 
 	@Override

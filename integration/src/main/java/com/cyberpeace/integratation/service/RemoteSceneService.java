@@ -183,10 +183,10 @@ public interface RemoteSceneService {
 
 	/**
 	 * 快照删除
-	 * @param imageIds
+	 * @param deleteContext
 	 * @return
 	 */
-	JSONObject deleteSnapshot(List<String> imageIds);
+	Boolean deleteSnapshot(SnapshotDeleteContext deleteContext);
 
 	/**
 	 * 获取场景下节点及链路状态

@@ -117,8 +117,9 @@ public interface LocalSceneService extends IService<LocalScene> {
 	/**
 	 * 删除快照
 	 * @param sceneId
-	 * @param imageIds
+	 * @param nodeId
+	 * @param snapshotId
 	 * @return
 	 */
-	JSONObject deleteSnapshot(String sceneId, List<String> imageIds);
+	Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId);
 }

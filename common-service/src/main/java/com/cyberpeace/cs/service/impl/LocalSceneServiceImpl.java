@@ -380,13 +380,19 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public JSONObject deleteSnapshot(String sceneId, List<String> imageIds) {
+	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
 		if (null == localScene) {
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
-		return remoteSceneService.deleteSnapshot(imageIds);
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+		SnapshotDeleteContext deleteContext = BeanUtils.copy(sceneOpsContext,
+				SnapshotDeleteContext.class);
+		deleteContext.setNodeId(nodeId);
+		deleteContext.setSnapshotId(snapshotId);
+
+		return remoteSceneService.deleteSnapshot(deleteContext);
 	}
 
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,

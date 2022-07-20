@@ -2,6 +2,7 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.integratation.model.scene.SnapshotDeleteContext;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -67,10 +68,10 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<JSONObject> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
+	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
 
-		JSONObject result = localSceneService.deleteSnapshot(deleteReq.getSceneId(),
-				deleteReq.getImageIds());
+		Boolean result = localSceneService.deleteSnapshot(deleteReq.getSceneId(),
+				deleteReq.getNodeId(), deleteReq.getSnapshotId());
 		return new BaseRsp<>(result);
 	}
 

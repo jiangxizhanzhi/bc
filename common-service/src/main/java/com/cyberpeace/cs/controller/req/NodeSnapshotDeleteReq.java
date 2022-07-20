@@ -18,8 +18,12 @@ public class NodeSnapshotDeleteReq implements Serializable {
 	@NotBlank
 	private String sceneId;
 
-	@ApiModelProperty("快照编号")
+	@ApiModelProperty("节点编号")
 	@NotEmpty
-	private List<String> imageIds;
+	private String nodeId;
+
+	@ApiModelProperty("快照编号")
+	@NotBlank
+	private String snapshotId;
 
 }

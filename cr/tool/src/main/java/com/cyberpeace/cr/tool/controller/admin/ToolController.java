@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "后台-资源中心-工具库")
 @RestController
@@ -113,12 +114,17 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 
-		for(String id: deleteReq.getIds()){
-			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
-					OperationType.DELETE, toolService.selectById(id).getName());
-		}
+		List<Tool> toolList = toolService.listByIds(deleteReq.getIds());
 
 		toolService.removeByIds(deleteReq.getIds());
+
+		toolList.forEach(tool -> {
+			if (tool != null) {
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,
+						OperationType.DELETE, tool.getName());
+			}
+		});
+
 		return new BaseRsp<>();
 	}
 

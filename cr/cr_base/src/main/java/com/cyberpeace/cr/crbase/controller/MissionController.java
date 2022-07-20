@@ -235,12 +235,15 @@ public class MissionController {
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp<?> batchDeleteSchemeTemplate(@RequestBody @Validated BatchDeleteReq deleteReq) {
 
-		for(String id:deleteReq.getIds()){
-			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
-					OperationType.DELETE, missionSchemeTemplateMapper.selectById(id).getTitle());
-		}
+		List<MissionSchemeTemplate> missionSchemeTemplateList = missionSchemeTemplateMapper.selectBatchIds(deleteReq.getIds());
 
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
+
+		missionSchemeTemplateList.forEach(missionSchemeTemplate -> {
+			if (missionSchemeTemplate != null) {
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK, OperationType.DELETE, missionSchemeTemplate.getTitle());
+			}
+		});
 
 		return new BaseRsp<>();
 	}

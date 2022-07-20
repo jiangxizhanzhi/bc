@@ -213,12 +213,17 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 
-		for(String id:batchDeleteReq.getResourceIds()){
-			remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-					OperationType.DELETE, courseService.selectById(id,authContext).getName());
-		}
+		List<Course> courseList = courseService.listByIds(batchDeleteReq.getResourceIds());
 
 		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds(), authContext);
+
+		courseList.forEach(course -> {
+			if (course != null) {
+				remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+						OperationType.DELETE, course.getName());
+			}
+		});
+
 		return new BaseRsp<>(result);
 	}
 

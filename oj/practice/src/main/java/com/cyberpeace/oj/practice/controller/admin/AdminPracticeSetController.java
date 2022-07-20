@@ -151,15 +151,20 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		// 删除之前校验
 		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
-
-		for(String id:delReq.getResourceIds()){
-			String practiceSetName = practiceSetService.selectById(id,authContext).getName();
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
-					OperationType.DELETE, practiceSetName,
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.PRACTICE_SET.getMsg(), practiceSetName));
-		}
+		List<PracticeSet> practiceSetList = practiceSetService.listByIds(delReq.getResourceIds());
 
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
+
+		practiceSetList.forEach(practiceSet -> {
+			if (practiceSet != null) {
+				String practiceSetName = practiceSet.getName();
+
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.EXERCISE,
+						OperationType.DELETE, practiceSetName,
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.PRACTICE_SET.getMsg(), practiceSetName));
+			}
+		});
+
 		return new BaseRsp(result);
 	}
 

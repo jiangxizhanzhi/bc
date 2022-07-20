@@ -206,17 +206,20 @@ public class TeamTrainTemplateController {
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-		for(String id:deleteReq.getIds()){
-			BusinessTemplate businessTemplate = businessTemplateMapper.selectById(id);
-			if(businessTemplate != null){
+		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
+
+		teamTemplateService.batchDelete(deleteReq.getIds());
+
+		businessTemplateList.forEach(businessTemplate -> {
+
+			if (businessTemplate != null) {
 				String teamTrainTemplateName = businessTemplate.getName();
 				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 						OperationType.DELETE, teamTrainTemplateName,
 						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
 			}
-		}
+		});
 
-		teamTemplateService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();
 	}
 

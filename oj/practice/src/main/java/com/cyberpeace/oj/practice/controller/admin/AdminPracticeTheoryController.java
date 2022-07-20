@@ -138,13 +138,17 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
-		for(String id:delReq.getResourceIds()){
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
-					OperationType.DELETE, LogContent.THEORY.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.THEORY.getMsg(), practiceTheoryMapper.selectById(id).getContent()));
-		}
+		List<PracticeTheory> practiceTheoryList = practiceTheoryService.listByIds(delReq.getResourceIds());
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
+
+		practiceTheoryList.forEach(practiceTheory -> {
+
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
+					OperationType.DELETE, LogContent.THEORY.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.THEORY.getMsg(), practiceTheory.getContent()));
+		});
+
 		return new BaseRsp<>(result);
 	}
 

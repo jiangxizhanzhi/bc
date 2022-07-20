@@ -151,17 +151,19 @@ public class RbTemplateAdminController {
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-		for(String id:deleteReq.getIds()){
-			BusinessTemplate businessTemplate = businessTemplateMapper.selectById(id);
-			if(businessTemplate != null){
+		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
+
+		rbTemplateService.batchDelete(deleteReq.getIds());
+
+		businessTemplateList.forEach(businessTemplate -> {
+
+			if (businessTemplate != null) {
 				String rbTrainTemplateName = businessTemplate.getName();
 				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 						OperationType.DELETE, rbTrainTemplateName,
 						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
 			}
-		}
-
-		rbTemplateService.batchDelete(deleteReq.getIds());
+		});
 
 		return new BaseRsp<>();
 	}

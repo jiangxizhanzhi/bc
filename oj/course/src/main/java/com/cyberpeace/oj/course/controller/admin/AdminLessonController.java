@@ -212,20 +212,25 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
 
-		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
-		for(String id:batchDeleteReq.getResourceIds()){
-			CourseLesson courseLesson = courseLessonMapper.selectById(id);
-			String operationTarget = courseName + "-" + courseLesson.getName();
-			String content = LogContent.COURSE_FORMAT.format(courseName, courseLesson.getName());
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
-					OperationType.DELETE, operationTarget, content);
-		}
-
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 
+		String courseName = courseMapper.selectById(lesson.getCourseId()).getName();
+
+		List<CourseLesson> courseLessonList = courseLessonService.listByIds(batchDeleteReq.getResourceIds());
+
 		Integer result = courseLessonService.batchDelete(lesson.getCourseId(),
 				batchDeleteReq.getResourceIds(), authContext);
+
+		courseLessonList.forEach(courseLesson -> {
+			if (courseLesson != null) {
+				String operationTarget = courseName + "-" + courseLesson.getName();
+				String content = LogContent.COURSE_FORMAT.format(courseName, courseLesson.getName());
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
+						OperationType.DELETE, operationTarget, content);
+			}
+		});
+
 
 		return new BaseRsp(result);
 	}

@@ -542,7 +542,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 			if (teamRoom.getSceneEndTime() != null
 					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
-				endTime = teamRoom.getSceneStartTime();
+				endTime = teamRoom.getSceneEndTime();
 
 			}
 		}

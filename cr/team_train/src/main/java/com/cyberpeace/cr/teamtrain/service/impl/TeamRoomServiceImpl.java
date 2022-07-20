@@ -518,8 +518,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	private void setTime(TimeLineData timeLineData, String roomId) {
 		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
-
-		timeLineData.setCurrentTime(new Date());
+		// 团队训练结束后，时间轴中蓝条（current_time）设为结束时间
+		timeLineData.setCurrentTime(
+				teamRoom.getSceneEndTime() == null ? new Date() : teamRoom.getSceneEndTime());
 		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
 				: teamRoom.getSceneStartTime());
 

@@ -24,6 +24,7 @@ import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.*;
+import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
@@ -73,13 +74,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private LessonRecordService lessonRecordService;
 
 	@Autowired
-	private LevelMapper levelMapper;
-
-	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
 
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
+
+	@Autowired
+	private RtksSituationService rtksSituationService;
 
 	@Override
 	public String roleMatchPercent(String roleId, String userId) {
@@ -101,6 +102,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		Integer result = knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight);
 
 		Integer ret = floor(result);
+
+		// 4、记录匹配度数据
+		rtksSituationService.recordMatch(userId, roleId, ret);
 
 		return ret + "";
 	}

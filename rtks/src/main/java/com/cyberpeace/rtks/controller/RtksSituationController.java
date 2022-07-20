@@ -15,6 +15,7 @@ import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
 import com.cyberpeace.rtks.service.bo.situation.NewsBo;
 import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
+import com.cyberpeace.rtks.service.bo.situation.SituationTrendBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,8 +55,9 @@ public class RtksSituationController {
 	@ApiOperation("网安人才发展趋势")
 	@GetMapping("/trend")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
-	public BaseRsp<Object> getTrend() {
-		return new BaseRsp<>();
+	public BaseRsp<SituationTrendBo> getTrend() {
+		SituationTrendBo result = rtksSituationService.getTrends();
+		return new BaseRsp<>(result);
 	}
 
 }

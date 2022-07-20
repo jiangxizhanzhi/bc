@@ -27,4 +27,6 @@ public interface RtksSituationMapper {
 	List<SituationLog> getMomentsDesc();
 
 	List<LevelRoleContext> getLevels(@Param("masterId") String masterId);
+
+	List<SituationLog> getAllLogByType(@Param("type") Integer type);
 }

@@ -44,4 +44,9 @@
         where a.parent = #{masterId}
         order by a.id
     </select>
+    <select id="getAllLogByType" resultType="com.cyberpeace.rtks.dao.entity.SituationLog">
+        select *
+        from rtks_situation_log
+        where type = #{type}
+    </select>
 </mapper>

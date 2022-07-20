@@ -13,6 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.cyberpeace.common.model.cache.RtksMatch;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.constant.RtksCommonConstants;
 import com.cyberpeace.rtks.dao.entity.SituationLog;
@@ -232,11 +233,49 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	public Integer recordSituation(String userId, String userName, String roleId, String roleName) {
 		// 计算匹配度
 		Integer match = new Integer(rtksStatisticService.roleMatchPercent(roleId, userId));
-		// 记录匹配度
-		recordMatch(userId, roleId, match);
 		// 记录动态
 		logMoment(userId, userName, roleId, roleName, match);
 		return match;
+	}
+
+	@Override
+	public SituationTrendBo getTrends() {
+		SituationTrendBo result = new SituationTrendBo();
+		// 确定曲线开始和结束时间
+		Date startTime = rtksRoleMatchRecordMapper.getFirstRecordTime();
+		if (startTime == null) {
+			return result;
+		}
+		Date endTime = new Date();
+		// get all qualification log
+		List<SituationLog> logs = rtksSituationMapper
+				.getAllLogByType(SituationLog.MatchType.QUALIFIED.getCode());
+		Map<String, Integer> dateNumMap = Maps.newHashMap();
+		String date8;
+		// count by date
+		for (SituationLog log : logs) {
+			date8 = TimeUtil.format8(log.getCreateTime());
+			if (!dateNumMap.containsKey(date8)) {
+				dateNumMap.put(date8, 1);
+			} else {
+				dateNumMap.put(date8, dateNumMap.get(date8) + 1);
+			}
+		}
+		// group by date
+		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
+				TimeUtil.getStartOfDay(endTime));
+		Date date = startTime;
+		Integer sum = 0;
+		for (int i = 0; i < daysBetween; i++) {
+			date8 = TimeUtil.format8(date);
+			result.getXDates().add(date8);
+			if (dateNumMap.containsKey(date8)) {
+				sum += dateNumMap.get(date8);
+			}
+			result.getYNums().add(sum);
+			date = TimeUtil.addDates(date, 1);
+		}
+		return result;
 	}
 
 	@Override
@@ -264,7 +303,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
-	private void recordMatch(String userId, String roleId, Integer match) {
+	@Override
+	public void recordMatch(String userId, String roleId, Integer match) {
 		Boolean exist = rtksRoleMatchRecordMapper.existBy(userId, roleId);
 		if (exist) {
 			rtksRoleMatchRecordMapper.updateRecord(userId, roleId, match);

@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -20,4 +21,5 @@ public interface RtksRoleMatchRecordMapper {
 
 	List<RoleMatchRecordContext> selectAllByExistingRoles();
 
+	Date getFirstRecordTime();
 }

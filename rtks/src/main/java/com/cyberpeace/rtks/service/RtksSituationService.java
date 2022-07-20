@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
 import com.cyberpeace.rtks.service.bo.situation.NewsBo;
 import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
+import com.cyberpeace.rtks.service.bo.situation.SituationTrendBo;
 
 public interface RtksSituationService {
 
@@ -27,6 +28,14 @@ public interface RtksSituationService {
 	List<LevelStatisticBo> getSituation();
 
 	/**
+	 * 记录-更新匹配度数据
+	 * @param userId
+	 * @param roleId
+	 * @param match
+	 */
+	void recordMatch(String userId, String roleId, Integer match);
+
+	/**
 	 * 记录rtks态势信息，
 	 * @param userId 
 	 * @param userName
@@ -35,5 +44,11 @@ public interface RtksSituationService {
 	 * @return
 	 */
 	Integer recordSituation(String userId, String userName, String roleId, String roleName);
+
+	/**
+	 * 网安人才发展趋势
+	 * @return
+	 */
+	SituationTrendBo getTrends();
 
 }

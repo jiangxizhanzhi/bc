@@ -89,19 +89,4 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
-	@PutMapping("/node/snapshot")
-	@ApiOperation("场景节点快照合并")
-	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<JSONObject>
-			mergeSnapshot(@Valid @RequestBody MergeSnapshotReq mergeSnapshotReq) {
-
-		MergeSnapshotContext snapshotContext = BeanUtils.copy(mergeSnapshotReq,
-				MergeSnapshotContext.class);
-
-		JSONObject object = localSceneService.mergeSnapshot(mergeSnapshotReq.getSceneId(),
-				snapshotContext);
-		return new BaseRsp<>(object);
-	}
 }

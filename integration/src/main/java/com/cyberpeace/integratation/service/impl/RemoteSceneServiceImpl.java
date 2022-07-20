@@ -394,7 +394,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public Boolean deleteSnapshot(SnapshotDeleteContext deleteContext) {
-		return HttpClientUtil.delete(SNAPSHOT_DELETE_URL,
+		return HttpClientUtil.post(SNAPSHOT_DELETE_URL,
 				JsonUtil.toJsonString(deleteContext, PropertyNamingStrategy.SnakeCase),
 				Boolean.class);
 	}

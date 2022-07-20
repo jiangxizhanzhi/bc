@@ -313,24 +313,25 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
-
-		updateById(teamRoom);
-
 		// 获取团队训练业务模板id
 		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId())
 				.getBusinessTemplateId();
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		if (teamRoom.isOpening()) {
-			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
-					teamRoom.getCreateUserId(),
-					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		} else if (teamRoom.isEnded()) {
-			trainRecordService.updateEndDate(roomId,
-					BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
-		}
-
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(teamRoom);
+				if (teamRoom.isOpening()) {
+					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
+							teamRoom.getCreateUserId(),
+							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				} else if (teamRoom.isEnded()) {
+					trainRecordService.updateEndDate(roomId,
+							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				}
+			}
+		});
 		return teamRoom.getTrainingStatus();
-
 	}
 
 	@Override

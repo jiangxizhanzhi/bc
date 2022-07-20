@@ -226,14 +226,14 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
     }
 
     @Override
-    public EvalRecordResultIndexRsp resultIndex(String recordId, String indexId) {
+    public EvalRecordResultIndexRsp resultIndex(String indexId) {
         EvalIndexRef evalIndexRef = getById(indexId);
         if (evalIndexRef == null) {
-            throw new BusinessException();
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
         Map<String, EvalRecordResultIndexRsp> evalRecordResultIndexRspMap = this.getBaseMapper().selectResultIndexes(
-                recordId, evalIndexRef.getLevel()
+                evalIndexRef.getRecordId(), evalIndexRef.getLevel()
         ).stream().collect(Collectors.toMap(EvalRecordResultIndexRsp::getResourceId, evalRecordResultIndexRsp -> evalRecordResultIndexRsp));
 
         EvalRecordResultIndexRsp firstIndex = evalRecordResultIndexRspMap.get(evalIndexRef.getResourceId());
@@ -247,7 +247,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         } else if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
             firstIndex.setChildren(collectionIndexes(firstIndex, 2, evalRecordResultIndexRspMap));
         } else {
-            throw new BusinessException();
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
         }
         return firstIndex;
     }

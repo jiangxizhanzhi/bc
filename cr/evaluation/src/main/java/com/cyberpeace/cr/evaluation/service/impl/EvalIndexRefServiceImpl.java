@@ -109,27 +109,31 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
     @Override
     public List<EvalRoomPairRsp> selectVariables(String indexId) {
-        EvalIndexRef thirdIndex = lambdaQuery()
-                .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
-                .eq(EvalIndexRef::getResourceId, indexId)
-                .one();
-        if (thirdIndex == null) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-        }
-
-        List<EvalIndexRef> fourthIndexes = lambdaQuery()
-                .eq(EvalIndexRef::getLevel, EvalIndexRef.Level.AGGREGATION.getCode())
-                .in(EvalIndexRef::getResourceId, JsonUtil.toJsonObjectArray(thirdIndex.getNextIds(), String.class))
-                .list();
-
-        Set<String> variables = Sets.newHashSet();
-        fourthIndexes.forEach(evalIndexRef -> {
-            variables.addAll(JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class));
-        });
-
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
-        evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variables).list().forEach(evalVariableRef -> {
+        EvalIndexRef evalIndexRef = getById(indexId);
+        if (evalIndexRef == null) {
+            // 非指标项id, 查询变量项
+            EvalVariableRef evalVariableRef = evalVariableRefService.getById(indexId);
+            if (evalVariableRef == null) {
+                throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+            }
+            EvalRoomPairRsp evalRoomPairRsp = new EvalRoomPairRsp();
+            evalRoomPairRsp.setId(evalVariableRef.getResourceId());
+            evalRoomPairRsp.setLabel(evalVariableRef.getName());
+            results.add(evalRoomPairRsp);
+            return results;
+        }
+        Map<String, EvalIndexRef> evalIndexRefMap = lambdaQuery()
+                .eq(EvalIndexRef::getRecordId, evalIndexRef.getRecordId())
+                .ge(EvalIndexRef::getLevel, evalIndexRef.getLevel())
+                .list()
+                .stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef1 -> evalIndexRef1));
+
+        Set<String> variableIds = Sets.newHashSet();
+        collectionVariableIds(evalIndexRef, evalIndexRefMap, variableIds);
+
+        evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list().forEach(evalVariableRef -> {
             EvalRoomPairRsp evalRoomPairRsp = new EvalRoomPairRsp();
             evalRoomPairRsp.setId(evalVariableRef.getResourceId());
             evalRoomPairRsp.setLabel(evalVariableRef.getName());
@@ -138,6 +142,24 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         });
 
         return results;
+    }
+
+    /**
+     * 收集某一指标项下所有变量项ID
+     * @param evalIndexRef 需要收集的指标项
+     * @param evalIndexRefMap 所选指标项的所有次级指标
+     * @param variableIds 收集变量项id集合
+     */
+    private void collectionVariableIds(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> evalIndexRefMap, Set<String> variableIds) {
+        List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
+        nextIds.forEach(nextId -> {
+            variableIds.add(nextId);
+
+            EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
+            if (evalIndexRef1 != null) {
+                collectionVariableIds(evalIndexRef1, evalIndexRefMap, variableIds);
+            }
+        });
     }
 
     private final Map<Integer, Map<Integer, Integer>> CYCLE_MAP = new HashMap<Integer, Map<Integer, Integer>>() {

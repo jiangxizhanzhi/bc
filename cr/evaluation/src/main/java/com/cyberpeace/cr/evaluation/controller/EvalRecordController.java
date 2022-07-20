@@ -151,7 +151,7 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.result(recordId));
     }
 
-    @ApiOperation("获取三级指标项下全部变量项")
+    @ApiOperation("获取某一级指标项下全部变量项")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables")
     public BaseRsp<List<EvalRoomPairRsp>> variables(@RequestParam("index_id") String indexId) {

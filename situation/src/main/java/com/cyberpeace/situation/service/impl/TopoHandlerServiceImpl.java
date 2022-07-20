@@ -12,6 +12,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.mp.MpNodeStatus;
 import com.cyberpeace.integratation.model.scene.ElementCommonContext;
@@ -24,10 +26,7 @@ import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
-import com.cyberpeace.situation.model.CategorieMap;
-import com.cyberpeace.situation.model.DeviceRole;
-import com.cyberpeace.situation.model.DeviceType;
-import com.cyberpeace.situation.model.SceneData;
+import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.ConnectionStatusContext;
@@ -51,7 +50,14 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	private RemoteTerminalService remoteTerminalService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private SituationConfigMapper situationConfigMapper;
+
+	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
+
+	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
 	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
@@ -286,5 +292,36 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 		return wsNodeStatus;
 
+	}
+
+	@Override
+	public MpSceneData getMpSceneData(String sceneId) {
+		JSONObject sceneData = localSceneService.getSceneData(sceneId, null);
+		if (sceneData == null) {
+			return null;
+		}
+		return sceneData.toJavaObject(MpSceneData.class);
+	}
+
+	@Override
+	public Boolean checkSceneStatus(MpSceneData mpSceneData) {
+
+		if (mpSceneData == null) {
+			return false;
+		}
+
+		Integer event = mpSceneData.getTopology().getScene().getEvent();
+		Integer eventStatus = mpSceneData.getTopology().getScene().getEventStatus();
+
+		return !event.equals(MP_SCENE_DELETE_EVENT_CODE)
+				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
+	}
+
+	@Override
+	public Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType) {
+		Map<String, SceneFlowContext> sceneFlowContextMap = localSceneService
+				.getSceneFlowList(mpSceneData, interactiveType);
+
+		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
 	}
 }

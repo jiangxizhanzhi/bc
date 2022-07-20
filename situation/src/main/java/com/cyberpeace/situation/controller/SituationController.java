@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
@@ -95,5 +98,22 @@ public class SituationController {
 				wsNodeStatus);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(wsMessage);
+	}
+
+	@ApiOperation("随机运行流量")
+	@PostMapping("flow/auto_run")
+	public BaseRsp<Boolean> flowAutoRun(@RequestBody @Validated FlowAutoRunReq flowAutoRunReq) {
+
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(flowAutoRunReq.getSceneId());
+
+		// 场景未启动时返回false
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			return new BaseRsp<>(false);
+		}
+
+		// 随机运行场景中的流量
+		Boolean result = topoHandlerService.flowAutoRun(flowAutoRunReq.getSceneId(), mpSceneData,
+				flowAutoRunReq.getInteractiveType());
+		return new BaseRsp<>(result);
 	}
 }

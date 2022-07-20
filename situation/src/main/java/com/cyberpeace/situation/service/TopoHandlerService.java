@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.CategorieMap;
+import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
 
@@ -61,5 +62,27 @@ public interface TopoHandlerService {
 	 * @return WsNodeStatus
 	 */
 	WsNodeStatus getNodeStatusMessage(String sceneId);
+
+	/**
+	 * 获取中台场景数据
+	 * @param sceneId
+	 * @return MpSceneData
+	 */
+	MpSceneData getMpSceneData(String sceneId);
+
+	/**
+	 * 校验场景状态
+	 * @param mpSceneData
+	 * @return Boolean true-活动 false-非活动
+	 */
+	Boolean checkSceneStatus(MpSceneData mpSceneData);
+
+	/**
+	 * 自动运行流量
+	 * @param mpSceneData
+	 * @param sceneId
+	 * @return Boolean
+	 */
+	Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType);
 
 }

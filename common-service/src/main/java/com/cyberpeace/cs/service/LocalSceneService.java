@@ -1,13 +1,15 @@
 package com.cyberpeace.cs.service;
 
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
+import com.cyberpeace.cs.service.context.SceneFlowContext;
+import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
-
-import java.util.List;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -75,6 +77,22 @@ public interface LocalSceneService extends IService<LocalScene> {
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
+
+	/**
+	 * 获取场景流量映射表
+	 * @param sceneData
+	 * @param interactiveType
+	 * @return Map<String, SceneFlowContext>
+	 */
+	Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData, Integer interactiveType);
+
+	/**
+	 * 随机启动一个流量
+	 * @param mpSceneId
+	 * @param sceneFlowContextMap
+	 * @return Boolean
+	 */
+	Boolean startRandomFlow(String mpSceneId, Map<String, SceneFlowContext> sceneFlowContextMap);
 
 	/**
 	 * 关闭mp场景

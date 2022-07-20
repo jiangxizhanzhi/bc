@@ -80,7 +80,7 @@ public class ExternalTheoryController {
 	private UserInfo validateUser(String userId) {
 		UserInfo userInfo = remoteUserService.getById(userId);
 		if (null == userInfo) {
-			log.error("User does not exist！user_id=[{}]", userInfo.getUserId());
+			log.error("User does not exist！user_id=[{}]", userId);
 			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
 		}
 
@@ -91,7 +91,8 @@ public class ExternalTheoryController {
 	@GetMapping("/practice-set/list")
 	public BaseRsp<List<ExternalPracticeSetBo>> getPracticeSetList(
 			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
-			@RequestParam("userId") @NotBlank(message = ErrorCode.USER_INFO_MISSING) String userId) {
+			@RequestParam("userId") @NotBlank(
+					message = ErrorCode.USER_INFO_MISSING) String userId) {
 		// 数据校验
 		allowAccess(key);
 		UserInfo userInfo = validateUser(userId);
@@ -146,7 +147,8 @@ public class ExternalTheoryController {
 
 		// 习题集权限查询
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-		List<String> setIds = practiceSetService.getSetIds(authContext, queryParams.getPracticeSet());
+		List<String> setIds = practiceSetService.getSetIds(authContext,
+				queryParams.getPracticeSet());
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp<>(PageUtil.getNullResult());
 		}
@@ -182,7 +184,8 @@ public class ExternalTheoryController {
 		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-		List<String> setIds = practiceSetService.getSetIds(authContext, queryParams.getPracticeSet());
+		List<String> setIds = practiceSetService.getSetIds(authContext,
+				queryParams.getPracticeSet());
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp<>(Lists.newArrayList());
 		}

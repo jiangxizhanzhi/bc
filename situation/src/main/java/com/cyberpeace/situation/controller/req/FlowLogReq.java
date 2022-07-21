@@ -23,4 +23,9 @@ public class FlowLogReq implements Serializable {
 	@ApiModelProperty("每页数据量")
 	private Integer perPage = 10;
 
+	public FlowLogReq(String sceneId) {
+		this.sceneId = sceneId;
+	}
+
+	public FlowLogReq() {}
 }

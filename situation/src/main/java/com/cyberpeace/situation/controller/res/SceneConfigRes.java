@@ -13,9 +13,6 @@ public class SceneConfigRes extends SceneConfigContext {
 	private Integer refreshRate = Integer
 			.parseInt(ConfigUtil.getContextProperty("situation.refresh.rate"));
 
-	@ApiModelProperty("是否获取节点链路状态")
-	private Boolean linkStatus = true;
-
 	public SceneConfigRes(Boolean linkStatus, Boolean flowAnalysis, Boolean flowAutoRun) {
 		this.setLinkStatus(linkStatus);
 		this.setFlowAnalysis(flowAnalysis);

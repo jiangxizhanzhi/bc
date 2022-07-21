@@ -14,4 +14,7 @@ public class SceneConfigContext implements Serializable {
 	@ApiModelProperty("是否自动运行流量")
 	private Boolean flowAutoRun;
 
+	@ApiModelProperty("是否获取节点链路状态")
+	private Boolean linkStatus = true;
+
 }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -17,6 +16,7 @@ import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SceneConfigReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
 import com.cyberpeace.situation.dao.entity.SceneConfig;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
@@ -71,20 +71,11 @@ public class SituationController {
 
 	@ApiOperation("获取流量攻击事件")
 	@GetMapping("/dynamic/attack")
-	public List<WsMessage> attackDynamic(FlowLogReq flowLogReq) {
+	public BaseRsp<List<WsMessage>> attackDynamic(FlowLogReq flowLogReq) {
 
-		// 获取流量日志
-		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
+		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.pushFlowEvents(flowLogReq);
 
-		// 处理流量日志
-		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
-				flowLogReq.getSceneId());
-
-		// 分批推送消息
-		situationHandlerService.batchPushDataToRoom(flowLogReq.getSceneId(), wsMultiNodeDynamics, 5,
-				5);
-
-		return wsMultiNodeDynamics;
+		return new BaseRsp<>(wsMultiNodeDynamics);
 	}
 
 	@ApiOperation("获取节点监控信息")
@@ -105,12 +96,7 @@ public class SituationController {
 	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
 
-		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
-
-		// 推送ws消息
-		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
-				wsNodeStatus);
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		WsMessage<WsNodeStatus> wsMessage = situationHandlerService.pushLinkStatus(sceneId);
 		return new BaseRsp<>(wsMessage);
 	}
 
@@ -206,6 +192,40 @@ public class SituationController {
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 
 		return new BaseRsp<>(sceneConfigRes);
+	}
+
+	@ApiOperation("刷新态势场景数据")
+	@GetMapping("refresh_data")
+	public BaseRsp<RefreshDataRes> refreshSceneData(@RequestBody SceneConfigReq sceneConfigReq) {
+
+		String sceneId = sceneConfigReq.getSceneId();
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		RefreshDataRes refreshDataRes = new RefreshDataRes();
+
+		// 场景未启动时返回false
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			return new BaseRsp<>(refreshDataRes);
+		}
+
+		// 自动运行流量
+		if (sceneConfigReq.getFlowAutoRun()) {
+			refreshDataRes.setFlowAutoRunResult(
+					topoHandlerService.flowAutoRun(sceneId, mpSceneData, null));
+		}
+
+		// 推送流量事件
+		if (sceneConfigReq.getFlowAnalysis()) {
+			FlowLogReq flowLogReq = new FlowLogReq(sceneId);
+			refreshDataRes.setFlowEvents(situationHandlerService.pushFlowEvents(flowLogReq));
+		}
+
+		// 推送节点链路状态
+		if (sceneConfigReq.getLinkStatus()) {
+			refreshDataRes.setLinkStatus(situationHandlerService.pushLinkStatus(sceneId));
+		}
+
+		return new BaseRsp<>(refreshDataRes);
 	}
 
 	@ApiOperation("清除态势场景数据")

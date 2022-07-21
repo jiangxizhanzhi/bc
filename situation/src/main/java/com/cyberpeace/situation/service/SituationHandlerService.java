@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
+import com.cyberpeace.situation.model.ws.WsNodeStatus;
 
 /**
  * 场景态势数据处理
@@ -131,5 +133,19 @@ public interface SituationHandlerService {
 	 */
 	void batchPushDataToRoom(String sceneId, List<WsMessage> datas, Integer number,
 			Integer interval);
+
+	/**
+	 * 推送链路状态至房间
+	 * @param sceneId 场景id
+	 * @return WsMessage<WsNodeStatus>
+	 */
+	WsMessage<WsNodeStatus> pushLinkStatus(String sceneId);
+
+	/**
+	 * 推送流量事件至房间
+	 * @param flowLogReq
+	 * @return List<WsMessage>
+	 */
+	List<WsMessage> pushFlowEvents(FlowLogReq flowLogReq);
 
 }

@@ -71,10 +71,15 @@ public class LearnStatsServiceImpl implements LearnStatsService {
         endTimeStr = TimeUtil.format6(endTime);
 
         // pattern用户名及organization 获取指定查询用户
-        JSONObject result;
+		List<UserInfo> userInfos;
         OrderItem orderField = page.getOrders().isEmpty() ? new OrderItem() : (OrderItem) page.getOrders().get(0);
-        result = remoteUserService.getList(null, 0L, pattern, organization);
-        List<UserInfo> userInfos = result.getJSONArray("list").toJavaList(UserInfo.class);
+
+		if (pattern == null && organization == null) {
+			userInfos = remoteUserService.getAllUsers();
+		} else {
+			userInfos = remoteUserService.getList(null, 0L, pattern, organization)
+					.getJSONArray("list").toJavaList(UserInfo.class);
+		}
         userInfos = userInfos.stream().filter(userInfo -> userInfo.getName() != null && !userInfo.getName().isEmpty()).collect(Collectors.toList());
         if (userInfos.isEmpty()) {
             return new ListRsp<>();

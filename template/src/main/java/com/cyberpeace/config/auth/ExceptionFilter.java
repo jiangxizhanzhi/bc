@@ -54,7 +54,6 @@ public class ExceptionFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain filterChain) throws IOException, ServletException {
-		Long startTime = System.currentTimeMillis();
 		try {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} catch (Exception e) {
@@ -67,7 +66,6 @@ public class ExceptionFilter implements Filter {
 			CommonContext.removeLanguage();
 			CommonContext.removeIp();
 			CommonContext.removeAuthorization();
-			log.debug("exception filter start to end : " + (System.currentTimeMillis() - startTime));
 		}
 	}
 

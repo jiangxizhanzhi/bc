@@ -28,7 +28,7 @@ public class MyFilter implements Filter {
 
 		Long startTime = System.currentTimeMillis();
 		chain.doFilter(request, response);
-		log.debug("myFilter start to end: " + (System.currentTimeMillis() - startTime));
+		log.debug("request total time cost(milliseconds): " + (System.currentTimeMillis() - startTime));
 	}
 
 	@Override

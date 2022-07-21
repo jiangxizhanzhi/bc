@@ -25,6 +25,7 @@ import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 
@@ -46,6 +47,9 @@ public class SituationController {
 
 	@Autowired
 	private SceneConfigMapper sceneConfigMapper;
+
+	@Autowired
+	private DynamicSchemeService dynamicSchemeService;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -202,5 +206,13 @@ public class SituationController {
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 
 		return new BaseRsp<>(sceneConfigRes);
+	}
+
+	@ApiOperation("清除态势场景数据")
+	@DeleteMapping("scene_data")
+	public BaseRsp<Boolean> clearSceneConfig(@ApiParam(name = "scene_id",
+			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+		dynamicSchemeService.clearSceneData(sceneId);
+		return new BaseRsp<>(true);
 	}
 }

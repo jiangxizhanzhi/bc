@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,7 @@ import com.google.common.collect.Lists;
 
 import lombok.SneakyThrows;
 
+@Slf4j
 @Service
 public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
@@ -439,9 +441,15 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 	@Override
 	public void clearSceneData(String sceneId) {
-		sceneConfigMapper.deleteBySceneId(sceneId);
-		dynamicSchemeMapper.deleteBySceneId(sceneId);
-		attackMessageMapper.deleteBySceneId(sceneId);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				sceneConfigMapper.deleteBySceneId(sceneId);
+				dynamicSchemeMapper.deleteBySceneId(sceneId);
+				attackMessageMapper.deleteBySceneId(sceneId);
+			}
+		});
+		log.info(String.format("Clear situation scene config, scene id is %s", sceneId));
 	}
 
 	/**

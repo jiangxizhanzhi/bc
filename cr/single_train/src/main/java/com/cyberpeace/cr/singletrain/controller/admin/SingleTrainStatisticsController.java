@@ -34,7 +34,7 @@ public class SingleTrainStatisticsController {
 
     @GetMapping("/personal_rank")
     @ApiOperation("单兵训练个人排名TOP5")
-    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
+//    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
     public BaseRsp<List<SinglePersonalStatisticsBo>> getAllPersonalRank() {
         List<SinglePersonalStatisticsBo> rsp = singleTrainStatistics.getAllPersonalRankStatistics();
         return new BaseRsp<>(rsp);
@@ -42,7 +42,7 @@ public class SingleTrainStatisticsController {
 
     @GetMapping("/organization_rank")
     @ApiOperation("单兵训练组织排名TOP5")
-    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
+//    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
     public BaseRsp<List<SingleOrganizationStatisticsBo>> getOrganizationRank() {
         List<SingleOrganizationStatisticsBo> rsp = singleTrainStatistics.getOrganizationRankStatistics();
         return new BaseRsp<>(rsp);
@@ -51,7 +51,7 @@ public class SingleTrainStatisticsController {
 
     @GetMapping("/detail")
     @ApiOperation("单兵训练统计详情")
-    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
+//    @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
     public BaseRsp<ListRsp<SingleStatisticsDetailBo>> getAllDetail(SingleTrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
         ListRsp<SingleStatisticsDetailBo> rsp = singleTrainStatistics.getAllStatisticsDetail(detailReq, page);

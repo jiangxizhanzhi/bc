@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.situation.controller.req.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.ws.AttackType;
-import com.cyberpeace.situation.controller.req.AddDynamicSchemeReq;
-import com.cyberpeace.situation.controller.req.AttackMessageReq;
-import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
-import com.cyberpeace.situation.controller.req.RunAttackMessageReq;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
@@ -170,13 +167,13 @@ public class SituationControlController {
 
 	@ApiOperation("导入动效方案")
 	@PostMapping("/scheme/import")
-	public BaseRsp importScheme(@RequestParam("file") MultipartFile file) throws IOException, ZipException {
+	public BaseRsp importScheme(@RequestBody @Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
 		// 1. save file to temp dir
-		File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(), ZipUtil.generatePath());
 		// 2. unzip file
 		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
 		// 3. load resources
-		dynamicSchemeService.importDynamicScheme(unZipPath);
+		dynamicSchemeService.importDynamicScheme(unZipPath,importDynamicSchemeReq.getSceneId());
 		// 4. delete temp dir
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");

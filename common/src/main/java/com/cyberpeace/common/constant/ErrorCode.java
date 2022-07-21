@@ -146,4 +146,7 @@ public interface ErrorCode {
 
 	/** 导出动效方案失败 */
 	String FAILED_TO_EXPORT_DYNAMIC_SCHEME = "100050";
+
+	/** 动效方案中的部分节点在该场景中不存在 */
+	String SOME_NODES_NOT_EXIST = "100051";
 }

@@ -1,6 +1,18 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -17,18 +29,8 @@ import com.cyberpeace.cr.redvsblue.service.bo.RbStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -48,9 +50,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
     public List<RbOrganizationStatisticsBo> getOrganizationRankStatistics() {
         List<RbOrganizationStatisticsBo> rsp = Lists.newArrayList();
 
-        List<UserInfo> userInfos = remoteUserService.getList(
-                null, 0L, null, null
-        ).getJSONArray("list").toJavaList(UserInfo.class);
+		List<UserInfo> userInfos = remoteUserService.getAllUsers();
 
         List<String> userIds = Lists.newArrayList();
         Map<String, UserInfo> id2User = new HashMap<>();

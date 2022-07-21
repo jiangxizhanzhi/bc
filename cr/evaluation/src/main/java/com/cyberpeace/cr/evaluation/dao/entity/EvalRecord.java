@@ -61,6 +61,11 @@ public class EvalRecord extends BaseTable {
      */
     private Date evalTime;
 
+    /**
+     * 评估结束时间
+     */
+    private Date evalEndTime;
+
     public enum Status implements GenericEnum {
         NOT_START(1, "未评估"),
         RUNNING(2, "评估中"),

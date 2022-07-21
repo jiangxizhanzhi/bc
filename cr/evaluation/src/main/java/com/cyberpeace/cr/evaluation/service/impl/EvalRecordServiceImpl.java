@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -294,6 +293,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setName(evalAggregation.getName());
             evalIndexRef.setType(EvalIndexRef.Type.SYSTEM.getCode());
             evalIndexRef.setLevel(EvalIndexRef.Level.AGGREGATION.getCode());
+            evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
 
             List<String> nextIds = Lists.newArrayList();
             JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class).forEach(item -> {
@@ -322,6 +322,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setName(evalIndex.getName());
             evalIndexRef.setType(thirdIndexesTypeMap.getOrDefault(evalIndex.getResourceId(), EvalIndexRef.Type.SYSTEM.getCode()));
             evalIndexRef.setLevel(evalIndex.getLevel());
+            evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
 
             // 设置下一级、备份算法信息
             String nextIds;
@@ -352,6 +353,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                             evalIndexRef.getSpecialistAttrValue(),
                             evalIndexRef.getSpecialistValue()
                     ));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
             }
 
@@ -444,6 +446,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                             evalIndexRef.getSpecialistAttrValue(),
                             evalIndexRef.getSpecialistValue()
                     ));
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                } else {
+                    evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
                 }
                 evalIndexRefs.add(evalIndexRef);
                 indexesSet.add(evalIndexRef.getResourceId());
@@ -461,8 +466,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
             });
         });
-
-
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -587,7 +590,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         startIndexes(evalRecord, evalTask);
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
-        EvalLog.info(evalRecord, String.format("END, result: %s, cost: %s", evalRecord.getScore(), new Date().getTime() - evalRecord.getEvalTime().getTime()));
+        EvalLog.info(
+                evalRecord,
+                String.format("END, result: %s, cost: %s", evalRecord.getScore(), evalRecord.getEvalEndTime().getTime() - evalRecord.getEvalTime().getTime())
+        );
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
@@ -626,7 +632,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             // 非null返回值为采集变量项运行失败
             if (!StringUtils.isEmpty(result)) {
                 evalVariableRef.setScore(0);
-                evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());
+                evalVariableRef.setProgress(EvalVariableRef.Progress.EXCEPTION.getCode());
                 evalRecord.setMessage(evalRecord.getMessage() + result + "\n");
                 transactionTemplate.execute(status -> {
                     evalVariableRefService.updateById(evalVariableRef);
@@ -670,6 +676,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalRecord.setStatus(StringUtils.isEmpty(evalRecord.getMessage()) ? EvalRecord.Status.END.getCode() : EvalRecord.Status.EXCEPTION.getCode());
         evalRecord.setScore(evalIndexRefs.get(evalIndexRefs.size() - 1).getScore());
+        evalRecord.setEvalEndTime(new Date());
         transactionTemplate.execute(status -> {
             evalIndexRefService.updateBatchById(evalIndexRefs);
             return this.getBaseMapper().updateById(evalRecord);

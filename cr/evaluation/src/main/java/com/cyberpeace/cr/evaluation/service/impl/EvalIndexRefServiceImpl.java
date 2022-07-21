@@ -55,17 +55,29 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
                            Map<String, EvalIndexRef> evalIndexRefMap,
                            Map<String, EvalVariableRef> evalVariableRefMap,
                            EvalRecord evalRecord) {
+        String msg = "";
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
-        List<Integer> scoreList;
+        List<Integer> scoreList = Lists.newArrayList();
 
+        // 仅获取正常运行结束的指标/变量项分值，执行失败项目（progress非END）在下一级运算中忽略
         if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
-            scoreList = nextIds.stream().map(nextId -> evalVariableRefMap.get(nextId).getScore()).collect(Collectors.toList());
+            for (String nextId: nextIds) {
+                EvalVariableRef evalVariableRef = evalVariableRefMap.get(nextId);
+                if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.END.getCode())) {
+                    scoreList.add(evalVariableRef.getScore());
+                }
+            }
         } else {
-            scoreList = nextIds.stream().map(nextId -> evalIndexRefMap.get(nextId).getScore()).collect(Collectors.toList());
+            for (String nextId: nextIds) {
+                EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
+                if (evalIndexRef1.getProgress().equals(EvalIndexRef.Progress.END.getCode())) {
+                    scoreList.add(evalIndexRef1.getScore());
+                }
+            }
         }
-        // 正常情况下, scoreList应均为0~100整数，包含`null`为专家评分下未进行计算变量项(五级指标)，无法进行下一步聚合计算，设置score为0，跳过
+        // todo 次级全部执行失败情况下，是否需要继续向下执行？
+        // 正常情况下, scoreList应均为0~100整数，包含`null`为专家评分下未进行计算变量项(五级指标)，无法进行下一步聚合计算，跳过
         if (scoreList.contains(null)) {
-            evalIndexRef.setScore(0);
             return;
         }
 
@@ -76,7 +88,6 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             EvalLog.info(evalRecord, evalIndexRef, String.format("system evaluation type index result: %s.", score));
         } catch (RemoteServiceException e) {
             score = 0;
-            String msg;
             if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
                 msg = String.format(
                         BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
@@ -94,8 +105,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
             EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
         }
 
+        // 聚合算法返回值有效性校验
         if (score > 100 || 0 > score) {
-            String msg = String.format(
+            msg = String.format(
                     BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
                     this.int2cn.get(evalIndexRef.getLevel()),
                     evalIndexRef.getName()
@@ -105,6 +117,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         }
 
         evalIndexRef.setScore(score);
+        if (StringUtils.isEmpty(msg)) {
+            evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+        } else {
+            evalIndexRef.setProgress(EvalIndexRef.Progress.EXCEPTION.getCode());
+        }
     }
 
     @Override

@@ -1,12 +1,12 @@
 package com.cyberpeace.integratation.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface RemoteUserService {
 
@@ -48,11 +48,5 @@ public interface RemoteUserService {
 	List<String> idsByOrgId(String orgId);
 
 	Set<String> getUserPermission(String userId);
-
-	/**
-	 * 获取mp所有用户
-	 * @return
-	 */
-	List<UserInfo> getAllUsers();
 
 }

@@ -253,12 +253,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.collect(Collectors.toSet());
 	}
 
-	@Override
-	@Cacheable(cacheNames = "allUsers")
-	public List<UserInfo> getAllUsers() {
-		return getList(null, 0L, null, null).getJSONArray("list").toJavaList(UserInfo.class);
-	}
-
 	/**
 	 * 组织用户数据转
 	 * @param jsonObject

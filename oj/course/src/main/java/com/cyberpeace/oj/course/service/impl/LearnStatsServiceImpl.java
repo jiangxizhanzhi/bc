@@ -1,16 +1,5 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -33,8 +22,16 @@ import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -159,7 +156,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
     @Override
     public UserStatsRankBo getUserLearnRank() {
         int limit = topFive;
-		List<UserInfo> userInfos = remoteUserService.getAllUsers();
+        List<UserInfo> userInfos = remoteUserService.getList(
+                null, 0L, null, null
+        ).getJSONArray("list").toJavaList(UserInfo.class);
+
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         Map<String, String> usernameMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getUserName));
 
@@ -239,7 +239,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
     @Override
     public HistogramRes getClassIntegralTopTen(String ranking_type, String orgId) {
-		List<UserInfo> userInfos = remoteUserService.getAllUsers();
+        List<UserInfo> userInfos  = remoteUserService.getList(
+                null, 0L, null, null
+        ).getJSONArray("list").toJavaList(UserInfo.class);
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
 
         Date endTime = new Date();
@@ -328,7 +330,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
     public UserStatsRankBo getOrgLearnRank(HttpServletRequest request) {
         UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
-		List<UserInfo> userInfos = remoteUserService.getAllUsers();
+        List<UserInfo> userInfos = remoteUserService.getList(
+                null, 0L, null, null
+        ).getJSONArray("list").toJavaList(UserInfo.class);
         Map<String, String> childrenOrg = collectChildrenOrg(null);
         Map<String, List<UserInfo>> orgUsers = userInfos.stream().filter(item -> StringUtils.isNotBlank(item.getOrganizationId())).collect(Collectors.groupingBy(UserInfo::getOrganizationId));
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
@@ -468,7 +472,9 @@ public class LearnStatsServiceImpl implements LearnStatsService {
         if (organization == null || organization.isEmpty()) {
             organization = null;
         }
-		List<UserInfo> userInfos = remoteUserService.getAllUsers();
+        List<UserInfo> userInfos = remoteUserService.getList(
+                null, 0L, pattern, organization
+        ).getJSONArray("list").toJavaList(UserInfo.class);
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
 
         if (userIds.size() == 0) {

@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -21,6 +23,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/admin/single_train/template")
+@Log4j2
 public class SingleTemplateController {
 
 	@Autowired
@@ -60,10 +64,24 @@ public class SingleTemplateController {
 		return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
 	}
 
+	public void updateSceneConfig(SingleTrainTemplateReqRel requestDataRel){
+		JSONObject sceneConfig = requestDataRel.getEventData().getSceneConfigData().getSceneConfig();
+		try {
+			// 默认开启流量采集
+			sceneConfig.getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("scene").fluentPut("enable_flow_collect", true);
+		} catch (Exception e) {
+			// 不处理
+			log.error("set enable_flow_collect error !!!");
+			throw new BusinessException("set enable_flow_collect error");
+		}
+		requestDataRel.getEventData().getSceneConfigData().setSceneConfig(sceneConfig);
+	}
+
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
+		updateSceneConfig(requestDataRel);
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
 				SingleTrainTemplateReq.class);
@@ -101,6 +119,7 @@ public class SingleTemplateController {
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleTemplateBo>
 			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
+		updateSceneConfig(requestDataRel);
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
 				SingleTrainTemplateReq.class);

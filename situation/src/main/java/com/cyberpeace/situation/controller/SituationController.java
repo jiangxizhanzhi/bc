@@ -88,6 +88,10 @@ public class SituationController {
 	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
 
+		if (!topoHandlerService.checkSceneStatus(sceneId)){
+			return new BaseRsp<>(null);
+		}
+
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
 
 		// 推送ws消息

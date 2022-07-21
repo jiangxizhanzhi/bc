@@ -70,4 +70,11 @@ public interface TopoHandlerService {
 	 */
 	Map<String, List<String>> getSceneNodeIds(List<String> sceneIds);
 
+	/**
+	 * 校验场景状态
+	 * @param sceneId
+	 * @return Boolean true-活动 false-非活动
+	 */
+	Boolean checkSceneStatus(String sceneId);
+
 }

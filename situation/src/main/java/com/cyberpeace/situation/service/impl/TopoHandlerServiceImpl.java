@@ -53,6 +53,10 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	@Autowired
 	private SituationConfigMapper situationConfigMapper;
 
+	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
+
+	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
+
 	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
 
@@ -289,11 +293,11 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	}
 
 	@Override
-	public Map<String, List<String>> getSceneNodeIds(List<String> sceneIds){
+	public Map<String, List<String>> getSceneNodeIds(List<String> sceneIds) {
 
 		Map<String, List<String>> sceneNodeMap = Maps.newHashMap();
 
-		for (String sceneId : sceneIds){
+		for (String sceneId : sceneIds) {
 			JSONObject sceneTopo = getSceneTopoBySceneId(sceneId);
 			JSONObject topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 			JSONArray elements = (JSONArray) topology.getOrDefault("elements",
@@ -303,12 +307,28 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 			List<String> nodeIds = Lists.newArrayList();
 
-			for (int i = 0; i < elements.size(); i++){nodeIds.add(elements.getJSONObject(i).getString("id"));}
-			for (int i = 0; i < areas.size(); i++){nodeIds.add(areas.getJSONObject(i).getString("id"));}
+			for (int i = 0; i < elements.size(); i++) {
+				nodeIds.add(elements.getJSONObject(i).getString("id"));
+			}
+			for (int i = 0; i < areas.size(); i++) {
+				nodeIds.add(areas.getJSONObject(i).getString("id"));
+			}
 
 			sceneNodeMap.put(sceneId, nodeIds);
 
 		}
 		return sceneNodeMap;
 	}
+
+	@Override
+	public Boolean checkSceneStatus(String sceneId) {
+		JSONObject sceneTopo = getSceneTopoBySceneId(sceneId);
+		JSONObject scene = sceneTopo.getJSONObject("scene").getJSONObject("topology")
+				.getJSONObject("scene");
+		Integer event = scene.getInteger("event");
+		Integer eventStatus = scene.getInteger("event_status");
+		return !event.equals(MP_SCENE_DELETE_EVENT_CODE)
+				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
+	}
+
 }

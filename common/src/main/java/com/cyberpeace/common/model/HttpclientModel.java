@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
 
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 
 import lombok.Data;
@@ -33,6 +32,8 @@ public class HttpclientModel {
 	 */
 	private long callTime;
 
+	private Integer responseLogMaxLength = 2000;
+
 	private String url;
 
 	public HttpclientModel(String traceId, String url) {
@@ -56,6 +57,10 @@ public class HttpclientModel {
 
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;
-		LOG.info(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
+		String toPrint = httpResponse;
+		if (StringUtils.length(httpResponse) > responseLogMaxLength) {
+			toPrint = "httpResponse too long, ignore";
+		}
+		LOG.info(LOG_FORMATTER, new Object[] { callTime, url, toPrint });
 	}
 }

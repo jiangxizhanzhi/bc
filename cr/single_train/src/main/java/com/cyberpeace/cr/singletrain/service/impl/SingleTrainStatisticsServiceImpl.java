@@ -269,7 +269,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             tmp.setOverallRank(i + 1);
 //            rsp.set(i, tmp);
 
-            if (searchName && !tmp.getName().contains(userName)){
+            if (searchName && (!tmp.getName().contains(userName) && !tmp.getUsername().contains(userName))){
                 continue;
             }
 

@@ -12,6 +12,7 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.DynamicSchemeService;
+import com.cyberpeace.situation.service.SceneConfigService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,9 @@ public class SituationControlController {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private SceneConfigService sceneConfigService;
 
     @ApiOperation("新增动效方案")
     @PostMapping("/scheme")
@@ -92,8 +96,10 @@ public class SituationControlController {
     public BaseRsp<?> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq){
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
         dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
+        dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
+        String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
         if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null, null);
+            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null, null, code);
         }else{
             dynamicSchemeService.pushAttackToRoom(attackMessageBo, null);
         }

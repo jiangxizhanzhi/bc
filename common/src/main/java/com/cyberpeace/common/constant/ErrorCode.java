@@ -124,4 +124,13 @@ public interface ErrorCode {
 	/** 源节点为空 */
 	String EMPTY_SOURCE_NODE = "100043";
 
+	/** 动效方案名称不合法 */
+	String INVALID_DYNAMIC_SCHEME_NAME = "100044";
+
+	/** 阶段名称不合法 */
+	String INVALID_STAGE_NAME = "100045";
+
+	/** 动效描述不合法 */
+	String INVALID_DYNAMIC_DESCRIPTION = "100046";
+
 }

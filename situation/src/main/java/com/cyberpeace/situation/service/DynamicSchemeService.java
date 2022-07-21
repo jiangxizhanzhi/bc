@@ -9,7 +9,6 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface DynamicSchemeService {
@@ -28,7 +27,7 @@ public interface DynamicSchemeService {
 
     void getRemoteOption(OptionsRes optionsRes, String sceneId);
 
-    void pushMediaToRoom(AttackMessageReq attackMessageBo, List<String> nodeIds, String sceneId);
+    void pushMediaToRoom(AttackMessageReq attackMessageBo, List<String> nodeIds, String sceneId, String code);
 
     void pushAttackToRoom(AttackMessageReq attackMessageBo, String sceneId);
 
@@ -43,4 +42,7 @@ public interface DynamicSchemeService {
     void clearMedia(String sceneId);
 
     void validStage(DynamicSchemeReq dynamicSchemeReq);
+
+    void clearRoomSchedule(String sceneId);
+
 }

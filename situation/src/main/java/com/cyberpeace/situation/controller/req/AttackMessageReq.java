@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller.req;
 
-import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.MediaAnimation;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

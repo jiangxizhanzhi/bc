@@ -8,11 +8,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.req.SceneConfigReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.SceneConfigRes;
+import com.cyberpeace.situation.dao.entity.SceneConfig;
+import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
@@ -36,6 +43,9 @@ public class SituationController {
 
 	@Autowired
 	private TopoHandlerService topoHandlerService;
+
+	@Autowired
+	private SceneConfigMapper sceneConfigMapper;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -115,5 +125,82 @@ public class SituationController {
 		Boolean result = topoHandlerService.flowAutoRun(flowAutoRunReq.getSceneId(), mpSceneData,
 				flowAutoRunReq.getInteractiveType());
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("获取态势场景配置")
+	@PostMapping("scene_config")
+	public BaseRsp<SceneConfigRes> getSceneConfig(@ApiParam(name = "scene_id",
+			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		// 校验场景状态
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			return new BaseRsp<>(new SceneConfigRes(false, false, false));
+		}
+
+		// 获取数据库中的态势场景配置
+		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
+
+		Boolean enableFlowCollect = topoHandlerService.enableFlowCollect(mpSceneData);
+
+		// 未查到记录时新增
+		if (sceneConfig == null) {
+			sceneConfig = new SceneConfig(sceneId, enableFlowCollect, false);
+			sceneConfigMapper.insert(sceneConfig);
+		}
+
+		// 未记录配置时修改
+		if (sceneConfig.getFlowAnalysis() == null || sceneConfig.getFlowAutoRun() == null) {
+			sceneConfig.setFlowAutoRun(false);
+			sceneConfig.setFlowAnalysis(enableFlowCollect);
+			sceneConfigMapper.updateById(sceneConfig);
+		}
+
+		SceneConfigRes sceneConfigRes = BeanUtils.copy(sceneConfig, SceneConfigRes.class);
+		return new BaseRsp<>(sceneConfigRes);
+	}
+
+	@ApiOperation("修改态势场景配置")
+	@PatchMapping("scene_config")
+	public BaseRsp<SceneConfigRes> setSceneConfig(@RequestBody SceneConfigReq sceneConfigReq) {
+
+		String sceneId = sceneConfigReq.getSceneId();
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		// 校验场景状态
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		// 场景配置不在时报错
+		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
+		if (sceneConfig == null) {
+			throw new BusinessException(ErrorCode.NOT_CONFIGURED);
+		}
+
+		// 校验场景是否允许流量事件推送
+		if (sceneConfigReq.getFlowAnalysis()
+				&& !topoHandlerService.enableFlowCollect(mpSceneData)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+
+		// 校验场景是否允许流量自动运行
+		if (sceneConfigReq.getFlowAutoRun() && !topoHandlerService.enableFlowAutoRun(mpSceneData)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+
+		// 更新数据库配置
+		sceneConfig.setFlowAutoRun(sceneConfigReq.getFlowAutoRun());
+		sceneConfig.setFlowAnalysis(sceneConfigReq.getFlowAnalysis());
+		sceneConfigMapper.updateById(sceneConfig);
+
+		// 推送场景配置
+		SceneConfigRes sceneConfigRes = BeanUtils.copy(sceneConfig, SceneConfigRes.class);
+		WsMessage<SceneConfigRes> wsMessage = new WsMessage<>(MessageType.SceneConfig.getDesc(),
+				sceneConfigRes);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+
+		return new BaseRsp<>(sceneConfigRes);
 	}
 }

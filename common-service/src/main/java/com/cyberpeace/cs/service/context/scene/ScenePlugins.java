@@ -8,4 +8,6 @@ import lombok.Data;
 public class ScenePlugins implements Serializable {
 
 	private CpFlow cpFlow;
+
+	private CpCollection cpCollection;
 }

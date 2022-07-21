@@ -78,6 +78,20 @@ public interface TopoHandlerService {
 	Boolean checkSceneStatus(MpSceneData mpSceneData);
 
 	/**
+	 * 校验场景是否允许自动运行流量
+	 * @param mpSceneData
+	 * @return Boolean true-允许 false-不允许
+	 */
+	Boolean enableFlowAutoRun(MpSceneData mpSceneData);
+
+	/**
+	 * 校验场景是否允许自动推送流量事件
+	 * @param mpSceneData
+	 * @return Boolean true-允许 false-不允许
+	 */
+	Boolean enableFlowCollect(MpSceneData mpSceneData);
+
+	/**
 	 * 自动运行流量
 	 * @param mpSceneData
 	 * @param sceneId

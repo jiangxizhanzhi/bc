@@ -14,6 +14,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
+import com.cyberpeace.cs.service.context.scene.CpCollection;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.mp.MpNodeStatus;
 import com.cyberpeace.integratation.model.scene.ElementCommonContext;
@@ -315,6 +316,29 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 		return !event.equals(MP_SCENE_DELETE_EVENT_CODE)
 				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
+	}
+
+	@Override
+	public Boolean enableFlowAutoRun(MpSceneData mpSceneData) {
+		return !localSceneService.getSceneFlowList(mpSceneData, null).isEmpty();
+	}
+
+	@Override
+	public Boolean enableFlowCollect(MpSceneData mpSceneData) {
+
+		CpCollection cpCollection = mpSceneData.getPlugins().getCpCollection();
+
+		if (cpCollection == null) {
+			return false;
+		}
+
+		if (cpCollection.getScene() == null) {
+			return false;
+		}
+
+		Boolean enableFlowCollect = cpCollection.getScene().getEnableFlowCollect();
+		return !(enableFlowCollect == null || !enableFlowCollect);
+
 	}
 
 	@Override

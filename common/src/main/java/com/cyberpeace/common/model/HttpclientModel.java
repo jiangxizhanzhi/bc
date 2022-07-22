@@ -62,7 +62,7 @@ public class HttpclientModel {
 			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
 		}
 		if (LOG.isInfoEnabled()) {
-			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, "success" });
+			LOG.info(LOG_FORMATTER, new Object[] { callTime, url, "success" });
 		}
 	}
 }

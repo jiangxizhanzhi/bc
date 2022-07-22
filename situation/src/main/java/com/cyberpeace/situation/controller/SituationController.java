@@ -12,10 +12,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
-import com.cyberpeace.situation.controller.req.FlowLogReq;
-import com.cyberpeace.situation.controller.req.SceneConfigReq;
-import com.cyberpeace.situation.controller.req.SceneIdReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
@@ -198,7 +195,7 @@ public class SituationController {
 	}
 
 	@ApiOperation("刷新态势场景数据")
-	@GetMapping("refresh_data")
+	@PostMapping("refresh_data")
 	public BaseRsp<RefreshDataRes>
 			refreshSceneData(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
 
@@ -234,8 +231,26 @@ public class SituationController {
 
 	@ApiOperation("清除态势场景数据")
 	@DeleteMapping("scene_data")
-	public BaseRsp<Boolean> clearSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
-		dynamicSchemeService.clearSceneData(sceneIdReq.getSceneId());
+	public BaseRsp<Boolean>
+			clearSceneConfig(@RequestBody @Validated SceneIdListReq sceneIdListReq) {
+
+		for (String sceneId : sceneIdListReq.getSceneIds()) {
+
+			MpSceneData mpSceneData;
+
+			try {
+				mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+			} catch (Exception e) {
+				mpSceneData = null;
+			}
+
+			if (topoHandlerService.checkSceneStatus(mpSceneData)) {
+				continue;
+			}
+
+			dynamicSchemeService.clearSceneData(sceneId);
+		}
+
 		return new BaseRsp<>(true);
 	}
 }

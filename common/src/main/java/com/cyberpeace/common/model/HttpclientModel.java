@@ -57,10 +57,12 @@ public class HttpclientModel {
 
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;
-		String toPrint = httpResponse;
-		if (StringUtils.length(httpResponse) > responseLogMaxLength) {
-			toPrint = "httpResponse too long, ignore";
+		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
 		}
-		LOG.info(LOG_FORMATTER, new Object[] { callTime, url, toPrint });
+		if (LOG.isInfoEnabled()) {
+			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, "success" });
+		}
 	}
 }

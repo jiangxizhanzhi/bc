@@ -15,6 +15,7 @@ import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SceneConfigReq;
+import com.cyberpeace.situation.controller.req.SceneIdReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
@@ -119,8 +120,9 @@ public class SituationController {
 
 	@ApiOperation("获取态势场景配置")
 	@PostMapping("scene_config")
-	public BaseRsp<SceneConfigRes> getSceneConfig(@ApiParam(name = "scene_id",
-			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+	public BaseRsp<SceneConfigRes> getSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
+
+		String sceneId = sceneIdReq.getSceneId();
 
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
 
@@ -153,7 +155,8 @@ public class SituationController {
 
 	@ApiOperation("修改态势场景配置")
 	@PatchMapping("scene_config")
-	public BaseRsp<SceneConfigRes> setSceneConfig(@RequestBody SceneConfigReq sceneConfigReq) {
+	public BaseRsp<SceneConfigRes>
+			setSceneConfig(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
 
 		String sceneId = sceneConfigReq.getSceneId();
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
@@ -196,7 +199,8 @@ public class SituationController {
 
 	@ApiOperation("刷新态势场景数据")
 	@GetMapping("refresh_data")
-	public BaseRsp<RefreshDataRes> refreshSceneData(@RequestBody SceneConfigReq sceneConfigReq) {
+	public BaseRsp<RefreshDataRes>
+			refreshSceneData(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
 
 		String sceneId = sceneConfigReq.getSceneId();
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
@@ -230,9 +234,8 @@ public class SituationController {
 
 	@ApiOperation("清除态势场景数据")
 	@DeleteMapping("scene_data")
-	public BaseRsp<Boolean> clearSceneConfig(@ApiParam(name = "scene_id",
-			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
-		dynamicSchemeService.clearSceneData(sceneId);
+	public BaseRsp<Boolean> clearSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
+		dynamicSchemeService.clearSceneData(sceneIdReq.getSceneId());
 		return new BaseRsp<>(true);
 	}
 }

@@ -1,12 +1,17 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.impl.TraceIdContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +51,6 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
     final int minScore = 80; // 获取竞赛-理论赛的百分换算后的最低分数标准
 
-
     @Autowired
     LearnStatsMapper learnStatsMapper;
 
@@ -61,6 +65,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 
     @Autowired
     CourseLearnStatisticsService courseLearnStatisticsService;
+
+	ExecutorService es = Executors.newCachedThreadPool();
 
     @Override
     public ListRsp<UserStatsBo> getUserStats(Page page, String pattern, String organization, boolean isPage, String startTimeStr, String endTimeStr) {
@@ -170,62 +176,97 @@ public class LearnStatsServiceImpl implements LearnStatsService {
         Map<String, String> usernameMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getUserName));
 		if (log.isDebugEnabled()) {
 			log.debug("getAllUser cost =" + (System.currentTimeMillis() - startTime));
-			startTime = System.currentTimeMillis();
 		}
         UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
+		String traceId = TraceIdContext.getTraceId();
+
+		CountDownLatch countDownLatch = new CountDownLatch(3);
+
         // 课时学习排行
-        userStatsRankBo.setLessonRecordUser(Lists.newArrayList());
-        userStatsRankBo.setLessonRecordCount(Lists.newArrayList());
-        learnStatsMapper.lessonRecordRank(userIds, limit).forEach(item -> {
-            userStatsRankBo.getLessonRecordUser().add(usernameMap.get(item.getString("user_id")));
-            userStatsRankBo.getLessonRecordCount().add(item.getInteger("count"));
-        });
-		if (log.isDebugEnabled()) {
-			log.debug("lessonRecordRank cost =" + (System.currentTimeMillis() - startTime));
-			startTime = System.currentTimeMillis();
-		}
+		es.submit(() -> {
+			long st = System.currentTimeMillis();
+			userStatsRankBo.setLessonRecordUser(Lists.newArrayList());
+			userStatsRankBo.setLessonRecordCount(Lists.newArrayList());
+			learnStatsMapper.lessonRecordRank(userIds, limit).forEach(item -> {
+				userStatsRankBo.getLessonRecordUser()
+						.add(usernameMap.get(item.getString("user_id")));
+				userStatsRankBo.getLessonRecordCount().add(item.getInteger("count"));
+			});
+			if (log.isDebugEnabled()) {
+				log.debug("{}|lessonRecordRank cost ={}", traceId,
+						(System.currentTimeMillis() - st));
+			}
+			try {
+				countDownLatch.countDown();
+			} catch (Exception e) {}
+		});
 
         // 完成报告排行
-        userStatsRankBo.setFinishReportUser(Lists.newArrayList());
-        userStatsRankBo.setFinishReportCount(Lists.newArrayList());
-        learnStatsMapper.reportFinishRank(userIds, Note.NoteType.REPORT.getCode(), limit).forEach(item -> {
-            userStatsRankBo.getFinishReportUser().add(usernameMap.get(item.getString("user_id")));
-            userStatsRankBo.getFinishReportCount().add(item.getInteger("count"));
-        });
-		if (log.isDebugEnabled()) {
-			log.debug("reportFinishRank cost =" + (System.currentTimeMillis() - startTime));
-			startTime = System.currentTimeMillis();
-		}
+		es.submit(() -> {
+			long st = System.currentTimeMillis();
+			userStatsRankBo.setFinishReportUser(Lists.newArrayList());
+			userStatsRankBo.setFinishReportCount(Lists.newArrayList());
+			learnStatsMapper.reportFinishRank(userIds, Note.NoteType.REPORT.getCode(), limit)
+					.forEach(item -> {
+						userStatsRankBo.getFinishReportUser()
+								.add(usernameMap.get(item.getString("user_id")));
+						userStatsRankBo.getFinishReportCount().add(item.getInteger("count"));
+					});
+			if (log.isDebugEnabled()) {
+				log.debug("{}|reportFinishRank cost ={}", traceId,
+						(System.currentTimeMillis() - st));
+			}
+			try {
+				countDownLatch.countDown();
+			} catch (Exception e) {}
+		});
 
         // 完成课后练习排行
-        userStatsRankBo.setFinishPracticeUser(Lists.newArrayList());
-        userStatsRankBo.setFinishPracticeCount(Lists.newArrayList());
-        learnStatsMapper.practiceFinishRank(userIds, limit).forEach(item -> {
-            userStatsRankBo.getFinishPracticeUser().add(usernameMap.get(item.getString("user_id")));
-            userStatsRankBo.getFinishPracticeCount().add(item.getInteger("count"));
-        });
-		if (log.isDebugEnabled()) {
-			log.debug("practiceFinishRank cost =" + (System.currentTimeMillis() - startTime));
-			startTime = System.currentTimeMillis();
-		}
+		es.submit(() -> {
+			long st = System.currentTimeMillis();
+			userStatsRankBo.setFinishPracticeUser(Lists.newArrayList());
+			userStatsRankBo.setFinishPracticeCount(Lists.newArrayList());
+			learnStatsMapper.practiceFinishRank(userIds, limit).forEach(item -> {
+				userStatsRankBo.getFinishPracticeUser()
+						.add(usernameMap.get(item.getString("user_id")));
+				userStatsRankBo.getFinishPracticeCount().add(item.getInteger("count"));
+			});
+			if (log.isDebugEnabled()) {
+				log.debug("{}|practiceFinishRank cost ={}", traceId,
+						(System.currentTimeMillis() - st));
+			}
+			try {
+				countDownLatch.countDown();
+			} catch (Exception e) {}
+		});
 
         // 获取竞赛的考试排行
+		startTime = System.currentTimeMillis();
 		userStatsRankBo.setAttendExamUser(Lists.newArrayList());
-        userStatsRankBo.setAttendExamCount(Lists.newArrayList());
-        Date endTime = new Date();
-        List<JSONObject> examIntegrals = remoteAdService.competitionListWithMinScore(TimeUtil.format6(DateUtils.addDays(endTime, -CommonConstant.TWENTY_FOUR_MONTHS)), TimeUtil.format6(endTime),
-                null, minScore);
-        Map<String, Integer> integralExam = getUserWithCount(examIntegrals);
-        ArrayList<Map.Entry<String, Integer>> entries = getTopCount(integralExam, topFive);
-        entries.forEach(item -> {
-            userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
-            userStatsRankBo.getAttendExamCount().add(item.getValue());
-        });
+		userStatsRankBo.setAttendExamCount(Lists.newArrayList());
+		Date endTime = new Date();
+		List<JSONObject> examIntegrals = remoteAdService.competitionListWithMinScore(
+				TimeUtil.format6(DateUtils.addDays(endTime, -CommonConstant.TWENTY_FOUR_MONTHS)),
+				TimeUtil.format6(endTime), null, minScore);
+		Map<String, Integer> integralExam = getUserWithCount(examIntegrals);
+		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(integralExam, topFive);
+		entries.forEach(item -> {
+			userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
+			userStatsRankBo.getAttendExamCount().add(item.getValue());
+		});
 		if (log.isDebugEnabled()) {
-			log.debug("competitionListWithMinScore cost ="
-					+ (System.currentTimeMillis() - startTime));
+			log.debug("{}|competitionListWithMinScore cost ={}", traceId,
+					(System.currentTimeMillis() - startTime));
 		}
+
+		try {
+			countDownLatch.await(300, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			log.error("task interrupted", e);
+			e.printStackTrace();
+		}
+
         return userStatsRankBo;
     }
 

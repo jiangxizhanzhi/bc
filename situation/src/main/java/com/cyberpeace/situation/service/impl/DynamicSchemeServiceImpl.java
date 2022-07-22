@@ -136,6 +136,13 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                         throw new BusinessException(ErrorCode.DUPLICATED_DYNAMIC_DESCRIPTION);
                     }
                     for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+
+                        if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+                            for (MediaAnimation mediaAnimation: attackMessageReq.getMediaAnimationList()){
+                                mediaAnimation.setName(FileUtil.getFileName(mediaAnimation.getUrl(),true) );
+                            }
+                        }
+
                         if(attackMessageReq.getResourceId() == null || attackMessageReq.getResourceId().equals("")){
                             attackMessageReq.setSceneId(dynamicSchemeReq.getSceneId());
                             attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));

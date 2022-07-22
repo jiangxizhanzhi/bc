@@ -27,7 +27,7 @@ public interface DynamicSchemeService {
 
 	void getRemoteOption(OptionsRes optionsRes, String sceneId);
 
-	void pushMediaToRoom(AttackMessageReq attackMessageBo);
+	void pushMediaToRoom(AttackMessageReq attackMessageBo,String code);
 
 	void pushAttackToRoom(AttackMessageReq attackMessageBo);
 
@@ -42,6 +42,8 @@ public interface DynamicSchemeService {
 	void clearMedia(String sceneId);
 
 	void validStage(DynamicSchemeReq dynamicSchemeReq);
+
+	void clearRoomSchedule(String sceneId);
 
 	String makeExportFile(String resourceId, String tempDir) throws IOException;
 

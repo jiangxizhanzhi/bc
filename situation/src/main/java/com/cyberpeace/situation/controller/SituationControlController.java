@@ -11,6 +11,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.service.SceneConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,8 @@ public class SituationControlController {
 	@Autowired
 	private AttachmentService attachmentService;
 
+	@Autowired
+	private SceneConfigService sceneConfigService;
 
 	@ApiOperation("新增动效方案")
 	@PostMapping("/scheme")
@@ -107,8 +110,10 @@ public class SituationControlController {
 		AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq,
 				AttackMessageReq.class);
 		dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
+		dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
+		String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-			dynamicSchemeService.pushMediaToRoom(attackMessageBo);
+			dynamicSchemeService.pushMediaToRoom(attackMessageBo,code);
 		} else {
 			dynamicSchemeService.pushAttackToRoom(attackMessageBo);
 		}

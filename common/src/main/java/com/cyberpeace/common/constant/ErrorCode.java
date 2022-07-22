@@ -149,4 +149,14 @@ public interface ErrorCode {
 
 	/** 动效方案中的部分节点在该场景中不存在 */
 	String SOME_NODES_NOT_EXIST = "100051";
+
+	/** 动效方案名称不合法 */
+	String INVALID_DYNAMIC_SCHEME_NAME = "100052";
+
+	/** 阶段名称不合法 */
+	String INVALID_STAGE_NAME = "100053";
+
+	/** 动效描述不合法 */
+	String INVALID_DYNAMIC_DESCRIPTION = "100054";
+
 }

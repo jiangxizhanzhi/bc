@@ -683,16 +683,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
 
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-					OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
+					OperationModule.CAPTURE_FLAG, OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
+							practiceOperationMapper.selectById(resourceId).getTitle()));
 
 			return localSceneService.pauseScene(localScene.getResourceId());
 		} else {
 
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-					OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
+					OperationModule.CAPTURE_FLAG, OperationType.UNPAUSE,
+					LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
+							practiceOperationMapper.selectById(resourceId).getTitle()));
 
 			return localSceneService.unpauseScene(localScene.getResourceId());
 		}
@@ -759,8 +762,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				try {
 					localSceneService.deleteRemoteScene(localScene);
 				} catch (Exception e) {
-					log.warn("Scene delete failed! local_scene_id=[{}]",
-							localScene.getResourceId());
+					log.warn("Scene delete failed! local_scene_id=[{}], catch error:",
+							localScene.getResourceId(), e);
 					continue;
 				}
 			}
@@ -774,6 +777,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
 						: practiceSet.getPracticeCount() - practiceIds.size());
 
+		List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
+
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
 			@Override
@@ -786,6 +791,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				}
 
 				practiceSetMapper.updateById(practiceSet);
+				try {
+					remoteTopoService.batchDeleteTopo(topoIds);
+				} catch (Exception e) {
+					log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
+							JsonUtil.toJsonString(topoIds), e);
+				}
+
 				return practiceOperationMapper.deleteBatchIds(practiceIds);
 			}
 		});

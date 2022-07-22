@@ -1087,6 +1087,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				lessonList.forEach(courseLesson -> {
 					practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
 					practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
+					try {
+						if (StringUtils.isNotBlank(courseLesson.getTopoId())) {
+							remoteTopoService.deleteById(courseLesson.getTopoId());
+						}
+					} catch (Exception e) {
+						log.error("Lesson topo delete failed! topo_id=[{}], catch error:",
+								courseLesson.getTopoId(), e);
+					}
 				});
 
 				// 目录和场景

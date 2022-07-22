@@ -151,7 +151,7 @@ public class SituationControlController {
 
 	@ApiOperation("导出动效方案")
 	@GetMapping("/scheme/export")
-	public void exportScheme(HttpServletResponse response, @ApiParam("动效方案id") @Validated String resourceId){
+	public void exportScheme(HttpServletResponse response, @ApiParam("动效方案id") @RequestParam("resource_id") @Validated String resourceId){
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {

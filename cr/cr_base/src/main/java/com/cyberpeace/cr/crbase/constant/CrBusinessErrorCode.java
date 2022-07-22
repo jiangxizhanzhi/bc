@@ -388,4 +388,7 @@ public interface CrBusinessErrorCode {
 	/** IP格式错误 */
 	String WRONG_IP_FORMAT = "101116";
 
+	/** 最大支持7个分类 */
+	String MAX_7_CATEGORIES = "101117";
+
 }

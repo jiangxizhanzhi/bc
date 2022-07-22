@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.situation.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ import lombok.SneakyThrows;
 
 @Slf4j
 @Service
-public class DynamicSchemeServiceImpl implements DynamicSchemeService {
+public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,DynamicScheme> implements DynamicSchemeService {
 
 	@Autowired
 	private AttackMessageMapper attackMessageMapper;

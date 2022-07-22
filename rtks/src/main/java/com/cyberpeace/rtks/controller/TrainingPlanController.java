@@ -63,6 +63,9 @@ public class TrainingPlanController {
 	@Autowired
 	private SkillService skillService;
 
+	@Autowired
+	private RtksSituationService rtksSituationService;
+
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -175,10 +178,12 @@ public class TrainingPlanController {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
 
-			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
+			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());
-
-			data.setPercent(percent);
+			// record match
+			rtksSituationService.recordMatch(UserInfoContext.getUserContext().getUserId(),
+					existRoleId, percent);
+			data.setPercent(percent + "");
 			rsp.setData(data);
 		}
 
@@ -196,10 +201,12 @@ public class TrainingPlanController {
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleDetailResByRoleId(existRoleId);
 
-			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
+			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId,
 					UserInfoContext.getUserContext().getUserId());
-
-			data.setPercent(percent);
+			// record match
+			rtksSituationService.recordMatch(UserInfoContext.getUserContext().getUserId(),
+					existRoleId, percent);
+			data.setPercent(percent + "");
 			rsp.setData(data);
 		}
 

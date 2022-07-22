@@ -117,7 +117,7 @@ public class SituationControlController {
     @ApiOperation("上传媒体文件")
     @PostMapping("/upload_media")
     public BaseRsp<AttachmentBo> uploadMedia(@ApiParam(value = "上传文件",required = true) @RequestPart("file") MultipartFile multipartFile){
-        String fileName = multipartFile.getName();
+        String fileName = multipartFile.getOriginalFilename();
         FileUtil.validateFileSuffix(fileName, DynamicSchemeServiceImpl.PICTURE_TYPE+","+DynamicSchemeServiceImpl.VIDEO_TYPE);
         AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), true, multipartFile, true);
         attachmentBo.setFilePath(attachmentBo.getFilePath());

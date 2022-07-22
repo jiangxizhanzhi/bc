@@ -151,11 +151,11 @@ public class SituationControlController {
 
 	@ApiOperation("导出动效方案")
 	@PostMapping("/scheme/export")
-	public void exportScheme(HttpServletResponse response, @ApiParam("资源id") @NotBlank @Validated String resourceId){
+	public void exportScheme(HttpServletResponse response, @RequestBody @Validated ExportDynamicSchemeReq exportDynamicSchemeReq){
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {
-			String zipPath = dynamicSchemeService.makeExportFile(resourceId, tempDir);
+			String zipPath = dynamicSchemeService.makeExportFile(exportDynamicSchemeReq.getResourceId(), tempDir);
 			// 2. generate file response
 			File zip = new File(zipPath);
 			FileUtil.setResponse(zip, false, response);

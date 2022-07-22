@@ -112,6 +112,8 @@ public class HttpClientUtil {
 		httpGet.setHeader(WebConstant.TOKEN, token);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+
+		LOG.info("remote_user_token: " + token);
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
 	}

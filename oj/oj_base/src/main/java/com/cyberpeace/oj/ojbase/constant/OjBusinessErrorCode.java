@@ -26,7 +26,7 @@ public interface OjBusinessErrorCode {
 	String SCENE_START_FAIL = "102006";
 
 	/** 字段数据过长*/
-	String FILED_DATA_TOO_LONG = "102007";
+	String CONTENT_FILED_DATA_TOO_LONG = "102007";
 
 	/** 名称已存在*/
 	String NAME_IS_EXIST = "102008";

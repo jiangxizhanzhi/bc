@@ -59,11 +59,7 @@ public class AdminPersonalStatsController {
 	@GetMapping("/person-stats-rank")
 	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
 	public BaseRsp<UserStatsRankBo> personalStatsRank() {
-		Long startTime = System.currentTimeMillis();
-		UserStatsRankBo result = learnStatsService.getUserLearnRank();
-		BaseRsp rsp = new BaseRsp(result);
-		log.debug("personalStatsRank+ :" + (System.currentTimeMillis() - startTime));
-		return rsp;
+		return new BaseRsp<>(learnStatsService.getUserLearnRank());
 	}
 
 	@ApiOperation("个人课程学习数量统计")

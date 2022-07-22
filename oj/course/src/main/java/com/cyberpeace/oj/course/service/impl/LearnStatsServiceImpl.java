@@ -168,41 +168,49 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		List<UserInfo> userInfos = remoteUserService.getAllUsers();
         List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         Map<String, String> usernameMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getUserName));
-		log.debug("getAllUser cost =" + (System.currentTimeMillis() - startTime));
+		if (log.isDebugEnabled()) {
+			log.debug("getAllUser cost =" + (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
+		}
         UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
         // 课时学习排行
-		startTime = System.currentTimeMillis();
         userStatsRankBo.setLessonRecordUser(Lists.newArrayList());
         userStatsRankBo.setLessonRecordCount(Lists.newArrayList());
         learnStatsMapper.lessonRecordRank(userIds, limit).forEach(item -> {
             userStatsRankBo.getLessonRecordUser().add(usernameMap.get(item.getString("user_id")));
             userStatsRankBo.getLessonRecordCount().add(item.getInteger("count"));
         });
-		log.debug("lessonRecordRank cost =" + (System.currentTimeMillis() - startTime));
+		if (log.isDebugEnabled()) {
+			log.debug("lessonRecordRank cost =" + (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
+		}
 
         // 完成报告排行
-		startTime = System.currentTimeMillis();
         userStatsRankBo.setFinishReportUser(Lists.newArrayList());
         userStatsRankBo.setFinishReportCount(Lists.newArrayList());
         learnStatsMapper.reportFinishRank(userIds, Note.NoteType.REPORT.getCode(), limit).forEach(item -> {
             userStatsRankBo.getFinishReportUser().add(usernameMap.get(item.getString("user_id")));
             userStatsRankBo.getFinishReportCount().add(item.getInteger("count"));
         });
-		log.debug("reportFinishRank cost =" + (System.currentTimeMillis() - startTime));
+		if (log.isDebugEnabled()) {
+			log.debug("reportFinishRank cost =" + (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
+		}
 
         // 完成课后练习排行
-		startTime = System.currentTimeMillis();
         userStatsRankBo.setFinishPracticeUser(Lists.newArrayList());
         userStatsRankBo.setFinishPracticeCount(Lists.newArrayList());
         learnStatsMapper.practiceFinishRank(userIds, limit).forEach(item -> {
             userStatsRankBo.getFinishPracticeUser().add(usernameMap.get(item.getString("user_id")));
             userStatsRankBo.getFinishPracticeCount().add(item.getInteger("count"));
         });
-		log.debug("practiceFinishRank cost =" + (System.currentTimeMillis() - startTime));
+		if (log.isDebugEnabled()) {
+			log.debug("practiceFinishRank cost =" + (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
+		}
 
         // 获取竞赛的考试排行
-		startTime = System.currentTimeMillis();
 		userStatsRankBo.setAttendExamUser(Lists.newArrayList());
         userStatsRankBo.setAttendExamCount(Lists.newArrayList());
         Date endTime = new Date();
@@ -214,7 +222,10 @@ public class LearnStatsServiceImpl implements LearnStatsService {
             userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
             userStatsRankBo.getAttendExamCount().add(item.getValue());
         });
-		log.debug("competitionListWithMinScore cost =" + (System.currentTimeMillis() - startTime));
+		if (log.isDebugEnabled()) {
+			log.debug("competitionListWithMinScore cost ="
+					+ (System.currentTimeMillis() - startTime));
+		}
         return userStatsRankBo;
     }
 

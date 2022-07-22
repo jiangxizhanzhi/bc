@@ -544,11 +544,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,Dy
 	}
 
 	@Override
-	public void importDynamicScheme(String unZipPath,String sceneId) {
+	public String importDynamicScheme(String unZipPath,String sceneId) {
 		String dataJson = FileUtil.getContent(
 				new File(unZipPath + File.separator + RESOURCE_FILE_NAME));
-		DynamicSchemeRes dynamicSchemeRes = JsonUtil.toJsonObject(dataJson, DynamicSchemeRes.class);
-		validDynamicSchemeName(new AddDynamicSchemeReq(sceneId,dynamicSchemeRes.getName()));
+		DynamicSchemeReq dynamicSchemeReq = JsonUtil.toJsonObject(dataJson, DynamicSchemeReq.class);
+		validDynamicSchemeName(new AddDynamicSchemeReq(sceneId,dynamicSchemeReq.getName()));
 		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
 
 		//获取该场景下的所有区域和节点id
@@ -562,7 +562,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,Dy
 		areaAndElementIds.addAll(elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList()));
 
 		//判断动效方案中涉及到的节点该场景中是否都存在
-		for(DynamicStage dynamicStage:dynamicSchemeRes.getSchemeData()){
+		for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
 			for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
 				if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
 					for(MediaAnimation mediaAnimation:attackMessageReq.getMediaAnimationList()){
@@ -587,7 +587,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,Dy
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				for(DynamicStage dynamicStage : dynamicSchemeRes.getSchemeData()){
+				for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
 
 					HashSet<String> description = dynamicStage.getAttackMessageReqList().stream().
 							map(AttackMessageReq::getDescription).collect(Collectors.toCollection(HashSet::new));
@@ -607,13 +607,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,Dy
 							map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
 					dynamicStageBoList.add(dynamicStageBo);
 				}
-				DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeRes,DynamicScheme.class);
+				DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq,DynamicScheme.class);
 				dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
 				dynamicScheme.setSceneId(sceneId);
+				dynamicScheme.setResourceId(IDGeneratorUtil.getID());
 				dynamicSchemeMapper.insert(dynamicScheme);
+				dynamicSchemeReq.setResourceId(dynamicScheme.getResourceId());
 			}
 		});
-
+		return dynamicSchemeReq.getResourceId();
 	}
 
 	@Cacheable(cacheNames = "getElementIds", key = "#sceneId")

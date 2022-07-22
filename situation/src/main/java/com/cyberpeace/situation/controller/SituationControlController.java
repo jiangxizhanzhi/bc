@@ -172,18 +172,18 @@ public class SituationControlController {
 
 	@ApiOperation("导入动效方案")
 	@PostMapping("/scheme/import")
-	public BaseRsp importScheme(@RequestBody @Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
+	public BaseRsp<String> importScheme(@RequestBody @Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(), ZipUtil.generatePath());
 		// 2. unzip file
 		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
 		// 3. load resources
-		dynamicSchemeService.importDynamicScheme(unZipPath,importDynamicSchemeReq.getSceneId());
+		String resourceId = dynamicSchemeService.importDynamicScheme(unZipPath,importDynamicSchemeReq.getSceneId());
 		// 4. delete temp dir
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp();
+		return new BaseRsp(resourceId);
 	}
 
 }

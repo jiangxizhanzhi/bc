@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,9 @@ public class ClassroomEventListener extends MessageListener {
 	private OjLocalSceneService ojLocalSceneService;
 
 	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
+	@Autowired
 	private OjLocalSceneMapper ojLocalSceneMapper;
 
 	@Autowired
@@ -68,7 +73,8 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		// 消息推送
-		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(), ojLocalScene);
+		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
 
 		return CommonConstant.TRUE;
 	}
@@ -104,6 +110,20 @@ public class ClassroomEventListener extends MessageListener {
 
 		pushMessageHandler.pushClassroomMessage(dataObj, ojLocalScene);
 		return CommonConstant.TRUE;
+	}
+
+	@Override
+	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
+				.selectById(ojLocalScene.getBusinessId());
+		if (null != groupInfo) {
+			classroomSceneService.finishStart(groupInfo.getClassroomId(),
+					groupInfo.getResourceId());
+		}
+
+		return Boolean.TRUE;
 	}
 
 	/**

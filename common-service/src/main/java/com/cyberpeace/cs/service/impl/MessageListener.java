@@ -37,6 +37,8 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	private final String SCENE_DELETE = "delete_cscene_instance";
 
+	private final String SCENE_SUCCESS = "scene_success";
+
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -83,6 +85,10 @@ public class MessageListener implements ChannelAwareMessageListener {
 	}
 
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
+		return false;
+	}
+
+	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 		return false;
 	}
 
@@ -166,6 +172,11 @@ public class MessageListener implements ChannelAwareMessageListener {
 					String content = JsonUtil.toJsonString(reportBO);
 					realListener.onSceneElement(content, businessId, context);
 					break;
+				case SCENE_SUCCESS:
+					WsSceneReportBO successBO = new WsSceneReportBO("", type,
+							object.getJSONObject("data"));
+					String successContent = JsonUtil.toJsonString(successBO);
+					realListener.onSceneSuccess(successContent, businessId, context);
 				default:
 					break;
 			}

@@ -1,16 +1,12 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -20,15 +16,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -49,8 +47,6 @@ import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.GroupWsMessageIdentifier;
 import com.cyberpeace.oj.course.service.bo.SimpleUserData;
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
@@ -106,6 +102,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
+
 	@Override
 	public JSONObject startScene(String groupId, AuthContext authContext) {
 
@@ -119,6 +117,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				SceneShare.GROUP.getCode(), authContext);
 		if (null != ojLocalScene) {
 			JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
+			BatchStartSceneHandler sceneHandler = batchSceneMap.get(groupInfo.getClassroomId());
+			if (null != sceneHandler) {
+				sceneHandler.finish(groupId);
+			}
 			return sceneData;
 		}
 
@@ -235,62 +237,29 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(),
 				groupInfoList.size() - ojLocalScenes.size());
 
-		// 获取线程池对象
-		ThreadPoolTaskExecutor executor = SpringContextUtil.getBean("taskExecutor");
-		CountDownLatch downLatch = new CountDownLatch(groupInfoList.size());
-
-		// 构建数据存储结构
-		List<String> execFailGroupIds = Collections.synchronizedList(Lists.newArrayList());
-		ConcurrentMap<String, JSONObject> execGroupMap = Maps.newConcurrentMap();
-
-		UserInfo userInfo = UserInfoContext.getUserContext();
-		String ip = CommonContext.getIp();
-		String language = CommonContext.getLanguage();
-
-		// 场景启动
-		for (ClassroomGroupInfo groupInfo : groupInfoList) {
-			executor.execute(() -> {
-				try {
-					// 设置当前用户
-					UserInfoContext.setUserContext(userInfo);
-					CommonContext.setIp(ip);
-					CommonContext.setLanguage(language);
-					// 有用户的组才可以启动场景
-					if (CollectionUtils.isNotEmpty(JsonUtil
-							.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class))) {
-						JSONObject sceneData = startScene(groupInfo.getResourceId(), authContext);
-						execGroupMap.put(groupInfo.getResourceId(), sceneData);
-					}
-
-				} catch (Exception e) {
-					execFailGroupIds.add(groupInfo.getResourceId());
-					log.error(
-							"Classroom start scene failed! classroom_id=[{}], group_id=[{}], catch error:",
-							classroomId, groupInfo.getResourceId(), e);
-				} finally {
-					downLatch.countDown();
-					UserInfoContext.removeUserContext();
-					CommonContext.removeIp();
-					CommonContext.removeLanguage();
-				}
-
-			});
+		if (null != batchSceneMap.get(classroomId)) {
+			batchSceneMap.get(classroomId).addStartScene(UserInfoContext.getUserContext(),
+					groupInfoList);
+		} else {
+			BatchStartSceneHandler sceneHandler = new BatchStartSceneHandler(
+					UserInfoContext.getUserContext(), groupInfoList, this);
+			batchSceneMap.put(classroomId, sceneHandler);
 		}
 
-		boolean result = downLatch.await(CommonConstant.SIXTY, TimeUnit.MINUTES);
-		if (!result) {
-			log.error("Classroom start scene time out! classroom_id=[{}]", classroomId);
-			throw new BusinessException(OjBusinessErrorCode.SCENE_START_FAIL);
-		}
+		batchSceneMap.get(classroomId).batchStart();
 
-		if (CollectionUtils.isNotEmpty(execFailGroupIds)) {
-			log.error("Classroom some group start scene failed! classroom_id=[{}], group_ids=[{}]",
-					classroomId, JsonUtil.arrayToString(execFailGroupIds));
-			throw new BusinessException(OjBusinessErrorCode.ROOM_SCENE_BATCH_FAILED,
-					groupInfoList.size() - execFailGroupIds.size(), execFailGroupIds.size());
-		}
+		return Lists.newArrayList();
+	}
 
-		return listEntityToBo(groupInfoList, execGroupMap);
+	@Override
+	public void finishStart(String classroomId, String groupId) {
+		BatchStartSceneHandler sceneHandler = batchSceneMap.get(classroomId);
+		if (null != sceneHandler) {
+			sceneHandler.finish(groupId);
+			if (sceneHandler.isFinishAll()) {
+				batchSceneMap.remove(classroomId);
+			}
+		}
 	}
 
 	@Override
@@ -300,6 +269,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		validateClassroom(classroomId);
 
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
+		batchSceneMap.remove(classroomId);
 		groupInfos.forEach(groupInfo -> deleteScene(groupInfo.getResourceId(), authContext));
 
 	}

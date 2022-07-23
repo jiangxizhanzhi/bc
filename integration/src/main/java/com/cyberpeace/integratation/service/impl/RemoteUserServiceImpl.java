@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -209,25 +210,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
-		List<String> orgIds = Lists.newArrayList();
-		if (children) {
-			List<String> childrenList = remoteOrganizationService.childrenList(organizationId,
-					true);
-			orgIds.addAll(childrenList);
-		} else {
-			orgIds.add(organizationId);
+
+		if (StringUtils.isBlank(organizationId)) {
+			log.error("Org id is blank!");
 		}
 
-		List<UserInfo> userInfos = Lists.newArrayList();
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
+				JSONArray.class);
+		List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
+				obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
 
-		for (String orgId : orgIds) {
-			JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
-			List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
-					obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
-			userInfos.addAll(orgUsers);
-		}
-
-		return userInfos;
+		return orgUsers;
 	}
 
 	@Override

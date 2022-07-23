@@ -536,6 +536,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomMonitorBo> monitorBos = StreamApiUtils.map(userInfos,
 				userInfo -> userToMonitorBo(userInfo, signMap));
 
+		// 组织信息外部获取 防止用户过多调用外部接口
+		Map<String, String> orgNameMap = Maps.newHashMap();
+		for (ClassroomMonitorBo monitorBo : monitorBos) {
+
+			if (StringUtils.isBlank(orgNameMap.get(monitorBo.getOrganizationId()))) {
+				// 组织信息查询
+				String orgName = remoteOrganizationService
+						.orgNameById(monitorBo.getOrganizationId());
+				orgNameMap.put(monitorBo.getOrganizationId(), orgName);
+			}
+			monitorBo.setOrganizationName(orgNameMap.get(monitorBo.getOrganizationId()));
+		}
+
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 
 	}
@@ -1524,9 +1537,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Map<String, ClassroomSign> userSignMap) {
 
 		ClassroomMonitorBo monitorBo = BeanUtils.copy(userInfo, ClassroomMonitorBo.class);
-		// 组织信息查询
-		String orgName = remoteOrganizationService.orgNameById(userInfo.getOrganizationId());
-		monitorBo.setOrganizationName(orgName);
 
 		// 签到数据
 		ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());

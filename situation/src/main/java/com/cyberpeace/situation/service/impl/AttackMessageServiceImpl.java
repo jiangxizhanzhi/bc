@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,11 @@ import com.cyberpeace.situation.dao.entity.AttackMessage;
 import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
 import com.cyberpeace.situation.service.AttackMessageService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
-public class AttackMessageServiceImpl implements AttackMessageService {
+public class AttackMessageServiceImpl extends ServiceImpl<AttackMessageMapper,AttackMessage> implements AttackMessageService {
 
 	@Autowired
 	private AttackMessageMapper attackMessageMapper;

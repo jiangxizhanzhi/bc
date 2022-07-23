@@ -175,8 +175,8 @@ public class EvalRecordController {
     @ApiOperation("评估任务结果（指标项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/index")
-    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("record_id") String recordId, @RequestParam("index_id") String indexId) {
-        return new BaseRsp<>(evalIndexRefService.resultIndex(recordId, indexId));
+    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("index_id") String indexId) {
+        return new BaseRsp<>(evalIndexRefService.resultIndex(indexId));
     }
 
     @ApiOperation("评估任务结果（变量项信息）")

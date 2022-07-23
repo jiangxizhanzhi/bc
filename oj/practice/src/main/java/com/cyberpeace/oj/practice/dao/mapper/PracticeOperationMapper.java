@@ -14,8 +14,6 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 @Mapper
 public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 
-	List<PracticeOperation> batchGet(@Param("resource_ids") List<String> resourceIds);
-
 	IPage<PracticeOperation> pageByQuery(@Param("page") Page page,
 			@Param("listQuery") OperationListQuery listQuery, @Param("isPublic") Boolean isPublic);
 
@@ -42,4 +40,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	 */
 	String selectByTitle(@Param("practiceSetId") String practiceSetId,
 			@Param("title") String title);
+
+	List<String> topoIdsByIds(@Param("resource_ids") List<String> resourceIds);
 }

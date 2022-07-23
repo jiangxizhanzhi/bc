@@ -6,15 +6,6 @@
         <result property="isPublic" column="public"/>
     </resultMap>
 
-    <select id="batchGet" resultMap="operation">
-        select * from practice_operation
-        where status = 1
-        and resource_id in
-        <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
-            #{resource_id}
-        </foreach>
-    </select>
-
     <select id="pageByQuery" resultMap="operation">
         select * from oj_practice_operation
         <where>
@@ -109,5 +100,13 @@
         select resource_id from oj_practice_operation
         where practice_set_id = #{practiceSetId}
         and title = #{title}
+    </select>
+
+    <select id="topoIdsByIds" resultType="java.lang.String">
+        select topo_id from oj_practice_operation
+        where resource_id in
+        <foreach collection="resource_ids" item="resource_id" separator="," open="(" close=")">
+            #{resource_id}
+        </foreach>
     </select>
 </mapper>

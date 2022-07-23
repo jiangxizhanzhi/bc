@@ -1,9 +1,17 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.OrgInfo;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -12,24 +20,14 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
-import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
+import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
+import com.cyberpeace.cr.singletrain.service.bo.SingleStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hpsf.Decimal;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,9 +46,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
     public List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics() {
         List<SingleOrganizationStatisticsBo> rsp = Lists.newArrayList();
 
-        List<UserInfo> userInfos = remoteUserService.getList(
-                null, 0L, null, null
-        ).getJSONArray("list").toJavaList(UserInfo.class);
+		List<UserInfo> userInfos = remoteUserService.getAllUsers();
 //		List<String> userIds = userInfos.stream().map(UserInfo::getUserId).collect(Collectors.toList());
         List<String> userIds = Lists.newArrayList();
         Map<String, UserInfo> id2User = new HashMap<>();
@@ -200,7 +196,12 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
                 statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode()
         );
-
+        //时间过滤
+        if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {
+            Date startTime = java.sql.Date.valueOf(detailReq.getStartTime());
+            Date endTime = java.sql.Date.valueOf(detailReq.getEndTime());
+            personalTotalStatistics = personalTotalStatistics.stream().filter(personalTotalStatistic -> startTime.before(personalTotalStatistic.getCreateTime()) && personalTotalStatistic.getCreateTime().before(endTime)).collect(Collectors.toList());
+        }
         Map<String, List<CrTask>> user2Tasks = new HashMap<>();
         for (CrTask personStatistic : personalTotalStatistics) {
             String userId = personStatistic.getUserId();
@@ -268,7 +269,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             tmp.setOverallRank(i + 1);
 //            rsp.set(i, tmp);
 
-            if (searchName && !tmp.getName().contains(userName)){
+            if (searchName && (!tmp.getName().contains(userName) && !tmp.getUsername().contains(userName))){
                 continue;
             }
 

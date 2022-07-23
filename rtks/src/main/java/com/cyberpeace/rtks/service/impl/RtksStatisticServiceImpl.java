@@ -24,7 +24,6 @@ import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.*;
-import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TreeService;
@@ -79,11 +78,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
 
-	@Autowired
-	private RtksSituationService rtksSituationService;
-
 	@Override
-	public String roleMatchPercent(String roleId, String userId) {
+	public Integer roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
 		Integer skillScore = 0;
 		Role role = roleMapper.selectById(roleId);
@@ -103,14 +99,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		Integer ret = floor(result);
 
-		// 4、记录匹配度数据
-		rtksSituationService.recordMatch(userId, roleId, ret);
-
-		return ret + "";
+		return ret;
 	}
 
 	@Override
-	@Cacheable(cacheNames = "role", key = "#roleId + #userId")
+	@Cacheable(cacheNames = "role", key = "#userId")
 	public List<RtksRadarBo> calculateRadar(String roleId, String userId) {
 		List<RtksRadarBo> ret = Lists.newArrayList();
 
@@ -641,13 +634,18 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 1、获取当前层级下所有role数据
 		List<Role> roles = treeService.roleUnderLevel(levelId);
 
-		// 2、获取所有知识点
-		List<Knowledge> knowledges = mergeKnowledgeByRoles(roles);
-
-		// 3、统计所有知识点的课时完成度
-		Integer ret = calculateFinishPercent(knowledges, userId);
-
-		return ret;
+		// 2, calculate match by role and user
+		Integer count = 0;
+		Integer sum = 0;
+		for (Role role : roles) {
+			sum += roleMatchPercent(role.getResourceId(), userId);
+			count++;
+		}
+		// 3、取岗位匹配度平均值
+		if (sum == 0) {
+			return 0;
+		}
+		return MathUtils.roundDivide(sum, count);
 	}
 
 	/**

@@ -23,6 +23,7 @@ import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
@@ -611,6 +612,34 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 延时发送
 			Thread.sleep(interval * 1000);
 		}
+	}
+
+	@Override
+	public WsMessage<WsNodeStatus> pushLinkStatus(String sceneId) {
+		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
+
+		// 推送ws消息
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+				wsNodeStatus);
+		pushDataToRoom(wsMessage, sceneId);
+
+		return wsMessage;
+	}
+
+	@Override
+	public List<WsMessage> pushFlowEvents(FlowLogReq flowLogReq) {
+
+		// 获取流量日志
+		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
+
+		// 处理流量日志
+		List<WsMessage> wsMultiNodeDynamics = getAttackEventList(flowLogs, flowLogReq.getSceneId());
+
+		// 分批推送消息
+		batchPushDataToRoom(flowLogReq.getSceneId(), wsMultiNodeDynamics, 5, 5);
+
+		return wsMultiNodeDynamics;
+
 	}
 
 }

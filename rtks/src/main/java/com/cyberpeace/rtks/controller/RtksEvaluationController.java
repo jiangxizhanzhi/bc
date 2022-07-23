@@ -20,6 +20,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.res.PercentRes;
+import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
@@ -40,6 +41,9 @@ public class RtksEvaluationController {
 
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
+
+	@Autowired
+	private RtksSituationService rtksSituationService;
 
 	@ApiOperation("岗位知识点学习进度统计")
 	@GetMapping("/role/knowledge/study_record")
@@ -114,8 +118,10 @@ public class RtksEvaluationController {
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
 		BaseRsp<String> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
-			String percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
-			rsp.setData(percent);
+			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
+			// record match
+			rtksSituationService.recordMatch(userId, existRoleId, percent);
+			rsp.setData(percent + "");
 		}
 		return rsp;
 	}

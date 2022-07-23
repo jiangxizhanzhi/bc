@@ -131,7 +131,8 @@ public class RbRoomController {
 		RbRoom rbRoom = rbRoomService.create(rbRoomContext);
 
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoomReq.getTemplate());
-		String rbTemplateName = businessTemplateMapper.selectById(rbTemplate.getBusinessTemplateId()).getName();
+		String rbTemplateName = businessTemplateMapper
+				.selectById(rbTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.CREATE, rbRoomReq.getName(),
 				LogContent.SCENE_FORMAT.format(rbTemplateName));
@@ -371,9 +372,10 @@ public class RbRoomController {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
+		RbRoom rbRoom = rbRoomService.getById(roomId);
 		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.DELETE, rbRoomService.getById(roomId).getName(),
+				OperationType.DELETE, rbRoom.getName(),
 				LogContent.SCENE_FORMAT.format(rbTemplateName));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -385,6 +387,15 @@ public class RbRoomController {
 				rbRoomService.removeById(roomId);
 			}
 		});
+
+		if (StringUtils.isNotBlank(rbRoom.getCopyedTopoId())) {
+			try {
+				remoteTopoService.deleteById(rbRoom.getCopyedTopoId());
+			} catch (Exception e) {
+				log.error("Red vs blue delete topo failed! room_id=[{}] topo_id=[{}]", roomId,
+						rbRoom.getCopyedTopoId());
+			}
+		}
 
 		return new BaseRsp<>();
 	}

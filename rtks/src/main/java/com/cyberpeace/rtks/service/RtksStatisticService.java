@@ -21,7 +21,7 @@ public interface RtksStatisticService {
 	 * @param userId
 	 * @return 匹配度百分比
 	 */
-	String roleMatchPercent(String roleId, String userId);
+	Integer roleMatchPercent(String roleId, String userId);
 
 	/**
 	 * 计算岗位雷达图

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
 
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 
 import lombok.Data;
@@ -33,6 +32,8 @@ public class HttpclientModel {
 	 */
 	private long callTime;
 
+	private Integer responseLogMaxLength = 2000;
+
 	private String url;
 
 	public HttpclientModel(String traceId, String url) {
@@ -56,6 +57,12 @@ public class HttpclientModel {
 
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;
-		LOG.info(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
+		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
+		}
+		if (LOG.isInfoEnabled()) {
+			LOG.info(LOG_FORMATTER, new Object[] { callTime, url, "success" });
+		}
 	}
 }

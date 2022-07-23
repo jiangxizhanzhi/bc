@@ -46,9 +46,8 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
 
     /**
      * 指标项目最近等级关联关系
-     * @param recordId 评估任务id
      * @param indexId 指标项id
      * @return EvalRecordResultIndexRsp
      */
-    EvalRecordResultIndexRsp resultIndex(String recordId, String indexId);
+    EvalRecordResultIndexRsp resultIndex(String indexId);
 }

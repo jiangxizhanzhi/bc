@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -90,18 +91,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			return null;
 		}
 		return userInfoFromJsonObject(jsonObject);
-	}
-
-	@Override
-	public List<UserInfo> getList() {
-		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
-				.get("list");
-
-		List<UserInfo> userInfoList = new ArrayList<>();
-		for (Object object : jsonArray) {
-			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
-		}
-		return userInfoList;
 	}
 
 	@Override
@@ -209,25 +198,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
-		List<String> orgIds = Lists.newArrayList();
-		if (children) {
-			List<String> childrenList = remoteOrganizationService.childrenList(organizationId,
-					true);
-			orgIds.addAll(childrenList);
-		} else {
-			orgIds.add(organizationId);
+
+		if (StringUtils.isBlank(organizationId)) {
+			log.error("Org id is blank!");
 		}
 
-		List<UserInfo> userInfos = Lists.newArrayList();
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
+				JSONArray.class);
+		List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
+				obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
 
-		for (String orgId : orgIds) {
-			JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
-			List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
-					obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
-			userInfos.addAll(orgUsers);
-		}
-
-		return userInfos;
+		return orgUsers;
 	}
 
 	@Override
@@ -239,6 +220,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 获取用户可见的菜单
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -253,8 +235,23 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.collect(Collectors.toSet());
 	}
 
+	@Override
+	@Cacheable(cacheNames = "allUsers")
+	public List<UserInfo> getAllUsers() {
+		return getList(null, 0L, null, null).getJSONArray("list").toJavaList(UserInfo.class);
+	}
+
+	@Override
+	public Map<String, UserInfo> allUsers() {
+		List<UserInfo> userInfos = getList(null, 0L, null, null).getJSONArray("list")
+				.toJavaList(UserInfo.class);
+
+		return StreamApiUtils.toMap(userInfos, UserInfo::getUserId, userInfo -> userInfo);
+	}
+
 	/**
 	 * 组织用户数据转
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -275,6 +272,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 用户数据转换
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -311,6 +309,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * mp 用户模型到本地到映射
+	 *
 	 * @param mpAuthenticatedUser
 	 * @return
 	 */

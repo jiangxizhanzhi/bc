@@ -74,7 +74,7 @@ public class ToolController {
 	@ApiOperation("工具创建")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
-	public BaseRsp<String> create(@RequestBody ToolAddReq toolReq) {
+	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
 		if (!StringUtils.isBlank(toolReq.getPublishTime())) {
 			Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
@@ -94,7 +94,7 @@ public class ToolController {
 	@ApiOperation("工具更新")
 	@PatchMapping()
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
-	public BaseRsp<String> update(@RequestBody ToolUpdateReq toolupdateReq) {
+	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
 		if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
 			Date date = DateUtil.StringToDate(toolupdateReq.getPublishTime(),

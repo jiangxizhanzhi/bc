@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.alibaba.fastjson.JSONException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
@@ -52,7 +52,10 @@ public class MessageListener implements ChannelAwareMessageListener {
 	public void onMessage(Message message, Channel channel) throws Exception {
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
 
-		log.info("MessageListener: {}", realMessage);
+		// mq日志正常情况不输出，调试的时候再输出
+		if (log.isDebugEnabled()) {
+			log.debug("MessageListener: {}", realMessage);
+		}
 
 		try {
 			dispatch(realMessage);

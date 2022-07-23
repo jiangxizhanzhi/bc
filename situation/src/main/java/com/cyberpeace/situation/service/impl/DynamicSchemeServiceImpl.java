@@ -1,9 +1,6 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.situation.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -46,16 +46,13 @@ import com.cyberpeace.situation.model.ws.WsAttackEffectDynamic;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
-import com.cyberpeace.situation.service.AttackMessageService;
-import com.cyberpeace.situation.service.DynamicSchemeService;
-import com.cyberpeace.situation.service.SituationHandlerService;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 
 import lombok.SneakyThrows;
 
+@Slf4j
 @Service
-public class DynamicSchemeServiceImpl implements DynamicSchemeService {
+public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper,DynamicScheme> implements DynamicSchemeService {
 
 	@Autowired
 	private AttackMessageMapper attackMessageMapper;
@@ -78,11 +75,30 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 	@Autowired
 	private SceneConfigMapper sceneConfigMapper;
 
+	@Autowired
+	private SceneConfigService sceneConfigService;
+
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
 	public static String VIDEO_TYPE = "MP4";
 
-	private static String RESOURCE_FILE_NAME = "data.json";
+	public static final String RESOURCE_FILE_NAME = "data.json";
+
+	public Integer MIN_STR_LEN = 1;
+
+	public Integer MAX_NAME_STR_LEN = 255;
+
+	public Integer STAGE_HAS_BEEN_RUN = 0;
+
+	public Integer STAGE_IS_RUNNING = 1;
+
+	public Integer DYNAMIC_HAS_BEEN_RUN = 2;
+
+	public Integer DYNAMIC_IS_RUNNING = 3;
+
+	public Integer PICTURE_CODE = 1;
+
+	public Integer VIDEO_CODE = 2;
 
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
@@ -142,6 +158,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
+					//判断同一阶段内动效描述是否重复
 					HashSet<String> description = new HashSet<>(dynamicStage
 							.getAttackMessageReqList().stream()
 							.map(AttackMessageReq::getDescription).collect(Collectors.toList()));
@@ -150,12 +167,20 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 					}
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {
+						//设置多媒体的名称
+						if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+							for (MediaAnimation mediaAnimation: attackMessageReq.getMediaAnimationList()){
+								mediaAnimation.setName(FileUtil.getFileName(mediaAnimation.getUrl(),true) );
+							}
+						}
 						if (attackMessageReq.getResourceId() == null
 								|| attackMessageReq.getResourceId().equals("")) {
+							//数据库中不存在该动效，进行新增
 							attackMessageReq.setSceneId(dynamicSchemeReq.getSceneId());
 							attackMessageReq.setResourceId(
 									attackMessageService.addAttackMessage(attackMessageReq));
 						} else {
+							//数据库中存在该动效，进行更新
 							attackMessageService.updateAttackMessage(attackMessageReq);
 						}
 					}
@@ -238,7 +263,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 	 * 推送多媒体动效消息
 	 */
 	@Override
-	public void pushMediaToRoom(AttackMessageReq attackMessageBo) {
+	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code) {
 		WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
 		wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
 		wsAttackEffectDynamic.setCategory("attack");
@@ -257,9 +282,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 			List<String> videoTypeList = Arrays
 					.asList(VIDEO_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
 			if (pictureTypeList.contains(fileSuffix)) {
-				attackEffect.setMediaType(1);
+				attackEffect.setMediaType(PICTURE_CODE);
 			} else if (videoTypeList.contains(fileSuffix)) {
-				attackEffect.setMediaType(2);
+				attackEffect.setMediaType(VIDEO_CODE);
 			} else {
 				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 			}
@@ -279,8 +304,13 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 			@SneakyThrows
 			@Override
 			public void run() {
+				//持续时间结束后清除该多媒体动效
 				Thread.sleep(attackMessageBo.getDurationTime() * 1000);
-				clearMedia(attackMessageBo.getSceneId());
+				SceneConfig nowSceneConfig = sceneConfigMapper.selectBySceneId(attackMessageBo.getSceneId());
+				//判断当前是否有其他动效正在运行
+				if(nowSceneConfig.getSchemeCode().equals(code)){
+					clearMedia(attackMessageBo.getSceneId());
+				}
 			}
 		});
 		thread.start();
@@ -323,17 +353,8 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 	@Override
 	public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
-		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId());
-		String code = IDGeneratorUtil.getID();
-		if (sceneConfig == null) {
-			sceneConfig = new SceneConfig();
-			sceneConfig.setSchemeCode(code);
-			sceneConfig.setSceneId(dynamicSchemeReq.getSceneId());
-			sceneConfigMapper.insert(sceneConfig);
-		} else {
-			sceneConfig.setSchemeCode(code);
-			sceneConfigMapper.updateById(sceneConfig);
-		}
+
+		String code = sceneConfigService.updateSceneCode(dynamicSchemeReq.getSceneId());
 
 		Thread thread = new Thread(new Runnable() {
 
@@ -350,9 +371,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 					}
 
 					WsAttackSchedule wsAttackScheduleStage = new WsAttackSchedule(
-							dynamicStage.getName(), 1);
+							dynamicStage.getName(), STAGE_IS_RUNNING);
 					wsAttackScheduleList.add(wsAttackScheduleStage);
-					WsAttackSchedule wsAttackMessageSchedule = new WsAttackSchedule("", 3);
+					WsAttackSchedule wsAttackMessageSchedule = new WsAttackSchedule("", DYNAMIC_IS_RUNNING);
 					wsAttackScheduleList.add(wsAttackMessageSchedule);
 					// 动效序号
 					int number = 1;
@@ -370,7 +391,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 						}
 
 						wsAttackMessageSchedule
-								.setName(number++ + attackMessageReq.getDescription());
+								.setName(number++ + "." + attackMessageReq.getDescription());
 						pushAttackScheduleToRoom(wsAttackScheduleList,
 								dynamicSchemeReq.getSceneId());
 						dynamicSchemeMapper.updateScheduleById(
@@ -379,7 +400,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 						if (attackMessageReq.getType()
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-							pushMediaToRoom(attackMessageReq);
+							pushMediaToRoom(attackMessageReq,code);
 						} else {
 							pushAttackToRoom(attackMessageReq);
 						}
@@ -388,9 +409,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 						}
 
 					}
-					if (state) {
-						wsAttackScheduleStage.setStatus(0);
-						wsAttackMessageSchedule.setStatus(2);
+					if (state &&
+							sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId()).getSchemeCode()
+								.equals(code)) {
+						wsAttackScheduleStage.setStatus(STAGE_HAS_BEEN_RUN);
+						wsAttackMessageSchedule.setStatus(DYNAMIC_HAS_BEEN_RUN);
 						wsAttackMessageSchedule.setName("");
 						pushAttackScheduleToRoom(wsAttackScheduleList,
 								dynamicSchemeReq.getSceneId());
@@ -402,7 +425,9 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 				dynamicSchemeMapper.updateScheduleById(null, dynamicSchemeReq.getResourceId());
 
-				if (state) {
+				if (state &&
+						sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId()).getSchemeCode()
+								.equals(code)) {
 					// 正常运行结束，清除code
 					sceneConfigMapper.clearCodeBySceneId(dynamicSchemeReq.getSceneId());
 				}
@@ -418,6 +443,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 	 */
 	@Override
 	public void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq) {
+		validateNameLen(addDynamicSchemeReq.getName(),ErrorCode.INVALID_DYNAMIC_SCHEME_NAME);
 		DynamicScheme dynamicScheme = dynamicSchemeMapper
 				.selectByName(addDynamicSchemeReq.getName(), addDynamicSchemeReq.getSceneId());
 		if (dynamicScheme != null) {
@@ -437,9 +463,15 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 	@Override
 	public void clearSceneData(String sceneId) {
-		sceneConfigMapper.deleteBySceneId(sceneId);
-		dynamicSchemeMapper.deleteBySceneId(sceneId);
-		attackMessageMapper.deleteBySceneId(sceneId);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				sceneConfigMapper.deleteBySceneId(sceneId);
+				dynamicSchemeMapper.deleteBySceneId(sceneId);
+				attackMessageMapper.deleteBySceneId(sceneId);
+			}
+		});
+		log.info(String.format("Clear situation scene config, scene id is %s", sceneId));
 	}
 
 	/**
@@ -466,8 +498,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 			if (dynamicStage.getName() == null || dynamicStage.getName().equals("")) {
 				throw new BusinessException(ErrorCode.EMPTY_STAGE_NAME);
 			}
+			validateNameLen(dynamicStage.getName(),ErrorCode.INVALID_STAGE_NAME);
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
-				if (!attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
+				validateNameLen(attackMessageReq.getDescription(),ErrorCode.INVALID_DYNAMIC_DESCRIPTION);
+				if (!(attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())||
+						attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
 						&& attackMessageReq.getSourceId().equals("")) {
 					throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE,
 							attackMessageReq.getDescription());
@@ -478,23 +513,14 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
 	}
 
-	@Cacheable(cacheNames = "getElementIds", key = "#sceneId")
-	public List<String> getElementIds(String sceneId) {
-		SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
-		List<ElementInfo> elementInfoList = Lists
-				.newArrayList(situationTopo.getElements().values());
-		return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
-	}
-
 	/**
-	 * 推送进程消息
+	 * 清除场景进程信息
+	 * @param sceneId
 	 */
-	public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,
-			String sceneId) {
-		WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(
-				MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+	@Override
+	public void clearRoomSchedule(String sceneId){
+		List<WsAttackSchedule> wsAttackScheduleList = new ArrayList<>();
+		pushAttackScheduleToRoom(wsAttackScheduleList,sceneId);
 	}
 
 	@Override
@@ -518,40 +544,121 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 	}
 
 	@Override
-	public void importDynamicScheme(String unZipPath) {
+	public String importDynamicScheme(String unZipPath,String sceneId) {
 		String dataJson = FileUtil.getContent(
 				new File(unZipPath + File.separator + RESOURCE_FILE_NAME));
-		DynamicSchemeRes dynamicSchemeRes = JsonUtil.toJsonObject(dataJson, DynamicSchemeRes.class);
-		validDynamicSchemeName(new AddDynamicSchemeReq(dynamicSchemeRes.getSceneId(),dynamicSchemeRes.getName()));
+		DynamicSchemeReq dynamicSchemeReq = JsonUtil.toJsonObject(dataJson, DynamicSchemeReq.class);
+		validDynamicSchemeName(new AddDynamicSchemeReq(sceneId,dynamicSchemeReq.getName()));
 		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
+
+		//获取该场景下的所有区域和节点id
+		SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
+		List<ElementInfo> elementInfoList = Lists
+				.newArrayList(situationTopo.getElements().values());
+		List<String> areaAndElementIds = new ArrayList<>();
+		areaAndElementIds.addAll(areaInfoList.stream().map(AreaInfo::getAreaId).collect(Collectors.toList()));
+		areaAndElementIds.addAll(elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList()));
+
+		//判断动效方案中涉及到的节点该场景中是否都存在
+		for(DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
+			for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+				if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+					for(MediaAnimation mediaAnimation:attackMessageReq.getMediaAnimationList()){
+						if(!areaAndElementIds.contains(mediaAnimation.getSourceId())){
+							throw new BusinessException(ErrorCode.SOME_NODES_NOT_EXIST);
+						}
+					}
+				}else {
+					if (attackMessageReq.getTargetId() != null &&
+							!areaAndElementIds.contains(attackMessageReq.getTargetId())){
+						throw new BusinessException(ErrorCode.SOME_NODES_NOT_EXIST);
+					}
+					if (attackMessageReq.getSourceId() != null &&
+							!areaAndElementIds.contains(attackMessageReq.getSourceId())){
+						throw new BusinessException(ErrorCode.SOME_NODES_NOT_EXIST);
+					}
+				}
+			}
+		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				for(DynamicStage dynamicStage : dynamicSchemeRes.getSchemeData()){
+				for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
 
-					HashSet<String> description = new HashSet<>(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getDescription).collect(Collectors.toList()));
+					HashSet<String> description = dynamicStage.getAttackMessageReqList().stream().
+							map(AttackMessageReq::getDescription).collect(Collectors.toCollection(HashSet::new));
 					if (description.size()<dynamicStage.getAttackMessageReqList().size()){
 						throw new BusinessException(ErrorCode.DUPLICATED_DYNAMIC_SCHEME_NAME);
 					}
 
+					//保存动效
 					for(AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
-						attackMessageReq.setSceneId(dynamicSchemeRes.getSceneId());
+						attackMessageReq.setSceneId(sceneId);
 						attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));
 					}
 
 					DynamicStageBo dynamicStageBo = new DynamicStageBo();
 					dynamicStageBo.setName(dynamicStage.getName());
-					dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
+					dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList().stream().
+							map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
 					dynamicStageBoList.add(dynamicStageBo);
 				}
-				DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeRes,DynamicScheme.class);
+				DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq,DynamicScheme.class);
 				dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
+				dynamicScheme.setSceneId(sceneId);
+				dynamicScheme.setResourceId(IDGeneratorUtil.getID());
 				dynamicSchemeMapper.insert(dynamicScheme);
+				dynamicSchemeReq.setResourceId(dynamicScheme.getResourceId());
 			}
 		});
+		return dynamicSchemeReq.getResourceId();
+	}
 
+	@Cacheable(cacheNames = "getElementIds", key = "#sceneId")
+	public List<String> getElementIds(String sceneId) {
+		SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		List<ElementInfo> elementInfoList = Lists
+				.newArrayList(situationTopo.getElements().values());
+		return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
+	}
+
+	/**
+	 * 推送进程消息
+	 */
+	public void pushAttackScheduleToRoom(List<WsAttackSchedule> wsAttackScheduleList,
+			String sceneId) {
+		WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(
+				MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+	}
+
+	public void validateLength(String target, Integer minLen, Integer maxLen,
+							   String errorCode) {
+		if (target == null) {
+			if (minLen == 0) {
+				return;
+			} else {
+				throw new BusinessException(errorCode, minLen, maxLen);
+			}
+		}
+		try {
+			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
+			int len = targetStr.length();
+			if (len < minLen || len > maxLen) {
+				throw new BusinessException(errorCode, minLen, maxLen);
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void validateNameLen(String target, String errorCode) {
+		validateLength(target, MIN_STR_LEN, MAX_NAME_STR_LEN, errorCode);
 	}
 
 }

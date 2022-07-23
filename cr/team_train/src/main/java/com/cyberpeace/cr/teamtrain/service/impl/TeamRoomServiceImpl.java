@@ -326,8 +326,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 							teamRoom.getCreateUserId(),
 							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 				} else if (teamRoom.isEnded()) {
-					trainRecordService.updateEndDate(roomId,
-							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 				}
 			}
 		});
@@ -542,7 +541,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 			if (teamRoom.getSceneEndTime() != null
 					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
-				endTime = teamRoom.getSceneStartTime();
+				endTime = teamRoom.getSceneEndTime();
 
 			}
 		}

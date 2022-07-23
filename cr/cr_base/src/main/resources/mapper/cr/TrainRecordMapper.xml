@@ -51,6 +51,11 @@
             and end_time is null
         </where>
     </update>
+    <update id="updateEndTimeByRoomId">
+        update cr_train_record
+        set end_time = #{endTime}
+        where room_id = #{roomId}
+    </update>
     <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
         select count(id)
         from cr_train_record

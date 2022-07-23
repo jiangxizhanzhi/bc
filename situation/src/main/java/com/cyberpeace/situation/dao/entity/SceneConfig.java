@@ -22,8 +22,10 @@ public class SceneConfig extends BaseTable {
 
 	private Boolean flowAutoRun;
 
-	public SceneConfig(String sceneId) {
+	public SceneConfig(String sceneId, Boolean flowAnalysis, Boolean flowAutoRun) {
 		this.sceneId = sceneId;
+		this.flowAnalysis = flowAnalysis;
+		this.flowAutoRun = flowAutoRun;
 	}
 
 	public SceneConfig() {}

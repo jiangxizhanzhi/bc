@@ -57,4 +57,11 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	Boolean equalTopo(JSONObject topo, String topoId);
+
+	/**
+	 * 批量删除topo
+	 * @param topoIds
+	 * @return
+	 */
+	Boolean batchDeleteTopo(List<String> topoIds);
 }

@@ -61,7 +61,7 @@ public class PracticeValidateHandler {
 	public void validateFieldLength(String fieldContent, Integer maxLength) {
 		if (fieldContent.length() > maxLength) {
 			log.error("field length too long!");
-			throw new BusinessException(OjBusinessErrorCode.FILED_DATA_TOO_LONG);
+			throw new BusinessException(OjBusinessErrorCode.CONTENT_FILED_DATA_TOO_LONG);
 		}
 	}
 

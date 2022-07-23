@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -25,6 +23,9 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author chenzhuo
+ */
 @Slf4j
 @Service
 public class RemoteTopoServiceImpl implements RemoteTopoService {
@@ -41,11 +42,14 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_EXPORT;
 
+	private String BATCH_DELETE_TOPO;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	@PostConstruct
 	public void init() {
+		String MP_HOST = mpEnvService.getMpHost();
 		COPY_TOPO_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.copy");
 		TOPO_DIGEST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.terminal.statistic");
@@ -54,6 +58,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
+
+		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
 	}
 
 	@Override
@@ -169,6 +175,19 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		JSONObject topoById = getTopoById(topoId);
 		return JsonUtil.equalJson(topo, topoById);
+	}
+
+	@Override
+	public Boolean batchDeleteTopo(List<String> topoIds) {
+
+		List<String> notBlankIds = StreamApiUtils.filter(topoIds,
+				topoId -> StringUtils.isNotBlank(topoId));
+		if (CollectionUtils.isEmpty(notBlankIds)) {
+			return Boolean.TRUE;
+		}
+
+		String result = HttpClientUtil.delete(BATCH_DELETE_TOPO, notBlankIds, String.class);
+		return Boolean.TRUE;
 	}
 
 	/**

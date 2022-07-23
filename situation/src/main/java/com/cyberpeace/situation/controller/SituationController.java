@@ -7,17 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
-import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.RefreshDataRes;
+import com.cyberpeace.situation.controller.res.SceneConfigRes;
+import com.cyberpeace.situation.dao.entity.SceneConfig;
+import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.MpSceneData;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 
@@ -36,6 +42,12 @@ public class SituationController {
 
 	@Autowired
 	private TopoHandlerService topoHandlerService;
+
+	@Autowired
+	private SceneConfigMapper sceneConfigMapper;
+
+	@Autowired
+	private DynamicSchemeService dynamicSchemeService;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -57,20 +69,11 @@ public class SituationController {
 
 	@ApiOperation("获取流量攻击事件")
 	@GetMapping("/dynamic/attack")
-	public List<WsMessage> attackDynamic(FlowLogReq flowLogReq) {
+	public BaseRsp<List<WsMessage>> attackDynamic(FlowLogReq flowLogReq) {
 
-		// 获取流量日志
-		List<JSONObject> flowLogs = topoHandlerService.getFlowLogs(flowLogReq);
+		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.pushFlowEvents(flowLogReq);
 
-		// 处理流量日志
-		List<WsMessage> wsMultiNodeDynamics = situationHandlerService.getAttackEventList(flowLogs,
-				flowLogReq.getSceneId());
-
-		// 分批推送消息
-		situationHandlerService.batchPushDataToRoom(flowLogReq.getSceneId(), wsMultiNodeDynamics, 5,
-				5);
-
-		return wsMultiNodeDynamics;
+		return new BaseRsp<>(wsMultiNodeDynamics);
 	}
 
 	@ApiOperation("获取节点监控信息")
@@ -91,12 +94,7 @@ public class SituationController {
 	public BaseRsp<WsMessage> linkStatus(@ApiParam(name = "scene_id",
 			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
 
-		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
-
-		// 推送ws消息
-		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
-				wsNodeStatus);
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		WsMessage<WsNodeStatus> wsMessage = situationHandlerService.pushLinkStatus(sceneId);
 		return new BaseRsp<>(wsMessage);
 	}
 
@@ -115,5 +113,144 @@ public class SituationController {
 		Boolean result = topoHandlerService.flowAutoRun(flowAutoRunReq.getSceneId(), mpSceneData,
 				flowAutoRunReq.getInteractiveType());
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("获取态势场景配置")
+	@PostMapping("scene_config")
+	public BaseRsp<SceneConfigRes> getSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
+
+		String sceneId = sceneIdReq.getSceneId();
+
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		// 校验场景状态
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			return new BaseRsp<>(new SceneConfigRes(false, false, false));
+		}
+
+		// 获取数据库中的态势场景配置
+		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
+
+		Boolean enableFlowCollect = topoHandlerService.enableFlowCollect(mpSceneData);
+
+		// 未查到记录时新增
+		if (sceneConfig == null) {
+			sceneConfig = new SceneConfig(sceneId, enableFlowCollect, false);
+			sceneConfigMapper.insert(sceneConfig);
+		}
+
+		// 未记录配置时修改
+		if (sceneConfig.getFlowAnalysis() == null || sceneConfig.getFlowAutoRun() == null) {
+			sceneConfig.setFlowAutoRun(false);
+			sceneConfig.setFlowAnalysis(enableFlowCollect);
+			sceneConfigMapper.updateById(sceneConfig);
+		}
+
+		SceneConfigRes sceneConfigRes = BeanUtils.copy(sceneConfig, SceneConfigRes.class);
+		return new BaseRsp<>(sceneConfigRes);
+	}
+
+	@ApiOperation("修改态势场景配置")
+	@PatchMapping("scene_config")
+	public BaseRsp<SceneConfigRes>
+			setSceneConfig(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
+
+		String sceneId = sceneConfigReq.getSceneId();
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		// 校验场景状态
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		// 场景配置不在时报错
+		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
+		if (sceneConfig == null) {
+			throw new BusinessException(ErrorCode.NOT_CONFIGURED);
+		}
+
+		// 校验场景是否允许流量事件推送
+		if (sceneConfigReq.getFlowAnalysis()
+				&& !topoHandlerService.enableFlowCollect(mpSceneData)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+
+		// 校验场景是否允许流量自动运行
+		if (sceneConfigReq.getFlowAutoRun() && !topoHandlerService.enableFlowAutoRun(mpSceneData)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+
+		// 更新数据库配置
+		sceneConfig.setFlowAutoRun(sceneConfigReq.getFlowAutoRun());
+		sceneConfig.setFlowAnalysis(sceneConfigReq.getFlowAnalysis());
+		sceneConfigMapper.updateById(sceneConfig);
+
+		// 推送场景配置
+		SceneConfigRes sceneConfigRes = BeanUtils.copy(sceneConfig, SceneConfigRes.class);
+		WsMessage<SceneConfigRes> wsMessage = new WsMessage<>(MessageType.SceneConfig.getDesc(),
+				sceneConfigRes);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+
+		return new BaseRsp<>(sceneConfigRes);
+	}
+
+	@ApiOperation("刷新态势场景数据")
+	@PostMapping("refresh_data")
+	public BaseRsp<RefreshDataRes>
+			refreshSceneData(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
+
+		String sceneId = sceneConfigReq.getSceneId();
+		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+
+		RefreshDataRes refreshDataRes = new RefreshDataRes();
+
+		// 场景未启动时返回false
+		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			return new BaseRsp<>(refreshDataRes);
+		}
+
+		// 自动运行流量
+		if (sceneConfigReq.getFlowAutoRun()) {
+			refreshDataRes.setFlowAutoRunResult(
+					topoHandlerService.flowAutoRun(sceneId, mpSceneData, null));
+		}
+
+		// 推送流量事件
+		if (sceneConfigReq.getFlowAnalysis()) {
+			FlowLogReq flowLogReq = new FlowLogReq(sceneId);
+			refreshDataRes.setFlowEvents(situationHandlerService.pushFlowEvents(flowLogReq));
+		}
+
+		// 推送节点链路状态
+		if (sceneConfigReq.getLinkStatus()) {
+			refreshDataRes.setLinkStatus(situationHandlerService.pushLinkStatus(sceneId));
+		}
+
+		return new BaseRsp<>(refreshDataRes);
+	}
+
+	@ApiOperation("清除态势场景数据")
+	@DeleteMapping("scene_data")
+	public BaseRsp<Boolean>
+			clearSceneConfig(@RequestBody @Validated SceneIdListReq sceneIdListReq) {
+
+		for (String sceneId : sceneIdListReq.getSceneIds()) {
+
+			MpSceneData mpSceneData;
+
+			try {
+				mpSceneData = topoHandlerService.getMpSceneData(sceneId);
+			} catch (Exception e) {
+				mpSceneData = null;
+			}
+
+			if (topoHandlerService.checkSceneStatus(mpSceneData)) {
+				continue;
+			}
+
+			dynamicSchemeService.clearSceneData(sceneId);
+		}
+
+		return new BaseRsp<>(true);
 	}
 }

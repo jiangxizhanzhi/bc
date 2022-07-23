@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
+import java.util.Date;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -26,4 +28,6 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	void batchEnd(@Param("businessTemplateId") String businessTemplateId);
 
 	TrainRecord getByRoomId(String roomId);
+
+	void updateEndTimeByRoomId(@Param("roomId") String roomId, @Param("endTime") Date endTime);
 }

@@ -83,6 +83,11 @@ public class EvalIndexRef extends BaseTable {
      */
     private Date endTime;
 
+    /**
+     * 评估进度
+     */
+    private Integer progress;
+
     public enum Type implements GenericEnum {
         SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分");
 
@@ -144,5 +149,21 @@ public class EvalIndexRef extends BaseTable {
         }
     }
 
+    public enum Progress implements GenericEnum {
+        NOT_START(1, "未开始"),
+        EXCEPTION(2, "异常"),
+        END(10, "结束");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        Progress(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
 
 }

@@ -1,12 +1,12 @@
 package com.cyberpeace.integratation.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.model.UserPageContext;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.model.UserPageContext;
 
 public interface RemoteUserService {
 
@@ -19,9 +19,6 @@ public interface RemoteUserService {
 	UserInfo doAuthentication(String token);
 
 	UserInfo getById(String userId);
-
-	// todo getList 未传入分页参数时, 会默认返回10条
-	List<UserInfo> getList();
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
@@ -48,5 +45,13 @@ public interface RemoteUserService {
 	List<String> idsByOrgId(String orgId);
 
 	Set<String> getUserPermission(String userId);
+
+	/**
+	 * 获取mp所有用户
+	 * @return
+	 */
+	List<UserInfo> getAllUsers();
+
+	Map<String, UserInfo> allUsers();
 
 }

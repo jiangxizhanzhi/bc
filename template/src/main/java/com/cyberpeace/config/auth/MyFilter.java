@@ -26,7 +26,9 @@ public class MyFilter implements Filter {
 		// 1、设置traceId
 		setTraceId(request);
 
+		long startTime = System.currentTimeMillis();
 		chain.doFilter(request, response);
+		log.debug("total time cost: " + (System.currentTimeMillis() - startTime));
 	}
 
 	@Override

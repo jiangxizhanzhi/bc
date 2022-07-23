@@ -232,7 +232,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	@Override
 	public Integer recordSituation(String userId, String userName, String roleId, String roleName) {
 		// 计算匹配度
-		Integer match = new Integer(rtksStatisticService.roleMatchPercent(roleId, userId));
+		Integer match = rtksStatisticService.roleMatchPercent(roleId, userId);
+		// record match
+		recordMatch(userId, roleId, match);
 		// 记录动态
 		logMoment(userId, userName, roleId, roleName, match);
 		return match;

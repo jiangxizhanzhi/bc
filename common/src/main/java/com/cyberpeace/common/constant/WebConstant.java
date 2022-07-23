@@ -12,6 +12,10 @@ public interface WebConstant {
 
 	String TOKEN = "token";
 
+	String COOKIE = "Cookie";
+
+	String ADMIN_TOKEN = "Admin-Token=";
+
 	String LANGUAGE = "Accept-Language";
 
 	String LANGUAGE_ZH = "zh-CN";

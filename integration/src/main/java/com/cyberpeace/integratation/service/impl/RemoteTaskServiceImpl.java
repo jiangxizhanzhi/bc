@@ -49,7 +49,10 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 		String targetUrl = REMOTE_USER_URL + "?taskId=" + taskId;
 
 		try {
-			return HttpClientUtil.rawGet(targetUrl, token, String.class);
+
+			String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
+			log.info(String.format("Try to get task users, token is %s", token));
+			return data;
 		} catch (Exception e) {
 			log.error("Failed to get task users.", e);
 			throw new ChatException(ErrorCode.USER_INFO_MISSING);
@@ -79,6 +82,8 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 
 		try {
 			String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
+			log.info(String.format("Try to get user tasks, user id is %s, user token is %s", userId,
+					token));
 			return JsonUtil.toJsonObjectArray(data, JSONObject.class);
 		} catch (Exception e) {
 			log.error("Failed to get task list.", e);

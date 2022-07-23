@@ -929,7 +929,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 获取用户组装
-		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		Map<String, UserInfo> userInfoMap;
+		if (userIds.size() >= CommonConstant.NINE_NINE_NINE) {
+			userInfoMap = remoteUserService.allUsers();
+		} else {
+			userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		}
+
 		DashboardInfo dashboardInfo = new DashboardInfo();
 		List<DashboardUser> friendUsers = Lists.newArrayList();
 

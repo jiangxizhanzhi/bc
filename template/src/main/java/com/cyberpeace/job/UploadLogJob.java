@@ -46,12 +46,12 @@ public class UploadLogJob {
             for (String logPath: logPaths) {
                 String logName = FileUtil.getFileName(logPath,true);
                 if(logName.startsWith("bc")){
-                    File log = new File(logPath);
+                    File logFile = new File(logPath);
                     JSONObject object = new JSONObject();
                     object.put("download_url",DOWNLOAD_LOG_URL+logName);
                     object.put("file_name",logName);
-                    object.put("file_size",(int)log.length());
-                    long lastModified = log.lastModified();
+                    object.put("file_size",(int)logFile.length());
+                    long lastModified = logFile.lastModified();
                     Date date = new Date(lastModified);
                     object.put("update_time",TimeUtil.format1(date));
                     logBos.add(object);

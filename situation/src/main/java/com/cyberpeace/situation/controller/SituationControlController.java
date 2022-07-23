@@ -172,7 +172,7 @@ public class SituationControlController {
 
 	@ApiOperation("导入动效方案")
 	@PostMapping("/scheme/import")
-	public BaseRsp<String> importScheme(@RequestBody @Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
+	public BaseRsp<String> importScheme(@Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
 		// 1. save file to temp dir
 		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(), ZipUtil.generatePath());
 		// 2. unzip file

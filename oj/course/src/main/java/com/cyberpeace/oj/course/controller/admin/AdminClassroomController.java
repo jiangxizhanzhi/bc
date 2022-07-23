@@ -2,7 +2,6 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import java.util.List;
 
-import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,14 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.oj.course.controller.req.ClassroomDeleteReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomListReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomMonitorReq;
-import com.cyberpeace.oj.course.controller.req.ClassroomReq;
+import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.service.ClassroomScoreService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
@@ -60,6 +58,9 @@ public class AdminClassroomController {
 
 	@Autowired
 	private GxTaskService gxTaskService;
+
+	@Autowired
+	private ClassroomScoreService classroomScoreService;
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")
@@ -201,6 +202,16 @@ public class AdminClassroomController {
 		ClassroomStatisticBo statisticBo = classroomService.classroomStatistic(classroomId,
 				authContext);
 		return new BaseRsp<>(statisticBo);
+	}
+
+	@ApiOperation("初始化任务关联的课程表分数数据")
+	@PostMapping("/init_score")
+	public BaseRsp<Boolean>
+			createClassRoom(@RequestBody @Validated ClassroomScoreReq classroomScoreReq) {
+		Boolean result = classroomScoreService.initTaskClassroom(classroomScoreReq.getTaskId(),
+				classroomScoreReq.getClassroomId());
+
+		return new BaseRsp<>(result);
 	}
 
 }

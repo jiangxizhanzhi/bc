@@ -287,7 +287,8 @@ public class TeamTrainRoomController {
 		// localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
 
 		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
-		String teamTemplateName = businessTemplateMapper.selectById(teamTemplate.getBusinessTemplateId()).getName();
+		String teamTemplateName = businessTemplateMapper
+				.selectById(teamTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
 				LogContent.SCENE_FORMAT.format(teamTemplateName));
@@ -370,9 +371,11 @@ public class TeamTrainRoomController {
 
 		String roomId = opsReq.getRoomId();
 
-		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId()).getTeamTemplateName();
+		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId())
+				.getTeamTemplateName();
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				OperationType.DELETE, teamRoomService.getById(roomId).getName(),
+				OperationType.DELETE, teamRoom.getName(),
 				LogContent.SCENE_FORMAT.format(teamTemplateName));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -386,6 +389,16 @@ public class TeamTrainRoomController {
 				trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 			}
 		});
+
+		// 不放入事务中，删除失败或成功均可
+		if (StringUtils.isNotBlank(teamRoom.getCopyedTopoId())) {
+			try {
+				remoteTopoService.deleteById(teamRoom.getCopyedTopoId());
+			} catch (Exception e) {
+				log.error("Team train delete topo failed! team_id=[{}], topo_id=[{}], catch error:",
+						teamRoom.getResourceId(), teamRoom.getCopyedTopoId(), e);
+			}
+		}
 
 		return new BaseRsp<>();
 	}

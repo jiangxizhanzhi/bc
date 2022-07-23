@@ -94,18 +94,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	public List<UserInfo> getList() {
-		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
-				.get("list");
-
-		List<UserInfo> userInfoList = new ArrayList<>();
-		for (Object object : jsonArray) {
-			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
-		}
-		return userInfoList;
-	}
-
-	@Override
 	public JSONObject getList(Long page, Long perPage, String pattern, String organization) {
 		String targetUrl = USERINFO_LIST_URL;
 		if (!targetUrl.endsWith("?")) {
@@ -232,6 +220,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 获取用户可见的菜单
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -252,8 +241,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		return getList(null, 0L, null, null).getJSONArray("list").toJavaList(UserInfo.class);
 	}
 
+	@Override
+	public Map<String, UserInfo> allUsers() {
+		List<UserInfo> userInfos = getList(null, 0L, null, null).getJSONArray("list")
+				.toJavaList(UserInfo.class);
+
+		return StreamApiUtils.toMap(userInfos, UserInfo::getUserId, userInfo -> userInfo);
+	}
+
 	/**
 	 * 组织用户数据转
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -274,6 +272,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 用户数据转换
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -310,6 +309,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * mp 用户模型到本地到映射
+	 *
 	 * @param mpAuthenticatedUser
 	 * @return
 	 */

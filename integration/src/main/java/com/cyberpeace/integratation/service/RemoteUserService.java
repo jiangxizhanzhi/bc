@@ -20,9 +20,6 @@ public interface RemoteUserService {
 
 	UserInfo getById(String userId);
 
-	// todo getList 未传入分页参数时, 会默认返回10条
-	List<UserInfo> getList();
-
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);
@@ -54,5 +51,7 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	List<UserInfo> getAllUsers();
+
+	Map<String, UserInfo> allUsers();
 
 }

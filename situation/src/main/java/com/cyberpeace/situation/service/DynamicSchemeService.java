@@ -45,4 +45,6 @@ public interface DynamicSchemeService {
 
     void clearRoomSchedule(String sceneId);
 
+    void validMedia(DynamicSchemeReq dynamicSchemeReq);
+
 }

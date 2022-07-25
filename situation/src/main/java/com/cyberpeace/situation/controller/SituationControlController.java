@@ -110,6 +110,7 @@ public class SituationControlController {
     @PostMapping("/run_dynamic_scheme")
     public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
         dynamicSchemeService.validStage(dynamicSchemeReq);
+        dynamicSchemeService.validMedia(dynamicSchemeReq);
         dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
         return new BaseRsp<>();
     }

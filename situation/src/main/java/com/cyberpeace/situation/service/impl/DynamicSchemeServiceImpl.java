@@ -481,6 +481,22 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         pushAttackScheduleToRoom(wsAttackScheduleList,sceneId);
     }
 
+    @Override
+    public void validMedia(DynamicSchemeReq dynamicSchemeReq) {
+        int startTime = 0;
+        int endTime = 0;
+        for (DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
+            for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+                if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+                    if(startTime < endTime){
+                        throw new BusinessException(ErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
+                    }
+                    endTime = startTime + attackMessageReq.getDurationTime();
+                }
+                startTime += attackMessageReq.getIntervalTime();
+            }
+        }
+    }
 
 
     @Cacheable(cacheNames = "getElementIds", key = "#sceneId")

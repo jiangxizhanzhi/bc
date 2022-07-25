@@ -133,4 +133,7 @@ public interface ErrorCode {
 	/** 动效描述不合法 */
 	String INVALID_DYNAMIC_DESCRIPTION = "100046";
 
+	/** 多个多媒体动效存在时间重叠 */
+	String MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP = "100047";
+
 }

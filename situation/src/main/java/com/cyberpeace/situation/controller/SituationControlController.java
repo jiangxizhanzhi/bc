@@ -64,6 +64,7 @@ public class SituationControlController {
     @PatchMapping("/scheme")
     public BaseRsp<DynamicSchemeReq> updateDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq){
         dynamicSchemeService.validStage(dynamicSchemeReq);
+        dynamicSchemeService.validMedia(dynamicSchemeReq);
         DynamicSchemeReq dynamicSchemeReq1 = dynamicSchemeService.updateDynamicScheme(dynamicSchemeReq);
         return new BaseRsp<>(dynamicSchemeReq1);
     }

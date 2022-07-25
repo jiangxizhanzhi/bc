@@ -145,26 +145,4 @@ public class WebClassroomController {
 		return new BaseRsp<>(dashboardUsers);
 	}
 
-	@ApiOperation("批量启动测试")
-	@GetMapping("/batch/test")
-	public BaseRsp<Boolean> batchStartTest(String key) {
-		List<String> strings = Lists.newArrayList("1", "2", "3", "4", "5", "6", "7", "8", "9");
-		BatchStartSceneHandler sceneHandler = new BatchStartSceneHandler(null, null, null);
-		if (null == map.putIfAbsent(key, sceneHandler)) {
-			sceneHandler.batchStart();
-		}
-
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("任务完成")
-	@GetMapping("/batch/test/finish")
-	public BaseRsp<Boolean> finish(@RequestParam("key") String key,
-			@RequestParam("value") String value) {
-		map.get(key).finish(value);
-		return new BaseRsp<>(true);
-	}
-
-	private Map<String, BatchStartSceneHandler> map = new ConcurrentHashMap<>();
-
 }

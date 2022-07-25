@@ -4125,15 +4125,7 @@ VALUES (133, 'T0164', '进行网络空间防御趋势分析和报告。', '2021-
 INSERT INTO `rtks_user_role` (`id`, `user_id`, `role_id`, `role_name`, `create_time`, `update_time`, `user_name`)
 VALUES (7, '42c0d228f9a6424eb4133459beaf0f2e', '542fc3e2caf0fa9b4935432ffe4daafa', '安全运维工程师', '2021-10-15 13:39:59',
         '2021-10-15 13:39:59', '产品部');
-INSERT INTO `rtks_user_role` (`id`, `user_id`, `role_id`, `role_name`, `create_time`, `update_time`, `user_name`)
-VALUES (8, '3f655d87112f4ae094bbaf70830e20aa', 'eca75b7f8a701bc544911330f7f7c7b2', 'Program Manager',
-        '2021-10-16 14:49:57', '2021-12-28 10:34:19', '管理员');
-INSERT INTO `rtks_user_role` (`id`, `user_id`, `role_id`, `role_name`, `create_time`, `update_time`, `user_name`)
-VALUES (9, 'b93f5f362445400ebd1ca3277ac086d3', '9d6c15369048cbd3575bf9b3cae0c502',
-        'Authorizing Official/Designating  Representative', '2021-12-24 16:08:12', '2021-12-24 16:08:23', 'liuyc123');
-INSERT INTO `rtks_user_role` (`id`, `user_id`, `role_id`, `role_name`, `create_time`, `update_time`, `user_name`)
-VALUES (10, '219d28bbc0a342a193fad94c2d9ee3c2', 'e25dc8c9d15ddd621f16616083d68726', '安全开发工程师', '2022-01-06 18:42:24',
-        '2022-01-07 16:38:16', 'sred');
+
 
 INSERT INTO `cr_mission_category`
 VALUES (1, '05b739fc686a073756399f79c34039b5', '情报侦查研判', 'Intelligence Investigation');

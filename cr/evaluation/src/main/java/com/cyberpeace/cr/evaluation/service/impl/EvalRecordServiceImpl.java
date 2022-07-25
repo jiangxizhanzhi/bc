@@ -7,43 +7,52 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
-import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
+import com.cyberpeace.cr.evaluation.service.context.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Resource;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -94,15 +103,44 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
     @Autowired
+    private MpEnvService mpEnvService;
+
+    @Autowired
     private EvalTaskMapper evalTaskMapper;
+
+    @Autowired
+    private EvalTaskStepService evalTaskStepService;
+
+    @Autowired
+    @Lazy
+    private EvalTemplateService evalTemplateService;
+
+    @Autowired
+    private LocalSceneService localSceneService;
+
+    @Autowired
+    private EvalSystemService evalSystemService;
+
+    @Resource
+    private EvalIndexMapper evalIndexMapper;
+
+    @Resource
+    private EvalCollectionMapper evalCollectionMapper;
+
+    @Autowired
+    private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
+
+    @Autowired
+    private CrConstantsService crConstantsService;
+
+    @Autowired
+    private EvalVariableRefMapper evalVariableRefMapper;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
     public void isExist(EvalRecordAddReq requestData) {
-        LambdaQueryChainWrapper<EvalRecord> querySet = lambdaQuery()
-                .eq(EvalRecord::getTaskId, requestData.getTaskId())
-                .eq(EvalRecord::getName, requestData.getName());
+        LambdaQueryChainWrapper<EvalRecord> querySet = lambdaQuery().eq(EvalRecord::getTaskId, requestData.getTaskId()).eq(EvalRecord::getName, requestData.getName());
 
         if (requestData.getResourceId() != null) {
             querySet = querySet.ne(EvalRecord::getResourceId, requestData.getResourceId());
@@ -115,6 +153,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     /**
      * 获取测评任务实例
+     *
      * @param taskId 任务id(roomId)
      * @return EvalTask
      */
@@ -127,8 +166,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 校验用户权限
-        if (!Objects.equals(evalTask.getCreateUserId(),
-                UserInfoContext.getUserContext().getUserId())) {
+        if (!Objects.equals(evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId())) {
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
         }
 
@@ -164,9 +202,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         Map<String, EvalIndexRef> fullIndexesMap = fullIndexes.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
 
-        Map<String, EvalVariableRef> fullVariablesMap = evalVariableRefService.lambdaQuery().eq(
-                EvalVariableRef::getRecordId, recordRsp.getResourceId()
-        ).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+        Map<String, EvalVariableRef> fullVariablesMap = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, recordRsp.getResourceId()).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
         for (EvalIndexRef evalIndexRef : fullIndexes) {
             if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
@@ -199,9 +235,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                 thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
             }
-            evalRecordIndexContext.getVariables().forEach(
-                    evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext)
-            );
+            evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
 
         // 获取一、二、三级指标
@@ -218,9 +252,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 四级指标
         List<EvalAggregation> evalAggregations = evalAggregationService.lambdaQuery().in(EvalAggregation::getEvalIndicatorId, evalIndicatorIds).list();
         // 五级指标
-        List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty()
-                ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list()
-                : Lists.newArrayList();
+        List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty() ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list() : Lists.newArrayList();
 
         // 请求体变量项数量与db获取体系下变量项数量一致
         if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
@@ -239,9 +271,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         usingAlgorithmIds.addAll(thirdRelationList.stream().map(EvalIndicator::getAggregatingAlgorithmId).collect(Collectors.toList()));
 
         // 查询使用算法生成Map
-        Map<String, EvalAlgorithm> evalAlgorithmMap = evalAlgorithmService.lambdaQuery().in(
-                EvalAlgorithm::getResourceId, usingAlgorithmIds
-        ).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithm -> evalAlgorithm));
+        Map<String, EvalAlgorithm> evalAlgorithmMap = evalAlgorithmService.lambdaQuery().in(EvalAlgorithm::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithm::getResourceId, evalAlgorithm -> evalAlgorithm));
         Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = Maps.newHashMap();
 
         // 生成变量项数据（五级）
@@ -278,9 +308,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             variableIdsMap.put(evalCollection.getResourceId(), evalVariableRef.getResourceId());
         });
 
-        Map<String, EvalIndicator> thirdRelationMap = thirdRelationList.stream().collect(
-                Collectors.toMap(EvalIndicator::getResourceId, evalIndicator -> evalIndicator)
-        );
+        Map<String, EvalIndicator> thirdRelationMap = thirdRelationList.stream().collect(Collectors.toMap(EvalIndicator::getResourceId, evalIndicator -> evalIndicator));
 
         // 生成聚合项数据（四级）
         List<EvalIndexRef> indexRefs = Lists.newArrayList();
@@ -347,21 +375,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setSpecialistAttrValue(evalIndicator.getAttributeValue());
                 evalIndexRef.setSpecialistValue(thirdSpecialistMap.get(evalIndex.getResourceId()));
                 if (evalIndexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
-                            evalIndexRef.getSpecialistType(),
-                            evalIndexRef.getSpecialistAttr(),
-                            evalIndexRef.getSpecialistAttrValue(),
-                            evalIndexRef.getSpecialistValue()
-                    ));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 }
             }
 
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
 
-            evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(
-                    nextIds, String.class
-            ).stream().map(evalIndexIdsMap::get).collect(Collectors.toList())));
+            evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(nextIds, String.class).stream().map(evalIndexIdsMap::get).collect(Collectors.toList())));
 
             indexRefs.add(evalIndexRef);
             evalIndexIdsMap.put(evalIndex.getResourceId(), evalIndexRef.getResourceId());
@@ -392,8 +413,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return get(evalRecord.getResourceId());
     }
 
-    private EvalAlgorithmRef generateAlgorithmRef(
-            String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
+    private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
         // 已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回
         if (evalAlgorithmRefMap.containsKey(algorithmId)) {
             return evalAlgorithmRefMap.get(algorithmId);
@@ -421,11 +441,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return create(requestData);
         }
 
-        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery()
-                .eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId())
-                .eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode())
-                .list()
-                .stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
         // 重复数据仅编辑一次
         Set<String> indexesSet = Sets.newHashSet();
         Set<String> variablesSet = Sets.newHashSet();
@@ -440,12 +456,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setType(evalRecordIndexContext.getType());
                 if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
                     evalIndexRef.setSpecialistValue(evalRecordIndexContext.getSpecialist().getValue());
-                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(
-                            evalIndexRef.getSpecialistType(),
-                            evalIndexRef.getSpecialistAttr(),
-                            evalIndexRef.getSpecialistAttrValue(),
-                            evalIndexRef.getSpecialistValue()
-                    ));
+                    evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
                     evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
                 } else {
                     evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
@@ -479,10 +490,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return get(newEvalRecord.getResourceId());
     }
 
-    private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef,
-                                                         Map<String, EvalIndexRef> fullIndexesMap,
-                                                         Map<String, EvalVariableRef> fullVariablesMap,
-                                                         Boolean isFull) {
+    private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> fullIndexesMap, Map<String, EvalVariableRef> fullVariablesMap, Boolean isFull) {
         EvalSystemIndexesContext evalSystemIndexesContext = BeanUtils.copy(evalIndexRef, EvalSystemIndexesContext.class);
         evalSystemIndexesContext.setChildren(Lists.newArrayList());
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
@@ -520,9 +528,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalSystemIndexesContext;
     }
 
-    private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef,
-                                                         Map<String, EvalIndexRef> fullIndexesMap,
-                                                         Map<String, EvalVariableRef> fullVariablesMap) {
+    private EvalSystemIndexesContext generateNextIndexes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> fullIndexesMap, Map<String, EvalVariableRef> fullVariablesMap) {
 
         return generateNextIndexes(evalIndexRef, fullIndexesMap, fullVariablesMap, false);
     }
@@ -553,13 +559,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     private void deleteRelation(List<String> recordIds) {
         // todo 算法, 同步数据, 计算结果一并删除
-        evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(
-                EvalIndexRef::getRecordId, recordIds
-        ).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));
+        evalIndexRefService.removeByIds(evalIndexRefService.lambdaQuery().in(EvalIndexRef::getRecordId, recordIds).list().stream().map(EvalIndexRef::getResourceId).collect(Collectors.toList()));
 
-        evalVariableRefService.removeByIds(evalVariableRefService.lambdaQuery().in(
-                EvalVariableRef::getRecordId, recordIds
-        ).list().stream().map(EvalVariableRef::getResourceId).collect(Collectors.toList()));
+        evalVariableRefService.removeByIds(evalVariableRefService.lambdaQuery().in(EvalVariableRef::getRecordId, recordIds).list().stream().map(EvalVariableRef::getResourceId).collect(Collectors.toList()));
     }
 
     @Override
@@ -602,11 +604,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return;
         }
 
-        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery()
-                .in(EvalVariableRef::getResourceId, variableIds)
-                .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode())
-                .ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode())
-                .list();
+        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode()).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode()).list();
 
         // 运行中变量项为空, 退出执行下一步
         if (evalVariableRefList.isEmpty()) {
@@ -620,9 +618,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             usingAlgorithmIds.add(evalVariableRef.getMatchAlgorithmId());
             usingAlgorithmIds.add(evalVariableRef.getMarkAlgorithmId());
         });
-        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery()
-                .in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list()
-                .stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
+        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery().in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
 
         evalVariableRefList.forEach(evalVariableRef -> {
             // 采集变量项算法依次执行
@@ -653,15 +649,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 指标项使用的算法
         List<String> usingAlgorithmIds = evalIndexRefs.stream().map(EvalIndexRef::getAlgorithmId).collect(Collectors.toList());
-        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery()
-                .in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list()
-                .stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
+        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap = evalAlgorithmRefService.lambdaQuery().in(EvalAlgorithmRef::getResourceId, usingAlgorithmIds).list().stream().collect(Collectors.toMap(EvalAlgorithmRef::getResourceId, evalAlgorithmRef -> evalAlgorithmRef));
 
         // 四级指标使用的变量项
-        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery()
-                .eq(EvalVariableRef::getRecordId, evalRecord.getResourceId())
-                .list()
-                .stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, evalRecord.getResourceId()).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
         evalIndexRefs.forEach(evalIndexRef -> {
             EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMap.get(evalIndexRef.getAlgorithmId());
@@ -690,10 +681,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 获取需要同步数据的变量项
-        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery()
-                .in(EvalVariableRef::getResourceId, variableIds)
-                .in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode()))
-                .list();
+        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode())).list();
 
         // 没有需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {
@@ -723,15 +711,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             collectionEventPageContext.setRequestId(IDGeneratorUtil.getID());
 
             // 查询当前已同步数据量, 生成页码
-            int probeDataCount = evalProbeDataService.lambdaQuery()
-                    .eq(EvalProbeData::getSceneId, evalTask.getMpSceneId())
-                    .eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId())
-                    .eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId())
-                    .count();
+            int probeDataCount = evalProbeDataService.lambdaQuery().eq(EvalProbeData::getSceneId, evalTask.getMpSceneId()).eq(EvalProbeData::getDeviceId, evalVariableRef.getDeviceId()).eq(EvalProbeData::getProbeId, evalVariableRef.getProbeId()).count();
             if (!SqlHelper.retBool(probeDataCount)) {
                 collectionEventPageContext.setPage(1L);
             } else {
-                int scale = - (Integer.toString(Math.toIntExact(onceProbeDataSize)).length() - 1);
+                int scale = -(Integer.toString(Math.toIntExact(onceProbeDataSize)).length() - 1);
                 // 数据量向上取整, 生成当前页码
                 int count = new BigDecimal(probeDataCount).setScale(scale, BigDecimal.ROUND_UP).intValue();
                 collectionEventPageContext.setPage((count / onceProbeDataSize) + 1);
@@ -758,11 +742,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void exeCollectionEvent(EvalRecord evalRecord,
-                                    EvalVariableRef evalVariableRef,
-                                    CollectionEventPageContext collectionEventPageContext,
-                                    Map<String, String> ipMap,
-                                    Boolean isFirstCall) {
+    private void exeCollectionEvent(EvalRecord evalRecord, EvalVariableRef evalVariableRef, CollectionEventPageContext collectionEventPageContext, Map<String, String> ipMap, Boolean isFirstCall) {
 
         List<EvalProbeData> evalProbeDataList = Lists.newArrayList();
 
@@ -780,7 +760,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
                 }
                 collectionEventPageContext.setPage(currentPage);
-            // 非es查询的探针类型, 根据分页入参`page`、`per_page`获取数据
+                // 非es查询的探针类型, 根据分页入参`page`、`per_page`获取数据
             } else {
                 collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
             }
@@ -837,6 +817,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     /**
      * 获取场景下节点ip
+     *
      * @param mpSceneId MP场景id
      * @return Map
      */
@@ -1019,10 +1000,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
 
         Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefs.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
-        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery()
-                .eq(EvalVariableRef::getRecordId, recordId)
-                .list()
-                .stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, recordId).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
 
         result.setIndexes(Lists.newArrayList());
         for (EvalIndexRef evalIndexRef : evalIndexRefs) {
@@ -1053,5 +1031,244 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             result.setId(item.getCode());
             return result;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public String dumpEvalRecordPath(String resourceId, String taskId) {
+        String destPdfPath;
+        JSONObject data = getEvalRecordJsonObject(resourceId, taskId);
+        String destHtmlPath = String.format("%s%s-%s.html",
+                AttachmentPath.EVAL_HTML_TEMPLATE.getDesc(), resourceId,
+                UserInfoContext.getUserContext().getUserId());
+        try {
+            HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.EVAL, destHtmlPath);
+            destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+                    + "pdf";
+            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if(!new File(destHtmlPath).delete()){
+                log.error("failed to delete file:{}", destHtmlPath);
+            }
+        }
+        return destPdfPath;
+    }
+
+    private JSONObject getEvalRecordJsonObject(String resourceId, String taskId) {
+        JSONObject data = new JSONObject();
+
+        EvalRecord evalRecord = getById(resourceId);
+        String templateId = evalTaskMapper.getTemplateIdByTaskId(evalRecord.getTaskId());
+        EvalTemplate template = evalTemplateService.getById(templateId);
+        List<String> evalIndicatorIdList = new ArrayList<>();
+        EvalTask evalTask = evalTaskMapper.selectById(taskId);
+
+        if (StringUtils.isEmpty(evalRecord.getTaskId()) || StringUtils.isEmpty(templateId)) {
+            throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
+        }
+        data.put("title", getTitle(template.getName()));
+        JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
+        String topoLogo = topoData.getString("logo");
+        if (StringUtils.isEmpty(topoLogo)) {
+            throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
+        }
+        evalRecord.getSystemId();
+        data.put("topoLogo", mpEnvService.getMpHost() + topoLogo);
+        //设置测试基本信息
+        data.put("taskName", evalTask.getTaskName());
+        data.put("name", evalRecord.getName());
+        data.put("templateName", template.getName());
+        data.put("recordDescription", evalRecord.getDescription());
+        data.put("templateDescription",template.getDescription());
+        data.put("score", evalRecord.getScore());
+        data.put("endTime", evalRecord.getEndTime());
+        data.put("evalTime", evalRecord.getEvalTime());
+        data.put("startTime", evalRecord.getStartTime());
+        data.put("enableRecording", changeRecordStatus(template.getEnableRecording()));
+        List<CrConstantsConfig> constants = crConstantsService.getByType(4);
+        List<CodeNameRsp> rsp = StreamApiUtils.map(constants,
+                constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName()));
+        if (CollectionUtils.isNotEmpty(rsp)) {
+            for (CodeNameRsp codeNameRsp : rsp) {
+                if (codeNameRsp.getCode().equals(template.getCategoryCode())) {
+                    data.put("categoryCode", codeNameRsp.getName());
+                }
+            }
+        }
+        //测试步骤
+        data.put("steps", evalTaskStepService.getTaskSteps(taskId));
+        //指标体系结构和评估结果数据
+        EvalSystem evalSystem = evalSystemService.getById(evalRecord.getSystemId());
+        convertEvalSystemToEvalSystemRsp(evalSystem, evalIndicatorIdList);
+        EvalRecordResultRsp result = result(resourceId);
+        List<EvalSystemIndexesContext> indexes = result.getIndexes();
+        if (CollectionUtils.isNotEmpty(indexes)) {
+            String variableId = indexes.get(0).getResourceId();
+            data.put("evalSystem", parseGraph(result, variableId));
+        }
+        List<EvalCollectionContextRsp> evalCollection = getEvalCollection(evalIndicatorIdList);
+        //变量项算法
+        data.put("evalCollection", evalCollection);
+        List<EvalVariableGraphListRsp> evalVariableGraphListRspList = new ArrayList<>();
+        List<String> variableIdByRecordId = evalVariableRefMapper.getVariableIdByRecordId(resourceId);
+        for (String variableId : variableIdByRecordId) {
+            evalVariableGraphListRspList.add(changeGraph(variableId));
+        }
+        //折线图
+        data.put("evalCollectionLine", evalVariableGraphListRspList);
+        //添加词条
+        data.put("locale", getTemplateI18n());
+        return data;
+    }
+
+    private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem, List<String> evalIndicatorIdList) {
+        if (evalSystem == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
+        evalSystemRsp.setEvalSystemId(evalSystem.getResourceId());
+        evalSystemRsp.setFirstIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode(), evalIndicatorIdList));
+        evalSystemRsp.setSecondIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.SECOND.getCode(), evalIndicatorIdList));
+        evalSystemRsp.setThirdIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.THIRD.getCode(), evalIndicatorIdList));
+
+        return evalSystemRsp;
+    }
+
+    private List<IndexContext> getIndexes(String systemId, Integer level, List<String> evalIndicatorIdList) {
+
+        List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(systemId, level);
+
+        List<IndexContext> indexContextList = evalIndexList.stream().map(evalIndex -> {
+            IndexContext indexContext = BeanUtils.copy(evalIndex, IndexContext.class);
+
+            indexContext.setIndexId(evalIndex.getResourceId());
+            indexContext.setChildrenIds(JsonUtil.toJsonObjectArray(evalIndex.getChildrenIds(), String.class));
+            EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(evalIndex.getAggregatingAlgorithmId());
+            if (evalAlgorithm != null) {
+                indexContext.setAlgorithmId(evalAlgorithm.getName());
+            }
+            if (StringUtils.isNotEmpty(evalIndex.getEvalIndicatorId())) {
+                evalIndicatorIdList.add(evalIndex.getEvalIndicatorId());
+            }
+            indexContext.setParams(evalIndex.getAggregatingAlgorithmParams());
+            return indexContext;
+        }).collect(Collectors.toList());
+
+        return indexContextList;
+    }
+
+    private List<EvalCollectionContextRsp> getEvalCollection(List<String> evalIndicatorIdList) {
+        List<EvalCollectionContextRsp> evalCollectionContextList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(evalIndicatorIdList)) {
+            evalCollectionContextList = evalCollectionMapper.selectByEvalIndicatorIds(evalIndicatorIdList).stream().map(evalCollectionContextRsp -> {
+                evalCollectionContextRsp.setDetectionAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getDetectionAlgorithmId()).getName());
+                evalCollectionContextRsp.setFormatAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getFormatAlgorithmId()).getName());
+                evalCollectionContextRsp.setScoreAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getScoreAlgorithmId()).getName());
+                return evalCollectionContextRsp;
+            }).collect(Collectors.toList());
+        }
+        return evalCollectionContextList;
+    }
+
+    private JSONObject getTemplateI18n() {
+        JSONObject jsonObject = new JSONObject();
+
+        for (TrainingReport.TemplateI18n enumData : TrainingReport.TemplateI18n.values()) {
+            jsonObject.put(enumData.name(), enumData.getMsg());
+        }
+
+        return jsonObject;
+    }
+
+    private String getTitle(String name) {
+
+        if (!CommonContext.isChinese()) {
+            return "Cyber Exercise Report of " + name;
+        } else {
+            return name + "评估报告";
+        }
+    }
+
+    private EvalRecordResultIndexRsp parseGraph(EvalRecordResultRsp result, String variableId){
+        List<EvalSystemIndexesContext> indexes = result.getIndexes();
+        EvalRecordResultIndexRsp evalRecordResultIndexRsp = new EvalRecordResultIndexRsp();
+        if (CollectionUtils.isNotEmpty(indexes)) {
+            evalRecordResultIndexRsp = evalIndexRefService.resultIndex(variableId);
+            getOtherResult(evalRecordResultIndexRsp);
+            setParentId(evalRecordResultIndexRsp);
+        }
+        return  evalRecordResultIndexRsp;
+    }
+
+    private void getOtherResult(EvalRecordResultIndexRsp evalRecordResultIndexRsp){
+        List<EvalRecordResultIndexRsp> children = evalRecordResultIndexRsp.getChildren();
+        if (CollectionUtils.isNotEmpty(children)) {
+            for (EvalRecordResultIndexRsp child : children) {
+                if (child.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
+                    EvalRecordResultIndexRsp childEvalRecordResultIndexRsp = evalIndexRefService.resultIndex(child.getResourceId());
+                    child.setChildren(childEvalRecordResultIndexRsp.getChildren());
+                }else {
+                    getOtherResult(child);
+                }
+            }
+        }
+    }
+
+    private void setParentId(EvalRecordResultIndexRsp evalRecordResultIndexRsp) {
+        if (StringUtils.isNotEmpty(evalRecordResultIndexRsp.getNextIds())) {
+            List<EvalRecordResultIndexRsp> children = evalRecordResultIndexRsp.getChildren();
+            String resourceId = evalRecordResultIndexRsp.getResourceId();
+            String algorithmId = evalRecordResultIndexRsp.getAlgorithmId();
+            if (StringUtils.isNotEmpty(algorithmId)) {
+                EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(algorithmId);
+                if (evalAlgorithm != null) {
+                    evalRecordResultIndexRsp.setAlgorithmName(evalAlgorithm.getName());
+                }
+            }
+            for (EvalRecordResultIndexRsp evalRecordResultIndex : children) {
+                evalRecordResultIndex.setParentId(resourceId);
+                setParentId(evalRecordResultIndex);
+            }
+        }
+    }
+
+    private EvalVariableGraphListRsp changeGraph(String variableId){
+        EvalVariableGraphListRsp result = new EvalVariableGraphListRsp();
+        result.setTime(Lists.newArrayList());
+        result.setValue(Lists.newArrayList());
+        result.setIsMatched(Lists.newArrayList());
+
+        List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
+                .eq(EvalVariableRefProbeData::getVariableId, variableId).list();
+        evalVariableRefProbeDataList.sort(Comparator.comparing(EvalVariableRefProbeData::getTime));
+
+        evalVariableRefProbeDataList.forEach(item -> {
+            result.setVariableId(item.getVariableId());
+            result.getTime().add(item.getTime());
+            // todo 仅判断一次
+            if (StringUtils.isNumeric(item.getFormattedValue())) {
+                result.getValue().add(Integer.parseInt(item.getFormattedValue()));
+                result.getIsMatched().add(item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode()));
+            } else {
+                boolean isMatched = item.getStatus().equals(EvalVariableRefProbeData.Status.MATCHED.getCode());
+                result.getValue().add(isMatched ? 1 : 0);
+                result.getIsMatched().add(isMatched);
+            }
+            result.setVariableName(evalVariableRefService.getById(item.getVariableId()).getName());
+        });
+        return result;
+    }
+    private String changeRecordStatus(Boolean enableRecording){
+        if (CommonContext.isChinese()) {
+            if (enableRecording){
+                return CommonConstant.RIGHT;
+            }else {
+                return CommonConstant.NO;
+            }
+        }else {
+            return String.valueOf(enableRecording);
+        }
     }
 }

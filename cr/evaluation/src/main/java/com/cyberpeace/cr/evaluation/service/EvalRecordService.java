@@ -102,4 +102,10 @@ public interface EvalRecordService extends IService<EvalRecord> {
 
     List<EvalRoomIntPairRsp> recordStatusEnum();
 
+    /**
+     * 导出测评报告pdf
+     * @param resourceId
+     * @return
+     */
+    String dumpEvalRecordPath(String resourceId, String taskId);
 }

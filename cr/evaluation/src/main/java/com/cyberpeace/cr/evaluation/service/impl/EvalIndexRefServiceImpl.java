@@ -59,23 +59,23 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
         List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
         List<Integer> scoreList = Lists.newArrayList();
 
-        // 仅获取正常运行结束的指标/变量项分值，执行失败项目（progress非END）在下一级运算中忽略
+        // 仅获取正常运行结束的指标/变量项分值，执行失败项目（progress为EXCEPTION）在下一级运算中忽略
         if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
             for (String nextId: nextIds) {
                 EvalVariableRef evalVariableRef = evalVariableRefMap.get(nextId);
-                if (evalVariableRef.getProgress().equals(EvalVariableRef.Progress.END.getCode())) {
+                if (!evalVariableRef.getProgress().equals(EvalVariableRef.Progress.EXCEPTION.getCode())) {
                     scoreList.add(evalVariableRef.getScore());
                 }
             }
         } else {
             for (String nextId: nextIds) {
                 EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
-                if (evalIndexRef1.getProgress().equals(EvalIndexRef.Progress.END.getCode())) {
+                if (!evalIndexRef1.getProgress().equals(EvalIndexRef.Progress.EXCEPTION.getCode())) {
                     scoreList.add(evalIndexRef1.getScore());
                 }
             }
         }
-        // todo 次级全部执行失败情况下，是否需要继续向下执行？
+        // todo 次级全部执行失败情况下（scoreList为空），是否需要继续向下执行？
         // 正常情况下, scoreList应均为0~100整数，包含`null`为专家评分下未进行计算变量项(五级指标)，无法进行下一步聚合计算，跳过
         if (scoreList.contains(null)) {
             return;

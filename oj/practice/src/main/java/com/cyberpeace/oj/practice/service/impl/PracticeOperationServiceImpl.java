@@ -823,7 +823,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 校验实操习题标题
 		practiceValidateHandler.validateOperationTitleExist(practiceSet.getResourceId(),
 				operation.getTitle());
-		practiceValidateHandler.validateAttachmentLength(operation.getDynamicFlag(), fileNames);
+		practiceValidateHandler.validateAttachmentLength(operation.getTitle(),
+				operation.getDynamicFlag(), fileNames);
 
 		// 附件处理
 		List<String> attachments = FileUtil.listDirs(attachmentPath, true);
@@ -1151,15 +1152,18 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	private String handlerMultiContent(String filedContent) {
 
-		if (StringUtils.isBlank(filedContent)) {
+		if (StringUtils.isBlank(filedContent)
+				|| filedContent.equals(CommonConstant.SHORT_TRANSVERSE_LINE)) {
 			return JsonUtil.arrayToString(Lists.newArrayList());
 		}
 
 		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		List<String> content = StreamApiUtils.filter(Arrays.asList(multiContent),
-				knowledge -> StringUtils.isNotBlank(knowledge));
+		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent),
+				content -> content.trim());
+		List<String> result = StreamApiUtils.filter(contents,
+				content -> StringUtils.isNotBlank(content));
 
-		return JsonUtil.arrayToString(content);
+		return JsonUtil.arrayToString(result);
 	}
 
 	/**

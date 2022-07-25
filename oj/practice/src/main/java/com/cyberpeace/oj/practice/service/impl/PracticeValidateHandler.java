@@ -250,10 +250,11 @@ public class PracticeValidateHandler {
 		}
 	}
 
-	public void validateAttachmentLength(Integer dynamicFlag, List<String> attachments) {
+	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
+			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
-				&& attachments.size() > CommonConstant.ZERO) {
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY);
+				&& attachments.size() > CommonConstant.ONE) {
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY, practiceName);
 		}
 	}
 }

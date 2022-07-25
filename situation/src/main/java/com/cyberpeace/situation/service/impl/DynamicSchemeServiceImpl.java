@@ -126,12 +126,17 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     @Override
     public DynamicSchemeReq updateDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
         DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq,DynamicScheme.class);
-        List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
+
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                List<AttackMessageReq> updateAttackMessageReqList = new ArrayList<>();
+                List<AttackMessageReq> addAttackMessageReqList = new ArrayList<>();
+                List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
+
                 for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
-                    HashSet<String> description = new HashSet<>(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getDescription).collect(Collectors.toList()));
+                    HashSet<String> description = new HashSet<>(dynamicStage.getAttackMessageReqList().stream()
+                            .map(AttackMessageReq::getDescription).collect(Collectors.toList()));
                     if (description.size()<dynamicStage.getAttackMessageReqList().size()){
                         throw new BusinessException(ErrorCode.DUPLICATED_DYNAMIC_DESCRIPTION);
                     }
@@ -145,16 +150,23 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
                         if(attackMessageReq.getResourceId() == null || attackMessageReq.getResourceId().equals("")){
                             attackMessageReq.setSceneId(dynamicSchemeReq.getSceneId());
-                            attackMessageReq.setResourceId(attackMessageService.addAttackMessage(attackMessageReq));
+                            addAttackMessageReqList.add(attackMessageReq);
                         }else {
-                            attackMessageService.updateAttackMessage(attackMessageReq);
+                            updateAttackMessageReqList.add(attackMessageReq);
                         }
                     }
+                }
+
+                attackMessageService.bathAddAttackMessage(addAttackMessageReqList);
+                attackMessageService.bathUpdateAttackMessage(updateAttackMessageReqList);
+
+                for(DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()){
                     DynamicStageBo dynamicStageBo = new DynamicStageBo();
                     dynamicStageBo.setName(dynamicStage.getName());
                     dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList().stream().map(AttackMessageReq::getResourceId).collect(Collectors.toList()));
                     dynamicStageBoList.add(dynamicStageBo);
                 }
+
                 dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
                 dynamicSchemeMapper.updateById(dynamicScheme);
             }

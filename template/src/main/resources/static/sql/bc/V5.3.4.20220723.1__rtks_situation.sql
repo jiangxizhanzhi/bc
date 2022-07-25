@@ -36,3 +36,39 @@ ALTER TABLE `cr_mission`
 
 ALTER TABLE `cr_train_record`
     ADD INDEX `room_id` (`room_id`) USING BTREE;
+
+ALTER TABLE `attachment`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE;
+
+ALTER TABLE `cr_rb_device`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    ADD UNIQUE INDEX `room_device_user` (`room_id`, `device_id`, `create_user_id`) USING BTREE;
+
+ALTER TABLE `cr_rb_time_management`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    ADD UNIQUE INDEX `room_id` (`room_id`) USING BTREE;
+
+ALTER TABLE `cr_score`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    ADD UNIQUE INDEX `room_user` (`room_id`, `user_id`) USING BTREE;
+
+
+ALTER TABLE `rtks_engage_category`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE;
+
+ALTER TABLE `rtks_role_related`
+    ADD INDEX `role_id` (`role_id`) USING BTREE;
+
+ALTER TABLE `situation_attack_message`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    ADD INDEX `scene_id` (`scene_id`) USING BTREE;
+
+ALTER TABLE `situation_config`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE;
+
+ALTER TABLE `situation_dynamic_scheme`
+    ADD UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    ADD INDEX `scene_id` (`scene_id`) USING BTREE;
+
+ALTER TABLE `situation_scene_config`
+    ADD UNIQUE INDEX `scene_id` (`scene_id`) USING BTREE;

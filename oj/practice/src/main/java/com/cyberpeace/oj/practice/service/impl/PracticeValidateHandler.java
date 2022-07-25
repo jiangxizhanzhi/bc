@@ -249,4 +249,11 @@ public class PracticeValidateHandler {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
+
+	public void validateAttachmentLength(Integer dynamicFlag, List<String> attachments) {
+		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
+				&& attachments.size() > CommonConstant.ZERO) {
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY);
+		}
+	}
 }

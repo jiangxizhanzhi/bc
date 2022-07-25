@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ImageUploadRsp implements Serializable {
 
-    private String url;
+	private String url;
 }

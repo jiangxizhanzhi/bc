@@ -1,13 +1,14 @@
 package com.cyberpeace.integratation.model.evaluation;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.Data;
+
 @Data
 public class MarkData implements Serializable {
-    private Long baseTime;
 
-    List<MarkItemData> data;
+	private Long baseTime;
+
+	List<MarkItemData> data;
 }

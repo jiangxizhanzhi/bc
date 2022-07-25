@@ -114,11 +114,6 @@
             <version>${situation.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.evaluate</groupId>
-            <artifactId>evaluate</artifactId>
-            <version>${evaluation.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.gateway</groupId>
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>

@@ -402,13 +402,6 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
                 dynamicSchemeMapper.updateScheduleById(null,dynamicSchemeReq.getResourceId());
 
-                if (state &&
-                        sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId()).getSchemeCode()
-                                .equals(code)){
-                    //正常运行结束，清除code
-                    sceneConfigMapper.clearCodeBySceneId(dynamicSchemeReq.getSceneId());
-                }
-
             }
         });
         thread.start();

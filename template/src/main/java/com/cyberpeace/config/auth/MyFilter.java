@@ -27,8 +27,9 @@ public class MyFilter implements Filter {
 		setTraceId(request);
 
 		long startTime = System.currentTimeMillis();
+		String url = ((HttpServletRequest) request).getServletPath();
 		chain.doFilter(request, response);
-		log.debug("total time cost: " + (System.currentTimeMillis() - startTime));
+		log.debug("{}|{}", url, (System.currentTimeMillis() - startTime));
 	}
 
 	@Override

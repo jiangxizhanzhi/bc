@@ -225,6 +225,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @return
 	 */
 	@Override
+	@Cacheable(key = "#p0")
 	public Set<String> getUserPermission(String userId) {
 		String targetUrl = AUTH_PERMISSION_MENUS_URL + userId;
 		// 获取该用户下对应多个角色可看见菜单的合集

@@ -484,11 +484,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
     @Override
     public void validMedia(DynamicSchemeReq dynamicSchemeReq) {
         int startTime = 0;
-        int endTime = 0;
+        int endTime = -1;
         for (DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
             for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
                 if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-                    if(startTime < endTime){
+                    if(startTime <= endTime){
                         throw new BusinessException(ErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
                     }
                     endTime = startTime + attackMessageReq.getDurationTime();

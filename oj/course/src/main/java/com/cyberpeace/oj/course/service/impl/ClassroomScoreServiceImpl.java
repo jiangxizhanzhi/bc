@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.ClassroomScore;
 import com.cyberpeace.cs.dao.mapper.ClassroomScoreMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomScoreService;
+import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,7 @@ public class ClassroomScoreServiceImpl extends ServiceImpl<ClassroomScoreMapper,
 		String lessonId = classroom.getLessonId();
 
 		List<ClassroomScore> originalScores = classroomScoreMapper
-				.listByClassroomId(classroom.getResourceId());
+				.listByClassroomIdAndUserId(classroom.getResourceId(), null);
 		Map<String, ClassroomScore> originalMap = Maps.newHashMap();
 		originalScores.forEach(
 				originalScore -> originalMap.put(originalScore.getUserId(), originalScore));
@@ -72,6 +74,23 @@ public class ClassroomScoreServiceImpl extends ServiceImpl<ClassroomScoreMapper,
 
 		return true;
 
+	}
+
+	@Override
+	public void setLessonStatus(LessonInfoBo lessonInfoBo) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		ClassroomScore classroomScore = classroomScoreMapper
+				.selectByLessonIdAndUserId(lessonInfoBo.getResourceId(), userId);
+
+		// 未找到记录时返回原值
+		if (classroomScore == null) {
+			return;
+		}
+
+		lessonInfoBo.setIsTaskLesson(true);
+		Boolean isFinished = classroomScore.getScore().equals(100);
+		lessonInfoBo.setIsLessonFinished(isFinished);
 	}
 
 }

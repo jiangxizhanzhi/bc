@@ -1,8 +1,8 @@
 package com.cyberpeace.integratation.model.mp;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 @Data
 public class RemoteUser implements Serializable {
@@ -16,5 +16,9 @@ public class RemoteUser implements Serializable {
 	 * 远程用户token
 	 */
 	private String thirdToken;
+
+	private String userName;
+
+	private Integer isAdmin;
 
 }

@@ -6,8 +6,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-
 import com.cyberpeace.cs.service.context.AttachmentBo;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -105,6 +105,12 @@ public class LessonInfoBo implements Serializable {
 
 	@ApiModelProperty("当前用户所属课堂组编号")
 	private String groupId;
+
+	@ApiModelProperty("当前课时是否为任务课时")
+	private Boolean isTaskLesson;
+
+	@ApiModelProperty("当前课时是否已完成学习")
+	private Boolean isLessonFinished;
 
 	/**
 	 * 设置上节和下节课程编号

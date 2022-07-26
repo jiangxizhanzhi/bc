@@ -54,4 +54,10 @@ public interface RemoteUserService {
 	 */
 	List<RemoteUser> getGxUserList();
 
+	/**
+	 * 查询共性平台用户token
+	 * @return
+	 */
+	String getGxUserToken(String userId);
+
 }

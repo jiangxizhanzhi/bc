@@ -3,9 +3,6 @@ package com.cyberpeace.cs.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cs.dao.entity.GxLocalOrg;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,21 +15,27 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cs.dao.entity.ClassroomScore;
+import com.cyberpeace.cs.dao.entity.GxLocalOrg;
 import com.cyberpeace.cs.dao.entity.GxTask;
+import com.cyberpeace.cs.dao.mapper.ClassroomScoreMapper;
 import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
 import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.cs.service.context.GxTaskContext;
 import com.cyberpeace.cs.service.context.GxTaskListContext;
 import com.cyberpeace.cs.service.context.GxTaskListQuery;
+import com.cyberpeace.integratation.model.gx.TrainResult;
+import com.cyberpeace.integratation.model.gx.TrainScore;
 import com.cyberpeace.integratation.service.RemoteTaskService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> implements GxTaskService {
@@ -50,6 +53,9 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private ClassroomScoreMapper classroomScoreMapper;
 
 	@Override
 	public Boolean create(GxTaskContext gxTaskContext) {
@@ -187,7 +193,7 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	}
 
 	@Override
-	public List<UserInfo> getUserInfosByOrgId(String orgId){
+	public List<UserInfo> getUserInfosByOrgId(String orgId) {
 
 		// 首先校验本地组织
 		GxLocalOrg gxLocalOrg = gxLocalOrgMapper.selectById(orgId);
@@ -198,6 +204,60 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		}
 
 		return remoteUserService.ListByOrgId(orgId, true);
+	}
+
+	@Override
+	public Boolean finishClassroom(String lessonId) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String token = UserInfoContext.getUserContext().getThirdToken();
+
+		// token不存在时报错 todo
+
+		ClassroomScore classroomScore = classroomScoreMapper.selectByLessonIdAndUserId(lessonId,
+				userId);
+
+		// 未找到记录时直接报错
+		if (classroomScore == null) {
+			return false;
+		}
+
+		Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(), userId,
+				token);
+
+		if (stopResult) {
+			// 课时学完后赋值100分
+			classroomScore.setScore(100);
+			classroomScoreMapper.updateById(classroomScore);
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public TrainResult getTrainResult(GxTask gxTask, String userId) {
+
+		List<ClassroomScore> classroomScores = classroomScoreMapper
+				.listByClassroomIdAndUserId(gxTask.getEventId(), userId);
+
+		// 获取任务下所有用户课程表分数
+		List<TrainScore> trainScores = Lists.newArrayList();
+		classroomScores.forEach(classroomScore -> {
+			trainScores.add(new TrainScore(classroomScore.getUserId(), classroomScore.getScore()));
+		});
+
+		TrainResult trainResult = new TrainResult(gxTask.getDuration(), gxTask.getTaskId(),
+				trainScores);
+
+		return trainResult;
+	}
+
+	@Override
+	public Boolean finishClassroomTask(GxTask gxTask, String userId, String token) {
+		TrainResult trainResult = getTrainResult(gxTask, userId);
+		remoteTaskService.stopClassroomTask(trainResult, token);
+		return true;
 	}
 
 }

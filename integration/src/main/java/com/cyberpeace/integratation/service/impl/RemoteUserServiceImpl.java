@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.integratation.model.mp.RemoteUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,12 +21,15 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.GxToken;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
+import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.context.MpUserId;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -51,6 +52,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String REMOTE_USERS_URL;
 
+	private String REMOTE_USER_TOKEN_URL;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -72,6 +75,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		REMOTE_USERS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.user.remote.list");
+
+		REMOTE_USER_TOKEN_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.user.third_token");
 	}
 
 	@Override
@@ -286,6 +292,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setOrgpaths((List<List<String>>) jsonObject.get("orgpaths"));
 		userInfo.setAdmin((int) jsonObject.get("is_admin") == 1);
 		userInfo.setSuperuser((int) jsonObject.get("is_super_user") == 1);
+		userInfo.setThirdToken(jsonObject.getString("third_token"));
+		userInfo.setThirdUserId(jsonObject.getString("third_user_id"));
 		return userInfo;
 	}
 
@@ -306,6 +314,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setOrganizationId(byId.getOrganizationId());
 		userInfo.setSuperuser(byId.isSuperuser());
 		userInfo.setAdmin(byId.isAdmin());
+		userInfo.setThirdToken(byId.getThirdToken());
+		userInfo.setThirdUserId(byId.getThirdUserId());
 
 		return userInfo;
 	}
@@ -321,7 +331,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	public List<RemoteUser> getGxUserList(){
+	public List<RemoteUser> getGxUserList() {
 
 		try {
 			String data = HttpClientUtil.rawGet(REMOTE_USERS_URL, String.class);
@@ -330,6 +340,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			log.error("Failed to get remote users.", e);
 			return Lists.newArrayList();
 		}
+	}
+
+	@Override
+	public String getGxUserToken(String userId) {
+		MpUserId mpUserId = new MpUserId(userId);
+		return HttpClientUtil.post(REMOTE_USER_TOKEN_URL, mpUserId, String.class);
 	}
 
 }

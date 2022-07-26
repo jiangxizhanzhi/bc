@@ -11,6 +11,7 @@ import com.cyberpeace.cs.dao.entity.GxTask;
 import com.cyberpeace.cs.service.context.GxTaskContext;
 import com.cyberpeace.cs.service.context.GxTaskListContext;
 import com.cyberpeace.cs.service.context.GxTaskListQuery;
+import com.cyberpeace.integratation.model.gx.TrainResult;
 
 public interface GxTaskService extends IService<GxTask> {
 
@@ -35,5 +36,13 @@ public interface GxTaskService extends IService<GxTask> {
 
 	/**从队列消息中提取任务数据*/
 	GxTaskContext getContextByMsg(JSONObject message);
+
+	/**上报个人课程任务结束*/
+	Boolean finishClassroom(String lessonId);
+
+	TrainResult getTrainResult(GxTask gxTask, String userId);
+
+	/**上报整体课程任务结束*/
+	Boolean finishClassroomTask(GxTask gxTask, String userId, String token);
 
 }

@@ -22,13 +22,17 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.service.GxTaskService;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.controller.res.ClassroomInfoRes;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.service.ClassroomScoreService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
+import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.ClassroomBo;
 import com.cyberpeace.oj.course.service.bo.ClassroomMonitorBo;
 import com.cyberpeace.oj.course.service.bo.ClassroomReportBo;
@@ -51,7 +55,10 @@ public class AdminClassroomController {
 	private ClassroomService classroomService;
 
 	@Autowired
-	private RemoteOrganizationService remoteOrganizationService;
+	private CourseService courseService;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
 	private ClassroomSignService classroomSignService;
@@ -212,6 +219,27 @@ public class AdminClassroomController {
 				classroomScoreReq.getClassroomId());
 
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台课程表单个查询")
+	@GetMapping("")
+	public BaseRsp<ClassroomInfoRes> get(@RequestParam("classroom_id") String classroomId) {
+
+		Classroom classRoom = classroomService.getById(classroomId);
+
+		if (classRoom == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		ClassroomInfoRes classroomInfoRes = BeanUtils.copy(classRoom, ClassroomInfoRes.class);
+
+		Course course = courseService.getById(classroomInfoRes.getCourseId());
+		CourseLesson lesson = courseLessonMapper.selectById(classroomInfoRes.getLessonId());
+
+		classroomInfoRes.setCourseTitle(course.getName());
+		classroomInfoRes.setLessonTitle(lesson.getName());
+		return new BaseRsp<>(classroomInfoRes);
+
 	}
 
 }

@@ -375,6 +375,17 @@ public class TimeUtil {
     }
 
     /**
+     * 格式化成07-12的形式
+     *
+     * @param date
+     * @return
+     */
+    public static String format9(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ");
+        return simpleDateFormat.format(date);
+    }
+
+    /**
      * 获取传入日期00:00:00的时间
      *
      * @param date

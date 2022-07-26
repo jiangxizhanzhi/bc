@@ -2,32 +2,35 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
-import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
-import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
-import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
-import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;
+import com.cyberpeace.oj.course.service.ClassroomScoreService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.LessonSceneService;
 import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeBo;
 import com.cyberpeace.oj.course.service.bo.PracticeAnswerContext;
 import com.cyberpeace.oj.course.service.bo.SubmitAnswerContext;
+import com.cyberpeace.oj.ojbase.controller.req.LessonIdReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
+import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-前台课时相关api")
@@ -43,6 +46,12 @@ public class WebLessonController {
 	@Autowired
 	private LessonSceneService lessonSceneService;
 
+	@Autowired
+	private GxTaskService gxTaskService;
+
+	@Autowired
+	private ClassroomScoreService classroomScoreService;
+
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号"),
@@ -53,6 +62,9 @@ public class WebLessonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
 		LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, authContext);
+
+		// 校验课时是否为任务关联
+		classroomScoreService.setLessonStatus(infoBo);
 
 		// 记录远程操作日志
 		courseLessonService.createMpLog(infoBo);
@@ -157,6 +169,13 @@ public class WebLessonController {
 				true);
 		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getResourceId(),
 				sceneStatusReq.getStatus(), authContext);
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("任务课时上报结束")
+	@PostMapping("/finish_task")
+	public BaseRsp<Boolean> finishTask(@RequestBody @Validated LessonIdReq lessonIdReq) {
+		Boolean result = gxTaskService.finishClassroom(lessonIdReq.getLessonId());
 		return new BaseRsp<>(result);
 	}
 

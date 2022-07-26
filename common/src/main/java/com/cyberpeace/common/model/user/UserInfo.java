@@ -70,4 +70,14 @@ public class UserInfo implements Serializable {
      */
     private List<List<String>> orgpaths;
 
+    /**
+     * 第三方用户id
+     */
+    private String thirdUserId;
+
+    /**
+     * 第三方用户token
+     */
+    private String thirdToken;
+
 }

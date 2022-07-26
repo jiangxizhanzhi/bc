@@ -4,12 +4,15 @@
 <mapper namespace="com.cyberpeace.cs.dao.mapper.ClassroomScoreMapper">
     <resultMap id="classroomScore" type="com.cyberpeace.cs.dao.entity.ClassroomScore"></resultMap>
 
-    <select id="listByClassroomId" resultMap="classroomScore">
+    <select id="listByClassroomIdAndUserId" resultMap="classroomScore">
 
         select *
         from oj_classroom_scores
         <where>
             classroom_id = #{classroomId}
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
         </where>
     </select>
 
@@ -33,5 +36,14 @@
         from oj_classroom_scores
         where classroom_id = #{classroomId}
     </delete>
+
+    <select id="selectByLessonIdAndUserId" resultMap="classroomScore">
+        select *
+        from oj_classroom_scores
+        <where>
+            lesson_id = #{lessonId}
+            and user_id = #{userId}
+        </where>
+    </select>
 
 </mapper>

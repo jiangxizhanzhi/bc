@@ -15,6 +15,8 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.model.gx.TrainResult;
+import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteTaskService;
 import com.google.common.collect.Lists;
 
@@ -27,21 +29,35 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 
 	private String REMOTE_USER_URL;
 
+	private String REMOTE_TRAIN_URL;
+
 	private String REMOTE_TASK_LIST_URL;
 
 	private String CT_TASK_URL;
 
 	private String CT_TASK_STOP_URL;
 
+	private String REMOTE_TRAIN_REGISTER_URL;
+
+	private String REMOTE_TASK_STOP_URL;
+
+	private String ADMIN_NAME;
+
 	@PostConstruct
 	public void init() {
 		REMOTE_TASK_URL = "http://" + SystemPropUtil.getProp("TASKS_PUBLISH_HOST") + ":"
 				+ SystemPropUtil.getProp("TASKS_PUBLISH_PORT");
+		REMOTE_TRAIN_URL = "http://" + SystemPropUtil.getProp("TRAIN_PUBLISH_HOST") + ":"
+				+ SystemPropUtil.getProp("TRAIN_PUBLISH_PORT");
 		CT_TASK_URL = "http://" + SystemPropUtil.getProp("AD_TASK_SERVER_HOST") + ":"
 				+ SystemPropUtil.getProp("AD_TASK_SERVER_PORT");
 		REMOTE_USER_URL = REMOTE_TASK_URL + ConfigUtil.getContextProperty("gx.task.users");
 		REMOTE_TASK_LIST_URL = REMOTE_TASK_URL + ConfigUtil.getContextProperty("gx.task.list");
+		REMOTE_TASK_STOP_URL = REMOTE_TASK_URL + ConfigUtil.getContextProperty("gx.task.stop");
 		CT_TASK_STOP_URL = CT_TASK_URL + ConfigUtil.getContextProperty("ct.task.stop");
+		REMOTE_TRAIN_REGISTER_URL = REMOTE_TRAIN_URL
+				+ ConfigUtil.getContextProperty("gx.train.register");
+		ADMIN_NAME = SystemPropUtil.getProp("ADMIN_NAME");
 	}
 
 	@Override
@@ -90,6 +106,30 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 			return Lists.newArrayList();
 		}
 
+	}
+
+	@Override
+	public String getAdminToken(List<RemoteUser> remoteUsers) {
+		for (RemoteUser remoteUser : remoteUsers) {
+			if (remoteUser.getUserName().equals(ADMIN_NAME)) {
+				return remoteUser.getThirdToken();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean stopClassroom(String taskId, String userId, String token) {
+		String targetUrl = REMOTE_TASK_STOP_URL + "?taskId=" + taskId + "&userId=" + userId;
+		HttpClientUtil.rawGet(targetUrl, token, String.class);
+		return true;
+	}
+
+	@Override
+	public Boolean stopClassroomTask(TrainResult trainResult, String token) {
+		String targetUrl = REMOTE_TRAIN_REGISTER_URL;
+		HttpClientUtil.post(targetUrl, trainResult, String.class, token);
+		return true;
 	}
 
 }

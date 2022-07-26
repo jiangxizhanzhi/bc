@@ -16,7 +16,8 @@ public interface ClassroomScoreMapper extends BaseMapper<ClassroomScore> {
 	 * @param classroomId
 	 * @return
 	 */
-	List<ClassroomScore> listByClassroomId(@Param("classroomId") String classroomId);
+	List<ClassroomScore> listByClassroomIdAndUserId(@Param("classroomId") String classroomId,
+			@Param("userId") String userId);
 
 	/**
 	 * 根据课程表id获取分数记录的用户列表
@@ -28,5 +29,8 @@ public interface ClassroomScoreMapper extends BaseMapper<ClassroomScore> {
 	void clearByTaskId(@Param("taskId") String taskId);
 
 	void clearByClassroomId(@Param("classroomId") String classroomId);
+
+	ClassroomScore selectByLessonIdAndUserId(@Param("lessonId") String lessonId,
+			@Param("userId") String userId);
 
 }

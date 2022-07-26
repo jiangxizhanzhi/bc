@@ -117,6 +117,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		SceneConfigData topoData = baseInfo.getSceneConfigData();
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
+		topoJson.put("logo", topoData.getLogo());
 		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
@@ -173,6 +174,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (topoData != null) {
 			JSONObject topoJson = new JSONObject();
 			topoJson.put("scene_config", topoData.getSceneConfig());
+			topoJson.put("logo", topoData.getLogo());
 			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
 		}
 		// save

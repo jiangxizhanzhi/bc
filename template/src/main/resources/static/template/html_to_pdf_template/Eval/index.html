@@ -95,7 +95,7 @@
           <div class="desc">
             <div class="no-wrap">${locale.evaluation_time}:</div>
             <div class="ml8">
-              <div>${evalTime?string('yyyy-MM-dd hh:mm:ss')}</div>
+              <div>${evalTime?string('yyyy-MM-dd HH:mm:ss')}</div>
             </div>
           </div>
           <div class="desc">
@@ -134,7 +134,7 @@
           </div>
           <div class="mt10 font12">
             <span>${locale.evaluation_stage}:</span>
-            <span class="ml5">${locale.scene_start}${startTime?string('yyyy-MM-dd hh:mm:ss')}${locale.to}${locale.scene_end}${endTime?string('yyyy-MM-dd hh:mm:ss')}</span>
+            <span class="ml5">${locale.scene_start}${startTime?string('yyyy-MM-dd HH:mm:ss')}${locale.to}${locale.scene_end}${endTime?string('yyyy-MM-dd HH:mm:ss')}</span>
           </div>
         </div>
       </div>
@@ -157,7 +157,7 @@
         <div id="lineChart${LineList_index}" class="lineChart"></div>
         <script>
             var xData = [
-                    <#list LineList.time as xList>'${xList?string('yyyy-MM-dd hh:mm:ss')}',</#list>
+                    <#list LineList.time as xList>'${xList?string('yyyy-MM-dd HH:mm:ss')}',</#list>
                 ];
             var yData = [
                     <#list LineList.value as yList>${yList},</#list>

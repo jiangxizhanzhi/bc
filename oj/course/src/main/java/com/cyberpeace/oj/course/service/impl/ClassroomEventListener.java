@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.cs.constant.SceneEvent;
+import com.cyberpeace.cs.constant.SceneEventStatus;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +98,9 @@ public class ClassroomEventListener extends MessageListener {
 			pushMessageHandler.pushClassroomMessage(startSceneMessage, ojLocalScene);
 		}
 
+		// 启动完成和失败，用于批量启动
+		onSceneSuccess(data, businessId, context);
+
 		return CommonConstant.TRUE;
 	}
 
@@ -114,6 +119,11 @@ public class ClassroomEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
+
+		if (!finishStart(data)) {
+			return false;
+		}
+
 		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
 
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
@@ -124,6 +134,22 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		return Boolean.TRUE;
+	}
+
+	/** 判断是否是完成启动的消息*/
+	private boolean finishStart(String data) {
+
+		// 场景启动完成更新数据库
+		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
+		JSONObject scene = dataObj.getJSONObject(JsonKeyConstant.DATA)
+				.getJSONObject(JsonKeyConstant.DATA).getJSONObject(JsonKeyConstant.SCENE_DATA);
+
+		int event = scene.getIntValue(JsonKeyConstant.SCENE_EVENT);
+		int eventStatus = scene.getIntValue(JsonKeyConstant.SCENE_EVENT_STATUS);
+
+		return event == SceneEvent.CREATE.getCode().intValue()
+				&& (eventStatus == SceneEventStatus.FINISH.getCode().intValue()
+						|| eventStatus == SceneEventStatus.FAILED.getCode().intValue());
 	}
 
 	/**

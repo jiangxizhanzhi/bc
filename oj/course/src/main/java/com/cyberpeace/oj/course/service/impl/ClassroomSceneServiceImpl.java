@@ -253,13 +253,17 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	@Override
 	public void finishStart(String classroomId, String groupId) {
+		// 未进行批量启动 直接退出
 		BatchStartSceneHandler sceneHandler = batchSceneMap.get(classroomId);
-		if (null != sceneHandler) {
-			sceneHandler.finish(groupId);
-			if (sceneHandler.isFinishAll()) {
-				batchSceneMap.remove(classroomId);
-			}
+		if (null == sceneHandler) {
+			return;
 		}
+
+		sceneHandler.finish(groupId);
+		if (sceneHandler.isFinishAll()) {
+			batchSceneMap.remove(classroomId);
+		}
+
 	}
 
 	@Override

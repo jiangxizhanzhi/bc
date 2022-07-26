@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,18 @@ public class GxTaskJob {
 
 	private String SOFT_ID;
 
+	private String ADMIN_USER_ID;
+
 	@PostConstruct
 	public void init() {
 
 		SOFT_ID = SystemPropUtil.getProp("SOFT_ID");
+
+		ADMIN_USER_ID = SystemPropUtil.getProp("ADMIN_USER_ID");
+
+		if (StringUtils.isEmpty(ADMIN_USER_ID)){
+			ADMIN_USER_ID = "3f655d87112f4ae094bbaf70830e20aa";
+		}
 
 	}
 
@@ -70,8 +79,17 @@ public class GxTaskJob {
 
 		// 获取所有远程用户id列表
 		List<RemoteUser> remoteUsers = remoteUserService.getGxUserList();
+
+		String adminToken = null;
+
+		for (RemoteUser remoteUser : remoteUsers){
+			if (StringUtils.isNotEmpty(ADMIN_USER_ID) && remoteUser.getUserId().equals(ADMIN_USER_ID)){
+				adminToken = remoteUser.getThirdToken();
+			}
+		}
+
 		for (RemoteUser remoteUser : remoteUsers) {
-			String token = remoteUser.getThirdToken();
+			String token = StringUtils.isNotEmpty(adminToken)? adminToken:remoteUser.getThirdToken();
 			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getUserId(), SOFT_ID,
 					token);
 			for (JSONObject userTask : userTasks) {

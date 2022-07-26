@@ -28,7 +28,7 @@
   <div class="line"></div>
   <!-- 测试过程 -->
   <div class="test-process">
-    <div class="title">
+    <div class="title width600">
       <span class="block"></span>
       <span class="title-name">${locale.test_process}</span>
     </div>
@@ -44,7 +44,7 @@
         <span class="ml5 mr30">${categoryCode}</span>
         <span>${locale.recording}:</span>
         <span class="ml5 mr30">${enableRecording}</span>
-        <div class="desc">
+        <div class="desc width600">
           <div class="no-wrap">${locale.test_description}:</div>
           <div class="ml8">${templateDescription!"-"}</div>
         </div>
@@ -65,7 +65,7 @@
         <#list steps as step>
         <div class="desc">
           <div class="no-wrap">${locale.step}${step.stage}:</div>
-          <div class="ml8">
+          <div class="ml8 width600">
             <div>${step.title}</div>
             <div>${step.process}</div>
           </div>
@@ -98,7 +98,7 @@
               <div>${evalTime?string('yyyy-MM-dd HH:mm:ss')}</div>
             </div>
           </div>
-          <div class="desc">
+          <div class="desc width600">
             <div class="no-wrap">${locale.evaluation_description}:</div>
             <div class="ml8">
               <div>${recordDescription!"-"}</div>

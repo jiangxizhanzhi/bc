@@ -870,7 +870,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
-        JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
+        JSONObject cpCollection = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection");
+        if (cpCollection == null) {
+            return results;
+        }
+        JSONObject nodesProbe = cpCollection.getJSONObject("elements");
         for (Map.Entry<String, Object> entry : nodesProbe.entrySet()) {
             if (!entry.getKey().equals(nodeId)) {
                 continue;
@@ -944,7 +948,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
 
         JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
-        JSONObject nodesProbe = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("elements");
+        JSONObject cpCollection = jsonObject.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcollection");
+        JSONObject nodesProbe;
+        if (cpCollection == null) {
+            nodesProbe = new JSONObject();
+        } else {
+            nodesProbe = cpCollection.getJSONObject("elements");
+        }
 
         List<EvalRecordNodeProbeReq> results = Lists.newArrayList();
         nodes.forEach(node -> {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,7 @@ public class MdParser {
 
 			String matchLine = getAssignStr(annotation.level(), HEAD_SYMBOL) + CommonConstant.SPACE
 					+ annotation.name();
-			Object parse = parser.parse(titleMap.get(matchLine));
+			Object parse = parser.parse(getMatchValue(matchLine, annotation.startWith()));
 
 			Class<? extends MdConvertEnum> convert = annotation.convert();
 			if (convert != NoConvert.class) {
@@ -134,6 +135,21 @@ public class MdParser {
 		}
 
 		return assignStr;
+	}
+
+	private String getMatchValue(String matchLine, boolean startWith) {
+
+		if (!startWith) {
+			return titleMap.get(matchLine);
+		}
+
+		for (String key : titleMap.keySet()) {
+			if (key.startsWith(matchLine)) {
+				return titleMap.get(key);
+			}
+		}
+
+		return "";
 	}
 
 	/**

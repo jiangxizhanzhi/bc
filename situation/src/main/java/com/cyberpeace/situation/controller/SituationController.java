@@ -11,6 +11,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
@@ -106,7 +107,7 @@ public class SituationController {
 
 		// 场景未启动时返回false
 		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
-			return new BaseRsp<>(false);
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
 		// 随机运行场景中的流量
@@ -166,18 +167,18 @@ public class SituationController {
 		// 场景配置不在时报错
 		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
 		if (sceneConfig == null) {
-			throw new BusinessException(ErrorCode.NOT_CONFIGURED);
+			throw new BusinessException(SituationErrorCode.NO_VALID_SCENE_CONFIG);
 		}
 
 		// 校验场景是否允许流量事件推送
 		if (sceneConfigReq.getFlowAnalysis()
 				&& !topoHandlerService.enableFlowCollect(mpSceneData)) {
-			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+			throw new BusinessException(SituationErrorCode.FLOW_COLLECTION_IS_NOT_CONFIGURED);
 		}
 
 		// 校验场景是否允许流量自动运行
 		if (sceneConfigReq.getFlowAutoRun() && !topoHandlerService.enableFlowAutoRun(mpSceneData)) {
-			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+			throw new BusinessException(SituationErrorCode.FLOW_SIMULATION_IS_NOT_CONFIGURED);
 		}
 
 		// 更新数据库配置

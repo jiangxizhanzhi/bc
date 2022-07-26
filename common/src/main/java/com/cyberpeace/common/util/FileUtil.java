@@ -446,6 +446,29 @@ public class FileUtil {
 	}
 
 	/**
+	 * 获取目录下的文件夹
+	 *
+	 * @param path
+	 * @param includeDir true 包含文件夹 false不包含文件夹
+	 * @return
+	 */
+	public static List<String> listFileNamesByDir(String path, boolean includeDir) {
+
+		File rootFile = new File(path);
+		if (!rootFile.exists()) {
+			log.error("File not exist! path=[{}]", path);
+			return Lists.newArrayList();
+		}
+		File[] files = rootFile.listFiles();
+
+		List<String> directions = Arrays.stream(files)
+				.filter(file -> !file.getName().startsWith("."))
+				.filter(file -> includeDir ? true : file.isFile()).map(File::getName).sorted()
+				.collect(Collectors.toList());
+		return directions;
+	}
+
+	/**
 	 * 获取文件夹下的一个文件
 	 * @param path
 	 * @param fileSuffix

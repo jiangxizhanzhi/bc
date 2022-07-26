@@ -129,34 +129,4 @@ public interface ErrorCode {
 	/** 文件大小超限制*/
 	String FILE_SIZE_EXCEED_UPPER_LIMIT = "100044";
 
-	/** 动效方案名称重复 */
-	String DUPLICATED_DYNAMIC_SCHEME_NAME = "100045";
-
-	/** 阶段内动效描述重复 */
-	String DUPLICATED_DYNAMIC_DESCRIPTION = "100046";
-
-	/** 阶段名称不能为空 */
-	String EMPTY_STAGE_NAME = "100047";
-
-	/** 动效方案名称不能为空 */
-	String EMPTY_SCHEME_NAME = "100048";
-
-	/** 源节点为空 */
-	String EMPTY_SOURCE_NODE = "100049";
-
-	/** 导出动效方案失败 */
-	String FAILED_TO_EXPORT_DYNAMIC_SCHEME = "100050";
-
-	/** 动效方案中的部分节点在该场景中不存在 */
-	String SOME_NODES_NOT_EXIST = "100051";
-
-	/** 动效方案名称不合法 */
-	String INVALID_DYNAMIC_SCHEME_NAME = "100052";
-
-	/** 阶段名称不合法 */
-	String INVALID_STAGE_NAME = "100053";
-
-	/** 动效描述不合法 */
-	String INVALID_DYNAMIC_DESCRIPTION = "100054";
-
 }

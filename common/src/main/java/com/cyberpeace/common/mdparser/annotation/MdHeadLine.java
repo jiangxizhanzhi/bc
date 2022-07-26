@@ -33,6 +33,12 @@ public @interface MdHeadLine {
 	Class parser() default StringParser.class;
 
 	/**
+	 * 非精确匹配
+	 * @return
+	 */
+	boolean startWith() default false;
+
+	/**
 	 * 转换器 将获取到的值 通过枚举进行转换 通过to 获取 reTo
 	 * @return
 	 */

@@ -7,35 +7,35 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ZipUtil;
-import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.service.SceneConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.DynamicSchemeService;
+import com.cyberpeace.situation.service.SceneConfigService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
-import net.lingala.zip4j.exception.ZipException;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 @Api(tags = "态势编排")
 @RestController
@@ -113,7 +113,7 @@ public class SituationControlController {
 		dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
 		String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-			dynamicSchemeService.pushMediaToRoom(attackMessageBo,code);
+			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {
 			dynamicSchemeService.pushAttackToRoom(attackMessageBo);
 		}
@@ -151,7 +151,8 @@ public class SituationControlController {
 
 	@ApiOperation("导出动效方案")
 	@GetMapping("/scheme/export")
-	public void exportScheme(HttpServletResponse response, @ApiParam("动效方案id") @RequestParam("resource_id") @Validated String resourceId){
+	public void exportScheme(HttpServletResponse response,
+			@ApiParam("动效方案id") @RequestParam("resource_id") @Validated String resourceId) {
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {
@@ -161,7 +162,7 @@ public class SituationControlController {
 			FileUtil.setResponse(zip, false, response);
 		} catch (Exception e) {
 			log.error("failed to dump combat techs", e);
-			throw new BusinessException(ErrorCode.FAILED_TO_EXPORT_DYNAMIC_SCHEME);
+			throw new BusinessException(SituationErrorCode.FAILED_TO_EXPORT_DYNAMIC_SCHEME);
 		} finally {
 			// 3. delete temp dir
 			if (!FileUtil.deleteDir(new File(tempDir))) {
@@ -172,13 +173,16 @@ public class SituationControlController {
 
 	@ApiOperation("导入动效方案")
 	@PostMapping("/scheme/import")
-	public BaseRsp<String> importScheme(@Validated ImportDynamicSchemeReq importDynamicSchemeReq) throws IOException, ZipException {
+	public BaseRsp<String> importScheme(@Validated ImportDynamicSchemeReq importDynamicSchemeReq)
+			throws IOException, ZipException {
 		// 1. save file to temp dir
-		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(), ZipUtil.generatePath());
+		File localFile = FileUtil.saveFile(importDynamicSchemeReq.getFile(),
+				ZipUtil.generatePath());
 		// 2. unzip file
 		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
 		// 3. load resources
-		String resourceId = dynamicSchemeService.importDynamicScheme(unZipPath,importDynamicSchemeReq.getSceneId());
+		String resourceId = dynamicSchemeService.importDynamicScheme(unZipPath,
+				importDynamicSchemeReq.getSceneId());
 		// 4. delete temp dir
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");

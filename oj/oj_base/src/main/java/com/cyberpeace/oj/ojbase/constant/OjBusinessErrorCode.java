@@ -194,4 +194,7 @@ public interface OjBusinessErrorCode {
 
 	/** 第xxx行 文件内容缺失*/
 	String TIME_FORMAT_ERROR = "102063";
+
+	/** xx习题附件过多**/
+	String PRACTICE_ATTACHMENT_IS_TOO_MANY = "102064";
 }

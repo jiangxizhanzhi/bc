@@ -17,6 +17,8 @@ public interface CommonConstant {
 
 	String UNDER_LINE = "_";
 
+	String SHORT_TRANSVERSE_LINE = "-";
+
 	String LEFT_OBLIQUE_LINE = "/";
 
 	Integer ZERO = 0;

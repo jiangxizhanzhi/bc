@@ -80,7 +80,6 @@
         <module>gateway</module>
         <module>cr</module>
         <module>oj</module>
-        <module>evaluate</module>
         <module>common-service</module>
         <module>situation</module>
     </modules>

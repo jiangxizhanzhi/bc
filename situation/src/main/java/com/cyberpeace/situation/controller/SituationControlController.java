@@ -73,6 +73,7 @@ public class SituationControlController {
 	public BaseRsp<DynamicSchemeReq>
 			updateDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
 		dynamicSchemeService.validStage(dynamicSchemeReq);
+		dynamicSchemeService.validMedia(dynamicSchemeReq);
 		DynamicSchemeReq dynamicSchemeReq1 = dynamicSchemeService
 				.updateDynamicScheme(dynamicSchemeReq);
 		return new BaseRsp<>(dynamicSchemeReq1);
@@ -124,6 +125,7 @@ public class SituationControlController {
 	@PostMapping("/run_dynamic_scheme")
 	public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
 		dynamicSchemeService.validStage(dynamicSchemeReq);
+		dynamicSchemeService.validMedia(dynamicSchemeReq);
 		dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
 		return new BaseRsp<>();

@@ -634,6 +634,27 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		return dynamicSchemeReq.getResourceId();
 	}
 
+	/**
+	 * 验证多媒体动效存在时间是否重叠
+	 * @param dynamicSchemeReq
+	 */
+	@Override
+	public void validMedia(DynamicSchemeReq dynamicSchemeReq) {
+		int startTime = 0;
+		int endTime = 0;
+		for (DynamicStage dynamicStage:dynamicSchemeReq.getSchemeData()){
+			for (AttackMessageReq attackMessageReq:dynamicStage.getAttackMessageReqList()){
+				if(attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
+					if(startTime < endTime){
+						throw new BusinessException(SituationErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
+					}
+					endTime = startTime + attackMessageReq.getDurationTime();
+				}
+				startTime += attackMessageReq.getIntervalTime();
+			}
+		}
+	}
+
 	@Cacheable(cacheNames = "getElementIds", key = "#sceneId")
 	public List<String> getElementIds(String sceneId) {
 		SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);

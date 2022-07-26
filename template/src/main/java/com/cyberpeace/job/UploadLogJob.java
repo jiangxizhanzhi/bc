@@ -10,10 +10,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
@@ -31,11 +37,14 @@ public class UploadLogJob {
 
     private String LOG_type = "BC";
 
+    private String HOST_ADDRESS;
+
     @PostConstruct
-    public void init() {{
+    public void init() throws UnknownHostException {
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
         isUploadLog = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.upload.log"));
-    }}
+        HOST_ADDRESS = InetAddress.getLocalHost().getHostAddress();
+    }
 
     @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")
     public void uploadLog(){
@@ -54,6 +63,7 @@ public class UploadLogJob {
                     long lastModified = logFile.lastModified();
                     Date date = new Date(lastModified);
                     object.put("update_time",TimeUtil.format1(date));
+                    object.put("host_ip",HOST_ADDRESS);
                     logBos.add(object);
                 }
             }

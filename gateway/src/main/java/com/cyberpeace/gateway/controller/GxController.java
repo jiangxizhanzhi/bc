@@ -73,9 +73,9 @@ public class GxController {
 		// 构造返回体
 		response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 		response.setHeader("Cache-Control", "no-cache");
-		response.setHeader("Location", "/page/mg/");
+		response.setHeader("Location", "/");
 		response.setHeader("Set-Cookie",
-				"cr_jwttoken=" + mpToken + "; SameSite=Lax; Path=/page/mg/");
+				"cr_jwttoken=" + mpToken + "; SameSite=Lax; Path=/");
 
 	}
 

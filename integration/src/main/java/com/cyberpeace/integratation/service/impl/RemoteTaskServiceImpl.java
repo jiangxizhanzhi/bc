@@ -9,14 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.ChatException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.model.gx.TrainResult;
-import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteTaskService;
 import com.google.common.collect.Lists;
 
@@ -41,8 +38,6 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 
 	private String REMOTE_TASK_STOP_URL;
 
-	private String ADMIN_NAME;
-
 	@PostConstruct
 	public void init() {
 		REMOTE_TASK_URL = "http://" + SystemPropUtil.getProp("TASKS_PUBLISH_HOST") + ":"
@@ -57,7 +52,6 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 		CT_TASK_STOP_URL = CT_TASK_URL + ConfigUtil.getContextProperty("ct.task.stop");
 		REMOTE_TRAIN_REGISTER_URL = REMOTE_TRAIN_URL
 				+ ConfigUtil.getContextProperty("gx.train.register");
-		ADMIN_NAME = SystemPropUtil.getProp("ADMIN_NAME");
 	}
 
 	@Override
@@ -65,13 +59,12 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 		String targetUrl = REMOTE_USER_URL + "?taskId=" + taskId;
 
 		try {
-
 			String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
 			log.info(String.format("Try to get task users, token is %s", token));
 			return data;
 		} catch (Exception e) {
 			log.error("Failed to get task users.", e);
-			throw new ChatException(ErrorCode.USER_INFO_MISSING);
+			return null;
 		}
 	}
 
@@ -81,15 +74,16 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 		String targetUrl = CT_TASK_STOP_URL + "?task_id=" + taskId + "&exam_id=" + examId
 				+ "&duration=" + duration;
 
-		log.info(String.format("Stop task, taskId: %s, examId: %s", taskId, examId));
+		log.info(String.format("Try to stop exam task, taskId: %s, examId: %s", taskId, examId));
 		try {
 			Boolean result = HttpClientUtil.rawGet(targetUrl, Boolean.class);
 			log.info("Stop task successfully.");
-			return result;
 		} catch (Exception e) {
-			log.error("Failed to stop task.", e);
+			log.error("Failed to stop exam task.", e);
 			return false;
 		}
+
+		return true;
 	}
 
 	@Override
@@ -109,26 +103,32 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 	}
 
 	@Override
-	public String getAdminToken(List<RemoteUser> remoteUsers) {
-		for (RemoteUser remoteUser : remoteUsers) {
-			if (remoteUser.getUserName().equals(ADMIN_NAME)) {
-				return remoteUser.getThirdToken();
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public Boolean stopClassroom(String taskId, String userId, String token) {
 		String targetUrl = REMOTE_TASK_STOP_URL + "?taskId=" + taskId + "&userId=" + userId;
-		HttpClientUtil.rawGet(targetUrl, token, String.class);
+		log.info(String.format("Try to stop user task, taskId: %s, userId: %s", taskId, userId));
+		try {
+			HttpClientUtil.rawGet(targetUrl, token, String.class);
+			log.info("Stop user task successfully.");
+		} catch (Exception e) {
+			log.error("Failed to stop user task.", e);
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public Boolean stopClassroomTask(TrainResult trainResult, String token) {
+
 		String targetUrl = REMOTE_TRAIN_REGISTER_URL;
-		HttpClientUtil.post(targetUrl, trainResult, String.class, token);
+		log.info(String.format("Try to stop classroom task, taskId: %s", trainResult.getTaskId()));
+		try {
+			HttpClientUtil.post(targetUrl, trainResult, String.class, token);
+			log.info("Stop classroom task successfully.");
+		} catch (Exception e) {
+			log.error("Failed to stop classroom task.", e);
+			return false;
+		}
+
 		return true;
 	}
 

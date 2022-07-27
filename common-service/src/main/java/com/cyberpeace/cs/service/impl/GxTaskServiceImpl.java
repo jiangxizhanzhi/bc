@@ -2,6 +2,9 @@ package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,14 +16,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.ClassroomScore;
 import com.cyberpeace.cs.dao.entity.GxLocalOrg;
 import com.cyberpeace.cs.dao.entity.GxTask;
@@ -33,9 +31,15 @@ import com.cyberpeace.cs.service.context.GxTaskListContext;
 import com.cyberpeace.cs.service.context.GxTaskListQuery;
 import com.cyberpeace.integratation.model.gx.TrainResult;
 import com.cyberpeace.integratation.model.gx.TrainScore;
+import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteTaskService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.context.MpUserIds;
+import com.cyberpeace.integratation.service.context.MpUserSlimInfo;
+import com.cyberpeace.integratation.service.context.RemoteUserInfo;
+import com.cyberpeace.integratation.service.context.RemoteUserInfos;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> implements GxTaskService {
@@ -57,12 +61,20 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Autowired
 	private ClassroomScoreMapper classroomScoreMapper;
 
+	private String SOFT_ID;
+
+	@PostConstruct
+	public void init() {
+		SOFT_ID = SystemPropUtil.getProp("SOFT_ID");
+	}
+
 	@Override
 	public Boolean create(GxTaskContext gxTaskContext) {
 
 		// 校验任务id是否重复
 		if (gxTaskMapper.getByTaskId(gxTaskContext.getTaskId()) != null) {
-			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
+			log.info(String.format("Skip existing task, taskId: %s", gxTaskContext.getTaskId()));
+			return false;
 		}
 
 		GxTask task = BeanUtils.copy(gxTaskContext, GxTask.class);
@@ -139,12 +151,10 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		gxTaskContext.setEndTime(TimeUtil.addMins(startTime, (int) (duration * 60)));
 		gxTaskContext.setValidityPeriod(taskBaseData.getInteger("validityPeriod"));
 
-		// gxTaskContext.setTraineesCount(taskBaseData.getInteger("numberOfTrainees"));
-		// gxTaskContext
-		// .setTrainees(JsonUtil.toJsonString(taskDetails.getJSONArray("trainPlanPersons")));
-
 		// 处理任务用户数据
-		setTrainees(gxTaskContext, taskId, token);
+		if (!setTrainees(gxTaskContext, taskId, token)) {
+			return null;
+		}
 
 		return gxTaskContext;
 	}
@@ -182,14 +192,43 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 	}
 
-	private void setTrainees(GxTaskContext gxTaskContext, String taskId, String token) {
+	private Boolean setTrainees(GxTaskContext gxTaskContext, String taskId, String token) {
 
+		// 获取共性平台任务的用户列表
 		String trainees = remoteTaskService.getTaskUsers(taskId, token);
+		if (trainees == null) {
+			return false;
+		}
+
 		List<JSONObject> traineeList = JsonUtil.toJsonObjectArray(trainees, JSONObject.class);
 		Integer traineesCount = traineeList == null ? 0 : traineeList.size();
-		gxTaskContext.setTrainees(trainees);
-		gxTaskContext.setTraineesCount(traineesCount);
 
+		// 获取远程、本地用户id映射表
+		List<RemoteUserInfo> remoteUserInfos = Lists.newArrayList();
+		traineeList.forEach(jsonObject -> {
+			RemoteUserInfo remoteUserInfo = new RemoteUserInfo(jsonObject.getString("userId"),
+					jsonObject.getString("userName"));
+			remoteUserInfos.add(remoteUserInfo);
+		});
+		Map<String, String> gxMpUserIdMap = getGxMpUserIdMap(new RemoteUserInfos(remoteUserInfos));
+
+		// 替换用户列表中的userId为中台用户Id
+		for (JSONObject userInfo : traineeList) {
+			userInfo.put("userId", gxMpUserIdMap.get(userInfo.getString("userId")));
+		}
+
+		gxTaskContext.setTrainees(traineeList.toString());
+		gxTaskContext.setTraineesCount(traineesCount);
+		return true;
+	}
+
+	private Map<String, String> getGxMpUserIdMap(RemoteUserInfos remoteUserInfos) {
+		List<MpUserSlimInfo> userInfos = remoteUserService.getMpUserInfos(remoteUserInfos);
+		Map<String, String> userIdMap = Maps.newHashMap();
+		userInfos.forEach(userInfo -> {
+			userIdMap.put(userInfo.getThirdUserId(), userInfo.getId());
+		});
+		return userIdMap;
 	}
 
 	@Override
@@ -210,6 +249,7 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	public Boolean finishClassroom(String lessonId) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
+		String thirdUserId = UserInfoContext.getUserContext().getThirdUserId();
 		String token = UserInfoContext.getUserContext().getThirdToken();
 
 		// token不存在时报错 todo
@@ -222,8 +262,8 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			return false;
 		}
 
-		Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(), userId,
-				token);
+		Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
+				thirdUserId, token);
 
 		if (stopResult) {
 			// 课时学完后赋值100分
@@ -243,8 +283,15 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 		// 获取任务下所有用户课程表分数
 		List<TrainScore> trainScores = Lists.newArrayList();
+		List<String> mpUserIds = Lists.newArrayList();
 		classroomScores.forEach(classroomScore -> {
-			trainScores.add(new TrainScore(classroomScore.getUserId(), classroomScore.getScore()));
+			mpUserIds.add(classroomScore.getUserId());
+		});
+		Map<String, String> mpGxUserIdMap = remoteUserService
+				.getMpGxUserIdMap(new MpUserIds(mpUserIds));
+		classroomScores.forEach(classroomScore -> {
+			trainScores.add(new TrainScore(mpGxUserIdMap.get(classroomScore.getUserId()),
+					classroomScore.getScore()));
 		});
 
 		TrainResult trainResult = new TrainResult(gxTask.getDuration(), gxTask.getTaskId(),
@@ -256,7 +303,45 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Override
 	public Boolean finishClassroomTask(GxTask gxTask, String userId, String token) {
 		TrainResult trainResult = getTrainResult(gxTask, userId);
-		remoteTaskService.stopClassroomTask(trainResult, token);
+		if (!remoteTaskService.stopClassroomTask(trainResult, token)) {
+			return false;
+		} ;
+		gxTask.setResult(JsonUtil.toJsonString(trainResult));
+		updateById(gxTask);
+		return true;
+	}
+
+	@Override
+	public Boolean getGxTasks(String token) {
+
+		List<String> existTaskIds = gxTaskMapper.listTaskId();
+
+		// 获取所有远程用户id列表
+		List<RemoteUser> remoteUsers = remoteUserService.getGxUserList();
+
+		for (RemoteUser remoteUser : remoteUsers) {
+			String userToken = StringUtils.isNotEmpty(token) ? token : remoteUser.getThirdToken();
+			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getUserId(), SOFT_ID,
+					userToken);
+			for (JSONObject userTask : userTasks) {
+				String taskId = userTask.getJSONObject("taskBaseData").getString("taskId");
+				if (existTaskIds.contains(taskId)) {
+					log.info(String.format("Skip existing task, taskId: %s", taskId));
+					continue;
+				}
+				GxTaskContext gxTaskContext = getContextByData(userTask, token);
+
+				// 共性任务数据未初始化完成
+				if (gxTaskContext == null) {
+					log.info(String.format("Fail to write task info, taskId: %s", taskId));
+					return false;
+				}
+
+				create(gxTaskContext);
+				log.info(String.format("Create task successfully, taskId: %s", taskId));
+			}
+
+		}
 		return true;
 	}
 

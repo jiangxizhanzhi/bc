@@ -3,6 +3,8 @@ package com.cyberpeace.cs.controller;
 import java.util.List;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.controller.req.task.TaskBindReq;
@@ -22,14 +25,14 @@ import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "共性平台任务接口")
 @RestController
 @RequestMapping("/common/task")
 @RequiresAuthentication
-@Slf4j
 public class GxTaskController {
+
+	private static final Logger log = LoggerFactory.getLogger("gx");
 
 	@Autowired
 	private GxTaskService gxTaskService;
@@ -48,6 +51,15 @@ public class GxTaskController {
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<GxTaskListContext>> getTaskList(@Validated GxTaskListQuery query) {
 
+		// 首先更新远程的任务
+		String token = UserInfoContext.getUserContext().getThirdToken();
+		try {
+			gxTaskService.getGxTasks(token);
+		} catch (Exception e) {
+			log.error("Fail to update task list.", e);
+		}
+
+		// 获取分页数据
 		IPage<GxTaskListContext> data = gxTaskService.list(query);
 		for (GxTaskListContext gxTaskListContext : data.getRecords()) {
 			gxTaskListContext.setTaskStatus();

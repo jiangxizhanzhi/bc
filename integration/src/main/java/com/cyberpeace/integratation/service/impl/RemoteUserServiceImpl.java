@@ -30,7 +30,11 @@ import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.context.MpUserId;
+import com.cyberpeace.integratation.service.context.MpUserIds;
+import com.cyberpeace.integratation.service.context.MpUserSlimInfo;
+import com.cyberpeace.integratation.service.context.RemoteUserInfos;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +57,10 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String REMOTE_USERS_URL;
 
 	private String REMOTE_USER_TOKEN_URL;
+
+	private String REMOTE_USER_IDS_URL;
+
+	private String MP_USER_INFOS_URL;
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -78,6 +86,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		REMOTE_USER_TOKEN_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.user.third_token");
+
+		REMOTE_USER_IDS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.user.remote.ids");
+
+		MP_USER_INFOS_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.user.remote.infos");
 	}
 
 	@Override
@@ -346,6 +360,31 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public String getGxUserToken(String userId) {
 		MpUserId mpUserId = new MpUserId(userId);
 		return HttpClientUtil.post(REMOTE_USER_TOKEN_URL, mpUserId, String.class);
+	}
+
+	@Override
+	public Map<String, String> getMpGxUserIdMap(MpUserIds mpUserIds) {
+
+		String data = HttpClientUtil.post(REMOTE_USER_IDS_URL, mpUserIds, String.class);
+		List<JSONObject> mpUserInfos = JsonUtil.toJsonObjectArray(data, JSONObject.class);
+		Map<String, String> mpGxUserIdMap = Maps.newHashMap();
+		mpUserInfos.forEach(mpUserInfo -> {
+			mpGxUserIdMap.put(mpUserInfo.getString("id"), mpUserInfo.getString("third_user_id"));
+		});
+		return mpGxUserIdMap;
+	}
+
+	@Override
+	public List<MpUserSlimInfo> getMpUserInfos(RemoteUserInfos remoteUserInfos) {
+		String data = HttpClientUtil.post(MP_USER_INFOS_URL, remoteUserInfos, String.class);
+
+		List<MpUserSlimInfo> mpUserSlimInfos = JsonUtil.toJsonObjectArray(data,
+				MpUserSlimInfo.class);
+
+		if (remoteUserInfos.getList_third_user_dtos().size() != mpUserSlimInfos.size()) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+		return JsonUtil.toJsonObjectArray(data, MpUserSlimInfo.class);
 	}
 
 }

@@ -45,4 +45,7 @@ public interface GxTaskService extends IService<GxTask> {
 	/**上报整体课程任务结束*/
 	Boolean finishClassroomTask(GxTask gxTask, String userId, String token);
 
+	/**获取远程新任务*/
+	Boolean getGxTasks(String token);
+
 }

@@ -8,6 +8,9 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.GxToken;
 import com.cyberpeace.integratation.model.mp.RemoteUser;
+import com.cyberpeace.integratation.service.context.MpUserIds;
+import com.cyberpeace.integratation.service.context.MpUserSlimInfo;
+import com.cyberpeace.integratation.service.context.RemoteUserInfos;
 
 public interface RemoteUserService {
 
@@ -59,5 +62,17 @@ public interface RemoteUserService {
 	 * @return
 	 */
 	String getGxUserToken(String userId);
+
+	/**
+	 * 通过本地用户id批量获取第三方用户id
+	 * @return
+	 */
+	Map<String, String> getMpGxUserIdMap(MpUserIds mpUserIds);
+
+	/**
+	 * 通过第三方用户信息获取本地用户信息
+	 * @return
+	 */
+	List<MpUserSlimInfo> getMpUserInfos(RemoteUserInfos remoteUserInfos);
 
 }

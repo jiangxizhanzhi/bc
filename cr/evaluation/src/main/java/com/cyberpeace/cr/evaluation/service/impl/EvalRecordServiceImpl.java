@@ -33,6 +33,7 @@ import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
+import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -135,6 +136,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private EvalVariableRefMapper evalVariableRefMapper;
+
+    @Autowired
+    private RemoteServerEnvService remoteServerEnvService;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
@@ -1085,7 +1089,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
         }
         evalRecord.getSystemId();
-        data.put("topoLogo", mpEnvService.getMpHost() + topoLogo);
+        data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);
         //设置测试基本信息
         data.put("taskName", evalTask.getTaskName());
         data.put("name", evalRecord.getName());

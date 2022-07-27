@@ -41,7 +41,7 @@ public class UserRelateController {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String userName = UserInfoContext.getUserContext().getUserName();
-		// 用户切换岗位前记录当前岗位匹配度, 无事务，不阻塞
+		// 用户切换岗位前记录当前岗位匹配度, 非事务，不阻塞
 		String oldRoleId = UserInfoContext.getUserContext().getRoleId();
 		try {
 			if (StringUtils.isNotBlank(oldRoleId)) {

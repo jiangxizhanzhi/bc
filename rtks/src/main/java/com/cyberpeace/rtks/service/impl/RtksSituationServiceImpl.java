@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -24,7 +25,10 @@ import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.situation.*;
 import com.google.common.collect.Maps;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class RtksSituationServiceImpl implements RtksSituationService {
 
 	@Autowired
@@ -233,10 +237,15 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	public Integer recordSituation(String userId, String userName, String roleId, String roleName) {
 		// 计算匹配度
 		Integer match = rtksStatisticService.roleMatchPercent(roleId, userId);
-		// record match
-		recordMatch(userId, roleId, match);
-		// 记录动态
-		logMoment(userId, userName, roleId, roleName, match);
+		try {
+			// record match
+			recordMatch(userId, roleId, match);
+			// 记录动态
+			logMoment(userId, userName, roleId, roleName, match);
+		} catch (DuplicateKeyException e) {
+			log.error("duplicationKeyException when inserting rtks situation data into db");
+			e.printStackTrace();
+		}
 		return match;
 	}
 

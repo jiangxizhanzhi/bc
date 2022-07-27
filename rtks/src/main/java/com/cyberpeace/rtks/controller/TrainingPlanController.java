@@ -178,11 +178,12 @@ public class TrainingPlanController {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
 
-			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId,
-					UserInfoContext.getUserContext().getUserId());
-			// record match
-			rtksSituationService.recordMatch(UserInfoContext.getUserContext().getUserId(),
-					existRoleId, percent);
+			String userId = UserInfoContext.getUserContext().getUserId();
+			String userName = UserInfoContext.getUserContext().getName();
+			String roleName = UserInfoContext.getUserContext().getRoleName();
+			// 计算并记录匹配度
+			Integer percent = rtksSituationService.recordSituation(userId, userName, existRoleId,
+					roleName);
 			data.setPercent(percent + "");
 			rsp.setData(data);
 		}
@@ -200,12 +201,12 @@ public class TrainingPlanController {
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleDetailResByRoleId(existRoleId);
-
-			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId,
-					UserInfoContext.getUserContext().getUserId());
-			// record match
-			rtksSituationService.recordMatch(UserInfoContext.getUserContext().getUserId(),
-					existRoleId, percent);
+			// 查询匹配度时，记录匹配度
+			String userId = UserInfoContext.getUserContext().getUserId();
+			String userName = UserInfoContext.getUserContext().getName();
+			String roleName = UserInfoContext.getUserContext().getRoleName();
+			Integer percent = rtksSituationService.recordSituation(userId, userName, existRoleId,
+					roleName);
 			data.setPercent(percent + "");
 			rsp.setData(data);
 		}

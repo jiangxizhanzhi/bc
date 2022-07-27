@@ -5,7 +5,8 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-public @Data class RoleContext implements Serializable {
+@Data
+public class RoleContext implements Serializable {
 
 	@ApiModelProperty("岗位id")
 	private String roleId;

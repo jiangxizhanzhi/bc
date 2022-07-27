@@ -1051,22 +1051,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public String dumpEvalRecordPath(String resourceId, String taskId) {
         String destPdfPath;
         JSONObject data = getEvalRecordJsonObject(resourceId, taskId);
-//        String destHtmlPath = String.format("%s%s-%s.html",
-//                AttachmentPath.EVAL_HTML_TEMPLATE.getDesc(), resourceId,
-//                UserInfoContext.getUserContext().getUserId());
-        String destHtmlPath = "C:\\Users\\28241\\Desktop\\pdfTest\\eval.html";
+        String destHtmlPath = String.format("%s%s-%s.html",
+                AttachmentPath.EVAL_HTML_TEMPLATE.getDesc(), resourceId,
+                UserInfoContext.getUserContext().getUserId());
         try {
             HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.EVAL, destHtmlPath);
             destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
                     + "pdf";
-//            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         } finally {
-//            if(!new File(destHtmlPath).delete()){
-//                log.error("failed to delete file:{}", destHtmlPath);
-//            }
+            if(!new File(destHtmlPath).delete()){
+                log.error("failed to delete file:{}", destHtmlPath);
+            }
         }
         return destPdfPath;
     }

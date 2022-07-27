@@ -278,11 +278,13 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
 					thirdUserId, token);
 
-			if (stopResult) {
-				// 课时学完后赋值100分
-				classroomScore.setScore(100);
-				classroomScoreMapper.updateById(classroomScore);
+			if (!stopResult){
+				return false;
 			}
+
+			// 课时学完后赋值100分
+			classroomScore.setScore(100);
+			classroomScoreMapper.updateById(classroomScore);
 		}
 
 		return true;

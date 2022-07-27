@@ -177,6 +177,7 @@ public class WebLessonController {
 	@ApiOperation("任务课时上报结束")
 	@PostMapping("/finish_task")
 	public BaseRsp<Boolean> finishTask(@RequestBody @Validated LessonIdReq lessonIdReq) {
+
 		Boolean result = gxTaskService.finishClassroom(lessonIdReq.getLessonId());
 
 		if (!result) {

@@ -11,7 +11,6 @@ import lombok.Data;
 public class SceneIdReq implements Serializable {
 
 	@ApiModelProperty("场景id")
-	@NotBlank
 	private String sceneId;
 
 }

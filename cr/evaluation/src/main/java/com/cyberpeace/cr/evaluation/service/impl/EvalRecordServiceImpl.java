@@ -1051,21 +1051,22 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public String dumpEvalRecordPath(String resourceId, String taskId) {
         String destPdfPath;
         JSONObject data = getEvalRecordJsonObject(resourceId, taskId);
-        String destHtmlPath = String.format("%s%s-%s.html",
-                AttachmentPath.EVAL_HTML_TEMPLATE.getDesc(), resourceId,
-                UserInfoContext.getUserContext().getUserId());
+//        String destHtmlPath = String.format("%s%s-%s.html",
+//                AttachmentPath.EVAL_HTML_TEMPLATE.getDesc(), resourceId,
+//                UserInfoContext.getUserContext().getUserId());
+        String destHtmlPath = "C:\\Users\\28241\\Desktop\\pdfTest\\eval.html";
         try {
             HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.EVAL, destHtmlPath);
             destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
                     + "pdf";
-            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+//            HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         } finally {
-            if(!new File(destHtmlPath).delete()){
-                log.error("failed to delete file:{}", destHtmlPath);
-            }
+//            if(!new File(destHtmlPath).delete()){
+//                log.error("failed to delete file:{}", destHtmlPath);
+//            }
         }
         return destPdfPath;
     }
@@ -1257,7 +1258,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
                 .eq(EvalVariableRefProbeData::getVariableId, variableId).list();
         evalVariableRefProbeDataList.sort(Comparator.comparing(EvalVariableRefProbeData::getTime));
-
+        result.setVariableName(evalVariableRefService.getById(variableId).getName());
         evalVariableRefProbeDataList.forEach(item -> {
             result.setVariableId(item.getVariableId());
             result.getTime().add(item.getTime());
@@ -1270,7 +1271,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 result.getValue().add(isMatched ? 1 : 0);
                 result.getIsMatched().add(isMatched);
             }
-            result.setVariableName(evalVariableRefService.getById(item.getVariableId()).getName());
         });
         return result;
     }

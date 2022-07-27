@@ -1,10 +1,7 @@
 package com.cyberpeace.job;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +40,7 @@ public class UploadLogJob {
     public void init() throws UnknownHostException {
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
         isUploadLog = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.upload.log"));
-        HOST_ADDRESS = System.getProperty("BC_HOST");
+        HOST_ADDRESS = SystemPropUtil.getProp("BC_HOST");
     }
 
     @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")

@@ -222,20 +222,20 @@
       {
         id: '${evalSystem.resourceId}',
         isroot: true,
-        topic: '<div class="topic-info"><div class="no-wrap topic">'+'${evalSystem.score}%'+'</div>'+'<div class="ml8"><div class="w80 wrap">'+'${evalSystem.name}'+'</div></div></div>'
+        topic: '<div class="topic-info"><div class="no-wrap topic">'+'${evalSystem.score!"0"}%'+'</div>'+'<div class="ml8"><div class="w80 wrap">'+'${evalSystem.name}'+'</div></div></div>'
       },
         <#list evalSystem.children as secondIndexes>
           {
             id: '${secondIndexes.resourceId}',
             parentid: '${secondIndexes.parentId}',
-            topic: '<div class="topic-info"><div class="no-wrap topic">'+'${secondIndexes.score}%'+'</div>'+ '<div class="ml8"><div class="w80 wrap">'+'${secondIndexes.name}'+'</div></div></div>'
+            topic: '<div class="topic-info"><div class="no-wrap topic">'+'${secondIndexes.score!"0"}%'+'</div>'+ '<div class="ml8"><div class="w80 wrap">'+'${secondIndexes.name}'+'</div></div></div>'
           },
                   <#list secondIndexes.children as thirdIndexes>
           i++,
                   {
                     id: '${thirdIndexes.resourceId}' + i,
                     parentid: '${thirdIndexes.parentId}',
-                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${thirdIndexes.score}%'+'</div><div class="ml8"><div class="w80 wrap">'+ '${thirdIndexes.name}'+'</div></div></div>'
+                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${thirdIndexes.score!"0"}%'+'</div><div class="ml8"><div class="w80 wrap">'+ '${thirdIndexes.name}'+'</div></div></div>'
                   },
                   <#if thirdIndexes.children??>
                   <#list thirdIndexes.children as fourthIndexes>
@@ -243,7 +243,7 @@
                   {
                     id: '${fourthIndexes.resourceId}' + j,
                     parentid: '${fourthIndexes.parentId}' + i,
-                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${fourthIndexes.score}%'+'</div><div class="ml8"><div class="w80 wrap">'+'${fourthIndexes.name}'+'</div></div></div>'
+                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${fourthIndexes.score!"0"}%'+'</div><div class="ml8"><div class="w80 wrap">'+'${fourthIndexes.name}'+'</div></div></div>'
                   },
                   <#if fourthIndexes.children??>
                   <#list fourthIndexes.children as lastIndexs>
@@ -251,7 +251,7 @@
                   {
                     id: '${lastIndexs.resourceId}' + k,
                     parentid: '${lastIndexs.parentId}' + j,
-                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${lastIndexs.score}%'+'</div><div class="ml8"><div class="w80 wrap">'+'${lastIndexs.name}'+'</div></div></div>'
+                    topic: '<div class="topic-info"><div class="no-wrap topic">'+'${lastIndexs.score!"0"}%'+'</div><div class="ml8"><div class="w80 wrap">'+'${lastIndexs.name}'+'</div></div></div>'
                   },
           </#list>
           </#if>

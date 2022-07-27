@@ -17,6 +17,8 @@ public class RemoteUser implements Serializable {
 	 */
 	private String thirdToken;
 
+	private String thirdUserId;
+
 	private String userName;
 
 	private Integer isAdmin;

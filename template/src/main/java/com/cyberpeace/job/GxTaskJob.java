@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +80,8 @@ public class GxTaskJob {
 				// 获取所有远程用户id列表
 				List<RemoteUser> remoteUsers = remoteUserService.getGxUserList();
 				for (RemoteUser remoteUser : remoteUsers) {
-					if (gxTaskService.finishClassroomTask(gxTask, null,
-							remoteUser.getThirdToken())) {
+					if (StringUtils.isNotEmpty(remoteUser.getThirdToken()) && gxTaskService
+							.finishClassroomTask(gxTask, null, remoteUser.getThirdToken())) {
 						break;
 					}
 				}

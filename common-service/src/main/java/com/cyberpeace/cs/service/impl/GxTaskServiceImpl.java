@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,7 +254,10 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		String thirdUserId = UserInfoContext.getUserContext().getThirdUserId();
 		String token = UserInfoContext.getUserContext().getThirdToken();
 
-		// token不存在时报错 todo
+		// token不存在时报错
+		if (StringUtils.isEmpty(token)){
+			throw new BusinessException(ErrorCode.WRONG_GX_TOKEN);
+		}
 
 		ClassroomScore classroomScore = classroomScoreMapper.selectByLessonIdAndUserId(lessonId,
 				userId);
@@ -321,7 +326,14 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 		for (RemoteUser remoteUser : remoteUsers) {
 			String userToken = StringUtils.isNotEmpty(token) ? token : remoteUser.getThirdToken();
-			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getUserId(), SOFT_ID,
+
+			// token不存在时跳过
+			if (StringUtils.isEmpty(userToken)){
+				log.info(String.format("Skip current user, token is empty, userId: %s", remoteUser.getThirdUserId()));
+				continue;
+			}
+
+			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getThirdUserId(), SOFT_ID,
 					userToken);
 			for (JSONObject userTask : userTasks) {
 				String taskId = userTask.getJSONObject("taskBaseData").getString("taskId");

@@ -106,4 +106,6 @@ public interface ErrorCode {
 	/** 任务已结束 */
 	String TASK_IS_FINISHED = "100037";
 
+	String WRONG_GX_TOKEN = "100038";
+
 }

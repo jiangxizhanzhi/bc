@@ -188,6 +188,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// get match records
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
+		if (recordContextList.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		// get existing users
 		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
 				.distinct().collect(Collectors.toList());
@@ -255,21 +258,21 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// 确定曲线开始和结束时间
 		Date startTime = rtksRoleMatchRecordMapper.getFirstRecordTime();
 		if (startTime == null) {
-			return result;
+			return new SituationTrendBo(2);
 		}
 		Date endTime = new Date();
 		// get all qualification log
 		List<SituationLog> logs = rtksSituationMapper
 				.getAllLogByType(SituationLog.MatchType.QUALIFIED.getCode());
 		Map<String, Integer> dateNumMap = Maps.newHashMap();
-		String date8;
+		String date6;
 		// count by date
 		for (SituationLog log : logs) {
-			date8 = TimeUtil.format8(log.getCreateTime());
-			if (!dateNumMap.containsKey(date8)) {
-				dateNumMap.put(date8, 1);
+			date6 = TimeUtil.format6(log.getCreateTime());
+			if (!dateNumMap.containsKey(date6)) {
+				dateNumMap.put(date6, 1);
 			} else {
-				dateNumMap.put(date8, dateNumMap.get(date8) + 1);
+				dateNumMap.put(date6, dateNumMap.get(date6) + 1);
 			}
 		}
 		// group by date
@@ -278,14 +281,16 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		Date date = startTime;
 		Integer sum = 0;
 		for (int i = 0; i < daysBetween; i++) {
-			date8 = TimeUtil.format8(date);
-			result.getXDates().add(date8);
-			if (dateNumMap.containsKey(date8)) {
-				sum += dateNumMap.get(date8);
+			date6 = TimeUtil.format6(date);
+			result.getXDates().add(date6);
+			if (dateNumMap.containsKey(date6)) {
+				sum += dateNumMap.get(date6);
 			}
 			result.getYNums().add(sum);
 			date = TimeUtil.addDates(date, 1);
 		}
+		// 填充不足
+		result.fill(2, startTime);
 		return result;
 	}
 

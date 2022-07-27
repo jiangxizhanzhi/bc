@@ -381,7 +381,7 @@ public class TimeUtil {
      * @return
      */
     public static String format9(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ssZ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         return simpleDateFormat.format(date);
     }
 

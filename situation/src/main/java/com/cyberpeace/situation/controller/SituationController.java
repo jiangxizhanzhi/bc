@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -121,6 +122,11 @@ public class SituationController {
 	public BaseRsp<SceneConfigRes> getSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
 
 		String sceneId = sceneIdReq.getSceneId();
+
+		// 未传入sceneId时返回空值
+		if (StringUtils.isEmpty(sceneId)){
+			return new BaseRsp<>(new SceneConfigRes(false, false, false));
+		}
 
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
 

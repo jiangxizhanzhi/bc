@@ -89,11 +89,10 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 	@Override
 	public List<JSONObject> getTasks(String userId, String softId, String token) {
 		String targetUrl = REMOTE_TASK_LIST_URL + "?userId=" + userId + "&softId=" + softId;
-
 		try {
-			String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
 			log.info(String.format("Try to get user tasks, user id is %s, user token is %s", userId,
 					token));
+			String data = HttpClientUtil.rawGet(targetUrl, token, String.class);
 			return JsonUtil.toJsonObjectArray(data, JSONObject.class);
 		} catch (Exception e) {
 			log.error("Failed to get task list.", e);

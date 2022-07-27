@@ -43,7 +43,7 @@ public class UploadLogJob {
     public void init() throws UnknownHostException {
         REPORT_LOG_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.report.log");
         isUploadLog = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.upload.log"));
-        HOST_ADDRESS = InetAddress.getLocalHost().getHostAddress();
+        HOST_ADDRESS = System.getProperty("BC_HOST");
     }
 
     @Scheduled(fixedDelayString = "${common.upload.log.interval.time}")

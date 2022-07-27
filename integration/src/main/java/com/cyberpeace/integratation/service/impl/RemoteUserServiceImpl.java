@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -28,6 +32,9 @@ import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -47,6 +54,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String ORG_INFO_LIST_URL;
 
 	private String AUTH_PERMISSION_MENUS_URL;
+
+	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
+			.expireAfterWrite(15, TimeUnit.MINUTES)
+			.build(new CacheLoader<String, List<UserInfo>>() {
+
+				@Override
+				public List<UserInfo> load(String key) {
+					return getList(null, 0L, null, null).getJSONArray("list")
+							.toJavaList(UserInfo.class);
+				}
+			});
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -237,9 +255,15 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	@Cacheable(cacheNames = {"mpAllUsers"}, key="'users'")
 	public List<UserInfo> getAllUsers() {
-		return getList(null, 0L, null, null).getJSONArray("list").toJavaList(UserInfo.class);
+		List<UserInfo> res = Lists.newArrayList();
+		try {
+			res = allUserCache.get("allUsers");
+		} catch (ExecutionException e) {
+			log.error("executionException", e);
+			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
+		}
+		return res;
 	}
 
 	@Override

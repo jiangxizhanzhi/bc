@@ -32,4 +32,7 @@ public class EvalRecordResultIndexRsp implements Serializable {
 
     @JsonIgnore
     private String nextIds;
+
+    @JsonIgnore
+    private String parentId;
 }

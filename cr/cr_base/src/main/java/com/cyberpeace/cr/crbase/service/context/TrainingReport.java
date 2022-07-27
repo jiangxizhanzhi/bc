@@ -90,7 +90,37 @@ public class TrainingReport {
 		success("成功", "Successful"),
 		fail("失败", "Failed"),
 		reject("驳回", "Reject"),
-		wait("等待", "Wait");
+		wait("等待", "Wait"),
+
+		test_process("测试过程", "Test Process"),
+		test_mission("测试任务", "Test Mission"),
+		test_name("测试名称", "Test Name"),
+		test_type("测试类型", "Test Type"),
+		recording("是否录屏", "Recording"),
+		test_description("测试描述", "Test Description"),
+		network_topo("网络拓扑", "Network Topology"),
+		test_step("测试步骤", "Test Step"),
+		step("步骤", "Step"),
+		evaluation_process("评估过程", "Evaluation Process"),
+		evaluation_mission("评估任务","Evaluation Mission"),
+		evaluation_name("评估名称","Evaluation Name"),
+		evaluation_time("评估时间","Evaluation Time"),
+		evaluation_description("评估描述","Evaluation Description"),
+		index_system("指标体系", "Index System"),
+		variable_term_algorithm("变量项算法", "Variable Term Algorithm"),
+		detection_algorithmId("模型匹配算法", "Model Matching Algorithm"),
+		format_algorithm("格式化算法", "Format Algorithm"),
+		score_algorithm("评分算法", "Score Algorithm"),
+		evaluation_data_source("评估数据源", "Evaluation Data Source"),
+		test_instances("测试实例", "Test Instances"),
+		evaluation_stage("评估阶段", "Evaluation Stage"),
+		scene_start("场景启动", "Scene Start"),
+		to("至", "To"),
+		scene_end("场景结束", "Scene End"),
+		evaluation_result("评估结果", "Evaluation Result"),
+		detailed_data("详细数据", "Detailed Data"),
+		log_events("日志事件", "Log Events"),
+		hard_disk_usage("硬盘使用率", "Hard Disk Usage");
 
 		@Getter
 		private final String chinese;

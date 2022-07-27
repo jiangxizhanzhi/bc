@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
@@ -17,11 +18,14 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,7 @@ import java.util.Map;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/record")
+@Slf4j
 public class EvalRecordController {
     @Autowired
     private EvalTaskService evalTaskService;
@@ -184,5 +189,14 @@ public class EvalRecordController {
     @GetMapping("/result/variable")
     public BaseRsp<EvalRecordResultVariableRsp> resultVariable(@RequestParam("variable_id") String variableId) {
         return new BaseRsp<>(evalVariableRefService.resultVariable(variableId));
+    }
+
+    @ApiOperation("评估详情导出为PDF")
+    @RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+    @GetMapping("/train2pdf")
+    public void dumpEvalRecord2PDF(HttpServletResponse httpServletResponse,
+                                   @RequestParam("resource_id") String resourceId,
+                                   @RequestParam("task_id")String taskId) {
+        FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
 }

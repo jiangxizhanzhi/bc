@@ -36,6 +36,25 @@ public class AttackMessageServiceImpl extends ServiceImpl<AttackMessageMapper,At
 		attackMessageMapper.updateById(attackMessage);
 	}
 
+	@Override
+	public void bathAddAttackMessage(List<AttackMessageReq> attackMessageReqList){
+		List<AttackMessage> attackMessageList = new ArrayList<>();
+		for(AttackMessageReq attackMessageReq:attackMessageReqList){
+			attackMessageReq.setResourceId(IDGeneratorUtil.getID());
+			attackMessageList.add(attackMessageBoToAttackMessage(attackMessageReq));
+		}
+		saveBatch(attackMessageList);
+	}
+
+	@Override
+	public void bathUpdateAttackMessage(List<AttackMessageReq> attackMessageReqList){
+		List<AttackMessage> attackMessageList = new ArrayList<>();
+		for (AttackMessageReq attackMessageReq:attackMessageReqList){
+			attackMessageList.add(attackMessageBoToAttackMessage(attackMessageReq));
+		}
+		updateBatchById(attackMessageList);
+	}
+
 	public AttackMessage attackMessageBoToAttackMessage(AttackMessageReq attackMessageReq) {
 		AttackMessage attackMessage = BeanUtils.copy(attackMessageReq, AttackMessage.class);
 		attackMessage

@@ -115,12 +115,14 @@ public class RtksEvaluationController {
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<String> getMatchByRole() {
 		String userId = UserInfoContext.getUserContext().getUserId();
+		String name = UserInfoContext.getUserContext().getName();
 		String existRoleId = UserInfoContext.getUserContext().getRoleId();
+		String roleName = UserInfoContext.getUserContext().getRoleName();
 		BaseRsp<String> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
-			Integer percent = rtksStatisticService.roleMatchPercent(existRoleId, userId);
-			// record match
-			rtksSituationService.recordMatch(userId, existRoleId, percent);
+			// 计算并记录匹配度
+			Integer percent = rtksSituationService.recordSituation(userId, name, existRoleId,
+					roleName);
 			rsp.setData(percent + "");
 		}
 		return rsp;

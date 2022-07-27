@@ -9,7 +9,8 @@ public enum HtmlTemplateEnum {
 	/** html模板枚举*/
 	INDIVIDUAL("index.html", "static/template/html_to_pdf_template/Individual"),
 	REDBLUE("index.html", "static/template/html_to_pdf_template/Team"),
-	TEAM("index.html", "static/template/html_to_pdf_template/Team");
+	TEAM("index.html", "static/template/html_to_pdf_template/Team"),
+	EVAL("index.html", "static/template/html_to_pdf_template/Eval");
 
 	@Getter
 	private String templatePath;

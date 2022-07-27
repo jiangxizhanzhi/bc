@@ -3,10 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -204,7 +201,12 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
                 statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode()
         );
-
+        //时间过滤
+        if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {
+            Date startTime = java.sql.Date.valueOf(detailReq.getStartTime());
+            Date endTime = java.sql.Date.valueOf(detailReq.getEndTime());
+            personalTotalStatistics = personalTotalStatistics.stream().filter(personalTotalStatistic -> startTime.before(personalTotalStatistic.getCreateTime()) && personalTotalStatistic.getCreateTime().before(endTime)).collect(Collectors.toList());
+        }
         Map<String, List<CrTask>> user2Tasks = new HashMap<>();
         for (CrTask personStatistic : personalTotalStatistics) {
             String userId = personStatistic.getUserId();

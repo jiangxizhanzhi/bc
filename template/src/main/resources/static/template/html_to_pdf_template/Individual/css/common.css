@@ -81,3 +81,7 @@ button:active {
 .outer-block {
     page-break-inside: avoid !important;
 }
+.width600{
+  width:600px;
+  word-break: break-all;
+}

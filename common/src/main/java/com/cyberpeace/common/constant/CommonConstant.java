@@ -69,6 +69,8 @@ public interface CommonConstant {
 
 	String RIGHT = "是";
 
+	String NO = "否";
+
 	String EMPTY_STRING = "";
 
 	String MD_CODING_BLOCK = "```";

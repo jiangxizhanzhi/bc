@@ -40,4 +40,7 @@ public interface SituationErrorCode {
 
 	/** 本场景未配置仿真流量 */
 	String FLOW_SIMULATION_IS_NOT_CONFIGURED = "104013";
+
+	/** 多个多媒体动效存在时间重叠 */
+	String MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP = "104014";
 }

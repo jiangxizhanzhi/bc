@@ -48,4 +48,6 @@ public interface DynamicSchemeService {
 	String makeExportFile(String resourceId, String tempDir) throws IOException;
 
 	String importDynamicScheme(String unZipPath,String sceneId);
+
+	void validMedia(DynamicSchemeReq dynamicSchemeReq);
 }

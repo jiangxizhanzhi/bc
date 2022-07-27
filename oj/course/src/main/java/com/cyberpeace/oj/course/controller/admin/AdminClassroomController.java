@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -203,10 +204,10 @@ public class AdminClassroomController {
 	public BaseRsp<ListRsp<ClassroomReportBo>> classroomReport(ClassroomMonitorReq reportReq) {
 
 		Page page = reportReq.toPageParam();
-		List<ClassroomReportBo> classroomReportBos = classroomService
-				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern());
+		PageReportBo pageReportBo = classroomService
+				.selectClassroomReport(reportReq.getClassroomId(), reportReq.getPattern(), page);
 		return new BaseRsp(
-				PageUtil.getListResult(classroomReportBos, page, classroomReportBos.size()));
+				PageUtil.getListResult(pageReportBo.getData(), page, pageReportBo.getTotal()));
 	}
 
 	@ApiOperation("课堂学习统计")

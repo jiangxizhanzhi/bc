@@ -52,7 +52,7 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param classroomId
 	 * @return
 	 */
-	List<ClassroomReportBo> selectClassroomReport(String classroomId, String userName);
+	PageReportBo selectClassroomReport(String classroomId, String userName, Page page);
 
 	/**
 	 * 课堂学习统计

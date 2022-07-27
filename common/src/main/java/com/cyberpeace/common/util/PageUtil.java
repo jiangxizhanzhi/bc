@@ -5,14 +5,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class PageUtil {
 
@@ -66,8 +67,8 @@ public class PageUtil {
 			K k = data.get(CommonConstant.ZERO);
 
 			// 判断是否存在该字段
-			try{
-			    ObjUtil.getCertainFieldValue(k, column);
+			try {
+				ObjUtil.getCertainFieldValue(k, column);
 			} catch (RuntimeException e) {
 				continue;
 			}
@@ -75,14 +76,15 @@ public class PageUtil {
 			// 对数据排序
 			if (((OrderItem) order).isAsc()) {
 				data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
-						.getFieldValueByName(column, classroomMonitorBo) != null ? ObjUtil
-                        .getFieldValueByName(column, classroomMonitorBo) : "").toString()));
+						.getFieldValueByName(column, classroomMonitorBo) != null
+								? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
+								: "").toString()));
 
 			} else {
-				data.sort(Comparator
-						.comparing(classroomMonitorBo -> (ObjUtil
-                                .getFieldValueByName(column, classroomMonitorBo) != null ? ObjUtil
-                                .getFieldValueByName(column, classroomMonitorBo) : "").toString())
+				data.sort(Comparator.comparing(classroomMonitorBo -> (ObjUtil
+						.getFieldValueByName(column, classroomMonitorBo) != null
+								? ObjUtil.getFieldValueByName(column, classroomMonitorBo)
+								: "").toString())
 						.reversed());
 			}
 		}
@@ -90,13 +92,18 @@ public class PageUtil {
 		long remainData = total % page.getSize();
 		long totalPage = remainData == CommonConstant.ZERO.longValue() ? (total / page.getSize())
 				: (total / page.getSize()) + CommonConstant.ONE;
-
-		long start = (page.getCurrent() - CommonConstant.ONE) * page.getSize();
-		long end = page.getCurrent() == totalPage ? total : start + page.getSize();
-		List<K> subList = data.subList(new Long(start).intValue(), new Long(end).intValue());
-
 		ListRsp<K> listRsp = new ListRsp<>();
-		listRsp.setList(subList);
+
+		// 如果只传一页数据 默认则作为数据体直接返回
+		if (data.size() == page.getSize() && total > page.getSize()) {
+			listRsp.setList(data);
+		} else {
+			long start = (page.getCurrent() - CommonConstant.ONE) * page.getSize();
+			long end = page.getCurrent() == totalPage ? total : start + page.getSize();
+			List<K> subList = data.subList(new Long(start).intValue(), new Long(end).intValue());
+			listRsp.setList(subList);
+		}
+
 		listRsp.setCurrentPage(page.getCurrent());
 		listRsp.setLastPage(totalPage);
 		listRsp.setTotal(total);

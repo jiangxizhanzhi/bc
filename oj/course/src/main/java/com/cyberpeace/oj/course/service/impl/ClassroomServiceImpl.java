@@ -554,7 +554,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	}
 
 	@Override
-	public List<ClassroomReportBo> selectClassroomReport(String classroomId, String userName) {
+	public PageReportBo selectClassroomReport(String classroomId, String userName, Page page) {
 
 		// 基本数据校验
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -564,15 +564,25 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
 				true);
 
-		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
+		List<UserInfo> pageUser;
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			pageUser = StreamApiUtils.pageByList(userInfos, page.getCurrent(), page.getSize());
+		} else {
+			pageUser = userInfos;
+		}
+
+		List<UserInfo> filterUsers = StreamApiUtils.filter(pageUser,
 				userInfo -> StringUtils.isBlank(userName)
 						|| userInfo.getUserName().contains(userName)
 						|| userInfo.getName().contains(userName));
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
-		return StreamApiUtils.map(filterUsers,
-				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
+		// 供评估人员使用
+		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
+		List<ClassroomReportBo> data = StreamApiUtils.map(filterUsers,
+				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
+		return new PageReportBo(data, (long) userInfos.size());
 	}
 
 	@Override
@@ -1493,7 +1503,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @return
 	 */
 	private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
-			Map<String, String> orgMap) {
+			Map<String, String> orgMap, Map<String, UserInfo> evaluatorMap) {
 
 		// 用户信息
 		ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
@@ -1522,7 +1532,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				reportBo.setPassed(noteEvaluate.getPassed());
 
 				// 评估人数据设置
-				UserInfo evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
+				UserInfo evaluator = evaluatorMap.get(noteEvaluate.getEvaluatorId());
+				if (null == evaluator) {
+					evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
+					evaluatorMap.put(noteEvaluate.getEvaluatorId(), evaluator);
+				}
+
 				if (null != evaluator) {
 					reportBo.setEvaluatorId(noteEvaluate.getEvaluatorId());
 					reportBo.setEvaluatorName(evaluator.getName());

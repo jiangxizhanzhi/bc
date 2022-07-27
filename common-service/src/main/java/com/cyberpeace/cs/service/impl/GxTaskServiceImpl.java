@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +16,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -255,29 +255,37 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		String token = UserInfoContext.getUserContext().getThirdToken();
 
 		// token不存在时报错
-		if (StringUtils.isEmpty(token)){
+		if (StringUtils.isEmpty(token)) {
 			throw new BusinessException(ErrorCode.WRONG_GX_TOKEN);
 		}
 
-		ClassroomScore classroomScore = classroomScoreMapper.selectByLessonIdAndUserId(lessonId,
-				userId);
+		List<ClassroomScore> classroomScores = classroomScoreMapper
+				.selectByLessonIdAndUserId(lessonId, userId);
 
 		// 未找到记录时直接报错
-		if (classroomScore == null) {
+		if (classroomScores.isEmpty()) {
 			return false;
 		}
 
-		Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
-				thirdUserId, token);
+		List<String> unFinishedTasks = gxTaskMapper.listUnFinishedTaskId();
 
-		if (stopResult) {
-			// 课时学完后赋值100分
-			classroomScore.setScore(100);
-			classroomScoreMapper.updateById(classroomScore);
-			return true;
+		for (ClassroomScore classroomScore : classroomScores) {
+
+			if (!unFinishedTasks.contains(classroomScore.getTaskId())) {
+				continue;
+			}
+
+			Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
+					thirdUserId, token);
+
+			if (stopResult) {
+				// 课时学完后赋值100分
+				classroomScore.setScore(100);
+				classroomScoreMapper.updateById(classroomScore);
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override
@@ -326,14 +334,16 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 		for (RemoteUser remoteUser : remoteUsers) {
 			String userToken = StringUtils.isNotEmpty(token) ? token : remoteUser.getThirdToken();
+			String thirdUserId = remoteUser.getThirdUserId();
 
 			// token不存在时跳过
-			if (StringUtils.isEmpty(userToken)){
-				log.info(String.format("Skip current user, token is empty, userId: %s", remoteUser.getThirdUserId()));
+			if (StringUtils.isEmpty(userToken) || StringUtils.isEmpty(thirdUserId)) {
+				log.info(String.format("Skip current user, token is empty, mpUserId: %s",
+						remoteUser.getUserId()));
 				continue;
 			}
 
-			List<JSONObject> userTasks = remoteTaskService.getTasks(remoteUser.getThirdUserId(), SOFT_ID,
+			List<JSONObject> userTasks = remoteTaskService.getTasks(thirdUserId, SOFT_ID,
 					userToken);
 			for (JSONObject userTask : userTasks) {
 				String taskId = userTask.getJSONObject("taskBaseData").getString("taskId");

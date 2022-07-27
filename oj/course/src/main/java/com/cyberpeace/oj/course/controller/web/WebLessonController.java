@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -176,6 +178,11 @@ public class WebLessonController {
 	@PostMapping("/finish_task")
 	public BaseRsp<Boolean> finishTask(@RequestBody @Validated LessonIdReq lessonIdReq) {
 		Boolean result = gxTaskService.finishClassroom(lessonIdReq.getLessonId());
+
+		if (!result) {
+			throw new BusinessException(ErrorCode.FAILED_TO_STOP_TASK);
+		}
+
 		return new BaseRsp<>(result);
 	}
 

@@ -106,6 +106,10 @@ public interface ErrorCode {
 	/** 任务已结束 */
 	String TASK_IS_FINISHED = "100037";
 
+	/** GXtoken异常 */
 	String WRONG_GX_TOKEN = "100038";
+
+	/** 任务结束失败 */
+	String FAILED_TO_STOP_TASK = "100039";
 
 }

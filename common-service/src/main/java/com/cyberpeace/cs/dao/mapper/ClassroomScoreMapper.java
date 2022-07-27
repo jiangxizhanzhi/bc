@@ -30,7 +30,7 @@ public interface ClassroomScoreMapper extends BaseMapper<ClassroomScore> {
 
 	void clearByClassroomId(@Param("classroomId") String classroomId);
 
-	ClassroomScore selectByLessonIdAndUserId(@Param("lessonId") String lessonId,
+	List<ClassroomScore> selectByLessonIdAndUserId(@Param("lessonId") String lessonId,
 			@Param("userId") String userId);
 
 }

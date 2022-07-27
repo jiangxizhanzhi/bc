@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.dao.entity.ClassroomScore;
 import com.cyberpeace.cs.dao.mapper.ClassroomScoreMapper;
+import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
 import com.cyberpeace.oj.course.service.ClassroomScoreService;
@@ -29,6 +30,9 @@ public class ClassroomScoreServiceImpl extends ServiceImpl<ClassroomScoreMapper,
 
 	@Autowired
 	private ClassroomScoreMapper classroomScoreMapper;
+
+	@Autowired
+	private GxTaskMapper gxTaskMapper;
 
 	@Override
 	public Boolean initTaskClassroom(String taskId, String classroomId) {
@@ -80,16 +84,26 @@ public class ClassroomScoreServiceImpl extends ServiceImpl<ClassroomScoreMapper,
 	public void setLessonStatus(LessonInfoBo lessonInfoBo) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		ClassroomScore classroomScore = classroomScoreMapper
+		List<ClassroomScore> classroomScores = classroomScoreMapper
 				.selectByLessonIdAndUserId(lessonInfoBo.getResourceId(), userId);
 
 		// 未找到记录时返回原值
-		if (classroomScore == null) {
+		if (classroomScores.isEmpty()) {
 			return;
 		}
 
 		lessonInfoBo.setIsTaskLesson(true);
-		Boolean isFinished = classroomScore.getScore().equals(100);
+
+		List<String> unFinishedTasks = gxTaskMapper.listUnFinishedTaskId();
+
+		Boolean isFinished = true;
+		for (ClassroomScore classroomScore : classroomScores) {
+			if (unFinishedTasks.contains(classroomScore.getTaskId())) {
+				isFinished = classroomScore.getScore().equals(100);
+			}
+
+		}
+
 		lessonInfoBo.setIsLessonFinished(isFinished);
 	}
 

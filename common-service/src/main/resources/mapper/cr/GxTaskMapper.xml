@@ -33,13 +33,19 @@
         select *
         from sjyc_task
         where end_time &lt; #{closeTime}
-        and result is null
-        and event_id is not null
+          and result is null
+          and event_id is not null
     </select>
 
     <select id="listTaskId" resultType="java.lang.String">
         select task_id
         from sjyc_task
+    </select>
+
+    <select id="listUnFinishedTaskId" resultType="java.lang.String">
+        select task_id
+        from sjyc_task
+        where result is null
     </select>
 
 </mapper>

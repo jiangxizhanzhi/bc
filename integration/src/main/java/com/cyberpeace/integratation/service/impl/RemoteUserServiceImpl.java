@@ -237,7 +237,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	@Override
-	@Cacheable(key = "#root.methodName")
+	@Cacheable(key = "#root.methodName", sync = true)
 	public List<UserInfo> getAllUsers() {
 		return getList(null, 0L, null, null).getJSONArray("list").toJavaList(UserInfo.class);
 	}

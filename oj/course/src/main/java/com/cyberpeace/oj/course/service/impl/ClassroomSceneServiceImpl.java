@@ -166,6 +166,12 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 		localSceneService.deleteRemoteScene(localScene);
 
+		// todo 课堂批量启动场景中，手动关闭某个启动中小组场景，将小组从启动队列中移除
+		BatchStartSceneHandler sceneHandler = batchSceneMap.get(groupInfo.getClassroomId());
+		if (null != sceneHandler) {
+			sceneHandler.finish(groupId);
+		}
+
 		// 查询签到的用户
 		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
 				String.class);

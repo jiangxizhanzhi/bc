@@ -4,14 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
+import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * 名称: TraceLogFileAppender.java<br>
@@ -24,7 +23,7 @@ import java.util.TreeMap;
  * 版本号:1.0 
  */
 @Slf4j
-public class Log4jRollingFileAppender extends DailyRollingFileAppender {
+public class Log4jRollingFileAppender extends FileAppender {
 
 	protected long maxFileSize = 10485760L;//file.length,字节数
 	protected int maxDaysIndex = 1;//备份天数,包含当天
@@ -32,10 +31,14 @@ public class Log4jRollingFileAppender extends DailyRollingFileAppender {
 	private long nextRollover = 0;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 	private static String separator = ".";
+	private long nextCheck = System.currentTimeMillis() - 1;
+	Date now = new Date();
+	private String scheduledFilename;
+	private int maxBackupIndex = 15;
 
 	public Log4jRollingFileAppender() {}
 
-//	public Log4jRollingFileAppender(Layout layout, String filename, boolean append)
+	//	public Log4jRollingFileAppender(Layout layout, String filename, boolean append)
 //			throws IOException
 //	{
 //		super(layout, filename, append);
@@ -138,23 +141,39 @@ public class Log4jRollingFileAppender extends DailyRollingFileAppender {
 	}
 
 	protected void subAppend(LoggingEvent event) {
-		String nowDate = sdf.format(new Date());
-		String[] strs = fileName.split("\\.");
-		String fileDate  = strs[2];
-		if(!nowDate.equals(fileDate)){
+//		String nowDate = sdf.format(new Date());
+//		String[] strs = fileName.split("\\.");
+//		String qwe = strs[1];
+//		String fileDate  = qwe.split("_")[1];
+//		if(!nowDate.equals(fileDate)){
+//			try {
+//				//新建文件,当切换日期时,文件名中的序号都是从1开始
+//				String newFileName = getFileName(fileName,1);
+//				this.setCustomFile(newFileName, true, bufferedIO, bufferSize);
+//				//计算备份天数,多出删掉
+//				countFile(newFileName,maxDaysIndex);
+//			} catch (IOException e) {
+//				if (e instanceof InterruptedIOException) {
+//					Thread.currentThread().interrupt();
+//				}
+//			}
+//		}
+
+		long n = System.currentTimeMillis();
+		if (n >= nextCheck) {
+
+			// 在每次写操作前判断一下是否需要滚动文件
+			now.setTime(n);
+			nextCheck = getNextDayCheckPoint(now);
 			try {
-				//新建文件,当切换日期时,文件名中的序号都是从1开始
-				String newFileName = getFileName(fileName,1);
-				this.setCustomFile(newFileName, true, bufferedIO, bufferSize);
-				//计算备份天数,多出删掉
-				countFile(newFileName,maxDaysIndex);
-			} catch (IOException e) {
-				if (e instanceof InterruptedIOException) {
-					Thread.currentThread().interrupt();
-				}
+				rollOver();
+			} catch (IOException ioe) {
+				LogLog.error("rollOver() failed.", ioe);
 			}
 		}
+
 		super.subAppend(event);//先写入数据
+
 		if ((fileName != null) && (qw != null)) {
 			long size = ((CustomCountingQuietWriter)qw).getCount();
 			if ((size >= maxFileSize) && (size >= nextRollover)) {
@@ -232,5 +251,94 @@ public class Log4jRollingFileAppender extends DailyRollingFileAppender {
 		}
 	}
 
-}
+	long getNextDayCheckPoint(Date now) {
 
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(now);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);// 注意MILLISECOND,毫秒也要置0.。。否则错了也找不出来的 calendar.add(Calendar.DATE, 1);
+		return calendar.getTimeInMillis();
+	}
+
+	void rollOver() throws IOException {
+		String datedFilename = fileName + sdf.format(now);
+		// 如果上次写的日期跟当前日期相同，不需要换文件
+		if (scheduledFilename.equals(datedFilename)) {
+			return;
+		}
+		// close current file, and rename it to datedFilename
+		this.closeFile();
+		File target = new File(scheduledFilename);
+		if (target.exists()) {
+			try {
+				target.delete();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+
+		File file = new File(fileName);
+		boolean result = file.renameTo(target);
+		if (result) {
+			LogLog.debug(fileName + " -> " + scheduledFilename);
+		} else {
+			LogLog.error("Failed to rename [" + fileName + "] to [" + scheduledFilename + "].");
+		}
+
+		// 删除过期文件
+		if (maxBackupIndex > 0) {
+			File folder = new File(file.getParent());
+			List<String> maxBackupIndexDates = getMaxBackupIndexDates();
+			for (File ff : folder.listFiles()) {
+				// 遍历目录，将日期不在备份范围内的日志删掉
+				if (ff.getName().startsWith(file.getName()) && !ff.getName().equals(file.getName())) {
+					// 获取文件名带的日期时间戳
+					String markedDate = ff.getName().substring( file.getName().length());
+					if (!maxBackupIndexDates.contains(markedDate)) {
+						result = ff.delete();
+					}
+					if (result) {
+						LogLog.debug(ff.getName() + " -> deleted ");
+					} else {
+						LogLog.error("Failed to deleted old DayRollingFileAppender file :" + ff.getName());
+					}
+				}
+			}
+		}
+
+		try {
+			// This will also close the file. This is OK since multiple
+			// close operations are safe.
+			this.setFile(fileName, false, this.bufferedIO, this.bufferSize);
+		} catch (IOException e) {
+			errorHandler.error("setFile(" + fileName + ", false) call failed.");
+		}
+
+		scheduledFilename = datedFilename;
+		// 更新最后更新日期戳
+	}
+
+	List<String> getMaxBackupIndexDates() {
+
+		List<String> result = new ArrayList<String>();
+		if (maxBackupIndex > 0) {
+			for (int i = 1; i <= maxBackupIndex; i++) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(now);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+
+				// 注意MILLISECOND,毫秒也要置0...否则错了也找不出来的
+				calendar.add(Calendar.DATE, -i);
+				result.add(sdf.format(calendar.getTime()));
+			}
+		}
+
+		return result;
+	}
+
+}

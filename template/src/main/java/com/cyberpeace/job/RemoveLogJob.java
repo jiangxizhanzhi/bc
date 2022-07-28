@@ -14,7 +14,7 @@ public class RemoveLogJob {
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void removeLogFiles() {
         String logRootPath = System.getProperty("catalina.base") + "/logs/";
-        String cmd = String.format("find %s  -type 'f' -mtime +15 |xargs rm -f", logRootPath);
+        String cmd = String.format("find %s - name ''bc*.log  -type 'f' -mtime +15 |xargs rm -f", logRootPath);
         try {
             Runtime.getRuntime().exec(cmd);
             log.info(cmd);

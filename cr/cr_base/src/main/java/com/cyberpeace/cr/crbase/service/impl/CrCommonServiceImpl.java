@@ -35,16 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrCommonServiceImpl implements CrCommonService {
 
-	/**
-	 * 场景删除事件代号
-	 */
-	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
-
-	/**
-	 * 场景事件完成代号
-	 */
-	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
-
 	@Autowired
 	private LocalSceneService localSceneService;
 
@@ -98,8 +88,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 	@Override
 	public Boolean isStopped(JSONObject sceneData) {
 		SceneData data = sceneData.toJavaObject(SceneData.class);
-		return data.getTopology().getScene().getEvent().equals(MP_SCENE_DELETE_EVENT_CODE) && data
-				.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+		return data.isStopped();
 	}
 
 	@Override

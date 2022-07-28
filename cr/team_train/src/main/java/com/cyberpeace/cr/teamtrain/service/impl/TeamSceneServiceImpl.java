@@ -119,37 +119,21 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		// 1、获取可见节点&鉴权， null代表所有节点可见
 		CrRoleNodesData nodes = getNodes(userId, roomId, roleId);
 
-		// 2、如果没有启动的场景，直接返回拓扑数据
-		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
-
-		// 后两个判断，主要是为了防止脏数据
-		if (StringUtils.isBlank(room.getLocalSceneId()) || null == localScene
-				|| StringUtils.isBlank(localScene.getMpSceneId())) {
-			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
-			ret.setTopoData(topoData);
-			ret.setTopoId(room.getCopyedTopoId());
-			return ret;
-		}
-
-		// 3、有启动的场景，尝试返回启动的场景数据
-		String sceneId = localScene.getMpSceneId();
-		JSONObject sceneData = localSceneService.getSceneData(sceneId, userId);
+		// 2、尝试获取启动的远程场景
+		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
-			ret.setMpSceneId(sceneId);
 			ret.setLocalSceneId(room.getLocalSceneId());
-		} else {
-			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room, sceneId);
-			// 清除本地脏数据
-			clearLocal(room);
-
-			// 这时实际场景是没启动的，返回拓扑数据
-			JSONObject topoData = getTopoData(room.getCopyedTopoId(), nodes);
-			ret.setTopoData(topoData);
-			ret.setTopoId(room.getCopyedTopoId());
+			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
+			return ret;
 		}
-
+		// 3、 远程场景不存在，返回topo数据
+		JSONObject topoData = localSceneService.getTopoData(room.getCopyedTopoId())
+				.getJSONObject(CrCommonConstants.TOPO_DATA_KEY);
+		sceneFilterService.filterVisibleTopo(topoData, nodes);
+		ret.setTopoId(room.getCopyedTopoId());
+		ret.setTopoData(topoData);
 		return ret;
 	}
 
@@ -333,5 +317,44 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		localScene.setRecord(teamRoom.getEnableRecording());
 
 		return localScene;
+	}
+
+	private JSONObject getMpSceneData(TeamRoom room) {
+		String localSceneId = room.getLocalSceneId();
+		// localSceneId字段为空
+		if (StringUtils.isBlank(localSceneId)) {
+			return null;
+		}
+		// localScene不存在，localSceneId字段是脏数据
+		LocalScene localScene = localSceneService.getById(localSceneId);
+		if (null == localScene) {
+			room.setLocalSceneId("");
+			teamRoomService.updateById(room);
+			return null;
+		}
+		// localScene 的 mpSceneId为空，localScene是脏数据
+		String mpSceneId = localScene.getMpSceneId();
+		if (StringUtils.isBlank(mpSceneId)) {
+			clearLocal(room);
+			return null;
+		}
+		// 请求远程场景数据
+		JSONObject sceneData = localSceneService.getSceneData(mpSceneId,
+				UserInfoContext.getUserContext().getUserId());
+		// 场景数据为空，清除本地脏数据
+		if (null == sceneData) {
+			log.info("roomId=[{}] local has sceneId=[{}], remote is null", room.getResourceId(),
+					mpSceneId);
+			clearLocal(room);
+			return null;
+		}
+		// 场景实际已被删除，清除本地脏数据
+		SceneData data = sceneData.toJavaObject(SceneData.class);
+		if (data.isStopped()) {
+			clearLocal(room);
+			return null;
+		}
+		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
+		return sceneData;
 	}
 }

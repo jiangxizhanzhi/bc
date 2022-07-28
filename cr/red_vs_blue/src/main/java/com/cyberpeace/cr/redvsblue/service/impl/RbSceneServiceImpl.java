@@ -378,6 +378,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 			clearLocal(room);
 			return null;
 		}
+		// 场景实际已被删除，清除本地脏数据
+		SceneData data = sceneData.toJavaObject(SceneData.class);
+		if (data.isStopped()) {
+			clearLocal(room);
+			return null;
+		}
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
 	}

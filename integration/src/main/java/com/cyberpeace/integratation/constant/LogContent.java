@@ -29,7 +29,8 @@ public enum LogContent implements BaseI18n {
 	ROLE("Role", "岗位"), SKILL("Skill", "技能"),
 	TASK("Task", "岗位职责"),
 	CORRECT("correctly", "正确"),
-	INCORRECT("incorrectly", "错误");
+	INCORRECT("incorrectly", "错误"),
+	BATCH_DELETE_FORMAT("Batch delete %s", "批量删除 %s");
 
 	@Getter
 	private final String english;

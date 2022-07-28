@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -210,15 +211,13 @@ public class TeamTrainTemplateController {
 
 		teamTemplateService.batchDelete(deleteReq.getIds());
 
-		businessTemplateList.forEach(businessTemplate -> {
+		List<String> teamTrainTemplateName  = StreamApiUtils.getColumn(businessTemplateList,BusinessTemplate::getName);
 
-			if (businessTemplate != null) {
-				String teamTrainTemplateName = businessTemplate.getName();
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-						OperationType.DELETE, teamTrainTemplateName,
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
-			}
-		});
+		if (businessTemplateList != null) {
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+					OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.TEAM_TRAIN_TEMPLATE.getMsg()),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName.toString()));
+		};
 
 		return new BaseRsp<>();
 	}

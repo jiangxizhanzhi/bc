@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -148,12 +149,11 @@ public class SkillController {
 			});
 		}
 
-		skillList.forEach(skill -> {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-					OperationType.DELETE, skill.getResourceId(),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.SKILL.getMsg(),
-							skill.getResourceId()));
-		});
+		List<String> columns = StreamApiUtils.getColumn(skillList, Skill::getContent);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.SKILL.getMsg()),
+				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.SKILL.getMsg(),
+						columns.toString()));
 
 		return new BaseRsp<>();
 	}

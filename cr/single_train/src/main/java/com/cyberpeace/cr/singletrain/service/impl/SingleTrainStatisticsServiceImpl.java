@@ -253,7 +253,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
             Map<Integer, List<CrTask>> groupTaskMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getStatus));
             int correctSize = groupTaskMap.get(successCode) == null ? 0 : groupTaskMap.get(successCode).size();
-            double accuracy = BigDecimal.valueOf((double) correctSize / taskList.size()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double accuracy = BigDecimal.valueOf(Math.ceil((double) correctSize / taskList.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             tmpDetailBo.setTaskAccuracy(accuracy);
 
             rsp.add(tmpDetailBo);

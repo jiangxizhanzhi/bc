@@ -314,11 +314,13 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
         wsMultiNodeDynamic.setDuration(attackMessageBo.getDurationTime());
         List<String> elementIds = getElementIds(attackMessageBo.getSceneId());
         WsMessage<WsMultiNodeDynamic> wsMessage;
+        String type = attackMessageBo.getType();
+        Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord()) || type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
         if(elementIds.contains(attackMessageBo.getTargetId()))
             wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
         else
             wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
-        if (attackMessageBo.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord()))
+        if (isSingleNode)
             wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(), wsMultiNodeDynamic);
         situationHandlerService.pushDataToRoom(wsMessage, sceneId);
     }
@@ -464,8 +466,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
                 validateNameLen(attackMessageReq.getDescription(),ErrorCode.INVALID_DYNAMIC_DESCRIPTION);
 
-                if(!(attackMessageReq.getType().equals(AttackType.HIGHLIGHT_AREA.getKeyWord())||
-                        attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
+                String type = attackMessageReq.getType();
+
+                Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord()) || type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
+
+                if(!(isSingleNode|| attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
                         &&attackMessageReq.getSourceId().equals("")){
                     throw new BusinessException(ErrorCode.EMPTY_SOURCE_NODE,attackMessageReq.getDescription());
                 }

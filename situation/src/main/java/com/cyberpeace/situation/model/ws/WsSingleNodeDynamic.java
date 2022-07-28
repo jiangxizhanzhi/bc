@@ -23,7 +23,7 @@ public class WsSingleNodeDynamic implements Serializable {
 	@ApiModelProperty("事件描述")
 	private String description;
 
-	@ApiModelProperty("事件类型 11-区域高亮")
+	@ApiModelProperty("事件类型 11-区域高亮 12-节点聚焦")
 	private Integer type;
 
 	@ApiModelProperty("目标id")

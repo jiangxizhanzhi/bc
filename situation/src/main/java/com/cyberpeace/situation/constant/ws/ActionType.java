@@ -24,7 +24,9 @@ public enum ActionType {
 	START_ATTACK(8, "起始节点特效", "element",true,true),
 	NORMAL(9, "普通攻击", "element",true,true),
 	NONE(10, "无", "element",true,true),
-	HIGHLIGHT_AREA(11,"区域高亮","area",false,true);
+	HIGHLIGHT_AREA(11,"区域高亮","area",false,true),
+	HIGHLIGHT_ELEMENT(12,"节点聚焦","element",false,true),
+	LINK_POWER_OFF(13,"链路断线","element",true,true);
 
 	@Getter
 	private Integer code;

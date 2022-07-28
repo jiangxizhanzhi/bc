@@ -55,9 +55,14 @@ public enum AttackType {
     WEB_APPLICATION_ACTIVITY(ActionType.TRY_ATTACK, "web漏洞尝试利用", "access to a potentially vulnerable web application", "web-application-activity"),
     WEB_APPLICATION_ATTACK(ActionType.NORMAL, "Web应用攻击", "Web Application Attack", "web-application-attack"),
     MEDIA_ANIMATION(ActionType.NONE,"多媒体动效","Media animation","media-animation"),
-    HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight area","highlight-area");
+    HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight area","highlight-area"),
+    HIGHLIGHT_ELEMENT(ActionType.HIGHLIGHT_ELEMENT,"节点聚焦","Highlight Element","highlight-element"),
+    LINK_POWER_OFF(ActionType.LINK_POWER_OFF,"链路断线","Link Poweroff","link-poweroff"),
+    HOST_REPAIR(ActionType.REPAIR,"主机修复","Host Repair","host-repair"),
+    START_ATTACK(ActionType.START_ATTACK,"发起攻击","Start Attack","start-attack"),
+    NO_ATTACK(ActionType.NONE,"无攻击","No Attack","no-attack");
 
-	@Getter
+    @Getter
 	private ActionType actionType;
 
 	@Getter

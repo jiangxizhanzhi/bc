@@ -55,7 +55,9 @@ public enum AttackType {
     HIGHLIGHT_AREA(ActionType.HIGHLIGHT_AREA,"区域高亮","Highlight area","highlight-area"),
     HIGHLIGHT_ELEMENT(ActionType.HIGHLIGHT_ELEMENT,"节点聚焦","Highlight Element","highlight-element"),
     LINK_POWER_OFF(ActionType.LINK_POWER_OFF,"链路断线","Link Poweroff","link-poweroff"),
-    HOST_REPAIR(ActionType.REPAIR,"主机修复","Host Repair","host-repair");
+    HOST_REPAIR(ActionType.REPAIR,"主机修复","Host Repair","host-repair"),
+    START_ATTACK(ActionType.START_ATTACK,"发起攻击","Start Attack","start-attack"),
+    NO_ATTACK(ActionType.NONE,"无攻击","No Attack","no-attack");
 
     @Getter
     private ActionType actionType;

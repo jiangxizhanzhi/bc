@@ -43,4 +43,7 @@ public interface SituationErrorCode {
 
 	/** 多个多媒体动效存在时间重叠 */
 	String MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP = "104014";
+
+	/** 非场景态势暂时无法使用控制台 */
+	String UNAVAILABLE_FOR_NON_SCENE_SITUATION = "104015";
 }

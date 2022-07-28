@@ -124,7 +124,7 @@ public class SituationController {
 		String sceneId = sceneIdReq.getSceneId();
 
 		// 未传入sceneId时返回空值
-		if (StringUtils.isEmpty(sceneId)){
+		if (StringUtils.isEmpty(sceneId) || "demo".equals(sceneId)) {
 			return new BaseRsp<>(new SceneConfigRes(false, false, false));
 		}
 
@@ -174,6 +174,11 @@ public class SituationController {
 		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
 		if (sceneConfig == null) {
 			throw new BusinessException(SituationErrorCode.NO_VALID_SCENE_CONFIG);
+		}
+
+		if (sceneConfig.getFlowAnalysis().equals(sceneConfigReq.getFlowAnalysis())
+				&& sceneConfig.getFlowAutoRun().equals(sceneConfigReq.getFlowAutoRun())) {
+			return new BaseRsp<>(null);
 		}
 
 		// 校验场景是否允许流量事件推送

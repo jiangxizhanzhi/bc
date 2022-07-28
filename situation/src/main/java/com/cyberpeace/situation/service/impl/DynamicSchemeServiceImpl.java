@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -250,6 +251,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
     @Override
     public void getRemoteOption(OptionsRes optionsRes, String sceneId) {
+
+        if (StringUtils.isEmpty(sceneId)){
+            throw new BusinessException(SituationErrorCode.UNAVAILABLE_FOR_NON_SCENE_SITUATION);
+        }
+
         SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
         SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
         List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());

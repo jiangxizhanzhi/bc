@@ -13,7 +13,10 @@ public enum Color {
 	RED("#FF0000", "红色", "red"),
 	YELLOW("#FFFF00","黄色","yellow"),
 	BLUE("#0000FF", "蓝色", "blue"),
-	WHITE("#FFFFFF", "白色", "white");
+	WHITE("#FFFFFF", "白色", "white"),
+	GOLD("#CD7F32","金色","gold"),
+	GREEN("#66FF66", "绿色", "green"),
+	GREY("#999999", "灰色", "grey");
 
 	@Getter
 	private String code;

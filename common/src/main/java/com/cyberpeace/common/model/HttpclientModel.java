@@ -51,8 +51,6 @@ public class HttpclientModel {
 	public void doRemoteException(Exception e) {
 		callTime = System.currentTimeMillis() - startTime;
 		LOG.error(LOG_FORMATTER, new Object[] { callTime, url, null }, e);
-
-		throw new RemoteServiceException();
 	}
 
 	public void addLog(String httpResponse) {

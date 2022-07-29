@@ -8,16 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.cyberpeace.common.util.FileUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
-import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.LoggingEvent;
 
-
+@Slf4j
 public class CustomLogAppender extends FileAppender {
 
-    private String datePattern = "yyyy-MM-dd-HH-mm";
+    private String datePattern = "yyyy-MM-dd";
 
     private int maxBackupIndex = 5;
 
@@ -94,22 +94,25 @@ public class CustomLogAppender extends FileAppender {
             // 获取最后更新时间拼成的文件名
             scheduledFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(new Date(file.lastModified())) + "." + FileUtil.getFileSuffix(fileName);
         } else {
-            LogLog.error("File is not set for appender [" + name + "].");
+            log.error("File is not set for appender [" + name + "].");
         }
         if (maxBackupIndex <= 0) {
-            LogLog.error("maxBackupIndex reset to default value[2],orignal value is:" + maxBackupIndex);
+            log.error("maxBackupIndex reset to default 5,original value is:" + maxBackupIndex);
             maxBackupIndex = 5;
         }
         if (maxDaysIndex <= 0) {
-            LogLog.error("maxDaysIndex reset to default value[2],orignal value is:" + maxDaysIndex);
+            log.error("maxDaysIndex reset to default 15,original value is:" + maxDaysIndex);
             maxDaysIndex = 15;
         }
         if (maxFileSize <= 0) {
-            LogLog.error("maxFileSize reset to default value[2],orignal value is:" + maxFileSize);
+            log.error("maxFileSize reset to default 20MB,original value is:" + maxFileSize);
             maxFileSize = 20971520L;
         }
     }
 
+    /**
+     * 按时间切片
+     */
     void rollOverByTime() throws IOException {
         String datedFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(now) + "." + FileUtil.getFileSuffix(fileName);
         // 如果上次写的日期跟当前日期相同，不需要换文件
@@ -130,9 +133,9 @@ public class CustomLogAppender extends FileAppender {
         File file = new File(fileName);
         boolean result = file.renameTo(target);
         if (result) {
-            LogLog.debug(fileName + " -> " + scheduledFilename);
+            log.debug(fileName + " -> " + scheduledFilename);
         } else {
-            LogLog.error("Failed to rename [" + fileName + "] to [" + scheduledFilename + "].");
+            log.error("Failed to rename [" + fileName + "] to [" + scheduledFilename + "].");
         }
 
         // 删除过期文件
@@ -148,9 +151,9 @@ public class CustomLogAppender extends FileAppender {
                         result = ff.delete();
                     }
                     if (result) {
-                        LogLog.debug(ff.getName() + " -> deleted ");
+                        log.debug(ff.getName() + " -> deleted ");
                     } else {
-                        LogLog.error("Failed to deleted old DayRollingFileAppender file :" + ff.getName());
+                        log.error("Failed to deleted old DayRollingFileAppender file :" + ff.getName());
                     }
                 }
             }
@@ -168,14 +171,17 @@ public class CustomLogAppender extends FileAppender {
         // 更新最后更新日期戳
     }
 
+    /**
+     * 按文件大小切片
+     */
     void rollOverBySize() {
         if (this.qw != null) {
             long size = ((CustomCountingQuietWriter) this.qw).getCount();
-            LogLog.debug("rolling over count=" + size);
+            log.debug("rolling over count=" + size);
             this.nextRollover = size + this.maxFileSize;
         }
 
-        LogLog.debug("maxBackupIndex=" + this.maxBackupIndex);
+        log.debug("maxBackupIndex=" + this.maxBackupIndex);
         boolean renameSucceeded = true;
         if (this.maxBackupIndex > 0) {
             File file = new File(this.fileName);
@@ -190,8 +196,7 @@ public class CustomLogAppender extends FileAppender {
                 file = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + i + ".log");
                 if (file.exists()) {
                     target = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + (i + 1) + ".log");
-                    LogLog.debug("Renaming file " + file + " to " + target);
-                    System.out.println("Renaming file " + file + " to " + target);
+                    log.debug("Renaming file " + file + " to " + target);
                     renameSucceeded = file.renameTo(target);
                 }
             }
@@ -200,8 +205,7 @@ public class CustomLogAppender extends FileAppender {
                 target = new File(file.getParent() + File.separator + realFileName + "_" + sdf.format(now) + '.' + 1 + ".log");
                 this.closeFile();
                 file = new File(this.fileName);
-                LogLog.debug("Renaming file " + file + " to " + target);
-                System.out.println("Renaming file " + file + " to " + target);
+                log.debug("Renaming file " + file + " to " + target);
                 renameSucceeded = file.renameTo(target);
                 if (!renameSucceeded) {
                     try {
@@ -210,7 +214,7 @@ public class CustomLogAppender extends FileAppender {
                         if (var6 instanceof InterruptedIOException) {
                             Thread.currentThread().interrupt();
                         }
-                        LogLog.error("setFile(" + this.fileName + ", true) call failed.", var6);
+                        log.error("setFile(" + this.fileName + ", true) call failed.", var6);
                     }
                 }
             }
@@ -224,8 +228,7 @@ public class CustomLogAppender extends FileAppender {
                 if (var5 instanceof InterruptedIOException) {
                     Thread.currentThread().interrupt();
                 }
-
-                LogLog.error("setFile(" + this.fileName + ", false) call failed.", var5);
+                log.error("setFile(" + this.fileName + ", false) call failed.", var5);
             }
         }
     }
@@ -243,15 +246,14 @@ public class CustomLogAppender extends FileAppender {
             // 在每次写操作前判断一下是否需要滚动文件
             now.setTime(n);
             Calendar calendar = Calendar.getInstance();
-            if (type >= 0 && type <= 5) {
-                nextCheck = getNextCheckDate(calendar, now, 1).getTimeInMillis();
-            } else {
-                nextCheck = getNextDayCheckPoint(now);
+            if (type < 0) {
+                computeCheckPeriod();
             }
+            nextCheck = getNextCheckDate(calendar, now, 1).getTimeInMillis();
             try {
                 rollOverByTime();
             } catch (IOException ioe) {
-                LogLog.error("rollOver() failed.", ioe);
+                log.error("rollOver() failed.", ioe);
             }
         }
 
@@ -267,31 +269,11 @@ public class CustomLogAppender extends FileAppender {
     }
 
     /**
-     * 获取下一天的时间变更点
-     *
-     * @param now
-     * @return
-     */
-    long getNextDayCheckPoint(Date now) {
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);// 注意MILLISECOND,毫秒也要置0.。。否则错了也找不出来的 calendar.add(Calendar.DATE, 1);
-        return calendar.getTimeInMillis();
-    }
-
-    /**
-     * 根据maxBackupIndex配置的备份文件个数，获取要保留log文件的日期范围集合
-     *
-     * @return list<' fileName + yyyy-MM-dd '>
+     * 获取前maxDaysIndex天的日期
      */
     List<String> getMaxDaysIndexDates() {
 
         List<String> result = new ArrayList<String>();
-        computeCheckPeriod();
         if (maxDaysIndex > 0) {
             for (int i = 1; i <= maxDaysIndex; i++) {
                 Calendar calendar = Calendar.getInstance();
@@ -303,6 +285,9 @@ public class CustomLogAppender extends FileAppender {
         return result;
     }
 
+    /**
+     * 根据datePattern来设定type
+     */
     int computeCheckPeriod() {
         Calendar calendar = Calendar.getInstance();
         Date epoch = new Date(0L);
@@ -322,54 +307,57 @@ public class CustomLogAppender extends FileAppender {
         return -1;
     }
 
+    /**
+     * 根据type来获取下i的时间
+     */
     public Calendar getNextCheckDate(Calendar calendar, Date now, int i) {
         calendar.setTime(now);
         switch (this.type) {
             case 0:
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                calendar.add(12, i);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.MINUTE, i);
                 break;
             case 1:
-                calendar.set(12, 0);
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                calendar.add(11, i);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.HOUR_OF_DAY, i);
                 break;
             case 2:
-                calendar.set(12, 0);
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                int hour = calendar.get(11);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 if (hour < 12) {
-                    calendar.set(11, 12);
+                    calendar.set(Calendar.HOUR_OF_DAY, 12);
                 } else {
-                    calendar.set(11, 0);
-                    calendar.add(5, i);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.add(Calendar.DAY_OF_MONTH, i);
                 }
                 break;
             case 3:
-                calendar.set(11, 0);
-                calendar.set(12, 0);
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                calendar.add(5, i);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.DAY_OF_MONTH, i);
                 break;
             case 4:
-                calendar.set(7, calendar.getFirstDayOfWeek());
-                calendar.set(11, 0);
-                calendar.set(12, 0);
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                calendar.add(3, i);
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.WEEK_OF_YEAR, i);
                 break;
             case 5:
-                calendar.set(5, 1);
-                calendar.set(11, 0);
-                calendar.set(12, 0);
-                calendar.set(13, 0);
-                calendar.set(14, 0);
-                calendar.add(2, i);
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.add(Calendar.MONTH, i);
                 break;
             default:
                 throw new IllegalStateException("Unknown periodicity type.");
@@ -377,6 +365,9 @@ public class CustomLogAppender extends FileAppender {
         return calendar;
     }
 
+    /**
+     * 获取文件名中的日期
+     */
     String getFileNameTime(File file) {
         String fileName = file.getName().substring(0, file.getName().indexOf("."));
         String[] str = fileName.split("_");

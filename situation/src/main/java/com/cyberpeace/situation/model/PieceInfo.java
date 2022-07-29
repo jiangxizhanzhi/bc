@@ -32,7 +32,7 @@ public class PieceInfo implements Serializable {
 	private String type;
 
 	@ApiModelProperty("部件层级")
-	private Float hierarchy;
+	private Float hierarchy = 0.0f;
 
 	@ApiModelProperty("部件坐标")
 	private PlaneCoordinate position;

@@ -40,7 +40,7 @@ public class AreaInfo implements Serializable {
 	private List<String> effect;
 
 	@ApiModelProperty("区域层级")
-	private Float hierarchy;
+	private Float hierarchy = 0.0f;
 
 	public AreaInfo(JSONObject area) {
 		this.areaId = area.getString("id");

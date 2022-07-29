@@ -785,21 +785,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 EvalLog.error(evalRecord, evalVariableRef, "collect data field [content] is null.");
                 throw new RemoteServiceException();
             }
-            // 时区变更，当前获取到数据为UTC时间
+            // 读取探针采集时间
             if (evalVariableRefService.BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
-                if (scanAttr == null) {
-                    if ("005".equals(mpCollectionEvent.getProbeId())) {
-
-                        probeDataItem.setCollectionTime(content.getTimestamp("startTime"));
-                    } else {
-                        EvalLog.error(evalRecord, evalVariableRef, "collect data field [time] is invalid.");
-                        throw new RemoteServiceException();
-                    }
-                } else {
-                    probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
-                }
-                // 暂不处理
+                probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
+            } else if (mpCollectionEvent.getProbeId().equals("011")) {
+                probeDataItem.setCollectionTime(content.getTimestamp("updateTime"));
             } else {
                 probeDataItem.setCollectionTime(content.getTimestamp("time"));
             }

@@ -145,7 +145,20 @@ ALTER TABLE `situation_scene_config`
 -- ----------------------------
 DELETE
 FROM `rtks_user_role`
-WHERE `id` IN (7, 8, 9, 10);
+WHERE `id` = 7
+  and role_id = '542fc3e2caf0fa9b4935432ffe4daafa';
+DELETE
+FROM `rtks_user_role`
+WHERE `id` = 8
+  and role_id = 'eca75b7f8a701bc544911330f7f7c7b2';
+DELETE
+FROM `rtks_user_role`
+WHERE `id` = 9
+  and role_id = '9d6c15369048cbd3575bf9b3cae0c502';
+DELETE
+FROM `rtks_user_role`
+WHERE `id` = 10
+  and role_id = 'e25dc8c9d15ddd621f16616083d68726';
 
 -- ----------------------------
 -- 20220726.1__add_cr_constants_config

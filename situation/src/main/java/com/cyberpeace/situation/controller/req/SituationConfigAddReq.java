@@ -21,7 +21,7 @@ public class SituationConfigAddReq implements Serializable {
 	private String nodeName;
 
 	@NotNull
-	@ApiModelProperty(value = "元素类型 1-区域 2-节点", required = true)
+	@ApiModelProperty(value = "元素类型 1-区域 2-节点 3-部件", required = true)
 	private Integer nodeType;
 
 	@NotNull

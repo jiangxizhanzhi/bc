@@ -9,8 +9,10 @@ import com.cyberpeace.situation.dao.entity.SituationConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
 @Data
+@Log4j2
 public class AreaInfo implements Serializable {
 
 	@ApiModelProperty("区域id")
@@ -37,6 +39,9 @@ public class AreaInfo implements Serializable {
 	@ApiModelProperty("区域动效")
 	private List<String> effect;
 
+	@ApiModelProperty("区域层级")
+	private Float hierarchy;
+
 	public AreaInfo(JSONObject area) {
 		this.areaId = area.getString("id");
 		this.desc = area.getString("description");
@@ -56,6 +61,19 @@ public class AreaInfo implements Serializable {
 		String color = nodeConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
 		if (color != null) {
 			this.style.setColor(color);
+		}
+
+		// 设置区域高度
+		String hierarchy = nodeConfig.getOrDefault(SituationConfig.Attribute.HEIGHT.getCode(),
+				null);
+		if (hierarchy != null) {
+			try {
+				this.hierarchy = Float.parseFloat(hierarchy);
+			} catch (Exception e) {
+				log.info(String.format(
+						"Fail to get the area hierarchy of %s, the original value is %s.",
+						this.areaId, hierarchy));
+			}
 		}
 	}
 

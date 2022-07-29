@@ -73,10 +73,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		List<PieceInfo> pieces = JsonUtil.toJsonObjectArray(sceneData.getPieces().toString(),
 				PieceInfo.class);
+		Map<String, List<SituationConfig>> piecesConfigMap = sceneData.getSituationConfigMap()
+				.getOrDefault(SituationConfig.NodeType.PIECE.getCode(), Maps.newHashMap());
 
 		Map<String, PieceInfo> piecesInfo = Maps.newHashMap();
 
 		for (PieceInfo pieceInfo : pieces) {
+			// 提取自定义配置
+			Map<Integer, String> areaConfig = getNodeConfig(piecesConfigMap, pieceInfo.getPieceId(),
+					pieceInfo.getDescription());
+			pieceInfo.setConfig(areaConfig);
 			piecesInfo.put(pieceInfo.getPieceId(), pieceInfo);
 		}
 

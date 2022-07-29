@@ -34,7 +34,7 @@ public class SituationConfig {
 
 	public enum NodeType {
 
-		AREA(1, "区域"), ELEMENT(2, "节点");
+		AREA(1, "区域"), ELEMENT(2, "节点"), PIECE(3, "部件");
 
 		@Getter
 		private Integer code;
@@ -51,9 +51,7 @@ public class SituationConfig {
 
 	public enum Attribute {
 
-		HEIGHT(1, "高度", "hierarchy"),
-		NAME(2, "名称", "name"),
-		COLOR(3,"颜色","color");
+		HEIGHT(1, "高度", "hierarchy"), NAME(2, "名称", "name"), COLOR(3, "颜色", "color");
 
 		@Getter
 		private Integer code;

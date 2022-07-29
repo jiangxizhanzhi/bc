@@ -20,7 +20,7 @@ public interface EvalVariableRefService extends IService<EvalVariableRef> {
     /**
      * 时间字段获取存在差异的探针
      */
-    List<String> BASE = Arrays.asList("002", "003", "004");
+    List<String> BASE = Arrays.asList("002", "003");
 
     /**
      * 由es查询的探针数据, 无法使用`page`、`per_page`分页, 需要传入`requestId`、`per_page`迭代获取

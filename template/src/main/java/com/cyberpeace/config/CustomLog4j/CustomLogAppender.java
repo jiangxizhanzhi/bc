@@ -11,41 +11,30 @@ import com.cyberpeace.common.util.FileUtil;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.LoggingEvent;
 
-/**
- * 扩展的一个按天滚动的appender类, 暂时不支持datePattern设置, 但是可以配置maxBackupIndex
- *
- * @author Dan Shan
- */
+
 public class CustomLogAppender extends FileAppender {
 
-
     private String datePattern = "yyyy-MM-dd-HH-mm";
-    /**
-     * 最多文件增长个数
-     */
+
     private int maxBackupIndex = 5;
 
     private int maxDaysIndex = 15;
 
-    private long maxFileSize = 20480L;
+    private long maxFileSize = 20971520L;
 
-    /**
-     * 文件名+上次最后更新时间
-     */
     private String scheduledFilename;
 
     private long nextRollover = 0L;
 
-    /**
-     * The next time we estimate a rollover should occur.
-     */
     private long nextCheck = System.currentTimeMillis() - 1;
 
     private int type = -1;
 
     Date now = new Date();
+
     SimpleDateFormat sdf;
 
     /**
@@ -67,8 +56,8 @@ public class CustomLogAppender extends FileAppender {
         qw = new CustomCountingQuietWriter(writer, errorHandler, this.encoding);
     }
 
-    public void setMaxFileSize(long maxFileSize) {
-        this.maxFileSize = maxFileSize;
+    public void setMaxFileSize(String maxFileSize) {
+        this.maxFileSize = OptionConverter.toFileSize(maxFileSize, 20971520L);
     }
 
     public void setDatePattern(String datePattern) {
@@ -104,7 +93,6 @@ public class CustomLogAppender extends FileAppender {
             String[] strings = fileName.split(".");
             // 获取最后更新时间拼成的文件名
             scheduledFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(new Date(file.lastModified())) + "." + FileUtil.getFileSuffix(fileName);
-//            scheduledFilename = fileName + sdf.format(new Date(file.lastModified()));
         } else {
             LogLog.error("File is not set for appender [" + name + "].");
         }
@@ -112,18 +100,16 @@ public class CustomLogAppender extends FileAppender {
             LogLog.error("maxBackupIndex reset to default value[2],orignal value is:" + maxBackupIndex);
             maxBackupIndex = 5;
         }
-        if(maxDaysIndex <= 0){
+        if (maxDaysIndex <= 0) {
             LogLog.error("maxDaysIndex reset to default value[2],orignal value is:" + maxDaysIndex);
             maxDaysIndex = 15;
         }
+        if (maxFileSize <= 0) {
+            LogLog.error("maxFileSize reset to default value[2],orignal value is:" + maxFileSize);
+            maxFileSize = 20971520L;
+        }
     }
 
-    /**
-     * 滚动文件的函数:<br>
-     * 1. 对文件名带的时间戳进行比较, 确定是否更新<br>
-     * 2. if需要更新, 当前文件rename到文件名+日期, 重新开始写文件<br>
-     * 3. 针对配置的maxBackupIndex,删除过期的文件
-     */
     void rollOverByTime() throws IOException {
         String datedFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(now) + "." + FileUtil.getFileSuffix(fileName);
         // 如果上次写的日期跟当前日期相同，不需要换文件
@@ -257,10 +243,9 @@ public class CustomLogAppender extends FileAppender {
             // 在每次写操作前判断一下是否需要滚动文件
             now.setTime(n);
             Calendar calendar = Calendar.getInstance();
-            if(type>=0 && type <= 5){
+            if (type >= 0 && type <= 5) {
                 nextCheck = getNextCheckDate(calendar, now, 1).getTimeInMillis();
-            }
-            else {
+            } else {
                 nextCheck = getNextDayCheckPoint(now);
             }
             try {
@@ -400,4 +385,5 @@ public class CustomLogAppender extends FileAppender {
         }
         return str[1];
     }
+
 }

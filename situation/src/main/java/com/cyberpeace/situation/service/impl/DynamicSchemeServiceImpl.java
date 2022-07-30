@@ -414,6 +414,11 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
 
     @Override
     public List<WsAttackSchedule> getSchedule(String sceneId) {
+
+        if (sceneId == null){
+            return new ArrayList<>();
+        }
+
         String schedule = sceneConfigService.getScheduleBySceneId(sceneId);
         if (schedule == null){
             return new ArrayList<>();

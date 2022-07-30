@@ -393,7 +393,7 @@ public class DynamicSchemeServiceImpl implements DynamicSchemeService {
                         sceneConfigService.updateScheduleById(sceneId, JSONObject.toJSONString(wsAttackScheduleList));
                     }
                 }
-                sceneConfigService.updateScheduleById(sceneId, null);
+                sceneConfigService.updateScheduleById(sceneId, JSONObject.toJSONString(Lists.newArrayList()));
             }
         });
         thread.start();

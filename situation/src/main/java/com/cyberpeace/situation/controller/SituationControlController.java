@@ -42,9 +42,6 @@ public class SituationControlController {
     @Autowired
     private AttachmentService attachmentService;
 
-    @Autowired
-    private SceneConfigService sceneConfigService;
-
     @ApiOperation("新增动效方案")
     @PostMapping("/scheme")
     public BaseRsp<String> addDynamicEffectScheme(@RequestBody @Validated AddDynamicSchemeReq addDynamicSchemeReq){
@@ -97,12 +94,11 @@ public class SituationControlController {
     public BaseRsp<?> runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq){
         AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq, AttackMessageReq.class);
         dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
-        dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
-        String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
         if(runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())){
-            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null, null, code);
+            dynamicSchemeService.pushMediaToRoom(attackMessageBo, null, null);
         }else{
-            dynamicSchemeService.pushAttackToRoom(attackMessageBo, null);
+            List<String> elementIds = dynamicSchemeService.getElementIds(attackMessageBo.getSceneId());
+            dynamicSchemeService.pushAttackToRoom(attackMessageBo, null, elementIds);
         }
         return new BaseRsp<>();
     }

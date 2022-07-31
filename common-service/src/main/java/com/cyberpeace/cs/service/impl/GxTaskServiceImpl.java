@@ -267,22 +267,30 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			return false;
 		}
 
-		List<String> unFinishedTasks = gxTaskMapper.listUnFinishedTaskId();
+		List<String> unFinishedTasks = gxTaskMapper.listActiveTaskIds(new Date());
 
 		for (ClassroomScore classroomScore : classroomScores) {
 
+			// 非活动任务不处理
 			if (!unFinishedTasks.contains(classroomScore.getTaskId())) {
 				continue;
 			}
 
+			// 已赋值100分的不处理
+			if (classroomScore.getScore().equals(100)) {
+				continue;
+			}
+
+			// 上报远程完成用户任务
 			Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
 					thirdUserId, token);
 
-			if (!stopResult){
+			// 上报失败时返回失败
+			if (!stopResult) {
 				return false;
 			}
 
-			// 课时学完后赋值100分
+			// 上报成功后赋值100分
 			classroomScore.setScore(100);
 			classroomScoreMapper.updateById(classroomScore);
 		}

@@ -51,10 +51,12 @@
         from sjyc_task
     </select>
 
-    <select id="listUnFinishedTaskId" resultType="java.lang.String">
+    <select id="listActiveTaskIds" resultType="java.lang.String">
         select task_id
         from sjyc_task
         where result is null
+          and start_time &lt; #{currentTime}
+          and end_time &gt; #{currentTime}
     </select>
 
 </mapper>

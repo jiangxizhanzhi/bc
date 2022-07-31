@@ -25,6 +25,6 @@ public interface GxTaskMapper extends BaseMapper<GxTask> {
 
 	List<String> listTaskId();
 
-	List<String> listUnFinishedTaskId();
+	List<String> listActiveTaskIds(Date currentTime);
 
 }

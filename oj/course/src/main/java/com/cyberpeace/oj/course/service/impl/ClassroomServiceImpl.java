@@ -27,8 +27,11 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.dao.entity.GxLocalOrg;
+import com.cyberpeace.cs.dao.entity.GxTask;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.ClassroomScoreMapper;
 import com.cyberpeace.cs.dao.mapper.GxLocalOrgMapper;
+import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.GxTaskService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
@@ -118,6 +121,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private GxTaskService gxTaskService;
+
+	@Autowired
+	private GxTaskMapper gxTaskMapper;
+
+	@Autowired
+	private ClassroomScoreMapper classroomScoreMapper;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -326,6 +335,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.CLASS_SCENE_IS_RUNNING);
 		}
 
+		// 校验课程表是否和共性平台任务关联
+		GxTask gxTask = gxTaskMapper.selectByEventId(classroom.getResourceId());
+		if (gxTask != null) {
+			throw new BusinessException(OjBusinessErrorCode.CLASSROOM_IS_BOUND_TO_TASK);
+		}
 	}
 
 	@Override
@@ -538,6 +552,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				// 课堂数据删除
 				classroomGroupInfoMapper.deleteByRoom(classroomId);
 				gxTaskService.clearClassRoomOrg(classroomId);
+				classroomScoreMapper.clearByClassroomId(classroomId);
 				return classroomMapper.deleteById(classroomId);
 			}
 		});

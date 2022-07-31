@@ -29,6 +29,15 @@
         </where>
     </select>
 
+    <select id="selectByEventId" resultMap="gxTask">
+
+        select *
+        from sjyc_task
+        <where>
+            event_id = #{eventId}
+        </where>
+    </select>
+
     <select id="selectByCloseTime" resultMap="gxTask">
         select *
         from sjyc_task

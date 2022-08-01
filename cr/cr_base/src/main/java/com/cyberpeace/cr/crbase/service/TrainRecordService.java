@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
-import com.alibaba.fastjson.JSONObject;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 
@@ -35,6 +36,14 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * 通过房间id更新结束时间
 	 */
 	void updateEndDate(String roomId, Integer businessType);
+
+	/**
+	 * 通过房间id，更新结束时间，
+	 * 传入结束时间，避免数据库时间和靶场时间不一致
+	 * @param roomId
+	 * @param endTime
+	 */
+	void updateEndTimeByRoomId(String roomId, Date endTime);
 
 	/**
 	 * 用于删除单兵训练模板时，批量更新训练记录

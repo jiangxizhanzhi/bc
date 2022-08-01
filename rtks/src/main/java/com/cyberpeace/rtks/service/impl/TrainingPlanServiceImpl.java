@@ -19,6 +19,8 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
 import com.cyberpeace.rtks.controller.TrainingPlanController;
@@ -34,9 +36,11 @@ import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
+import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 import com.google.common.collect.Lists;
@@ -58,6 +62,12 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 
 	@Autowired
 	private RoleMapper roleMapper;
+
+	@Autowired
+	private RoleSkillRelationMapper roleSkillRelationMapper;
+
+	@Autowired
+	private MissionTemplateMapper missionTemplateMapper;
 
 	@Autowired
 	private KnowledgeMapper knowledgeMapper;
@@ -183,17 +193,14 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
 		}
 		roleDetailRes.setBasicCourseList(basicCourseList);
 
-		// 获取技能的课程列表
-		// List<Skill> skillDataList = roleDetailOutput.getSkillDataList();
-		// List<SkillRes> skillResList = BeanUtils.deepCopyList(skillDataList,
-		// SkillRes.class);
-		//
-		// skillService.checkSkillRes(skillResList, type);
-		// List<RelatedCourse> skillCourseList = Lists.newArrayList();
-		// for (SkillRes skillRes : skillResList) {
-		// skillCourseList.addAll(skillRes.getCourseList());
-		// }
-		// roleDetailRes.setSkillCourseList(skillCourseList);
+		// 获取技能的任务列表
+		List<String> missionTemplateIds = roleSkillRelationMapper
+				.getMissionIdsByRoleId(resource_id);
+		List<MissionTemplateRes> missionTemplateResList = missionTemplateMapper
+				.listWithBusiness(missionTemplateIds);
+		List<MissionTemplateSimple> missions = BeanUtils.deepCopyList(missionTemplateResList,
+				MissionTemplateSimple.class);
+		roleDetailRes.setMissions(missions);
 
 		return roleDetailRes;
 	}

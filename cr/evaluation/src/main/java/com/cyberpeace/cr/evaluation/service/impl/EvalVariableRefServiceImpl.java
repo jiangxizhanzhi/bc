@@ -1,15 +1,17 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.exception.evaluate.RemoteException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultAlgorithmRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultVariableRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableDataPageRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalVariableGraphRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
@@ -18,23 +20,21 @@ import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.EvalProbeDataService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefProbeDataService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataContext;
 import com.cyberpeace.integratation.model.evaluation.*;
 import com.cyberpeace.integratation.service.RemotePythonService;
+import jdk.nashorn.internal.scripts.JO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.util.TextUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.xhtmlrenderer.layout.TextUtil;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -320,5 +320,43 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     @Override
     public ListRsp<EvalVariableDataPageRsp> originData(Page page, String variableId) {
         return evalVariableRefProbeDataService.variableProbeData(page, variableId);
+    }
+
+    @Override
+    public EvalRecordResultVariableRsp resultVariable(String variableId) {
+        EvalVariableRef evalVariableRef = getById(variableId);
+        if (evalVariableRef == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        EvalRecordResultVariableRsp evalRecordResultVariableRsp = new EvalRecordResultVariableRsp();
+        evalRecordResultVariableRsp.setResourceId(evalVariableRef.getResourceId());
+        evalRecordResultVariableRsp.setName(evalVariableRef.getName());
+
+        List<String> algorithmIds = Arrays.asList(
+                evalVariableRef.getFormatAlgorithmId(),
+                evalVariableRef.getMatchAlgorithmId(),
+                evalVariableRef.getMarkAlgorithmId()
+        );
+
+        List<EvalAlgorithmRef> evalAlgorithmRefList = evalAlgorithmRefService.lambdaQuery().in(EvalAlgorithmRef::getResourceId, algorithmIds).list();
+
+        evalAlgorithmRefList.forEach(evalAlgorithmRef -> {
+            EvalRecordResultAlgorithmRsp evalRecordResultAlgorithmRsp = new EvalRecordResultAlgorithmRsp();
+            BeanUtils.copyProperties(evalAlgorithmRef, evalRecordResultAlgorithmRsp);
+
+            if (evalAlgorithmRef.getType().equals(EvalAlgorithm.Type.FORMAT_ALGORITHM.getCode())) {
+                evalRecordResultAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalVariableRef.getFormatParams(), AlgorithmParamContext.class));
+                evalRecordResultVariableRsp.setFormatAlgorithm(evalRecordResultAlgorithmRsp);
+            } else if (evalAlgorithmRef.getType().equals(EvalAlgorithm.Type.MATCHING_ALGORITHM.getCode())) {
+                evalRecordResultAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalVariableRef.getMatchParams(), AlgorithmParamContext.class));
+                evalRecordResultVariableRsp.setMatchAlgorithm(evalRecordResultAlgorithmRsp);
+            } else {
+                evalRecordResultAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(evalVariableRef.getMarkParams(), AlgorithmParamContext.class));
+                evalRecordResultVariableRsp.setMarkAlgorithm(evalRecordResultAlgorithmRsp);
+            }
+        });
+
+        return evalRecordResultVariableRsp;
     }
 }

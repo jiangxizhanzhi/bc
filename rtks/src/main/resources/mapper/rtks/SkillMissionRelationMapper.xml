@@ -75,4 +75,12 @@
         from rtks_skill_mission_relation
         where skill_id = #{skillId}
     </select>
+    <select id="batchSelectBySkillIds" resultType="com.cyberpeace.rtks.service.bo.skill.SkillAndMission">
+        select skill_id,
+        mission_template_id as mission_id
+        from rtks_skill_mission_relation where skill_id in
+        <foreach collection="skillIds" item="skillId" open="(" close=")" separator=",">
+            #{skillId}
+        </foreach>
+    </select>
 </mapper>

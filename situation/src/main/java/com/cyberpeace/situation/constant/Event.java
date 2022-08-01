@@ -9,8 +9,9 @@ import lombok.Getter;
 public enum Event {
 
 	/**
-     * 事件
-     */
+	 * 事件
+	 */
+
     UNUSE(-1, "未使用"),
     DEFAULT(0, "默认"),
     INITIATE(1, "初始化"),
@@ -26,8 +27,8 @@ public enum Event {
     SUSPEND(12, "暂停"),
     RESUME(13, "恢复");
 
-    @Getter
-    private Integer code;
+	@Getter
+	private Integer code;
 
 	@Getter
 	private String desc;

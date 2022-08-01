@@ -683,16 +683,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
 
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-					OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
+					OperationModule.CAPTURE_FLAG, OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
+							practiceOperationMapper.selectById(resourceId).getTitle()));
 
 			return localSceneService.pauseScene(localScene.getResourceId());
 		} else {
 
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-					OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(resourceId).getTitle()));
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
+					OperationModule.CAPTURE_FLAG, OperationType.UNPAUSE,
+					LogContent.EXERCISE.getMsg(),
+					LogContent.CR_FORMAT.format(OperationType.UNPAUSE, LogContent.EXERCISE.getMsg(),
+							practiceOperationMapper.selectById(resourceId).getTitle()));
 
 			return localSceneService.unpauseScene(localScene.getResourceId());
 		}
@@ -759,8 +762,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				try {
 					localSceneService.deleteRemoteScene(localScene);
 				} catch (Exception e) {
-					log.warn("Scene delete failed! local_scene_id=[{}]",
-							localScene.getResourceId());
+					log.warn("Scene delete failed! local_scene_id=[{}], catch error:",
+							localScene.getResourceId(), e);
 					continue;
 				}
 			}
@@ -774,6 +777,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				|| practiceSet.getPracticeCount() <= practiceIds.size() ? CommonConstant.ZERO
 						: practiceSet.getPracticeCount() - practiceIds.size());
 
+		List<String> topoIds = practiceOperationMapper.topoIdsByIds(practiceIds);
+
 		return transactionTemplate.execute(new TransactionCallback<Integer>() {
 
 			@Override
@@ -786,6 +791,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				}
 
 				practiceSetMapper.updateById(practiceSet);
+				try {
+					remoteTopoService.batchDeleteTopo(topoIds);
+				} catch (Exception e) {
+					log.error("Operation batch delete topo failed!, topo_ids={}, catch error:",
+							JsonUtil.toJsonString(topoIds), e);
+				}
+
 				return practiceOperationMapper.deleteBatchIds(practiceIds);
 			}
 		});
@@ -801,19 +813,29 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				ResourceImportConstant.OPERATION_PRACTICE_DATA_MAPPING);
 		String envKey = new File(path).getName();
 		String topoId = envReqs.get(envKey);
-		PracticeOperation operation = JsonParseOperation(convertData, practiceSet, topoId);
+
+		String attachmentPath = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT)
+				.getAbsolutePath();
+		List<String> fileNames = FileUtil.listFileNamesByDir(attachmentPath, false);
+		PracticeOperation operation = JsonParseOperation(convertData, practiceSet, topoId,
+				fileNames);
 
 		// 校验实操习题标题
 		practiceValidateHandler.validateOperationTitleExist(practiceSet.getResourceId(),
 				operation.getTitle());
+		practiceValidateHandler.validateAttachmentLength(operation.getTitle(),
+				operation.getDynamicFlag(), fileNames);
 
 		// 附件处理
-		String attachmentFilePath = FileUtil.getOneFile(
-				new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT).getAbsolutePath(), null);
-		if (StringUtils.isNotBlank(attachmentFilePath)) {
-			AttachmentBo attachmentBo = attachmentService.copyFile(attachmentFilePath,
-					AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
-			operation.setAttachmentId(attachmentBo.getResourceId());
+		List<String> attachments = FileUtil.listDirs(attachmentPath, true);
+		if (CollectionUtils.isNotEmpty(attachments)) {
+			List<String> attachmentIds = StreamApiUtils.map(attachments, attachment -> {
+				AttachmentBo attachmentBo = attachmentService.copyFile(attachment,
+						AttachmentPath.PRACTICE_ATTACHMENT.getCode(), true, true);
+				return attachmentBo.getResourceId();
+			});
+
+			operation.setAttachmentId(String.join(CommonConstant.CODE_COMMA, attachmentIds));
 		}
 
 		// 题解数据处理
@@ -1021,7 +1043,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @return
 	 */
 	private PracticeOperation JsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
-			String topoId) {
+			String topoId, List<String> attachments) {
 
 		PracticeOperation operation = new PracticeOperation();
 		// 分类数据处理
@@ -1053,18 +1075,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 场景flag相关操作
 		String flag = (String) operationData.remove("answer");
-		operation.setAnswer(handlerMultiContent(flag));
 
 		// 场景flag类型
-		operation.setDynamicFlag(
-				StringUtils.isBlank(flag) ? PracticeOperation.DynamicFlag.DYNAMIC.getCode()
-						: PracticeOperation.DynamicFlag.STATIC.getCode());
+		Integer flagType = flagType(attachments, flag);
+		String answerStr = handlerMultiContent(flag);
+		operation.setAnswer(handlerAnswer(flagType, attachments, answerStr));
+		operation.setDynamicFlag(flagType);
+
 		// 设置场景共享类型默认值
 		operation.setDynamicEnv(StringUtils.isNotBlank(topoId));
 		String sceneShareMode = (String) operationData.remove("scene_share_mode");
-		operation.setSceneShareMode(StringUtils.isNotBlank(sceneShareMode)
-				&& sceneShareMode.equals(CommonConstant.RIGHT) ? SceneShare.SHARED.getCode()
-						: SceneShare.PRIVATE.getCode());
+		operation.setSceneShareMode(sceneShareMode(sceneShareMode));
 
 		if (StringUtils.isNotBlank(topoId)) {
 			operation.setTopoId(topoId);
@@ -1092,21 +1113,57 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	}
 
+	private Integer sceneShareMode(String sceneShareMode) {
+		return StringUtils.isNotBlank(sceneShareMode) && sceneShareMode.equals(CommonConstant.RIGHT)
+				? SceneShare.SHARED.getCode()
+				: SceneShare.PRIVATE.getCode();
+	}
+
+	/** 处理实操题答案**/
+	private String handlerAnswer(Integer flagType, List<String> attachments, String answers) {
+
+		if (flagType.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()) {
+			return answers;
+		}
+
+		List<String> answer = JsonUtil.toJsonObjectArray(answers, String.class);
+		List<String> flags = StreamApiUtils.map(attachments, attachment -> {
+			int indexOf = answer.indexOf(attachment);
+			return answer.get(indexOf + CommonConstant.ONE);
+		});
+
+		return JsonUtil.arrayToString(flags);
+	}
+
+	/** 计算flag类型*/
+	private Integer flagType(List<String> attachments, String flag) {
+
+		if (StringUtils.isBlank(flag)) {
+			return PracticeOperation.DynamicFlag.DYNAMIC.getCode();
+		}
+
+		if (CollectionUtils.isNotEmpty(attachments)
+				&& flag.contains(attachments.get(CommonConstant.ZERO))) {
+			return PracticeOperation.DynamicFlag.RANDOM.getCode();
+		}
+
+		return PracticeOperation.DynamicFlag.STATIC.getCode();
+	}
+
 	private String handlerMultiContent(String filedContent) {
 
-		if (StringUtils.isBlank(filedContent)) {
+		if (StringUtils.isBlank(filedContent)
+				|| filedContent.equals(CommonConstant.SHORT_TRANSVERSE_LINE)) {
 			return JsonUtil.arrayToString(Lists.newArrayList());
 		}
 
 		String[] multiContent = filedContent.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		// 经过剪切 第一个为空字符 删掉
-		if (multiContent.length > CommonConstant.ZERO) {
-			String[] knowledges = Arrays.copyOfRange(multiContent, CommonConstant.ONE,
-					multiContent.length);
-			return JsonUtil.toJsonString(knowledges);
-		}
+		List<String> contents = StreamApiUtils.map(Arrays.asList(multiContent),
+				content -> content.trim());
+		List<String> result = StreamApiUtils.filter(contents,
+				content -> StringUtils.isNotBlank(content));
 
-		return null;
+		return JsonUtil.arrayToString(result);
 	}
 
 	/**

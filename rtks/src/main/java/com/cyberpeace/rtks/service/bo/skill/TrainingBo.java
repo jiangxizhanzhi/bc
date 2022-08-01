@@ -47,4 +47,7 @@ public class TrainingBo implements Serializable {
 
 	@ApiModelProperty(value = "相关技能")
 	private List<SkillResBase> skills;
+
+//	@ApiModelProperty(value = "是否可用")
+//	private Boolean available;
 }

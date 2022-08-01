@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
@@ -61,6 +62,9 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 	@Autowired
 	private EvalTaskMapper evalTaskMapper;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Override
 	public EvalTemplate getTemplate(String templateId) {
@@ -132,6 +136,19 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			}
 			evalTemplateMapper.deleteById(templateId);
 		}
+
+		List<EvalTemplate> evalTemplates = evalTemplateMapper.selectBatchIds(templateIds);
+		for (EvalTemplate evalTemplate : evalTemplates) {
+			if (StringUtils.isNotBlank(evalTemplate.getTopoId())) {
+				try {
+					remoteTopoService.deleteById(evalTemplate.getTopoId());
+				} catch (Exception e) {
+					log.error(
+							"Evaluate template delete topo failed! template_id=[{}], topo_id=[{}], catch error:",
+							evalTemplate.getResourceId(), evalTemplate.getTopoId(), e);
+				}
+			}
+		}
 		return true;
 
 	}
@@ -199,7 +216,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		}
 
 		// 校验步骤标题是否重复
-		if (new HashSet<>(titleList).size() != titleList.size()){
+		if (new HashSet<>(titleList).size() != titleList.size()) {
 			throw new BusinessException(CrBusinessErrorCode.TITLE_DUPLICATE);
 		}
 

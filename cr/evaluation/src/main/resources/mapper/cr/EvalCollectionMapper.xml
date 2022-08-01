@@ -52,4 +52,11 @@
         where cr_eval_collection.eval_indicator_id = cr_eval_index.eval_indicator_id
           and cr_eval_index.resource_id = #{indexId}
     </select>
+    <select id="selectByEvalIndicatorIds" resultType="com.cyberpeace.cr.evaluation.controller.rsp.EvalCollectionContextRsp">
+        select * from cr_eval_collection
+        where eval_indicator_id in
+        <foreach collection="evalIndicatorIds" open="(" close=")" separator="," item="evalIndicatorId">
+            #{evalIndicatorId}
+        </foreach>
+    </select>
 </mapper>

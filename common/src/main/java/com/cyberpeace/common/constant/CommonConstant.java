@@ -17,6 +17,8 @@ public interface CommonConstant {
 
 	String UNDER_LINE = "_";
 
+	String SHORT_TRANSVERSE_LINE = "-";
+
 	String LEFT_OBLIQUE_LINE = "/";
 
 	Integer ZERO = 0;
@@ -67,6 +69,8 @@ public interface CommonConstant {
 
 	String RIGHT = "是";
 
+	String NO = "否";
+
 	String EMPTY_STRING = "";
 
 	String MD_CODING_BLOCK = "```";
@@ -86,5 +90,9 @@ public interface CommonConstant {
 	String UTF_8 = "UTF-8";
 
 	String ADMIN_ID = "3f655d87112f4ae094bbaf70830e20aa";
+
+	String SPACE = " ";
+
+	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
 
 }

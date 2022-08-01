@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 
@@ -22,8 +23,8 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
 
 
     /**
-     * 获取三级指标项下所有变量项`id`, `name`
-     * @param indexId 三级指标项ID
+     * 获取某一级指标项下所有变量项`id`, `name`
+     * @param indexId 指标项/变量项ID. # 为了兼容前端调用方式, 变量项ID也接受进行处理
      * @return List
      */
     List<EvalRoomPairRsp> selectVariables(String indexId);
@@ -42,4 +43,11 @@ public interface EvalIndexRefService extends IService<EvalIndexRef> {
      * @return List
      */
     Set<String> systemEvalVariableIds(String recordId);
+
+    /**
+     * 指标项目最近等级关联关系
+     * @param indexId 指标项id
+     * @return EvalRecordResultIndexRsp
+     */
+    EvalRecordResultIndexRsp resultIndex(String indexId);
 }

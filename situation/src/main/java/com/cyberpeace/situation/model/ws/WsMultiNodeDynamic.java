@@ -1,7 +1,6 @@
 package com.cyberpeace.situation.model.ws;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.cyberpeace.situation.model.LineStyle;
 
@@ -15,7 +14,10 @@ public class WsMultiNodeDynamic implements Serializable {
 	private String sceneId;
 
 	@ApiModelProperty("事件时间")
-	private Date time;
+	private Long time;
+
+	@ApiModelProperty("持续时间（秒）")
+	private Integer duration;
 
 	@ApiModelProperty("事件名称")
 	private String name;

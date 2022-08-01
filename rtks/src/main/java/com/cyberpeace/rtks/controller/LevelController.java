@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -108,11 +109,11 @@ public class LevelController {
 
 		performBatchDelete(deleteReq.getIds());
 
-		for (Level level : levelList) {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-					OperationType.DELETE, level.getName(), LogContent.CR_FORMAT.format(
-							OperationType.DELETE, LogContent.LEVEL.getMsg(), level.getName()));
-		}
+		List<String> columns = StreamApiUtils.getColumn(levelList, Level::getName);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.LEVEL.getMsg()), LogContent.CR_FORMAT.format(
+						OperationType.DELETE, LogContent.LEVEL.getMsg(), columns.toString()));
+
 
 		return new BaseRsp<>();
 	}

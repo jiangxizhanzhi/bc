@@ -133,15 +133,21 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
-		for(String id:delReq.getResourceIds()){
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
-					OperationType.DELETE, LogContent.EXERCISE.getMsg(),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.EXERCISE.getMsg(), practiceOperationMapper.selectById(id).getTitle()));
-		}
-
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
+		List<PracticeOperation> practiceOperationList = practiceOperationService.listByIds(delReq.getResourceIds());
+
 		Integer result = practiceOperationService.batchDelete(delReq.getResourceIds(), authContext);
+
+		practiceOperationList.forEach(practiceOperation -> {
+			if (practiceOperation != null) {
+				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.CAPTURE_FLAG,
+						OperationType.DELETE, LogContent.EXERCISE.getMsg(),
+						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.EXERCISE.getMsg(), practiceOperation.getTitle()));
+			}
+
+		});
+
 		return new BaseRsp<>(result);
 	}
 

@@ -21,4 +21,10 @@ public interface SkillTrainingMapper {
 
 	List<TrainingRaw> getSingleByBusinessTemplateIdsAndUserId(@Param("userId") String userId,
 			@Param("businessTemplateIds") Set<String> businessTemplateIds);
+
+	List<TrainingRaw>
+			getTeamTemplateByBTIds(@Param("businessTemplateIds") Set<String> businessTemplateIds);
+
+	List<TrainingRaw>
+			getRbTemplateByBTIds(@Param("businessTemplateIds") Set<String> businessTemplateIds);
 }

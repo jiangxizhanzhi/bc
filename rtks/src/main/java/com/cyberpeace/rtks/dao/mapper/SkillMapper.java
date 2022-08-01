@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
+import com.cyberpeace.rtks.service.bo.skill.SkillResBase;
 import com.cyberpeace.rtks.service.bo.skill.SkillSimpleRes;
 
 @Mapper
@@ -29,4 +30,6 @@ public interface SkillMapper extends BaseMapper<Skill> {
 	void clearAll();
 
 	Set<String> validateIds(List<String> skillIds);
+
+	IPage<SkillResBase> pageByRoleId(@Param("page") Page page, @Param("roleId") String roleId);
 }

@@ -1,5 +1,21 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -18,7 +34,6 @@ import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
@@ -55,24 +70,11 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -285,7 +287,8 @@ public class TeamTrainRoomController {
 		// localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
 
 		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
-		String teamTemplateName = businessTemplateMapper.selectById(teamTemplate.getBusinessTemplateId()).getName();
+		String teamTemplateName = businessTemplateMapper
+				.selectById(teamTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
 				LogContent.SCENE_FORMAT.format(teamTemplateName));
@@ -368,9 +371,11 @@ public class TeamTrainRoomController {
 
 		String roomId = opsReq.getRoomId();
 
-		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId()).getTeamTemplateName();
+		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId())
+				.getTeamTemplateName();
+		TeamRoom teamRoom = teamRoomService.getById(roomId);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-				OperationType.DELETE, teamRoomService.getById(roomId).getName(),
+				OperationType.DELETE, teamRoom.getName(),
 				LogContent.SCENE_FORMAT.format(teamTemplateName));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -381,10 +386,19 @@ public class TeamTrainRoomController {
 				crRoleService.clearRoomRoles(roomId);
 				teamRoomService.removeById(roomId);
 				// 记录房间删除时间
-				trainRecordService.updateEndDate(roomId,
-						BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 			}
 		});
+
+		// 不放入事务中，删除失败或成功均可
+		if (StringUtils.isNotBlank(teamRoom.getCopyedTopoId())) {
+			try {
+				remoteTopoService.deleteById(teamRoom.getCopyedTopoId());
+			} catch (Exception e) {
+				log.error("Team train delete topo failed! team_id=[{}], topo_id=[{}], catch error:",
+						teamRoom.getResourceId(), teamRoom.getCopyedTopoId(), e);
+			}
+		}
 
 		return new BaseRsp<>();
 	}

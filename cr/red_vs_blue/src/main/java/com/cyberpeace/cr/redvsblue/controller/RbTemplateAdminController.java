@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -150,19 +151,15 @@ public class RbTemplateAdminController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-
-		for(String id:deleteReq.getIds()){
-			BusinessTemplate businessTemplate = businessTemplateMapper.selectById(id);
-			if(businessTemplate != null){
-				String rbTrainTemplateName = businessTemplate.getName();
-				remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-						OperationType.DELETE, rbTrainTemplateName,
-						LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
-			}
-		}
-
+		List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectBatchIds(deleteReq.getIds());
 		rbTemplateService.batchDelete(deleteReq.getIds());
 
+		if (null != businessTemplates) {
+			List<String> columns = StreamApiUtils.getColumn(businessTemplates, BusinessTemplate::getName);
+			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
+					OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.RB_ROOM_TEMPLATE.getMsg()),
+					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), columns.toString()));
+		}
 		return new BaseRsp<>();
 	}
 

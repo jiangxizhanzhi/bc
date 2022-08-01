@@ -169,8 +169,11 @@ public class HttpClientUtil {
 		} catch (Exception e) {
 			try {
 				HttpclientContext.getContext().doRemoteException(e);
-			} catch (Exception e1) {} finally {
+			} catch (Exception e1) {
+				LOG.error("remote error logging Exception", e1);
+			} finally {
 				HttpclientContext.removeContext();
+				throw new RemoteServiceException();
 			}
 		}
 

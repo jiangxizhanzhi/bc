@@ -1,6 +1,8 @@
 package com.cyberpeace.cs.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +15,28 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.RenameTopoContext;
+import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
+import com.cyberpeace.cs.service.context.scene.CpFlow;
+import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import com.cyberpeace.cs.service.context.scene.ElementFlowList;
+import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -194,6 +206,59 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData,
+			Integer interactiveType) {
+
+		CpFlow cpFlow = sceneData.getPlugins().getCpFlow();
+		Map<String, SceneFlowContext> sceneFlowContextMap = Maps.newHashMap();
+
+		if (cpFlow == null){
+			return sceneFlowContextMap;
+		}
+
+		for (Map.Entry<String, ElementFlowList> entry : cpFlow.getElements().entrySet()) {
+			String nodeId = entry.getKey();
+			for (ElementFlow elementFlow : entry.getValue().getFlows()) {
+
+				Integer flowInteractiveType = elementFlow.getInteractiveType();
+
+				if (interactiveType != null && !flowInteractiveType.equals(interactiveType)) {
+					continue;
+				}
+
+				String flowId = elementFlow.getId();
+				SceneFlowContext sceneFlowContext = sceneFlowContextMap.getOrDefault(flowId,
+						new SceneFlowContext(flowId, flowInteractiveType));
+				sceneFlowContext.getNodeIds().add(nodeId);
+				sceneFlowContextMap.put(flowId, sceneFlowContext);
+			}
+
+		}
+		return sceneFlowContextMap;
+	}
+
+	@Override
+	public Boolean startRandomFlow(String mpSceneId,
+			Map<String, SceneFlowContext> sceneFlowContextMap) {
+
+		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
+
+		// 业务已被删除或场景下无流量时，返回启动失败
+		if (!sceneFlowContextMap.isEmpty() && localScene != null) {
+
+			List<String> flowIds = Lists.newArrayList();
+			flowIds.addAll(sceneFlowContextMap.keySet());
+
+			String flowId = ListUtil.selectRandomValue(flowIds);
+			String nodeId = ListUtil
+					.selectRandomValue(sceneFlowContextMap.get(flowId).getNodeIds());
+			return startFlow(localScene, nodeId, flowId);
+		}
+
+		return false;
+	}
+
+	@Override
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		// 1. 场景已暂停，返回true
@@ -347,6 +412,58 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return new JSONArray();
 		}
 		return remoteSceneService.getMonitorSessions(localScene.getMpSceneId(), studentId);
+	}
+
+	@Override
+	public Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext shotContext) {
+		NodeSnapshotContext snapshotContext = getNodeSnapshotContext(localScene, shotContext);
+
+		return remoteSceneService.nodeSnapshot(snapshotContext);
+	}
+
+	@Override
+	public JSONArray snapshotHistory(String sceneId, String imageId) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		return remoteSceneService.snapshotHistory(imageId);
+	}
+
+	@Override
+	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		return remoteSceneService.mergeSnapshot(snapshotContext);
+	}
+
+	@Override
+	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		SceneOpsContext sceneOpsContext = getSceneOpsContext(localScene);
+		SnapshotDeleteContext deleteContext = BeanUtils.copy(sceneOpsContext,
+				SnapshotDeleteContext.class);
+		deleteContext.setNodeId(nodeId);
+		deleteContext.setSnapshotId(snapshotId);
+
+		return remoteSceneService.deleteSnapshot(deleteContext);
+	}
+
+	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,
+			CreateSnapshotContext context) {
+		SceneOpsContext opsContext = getSceneOpsContext(localScene);
+		NodeSnapshotContext snapshotContext = BeanUtils.copy(opsContext, NodeSnapshotContext.class);
+		org.springframework.beans.BeanUtils.copyProperties(context, snapshotContext);
+
+		return snapshotContext;
 	}
 
 	private SceneOpsContext getSceneOpsContext(LocalScene localScene) {

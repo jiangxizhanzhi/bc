@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
@@ -17,11 +18,14 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,7 @@ import java.util.Map;
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/record")
+@Slf4j
 public class EvalRecordController {
     @Autowired
     private EvalTaskService evalTaskService;
@@ -151,7 +156,7 @@ public class EvalRecordController {
         return new BaseRsp<>(evalRecordService.result(recordId));
     }
 
-    @ApiOperation("获取三级指标项下全部变量项")
+    @ApiOperation("获取某一级指标项下全部变量项")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables")
     public BaseRsp<List<EvalRoomPairRsp>> variables(@RequestParam("index_id") String indexId) {
@@ -161,14 +166,37 @@ public class EvalRecordController {
     @ApiOperation("变量项采集信息（折线图）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/graph")
-    public BaseRsp<EvalVariableGraphRsp> VariableGraph(@RequestParam("variable_id") String variableId) {
+    public BaseRsp<EvalVariableGraphRsp> variableGraph(@RequestParam("variable_id") String variableId) {
         return new BaseRsp<>(evalVariableRefService.graph(variableId));
     }
 
     @ApiOperation("变量项采集信息（原始数据）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/data")
-    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> VariableData(EvalVariableProbeDataReq queryParams) {
+    public BaseRsp<ListRsp<EvalVariableDataPageRsp>> variableData(EvalVariableProbeDataReq queryParams) {
         return new BaseRsp<>(evalVariableRefService.originData(queryParams.toPageParam(), queryParams.getVariableId()));
+    }
+
+    @ApiOperation("评估任务结果（指标项信息）")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/result/index")
+    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("index_id") String indexId) {
+        return new BaseRsp<>(evalIndexRefService.resultIndex(indexId));
+    }
+
+    @ApiOperation("评估任务结果（变量项信息）")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/result/variable")
+    public BaseRsp<EvalRecordResultVariableRsp> resultVariable(@RequestParam("variable_id") String variableId) {
+        return new BaseRsp<>(evalVariableRefService.resultVariable(variableId));
+    }
+
+    @ApiOperation("评估详情导出为PDF")
+    @RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+    @GetMapping("/train2pdf")
+    public void dumpEvalRecord2PDF(HttpServletResponse httpServletResponse,
+                                   @RequestParam("resource_id") String resourceId,
+                                   @RequestParam("task_id")String taskId) {
+        FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
 }

@@ -3,11 +3,11 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.service.context.scene.ElementFlow;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 
@@ -57,7 +57,8 @@ public interface CrSceneService {
 	 * @param flows
 	 * @return
 	 */
-	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows, String businessId);
+	Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
+			String businessId);
 
 	/** 启动场景节点下所有流量
 	 * @param mpSceneId
@@ -81,6 +82,7 @@ public interface CrSceneService {
 	 * @param nodeId
 	 * @return
 	 */
-	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId, String nodeId);
+	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId,
+			String nodeId);
 
 }

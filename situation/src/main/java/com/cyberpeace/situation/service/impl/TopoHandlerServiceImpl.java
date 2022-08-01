@@ -12,7 +12,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.SceneFlowContext;
+import com.cyberpeace.cs.service.context.scene.CpCollection;
 import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.mp.MpNodeStatus;
 import com.cyberpeace.integratation.model.scene.ElementCommonContext;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
@@ -23,11 +27,11 @@ import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
-import com.cyberpeace.situation.model.CategorieMap;
-import com.cyberpeace.situation.model.DeviceRole;
-import com.cyberpeace.situation.model.DeviceType;
-import com.cyberpeace.situation.model.SceneData;
+import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.context.ConnectionStatusContext;
+import com.cyberpeace.situation.service.context.ElementStatusContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -47,7 +51,14 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	private RemoteTerminalService remoteTerminalService;
 
 	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
 	private SituationConfigMapper situationConfigMapper;
+
+	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
+
+	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
 	@Override
 	public SceneData getSceneData(String sceneId, String topoId) {
@@ -65,7 +76,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 			plugins = sceneTopo.getJSONObject("scene_config").getJSONObject("plugins");
 			situationConfigMap = getSituationConfigMap(topoId);
 		} else {
-			sceneTopo = getsceneTopoBySceneId(sceneId);
+			sceneTopo = getSceneTopoBySceneId(sceneId);
 			topology = sceneTopo.getJSONObject("scene").getJSONObject("topology");
 			plugins = sceneTopo.getJSONObject("scene").getJSONObject("plugins");
 			situationConfigMap = getSituationConfigMap(sceneId);
@@ -90,6 +101,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		sceneData.setElements((JSONArray) topology.getOrDefault("elements",
 				JSONArray.parseArray(Lists.newArrayList().toString())));
 		sceneData.setConnections((JSONArray) topology.getOrDefault("connections",
+				JSONArray.parseArray(Lists.newArrayList().toString())));
+		sceneData.setPieces((JSONArray) topology.getOrDefault("pieces",
 				JSONArray.parseArray(Lists.newArrayList().toString())));
 		sceneData.setExtendElementInfo(extendElementInfo);
 		sceneData.setXList(Lists.newArrayList());
@@ -151,7 +164,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	}
 
 	@Override
-	public JSONObject getsceneTopoBySceneId(String sceneId) {
+	public JSONObject getSceneTopoBySceneId(String sceneId) {
 		if ("demo".equals(sceneId)) {
 			return getDemoSceneTopo();
 		} else {
@@ -257,5 +270,82 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		elementStateRes.setRiskCount(remoteSceneService.getRiskCount(elementCommonContext));
 
 		return elementStateRes;
+	}
+
+	@Override
+	public WsNodeStatus getNodeStatusMessage(String sceneId) {
+
+		List<MpNodeStatus> nodeStatusList = remoteSceneService.getConnectionStatus(sceneId);
+
+		WsNodeStatus wsNodeStatus = new WsNodeStatus();
+
+		for (MpNodeStatus nodeStatus : nodeStatusList) {
+
+			wsNodeStatus.getElementStatus()
+					.add(BeanUtils.copy(nodeStatus, ElementStatusContext.class));
+
+			nodeStatus.getConnectionStatusList().forEach(connectionStatus -> {
+				wsNodeStatus.getConnectionStatus()
+						.add(BeanUtils.copy(connectionStatus, ConnectionStatusContext.class));
+			});
+
+		}
+
+		return wsNodeStatus;
+
+	}
+
+	@Override
+	public MpSceneData getMpSceneData(String sceneId) {
+		JSONObject sceneData = localSceneService.getSceneData(sceneId, null);
+		if (sceneData == null) {
+			return null;
+		}
+		return sceneData.toJavaObject(MpSceneData.class);
+	}
+
+	@Override
+	public Boolean checkSceneStatus(MpSceneData mpSceneData) {
+
+		if (mpSceneData == null) {
+			return false;
+		}
+
+		Integer event = mpSceneData.getTopology().getScene().getEvent();
+		Integer eventStatus = mpSceneData.getTopology().getScene().getEventStatus();
+
+		return !event.equals(MP_SCENE_DELETE_EVENT_CODE)
+				|| !eventStatus.equals(MP_SCENE_PROGRESS_FINISH_CODE);
+	}
+
+	@Override
+	public Boolean enableFlowAutoRun(MpSceneData mpSceneData) {
+		return !localSceneService.getSceneFlowList(mpSceneData, null).isEmpty();
+	}
+
+	@Override
+	public Boolean enableFlowCollect(MpSceneData mpSceneData) {
+
+		CpCollection cpCollection = mpSceneData.getPlugins().getCpCollection();
+
+		if (cpCollection == null) {
+			return false;
+		}
+
+		if (cpCollection.getScene() == null) {
+			return false;
+		}
+
+		Boolean enableFlowCollect = cpCollection.getScene().getEnableFlowCollect();
+		return !(enableFlowCollect == null || !enableFlowCollect);
+
+	}
+
+	@Override
+	public Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType) {
+		Map<String, SceneFlowContext> sceneFlowContextMap = localSceneService
+				.getSceneFlowList(mpSceneData, interactiveType);
+
+		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
 	}
 }

@@ -84,4 +84,40 @@
         </foreach>
         group by cr_business_template.resource_id
     </select>
+    <select id="getTeamTemplateByBTIds" resultType="com.cyberpeace.rtks.service.bo.skill.TrainingRaw">
+        select
+        cr_team_template.business_template_id,
+        cr_team_template.resource_id as training_id,
+        cr_business_template.name as training_name,
+        cr_team_template.duration_time,
+        cr_business_template.difficulty,
+        cr_team_template.pre_skills as pre_skill,
+        cr_team_template.train_skills as train_skill,
+        cr_business_template.logo
+        from cr_business_template
+        inner join cr_team_template on cr_business_template.resource_id = cr_team_template.business_template_id
+        where cr_business_template.resource_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">
+            #{businessTemplateId}
+        </foreach>
+    </select>
+    <select id="getRbTemplateByBTIds" resultType="com.cyberpeace.rtks.service.bo.skill.TrainingRaw">
+        select
+        cr_rb_template.business_template_id,
+        cr_rb_template.resource_id as training_id,
+        cr_business_template.name as training_name,
+        cr_rb_template.duration_time,
+        cr_business_template.difficulty,
+        cr_rb_template.pre_skill as pre_skill,
+        cr_rb_template.train_skill as train_skill,
+        cr_business_template.logo
+        from cr_business_template
+        inner join cr_rb_template on cr_business_template.resource_id = cr_rb_template.business_template_id
+        where cr_business_template.resource_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">
+            #{businessTemplateId}
+        </foreach>
+    </select>
 </mapper>

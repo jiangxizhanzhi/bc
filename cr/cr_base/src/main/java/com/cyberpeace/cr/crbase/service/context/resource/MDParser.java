@@ -236,6 +236,10 @@ public class MDParser {
 
 	private static final String TASK_DIR = "task";
 
+	private static final String LOGO_FILE = "/logo.png";
+
+	private static final String LOGO_SUFFIX = ".png";
+
 	private final String dirPath;
 
 	private final String topoId;
@@ -340,6 +344,15 @@ public class MDParser {
 		for (MissionTemplate missionTemplate : missionTemplates) {
 			missionTemplate.setBusinessTemplateId(businessTemplate.getResourceId());
 		}
+		// set logo, 资源包中logo文件名固定为logo.png
+		String logoPath = dirPath + LOGO_FILE;
+		String logoId = IDGeneratorUtil.getID();
+		String newFileName = logoId + LOGO_SUFFIX;
+		String dest = ConfigUtil.getContextProperty("cr.local.file.prefix")
+				+ AttachmentPath.UPLOAD_IMAGE.getOriginDesc() + newFileName;
+		FileUtil.copyFile(logoPath, dest, CommonConstant.FALSE);
+		images.put(logoId, newFileName);
+		businessTemplate.setLogo(dest);
 
 	}
 

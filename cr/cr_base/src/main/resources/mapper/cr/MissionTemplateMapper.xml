@@ -80,4 +80,21 @@
         from cr_mission_template
         where business_template_id = #{businessTemplateId}
     </select>
+    <select id="batchGetWithBusiness"
+            resultType="com.cyberpeace.cr.crbase.service.context.mission.MissionWithBT">
+        select cr_mission_template.resource_id as resource_id,
+        cr_mission_template.title as title,
+        cr_mission_template.type,
+        cr_mission_template.score,
+        cr_mission_template.business_template_id,
+        cr_business_template.name as scene_name,
+        cr_business_template.business_type as scene_type,
+        cr_business_template.difficulty as scene_difficulty
+        from cr_mission_template
+        left join cr_business_template on cr_mission_template.business_template_id = cr_business_template.resource_id
+        where cr_mission_template.resource_id in
+        <foreach collection="missionTemplateIds" item="missionTemplateId" open="(" close=")" separator=",">
+            #{missionTemplateId}
+        </foreach>
+    </select>
 </mapper>

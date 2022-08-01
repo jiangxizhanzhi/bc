@@ -37,4 +37,6 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	 */
 	List<LocalScene> selectBetweenEndTime(@Param("start_time") Date startTime,
 			@Param("end_time") Date endTime);
+
+	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
 }

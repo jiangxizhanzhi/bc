@@ -30,11 +30,10 @@ import com.cyberpeace.rtks.controller.res.skill.RelatedTrainingRes;
 import com.cyberpeace.rtks.controller.res.skill.TrainingPathRes;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.service.FrameService;
-import com.cyberpeace.rtks.service.LevelService;
-import com.cyberpeace.rtks.service.RtksStatisticService;
-import com.cyberpeace.rtks.service.TrainingPlanService;
+import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillPagePath;
+import com.cyberpeace.rtks.service.bo.skill.SkillProcessRes;
 import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
@@ -60,6 +59,12 @@ public class TrainingPlanController {
 
 	@Autowired
 	private FrameService frameService;
+
+	@Autowired
+	private SkillService skillService;
+
+	@Autowired
+	private RtksSituationService rtksSituationService;
 
 	@ApiOperation("知识体系")
 	@GetMapping("/knowledgeTree")
@@ -115,6 +120,7 @@ public class TrainingPlanController {
 		return new BaseRsp<>(frame);
 	}
 
+	// 对应页面：岗位简介树状图
 	@ApiOperation("学习路径")
 	@GetMapping("/learning-path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -142,6 +148,8 @@ public class TrainingPlanController {
 		return rsp;
 	}
 
+	// 岗位评估-技能体系清单
+	// 岗位简介-岗位学习路径
 	@ApiOperation("分页获取知识点以及课程")
 	@GetMapping("/getKnowledgeCourseList")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
@@ -170,10 +178,13 @@ public class TrainingPlanController {
 			RoleDetailRes data = trainingPlanService.getRoleOutputByRoleId(existRoleId,
 					RoleDetailRes.RELATED_COURSE_STUDY);
 
-			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
-					UserInfoContext.getUserContext().getUserId());
-
-			data.setPercent(percent);
+			String userId = UserInfoContext.getUserContext().getUserId();
+			String userName = UserInfoContext.getUserContext().getName();
+			String roleName = UserInfoContext.getUserContext().getRoleName();
+			// 计算并记录匹配度
+			Integer percent = rtksSituationService.recordSituation(userId, userName, existRoleId,
+					roleName);
+			data.setPercent(percent + "");
 			rsp.setData(data);
 		}
 
@@ -190,18 +201,20 @@ public class TrainingPlanController {
 		BaseRsp<RoleDetailRes> rsp = new BaseRsp<>();
 		if (StringUtils.isNotBlank(existRoleId)) {
 			RoleDetailRes data = trainingPlanService.getRoleDetailResByRoleId(existRoleId);
-
-			String percent = rtksStatisticService.roleMatchPercent(existRoleId,
-					UserInfoContext.getUserContext().getUserId());
-
-			data.setPercent(percent);
+			// 查询匹配度时，记录匹配度
+			String userId = UserInfoContext.getUserContext().getUserId();
+			String userName = UserInfoContext.getUserContext().getName();
+			String roleName = UserInfoContext.getUserContext().getRoleName();
+			Integer percent = rtksSituationService.recordSituation(userId, userName, existRoleId,
+					roleName);
+			data.setPercent(percent + "");
 			rsp.setData(data);
 		}
 
 		return rsp;
 	}
 
-	@ApiOperation("训练路径")
+	@ApiOperation("我的职业-技能训练路径")
 	@GetMapping("/training/path")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_KNOWLEDGE_COURSE,
 			MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
@@ -220,6 +233,38 @@ public class TrainingPlanController {
 		res.setRelated(getAllRelatedTraining(trainingBoList));
 		res.setPath(trainingBoList);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("岗位评估-技能体系清单")
+	@GetMapping("/role_evaluation/skill_list")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<SkillProcessRes>> pageSkillProcess(@Validated PageReqBase pageReqBase) {
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		if (StringUtils.isBlank(roleId)) {
+			return new BaseRsp<>(new ListRsp<SkillProcessRes>());
+		}
+		ListRsp<SkillProcessRes> result = skillService.pageSkillListByRoleId(pageReqBase, roleId);
+
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("岗位简介-岗位训练路径")
+	@GetMapping("/role_desc/training_path")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_SINGLE_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN,
+					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_PERSON_CENTER },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<SkillPagePath>> pageSkillPath(@Validated PageReqBase pageReqBase) {
+		String roleId = UserInfoContext.getUserContext().getRoleId();
+		if (StringUtils.isBlank(roleId)) {
+			return new BaseRsp<>(new ListRsp<SkillPagePath>());
+		}
+		ListRsp<SkillPagePath> result = skillService.pageSkillPathByRoleId(pageReqBase, roleId);
+
+		return new BaseRsp<>(result);
 	}
 
 	/**

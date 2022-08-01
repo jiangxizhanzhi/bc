@@ -33,6 +33,7 @@ public class CourseTrainController {
 	@Autowired
 	private CourseTrainService courseTrainService;
 
+	// 对应页面“推荐学习路径”
 	@ApiOperation("课程训练-职业课程课程学习进度")
 	@GetMapping("/knowledge")
 	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)

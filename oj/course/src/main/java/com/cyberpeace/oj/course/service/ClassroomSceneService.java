@@ -47,4 +47,11 @@ public interface ClassroomSceneService {
 	 * @return
 	 */
 	List<SceneMonitorBo> selectMonitorList(String classroomId);
+
+	/**
+	 * 启动完成
+	 * @param classroomId
+	 * @param groupId
+	 */
+	void finishStart(String classroomId, String groupId);
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -132,12 +133,11 @@ public class KnowledgeController {
 				CourseRelated.RELATED_TYPE_KNOWLEDGE);
 		roleService.updateBatchByDeleteRelatedIds(deleteReq, "knowledge");
 
-		knowledgeList.forEach(knowledge -> {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-					OperationType.DELETE, knowledge.getResourceId(),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.KNOWLEDGE.getMsg(),
-							knowledge.getResourceId()));
-		});
+		List<String> columns = StreamApiUtils.getColumn(knowledgeList, Knowledge::getContent);
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.KNOWLEDGE.getMsg()),
+				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.KNOWLEDGE.getMsg(),
+						columns.toString()));
 
 		return new BaseRsp<>();
 	}

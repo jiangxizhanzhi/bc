@@ -31,6 +31,12 @@
             </properties>
         </profile>
         <profile>
+            <id>test</id>
+            <properties>
+                <package.environment>test</package.environment>
+            </properties>
+        </profile>
+        <profile>
             <id>prod</id>
             <properties>
                 <package.environment>prod</package.environment>
@@ -112,11 +118,6 @@
             <groupId>com.cyberpeace.situation</groupId>
             <artifactId>situation</artifactId>
             <version>${situation.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.evaluate</groupId>
-            <artifactId>evaluate</artifactId>
-            <version>${evaluation.version}</version>
         </dependency>
         <dependency>
             <groupId>com.cyberpeace.gateway</groupId>
@@ -254,6 +255,15 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -268,6 +278,7 @@
                     <include>modules/*.*</include>
                     <include>static/**/*.*</include>
                     <include>*.properties</include>
+                    <include>banner.txt</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>

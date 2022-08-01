@@ -1,9 +1,15 @@
 package com.cyberpeace.cs.service;
 
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.context.CreateSnapshotContext;
+import com.cyberpeace.cs.service.context.SceneFlowContext;
+import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -73,6 +79,22 @@ public interface LocalSceneService extends IService<LocalScene> {
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
 
 	/**
+	 * 获取场景流量映射表
+	 * @param sceneData
+	 * @param interactiveType
+	 * @return Map<String, SceneFlowContext>
+	 */
+	Map<String, SceneFlowContext> getSceneFlowList(SceneData sceneData, Integer interactiveType);
+
+	/**
+	 * 随机启动一个流量
+	 * @param mpSceneId
+	 * @param sceneFlowContextMap
+	 * @return Boolean
+	 */
+	Boolean startRandomFlow(String mpSceneId, Map<String, SceneFlowContext> sceneFlowContextMap);
+
+	/**
 	 * 关闭mp场景
 	 * @param scene
 	 */
@@ -86,4 +108,36 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	JSONArray getMonitorSessions(LocalScene localScene, String studentId);
 
+	/**
+	 * 节点快照
+	 * @param localScene
+	 * @param context
+	 * @return
+	 */
+	Boolean nodeSnapshot(LocalScene localScene, CreateSnapshotContext context);
+
+	/**
+	 * 场景快照历史记录
+	 * @param sceneId
+	 * @param imageId
+	 * @return
+	 */
+	JSONArray snapshotHistory(String sceneId, String imageId);
+
+	/**
+	 * 场景节点快照合并
+	 * @param sceneId
+	 * @param snapshotContext
+	 * @return
+	 */
+	JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext);
+
+	/**
+	 * 删除快照
+	 * @param sceneId
+	 * @param nodeId
+	 * @param snapshotId
+	 * @return
+	 */
+	Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId);
 }

@@ -313,21 +313,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
-
-		updateById(teamRoom);
-
 		// 获取团队训练业务模板id
 		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId())
 				.getBusinessTemplateId();
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		if (teamRoom.isOpening()) {
-			trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
-					teamRoom.getCreateUserId(),
-					BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		}
-
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(teamRoom);
+				if (teamRoom.isOpening()) {
+					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
+							teamRoom.getCreateUserId(),
+							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				} else if (teamRoom.isEnded()) {
+					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
+				}
+			}
+		});
 		return teamRoom.getTrainingStatus();
-
 	}
 
 	@Override
@@ -515,7 +518,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	private void setTime(TimeLineData timeLineData, String roomId) {
 		TeamRoomData teamRoom = getTeamRoomDataByRoomId(roomId);
-
+		// 团队训练结束后，时间轴中蓝条（current_time）设为结束时间
 		timeLineData.setCurrentTime(new Date());
 		timeLineData.setStartTime(teamRoom.getSceneStartTime() == null ? teamRoom.getStartTime()
 				: teamRoom.getSceneStartTime());
@@ -538,7 +541,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 			if (teamRoom.getSceneEndTime() != null
 					&& teamRoom.getSceneEndTime().compareTo(teamRoom.getSceneStartTime()) > 0) {
-				endTime = teamRoom.getSceneStartTime();
+				endTime = teamRoom.getSceneEndTime();
 
 			}
 		}

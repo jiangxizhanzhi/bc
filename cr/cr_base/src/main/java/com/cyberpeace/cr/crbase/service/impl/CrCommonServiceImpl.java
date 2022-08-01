@@ -18,13 +18,13 @@ import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
-import com.cyberpeace.cr.crbase.service.context.scene.Port;
-import com.cyberpeace.cr.crbase.service.context.scene.SceneData;
-import com.cyberpeace.cr.crbase.service.context.scene.SceneElement;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.scene.Port;
+import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.cs.service.context.scene.SceneElement;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -34,16 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CrCommonServiceImpl implements CrCommonService {
-
-	/**
-	 * 场景删除事件代号
-	 */
-	private static final Integer MP_SCENE_DELETE_EVENT_CODE = 9;
-
-	/**
-	 * 场景事件完成代号
-	 */
-	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
 	@Autowired
 	private LocalSceneService localSceneService;
@@ -98,8 +88,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 	@Override
 	public Boolean isStopped(JSONObject sceneData) {
 		SceneData data = sceneData.toJavaObject(SceneData.class);
-		return data.getTopology().getScene().getEvent().equals(MP_SCENE_DELETE_EVENT_CODE) && data
-				.getTopology().getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+		return data.isStopped();
 	}
 
 	@Override

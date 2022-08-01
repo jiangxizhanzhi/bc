@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -33,10 +34,6 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ObjUtil;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -239,12 +236,11 @@ public class RoleController {
 				roleService.deleteSkillRelByRoleIds(deleteReq.getIds());
 			}
 		});
+		List<String> role_names = StreamApiUtils.getColumn(roles,Role::getName);
 
-		roles.forEach(role -> {
-			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-					OperationType.DELETE, role.getName(), LogContent.CR_FORMAT.format(
-							OperationType.DELETE, LogContent.ROLE.getMsg(), role.getName()));
-		});
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.ROLE.getMsg()), LogContent.CR_FORMAT.format(
+						OperationType.DELETE, LogContent.ROLE.getMsg(), role_names.toString()));
 
 		return new BaseRsp<>();
 	}

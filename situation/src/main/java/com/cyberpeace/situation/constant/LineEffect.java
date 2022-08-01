@@ -11,7 +11,9 @@ public enum LineEffect {
 	/**
 	 * 特效
 	 */
-	STREAM("stream", "流动"), SHINE("shine", "发光");
+
+	STREAM("stream", "流动"),
+	SHINE("shine", "发光");
 
 	@Getter
 	private String code;

@@ -97,7 +97,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder().title("RTKS项目文档").description("有问题请联系朱天尧").version("v1.0")
+		return new ApiInfoBuilder().title("网络靶场项目文档").description("有问题请联系朱天尧").version("v1.0")
 				.build();
 	}
 }

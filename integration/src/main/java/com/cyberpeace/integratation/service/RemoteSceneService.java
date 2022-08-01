@@ -160,4 +160,39 @@ public interface RemoteSceneService {
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
+	/**
+	 * 场景节点打快照
+	 * @param snapshotContext
+	 * @return
+	 */
+	Boolean nodeSnapshot(NodeSnapshotContext snapshotContext);
+
+	/**
+	 * 快照历史记录
+	 * @param imageId
+	 * @return
+	 */
+	JSONArray snapshotHistory(String imageId);
+
+	/**
+	 * 快照合并
+	 * @param mergeSnapshotContext
+	 * @return
+	 */
+	JSONObject mergeSnapshot(MergeSnapshotContext mergeSnapshotContext);
+
+	/**
+	 * 快照删除
+	 * @param deleteContext
+	 * @return
+	 */
+	Boolean deleteSnapshot(SnapshotDeleteContext deleteContext);
+
+	/**
+	 * 获取场景下节点及链路状态
+	 * @param mpSceneId
+	 * @return JSONObject
+	 */
+	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
+
 }

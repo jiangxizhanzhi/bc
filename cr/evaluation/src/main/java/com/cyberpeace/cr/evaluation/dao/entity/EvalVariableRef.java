@@ -109,6 +109,7 @@ public class EvalVariableRef extends BaseTable {
         FORMATTING(3, "格式化进行中"),
         MATCHING(4, "匹配进行中"),
         MARKING(5, "评分进行中"),
+        EXCEPTION(6, "异常"),
         END(10, "结束");
 
         @Getter

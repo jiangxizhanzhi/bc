@@ -49,6 +49,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -117,6 +118,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		SceneConfigData topoData = baseInfo.getSceneConfigData();
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
+		topoJson.put("logo", topoData.getLogo());
 		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
@@ -173,6 +175,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (topoData != null) {
 			JSONObject topoJson = new JSONObject();
 			topoJson.put("scene_config", topoData.getSceneConfig());
+			topoJson.put("logo", topoData.getLogo());
 			localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
 		}
 		// save
@@ -425,6 +428,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public SceneViewContext viewScene(BusinessTemplate template) {
 		SceneViewContext ret = new SceneViewContext();
 		ret.setRoomId(template.getResourceId());
+		ret.setTopoId(template.getTopoId());
 		// 1、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(template);
 		if (sceneData != null) {
@@ -622,6 +626,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				UserInfoContext.getUserContext().getUserId());
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
+			clearLocal(template);
+			return null;
+		}
+		// 场景实际已被删除，清除本地脏数据
+		SceneData data = sceneData.toJavaObject(SceneData.class);
+		if (data.isStopped()) {
 			clearLocal(template);
 			return null;
 		}

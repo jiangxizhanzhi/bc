@@ -58,7 +58,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private CrTaskMapper crTaskMapper;
 
 	@Autowired
-	private SkillMapper skillMapper;
+	private TrainingEvaluationMapper trainingEvaluationMapper;
 
 	@Autowired
 	private SkillService skillService;
@@ -73,16 +73,13 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private LessonRecordService lessonRecordService;
 
 	@Autowired
-	private LevelMapper levelMapper;
-
-	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
 
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
 
 	@Override
-	public String roleMatchPercent(String roleId, String userId) {
+	public Integer roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
 		Integer skillScore = 0;
 		Role role = roleMapper.selectById(roleId);
@@ -102,11 +99,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 		Integer ret = floor(result);
 
-		return ret + "";
+		return ret;
 	}
 
 	@Override
-	@Cacheable(cacheNames = "role", key = "#roleId + #userId")
+	@Cacheable(cacheNames = "role", key = "#userId")
 	public List<RtksRadarBo> calculateRadar(String roleId, String userId) {
 		List<RtksRadarBo> ret = Lists.newArrayList();
 
@@ -274,13 +271,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			businessTemplateIds.add(missionContext.getBusinessTemplateId());
 		}));
 		// collect mission-skill relations, one mission may be related to several skills
-		Map<String, List<MissionContext>> missionSkillRel = Maps.newHashMap();
-		missionContextList.forEach((missionContext) -> {
-			if (!missionSkillRel.containsKey(missionContext.getMissionTemplateId())) {
-				missionSkillRel.put(missionContext.getMissionTemplateId(), Lists.newArrayList());
-			}
-			missionSkillRel.get(missionContext.getMissionTemplateId()).add(missionContext);
-		});
+		Map<String, List<MissionContext>> missionSkillRel = StreamApiUtils
+				.groupBy(missionContextList, MissionContext::getMissionTemplateId);
 		// collect mission completion status; true or false
 		Set<String> missionTemplateIds = missionMap.keySet();
 		List<CompletionStatus> completionStatusList = crTaskMapper
@@ -294,19 +286,38 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// get single training
 		List<TrainingRaw> singles = skillTrainingMapper
 				.getSingleByBusinessTemplateIdsAndUserId(userId, businessTemplateIds);
-		// get team training
+		// get available team training
 		List<TrainingRaw> teams = skillTrainingMapper.getTeamByBusinessTemplateIdsAndUserId(userId,
 				businessTemplateIds);
-		// get rb training
+		// get available rb training
 		List<TrainingRaw> rbs = skillTrainingMapper.getRbByBusinessTemplateIdsAndUserId(userId,
 				businessTemplateIds);
 		// unify status
 		handleRbStatus(rbs);
-		// collect trainings
+		// collect available trainings
 		Map<String, List<TrainingRaw>> trainingMap = Maps.newHashMap();
 		mapTrainings(trainingMap, singles, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 		mapTrainings(trainingMap, teams, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		mapTrainings(trainingMap, rbs, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		// 获取未创建与用户相关实例的团队和红蓝的BT id
+		// Set<String> unAvailableBtIds = Sets.newHashSet();
+		// for (String businessTemplateId : businessTemplateIds) {
+		// if (!trainingMap.containsKey(businessTemplateId)) {
+		// unAvailableBtIds.add(businessTemplateId);
+		// }
+		// }
+		// if (!unAvailableBtIds.isEmpty()) {
+		// // 5.3.4：未创建相关实例的团队、红蓝也要展示在训练路径里
+		// teams = skillTrainingMapper.getTeamTemplateByBTIds(unAvailableBtIds);
+		// rbs = skillTrainingMapper.getRbTemplateByBTIds(unAvailableBtIds);
+		// mapTrainings(trainingMap, teams,
+		// BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+		// false);
+		// mapTrainings(trainingMap, rbs,
+		// BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+		// false);
+		// }
+
 		// get saved mission order
 		List<String> order = JsonUtil.toJsonObjectArray(role.getSkillMissions(), String.class);
 		// generate new order by merge with saved order
@@ -331,6 +342,50 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return newOrder;
 	}
 
+	@Override
+	public SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId,
+			Date startTime, Date endTime) {
+		SkillTrainingRecordBo result = new SkillTrainingRecordBo();
+		// get all related missions
+		List<MissionContext> missionContextList = roleSkillRelationMapper
+				.getMissionContextsByRoleId(roleId);
+		if (missionContextList.isEmpty()) {
+			return result;
+		}
+		// get mission-skill rel
+		Map<String, List<MissionContext>> missionSkillRel = StreamApiUtils
+				.groupBy(missionContextList, MissionContext::getMissionTemplateId);
+		// get records
+		Set<String> missionTemplateIds = missionContextList.stream()
+				.map(MissionContext::getMissionTemplateId).collect(Collectors.toSet());
+		List<MissionRecordBo> missionRecordBoList = trainingEvaluationMapper
+				.getTrainingRecordByMissionTemplateIdsAndUserId(missionTemplateIds, userId);
+		// fill skill_id
+		for (MissionRecordBo missionRecordBo : missionRecordBoList) {
+			missionSkillRel.get(missionRecordBo.getResourceId()).forEach(missionContext -> {
+				missionRecordBo.getSkillIds().add(missionContext.getSkillId());
+			});
+		}
+		result.setRecords(missionRecordBoList);
+		// group by date
+		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
+				TimeUtil.getStartOfDay(endTime));
+		Map<String, List<MissionRecordBo>> recordMap = missionRecordBoList.stream().collect(
+				Collectors.groupingBy(lessonRecord -> TimeUtil.format8(lessonRecord.getTime())));
+
+		for (int i = 0; i < daysBetween; i++) {
+			Date date = TimeUtil.addDates(startTime, i);
+			String format8 = TimeUtil.format8(date);
+			result.getXDates().add(format8);
+			if (recordMap.containsKey(format8)) {
+				result.getYMissions().add(recordMap.get(format8).size());
+			} else {
+				result.getYMissions().add(0);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * 将 trainingRaw 训练数据 和  missionContext 任务数据组装成前端展示的内容 trainingBo
 	 * @param trainingMap 
@@ -341,30 +396,35 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	private void addMissionBoByOrder(Map<String, List<TrainingRaw>> trainingMap,
 			Map<String, List<MissionContext>> missionSkillRel, MissionContext missionContext,
 			List<MissionPathBo> missionPathBoList, Map<String, Boolean> completionStatusMap) {
-		// training template has no active training
-		if (!trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
-			return;
-		}
-		// convert trainingRaw to trainingBo
-		List<TrainingBo> trainings = Lists.newArrayList();
-		for (TrainingRaw trainingRaw : trainingMap.get(missionContext.getBusinessTemplateId())) {
-			TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
-			trainingBo.setMissionTitle(missionContext.getTitle());
-			trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
-			trainingBo.setPreSkill(
-					JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
-			trainingBo.setTrainSkill(
-					JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
-			trainingBo.setSkills(
-					getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
-
-			trainings.add(trainingBo);
-		}
 		MissionPathBo missionPathBo = new MissionPathBo();
+		List<TrainingBo> trainings = Lists.newArrayList();
+		// training template has no active training
+		if (trainingMap.containsKey(missionContext.getBusinessTemplateId())) {
+			// convert trainingRaw to trainingBo
+			for (TrainingRaw trainingRaw : trainingMap
+					.get(missionContext.getBusinessTemplateId())) {
+				TrainingBo trainingBo = BeanUtils.copy(trainingRaw, TrainingBo.class);
+				trainingBo.setMissionTitle(missionContext.getTitle());
+				trainingBo.setMissionTemplateId(missionContext.getMissionTemplateId());
+				trainingBo.setPreSkill(
+						JsonUtil.toJsonObjectArray(trainingRaw.getPreSkill(), String.class));
+				trainingBo.setTrainSkill(
+						JsonUtil.toJsonObjectArray(trainingRaw.getTrainSkill(), String.class));
+				trainingBo.setSkills(
+						getSkillsByMission(missionSkillRel.get(trainingBo.getMissionTemplateId())));
+
+				trainings.add(trainingBo);
+			}
+			missionPathBo.setAvailable(true);
+		} else {
+			missionPathBo.setAvailable(false);
+		}
+
 		missionPathBo.setMissionTemplateId(missionContext.getMissionTemplateId());
 		missionPathBo.setCompletionStatus(
 				completionStatusMap.getOrDefault(missionContext.getMissionTemplateId(), false));
 		missionPathBo.setRelatedTrainings(trainings);
+		missionPathBo.setTitle(missionContext.getTitle());
 
 		missionPathBoList.add(missionPathBo);
 	}
@@ -396,6 +456,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				map.put(businessTemplateId, Lists.newArrayList());
 			}
 			training.setTrainingType(type);
+			// training.setAvailable(available);
+			// if (!available) {
+			// // 5 代表“不可用”， 此枚举值仅在训练路径中用到
+			// training.setTrainingStatus(5);
+			// }
 			map.get(businessTemplateId).add(training);
 		});
 	}
@@ -569,13 +634,18 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 1、获取当前层级下所有role数据
 		List<Role> roles = treeService.roleUnderLevel(levelId);
 
-		// 2、获取所有知识点
-		List<Knowledge> knowledges = mergeKnowledgeByRoles(roles);
-
-		// 3、统计所有知识点的课时完成度
-		Integer ret = calculateFinishPercent(knowledges, userId);
-
-		return ret;
+		// 2, calculate match by role and user
+		Integer count = 0;
+		Integer sum = 0;
+		for (Role role : roles) {
+			sum += roleMatchPercent(role.getResourceId(), userId);
+			count++;
+		}
+		// 3、取岗位匹配度平均值
+		if (sum == 0) {
+			return 0;
+		}
+		return MathUtils.roundDivide(sum, count);
 	}
 
 	/**

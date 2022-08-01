@@ -8,6 +8,7 @@ import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import com.cyberpeace.rtks.service.bo.StudyRecordBo;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
+import com.cyberpeace.rtks.service.bo.skill.SkillTrainingRecordBo;
 
 /**
  * rtks数据统计功能
@@ -20,7 +21,7 @@ public interface RtksStatisticService {
 	 * @param userId
 	 * @return 匹配度百分比
 	 */
-	String roleMatchPercent(String roleId, String userId);
+	Integer roleMatchPercent(String roleId, String userId);
 
 	/**
 	 * 计算岗位雷达图
@@ -64,4 +65,14 @@ public interface RtksStatisticService {
 	 */
 	List<MissionPathBo> getTrainingPath(String userId, String roleId);
 
+	/**
+	 * 统计 个人中心-岗位评估-岗位技能训练记录
+	 * @param userId
+	 * @param roleId
+	 * @param toDate1
+	 * @param toDate11
+	 * @return
+	 */
+	SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId, Date toDate1,
+			Date toDate11);
 }

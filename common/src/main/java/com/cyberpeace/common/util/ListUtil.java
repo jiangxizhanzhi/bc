@@ -107,4 +107,13 @@ public class ListUtil {
 		return Lists.newArrayList(IntStream.rangeClosed(start, end).iterator());
 	}
 
+	public static <T> T selectRandomValue(List<T> list) {
+
+		if (list.isEmpty()) {
+			return null;
+		}
+		return list.get((int) (Math.random() * list.size()));
+
+	}
+
 }

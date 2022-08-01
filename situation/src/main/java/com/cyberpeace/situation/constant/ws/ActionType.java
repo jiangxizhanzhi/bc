@@ -1,8 +1,8 @@
 package com.cyberpeace.situation.constant.ws;
 
-import lombok.Getter;
-
 import java.util.Arrays;
+
+import lombok.Getter;
 
 public enum ActionType {
 
@@ -13,17 +13,20 @@ public enum ActionType {
 	 * area: 只支持区域
 	 */
 
-	NETWORK_SCANNING(0, "网络扫描", "compound"),
-	VIRUS_ATTACKS(1, "病毒攻击", "compound"),
-	TROJAN(2, "木马攻击", "element"),
-	DDOS(3, "DDOS", "compound"),
-	HOST_ATTACK(4, "主机攻占", "element"),
-	TRY_ATTACK(5, "尝试攻击", "element"),
-	SUCCESS_ATTACK(6, "攻击成功", "element"),
-	REPAIR(7, "修复", "element"),
-	START_ATTACK(8, "起始节点特效", "element"),
-	NORMAL(9, "普通攻击", "element"),
-	NONE(10, "无", "element");
+	NETWORK_SCANNING(0, "网络扫描", "compound",true,true),
+	VIRUS_ATTACKS(1, "病毒攻击", "compound",true,true),
+	TROJAN(2, "木马攻击", "element",true,true),
+	DDOS(3, "DDOS攻击", "compound",true,true),
+	HOST_ATTACK(4, "主机攻占", "element",true,true),
+	TRY_ATTACK(5, "尝试攻击", "element",true,true),
+	SUCCESS_ATTACK(6, "有效攻击", "element",true,true),
+	REPAIR(7, "主机修复", "element",true,true),
+	START_ATTACK(8, "发起攻击", "element",true,true),
+	NORMAL(9, "一般攻击", "element",true,true),
+	NONE(10, "无攻击", "element",true,true),
+	HIGHLIGHT_AREA(11,"区域高亮","area",false,true),
+	HIGHLIGHT_ELEMENT(12,"节点聚焦","element",false,true),
+	LINK_POWER_OFF(13,"链路断线","element",true,true);
 
 	@Getter
 	private Integer code;
@@ -34,10 +37,24 @@ public enum ActionType {
 	@Getter
 	private String type;
 
-	ActionType(Integer code, String desc, String type) {
+	/**
+	 * 源节点是否可选
+	 */
+	@Getter
+	private boolean source;
+
+	/**
+	 * 持续时间是否可选
+	 */
+	@Getter
+	private boolean durationTime;
+
+	ActionType(Integer code, String desc, String type, boolean source, boolean durationTime) {
 		this.code = code;
 		this.desc = desc;
 		this.type = type;
+		this.source = source;
+		this.durationTime = durationTime;
 	}
 
 	public static Integer getRandomValue(ActionType[] values) {

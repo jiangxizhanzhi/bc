@@ -26,7 +26,7 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.context.scene.*;
+import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
@@ -36,6 +36,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -374,6 +375,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 				UserInfoContext.getUserContext().getUserId());
 		// 场景数据为空，清除本地脏数据
 		if (null == sceneData) {
+			clearLocal(room);
+			return null;
+		}
+		// 场景实际已被删除，清除本地脏数据
+		SceneData data = sceneData.toJavaObject(SceneData.class);
+		if (data.isStopped()) {
 			clearLocal(room);
 			return null;
 		}

@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.integratation.model.mp.MpAuthPermission;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,16 +22,19 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -48,6 +54,17 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String ORG_INFO_LIST_URL;
 
 	private String AUTH_PERMISSION_MENUS_URL;
+
+	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
+			.expireAfterWrite(15, TimeUnit.MINUTES)
+			.build(new CacheLoader<String, List<UserInfo>>() {
+
+				@Override
+				public List<UserInfo> load(String key) {
+					return getList(null, 0L, null, null).getJSONArray("list")
+							.toJavaList(UserInfo.class);
+				}
+			});
 
 	@Autowired
 	private MpEnvService mpEnvService;
@@ -92,18 +109,6 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			return null;
 		}
 		return userInfoFromJsonObject(jsonObject);
-	}
-
-	@Override
-	public List<UserInfo> getList() {
-		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
-				.get("list");
-
-		List<UserInfo> userInfoList = new ArrayList<>();
-		for (Object object : jsonArray) {
-			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
-		}
-		return userInfoList;
 	}
 
 	@Override
@@ -205,32 +210,23 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				idsSet.remove(info.getUserId());
 			}
 			log.error("invalid user_id: " + idsSet);
-			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
 		}
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 	}
 
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
-		List<String> orgIds = Lists.newArrayList();
-		if (children) {
-			List<String> childrenList = remoteOrganizationService.childrenList(organizationId,
-					true);
-			orgIds.addAll(childrenList);
-		} else {
-			orgIds.add(organizationId);
+
+		if (StringUtils.isBlank(organizationId)) {
+			log.error("Org id is blank!");
 		}
 
-		List<UserInfo> userInfos = Lists.newArrayList();
+		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
+				JSONArray.class);
+		List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
+				obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
 
-		for (String orgId : orgIds) {
-			JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
-			List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
-					obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
-			userInfos.addAll(orgUsers);
-		}
-
-		return userInfos;
+		return orgUsers;
 	}
 
 	@Override
@@ -242,10 +238,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 获取用户可见的菜单
+	 *
 	 * @param userId
 	 * @return
 	 */
 	@Override
+	@Cacheable(key = "#p0")
 	public Set<String> getUserPermission(String userId) {
 		String targetUrl = AUTH_PERMISSION_MENUS_URL + userId;
 		// 获取该用户下对应多个角色可看见菜单的合集
@@ -256,8 +254,29 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.collect(Collectors.toSet());
 	}
 
+	@Override
+	public List<UserInfo> getAllUsers() {
+		List<UserInfo> res = Lists.newArrayList();
+		try {
+			res = allUserCache.get("allUsers");
+		} catch (ExecutionException e) {
+			log.error("executionException", e);
+			throw new BusinessException(ErrorCode.INTERNAL_ERROR);
+		}
+		return res;
+	}
+
+	@Override
+	public Map<String, UserInfo> allUsers() {
+		List<UserInfo> userInfos = getList(null, 0L, null, null).getJSONArray("list")
+				.toJavaList(UserInfo.class);
+
+		return StreamApiUtils.toMap(userInfos, UserInfo::getUserId, userInfo -> userInfo);
+	}
+
 	/**
 	 * 组织用户数据转
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -278,6 +297,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * 用户数据转换
+	 *
 	 * @param jsonObject
 	 * @return
 	 */
@@ -314,6 +334,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	/**
 	 * mp 用户模型到本地到映射
+	 *
 	 * @param mpAuthenticatedUser
 	 * @return
 	 */

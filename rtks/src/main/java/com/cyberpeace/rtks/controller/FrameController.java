@@ -24,6 +24,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.ObjUtil;
+import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -256,9 +257,9 @@ public class FrameController {
 			}
 		});
 
-//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-//				OperationType.EMPTY, LogContent.FRAME.getMsg(),
-//				LogContent.RTKS_FRAME.format(OperationType.EMPTY, LogContent.FRAME.getMsg()));
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.DELETE, LogContent.FRAME.getMsg(),
+				LogContent.RTKS_FRAME.format(FrameOperation.EMPTY, LogContent.FRAME.getMsg()));
 
 		return retrieve(DEFAULT_FRAME_ID);
 	}
@@ -285,10 +286,31 @@ public class FrameController {
 			}
 		});
 
-//		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
-//				OperationType.RESET, LogContent.FRAME.getMsg(),
-//				LogContent.RTKS_FRAME.format(OperationType.RESET, LogContent.FRAME.getMsg()));
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
+				OperationType.UPDATE, LogContent.FRAME.getMsg(),
+				LogContent.RTKS_FRAME.format(FrameOperation.RESET, LogContent.FRAME.getMsg()));
 
 		return retrieve(DEFAULT_FRAME_ID);
+	}
+}
+
+enum FrameOperation implements BaseI18n {
+
+	RESET(0, "重置", "Reset"),
+	EMPTY(1, "清空", "Empty");
+
+	@Getter
+	private final Integer code;
+
+	@Getter
+	private final String chinese;
+
+	@Getter
+	private final String english;
+
+	FrameOperation(Integer code, String chinese, String english) {
+		this.code = code;
+		this.chinese = chinese;
+		this.english = english;
 	}
 }

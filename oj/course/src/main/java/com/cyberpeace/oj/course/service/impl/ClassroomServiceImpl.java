@@ -536,12 +536,25 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<ClassroomMonitorBo> monitorBos = StreamApiUtils.map(userInfos,
 				userInfo -> userToMonitorBo(userInfo, signMap));
 
+		// 组织信息外部获取 防止用户过多调用外部接口
+		Map<String, String> orgNameMap = Maps.newHashMap();
+		for (ClassroomMonitorBo monitorBo : monitorBos) {
+
+			if (StringUtils.isBlank(orgNameMap.get(monitorBo.getOrganizationId()))) {
+				// 组织信息查询
+				String orgName = remoteOrganizationService
+						.orgNameById(monitorBo.getOrganizationId());
+				orgNameMap.put(monitorBo.getOrganizationId(), orgName);
+			}
+			monitorBo.setOrganizationName(orgNameMap.get(monitorBo.getOrganizationId()));
+		}
+
 		return PageUtil.getListResult(monitorBos, page, monitorBos.size());
 
 	}
 
 	@Override
-	public List<ClassroomReportBo> selectClassroomReport(String classroomId, String userName) {
+	public PageReportBo selectClassroomReport(String classroomId, String userName, Page page) {
 
 		// 基本数据校验
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
@@ -551,15 +564,25 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
 				true);
 
-		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
+		List<UserInfo> pageUser;
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			pageUser = StreamApiUtils.pageByList(userInfos, page.getCurrent(), page.getSize());
+		} else {
+			pageUser = userInfos;
+		}
+
+		List<UserInfo> filterUsers = StreamApiUtils.filter(pageUser,
 				userInfo -> StringUtils.isBlank(userName)
 						|| userInfo.getUserName().contains(userName)
 						|| userInfo.getName().contains(userName));
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
-		return StreamApiUtils.map(filterUsers,
-				userInfo -> userToReportBo(userInfo, courseLesson, orgMap));
+		// 供评估人员使用
+		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
+		List<ClassroomReportBo> data = StreamApiUtils.map(filterUsers,
+				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
+		return new PageReportBo(data, (long) userInfos.size());
 	}
 
 	@Override
@@ -916,7 +939,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 获取用户组装
-		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		Map<String, UserInfo> userInfoMap;
+		if (userIds.size() >= CommonConstant.NINE_NINE_NINE) {
+			userInfoMap = remoteUserService.allUsers();
+		} else {
+			userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		}
+
 		DashboardInfo dashboardInfo = new DashboardInfo();
 		List<DashboardUser> friendUsers = Lists.newArrayList();
 
@@ -1474,7 +1503,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 * @return
 	 */
 	private ClassroomReportBo userToReportBo(UserInfo userInfo, CourseLesson courseLesson,
-			Map<String, String> orgMap) {
+			Map<String, String> orgMap, Map<String, UserInfo> evaluatorMap) {
 
 		// 用户信息
 		ClassroomReportBo reportBo = BeanUtils.copy(userInfo, ClassroomReportBo.class);
@@ -1503,7 +1532,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				reportBo.setPassed(noteEvaluate.getPassed());
 
 				// 评估人数据设置
-				UserInfo evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
+				UserInfo evaluator = evaluatorMap.get(noteEvaluate.getEvaluatorId());
+				if (null == evaluator) {
+					evaluator = remoteUserService.getById(noteEvaluate.getEvaluatorId());
+					evaluatorMap.put(noteEvaluate.getEvaluatorId(), evaluator);
+				}
+
 				if (null != evaluator) {
 					reportBo.setEvaluatorId(noteEvaluate.getEvaluatorId());
 					reportBo.setEvaluatorName(evaluator.getName());
@@ -1524,9 +1558,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Map<String, ClassroomSign> userSignMap) {
 
 		ClassroomMonitorBo monitorBo = BeanUtils.copy(userInfo, ClassroomMonitorBo.class);
-		// 组织信息查询
-		String orgName = remoteOrganizationService.orgNameById(userInfo.getOrganizationId());
-		monitorBo.setOrganizationName(orgName);
 
 		// 签到数据
 		ClassroomSign classroomSign = userSignMap.get(userInfo.getUserId());

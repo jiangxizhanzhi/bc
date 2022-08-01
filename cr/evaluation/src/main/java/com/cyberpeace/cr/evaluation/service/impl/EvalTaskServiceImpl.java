@@ -8,6 +8,7 @@ import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -244,6 +245,17 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 				evalRecordService.deleteRecord(Lists.newArrayList(taskId));
 			}
 		});
+
+		if (StringUtils.isNotBlank(evalTaskOpsContext.getEvalTask().getCopyedTopoId())) {
+			try {
+				remoteTopoService.deleteById(evalTaskOpsContext.getEvalTask().getCopyedTopoId());
+			} catch (Exception e) {
+				log.error(
+						"Evaluation delete topo failed! eval_task_id=[{}], topo_id=[{}], catch error:",
+						evalTaskOpsContext.getEvalTask().getResourceId(),
+						evalTaskOpsContext.getEvalTask().getCopyedTopoId(), e);
+			}
+		}
 
 		return true;
 	}

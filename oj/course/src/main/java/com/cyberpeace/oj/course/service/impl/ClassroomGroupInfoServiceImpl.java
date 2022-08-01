@@ -171,7 +171,9 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		groupInfoList.addAll(updateGroups);
 		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
 				ClassroomGroupInfo::getGroupNo);
-		return StreamApiUtils.map(sorted, classroomGroupInfo -> entityTBo(classroomGroupInfo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+		return StreamApiUtils.map(sorted,
+				classroomGroupInfo -> entityTBo(classroomGroupInfo, userInfoMap));
 	}
 
 	@Override
@@ -234,7 +236,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
 				ClassroomGroupInfo::getGroupNo);
-		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo, userInfoMap));
 	}
 
 	@Override
@@ -306,7 +309,8 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		List<ClassroomGroupInfo> sorted = StreamApiUtils.sortByColumn(groupInfoList,
 				ClassroomGroupInfo::getGroupNo);
-		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.allUsers();
+		return StreamApiUtils.map(sorted, groupInfo -> entityTBo(groupInfo, userInfoMap));
 	}
 
 	/**
@@ -525,7 +529,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	 * @param groupInfo
 	 * @return
 	 */
-	private GroupInfoBo entityTBo(ClassroomGroupInfo groupInfo) {
+	private GroupInfoBo entityTBo(ClassroomGroupInfo groupInfo, Map<String, UserInfo> userInfoMap) {
 
 		GroupInfoBo groupInfoBo = BeanUtils.copy(groupInfo, GroupInfoBo.class);
 		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
@@ -533,9 +537,13 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 
 		// 中台查询用户信息
 		if (CollectionUtils.isNotEmpty(userIds)) {
-			List<UserInfo> userInfos = remoteUserService.getByIdList(userIds);
-			List<SimpleUserData> userData = StreamApiUtils.map(userInfos,
-					user -> BeanUtils.copy(user, SimpleUserData.class));
+			List<SimpleUserData> userData = StreamApiUtils.map(userIds, user -> {
+				UserInfo userInfo = userInfoMap.get(user);
+				if (null == userInfo) {
+					return null;
+				}
+				return BeanUtils.copy(userInfo, SimpleUserData.class);
+			});
 			groupInfoBo.setUserInfos(userData);
 		}
 

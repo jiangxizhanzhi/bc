@@ -175,4 +175,13 @@ public interface MenuConstant {
 
     //指标体系管理
     String CMS_CR_EVALUATION_INDICATOR_SYSTEM = "assessment-indicators";
+
+    //单兵训练统计
+    String CMS_CR_SINGLE_TRAIN_STATISTICS = "individual-training-statistics";
+
+    //团队训练统计
+    String CMS_CR_TEAM_TRAIN_STATISTICS = "team-training-statistics";
+
+    //红蓝对抗统计
+    String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 }

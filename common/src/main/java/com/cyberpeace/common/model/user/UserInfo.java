@@ -66,6 +66,11 @@ public class UserInfo implements Serializable {
      */
     private String roleId;
 
+	/**
+	 * 当前岗位名称（rtks相关，与训练的角色无关）
+	 */
+	private String roleName;
+
     /**
      * 组织结构信息
      */

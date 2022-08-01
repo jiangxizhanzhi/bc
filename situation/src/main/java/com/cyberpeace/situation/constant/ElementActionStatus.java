@@ -9,8 +9,8 @@ public enum ElementActionStatus {
 	 */
 
 	NORMAL("normal", "正常"),
-    COMPROMISED("compromised", "被攻陷"),
-    RUINED("ruined", "被销毁");
+	COMPROMISED("compromised", "被攻陷"),
+	RUINED("ruined", "被销毁");
 
 	@Getter
 	private String code;

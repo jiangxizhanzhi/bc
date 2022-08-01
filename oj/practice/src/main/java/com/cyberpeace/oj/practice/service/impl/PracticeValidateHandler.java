@@ -61,7 +61,7 @@ public class PracticeValidateHandler {
 	public void validateFieldLength(String fieldContent, Integer maxLength) {
 		if (fieldContent.length() > maxLength) {
 			log.error("field length too long!");
-			throw new BusinessException(OjBusinessErrorCode.FILED_DATA_TOO_LONG);
+			throw new BusinessException(OjBusinessErrorCode.CONTENT_FILED_DATA_TOO_LONG);
 		}
 	}
 
@@ -247,6 +247,14 @@ public class PracticeValidateHandler {
 		// topo结构一致性校验
 		if (!remoteTopoService.equalTopo(topoData, operation.getTopoId())) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+		}
+	}
+
+	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
+			List<String> attachments) {
+		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
+				&& attachments.size() > CommonConstant.ONE) {
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY, practiceName);
 		}
 	}
 }

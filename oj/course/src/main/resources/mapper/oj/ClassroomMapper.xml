@@ -119,7 +119,7 @@
     </select>
 
     <select id="selectByUserIds" resultMap="base">
-        <foreach collection="userIds" item="userId" open="(" close=")" separator="union">
+        <foreach collection="userIds" item="userId" separator="union">
             select * from oj_classroom
             where user_ids like '%"${userId}"%'
         </foreach>

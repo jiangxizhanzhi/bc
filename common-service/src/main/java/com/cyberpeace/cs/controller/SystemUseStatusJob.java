@@ -1,24 +1,17 @@
 package com.cyberpeace.cs.controller;
 
-import ch.ethz.ssh2.ChannelCondition;
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cs.service.SystemUseStatusService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,66 +23,12 @@ public class SystemUseStatusJob {
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;
 
-	private static final int TIME_OUT = 1000 * 5 * 60;
-
 	private boolean insertSystemUseStatus;
 
 	@PostConstruct
 	public void init() {{
 		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
 	}}
-
-	private static String processStream(InputStream in, String charset) throws Exception {
-		byte[] buf = new byte[1024];
-		StringBuilder sb = new StringBuilder();
-		while (in.read(buf) != -1) {
-			sb.append(new String(buf, charset));
-		}
-		return sb.toString();
-	}
-
-	public static Map<String, String> commandRes(List<String> commands, String ipAddr, String useName, String password, Map<String, String> map) throws Exception {
-
-		InputStream stdOut = null;
-		InputStream stdErr = null;
-		String outStr = "";
-		String outErr = "";
-		String charset = Charset.defaultCharset().toString();
-		int ret = -1;
-		Connection conn = new Connection(ipAddr);
-		try {
-			conn.connect();
-			///是否登录成功
-			if (conn.authenticateWithPassword(useName, password)) {
-				for(String command:commands) {
-					Session session = conn.openSession();
-					//执行命令
-					session.execCommand(command);
-
-					stdOut = new StreamGobbler(session.getStdout());
-					outStr = processStream(stdOut, charset);
-					map.put(command, outStr);
-					stdErr = new StreamGobbler(session.getStderr());
-					outErr = processStream(stdErr, charset);
-
-					session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
-
-					System.out.println("outErr=" + outErr);
-
-					ret = session.getExitStatus();
-				}
-			} else {
-				throw new Exception("登录远程机器失败" + ipAddr); // 自定义异常类 实现略
-			}
-		} finally {
-			if (conn != null) {
-				conn.close();
-			}
-			IOUtils.closeQuietly(stdOut);
-			IOUtils.closeQuietly(stdErr);
-		}
-		return map;
-	}
 
 	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {

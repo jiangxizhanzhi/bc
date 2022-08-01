@@ -362,6 +362,12 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 
 class OrgComparator implements Comparator<OrgRankingBo> {
 
+	/**
+	 * 先比较优秀岗位，再比较合格岗位，再比较优秀岗位的匹配度之和
+	 * @param o1
+	 * @param o2
+	 * @return
+	 */
 	@Override
 	public int compare(OrgRankingBo o1, OrgRankingBo o2) {
 		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {

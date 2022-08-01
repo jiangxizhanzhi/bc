@@ -27,7 +27,7 @@
     <select id="existByResourceId" resultType="java.lang.Boolean">
         select case
                    when exists(select 1
-                               from bc.rtks_skill
+                               from rtks_skill
                                where resource_id = #{resourceId})
                        then 1
                    else 0

@@ -13,4 +13,13 @@
         resource_id
         ,name
     </sql>
+    <select id="filterId" resultType="java.lang.String">
+        select resource_id
+        from rtks_course_name
+        where resource_id
+        in
+        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+            #{courseId}
+        </foreach>
+    </select>
 </mapper>

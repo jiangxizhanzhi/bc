@@ -46,4 +46,15 @@
         </where>
     </select>
 
+    <select id="isTaskFinished" resultType="boolean">
+        select case
+                   when
+                           (select count(1)
+                            from oj_classroom_scores
+                            where task_id = #{taskId}
+                              and score = 0
+                           ) = 0 then 1
+                   else 0 end
+    </select>
+
 </mapper>

@@ -250,29 +250,34 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Override
 	public Boolean finishClassroom(String lessonId) {
 
+		// 提取当前用户信息
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String thirdUserId = UserInfoContext.getUserContext().getThirdUserId();
-		String token = UserInfoContext.getUserContext().getThirdToken();
+		String thirdToken = UserInfoContext.getUserContext().getThirdToken();
 
-		// token不存在时报错
-		if (StringUtils.isEmpty(token)) {
+		// 第三方token不存在时报错
+		if (StringUtils.isEmpty(thirdToken)) {
 			throw new BusinessException(ErrorCode.WRONG_GX_TOKEN);
 		}
 
+		// 提取当前用户当前课程的任务分数记录
 		List<ClassroomScore> classroomScores = classroomScoreMapper
 				.selectByLessonIdAndUserId(lessonId, userId);
 
 		// 未找到记录时直接报错
 		if (classroomScores.isEmpty()) {
-			return false;
+			throw new BusinessException(ErrorCode.FAILED_TO_STOP_TASK);
 		}
 
-		List<String> unFinishedTasks = gxTaskMapper.listActiveTaskIds(new Date());
+		// 获取当前活动的任务列表
+		List<String> activeTaskIds = gxTaskMapper.listActiveTaskIds(new Date());
 
 		for (ClassroomScore classroomScore : classroomScores) {
 
+			String taskId = classroomScore.getTaskId();
+
 			// 非活动任务不处理
-			if (!unFinishedTasks.contains(classroomScore.getTaskId())) {
+			if (!activeTaskIds.contains(taskId)) {
 				continue;
 			}
 
@@ -283,7 +288,7 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 			// 上报远程完成用户任务
 			Boolean stopResult = remoteTaskService.stopClassroom(classroomScore.getTaskId(),
-					thirdUserId, token);
+					thirdUserId, thirdToken);
 
 			// 上报失败时返回失败
 			if (!stopResult) {
@@ -293,18 +298,29 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			// 上报成功后赋值100分
 			classroomScore.setScore(100);
 			classroomScoreMapper.updateById(classroomScore);
-		}
 
+			// 判断任务是否已经整体完成，完成则上报整体进度
+			if (classroomScoreMapper.isTaskFinished(taskId)) {
+				GxTask gxTask = gxTaskMapper.getByTaskId(taskId);
+				finishClassroomTask(gxTask, null, thirdToken);
+			}
+		}
 		return true;
 	}
 
 	@Override
 	public TrainResult getTrainResult(GxTask gxTask, String userId) {
 
+		// 获取任务下所有用户课程表分数
 		List<ClassroomScore> classroomScores = classroomScoreMapper
 				.listByClassroomIdAndUserId(gxTask.getEventId(), userId);
+		List<TrainScore> trainScores = getTrainScores(classroomScores);
 
-		// 获取任务下所有用户课程表分数
+		return new TrainResult(gxTask.getDuration(), gxTask.getTaskId(), trainScores);
+	}
+
+	private List<TrainScore> getTrainScores(List<ClassroomScore> classroomScores) {
+
 		List<TrainScore> trainScores = Lists.newArrayList();
 		List<String> mpUserIds = Lists.newArrayList();
 		classroomScores.forEach(classroomScore -> {
@@ -316,11 +332,7 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			trainScores.add(new TrainScore(mpGxUserIdMap.get(classroomScore.getUserId()),
 					classroomScore.getScore()));
 		});
-
-		TrainResult trainResult = new TrainResult(gxTask.getDuration(), gxTask.getTaskId(),
-				trainScores);
-
-		return trainResult;
+		return trainScores;
 	}
 
 	@Override
@@ -328,7 +340,7 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 		TrainResult trainResult = getTrainResult(gxTask, userId);
 		if (!remoteTaskService.stopClassroomTask(trainResult, token)) {
 			return false;
-		} ;
+		}
 		gxTask.setResult(JsonUtil.toJsonString(trainResult));
 		updateById(gxTask);
 		return true;

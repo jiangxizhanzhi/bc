@@ -33,4 +33,6 @@ public interface ClassroomScoreMapper extends BaseMapper<ClassroomScore> {
 	List<ClassroomScore> selectByLessonIdAndUserId(@Param("lessonId") String lessonId,
 			@Param("userId") String userId);
 
+	Boolean isTaskFinished(@Param("taskId") String taskId);
+
 }

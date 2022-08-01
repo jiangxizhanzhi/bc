@@ -97,7 +97,7 @@ public class HtmlToPdfUtil {
 
 			File destFile = new File(templateInstancePath);
 			if (!destFile.getParentFile().exists()) {
-				destFile.mkdirs();
+				boolean res = destFile.getParentFile().mkdirs();
 			}
 
 			if (destFile.exists()) {

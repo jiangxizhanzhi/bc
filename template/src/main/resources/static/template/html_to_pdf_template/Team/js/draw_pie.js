@@ -368,7 +368,6 @@ function drawXY(elementId, xs, ys) {
         },
         yAxis: {
             type: 'value',
-            max: 100,
             axisLabel: {
                 color: '#9facc7',
                 showMaxLabel: true, //显示最后一个x轴标签

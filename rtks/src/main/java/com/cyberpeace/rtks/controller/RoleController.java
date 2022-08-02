@@ -286,10 +286,8 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
-
-		List<String> courseIds = knowledgeService.getCourseConfigs(resource_id).stream()
-				.map(CourseConfig::getResourceId).collect(Collectors.toList());
-
+		Role role = roleService.getOr404(resource_id);
+		List<String> courseIds = getCourseIdsFromDb(role, field);
 		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
 
 		return new BaseRsp<>(outputList);

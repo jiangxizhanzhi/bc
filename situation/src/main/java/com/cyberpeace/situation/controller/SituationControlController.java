@@ -113,10 +113,11 @@ public class SituationControlController {
 		dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
 		dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
 		String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
+		List<String> elementIds = dynamicSchemeService.getElementIds(runAttackMessageReq.getSceneId());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {
-			dynamicSchemeService.pushAttackToRoom(attackMessageBo);
+			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds);
 		}
 		return new BaseRsp<>();
 	}

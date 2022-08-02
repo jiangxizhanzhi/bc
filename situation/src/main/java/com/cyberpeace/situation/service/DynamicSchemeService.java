@@ -29,7 +29,7 @@ public interface DynamicSchemeService {
 
 	void pushMediaToRoom(AttackMessageReq attackMessageBo,String code);
 
-	void pushAttackToRoom(AttackMessageReq attackMessageBo);
+	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds);
 
 	void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
 
@@ -50,4 +50,6 @@ public interface DynamicSchemeService {
 	String importDynamicScheme(String unZipPath,String sceneId);
 
 	void validMedia(DynamicSchemeReq dynamicSchemeReq);
+
+	List<String> getElementIds(String sceneId);
 }

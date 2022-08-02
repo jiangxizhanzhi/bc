@@ -252,7 +252,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
     @Override
     public void getRemoteOption(OptionsRes optionsRes, String sceneId) {
 
-        if (StringUtils.isEmpty(sceneId)){
+        if (StringUtils.isEmpty(sceneId)) {
             throw new BusinessException(SituationErrorCode.UNAVAILABLE_FOR_NON_SCENE_SITUATION);
         }
 
@@ -323,10 +323,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
             public void run() {
                 // 持续时间结束后清除该多媒体动效
                 Thread.sleep(attackMessageBo.getDurationTime() * 1000);
-                SceneConfig nowSceneConfig = sceneConfigMapper
-                        .selectBySceneId(attackMessageBo.getSceneId());
                 // 判断当前是否有其他动效正在运行
-                if (nowSceneConfig.getSchemeCode().equals(code)) {
+                if (sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code)) {
                     clearMedia(attackMessageBo.getSceneId());
                 }
             }
@@ -339,7 +337,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
      * 推送其他消息
      */
     @Override
-    public void pushAttackToRoom(AttackMessageReq attackMessageBo) {
+    public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
         WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
                 WsMultiNodeDynamic.class);
         wsMultiNodeDynamic.setCategory("attack");
@@ -355,7 +353,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
         wsMultiNodeDynamic.setLineStyle(new LineStyle(attackMessageBo.getLineColor(),
                 attackMessageBo.getLineWidth(), attackMessageBo.getLineType()));
         wsMultiNodeDynamic.setDuration(attackMessageBo.getDurationTime());
-        List<String> elementIds = getElementIds(attackMessageBo.getSceneId());
         WsMessage<WsMultiNodeDynamic> wsMessage;
 
         String type = attackMessageBo.getType();
@@ -376,7 +373,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
     @Override
     public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
 
-        String code = sceneConfigService.updateSceneCode(dynamicSchemeReq.getSceneId());
+        String sceneId = dynamicSchemeReq.getSceneId();
+        String code = sceneConfigService.updateSceneCode(sceneId);
+        List<String> elementIds = getElementIds(sceneId);
 
         Thread thread = new Thread(new Runnable() {
 
@@ -403,11 +402,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
                     for (AttackMessageReq attackMessageReq : dynamicStage
                             .getAttackMessageReqList()) {
-                        attackMessageReq.setSceneId(dynamicSchemeReq.getSceneId());
+                        attackMessageReq.setSceneId(sceneId);
                         // 查看当前是否有其他动效方案正在运行
-                        SceneConfig nowSceneConfig = sceneConfigMapper
-                                .selectBySceneId(dynamicSchemeReq.getSceneId());
-                        if (!nowSceneConfig.getSchemeCode().equals(code)) {
+                        if (!sceneConfigService.isCurrentScheme(sceneId, code)) {
                             // 有其他方案正在运行，当前方案停止
                             state = false;
                             break;
@@ -415,37 +412,30 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
                         wsAttackMessageSchedule
                                 .setName(number++ + "." + attackMessageReq.getDescription());
-                        pushAttackScheduleToRoom(wsAttackScheduleList,
-                                dynamicSchemeReq.getSceneId());
-                        dynamicSchemeMapper.updateScheduleById(
-                                JSONObject.toJSONString(wsAttackScheduleList),
-                                dynamicSchemeReq.getResourceId());
+                        pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
+                        sceneConfigService.updateScheduleById(sceneId, JSONObject.toJSONString(wsAttackScheduleList));
 
                         if (attackMessageReq.getType()
                                 .equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
                             pushMediaToRoom(attackMessageReq, code);
                         } else {
-                            pushAttackToRoom(attackMessageReq);
+                            pushAttackToRoom(attackMessageReq, elementIds);
                         }
                         if (attackMessageReq.getIntervalTime() != null) {
                             Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
                         }
 
                     }
-                    if (state && sceneConfigMapper.selectBySceneId(dynamicSchemeReq.getSceneId())
-                            .getSchemeCode().equals(code)) {
+                    if (state && sceneConfigService.isCurrentScheme(sceneId, code)) {
                         wsAttackScheduleStage.setStatus(STAGE_HAS_BEEN_RUN);
                         wsAttackMessageSchedule.setStatus(DYNAMIC_HAS_BEEN_RUN);
                         wsAttackMessageSchedule.setName("");
-                        pushAttackScheduleToRoom(wsAttackScheduleList,
-                                dynamicSchemeReq.getSceneId());
-                        dynamicSchemeMapper.updateScheduleById(
-                                JSONObject.toJSONString(wsAttackScheduleList),
-                                dynamicSchemeReq.getResourceId());
+                        pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
+                        sceneConfigService.updateScheduleById(sceneId, JSONObject.toJSONString(wsAttackScheduleList));
                     }
                 }
 
-                dynamicSchemeMapper.updateScheduleById(null, dynamicSchemeReq.getResourceId());
+                sceneConfigService.updateScheduleById(sceneId, JSONObject.toJSONString(Lists.newArrayList()));
 
             }
         });
@@ -470,7 +460,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
     @Override
     public List<WsAttackSchedule> getSchedule(String sceneId) {
-        String schedule = dynamicSchemeMapper.getScheduleBySceneId(sceneId);
+
+        if (sceneId == null) {
+            return new ArrayList<>();
+        }
+
+        String schedule = sceneConfigService.getScheduleBySceneId(sceneId);
+
         if (schedule == null) {
             return new ArrayList<>();
         }
@@ -677,7 +673,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
         }
     }
 
-    @Cacheable(cacheNames = "getElementIds", key = "#sceneId")
+    @Override
     public List<String> getElementIds(String sceneId) {
         SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
         SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);

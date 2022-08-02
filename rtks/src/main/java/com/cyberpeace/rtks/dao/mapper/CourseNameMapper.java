@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,5 @@ import com.cyberpeace.rtks.dao.entity.CourseName;
 @Repository
 public interface CourseNameMapper extends BaseMapper<CourseName> {
 
+	List<String> filterId(List<String> courseIds);
 }

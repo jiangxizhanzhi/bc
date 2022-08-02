@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -34,6 +33,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -287,9 +287,8 @@ public class RoleController {
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
 
-		Role role = roleService.getOr404(resource_id);
-
-		List<String> courseIds = getCourseIdsFromDb(role, field);
+		List<String> courseIds = knowledgeService.getCourseConfigs(resource_id).stream()
+				.map(CourseConfig::getResourceId).collect(Collectors.toList());
 
 		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
 
@@ -415,11 +414,18 @@ public class RoleController {
 		List<CourseConfigOutput> courseConfigOutputList = new ArrayList<>();
 		List<String> removedIds = new ArrayList<>();
 
+		List<CourseName> courseNameList = courseNameService.selectByIds(courseIds);
+		if (courseNameList.isEmpty()) {
+			return courseConfigOutputList;
+		}
+		Map<String, CourseName> courseNameMap = StreamApiUtils.toMap(courseNameList,
+				CourseName::getResourceId, courseName -> courseName);
+
 		for (String courseId : courseIds) {
 			CourseConfigOutput courseConfigOutput = new CourseConfigOutput();
 			courseConfigOutput.setResourceId(courseId);
 
-			CourseName course = courseNameService.getById(courseId);
+			CourseName course = courseNameMap.get(courseId);
 			if (course == null) {
 				removedIds.add(courseId);
 				continue;
@@ -568,8 +574,9 @@ public class RoleController {
 		output.setAbilityIds(abilityIds);
 		output.setAbilityCount(abilityIds.size());
 
-		List<String> knowledgeCourses = stringToList(role.getKnowledgeCourses());
-		output.setKnowledgeCourseCount(knowledgeCourses.size());
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+		List<String> existingCourseIds = courseNameService.filterId(courseIds);
+		output.setKnowledgeCourseCount(existingCourseIds.size());
 
 		return output;
 	}

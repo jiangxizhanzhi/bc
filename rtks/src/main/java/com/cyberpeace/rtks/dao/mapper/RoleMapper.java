@@ -33,7 +33,7 @@ public interface RoleMapper extends BaseMapper<Role> {
 
 	void copyFromPreset(String table);
 
-	List<Role> selectRoleListByIds(List<String> ids, String type);
+	List<Role> selectRoleListByIds(@Param("ids") List<String> ids, @Param("type") String type);
 
 	void clearRole();
 

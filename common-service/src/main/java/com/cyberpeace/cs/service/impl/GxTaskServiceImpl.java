@@ -316,7 +316,13 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 				.listByClassroomIdAndUserId(gxTask.getEventId(), userId);
 		List<TrainScore> trainScores = getTrainScores(classroomScores);
 
-		return new TrainResult(gxTask.getDuration(), gxTask.getTaskId(), trainScores);
+		// 获取任务训练时间
+		Date currentTime = new Date();
+		Date startTime = gxTask.getStartTime();
+		Date endTime = gxTask.getEndTime();
+		Date finishTime = currentTime.before(endTime) ? currentTime : endTime;
+		Double trainTime = TimeUtil.getHoursBetween(startTime, finishTime);
+		return new TrainResult(gxTask.getDuration(), gxTask.getTaskId(), trainScores, trainTime);
 	}
 
 	private List<TrainScore> getTrainScores(List<ClassroomScore> classroomScores) {

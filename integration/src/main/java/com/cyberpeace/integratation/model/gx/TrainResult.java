@@ -18,8 +18,6 @@ public class TrainResult implements Serializable {
 
 	private String registerTime;
 
-	private String remake;
-
 	private String scoreType;
 
 	private List<TrainScore> scores;
@@ -30,9 +28,9 @@ public class TrainResult implements Serializable {
 
 	public TrainResult() {}
 
-	public TrainResult(Double duration, String taskId, List<TrainScore> scores) {
+	public TrainResult(Double duration, String taskId, List<TrainScore> scores, Double trainTime) {
 		this.duration = duration.toString();
-		this.trainTime = duration.toString();
+		this.trainTime = String.format("%.1f", trainTime);
 		this.registerTime = TimeUtil.format9(new Date());
 		this.scoreType = "3";
 		this.scores = scores;

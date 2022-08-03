@@ -501,6 +501,15 @@ public class TimeUtil {
     }
 
     /**
+     * 获取两日期时间间隔小时数
+     *
+     * @return
+     */
+    public static double getHoursBetween(Date dtBegin, Date dtEnd) {
+        return new Double((dtEnd.getTime() - dtBegin.getTime()) / 3600000.0);
+    }
+
+    /**
      * 判断输入的日期是否符合格式标准
      *
      * @param str

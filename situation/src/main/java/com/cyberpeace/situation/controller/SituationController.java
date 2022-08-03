@@ -122,11 +122,15 @@ public class SituationController {
 
 	@ApiOperation("获取态势场景配置")
 	@GetMapping("scene_config")
-	public BaseRsp<SceneConfigRes> getSceneConfig(@ApiParam(name = "scene_id",
-			value = "场景编号") @RequestParam(value = "scene_id") String sceneId) {
+	public BaseRsp<SceneConfigRes> getSceneConfig(
+			@ApiParam(name = "scene_id",
+					value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(name = "is_instance", value = "是否为实例场景") @RequestParam(value = "is_instance",
+					required = false) Boolean isInstance) {
 
 		// 未传入sceneId时返回空值
-		if (StringUtils.isEmpty(sceneId) || "demo".equals(sceneId)) {
+		if (StringUtils.isEmpty(sceneId) || "demo".equals(sceneId)
+				|| (isInstance != null && !isInstance)) {
 			return new BaseRsp<>(new SceneConfigRes(false, false, false));
 		}
 
@@ -163,6 +167,10 @@ public class SituationController {
 	@PatchMapping("scene_config")
 	public BaseRsp<SceneConfigRes>
 			setSceneConfig(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
+
+		if (sceneConfigReq.getIsInstance() != null && !sceneConfigReq.getIsInstance()) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
 
 		String sceneId = sceneConfigReq.getSceneId();
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);

@@ -117,11 +117,12 @@ public class SituationControlController {
 			runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq) {
 		AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq,
 				AttackMessageReq.class);
-		dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
-		dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
-		String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
+		String sceneId = runAttackMessageReq.getSceneId();
+		dynamicSchemeService.clearMedia(sceneId);
+		dynamicSchemeService.clearRoomSchedule(sceneId);
+		String code = sceneConfigService.updateSceneCode(sceneId);
 		List<String> elementIds = dynamicSchemeService
-				.getElementIds(runAttackMessageReq.getSceneId());
+				.getElementIds(sceneId, runAttackMessageReq.getIsInstance());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {

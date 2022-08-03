@@ -83,8 +83,8 @@ public class SituationControlController {
 	@ApiOperation("删除动效方案")
 	@DeleteMapping("/scheme")
 	public BaseRsp<Boolean>
-			deleteDynamicEffectScheme(@RequestBody @Validated SceneIdListReq sceneIdListReq) {
-		for (String dynamicSchemeId : sceneIdListReq.getSceneIds()) {
+			deleteDynamicEffectScheme(@RequestBody @Validated SchemeIdListReq schemeIdListReq) {
+		for (String dynamicSchemeId : schemeIdListReq.getSchemeIds()) {
 			dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
 		}
 		return new BaseRsp<>(true);

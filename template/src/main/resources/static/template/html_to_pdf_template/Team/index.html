@@ -57,16 +57,16 @@
                     </div>
                 </div>
                 <div class="tableSet flex-col">
-                    <#list report.users as user>
-			<div class="flex-row">
-              <div class="info4">${user.userName}</div>
-              <div class="word3">${user.roleName}</div>
-              <div class="info5">${user.score}</div>
-              <div class="word4"><span class="word6">${user.missionCompleted[0]}</span>
-                / ${user.missionCompleted[1]}
-              </div>
-              <span class="word5">${user.comment}</span>
-            </div>
+            <#list report.users as user>
+                <div class="flex-row">
+                  <div class="info4">${user.userName}</div>
+                  <div class="word3">${user.roleName}</div>
+                  <div class="info5">${user.score}</div>
+                  <div class="word4"><span class="word6">${user.missionCompleted[0]}</span>
+                    / ${user.missionCompleted[1]}
+                  </div>
+                  <span class="word5">${user.comment}</span>
+                </div>
              </#list>
                 </div>
             </div>

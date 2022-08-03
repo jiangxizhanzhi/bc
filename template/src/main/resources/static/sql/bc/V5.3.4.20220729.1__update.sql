@@ -32,7 +32,6 @@ CREATE TABLE `situation_dynamic_scheme`  (
                                              `scene_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                              `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                              `scheme_data` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-                                             `schedule` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
                                              `create_time` datetime NULL DEFAULT NULL,
                                              `update_time` datetime NULL DEFAULT NULL,
                                              PRIMARY KEY (`id`) USING BTREE
@@ -43,7 +42,6 @@ CREATE TABLE `situation_scene_config`  (
                                            `id` int NOT NULL AUTO_INCREMENT,
                                            `resource_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                            `scene_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                           `scheme_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                            `flow_analysis` tinyint(1) NULL DEFAULT NULL,
                                            `flow_auto_run` tinyint(1) NULL DEFAULT NULL,
                                            `create_time` datetime NULL DEFAULT NULL,

@@ -20,6 +20,4 @@ public class DynamicScheme extends BaseTable {
 
 	private String schemeData;
 
-	private String schedule;
-
 }

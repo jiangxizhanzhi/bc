@@ -381,7 +381,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 		String sceneId = dynamicSchemeReq.getSceneId();
 		String code = sceneConfigService.updateSceneCode(sceneId);
-		List<String> elementIds = getElementIds(sceneId);
+		List<String> elementIds = getElementIds(sceneId, dynamicSchemeReq.getIsInstance());
 
 		Thread thread = new Thread(new Runnable() {
 
@@ -690,8 +690,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public List<String> getElementIds(String sceneId) {
-		SceneData sceneData = topoHandlerService.getSceneData(sceneId, null);
+	public List<String> getElementIds(String sceneId, Boolean isInstance) {
+
+		SceneData sceneData;
+		if (isInstance != null && !isInstance){
+			sceneData = topoHandlerService.getSceneData(null, sceneId);
+		} else {
+			sceneData = topoHandlerService.getSceneData(sceneId, null);
+		}
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());

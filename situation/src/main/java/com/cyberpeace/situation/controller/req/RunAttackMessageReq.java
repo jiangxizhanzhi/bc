@@ -53,4 +53,7 @@ public class RunAttackMessageReq implements Serializable {
 	@ApiModelProperty("媒体动效")
 	private List<MediaAnimation> mediaAnimationList;
 
+	@ApiModelProperty("是否为实例场景")
+	private Boolean isInstance;
+
 }

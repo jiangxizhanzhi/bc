@@ -51,5 +51,5 @@ public interface DynamicSchemeService {
 
 	void validMedia(DynamicSchemeReq dynamicSchemeReq);
 
-	List<String> getElementIds(String sceneId);
+	List<String> getElementIds(String sceneId, Boolean isInstance);
 }

@@ -611,6 +611,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			return;
 		}
 
+		// 推送中台动效时打印日志
+		log.info(String.format("Push mp flow event successfully, content is %s", JsonUtil.arrayToString(datas)));
+
 		Integer circle = (int) Math.ceil((double) datas.size() / number);
 
 		for (int i = 0; i < circle; i++) {
@@ -623,8 +626,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Thread.sleep(interval * 1000);
 		}
 
-		// 推送中台动效时打印日志
-		log.info(String.format("push mp flow event successfully, content is %s", JsonUtil.arrayToString(datas)));
 	}
 
 	@Override

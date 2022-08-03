@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -63,7 +62,9 @@ public class SituationControlController {
 
 	@ApiOperation("查看动效方案")
 	@GetMapping("/scheme")
-	public BaseRsp<DynamicSchemeRes> getDynamicEffectScheme(@ApiParam("动效方案id") String resourceId) {
+	public BaseRsp<DynamicSchemeRes>
+			getDynamicEffectScheme(@ApiParam(name = "resource_id", value = "动效方案编号",
+					required = true) @RequestParam(value = "resource_id") String resourceId) {
 		DynamicSchemeRes dynamicSchemeRes = dynamicSchemeService.getDynamicSchemeById(resourceId);
 		return new BaseRsp<>(dynamicSchemeRes);
 	}
@@ -80,27 +81,33 @@ public class SituationControlController {
 	}
 
 	@ApiOperation("删除动效方案")
-	@DeleteMapping("/scheme/{resource_id}")
-	public BaseRsp<?>
-			deleteDynamicEffectScheme(@PathVariable("resource_id") String dynamicSchemeId) {
-		dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
-		return new BaseRsp<>();
+	@DeleteMapping("/scheme")
+	public BaseRsp<Boolean>
+			deleteDynamicEffectScheme(@RequestBody @Validated SceneIdListReq sceneIdListReq) {
+		for (String dynamicSchemeId : sceneIdListReq.getSceneIds()) {
+			dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
+		}
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("所有动效方案名称")
 	@GetMapping("/scheme_names")
-	public BaseRsp<List<DynamicSchemeNameRes>>
-			getAllDynamicName(@ApiParam("场景id") @Validated @NotBlank String sceneId) {
+	public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam(name = "scene_id",
+			value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId) {
 		List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName(sceneId);
 		return new BaseRsp<>(names);
 	}
 
 	@ApiOperation("返回所有选择项")
 	@GetMapping("/option")
-	public BaseRsp<OptionsRes> getAllOption(String sceneId) {
+	public BaseRsp<OptionsRes> getAllOption(
+			@ApiParam(name = "scene_id", value = "场景编号",
+					required = true) @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(name = "is_instance", value = "是否为实例场景") @RequestParam(value = "is_instance",
+					required = false) Boolean isInstance) {
 		OptionsRes optionsRes = new OptionsRes();
 		dynamicSchemeService.getLocalOption(optionsRes);
-		dynamicSchemeService.getRemoteOption(optionsRes, sceneId);
+		dynamicSchemeService.getRemoteOption(optionsRes, sceneId, isInstance);
 		return new BaseRsp<>(optionsRes);
 	}
 
@@ -113,7 +120,8 @@ public class SituationControlController {
 		dynamicSchemeService.clearMedia(runAttackMessageReq.getSceneId());
 		dynamicSchemeService.clearRoomSchedule(runAttackMessageReq.getSceneId());
 		String code = sceneConfigService.updateSceneCode(runAttackMessageReq.getSceneId());
-		List<String> elementIds = dynamicSchemeService.getElementIds(runAttackMessageReq.getSceneId());
+		List<String> elementIds = dynamicSchemeService
+				.getElementIds(runAttackMessageReq.getSceneId());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {
@@ -147,7 +155,8 @@ public class SituationControlController {
 
 	@ApiOperation("获取当前进程")
 	@GetMapping("/schedule")
-	public BaseRsp<List<WsAttackSchedule>> getSchedule(@ApiParam("场景id") String sceneId) {
+	public BaseRsp<List<WsAttackSchedule>> getSchedule(@ApiParam(name = "scene_id", value = "场景编号",
+			required = true) @RequestParam(value = "scene_id") String sceneId) {
 		List<WsAttackSchedule> schedule = dynamicSchemeService.getSchedule(sceneId);
 		return new BaseRsp<>(schedule);
 	}
@@ -185,7 +194,7 @@ public class SituationControlController {
 		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
 		// 3. load resources
 		String resourceId = dynamicSchemeService.importDynamicScheme(unZipPath,
-				importDynamicSchemeReq.getSceneId());
+				importDynamicSchemeReq.getSceneId(), importDynamicSchemeReq.getIsInstance());
 		// 4. delete temp dir
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");

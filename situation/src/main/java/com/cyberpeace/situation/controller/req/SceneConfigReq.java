@@ -14,4 +14,7 @@ public class SceneConfigReq extends SceneConfigContext {
 	@NotNull
 	private String sceneId;
 
+	@ApiModelProperty("是否为实例场景")
+	private Boolean isInstance;
+
 }

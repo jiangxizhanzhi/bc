@@ -58,14 +58,12 @@
 }
 
 .info1 {
-  height        : 24px;
   display       : block;
   overflow-wrap : break-word;
   color         : rgba(255, 255, 255, 1);
   font-size     : 16px;
   text-transform: uppercase;
   font-family   : simhei;
-  white-space   : nowrap;
   line-height   : 24px;
   text-align    : center;
 }
@@ -198,26 +196,24 @@
 
 .info4 {
   width        : 200px;
-  height       : 19px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(202, 211, 230, 1);
   font-size    : 14px;
   font-family  : MicrosoftYaHei;
-  white-space  : nowrap;
+  word-break: break-all;
   line-height  : 19px;
   text-align   : left;
 }
 
 .word3 {
   width        : 200px;
-  height       : 19px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(202, 211, 230, 1);
   font-size    : 14px;
   font-family  : MicrosoftYaHei;
-  white-space  : nowrap;
+  word-break: break-all;
   line-height  : 19px;
   text-align   : left;
 }
@@ -232,7 +228,7 @@
   font-family  : MicrosoftYaHei;
   white-space  : nowrap;
   line-height  : 19px;
-  text-align   : left;
+  text-align   : center;
 }
 
 .word4 {
@@ -249,12 +245,13 @@
 }
 
 .word5 {
-  width        : 279px;
+  width        : 270px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(202, 211, 230, 1);
   font-size    : 14px;
   font-family  : MicrosoftYaHei;
+  word-break: break-all;
   line-height  : 19px;
 }
 

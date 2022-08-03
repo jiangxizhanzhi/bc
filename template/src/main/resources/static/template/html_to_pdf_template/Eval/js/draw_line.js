@@ -55,7 +55,6 @@ function drawXY(elementId, xs, ys) {
             padding: [30, 0, 0, -30],
           },
           type: 'value',
-          max: 100,
           axisLabel: {
               color: '#616468',
               showMaxLabel: true, //显示最后一个x轴标签

@@ -6,6 +6,8 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.UtilService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
+
+    @Autowired
+    private UtilService utilService;
 
     @Override
     public List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics() {
@@ -117,16 +122,11 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
                 rsp.add(singleOrganizationStatistics);
             }
         }
+        //按分数排序后再按照组织机构自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(SingleOrganizationStatisticsBo::getAverageScore, Comparator.reverseOrder()).
+                        thenComparing(SingleOrganizationStatisticsBo::getOrgName, Comparator.naturalOrder())).collect(Collectors.toList());
 
-        List<SingleOrganizationStatisticsBo> sorted = rsp.stream().sorted(Comparator.comparing(SingleOrganizationStatisticsBo::getAverageScore).reversed())
-                .collect(Collectors.toList());
-
-        if (sorted.size() > 5) {
-            rsp = sorted.subList(0, 5);
-        } else {
-            rsp = sorted;
-        }
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0, 5) : rsp;
     }
 
 
@@ -152,7 +152,6 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
             Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 
-            int rspSize = 0;
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
                 UserInfo userInfo = userid2infos.get(personalStatistic.getUserId());
 
@@ -167,13 +166,13 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
                 singlePersonalStatistics.setUsername(userInfo.getUserName());
                 rsp.add(singlePersonalStatistics);
 
-                rspSize++;
-                if (rspSize == 5){
-                    break;
-                }
             }
+            //按分数排序后再按照用户名自然排序
+            rsp = rsp.stream().sorted(Comparator.comparing(SinglePersonalStatisticsBo::getTotalScore, Comparator.reverseOrder())
+                    .thenComparing(SinglePersonalStatisticsBo::getUserId, Comparator.naturalOrder())).collect(Collectors.toList());
+
         }
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
     @Override
@@ -281,5 +280,4 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
         return PageUtil.getListResult(newRsp, page, newRsp.size());
     }
-
 }

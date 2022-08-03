@@ -57,7 +57,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ----------------------------
 alter table cr_eval_record add column `eval_end_time` datetime NULL DEFAULT NULL;
 alter table cr_eval_index_ref add column `progress` int(11) NULL DEFAULT NULL;
-
+alter table cr_eval_index_ref modify column `algorithm_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `format_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `match_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `mark_params` longtext DEFAULT NULL;
 
 -- ----------------------------
 -- 20220723.1__rtks_situation

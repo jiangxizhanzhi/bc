@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cs.dao.entity.GxTask;
 import com.cyberpeace.cs.dao.mapper.GxTaskMapper;
 import com.cyberpeace.cs.service.GxTaskService;
-import com.cyberpeace.integratation.model.mp.RemoteUser;
 import com.cyberpeace.integratation.service.RemoteTaskService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
@@ -77,14 +75,7 @@ public class GxTaskJob {
 
 			// 关闭课程表任务
 			if (CLASSROOM_ID.equals(gxTask.getEventType())) {
-				// 获取所有远程用户id列表
-				List<RemoteUser> remoteUsers = remoteUserService.getGxUserList();
-				for (RemoteUser remoteUser : remoteUsers) {
-					if (StringUtils.isNotEmpty(remoteUser.getThirdToken()) && gxTaskService
-							.finishClassroomTask(gxTask, null, remoteUser.getThirdToken())) {
-						break;
-					}
-				}
+				gxTaskService.finishClassroomTask(gxTask, null, null);
 			}
 		}
 

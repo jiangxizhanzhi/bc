@@ -299,30 +299,35 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 			classroomScore.setScore(100);
 			classroomScoreMapper.updateById(classroomScore);
 
-			// 判断任务是否已经整体完成，完成则上报整体进度
-			if (classroomScoreMapper.isTaskFinished(taskId)) {
-				GxTask gxTask = gxTaskMapper.getByTaskId(taskId);
-				finishClassroomTask(gxTask, null, thirdToken);
-			}
+			// 上报个人分数
+			GxTask gxTask = gxTaskMapper.getByTaskId(taskId);
+			List<TrainScore> trainScores = getTrainScores(Lists.newArrayList(classroomScore));
+			TrainResult trainResult = new TrainResult(gxTask.getDuration(), gxTask.getTaskId(),
+					trainScores, getTrainTime(gxTask));
+			remoteTaskService.stopClassroomTask(trainResult, thirdToken);
+
 		}
 		return true;
 	}
 
 	@Override
 	public TrainResult getTrainResult(GxTask gxTask, String userId) {
-
 		// 获取任务下所有用户课程表分数
 		List<ClassroomScore> classroomScores = classroomScoreMapper
 				.listByClassroomIdAndUserId(gxTask.getEventId(), userId);
 		List<TrainScore> trainScores = getTrainScores(classroomScores);
+		return new TrainResult(gxTask.getDuration(), gxTask.getTaskId(), trainScores,
+				getTrainTime(gxTask));
+	}
 
+	private Double getTrainTime(GxTask gxTask) {
 		// 获取任务训练时间
 		Date currentTime = new Date();
 		Date startTime = gxTask.getStartTime();
 		Date endTime = gxTask.getEndTime();
 		Date finishTime = currentTime.before(endTime) ? currentTime : endTime;
 		Double trainTime = TimeUtil.getHoursBetween(startTime, finishTime);
-		return new TrainResult(gxTask.getDuration(), gxTask.getTaskId(), trainScores, trainTime);
+		return trainTime;
 	}
 
 	private List<TrainScore> getTrainScores(List<ClassroomScore> classroomScores) {
@@ -344,9 +349,6 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 	@Override
 	public Boolean finishClassroomTask(GxTask gxTask, String userId, String token) {
 		TrainResult trainResult = getTrainResult(gxTask, userId);
-		if (!remoteTaskService.stopClassroomTask(trainResult, token)) {
-			return false;
-		}
 		gxTask.setResult(JsonUtil.toJsonString(trainResult));
 		updateById(gxTask);
 		return true;

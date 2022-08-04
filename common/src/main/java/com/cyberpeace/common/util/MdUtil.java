@@ -237,7 +237,7 @@ public class MdUtil {
 			File replaceFile = new File(currentDir, relativePath);
 			if (!replaceFile.exists()) {
 				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, imagePath);
 			}
 			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}

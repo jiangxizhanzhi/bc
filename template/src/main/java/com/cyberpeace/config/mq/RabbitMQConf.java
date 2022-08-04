@@ -80,21 +80,6 @@ public class RabbitMQConf {
 		return QueueBuilder.nonDurable(sceneMessageQueue).build();
 	}
 
-	/**
-	 * 场景中节点操作涉及到到消息。
-	 *
-	 * 如对场景中节点对重启、重建。
-	 * @return
-	 */
-	@Bean
-	public Queue sceneElementQueue() {
-		String sceneElementQueue = queuePrefix + getProjectName() + ".scene.element";
-
-		queues.add(sceneElementQueue);
-
-		return QueueBuilder.nonDurable(sceneElementQueue).build();
-	}
-
 	@Bean
 	Binding bindingSceneStatus() {
 		return BindingBuilder.bind(sceneStatusQueue()).to(topicExchange())
@@ -104,12 +89,6 @@ public class RabbitMQConf {
 	@Bean
 	Binding bindingSceneMessage() {
 		return BindingBuilder.bind(sceneMessageQueue()).to(topicExchange())
-				.with(SCENE_EVENT_ROUTING_KEY).noargs();
-	}
-
-	@Bean
-	Binding bindingSceneElement() {
-		return BindingBuilder.bind(sceneElementQueue()).to(topicExchange())
 				.with(SCENE_EVENT_ROUTING_KEY).noargs();
 	}
 

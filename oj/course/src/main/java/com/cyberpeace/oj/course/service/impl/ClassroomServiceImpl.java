@@ -365,7 +365,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				roomListQuery);
 
 		// 添加本地组织课程并去重
-		addLocalOrgClassRoom(classrooms, authCourseIds, authContext.getUserId(), roomListQuery);
+		classrooms = addLocalOrgClassRoom(classrooms, authContext.getUserId(), roomListQuery);
 
 		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
 				classroom -> entityToBo(classroom));
@@ -389,11 +389,26 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	/**
 	 * 添加本地组织课程并去重
 	 */
-	private void addLocalOrgClassRoom(List<Classroom> classrooms, List<String> authCourseIds,
-			String userId, ClassRoomListQuery roomListQuery) {
+	private List<Classroom> addLocalOrgClassRoom(List<Classroom> classrooms, String userId,
+			ClassRoomListQuery roomListQuery) {
+
 		List<Classroom> localClassRooms = classroomMapper.selectByUserIdAndNotInCourses(userId,
-				authCourseIds, roomListQuery);
+				null, roomListQuery);
 		classrooms.addAll(localClassRooms);
+
+		// 课程去重
+		List<String> classroomIds = Lists.newArrayList();
+		List<Classroom> finalClassrooms = Lists.newArrayList();
+
+		for (Classroom classroom : classrooms) {
+			if (classroomIds.contains(classroom.getResourceId())) {
+				continue;
+			}
+			classroomIds.add(classroom.getResourceId());
+			finalClassrooms.add(classroom);
+		}
+
+		return finalClassrooms;
 	}
 
 	@Override

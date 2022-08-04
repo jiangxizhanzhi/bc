@@ -608,11 +608,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						}
 					}
 				} else {
-					if (attackMessageReq.getTargetId() != null
+					if (StringUtils.isNotEmpty(attackMessageReq.getTargetId())
 							&& !areaAndElementIds.contains(attackMessageReq.getTargetId())) {
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
-					if (attackMessageReq.getSourceId() != null
+					if (StringUtils.isNotEmpty(attackMessageReq.getSourceId())
 							&& !areaAndElementIds.contains(attackMessageReq.getSourceId())) {
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}

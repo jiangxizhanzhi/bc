@@ -65,7 +65,7 @@ public class CustomLogAppender extends FileAppender {
     }
 
     public void setMaxDaysIndex(int maxDaysIndex) {
-        maxDaysIndex = maxDaysIndex;
+        this.maxDaysIndex = maxDaysIndex;
     }
 
     public int getMaxBackupIndex() {

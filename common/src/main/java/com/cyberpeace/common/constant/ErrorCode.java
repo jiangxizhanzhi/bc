@@ -129,4 +129,7 @@ public interface ErrorCode {
 	/** 文件大小超限制*/
 	String FILE_SIZE_EXCEED_UPPER_LIMIT = "100044";
 
+	/** 名称已存在*/
+	String REPEAT_PRACTICE_SET_NANE = "100045";
+
 }

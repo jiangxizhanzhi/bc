@@ -132,4 +132,5 @@ public interface ErrorCode {
 	/** 名称已存在*/
 	String REPEAT_PRACTICE_SET_NANE = "100045";
 
+	String FILE_ERROR_FAIL = "100046";
 }

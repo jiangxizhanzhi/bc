@@ -148,7 +148,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		} catch (Exception e) {
 			log.error("file upload failed! dest_file_name=[{}], origin_file_name=[{}]",
 					destFileName, file.getOriginalFilename(), e);
-			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
+			throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, file.getOriginalFilename());
 		}
 
 		String viewUrl = utilService.replaceFileUrl(destFileName);

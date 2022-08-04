@@ -130,8 +130,8 @@
                 <!-- 主观题 -->
                 <div class='halfDiv' id='subjectiveTopic-${user.userId}'></div>
                 <script>
-                    drawRing('objectiveTopic-${user.userId}', ${user.score.trainingScore.getScoreObjective}, ${user.score.trainingScore.sumScoreObjective}, '${locale.obj_question}', 'rgba(11, 218, 255, 1)', '${locale.total_score}', '${locale.score}');
-                    drawRing('subjectiveTopic-${user.userId}', ${user.score.trainingScore.getScoreSubjective}, ${user.score.trainingScore.sumScoreSubjective}, '${locale.subj_question}', 'rgba(82, 196, 26, 1)', '${locale.total_score}', '${locale.score}');
+                    drawRing('objectiveTopic-${user.userId}', ${user.score.trainingScore.getScoreObjective?c}, ${user.score.trainingScore.sumScoreObjective?c}, '${locale.obj_question}', 'rgba(11, 218, 255, 1)', '${locale.total_score}', '${locale.score}');
+                    drawRing('subjectiveTopic-${user.userId}', ${user.score.trainingScore.getScoreSubjective?c}, ${user.score.trainingScore.sumScoreSubjective?c}, '${locale.subj_question}', 'rgba(82, 196, 26, 1)', '${locale.total_score}', '${locale.score}');
                 </script>
             </div>
             <#if user.score?? && user.score.abilityPercentage!="">
@@ -191,7 +191,7 @@
              </#if>
             <div class="outer-block outer21 flex-row justify-between">
                 <div class="section19 flex-col"></div>
-                <span class="word31">${locale.train_score}</span>
+                <span class="word31">${locale.train_stat}</span>
             </div>
             <div class="outer-block outer22 flex-col align-center" id='score-${user.userId}'></div>
             <script>

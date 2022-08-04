@@ -68,6 +68,7 @@ public class TrainingReport {
 		fen("分", "score"),
 		total_score("总分", "Total Score"),
 		train_score("训练得分", "Train Score"),
+		train_stat("训练统计", "Train Statistics"),
 		skill_score("技能评分", "Skill score"),
 		obj_question("客观题", "Objective Question"),
 		subj_question("主观题", "Subjective Question"),

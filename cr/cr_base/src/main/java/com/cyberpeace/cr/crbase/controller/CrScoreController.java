@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.sql.Timestamp;
 import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,10 +34,6 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -65,6 +64,10 @@ public class CrScoreController {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
+
 
 	public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
@@ -302,7 +305,8 @@ public class CrScoreController {
 			String user_hash) {
 
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_hash);
-
+		TrainRecord trainRecord = trainRecordService.getByRoomId(crRole.getRoomId());
+		JSONObject trainRecordMessage = getTrainRecordMessage(trainRecord);
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = crRoleService
 				.getBaseMissionByRole(crRole);
 
@@ -324,7 +328,12 @@ public class CrScoreController {
 						if (crTask != null) {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
-							trainingRecord.setTime(crTask.getLastSubmitTime());
+							if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
+								String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
+								if (StringUtils.isNotEmpty(time)) {
+									trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
+								}
+							}
 						} else {
 							trainingRecordMissionRsp
 									.setTraininStatus(CrTask.TaskStatus.UNRELEASED.getCode());
@@ -415,5 +424,18 @@ public class CrScoreController {
 		} else {
 			return name + "训练的训练报告";
 		}
+	}
+
+	private JSONObject getTrainRecordMessage(TrainRecord trainRecord) {
+		String extra = trainRecord.getExtra();
+		JSONObject missionsRecord = new JSONObject();
+		if (StringUtils.isNotEmpty(extra)) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject = JSONObject.parseObject(extra);
+			if (jsonObject != null) {
+				missionsRecord = (JSONObject) jsonObject.get("missions_record");
+			}
+		}
+		return missionsRecord;
 	}
 }

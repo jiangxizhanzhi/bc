@@ -83,7 +83,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		String setId = practiceSetMapper.selectByName(setAddReq.getName());
 		if (StringUtils.isNotBlank(setId)) {
 			log.error("Practice is exist! practice_name=[{}]", setAddReq.getName());
-			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
+			throw new BusinessException(ErrorCode.REPEAT_PRACTICE_SET_NANE);
 		}
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);

@@ -7,7 +7,7 @@ function drawPie(elementId, labels, values, title, text) {
         data.push({name: labels[i] + "  " + values[i], value: values[i]});
     }
     var option = {
-        color: ['#0bdaff', '#16d933', '#ff3045', '#f3900e', '#24a7ff'],
+        color: ['#0bdaff', '#16d933', '#ff3045', '#f3900e', '#24a7ff', '#F2A318', '#09B2EB'],
         animation: false,
         tooltip: {
             trigger: 'item'

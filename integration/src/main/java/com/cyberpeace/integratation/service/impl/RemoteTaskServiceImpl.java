@@ -119,8 +119,8 @@ public class RemoteTaskServiceImpl implements RemoteTaskService {
 	public Boolean stopClassroomTask(TrainResult trainResult, String token) {
 
 		String targetUrl = REMOTE_TRAIN_REGISTER_URL;
-		log.info(String.format("Try to stop classroom task, taskId: %s, content is [%s]",
-				trainResult.getTaskId(), JsonUtil.toJsonString(trainResult)));
+		log.info(String.format("Try to stop classroom task, token is: %s, content is [%s]", token,
+				JsonUtil.toJsonString(trainResult)));
 		try {
 			HttpClientUtil.post(targetUrl, trainResult, String.class, token);
 			log.info("Stop classroom task successfully.");

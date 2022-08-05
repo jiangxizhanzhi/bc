@@ -36,6 +36,10 @@ public class GxUnAuthTaskController {
 	public BaseRsp<Boolean> stopTask(@Validated TaskStopReq taskStopReq) {
 		GxTask gxTask = gxTaskMapper.getByTaskId(taskStopReq.getTaskId());
 
+		if (gxTask == null) {
+			throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+		}
+
 		if (StringUtils.isNotEmpty(gxTask.getResult())) {
 			throw new BusinessException(ErrorCode.TASK_IS_FINISHED);
 		}

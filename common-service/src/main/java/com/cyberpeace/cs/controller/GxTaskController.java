@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -74,6 +76,10 @@ public class GxTaskController {
 		ListRsp<TaskUserContext> rsp = PageUtil.getNullResult();
 		GxTask gxTask = gxTaskMapper.getByTaskId(query.getTaskId());
 
+		if (gxTask == null) {
+			throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+		}
+
 		List<JSONObject> userList = JsonUtil.toJsonObjectArray(gxTask.getTrainees(),
 				JSONObject.class);
 		List<TaskUserContext> users = Lists.newArrayList();
@@ -93,6 +99,11 @@ public class GxTaskController {
 	@PostMapping("/bind_task")
 	public BaseRsp<Boolean> bindTask(@RequestBody @Validated TaskBindReq taskBindReq) {
 		GxTask gxTask = gxTaskMapper.getByTaskId(taskBindReq.getTaskId());
+
+		if (gxTask == null) {
+			throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+		}
+
 		gxTask.setEventId(taskBindReq.getEventId());
 		gxTask.setEventType(taskBindReq.getEventType());
 		gxTaskService.updateById(gxTask);

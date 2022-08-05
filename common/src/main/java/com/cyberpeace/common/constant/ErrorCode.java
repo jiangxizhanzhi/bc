@@ -112,4 +112,7 @@ public interface ErrorCode {
 	/** 任务结束失败 */
 	String FAILED_TO_STOP_TASK = "100039";
 
+	/** 任务不存在 */
+	String TASK_NOT_FOUND = "100040";
+
 }

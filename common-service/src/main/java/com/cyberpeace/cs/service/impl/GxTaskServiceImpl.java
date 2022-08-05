@@ -301,6 +301,11 @@ public class GxTaskServiceImpl extends ServiceImpl<GxTaskMapper, GxTask> impleme
 
 			// 上报个人分数
 			GxTask gxTask = gxTaskMapper.getByTaskId(taskId);
+
+			if (gxTask == null) {
+				throw new BusinessException(ErrorCode.TASK_NOT_FOUND);
+			}
+
 			List<TrainScore> trainScores = getTrainScores(Lists.newArrayList(classroomScore));
 			TrainResult trainResult = new TrainResult(gxTask.getDuration(), gxTask.getTaskId(),
 					trainScores, getTrainTime(gxTask));

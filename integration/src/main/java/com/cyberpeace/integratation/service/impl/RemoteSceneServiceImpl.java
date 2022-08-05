@@ -181,7 +181,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject getById(String sceneId, String userId) {
 		String targetUrl = SCENE_RETRIEVE + "?id=" + sceneId + "&accessUserId=" + userId;
-		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+		return replaceAccessIp(HttpClientUtil.rawGet(targetUrl, JSONObject.class));
 
 	}
 
@@ -360,5 +360,46 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
 		// todo 错误响应
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
+	}
+
+	private JSONObject replaceAccessIp(JSONObject topoData) {
+		if (topoData == null) {
+			return null;
+		}
+		try {
+			JSONObject elementPorts = topoData.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("element_ports");
+			replaceAccessIpExe(elementPorts);
+		} catch (Exception e) {
+			log.error("[getById] access ip replacement failed:", e);
+		}
+
+		return topoData;
+	}
+
+	@Override
+	public void replaceAccessIpExe(JSONObject elementPorts) {
+		for (String key: elementPorts.keySet()) {
+			JSONArray accessModes = elementPorts.getJSONObject(key).getJSONArray("access_modes");
+			if (!accessModes.isEmpty()) {
+				accessModes.toJavaList(JSONObject.class).forEach(item -> {
+					// origin access port
+					String accessIp = item.getString("access_ip");
+					String accessPort = item.getString("access_port");
+					if (!StringUtils.isEmpty(accessIp)) {
+						// internet access port
+						String internetProxyIp = item.getString("public_net_proxy_ip");
+						Integer internetProxyPort = item.getInteger("public_net_proxy_port");
+						if (!StringUtils.isEmpty(internetProxyIp)) {
+							item.put("access_ip", internetProxyIp);
+							item.put("access_port", internetProxyPort);
+							log.debug(
+									"[replaceAccessIp] access ip replacement [{}:{}] -> [{}:{}]",
+									accessIp, accessPort, internetProxyIp, internetProxyPort
+							);
+						}
+					}
+				});
+			}
+		}
 	}
 }

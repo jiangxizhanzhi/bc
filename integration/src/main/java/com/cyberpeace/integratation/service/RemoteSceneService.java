@@ -160,4 +160,6 @@ public interface RemoteSceneService {
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
+	void replaceAccessIpExe(JSONObject elementPorts);
+
 }

@@ -916,14 +916,11 @@
 }
 
 .info20 {
-  width        : 140px;
-  height       : 20px;
   display      : block;
   overflow-wrap: break-word;
   color        : rgba(255, 255, 255, 1);
   font-size    : 14px;
   font-family  : PingFangSC-Medium;
-  white-space  : nowrap;
   line-height  : 20px;
   text-align   : left;
 }

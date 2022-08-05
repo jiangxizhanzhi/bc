@@ -160,7 +160,7 @@
                     <#list LineList.time as xList>'${xList?string('yyyy-MM-dd HH:mm:ss')}',</#list>
                 ];
             var yData = [
-                    <#list LineList.value as yList>${yList},</#list>
+                    <#list LineList.value as yList>${yList?c},</#list>
             ];
             drawXY('lineChart'+'${LineList_index}',xData,yData);
         </script>

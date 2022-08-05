@@ -78,7 +78,7 @@
         </div>
         <div class="outer-block outer8" id='staffScore'></div>
         <script>
-            drawXY('staffScore', [<#list report.users as user>'${user.userName?js_string}',</#list>], [<#list report.users as user>${user.score},</#list>]);
+            drawXY('staffScore', [<#list report.users as user>'${user.userName?js_string}',</#list>], [<#list report.users as user>${user.score?c},</#list>]);
         </script>
         <div class="outer-block outer11 flex-row justify-between">
             <div class="outer-block outer12 flex-col"></div>

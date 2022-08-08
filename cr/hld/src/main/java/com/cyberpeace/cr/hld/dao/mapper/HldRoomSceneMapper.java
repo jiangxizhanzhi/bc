@@ -17,4 +17,6 @@ public interface HldRoomSceneMapper extends BaseMapper<HldRoomScene> {
 
 	HldRoomScene selectByMpSceneId(String mpSceneId);
 
+    List<HldRoomScene> selectByRoomId(String roomId);
+
 }

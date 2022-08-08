@@ -24,6 +24,8 @@ public interface HldRoomService extends IService<HldRoom> {
 
 	CrRole getUserRole(String roomId, String userId);
 
+	CrRole getAdminRole(String roomId);
+
 	JSONObject getTaskInfo(String taskId);
 
 	String getHldRoleName(String crRoleName);

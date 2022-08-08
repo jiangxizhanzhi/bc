@@ -2,6 +2,7 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.hld.dao.entity.HldRoomScene;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ public class HldSceneController {
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
 
 		String roomId = sceneStartReq.getRoomId();
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String sceneId = hldSceneService.startScene(roomId, userId);
 

@@ -7,6 +7,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.hld.dao.entity.HldRoom;
+import com.cyberpeace.cr.hld.dao.entity.HldRoomScene;
 
 public interface HldSceneService {
 
@@ -26,4 +27,7 @@ public interface HldSceneService {
 
 	JSONObject viewSceneNoAuth(String roomId);
 
+	List<HldRoomScene> selectByRoomId(String roomId);
+
+	JSONObject viewTopoNoAuth(String roomId);
 }

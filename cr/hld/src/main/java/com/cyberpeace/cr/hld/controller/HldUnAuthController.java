@@ -5,9 +5,8 @@ import java.util.List;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FtpUploadUtil;
 import com.cyberpeace.integratation.model.mp.MpLogFile;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -76,11 +75,12 @@ public class HldUnAuthController {
 
         // read scene data
         JSONObject sceneData = hldSceneService.viewSceneNoAuth(resource_id);
-        if (sceneData == null) {
-            throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
-        }
+        JSONObject topoData = hldSceneService.viewTopoNoAuth(resource_id);
+
         HldTopoAssetsRsp rsp = new HldTopoAssetsRsp();
+
         rsp.setSceneData(sceneData);
+        rsp.setTopoData(topoData);
 
         // read role assets
         RoleQuery roleQuery = new RoleQuery();
@@ -114,7 +114,9 @@ public class HldUnAuthController {
         HldRoom hldRoom = hldRoomService.getHldRoom(resource_id);
         HldTopoRsp hldTopoRsp = BeanUtils.copy(context, HldTopoRsp.class);
         hldTopoRsp.setStatus(hldRoom.getStatus());
+        hldTopoRsp.setTopo(hldRoom.getTopo());
         hldTopoRsp.setTaskName(hldRoom.getTaskName());
+
         hldTopoRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
 
         return new BaseRsp<>(hldTopoRsp);
@@ -188,12 +190,18 @@ public class HldUnAuthController {
 
     @ApiOperation("获取场景的日志文件")
     @GetMapping("/mp_scene_file")
-    public BaseRsp<List<MpLogFile>> getMpSceneFiles(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id) {
+    public BaseRsp<List<MpLogFile>> getMpSceneFiles(@ApiParam(name = "resource_id", value = "HLD拓扑id", required = true) String resource_id,
+                                                    @ApiParam(name = "path", value = "lujing")String path,
+                                                    @ApiParam(name = "file", value = "文件")String file) {
 
-        List<MpLogFile> logFiles = remoteSceneService.getMpSceneFiles(resource_id);
+        List<MpLogFile> logFiles = remoteSceneService.getMpSceneFiles(resource_id, ConfigUtil.getContextProperty("cr.ftp.file.names"));
 
+        log.info("日志列表为" + logFiles.toString());
         for (MpLogFile logFile : logFiles) {
-            FtpUploadUtil.uploadFile("/"+resource_id, logFile.getName(),  ConfigUtil.getContextProperty("cr.ftp.file.path")+"/"+logFile.getName());
+            String roomId = hldRoomSceneMapper.selectByMpSceneId(resource_id).getHldRoomId();
+            if(StringUtils.isNotEmpty(roomId)){
+                FtpUploadUtil.uploadFile("/sjk/" + roomId, logFile.getName(), ConfigUtil.getContextProperty("cr.ftp.file.path") + "/" + logFile.getName());
+            }
         }
 
 

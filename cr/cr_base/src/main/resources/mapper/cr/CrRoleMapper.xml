@@ -30,15 +30,13 @@
     </select>
 
     <select id="getRoomIdsByUserId" resultType="java.lang.String">
-        <bind name="userId" value="'%' + userId + '%'"/>
-        select room_id
+         select room_id
         from cr_role
-        where user_ids like #{userId}
+        where user_ids like concat('%"', #{userId}, '"%')
     </select>
 
     <select id="selectCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
 
-        <bind name="userId" value="'%' + userId + '%'"/>
         select resource_id,
         `name` ,
         room_id,
@@ -52,12 +50,11 @@
         business_type
         from cr_role
         where room_id = #{roomId}
-        and user_ids like #{userId}
+        and user_ids like concat('%"', #{userId}, '"%')
     </select>
 
     <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
 
-        <bind name="userId" value="'%' + userId + '%'"/>
         select resource_id,
         `name` ,
         room_id,
@@ -71,7 +68,7 @@
         business_type
         from cr_role
         where room_id = #{roomId}
-        and user_ids like #{userId}
+        and user_ids like concat('%"', #{userId}, '"%')
     </select>
 
     <select id="getCrRoleByRoomIdAndRoleName" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
@@ -91,19 +88,17 @@
         and name = #{roleName}
     </select>
     <select id="getRoomIdsByUserIdAndType" resultType="java.lang.String">
-        <bind name="user_id" value="'%' + userId + '%'"/>
         select room_id
         from cr_role
         where business_type = #{code}
-        and user_ids like #{user_id}
+        and user_ids like concat('%"', #{userId}, '"%')
     </select>
     <select id="getRoomIdsAndRoleGroupByUserIdAndType"
             resultType="com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext">
-        <bind name="user_id" value="'%' + userId + '%'"/>
         select room_id, role_group
         from cr_role
         where business_type = #{code}
-        and user_ids like #{user_id}
+        and user_ids like concat('%"', #{userId}, '"%')
     </select>
     <select id="getRolesByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,

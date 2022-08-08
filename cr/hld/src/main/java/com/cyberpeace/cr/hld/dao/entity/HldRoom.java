@@ -27,6 +27,8 @@ public class HldRoom extends BaseTable {
 
 	private String roleConfig;
 
+	private String topo;
+
 	private Integer status;
 
 	private String createUserId;

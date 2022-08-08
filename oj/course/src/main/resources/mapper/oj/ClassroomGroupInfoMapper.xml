@@ -6,10 +6,9 @@
     <resultMap id="base" type="com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo"/>
 
     <select id="selectByRoomAndUser" resultMap="base">
-        <bind name="groupUser" value="'%' + userId + '%'"/>
         select * from oj_classroom_group_info
         where classroom_id = #{roomId}
-        and group_user_ids like #{groupUser}
+        and group_user_ids like concat('%"', #{userId}, '"%')
     </select>
 
     <select id="selectByRoom" resultMap="base">

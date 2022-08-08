@@ -78,7 +78,7 @@ public class ExceptionFilter implements Filter {
 		}
 
 		// 前端输入反序列化错误
-		if(e instanceof HttpMessageNotReadableException){
+		if (e instanceof HttpMessageNotReadableException) {
 			e = (Exception) e.getCause().getCause();
 		}
 
@@ -122,7 +122,8 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
-		BusinessException businessException = new BusinessException(ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
+		BusinessException businessException = new BusinessException(
+				ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
 		parseBusinessException(httpServletResponse, businessException);
 	}
 
@@ -184,7 +185,9 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseUnauthorizedException(HttpServletResponse httpServletResponse) {
 		// 直接返回403
-		httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		BusinessException businessException = new BusinessException(
+				ErrorCode.INTERFACE_UNAUTHORIZED);
+		parseBusinessException(httpServletResponse, businessException);
 	}
 
 	/**

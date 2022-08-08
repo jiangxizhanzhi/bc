@@ -133,4 +133,7 @@ public interface ErrorCode {
 	String REPEAT_PRACTICE_SET_NANE = "100045";
 
 	String FILE_ERROR_FAIL = "100046";
+
+	/** 无操作权限*/
+	String INTERFACE_UNAUTHORIZED = "100047";
 }

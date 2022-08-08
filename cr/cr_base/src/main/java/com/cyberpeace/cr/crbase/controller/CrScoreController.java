@@ -427,6 +427,9 @@ public class CrScoreController {
 	}
 
 	private JSONObject getTrainRecordMessage(TrainRecord trainRecord) {
+		if (trainRecord == null) {
+			return new JSONObject();
+		}
 		String extra = trainRecord.getExtra();
 		JSONObject missionsRecord = new JSONObject();
 		if (StringUtils.isNotEmpty(extra)) {

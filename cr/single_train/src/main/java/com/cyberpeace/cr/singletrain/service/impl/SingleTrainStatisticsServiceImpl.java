@@ -169,7 +169,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             }
             //按分数排序后再按照用户名自然排序
             rsp = rsp.stream().sorted(Comparator.comparing(SinglePersonalStatisticsBo::getTotalScore, Comparator.reverseOrder())
-                    .thenComparing(SinglePersonalStatisticsBo::getUserId, Comparator.naturalOrder())).collect(Collectors.toList());
+                    .thenComparing(SinglePersonalStatisticsBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
 
         }
         return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
@@ -258,9 +258,11 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             rsp.add(tmpDetailBo);
         }
 
-        rsp = rsp.stream().sorted(Comparator.comparing(SingleStatisticsDetailBo::getTotalScore).reversed()).collect(Collectors.toList());
-
         List<SingleStatisticsDetailBo> newRsp = Lists.newArrayList();
+
+        //按分数排序后再按照用户名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(SingleStatisticsDetailBo::getTotalScore, Comparator.reverseOrder())
+                .thenComparing(SingleStatisticsDetailBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
 
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {

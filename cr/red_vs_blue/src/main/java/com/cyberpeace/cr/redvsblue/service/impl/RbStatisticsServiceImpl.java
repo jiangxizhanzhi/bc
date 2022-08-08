@@ -167,7 +167,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
             }
             //按分数排序后再按照用户名自然排序
             rsp = rsp.stream().sorted(Comparator.comparing(RbPersonalStatisticsBo::getTotalScore, Comparator.reverseOrder()).
-                    thenComparing(RbPersonalStatisticsBo::getUsername, Comparator.naturalOrder())).collect(Collectors.toList());
+                    thenComparing(RbPersonalStatisticsBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
 
         }
 
@@ -257,9 +257,12 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
             rsp.add(tmpDetailBo);
         }
 
-        rsp = rsp.stream().sorted(Comparator.comparing(RbStatisticsDetailBo::getTotalScore).reversed()).collect(Collectors.toList());
-
         List<RbStatisticsDetailBo> newRsp = Lists.newArrayList();
+
+        //按分数排序后再按照用户名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(RbStatisticsDetailBo::getTotalScore, Comparator.reverseOrder()).
+                thenComparing(RbStatisticsDetailBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
+
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {
             RbStatisticsDetailBo tmp = rsp.get(i);

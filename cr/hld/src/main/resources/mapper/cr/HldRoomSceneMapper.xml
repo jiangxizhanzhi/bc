@@ -7,7 +7,7 @@
     <select id="listSceneIds" resultType="com.cyberpeace.cr.hld.service.context.HldRoomSceneContext">
         select *
         from cr_hld_room_scene
-        where hld_room_id = #{hldRoomId}
+        where hld_room_id = #{hldRoomId} order by create_time desc
     </select>
 
     <select id="selectByMpSceneId" resultType="com.cyberpeace.cr.hld.dao.entity.HldRoomScene">
@@ -15,5 +15,11 @@
         from cr_hld_room_scene
         where mp_scene_id = #{mpSceneId}
     </select>
+    <select id="selectByRoomId" resultType="com.cyberpeace.cr.hld.dao.entity.HldRoomScene">
+        select *
+        from cr_hld_room_scene
+        where hld_room_id = #{roomId} order by create_time desc
+    </select>
+
 
 </mapper>

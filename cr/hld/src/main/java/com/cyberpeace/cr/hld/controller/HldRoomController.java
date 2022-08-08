@@ -2,6 +2,16 @@ package com.cyberpeace.cr.hld.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
+import com.cyberpeace.cs.constant.UploadImagePermission;
+import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,173 +51,229 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/cr/hld/rooms/")
 public class HldRoomController {
 
-	@Autowired
-	private HldRoomService hldRoomService;
+    @Autowired
+    private HldRoomService hldRoomService;
 
-	@Autowired
-	private HldRoomMapper hldRoomMapper;
+    @Autowired
+    private HldRoomMapper hldRoomMapper;
 
-	@Autowired
-	private HldSceneService hldSceneService;
+    @Autowired
+    private HldSceneService hldSceneService;
 
-	@Autowired
-	private HldTaskService hldTaskService;
+    @Autowired
+    private HldTaskService hldTaskService;
 
-	@Autowired
-	private BusinessTemplateService businessTemplateService;
+    @Autowired
+    private BusinessTemplateService businessTemplateService;
 
-	@ApiOperation("新增")
-	@PostMapping()
-	public BaseRsp<HldRoomIdRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
+    @Autowired
+    private AttachmentService attachmentService;
 
-		// 构造初始数据
-		HldRoomContext hldRoomContext = reqToHldRoomContext(addReq);
+    @Autowired
+    private UtilService utilService;
 
-		// 执行创建
-		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
+    @ApiOperation("新增")
+    @PostMapping()
+    public BaseRsp<HldRoomIdRsp> create(@RequestBody @Validated HldRoomAddReq addReq) {
 
-		// 远程写入映射关系
-		if (!hldTaskService.updateTaskZt(addReq.getTaskId(), hldRoom.getResourceId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
-		}
+        // 构造初始数据
+        HldRoomContext hldRoomContext = reqToHldRoomContext(addReq);
 
-		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
-	}
+        // 执行创建
+        HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
-	@ApiOperation("查询")
-	@GetMapping()
-	public BaseRsp<HldRoomRsp>
-			get(@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
+        // 远程写入映射关系
+        if (!hldTaskService.updateTaskZt(addReq.getTaskId(), hldRoom.getResourceId())) {
+            throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+        }
 
-		// 获取当前用户角色
-		String userId = UserInfoContext.getUserContext().getUserId();
-		CrRole userRole = hldRoomService.getUserRole(room_id, userId);
+        return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
+    }
 
-		HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
-		SceneViewContext context = hldSceneService.viewScene(room_id, userRole);
+    @ApiOperation("查询")
+    @GetMapping()
+    public BaseRsp<HldRoomRsp>
+    get(@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
-		// 构造返回数据
-		HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
-		hldRoomRsp.setRoomStatus(hldRoom.getStatus());
-		hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
-		hldRoomRsp.setTaskName(hldRoom.getTaskName());
-		hldRoomRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
-		hldRoomRsp.setTaskStatus(hldRoomService.getTaskInfo(hldRoom.getTaskId())
-				.getJSONObject("baseInfo").getString("taskStatus"));
+        // 获取当前用户角色
+        String userId = UserInfoContext.getUserContext().getUserId();
 
-		return new BaseRsp<>(hldRoomRsp);
-	}
+        HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
+        CrRole userRole = new CrRole();
 
-	@ApiOperation("查询测试模板id")
-	@GetMapping("/template_id")
-	public BaseRsp<HldRoomRsp> getTemplateId(
-			@ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
+        if ("5".equals(hldRoomService.getTaskInfo(hldRoom.getTaskId())
+                .getJSONObject("baseInfo").getString("taskStatus"))) {
+            userRole = hldRoomService.getAdminRole(room_id);
+        } else {
+            userRole = hldRoomService.getUserRole(room_id, userId);
 
-		HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
-		HldRoomRsp hldRoomRsp = BeanUtils.copy(hldRoom, HldRoomRsp.class);
-		hldRoomRsp.setRoomId(hldRoom.getResourceId());
+        }
 
-		return new BaseRsp<>(hldRoomRsp);
-	}
+        SceneViewContext context = hldSceneService.viewScene(room_id, userRole);
 
-	@ApiOperation("修改")
-	@PatchMapping()
-	public BaseRsp<HldRoomIdRsp> update(@RequestBody @Validated HldRoomModifyReq modifyReq) {
-		String resourceId = modifyReq.getResourceId();
-		HldRoom hldRoom = hldRoomService.getHldRoom(resourceId);
+        // 构造返回数据
+        HldRoomRsp hldRoomRsp = BeanUtils.copy(context, HldRoomRsp.class);
+        hldRoomRsp.setRoomStatus(hldRoom.getStatus());
+        hldRoomRsp.setTemplateId(hldRoom.getTemplateId());
+        hldRoomRsp.setTaskName(hldRoom.getTaskName());
+        hldRoomRsp.setUserRole(hldRoomService.getHldRoleName(userRole.getName()));
+        hldRoomRsp.setTaskStatus(hldRoomService.getTaskInfo(hldRoom.getTaskId())
+                .getJSONObject("baseInfo").getString("taskStatus"));
 
-		// 已开启的训练不允许修改
-		if (!hldRoom.isUnopened() || !"5".equals(hldRoomService.getTaskInfo(hldRoom.getTaskId())
-				.getJSONObject("baseInfo").getString("taskStatus"))) {
-			throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
-		}
+        return new BaseRsp<>(hldRoomRsp);
+    }
 
-		// 如果业务模板不存在，抛出异常
-		if (businessTemplateService.getById(hldRoom.getTemplateId()) == null) {
-			throw new ResourceNotFoundException(resourceId);
-		}
+    @ApiOperation("查询测试模板id")
+    @GetMapping("/template_id")
+    public BaseRsp<HldRoomRsp> getTemplateId(
+            @ApiParam(name = "room_id", value = "HLD房间id", required = true) String room_id) {
 
-		// 构造更新数据
-		HldRoomContext hldRoomContext = reqToHldRoomContext(modifyReq);
+        HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
+        HldRoomRsp hldRoomRsp = BeanUtils.copy(hldRoom, HldRoomRsp.class);
+        hldRoomRsp.setRoomId(hldRoom.getResourceId());
 
-		// 更新业务数据
-		hldRoomService.update(hldRoomContext, hldRoom);
+        return new BaseRsp<>(hldRoomRsp);
+    }
 
-		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
-	}
+    @ApiOperation("修改")
+    @PatchMapping()
+    public BaseRsp<HldRoomIdRsp> update(@RequestBody @Validated HldRoomModifyReq modifyReq) {
+        String resourceId = modifyReq.getResourceId();
+        HldRoom hldRoom = hldRoomService.getHldRoom(resourceId);
 
-	@ApiOperation("删除")
-	@DeleteMapping()
-	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
+        // 已开启的训练不允许修改
+        if (!hldRoom.isUnopened() || !"5".equals(hldRoomService.getTaskInfo(hldRoom.getTaskId())
+                .getJSONObject("baseInfo").getString("taskStatus"))) {
+            throw new BusinessException(CrBusinessErrorCode.TRAIN_HAS_BEGUN);
+        }
 
-		// 校验待删除房间是否存在
-		for (String roomId : deleteReq.getIds()) {
-			hldRoomService.getHldRoom(roomId);
-		}
+        // 如果业务模板不存在，抛出异常
+        if (businessTemplateService.getById(hldRoom.getTemplateId()) == null) {
+            throw new ResourceNotFoundException(resourceId);
+        }
 
-		List<String> businessTemplateIds = hldRoomMapper
-				.listBusinessTemplateIds(deleteReq.getIds());
-		businessTemplateService.batchDelete(businessTemplateIds);
+        // 构造更新数据
+        HldRoomContext hldRoomContext = reqToHldRoomContext(modifyReq);
 
-		return new BaseRsp<>();
-	}
+        // 更新业务数据
+        hldRoomService.update(hldRoomContext, hldRoom);
 
-	@ApiOperation("查询HLD任务配置")
-	@GetMapping("/roles")
-	public BaseRsp<HldTaskRsp> getRoleConfig(
-			@ApiParam(name = "room_id", value = "HLD房间id") String room_id,
-			@ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
+        return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
+    }
 
-		if (room_id != null && !room_id.isEmpty()) {
+    @ApiOperation("删除")
+    @DeleteMapping()
+    public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-			// 获取房间角色信息
-			HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
+        // 校验待删除房间是否存在
+        for (String roomId : deleteReq.getIds()) {
+            hldRoomService.getHldRoom(roomId);
+        }
 
-			HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
-					HldRolesConfig.class);
-			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getRoomRoleConfig(hldRolesConfig);
+        List<String> businessTemplateIds = hldRoomMapper
+                .listBusinessTemplateIds(deleteReq.getIds());
+        businessTemplateService.batchDelete(businessTemplateIds);
 
-			return new BaseRsp<>(new HldTaskRsp(taskRoleConfigs, hldRoom.getTaskName()));
+        return new BaseRsp<>();
+    }
 
-		} else {
+    @ApiOperation("查询HLD任务配置")
+    @GetMapping("/roles")
+    public BaseRsp<HldTaskRsp> getRoleConfig(
+            @ApiParam(name = "room_id", value = "HLD房间id") String room_id,
+            @ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
-			// 获取任务角色信息
-			HldTaskContext hldTaskContext = getHldTaskContext(task_id);
-			List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
+        // 接口获取任务角色信息
+        HldTaskContext hldTaskContext = getHldTaskContext(task_id);
+        List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
 
-			return new BaseRsp<>(new HldTaskRsp(taskRoleConfigs, hldTaskContext.getTaskName()));
-		}
-	}
+        if (room_id != null && !room_id.isEmpty()) {
 
-	private HldTaskContext getHldTaskContext(String taskId) {
+            // 数据库获取房间角色信息
+            HldRoom hldRoom = hldRoomService.getHldRoom(room_id);
 
-		JSONObject taskInfo = hldRoomService.getTaskInfo(taskId);
+            HldRolesConfig hldRolesConfig = JsonUtil.toJsonObject(hldRoom.getRoleConfig(),
+                    HldRolesConfig.class);
+            List<TaskRoleConfig> localTaskRoleConfigs = hldRoomService.getRoomRoleConfig(hldRolesConfig);
 
-		HldTaskContext hldTaskContext = taskInfo.toJavaObject(HldTaskContext.class);
-		hldTaskContext.setTaskName(taskInfo.getJSONObject("baseInfo").getString("taskName"));
-		hldTaskContext.setAttackTaskSceneDes(
-				taskInfo.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
+            int sameRoles = 0;
+            if (localTaskRoleConfigs.size() == taskRoleConfigs.size()) {
 
-		return hldTaskContext;
-	}
+                for (TaskRoleConfig taskRoleConfig : taskRoleConfigs) {
+                    for (TaskRoleConfig localTaskRoleConfig : localTaskRoleConfigs) {
+                        if (taskRoleConfig.getName().equals(localTaskRoleConfig.getName())) {
+                            localTaskRoleConfig.setUsers(taskRoleConfig.getUsers());
+                            sameRoles++;
+                        }
+                    }
+                }
+                if (sameRoles == localTaskRoleConfigs.size()) {
+                    return new BaseRsp<>(new HldTaskRsp(localTaskRoleConfigs, hldRoom.getTaskName()));
+                }
+            }
 
-	private HldRoomContext reqToHldRoomContext(HldRoomAddReq addReq) {
 
-		// 提取角色信息
-		HldRolesConfig hldRolesConfig = BeanUtils.copy(addReq, HldRolesConfig.class);
+        }
 
-		// 提取基础信息
-		HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
-		HldBaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
-		baseInfo.setSceneConfigData(addReq.getSceneConfigData());
+        return new BaseRsp<>(new HldTaskRsp(taskRoleConfigs, hldTaskContext.getTaskName()));
 
-		// 构造初始数据
-		HldRoomContext hldRoomContext = new HldRoomContext();
-		hldRoomContext.setRoleConfig(JSONObject.toJSONString(hldRolesConfig));
-		hldRoomContext.setBaseInfo(baseInfo);
-		hldRoomContext.setTaskId(addReq.getTaskId());
+    }
 
-		return hldRoomContext;
-	}
+    private HldTaskContext getHldTaskContext(String taskId) {
+
+        JSONObject taskInfo = hldRoomService.getTaskInfo(taskId);
+
+        HldTaskContext hldTaskContext = taskInfo.toJavaObject(HldTaskContext.class);
+        hldTaskContext.setTaskName(taskInfo.getJSONObject("baseInfo").getString("taskName"));
+        hldTaskContext.setAttackTaskSceneDes(
+                taskInfo.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
+
+        return hldTaskContext;
+    }
+
+    private HldRoomContext reqToHldRoomContext(HldRoomAddReq addReq) {
+
+        // 提取角色信息
+        HldRolesConfig hldRolesConfig = BeanUtils.copy(addReq, HldRolesConfig.class);
+
+        // 提取基础信息
+        HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
+        HldBaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
+        baseInfo.setSceneConfigData(addReq.getSceneConfigData());
+
+        // 构造初始数据
+        HldRoomContext hldRoomContext = new HldRoomContext();
+        hldRoomContext.setRoleConfig(JSONObject.toJSONString(hldRolesConfig));
+        hldRoomContext.setBaseInfo(baseInfo);
+        hldRoomContext.setTaskId(addReq.getTaskId());
+
+        return hldRoomContext;
+    }
+
+    @ApiOperation("拓扑图片上传")
+    @PostMapping("/topo_image_upload")
+    public BaseRsp<AttachmentBo> imageUpload(HldTopoUploadReq hldTopoUploadReq) {
+
+        // 获取房间
+        HldRoom hldRoom = hldRoomService.getHldRoom(hldTopoUploadReq.getRoomId());
+
+        if (hldRoom == null) {
+            throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+        }
+
+        // 文件上传
+        AttachmentBo attachmentBo = attachmentService.uploadFile(
+                AttachmentPath.UPLOAD_IMAGE.getCode(), true, hldTopoUploadReq.getFile(), true);
+
+        String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
+        attachmentBo.setFilePath(viewPath);
+
+        // 更新路径
+        hldRoom.setTopo(viewPath);
+        hldRoomService.updateById(hldRoom);
+
+
+        return new BaseRsp(attachmentBo);
+    }
 
 }

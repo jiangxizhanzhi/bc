@@ -14,6 +14,8 @@ public class HldTopoAssetsRsp {
 
 	private JSONObject sceneData;
 
+	private JSONObject topoData;
+
 	private List<CrRoleConfig> redRoles = Lists.newArrayList();
 
 	private List<CrRoleConfig> blueRole = Lists.newArrayList();

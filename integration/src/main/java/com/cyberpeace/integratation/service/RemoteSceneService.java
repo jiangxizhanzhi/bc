@@ -29,7 +29,7 @@ public interface RemoteSceneService {
 
 	JSONObject getById(String sceneId, String userId);
 
-	List<MpLogFile> getMpSceneFiles(String sceneId);
+	List<MpLogFile> getMpSceneFiles(String sceneId, String allFileNames);
 
 	Boolean unpauseScene(SceneOpsContext sceneOpContext);
 
@@ -162,4 +162,5 @@ public interface RemoteSceneService {
 	List<MpCollectionEvent>
 			getCollectionEvent(CollectionEventPageContext collectionEventPageContext);
 
+	List getActiveScenes();
 }

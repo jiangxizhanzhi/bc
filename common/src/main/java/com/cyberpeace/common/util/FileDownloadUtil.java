@@ -1,6 +1,8 @@
 package com.cyberpeace.common.util;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+@Slf4j
 public class FileDownloadUtil {
     /**
      * 说明：根据指定URL将⽂件下载到指定⽬标位置
@@ -21,6 +24,7 @@ public class FileDownloadUtil {
      */
     @SuppressWarnings("finally")
     public static File downloadFile(String urlPath, String fileName, String downloadDir) {
+        log.info("下载文件"+urlPath+fileName+"，路径为"+downloadDir);
         File file = null;
         try {
 // 统⼀资源
@@ -40,7 +44,7 @@ public class FileDownloadUtil {
 // ⽂件⼤⼩
             int fileLength = httpURLConnection.getContentLength();
 // 控制台打印⽂件⼤⼩
-            System.out.println("您要下载的⽂件⼤⼩为:" + fileLength / (1024) + "KB");
+            log.info("您要下载的⽂件⼤⼩为:" + fileLength / (1024) + "KB");
 // 建⽴链接从请求中获取数据
             URLConnection con = url.openConnection();
             BufferedInputStream bin = new BufferedInputStream(httpURLConnection.getInputStream());
@@ -65,14 +69,14 @@ public class FileDownloadUtil {
             }
 // 关闭资源
             bin.close();
-            System.out.println("⽂件下载成功！");
+            log.info("⽂件下载成功！");
         } catch (MalformedURLException e) {
 // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
 // TODO Auto-generated catch block
             e.printStackTrace();
-            System.out.println("⽂件下载失败！");
+            log.error("⽂件下载失败！"+e);
         } finally {
             return file;
         }

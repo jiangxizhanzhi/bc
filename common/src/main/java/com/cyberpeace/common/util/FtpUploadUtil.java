@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
@@ -9,17 +10,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
+@Slf4j
 public class FtpUploadUtil {
 
 
-    public static final String hostname =  SystemPropUtil.getProp("FTP_HOST");
+    public static final String hostname = SystemPropUtil.getProp("FTP_HOST");
     public static final String username = SystemPropUtil.getProp("FTP_USER");
     public static final Integer port = 21;
     public static final String password = SystemPropUtil.getProp("FTP_PASSWORD");
 
     public static void main(String[] args) {
-        FtpUploadUtil.uploadFile("/ttt/", "sogou.exe", "C:\\work\\sogou.exe");
+        FtpUploadUtil.uploadFile("/65463645634/", "hld3.log", "C:\\work\\hld3.log");
     }
 
     /**
@@ -32,19 +33,33 @@ public class FtpUploadUtil {
      */
     @SuppressWarnings("static-access")
     public static void uploadFile(String pathname, String fileName, String originfilename) {
+
+
         InputStream inputStream = null;
         FTPClient ftp = new FTPClient();
         ftp.setDefaultTimeout(600 * 1000);
         ftp.setDataTimeout(600 * 1000);
         ftp.setControlEncoding("utf-8");
         try {
+            log.info("用户密码" + username +"----------"+ password);
+
             inputStream = new FileInputStream(new File(originfilename));
+
+            log.info("ftp服务器为" + hostname);
             ftp.connect(hostname, port); //连接ftp服务器
+             log.info("path为" + pathname + fileName);
+
             ftp.login(username, password); //登录ftp服务器
+            log.info("文件名为" + originfilename);
             ftp.enterLocalPassiveMode();
+            log.info("ftp login start！");
+
             int replyCode = ftp.getReplyCode(); //是否成功登录服务器
+            log.info("返回值为" + replyCode);
+
             if (!FTPReply.isPositiveCompletion(replyCode)) {
                 //链接失败
+                log.error("ftp login failed！");
             }
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
             CreateDirecroty(ftp, pathname);
@@ -57,6 +72,11 @@ public class FtpUploadUtil {
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e.getLocalizedMessage());
+            log.info(e.getMessage());
+            log.error(e.toString());
+
+            log.error("ftp error-----------------------",e);
         }
     }
 

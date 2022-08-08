@@ -3,7 +3,6 @@
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.SkillTrainingMapper">
     <select id="getRbByBusinessTemplateIdsAndUserId"
             resultType="com.cyberpeace.rtks.service.bo.skill.TrainingRaw">
-        <bind name="userId" value="'%' + userId + '%'"/>
         select
         cr_rb_template.business_template_id,
         cr_rb_room.resource_id as training_id,
@@ -24,11 +23,10 @@
         <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">
             #{businessTemplateId}
         </foreach>
-        and cr_role.user_ids like #{userId};
+        and cr_role.user_ids like concat('%"', #{userId}, '"%');
     </select>
     <select id="getTeamByBusinessTemplateIdsAndUserId"
             resultType="com.cyberpeace.rtks.service.bo.skill.TrainingRaw">
-        <bind name="userId" value="'%' + userId + '%'"/>
         select
         cr_team_template.business_template_id,
         cr_team_room.resource_id as training_id,
@@ -49,7 +47,7 @@
         <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">
             #{businessTemplateId}
         </foreach>
-        and cr_role.user_ids like #{userId};
+        and cr_role.user_ids like concat('%"', #{userId}, '"%');
     </select>
     <select id="getSingleByBusinessTemplateIdsAndUserId"
             resultType="com.cyberpeace.rtks.service.bo.skill.TrainingRaw">

@@ -248,6 +248,9 @@ public class FileUtil {
 	public static void writeToDestFile(String data, String destFilePath) {
 		BufferedWriter out = null;
 		try {
+			if(!new File(destFilePath).getParentFile().exists()){
+				new File(destFilePath).getParentFile().mkdirs();
+			}
 			out = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(destFilePath), "UTF-8"));
 			out.write(data);

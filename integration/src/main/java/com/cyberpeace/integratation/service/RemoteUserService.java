@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.integratation.model.HldToken;
 import com.cyberpeace.integratation.model.UserPageContext;
 
 import java.util.List;
@@ -49,4 +50,5 @@ public interface RemoteUserService {
 
 	Set<String> getUserPermission(String userId);
 
+	String getMpUserToken(HldToken tokenContext);
 }

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.integratation.model.HldToken;
 import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -256,6 +257,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.collect(Collectors.toSet());
 	}
 
+
+
 	/**
 	 * 组织用户数据转
 	 * @param jsonObject
@@ -333,5 +336,16 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		return userInfo;
 	}
+	@Override
+	public String getMpUserToken(HldToken tokenContext) {
 
+		String CONVERT_TOKEN_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.auth.hld.login");
+
+		JSONObject data = HttpClientUtil.post(CONVERT_TOKEN_URL, tokenContext, JSONObject.class);
+
+		String mpToken = data.getString("token");
+
+		return mpToken;
+	}
 }

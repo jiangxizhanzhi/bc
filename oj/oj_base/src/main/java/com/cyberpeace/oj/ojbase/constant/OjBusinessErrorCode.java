@@ -197,4 +197,7 @@ public interface OjBusinessErrorCode {
 
 	/** xx习题附件过多**/
 	String PRACTICE_ATTACHMENT_IS_TOO_MANY = "102064";
+
+	/** 附件数量和答案长度不一致*/
+	String PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT = "102065";
 }

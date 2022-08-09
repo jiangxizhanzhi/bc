@@ -303,11 +303,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds,
 						false);
 
-				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments,
+				if (attachments.size() != attachmentIds.size()) {
+					throw new BusinessException(
+							OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+				}
+
+				Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+						Attachment::getResourceId, attachment -> attachment);
+				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachmentIds,
 						attachment -> {
 							PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
-							fileBo.setFileName(attachment.getFileName());
-							fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
+							fileBo.setFileName(attachmentMap.get(attachment).getFileName());
+							fileBo.setFileUrl(utilService
+									.handlerFileUrl(attachmentMap.get(attachment).getFilePath()));
 							return fileBo;
 						});
 				operationBo.setFiles(fileBos);

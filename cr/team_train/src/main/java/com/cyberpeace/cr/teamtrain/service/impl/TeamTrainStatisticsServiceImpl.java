@@ -166,7 +166,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             }
             //按分数排序后再按照用户名自然排序
             rsp = rsp.stream().sorted(Comparator.comparing(TeamPersonalStatisticsBo::getTotalScore, Comparator.reverseOrder())
-                    .thenComparing(TeamPersonalStatisticsBo::getUsername,Comparator.naturalOrder())).collect(Collectors.toList());
+                    .thenComparing(TeamPersonalStatisticsBo::getName,Comparator.naturalOrder())).collect(Collectors.toList());
 
         }
         return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
@@ -253,9 +253,11 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             rsp.add(tmpDetailBo);
         }
 
-        rsp = rsp.stream().sorted(Comparator.comparing(TeamStatisticsDetailBo::getTotalScore).reversed()).collect(Collectors.toList());
-
         List<TeamStatisticsDetailBo> newRsp = Lists.newArrayList();
+
+        //按分数排序后再按照用户名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(TeamStatisticsDetailBo::getTotalScore, Comparator.reverseOrder())
+                .thenComparing(TeamStatisticsDetailBo::getName,Comparator.naturalOrder())).collect(Collectors.toList());
 
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {

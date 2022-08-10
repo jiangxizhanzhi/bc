@@ -117,16 +117,12 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
                 rsp.add(TeamOrganizationStatistics);
             }
         }
-
-        List<TeamOrganizationStatisticsBo> sorted = rsp.stream().sorted(Comparator.comparing(TeamOrganizationStatisticsBo::getAverageScore).reversed())
+        //按分数排序后再按组织机构名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(TeamOrganizationStatisticsBo::getAverageScore, Comparator.reverseOrder()).
+                        thenComparing(TeamOrganizationStatisticsBo::getOrgName, Comparator.naturalOrder()))
                 .collect(Collectors.toList());
 
-        if (sorted.size() > 5) {
-            rsp = sorted.subList(0, 5);
-        } else {
-            rsp = sorted;
-        }
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
 
@@ -152,7 +148,6 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
             List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
             Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 
-            int rspSize = 0;
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
                 UserInfo userInfo = userid2infos.get(personalStatistic.getUserId());
 
@@ -168,14 +163,13 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
                 TeamPersonalStatistics.setName(userInfo.getName());
 
                 rsp.add(TeamPersonalStatistics);
-
-                rspSize++;
-                if (rspSize == 5){
-                    break;
-                }
             }
+            //按分数排序后再按照用户名自然排序
+            rsp = rsp.stream().sorted(Comparator.comparing(TeamPersonalStatisticsBo::getTotalScore, Comparator.reverseOrder())
+                    .thenComparing(TeamPersonalStatisticsBo::getName,Comparator.naturalOrder())).collect(Collectors.toList());
+
         }
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
     @Override
@@ -253,15 +247,17 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
             Map<Integer, List<CrTask>> groupTaskMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getStatus));
             int correctSize = groupTaskMap.get(successCode) == null ? 0 : groupTaskMap.get(successCode).size();
-            double accuracy = BigDecimal.valueOf(Math.ceil((double) correctSize / taskList.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double accuracy = BigDecimal.valueOf((double) correctSize / taskList.size()).setScale(2, RoundingMode.HALF_UP).doubleValue();
             tmpDetailBo.setTaskAccuracy(accuracy);
 
             rsp.add(tmpDetailBo);
         }
 
-        rsp = rsp.stream().sorted(Comparator.comparing(TeamStatisticsDetailBo::getTotalScore).reversed()).collect(Collectors.toList());
-
         List<TeamStatisticsDetailBo> newRsp = Lists.newArrayList();
+
+        //按分数排序后再按照用户名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(TeamStatisticsDetailBo::getTotalScore, Comparator.reverseOrder())
+                .thenComparing(TeamStatisticsDetailBo::getName,Comparator.naturalOrder())).collect(Collectors.toList());
 
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {

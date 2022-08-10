@@ -119,23 +119,17 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
                 rsp.add(RbOrganizationStatistics);
             }
         }
+        //按分数排序后再按照组织机构名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(RbOrganizationStatisticsBo::getAverageScore, Comparator.reverseOrder()).
+                        thenComparing(RbOrganizationStatisticsBo::getOrgName, Comparator.naturalOrder())).collect(Collectors.toList());
 
-        List<RbOrganizationStatisticsBo> sorted = rsp.stream().sorted(Comparator.comparing(RbOrganizationStatisticsBo::getAverageScore).reversed())
-                .collect(Collectors.toList());
-
-        if (sorted.size() > 5) {
-            rsp = sorted.subList(0, 5);
-        } else {
-            rsp = sorted;
-        }
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
 
     @Override
     public List<RbPersonalStatisticsBo> getAllPersonalRankStatistics() {
         List<RbPersonalStatisticsBo> rsp = Lists.newArrayList();
-
 
         List<Integer> statusList = Lists.newArrayList();
         // 已完成的任务
@@ -145,7 +139,6 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
                 statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
         );
-
 
         if (null != personalStatistics) {
             List<String> user_ids = personalStatistics.stream().map(TrainingPersonalStatistics::getUserId).collect(Collectors.toList());
@@ -158,7 +151,6 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
             List<UserInfo> remoteUserInfos = remoteUserService.getByIdList(user_ids);
             Map<String, UserInfo> userid2infos = remoteUserInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, pc -> pc));
 
-            int rspSize = 0;
             for (TrainingPersonalStatistics personalStatistic : personalStatistics) {
                 UserInfo userInfo = userid2infos.get(personalStatistic.getUserId());
                 if (null == userInfo) {
@@ -172,14 +164,14 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
                 RbPersonalStatistics.setUsername(userInfo.getUserName());
                 rsp.add(RbPersonalStatistics);
-                rspSize++;
-                if (rspSize == 5){
-                    break;
-                }
             }
+            //按分数排序后再按照用户名自然排序
+            rsp = rsp.stream().sorted(Comparator.comparing(RbPersonalStatisticsBo::getTotalScore, Comparator.reverseOrder()).
+                    thenComparing(RbPersonalStatisticsBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
+
         }
 
-        return rsp;
+        return rsp.size() > 5 ? rsp.subList(0,5) : rsp;
     }
 
     @Override
@@ -259,15 +251,18 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
             Map<Integer, List<CrTask>> groupTaskMap = taskList.stream().collect(Collectors.groupingBy(CrTask::getStatus));
             int correctSize = groupTaskMap.get(successCode) == null ? 0 : groupTaskMap.get(successCode).size();
-            double accuracy = BigDecimal.valueOf(Math.ceil((double) correctSize / taskList.size())).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double accuracy = BigDecimal.valueOf((double) correctSize / taskList.size()).setScale(2, RoundingMode.HALF_UP).doubleValue();
             tmpDetailBo.setTaskAccuracy(accuracy);
 
             rsp.add(tmpDetailBo);
         }
 
-        rsp = rsp.stream().sorted(Comparator.comparing(RbStatisticsDetailBo::getTotalScore).reversed()).collect(Collectors.toList());
-
         List<RbStatisticsDetailBo> newRsp = Lists.newArrayList();
+
+        //按分数排序后再按照用户名自然排序
+        rsp = rsp.stream().sorted(Comparator.comparing(RbStatisticsDetailBo::getTotalScore, Comparator.reverseOrder()).
+                thenComparing(RbStatisticsDetailBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
+
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {
             RbStatisticsDetailBo tmp = rsp.get(i);

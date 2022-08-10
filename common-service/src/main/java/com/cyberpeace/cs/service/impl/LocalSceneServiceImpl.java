@@ -186,10 +186,12 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
 		Boolean result = remoteSceneService.startFlow(context);
 		if (!result) {
-			log.error("failed to start flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
+			log.error("Failed to start flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
 					localScene.getMpSceneId());
 			return false;
 		}
+		log.info(String.format("Start flow [%s] of node [%s] in scene [%s] successfully", flowId,
+				nodeId, localScene.getMpSceneId()));
 		return true;
 	}
 
@@ -212,7 +214,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		CpFlow cpFlow = sceneData.getPlugins().getCpFlow();
 		Map<String, SceneFlowContext> sceneFlowContextMap = Maps.newHashMap();
 
-		if (cpFlow == null){
+		if (cpFlow == null) {
 			return sceneFlowContextMap;
 		}
 

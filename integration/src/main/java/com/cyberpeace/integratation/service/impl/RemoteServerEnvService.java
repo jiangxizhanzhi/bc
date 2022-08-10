@@ -46,8 +46,12 @@ public class RemoteServerEnvService {
 
 		FILE_SERVER_HOST = SystemPropUtil.getProp("FILE_SERVER_HOST");
 		FILE_SERVER_PORT = SystemPropUtil.getProp("FILE_SERVER_PORT");
-		FILE_SERVER_URL = "http://" + FILE_SERVER_HOST + ":" + FILE_SERVER_PORT;
-		log.info("File server host=[{}], port=[{}]", FILE_SERVER_HOST, FILE_SERVER_PORT);
+		if (StringUtils.isNotBlank(FILE_SERVER_HOST) && FILE_SERVER_HOST.startsWith("http")) {
+			FILE_SERVER_URL = FILE_SERVER_HOST + ":" + FILE_SERVER_PORT;
+		} else {
+			FILE_SERVER_URL = "http://" + FILE_SERVER_HOST + ":" + FILE_SERVER_PORT;
+		}
+		log.info("File server url=[{}]", FILE_SERVER_URL);
 	}
 
 }

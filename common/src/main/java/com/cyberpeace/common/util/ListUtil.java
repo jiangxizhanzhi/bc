@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class ListUtil {
 
@@ -116,4 +117,16 @@ public class ListUtil {
 
 	}
 
+	public static <T> List<T> mergeWithOldOrder(List<T> l1, List<T> l2) {
+		List<T> res = Lists.newArrayList();
+		Set<T> set = Sets.newHashSet(l2);
+		for (T t : l1) {
+			if (set.contains(t)) {
+				res.add(t);
+				set.remove(t);
+			}
+		}
+		res.addAll(set);
+		return res;
+	}
 }

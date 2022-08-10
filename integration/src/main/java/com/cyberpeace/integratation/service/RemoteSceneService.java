@@ -195,4 +195,6 @@ public interface RemoteSceneService {
 	 */
 	List<MpNodeStatus> getConnectionStatus(String mpSceneId);
 
+	void replaceAccessIpExe(JSONObject elementPorts);
+
 }

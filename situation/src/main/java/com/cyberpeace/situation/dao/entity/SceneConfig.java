@@ -16,8 +16,6 @@ public class SceneConfig extends BaseTable {
 
 	private String sceneId;
 
-	private String schemeCode;
-
 	private Boolean flowAnalysis;
 
 	private Boolean flowAutoRun;

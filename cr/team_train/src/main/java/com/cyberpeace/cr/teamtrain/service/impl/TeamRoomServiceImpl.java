@@ -392,11 +392,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		for (TaskContext task : taskList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
-			timeLineEvent.setTime(task.getLastSubmitTime());
-			timeLineEvent.setTitle(missionService.getById(task.getMissionId()).getTitle());
-			timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
+			Date lastSubmitTime = task.getLastSubmitTime();
+			// 进返回操作过的任务
+			if (null != lastSubmitTime) {
 
-			timeLineEventList.add(timeLineEvent);
+				timeLineEvent.setTime(lastSubmitTime);
+				timeLineEvent.setTitle(missionService.getById(task.getMissionId()).getTitle());
+				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
+
+				timeLineEventList.add(timeLineEvent);
+			}
 		}
 
 		studentsTimeLineData.setData(timeLineEventList);

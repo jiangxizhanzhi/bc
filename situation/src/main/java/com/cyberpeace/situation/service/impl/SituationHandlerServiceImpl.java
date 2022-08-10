@@ -21,8 +21,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
-import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
@@ -477,10 +477,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 设置事件类型
 			String enDesc = flowLog.getObject("attack_info", JSONObject.class)
 					.getString("attack_type");
-			AttackType attackType = AttackType.getEnumByEnDesc(enDesc, AttackType.class);
-			attackEvent.setType(attackType.getActionType().getCode());
+			MpEventType mpEventType = MpEventType.getEnumByEnDesc(enDesc, MpEventType.class);
 
-			// attackEvent.setName(enDesc);
+			// 如果未识别流量，统一判断为未知流量
+			if (mpEventType == null) {
+				mpEventType = MpEventType.UNKNOWN;
+			}
+
+			attackEvent.setType(mpEventType.getActionType().getCode());
+
 			attackEvent.setSourceId(flowLog.getString("source_node_id"));
 			attackEvent.setTargetId(flowLog.getString("target_node_id"));
 
@@ -494,8 +499,8 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			String sourceName = flowLog.getString("source_node_name");
 			String targetIp = flowLog.getString("target_ip");
 			String targetName = flowLog.getString("target_node_name");
-			attackEvent.setDescription(String.format("%s(%s)对%s(%s)发起%s", sourceName, sourceIp,
-					targetName, targetIp, attackType.getCnDesc()));
+			attackEvent.setDescription(String.format("%s(%s)对%s(%s)%s", sourceName, sourceIp,
+					targetName, targetIp, mpEventType.getCnDesc()));
 
 			// ws推送消息
 			WsMessage<WsMultiElementDynamic> wsMessage = new WsMessage<>(
@@ -601,6 +606,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	public void batchPushDataToRoom(String sceneId, List<WsMessage> datas, Integer number,
 			Integer interval) {
 
+		// 无推送消息时，直接结束
+		if (datas.isEmpty()){
+			return;
+		}
+
+		// 推送中台动效时打印日志
+		log.info(String.format("Push mp flow event successfully, content is %s", JsonUtil.arrayToString(datas)));
+
 		Integer circle = (int) Math.ceil((double) datas.size() / number);
 
 		for (int i = 0; i < circle; i++) {
@@ -612,6 +625,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 延时发送
 			Thread.sleep(interval * 1000);
 		}
+
 	}
 
 	@Override

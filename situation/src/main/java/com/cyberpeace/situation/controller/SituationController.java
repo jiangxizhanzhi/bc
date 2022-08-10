@@ -14,7 +14,10 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
+import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.req.SceneConfigReq;
+import com.cyberpeace.situation.controller.req.SceneIdListReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
@@ -118,13 +121,16 @@ public class SituationController {
 	}
 
 	@ApiOperation("获取态势场景配置")
-	@PostMapping("scene_config")
-	public BaseRsp<SceneConfigRes> getSceneConfig(@RequestBody @Validated SceneIdReq sceneIdReq) {
-
-		String sceneId = sceneIdReq.getSceneId();
+	@GetMapping("scene_config")
+	public BaseRsp<SceneConfigRes> getSceneConfig(
+			@ApiParam(name = "scene_id",
+					value = "场景编号") @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(name = "is_instance", value = "是否为实例场景") @RequestParam(value = "is_instance",
+					required = false) Boolean isInstance) {
 
 		// 未传入sceneId时返回空值
-		if (StringUtils.isEmpty(sceneId) || "demo".equals(sceneId)) {
+		if (StringUtils.isEmpty(sceneId) || "demo".equals(sceneId)
+				|| (isInstance != null && !isInstance)) {
 			return new BaseRsp<>(new SceneConfigRes(false, false, false));
 		}
 
@@ -161,6 +167,10 @@ public class SituationController {
 	@PatchMapping("scene_config")
 	public BaseRsp<SceneConfigRes>
 			setSceneConfig(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
+
+		if (sceneConfigReq.getIsInstance() != null && !sceneConfigReq.getIsInstance()) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
 
 		String sceneId = sceneConfigReq.getSceneId();
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
@@ -207,11 +217,17 @@ public class SituationController {
 	}
 
 	@ApiOperation("刷新态势场景数据")
-	@PostMapping("refresh_data")
-	public BaseRsp<RefreshDataRes>
-			refreshSceneData(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
+	@GetMapping("refresh_data")
+	public BaseRsp<RefreshDataRes> refreshSceneData(
+			@ApiParam(name = "scene_id", value = "场景编号",
+					required = true) @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(name = "flow_analysis", value = "是否获取流量攻击事件",
+					required = true) @RequestParam(value = "flow_analysis") Boolean flowAnalysis,
+			@ApiParam(name = "flow_auto_run", value = "是否自动运行流量",
+					required = true) @RequestParam(value = "flow_auto_run") Boolean flowAutoRun,
+			@ApiParam(name = "link_status", value = "是否获取节点链路状态",
+					required = true) @RequestParam(value = "link_status") Boolean linkStatus) {
 
-		String sceneId = sceneConfigReq.getSceneId();
 		MpSceneData mpSceneData = topoHandlerService.getMpSceneData(sceneId);
 
 		RefreshDataRes refreshDataRes = new RefreshDataRes();
@@ -222,19 +238,19 @@ public class SituationController {
 		}
 
 		// 自动运行流量
-		if (sceneConfigReq.getFlowAutoRun()) {
+		if (flowAutoRun) {
 			refreshDataRes.setFlowAutoRunResult(
 					topoHandlerService.flowAutoRun(sceneId, mpSceneData, null));
 		}
 
 		// 推送流量事件
-		if (sceneConfigReq.getFlowAnalysis()) {
+		if (flowAnalysis) {
 			FlowLogReq flowLogReq = new FlowLogReq(sceneId);
 			refreshDataRes.setFlowEvents(situationHandlerService.pushFlowEvents(flowLogReq));
 		}
 
 		// 推送节点链路状态
-		if (sceneConfigReq.getLinkStatus()) {
+		if (linkStatus) {
 			refreshDataRes.setLinkStatus(situationHandlerService.pushLinkStatus(sceneId));
 		}
 

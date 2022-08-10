@@ -12,5 +12,4 @@ public interface SceneConfigMapper extends BaseMapper<SceneConfig> {
 
 	void deleteBySceneId(String sceneId);
 
-	void clearCodeBySceneId(String sceneId);
 }

@@ -32,7 +32,6 @@ CREATE TABLE `situation_dynamic_scheme`  (
                                              `scene_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                              `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                              `scheme_data` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-                                             `schedule` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
                                              `create_time` datetime NULL DEFAULT NULL,
                                              `update_time` datetime NULL DEFAULT NULL,
                                              PRIMARY KEY (`id`) USING BTREE
@@ -43,7 +42,6 @@ CREATE TABLE `situation_scene_config`  (
                                            `id` int NOT NULL AUTO_INCREMENT,
                                            `resource_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                            `scene_id` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                           `scheme_code` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                            `flow_analysis` tinyint(1) NULL DEFAULT NULL,
                                            `flow_auto_run` tinyint(1) NULL DEFAULT NULL,
                                            `create_time` datetime NULL DEFAULT NULL,
@@ -59,7 +57,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ----------------------------
 alter table cr_eval_record add column `eval_end_time` datetime NULL DEFAULT NULL;
 alter table cr_eval_index_ref add column `progress` int(11) NULL DEFAULT NULL;
-
+alter table cr_eval_index_ref modify column `algorithm_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `format_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `match_params` longtext DEFAULT NULL;
+alter table cr_eval_variable_ref modify column `mark_params` longtext DEFAULT NULL;
 
 -- ----------------------------
 -- 20220723.1__rtks_situation
@@ -233,4 +234,8 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 37, '高级', 'Senio
 ALTER TABLE `oj_practice_theory` MODIFY COLUMN `answer` varchar(4096) NOT NULL;
 ALTER TABLE `oj_practice_theory` MODIFY COLUMN `blank` varchar(4096) DEFAULT NULL;
 ALTER TABLE `oj_practice_theory` MODIFY COLUMN `title` varchar(2048) NOT NULL;
+
+
+# bug-9981
+ALTER TABLE `oj_practice_theory` MODIFY COLUMN `content` varchar(960) NOT NULL;
 

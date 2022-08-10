@@ -2,7 +2,9 @@ package com.cyberpeace.common.util;
 
 import java.io.*;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -218,9 +220,11 @@ public class MdUtil {
 
 		matchStrList.addAll(matchSrcStrList);
 
+		// markdown中引用重复文件, 避免String.replace替换多次, 转为Set（zentao 9894）
+		Set<String> matchStrSet = Sets.newHashSet(matchStrList);
 
 		// 文件路径替换
-		for (String imagePath : matchStrList) {
+		for (String imagePath : matchStrSet) {
 //			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
 //					PatternConstant.MARKDOWN_IMAGE_URL);
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
@@ -233,7 +237,7 @@ public class MdUtil {
 			File replaceFile = new File(currentDir, relativePath);
 			if (!replaceFile.exists()) {
 				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, imagePath);
 			}
 			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}

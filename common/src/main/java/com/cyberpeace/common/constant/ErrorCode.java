@@ -129,4 +129,11 @@ public interface ErrorCode {
 	/** 文件大小超限制*/
 	String FILE_SIZE_EXCEED_UPPER_LIMIT = "100044";
 
+	/** 名称已存在*/
+	String REPEAT_PRACTICE_SET_NANE = "100045";
+
+	String FILE_ERROR_FAIL = "100046";
+
+	/** 无操作权限*/
+	String INTERFACE_UNAUTHORIZED = "100047";
 }

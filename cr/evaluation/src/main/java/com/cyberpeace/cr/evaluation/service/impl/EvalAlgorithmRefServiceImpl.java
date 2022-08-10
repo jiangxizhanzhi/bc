@@ -32,7 +32,11 @@ public class EvalAlgorithmRefServiceImpl extends ServiceImpl<EvalAlgorithmRefMap
         params.forEach(param -> {
             Integer type = param.getInteger(PARAM_TYPE);
             if (type.equals(EvalAlgorithmRef.Params.NUMBER.getCode())) {
-                args.add(param.getInteger(PARAM_VALUE));
+                try {
+                    args.add(param.getInteger(PARAM_VALUE));
+                } catch (NumberFormatException e) {
+                    args.add(param.getDouble(PARAM_VALUE));
+                }
             } else if (type.equals(EvalAlgorithmRef.Params.STRING.getCode())) {
                 args.add(param.getString(PARAM_VALUE));
             } else if (type.equals(EvalAlgorithmRef.Params.BOOL.getCode())) {

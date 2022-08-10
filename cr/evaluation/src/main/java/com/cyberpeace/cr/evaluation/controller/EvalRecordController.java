@@ -144,6 +144,7 @@ public class EvalRecordController {
         boolean result = evalRecordService.updateById(evalRecord);
 
         // 开始执行
+        log.info(String.format("Range Test evaluation %s START.", evalRecord.getName()));
         evalRecordService.recordRun(evalRecord, evalTask, false);
 
         return new BaseRsp<>(result);

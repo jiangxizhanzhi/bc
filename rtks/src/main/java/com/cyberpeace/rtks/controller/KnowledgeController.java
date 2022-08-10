@@ -2,11 +2,13 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -51,6 +54,9 @@ public class KnowledgeController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("查询单条")
 	@GetMapping()
@@ -104,14 +110,20 @@ public class KnowledgeController {
 		BeanUtils.copyProperties(knowledgeAddReq, knowledge);
 		knowledge.setCourses(JsonUtil.toJsonString(knowledgeAddReq.getCourseList()));
 
-		knowledgeService.validate(knowledge);
-		List<RelatedCourse> relatedCourseList = knowledgeAddReq.getCourseList();
-		String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
-				knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
-		knowledge.setCourses(courses);
-		roleService.updateBatchByModifyRelatedIds(knowledgeAddReq.getResourceId(), "knowledge");
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		knowledgeService.updateById(knowledge);
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				knowledgeService.validate(knowledge);
+				List<RelatedCourse> relatedCourseList = knowledgeAddReq.getCourseList();
+				String courses = courseRelatedService.saveCourseRelatedList(relatedCourseList,
+						knowledge.getResourceId(), CourseRelated.RELATED_TYPE_KNOWLEDGE);
+				knowledge.setCourses(courses);
+				knowledgeService.updateById(knowledge);
+				roleService.updateBatchByModifyRelatedIds(knowledgeAddReq.getResourceId(),
+						"knowledge");
+			}
+		});
 
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RTKS,
 				OperationType.UPDATE, knowledge.getResourceId(),

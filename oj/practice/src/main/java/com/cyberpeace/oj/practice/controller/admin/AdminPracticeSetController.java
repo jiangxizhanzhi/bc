@@ -46,7 +46,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -83,7 +83,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		String setId = practiceSetMapper.selectByName(setAddReq.getName());
 		if (StringUtils.isNotBlank(setId)) {
 			log.error("Practice is exist! practice_name=[{}]", setAddReq.getName());
-			throw new BusinessException(ErrorCode.DUPLICATE_KEY);
+			throw new BusinessException(ErrorCode.REPEAT_PRACTICE_SET_NANE);
 		}
 
 		PracticeSet practiceSet = BeanUtils.copy(setAddReq, PracticeSet.class);
@@ -230,10 +230,14 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
 				false, loadReq.getFile(), true);
 		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
-
 		// 文件加载
-		Boolean result = practiceSetService.loadPracticeSet(realPath,
-				UserInfoContext.getUserContext().getUserId());
+		Boolean result;
+		try {
+			result = practiceSetService.loadPracticeSet(realPath, UserInfoContext.getUserContext().getUserId());
+		}catch (Exception e){
+			log.error("error file:{}:{}",realPath,e.getStackTrace());
+			throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
+		}
 		return new BaseRsp(result);
 	}
 

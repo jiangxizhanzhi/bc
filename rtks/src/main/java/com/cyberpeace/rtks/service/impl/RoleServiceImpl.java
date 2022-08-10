@@ -76,7 +76,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	}
 
 	@Override
-	@Async
 	public void updateBatchByModifyRelatedIds(String id, String type) {
 		List<String> ids = Lists.newArrayList();
 		ids.add(id);
@@ -84,15 +83,17 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 		roleList.addAll(roleMapper.selectRoleListByIds(ids, type));
 		if ("knowledge".equals(type)) {
-			roleList.forEach(role -> {
+			for (Role role : roleList) {
 				List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 						String.class);
 				List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
-				role.setKnowledgeCourses(JsonUtil.toJsonString(courseIds));
-			});
+				List<String> newOrder = ListUtil.mergeWithOldOrder(
+						JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class),
+						courseIds);
+				role.setKnowledgeCourses(JsonUtil.toJsonString(newOrder));
+			}
+			this.updateBatchById(roleList);
 		}
-		this.updateBatchById(roleList);
-
 	}
 
 	@Override

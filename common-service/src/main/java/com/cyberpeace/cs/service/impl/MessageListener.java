@@ -4,11 +4,13 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -36,6 +38,9 @@ public class MessageListener implements ChannelAwareMessageListener {
 	private final String SCENE = "scene";
 
 	private final String SCENE_DELETE = "delete_cscene_instance";
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@PostConstruct
 	public void init() {
@@ -169,7 +174,7 @@ public class MessageListener implements ChannelAwareMessageListener {
 					break;
 				case SCENE_ELEMENT:
 					WsSceneReportBO reportBO = new WsSceneReportBO("", type,
-							object.getJSONObject("data"));
+							replaceAccessIp(object.getJSONObject("data")));
 					String content = JsonUtil.toJsonString(reportBO);
 					realListener.onSceneElement(content, businessId, context);
 					break;
@@ -182,6 +187,16 @@ public class MessageListener implements ChannelAwareMessageListener {
 		}
 
 		return result;
+	}
+
+	private JSONObject replaceAccessIp(JSONObject topoData) {
+		try {
+			JSONObject elementPorts = topoData.getJSONObject("scene_element_port_plugin_data").getJSONObject("cpcloud");
+			remoteSceneService.replaceAccessIpExe(elementPorts);
+		} catch (Exception e) {
+			log.error("[dispatch] access ip replacement failed:", e);
+		}
+		return topoData;
 	}
 
 }

@@ -4,12 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper">
 
-    <update id="updateScheduleById">
-        update situation_dynamic_scheme
-        set schedule = #{schedule}
-        where resource_id = #{resourceId}
-    </update>
-
     <delete id="deleteBySceneId">
         delete
         from situation_dynamic_scheme
@@ -35,12 +29,6 @@
         select * from situation_dynamic_scheme
         <where>
             resource_id = #{resourceId}
-        </where>
-    </select>
-    <select id="getScheduleBySceneId" resultType="java.lang.String">
-        select schedule from situation_dynamic_scheme
-        <where>
-            scene_id = #{sceneId} and schedule is not null
         </where>
     </select>
 </mapper>

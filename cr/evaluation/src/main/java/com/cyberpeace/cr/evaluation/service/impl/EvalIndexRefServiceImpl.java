@@ -79,7 +79,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				}
 			}
 		}
-		// todo 次级全部执行失败情况下（scoreList为空），是否需要继续向下执行？
+		// 次级全部执行失败情况下（scoreList为空），继续向下执行
 		// 正常情况下, scoreList应均为0~100整数，包含`null`为专家评分下未进行计算变量项(五级指标)，无法进行下一步聚合计算，跳过
 		if (scoreList.contains(null)) {
 			return;

@@ -25,11 +25,11 @@ public interface DynamicSchemeService {
 
 	void getLocalOption(OptionsRes optionsRes);
 
-	void getRemoteOption(OptionsRes optionsRes, String sceneId);
+	void getRemoteOption(OptionsRes optionsRes, String sceneId, Boolean isInstance);
 
-	void pushMediaToRoom(AttackMessageReq attackMessageBo,String code);
+	void pushMediaToRoom(AttackMessageReq attackMessageBo, String code);
 
-	void pushAttackToRoom(AttackMessageReq attackMessageBo);
+	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds);
 
 	void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
 
@@ -47,7 +47,9 @@ public interface DynamicSchemeService {
 
 	String makeExportFile(String resourceId, String tempDir) throws IOException;
 
-	String importDynamicScheme(String unZipPath,String sceneId);
+	String importDynamicScheme(String unZipPath, String sceneId, Boolean isInstance);
 
 	void validMedia(DynamicSchemeReq dynamicSchemeReq);
+
+	List<String> getElementIds(String sceneId, Boolean isInstance);
 }

@@ -57,6 +57,8 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
     private static final int onceFormatSize = 1000;
 
+    private static final int formatValueLengthLimit = 65535;
+
     @Override
     public String startVariableAlgorithm(EvalVariableRef evalVariableRef,
                                        Map<String, EvalAlgorithmRef> evalAlgorithmRefMap,
@@ -144,11 +146,16 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
         for (int i = 0; i < formatReturn.size(); i++) {
+            String formatValue = formatReturn.get(i);
+            // 格式化算法返回值长度过长
+            if (formatValue.length() > formatValueLengthLimit) {
+                return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
+            }
             EvalVariableRefProbeData object = new EvalVariableRefProbeData();
             EvalProbeData originData = evalProbeDataList.get(i);
             object.setProbeDataId(originData.getId());
             object.setVariableId(evalVariableRef.getResourceId());
-            object.setFormattedValue(formatReturn.get(i));
+            object.setFormattedValue(formatValue);
             object.setStatus(EvalVariableRefProbeData.Status.NONE.getCode());
             object.setTime(originData.getCollectionTime());
 

@@ -133,7 +133,7 @@ public class ClassroomEventListener extends MessageListener {
 		}
 
 		if (eventStatus != SceneEventStatus.FINISH.getCode().intValue()
-				|| eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
+				&& eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
 			return false;
 		}
 
@@ -148,7 +148,7 @@ public class ClassroomEventListener extends MessageListener {
 			return false;
 		}
 
-		if (eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
+		if (eventStatus == SceneEventStatus.FINISH.getCode().intValue()) {
 			classroomSceneService.finishStart(groupInfo.getClassroomId(),
 					groupInfo.getResourceId());
 		} else {

@@ -156,15 +156,15 @@ public class BatchStartSceneHandler {
 				} catch (RemoteServiceException e) {
 					log.error("Classroom batch start error! group_id=[{}], catch error:",
 							sceneBo.getGroupId(), e);
-					classroomSceneService.toGroupSocketMessage(sceneBo.getGroupId(),
-							OjEvent.START_SCENE_ERROR, e.getMessage());
+					classroomSceneService.toClassroomMessage(sceneBo, OjEvent.START_SCENE_ERROR,
+							e.getMessage());
 					classroomSceneService.clearBatchStartScene(sceneBo.getClassroomId());
 
 				} catch (Exception e) {
 					log.error("Classroom batch start error! group_id=[{}], catch error:",
 							sceneBo.getGroupId(), e);
-					classroomSceneService.toGroupSocketMessage(sceneBo.getGroupId(),
-							OjEvent.START_SCENE_ERROR, ERROR_START_SCENE.ERROR_MESSAGE.getMsg());
+					classroomSceneService.toClassroomMessage(sceneBo, OjEvent.START_SCENE_ERROR,
+							ERROR_START_SCENE.ERROR_MESSAGE.getMsg());
 					classroomSceneService.clearBatchStartScene(sceneBo.getClassroomId());
 
 				} finally {

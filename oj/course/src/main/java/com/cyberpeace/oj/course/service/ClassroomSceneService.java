@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.course.service.bo.StartSceneBo;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
@@ -59,4 +60,6 @@ public interface ClassroomSceneService {
 	void toGroupSocketMessage(String groupId, OjEvent ojEvent, String message);
 
 	void clearBatchStartScene(String classroomId);
+
+	void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message);
 }

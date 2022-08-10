@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,6 +287,28 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Override
 	public void clearBatchStartScene(String classroomId) {
 		batchSceneMap.remove(classroomId);
+	}
+
+	@Override
+	public void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message) {
+		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
+		identifier.setUserId(sceneBo.getUserInfo().getUserId());
+
+		identifier.setClassroomId(sceneBo.getClassroomId());
+		identifier.setPath(WsPath.CLASSROOM_SCENE);
+
+		JSONObject data = new JSONObject();
+		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
+
+		JSONObject messageData = new JSONObject();
+		messageData.put(JsonKeyConstant.GROUP_ID, sceneBo.getGroupId());
+		messageData.put(JsonKeyConstant.MESSAGE, message);
+		data.put(JsonKeyConstant.DATA, messageData);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 	@Override

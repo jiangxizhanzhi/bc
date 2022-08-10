@@ -9,7 +9,11 @@ import java.io.Serializable;
 @Data
 public class StartSceneBo implements Serializable {
 
+	private String classroomId;
+
 	private String groupId;
+
+	private String language;
 
 	private AuthContext authContext;
 

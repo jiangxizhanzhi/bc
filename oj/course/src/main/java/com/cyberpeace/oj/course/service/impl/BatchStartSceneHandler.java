@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.constant.BaseI18n;
+import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.constant.CommonConstant;
@@ -113,6 +118,8 @@ public class BatchStartSceneHandler {
 			startSceneBo.setAuthContext(AuthContextUtils.constructAuth(userInfo, false));
 			startSceneBo.setGroupId(groupInfo.getResourceId());
 			startSceneBo.setUserInfo(userInfo);
+			startSceneBo.setClassroomId(groupInfo.getClassroomId());
+			startSceneBo.setLanguage(CommonContext.getLanguage());
 			return startSceneBo;
 		});
 	}
@@ -139,16 +146,30 @@ public class BatchStartSceneHandler {
 
 			for (int i = startGroupList.size() - 1; i >= 0; i--) {
 				StartSceneBo sceneBo = startGroupList.remove(i);
+
 				try {
 					UserInfoContext.setUserContext(sceneBo.getUserInfo());
+					CommonContext.setLanguage(sceneBo.getLanguage());
 					classroomSceneService.startScene(sceneBo.getGroupId(),
 							sceneBo.getAuthContext());
+
+				} catch (RemoteServiceException e) {
+					log.error("Classroom batch start error! group_id=[{}], catch error:",
+							sceneBo.getGroupId(), e);
+					classroomSceneService.toGroupSocketMessage(sceneBo.getGroupId(),
+							OjEvent.START_SCENE_ERROR, e.getMessage());
+					classroomSceneService.clearBatchStartScene(sceneBo.getClassroomId());
+
 				} catch (Exception e) {
 					log.error("Classroom batch start error! group_id=[{}], catch error:",
 							sceneBo.getGroupId(), e);
-					tasks.remove(sceneBo.getGroupId());
+					classroomSceneService.toGroupSocketMessage(sceneBo.getGroupId(),
+							OjEvent.START_SCENE_ERROR, ERROR_START_SCENE.ERROR_MESSAGE.getMsg());
+					classroomSceneService.clearBatchStartScene(sceneBo.getClassroomId());
+
 				} finally {
 					UserInfoContext.removeUserContext();
+					CommonContext.removeLanguage();
 				}
 			}
 		}
@@ -156,6 +177,30 @@ public class BatchStartSceneHandler {
 
 	public Boolean isFinishAll() {
 		return groupList.isEmpty() && tasks.isEmpty();
+	}
+
+	enum ERROR_START_SCENE implements BaseI18n {
+
+		ERROR_MESSAGE("场景启动失败", "Scenario Startup failure.");
+
+		private String chinese;
+
+		private String english;
+
+		ERROR_START_SCENE(String chinese, String english) {
+			this.chinese = chinese;
+			this.english = english;
+		}
+
+		@Override
+		public String getChinese() {
+			return chinese;
+		}
+
+		@Override
+		public String getEnglish() {
+			return english;
+		}
 	}
 
 }

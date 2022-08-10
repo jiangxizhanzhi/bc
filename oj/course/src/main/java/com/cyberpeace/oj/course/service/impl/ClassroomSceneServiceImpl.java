@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +102,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	@Autowired
 	private ClassroomSignService classroomSignService;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
@@ -199,6 +203,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		// 给前台课程websocket推送删除消息 重新加载课程场景
 		toLessonSocketMessage(groupInfo.getGroupUserIds(), courseLesson, OjEvent.SCENE_DELETE_SYNC);
 		toGroupSocketMessage(groupId, OjEvent.SCENE_DELETE_SYNC);
+		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
 		return CommonConstant.TRUE;
 	}
 

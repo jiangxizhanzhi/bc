@@ -4,7 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
+import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -91,9 +95,6 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
-	private RemoteUserService remoteUserService;
-
-	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
 	@Autowired
@@ -101,6 +102,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 	@Autowired
 	private ClassroomSignService classroomSignService;
+
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
@@ -199,6 +203,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		// 给前台课程websocket推送删除消息 重新加载课程场景
 		toLessonSocketMessage(groupInfo.getGroupUserIds(), courseLesson, OjEvent.SCENE_DELETE_SYNC);
 		toGroupSocketMessage(groupId, OjEvent.SCENE_DELETE_SYNC);
+		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(),
+				ojLocalScene);
 		return CommonConstant.TRUE;
 	}
 
@@ -208,23 +214,11 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	 * @param ojEvent
 	 */
 	private void toGroupSocketMessage(String groupId, OjEvent ojEvent) {
-
-		GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
-		identifier.setGroupId(groupId);
-		identifier.setPath(WsPath.CLASSROOM_GROUP_SCENE);
-
-		JSONObject data = new JSONObject();
-		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
-		data.put(JsonKeyConstant.DATA, "");
-		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-				.builder().data(data).messageIdentifier(identifier).build();
-
-		myWebSocketHandler.pushMessage(messageContext, true);
+		toGroupSocketMessage(groupId, ojEvent, CommonConstant.EMPTY_STRING);
 	}
 
 	@Override
-	public List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext)
-			throws InterruptedException {
+	public List<GroupInfoBo> batchStartScene(String classroomId, AuthContext authContext) {
 
 		// 基本数据校验
 		Classroom classroom = validateClassroom(classroomId);
@@ -273,6 +267,57 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	}
 
 	@Override
+	public void toGroupSocketMessage(String groupId, OjEvent ojEvent, String message) {
+
+		GroupWsMessageIdentifier identifier = new GroupWsMessageIdentifier();
+		identifier.setGroupId(groupId);
+		identifier.setPath(WsPath.CLASSROOM_GROUP_SCENE);
+
+		JSONObject data = new JSONObject();
+		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
+		data.put(JsonKeyConstant.DATA, message);
+
+		if (StringUtils.isNotBlank(message)) {
+			JSONObject messageData = new JSONObject();
+			messageData.put(JsonKeyConstant.GROUP_ID, groupId);
+			messageData.put(JsonKeyConstant.MESSAGE, message);
+			data.put(JsonKeyConstant.DATA, messageData);
+		}
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
+	public void clearBatchStartScene(String classroomId) {
+		batchSceneMap.remove(classroomId);
+	}
+
+	@Override
+	public void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message) {
+		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
+		identifier.setUserId(sceneBo.getUserInfo().getUserId());
+
+		identifier.setClassroomId(sceneBo.getClassroomId());
+		identifier.setPath(WsPath.CLASSROOM_SCENE);
+
+		JSONObject data = new JSONObject();
+		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
+
+		JSONObject messageData = new JSONObject();
+		messageData.put(JsonKeyConstant.GROUP_ID, sceneBo.getGroupId());
+		messageData.put(JsonKeyConstant.MESSAGE, message);
+		data.put(JsonKeyConstant.DATA, messageData);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
 	public void batchDeleteScene(String classroomId, AuthContext authContext) {
 
 		// 基本数据校验
@@ -299,33 +344,6 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		}
 
 		return ojLocalSceneService.selectMonitorList(ojLocalSceneList);
-	}
-
-	/**
-	 * 实体类列表数据转换 根据场景是否完成启动进行过滤
-	 * @param groupInfos
-	 * @param groupSceneMap
-	 * @return
-	 */
-	private List<GroupInfoBo> listEntityToBo(List<ClassroomGroupInfo> groupInfos,
-			Map<String, JSONObject> groupSceneMap) {
-		return groupInfos.stream()
-				.filter(groupInfo -> groupSceneMap.get(groupInfo.getResourceId()) != null)
-				.map(groupInfo -> {
-
-					// 场景数据
-					GroupInfoBo groupInfoBo = BeanUtils.copy(groupInfo, GroupInfoBo.class);
-					groupInfoBo.setSceneData(groupSceneMap.get(groupInfo.getResourceId()));
-
-					// 用户数据
-					List<UserInfo> userInfos = remoteUserService.getByIdList(
-							JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class));
-					List<SimpleUserData> simpleUserData = StreamApiUtils.map(userInfos,
-							userInfo -> BeanUtils.copy(userInfo, SimpleUserData.class));
-					groupInfoBo.setUserInfos(simpleUserData);
-
-					return groupInfoBo;
-				}).collect(Collectors.toList());
 	}
 
 	/**

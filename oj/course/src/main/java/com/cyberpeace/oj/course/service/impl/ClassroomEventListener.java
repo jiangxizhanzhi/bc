@@ -120,25 +120,6 @@ public class ClassroomEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 
-		if (!finishStart(data)) {
-			return false;
-		}
-
-		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
-
-		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
-				.selectById(ojLocalScene.getBusinessId());
-		if (null != groupInfo) {
-			classroomSceneService.finishStart(groupInfo.getClassroomId(),
-					groupInfo.getResourceId());
-		}
-
-		return Boolean.TRUE;
-	}
-
-	/** 判断是否是完成启动的消息*/
-	private boolean finishStart(String data) {
-
 		// 场景启动完成更新数据库
 		JSONObject dataObj = JsonUtil.toJsonObject(data, JSONObject.class);
 		JSONObject scene = dataObj.getJSONObject(JsonKeyConstant.DATA)
@@ -147,9 +128,34 @@ public class ClassroomEventListener extends MessageListener {
 		int event = scene.getIntValue(JsonKeyConstant.SCENE_EVENT);
 		int eventStatus = scene.getIntValue(JsonKeyConstant.SCENE_EVENT_STATUS);
 
-		return event == SceneEvent.CREATE.getCode().intValue()
-				&& (eventStatus == SceneEventStatus.FINISH.getCode().intValue()
-						|| eventStatus == SceneEventStatus.FAILED.getCode().intValue());
+		if (event != SceneEvent.CREATE.getCode().intValue()) {
+			return false;
+		}
+
+		if (eventStatus != SceneEventStatus.FINISH.getCode().intValue()
+				&& eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
+			return false;
+		}
+
+		OjLocalScene ojLocalScene = validateOjLocalScene(businessId);
+		if (ojLocalScene == null) {
+			return false;
+		}
+
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
+				.selectById(ojLocalScene.getBusinessId());
+		if (null == groupInfo) {
+			return false;
+		}
+
+		if (eventStatus == SceneEventStatus.FINISH.getCode().intValue()) {
+			classroomSceneService.finishStart(groupInfo.getClassroomId(),
+					groupInfo.getResourceId());
+		} else {
+			classroomSceneService.clearBatchStartScene(groupInfo.getClassroomId());
+		}
+
+		return Boolean.TRUE;
 	}
 
 	/**

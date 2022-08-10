@@ -6,6 +6,7 @@ import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.course.service.bo.ClassHelpWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
 import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import com.cyberpeace.oj.ojbase.service.bo.LessonPracticeWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.LessonWsMessageIdentifier;
 import com.cyberpeace.oj.ojbase.service.bo.OperationWsMessageIdentifier;
 
+@Slf4j
 @Service
 public class PushMessageHandlerImpl implements PushMessageHandler {
 
@@ -148,6 +150,10 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		// 组装课堂websocket业务类
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper
 				.selectById(ojLocalScene.getBusinessId());
+		if (null == groupInfo) {
+			log.error("Classroom group not found! group_id=[{}]", ojLocalScene.getBusinessId());
+			return;
+		}
 		identifier.setClassroomId(groupInfo.getClassroomId());
 		identifier.setPath(WsPath.CLASSROOM_SCENE);
 

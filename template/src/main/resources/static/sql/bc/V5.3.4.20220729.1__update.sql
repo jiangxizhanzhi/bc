@@ -61,6 +61,10 @@ alter table cr_eval_index_ref modify column `algorithm_params` longtext DEFAULT 
 alter table cr_eval_variable_ref modify column `format_params` longtext DEFAULT NULL;
 alter table cr_eval_variable_ref modify column `match_params` longtext DEFAULT NULL;
 alter table cr_eval_variable_ref modify column `mark_params` longtext DEFAULT NULL;
+alter table cr_eval_algorithm_ref modify column `code` text DEFAULT NULL;
+alter table cr_eval_variable_ref_probe_data modify column `formatted_value` text DEFAULT NULL;
+alter table cr_eval_probe_data modify column `content` text NOT NULL;
+alter table cr_eval_record modify column `message` longtext DEFAULT NULL;
 
 -- ----------------------------
 -- 20220723.1__rtks_situation

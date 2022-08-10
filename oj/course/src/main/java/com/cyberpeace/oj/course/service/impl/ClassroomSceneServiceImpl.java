@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -267,6 +268,14 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		JSONObject data = new JSONObject();
 		data.put(JsonKeyConstant.CODE, ojEvent.getCode());
 		data.put(JsonKeyConstant.DATA, message);
+
+		if (StringUtils.isNotBlank(message)) {
+			JSONObject messageData = new JSONObject();
+			messageData.put(JsonKeyConstant.GROUP_ID, groupId);
+			messageData.put(JsonKeyConstant.MESSAGE, message);
+			data.put(JsonKeyConstant.DATA, messageData);
+		}
+
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 

@@ -148,7 +148,7 @@ public class ClassroomEventListener extends MessageListener {
 			return false;
 		}
 
-		if (eventStatus != SceneEventStatus.FINISH.getCode().intValue()) {
+		if (eventStatus != SceneEventStatus.FAILED.getCode().intValue()) {
 			classroomSceneService.finishStart(groupInfo.getClassroomId(),
 					groupInfo.getResourceId());
 		} else {

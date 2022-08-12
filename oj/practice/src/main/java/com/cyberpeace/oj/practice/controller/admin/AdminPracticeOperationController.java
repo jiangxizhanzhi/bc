@@ -84,7 +84,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp add(@Validated(Create.class) OperationAddReq addReq) {
 
-		addReq.validate();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 
@@ -117,7 +116,6 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Integer> update(@Validated(Update.class) OperationUpdateReq updateReq) {
 
-		updateReq.validate();
 		PracticeOperation updateOperation = BeanUtils.copy(updateReq, PracticeOperation.class);
 
 		Integer result = practiceOperationService.updateOperation(updateOperation,

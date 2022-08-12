@@ -1,12 +1,21 @@
 package com.cyberpeace.oj.practice.controller.req;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.baseinterface.CustomValidate;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.baseinterface.Create;
@@ -17,7 +26,7 @@ import lombok.Data;
 
 @Data
 @ApiModel
-public class OperationAddReq implements Serializable {
+public class OperationAddReq implements Serializable, CustomValidate {
 
 	@ApiModelProperty("标题")
 	@NotBlank(groups = { Create.class })
@@ -125,5 +134,22 @@ public class OperationAddReq implements Serializable {
 
 	public void setAttachment_id(String attachmentId) {
 		this.attachmentId = attachmentId;
+	}
+
+	@Override
+	public void validate() {
+		if (null != dynamicFlag && dynamicFlag.intValue() == PracticeOperation.DynamicFlag.RANDOM
+				.getCode().intValue()) {
+
+			List<String> answers = JsonUtil.toJsonObjectArray(answer, String.class);
+			String[] files = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
+			List<String> notEmptyFile = StreamApiUtils.filter(Arrays.asList(files),
+					file -> StringUtils.isNotBlank(file));
+
+			if (answers.size() != notEmptyFile.size()) {
+				throw new BusinessException(
+						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+			}
+		}
 	}
 }

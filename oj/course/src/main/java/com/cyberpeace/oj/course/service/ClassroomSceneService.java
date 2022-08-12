@@ -23,9 +23,9 @@ public interface ClassroomSceneService {
 	 * 课堂组场景删除
 	 * @param groupId
 	 * @param authContext
-	 * @return
+	 * @return 存在场景删除完成后为空字符串 不存在场景则返回组编号
 	 */
-	Boolean deleteScene(String groupId, AuthContext authContext);
+	String deleteScene(String groupId, AuthContext authContext);
 
 	/**
 	 * 批量启动场景

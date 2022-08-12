@@ -10,8 +10,10 @@ import com.cyberpeace.oj.course.controller.req.ClassroomSceneReq;
 import com.cyberpeace.oj.course.controller.req.GroupSceneReq;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
+import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class AdminClassroomSceneController {
 
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
+	
+	@Autowired
+	private PushMessageHandler pushMessageHandler;
 
 	@ApiOperation("课堂组场景启动")
 	@PostMapping("")
@@ -49,12 +54,16 @@ public class AdminClassroomSceneController {
 	@ApiOperation("课堂场景删除")
 	@DeleteMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
+	public BaseRsp<String> deleteScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 
-		Boolean result = classroomSceneService.deleteScene(groupSceneReq.getGroupId(), authContext);
+		String result = classroomSceneService.deleteScene(groupSceneReq.getGroupId(), authContext);
+		if (StringUtils.isNotBlank(result)) {
+			pushMessageHandler.pushMessageToNoSceneClassroom(pushMessageHandler.getDeleteMessage(),
+					groupSceneReq.getGroupId());
+		}
 		return new BaseRsp<>(result);
 	}
 

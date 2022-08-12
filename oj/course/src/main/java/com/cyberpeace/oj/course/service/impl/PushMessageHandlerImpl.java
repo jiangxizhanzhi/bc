@@ -111,6 +111,30 @@ public class PushMessageHandlerImpl implements PushMessageHandler {
 		pushMessageToUser(data, ojLocalScene);
 	}
 
+	@Override
+	public void pushMessageToNoSceneClassroom(JSONObject data, String groupId) {
+
+		ClassroomWsMessageIdentifier identifier = new ClassroomWsMessageIdentifier();
+
+		// 组装课堂websocket业务类
+		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectById(groupId);
+		if (null == groupInfo) {
+			log.error("Classroom group not found! group_id=[{}]", groupId);
+			return;
+		}
+		identifier.setClassroomId(groupInfo.getClassroomId());
+		identifier.setPath(WsPath.CLASSROOM_SCENE);
+
+		JSONObject groupData = new JSONObject();
+		groupData.put(JsonKeyConstant.GROUP_ID, groupId);
+		data.put(JsonKeyConstant.DATA, groupData);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().messageIdentifier(identifier).data(data).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
 	/**
 	 * 推送消息给前台正在使用的用户
 	 * @param data

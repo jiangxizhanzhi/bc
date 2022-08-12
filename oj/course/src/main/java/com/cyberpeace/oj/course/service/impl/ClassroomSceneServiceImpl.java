@@ -153,7 +153,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	}
 
 	@Override
-	public Boolean deleteScene(String groupId, AuthContext authContext) {
+	public String deleteScene(String groupId, AuthContext authContext) {
 
 		// 基本数据校验
 		ClassroomGroupInfo groupInfo = validateGroup(groupId);
@@ -163,7 +163,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(groupId,
 				SceneShare.GROUP.getCode(), authContext);
 		if (null == ojLocalScene) {
-			return CommonConstant.TRUE;
+			return groupId;
 		}
 
 		// 远程场景删除
@@ -205,7 +205,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		toGroupSocketMessage(groupId, OjEvent.SCENE_DELETE_SYNC);
 		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(),
 				ojLocalScene);
-		return CommonConstant.TRUE;
+		return CommonConstant.EMPTY_STRING;
 	}
 
 	/**
@@ -325,7 +325,14 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 		batchSceneMap.remove(classroomId);
-		groupInfos.forEach(groupInfo -> deleteScene(groupInfo.getResourceId(), authContext));
+		groupInfos.forEach(groupInfo -> {
+			String groupId = deleteScene(groupInfo.getResourceId(), authContext);
+
+			if (StringUtils.isNotBlank(groupId)) {
+				pushMessageHandler.pushMessageToNoSceneClassroom(
+						pushMessageHandler.getDeleteMessage(), groupId);
+			}
+		});
 
 	}
 

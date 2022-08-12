@@ -17,6 +17,8 @@ public interface PushMessageHandler {
 	/** 向课堂推送场景信息*/
 	void pushClassroomMessage(JSONObject data, OjLocalScene ojLocalScene);
 
+	void pushMessageToNoSceneClassroom(JSONObject data, String groupId);
+
 	/** 获取删除消息*/
 	JSONObject getDeleteMessage();
 

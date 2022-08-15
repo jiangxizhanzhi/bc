@@ -172,7 +172,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		SetListQuery listQuery = SetListQuery.builder().practiceType(practiceType).setIds(authIds)
 				.pattern(pattern).build();
-		IPage<PracticeSet> iPage = practiceSetMapper.pageByTypeAndName(page, listQuery,
+		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery,
 				authContext.getIsWeb());
 
 		IPage<AdminPracticeSetBo> boIPage = iPage

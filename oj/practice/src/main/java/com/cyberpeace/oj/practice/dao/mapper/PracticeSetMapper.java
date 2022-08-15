@@ -34,6 +34,16 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 			@Param("isPublic") Boolean isPublic);
 
 	/**
+	 * 根据类型和名称分页查询
+	 * @param page
+	 * @param listQuery
+	 * @param isPublic
+	 * @return
+	 */
+	IPage<PracticeSet> pageByNameAndType(Page page, @Param("listQuery") SetListQuery listQuery,
+										 @Param("isPublic") Boolean isPublic);
+
+	/**
 	 * 根据习题集类型查询习题集
 	 * @param practiceType
 	 * @param isPublic

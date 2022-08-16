@@ -1,7 +1,9 @@
 package com.cyberpeace.common.mdparser.parser;
 
-public interface MdContentParser<T> {
+public interface MdContentParser<T, R> {
 
-	T parse(String content);
+	T parse(Object content);
+
+	R write(T t);
 
 }

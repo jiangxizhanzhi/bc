@@ -20,6 +20,8 @@ public interface PatternConstant {
 	/** 解析markdown文件匹配标题*/
 	String MARKDOWN_TITLE = "#{2}[^#]+";
 
+	String PARSER_MD_TITLE = "#{1,6}[^#]+";
+
 	/** 解析markdown文件匹配标签*/
 	String MARKDOWN_TAG = "#{3}[^#]+";
 
@@ -60,4 +62,6 @@ public interface PatternConstant {
 	String VERTICAL_LINE = "\\|";
 
 	String CODING_BLOCK = "`(?:(.*$)\\n)?([\\s\\S]*)`";
+
+    String MD_LIST = "- ";
 }

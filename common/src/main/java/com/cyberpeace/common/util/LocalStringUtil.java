@@ -1,34 +1,31 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.google.common.collect.Lists;
-
 public class LocalStringUtil {
 
 	private LocalStringUtil() {}
 
-	public static String notEmptyString(String s, String fieldName) {
-		if (s == null) {
-			return null;
-		}
-
-		s = s.trim();
-		if (s.isEmpty()) {
-			throw new InvalidParamException(fieldName);
-		}
-
-		return s;
-	}
+    /**
+     * 前后增加换行符
+     * @param value
+     * @return
+     */
+    public static String frontBackLine(String value) {
+        if (StringUtils.isBlank(value)) {
+            value = CommonConstant.EMPTY_STRING;
+        }
+        return System.lineSeparator() + value + System.lineSeparator();
+    }
 
 	public static String snakeCaseFormat(String name) {
 		final StringBuilder result = new StringBuilder();

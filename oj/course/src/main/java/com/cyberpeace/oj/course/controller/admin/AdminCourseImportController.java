@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.MdCourse;
+import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
@@ -31,57 +33,68 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/oj/admin/course")
 public class AdminCourseImportController {
 
-	@Autowired
-	private CourseImportService courseImportService;
+    @Autowired
+    private CourseImportService courseImportService;
 
-	@Autowired
-	private RemoteUserService remoteUserService;
+    @Autowired
+    private RemoteUserService remoteUserService;
 
-	@Autowired
-	private CourseService courseService;
+    @Autowired
+    private CourseService courseService;
 
-	@ApiOperation("资管课程数据导入")
-	@PostMapping("/rm/import")
-	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
+    @GetMapping("/test")
+    public BaseRsp<Boolean> test() {
 
-		// 路径是否存在校验
-		File file = new File(courseImportReq.getPath());
-		if (!file.exists()) {
-			log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
-			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
-		}
+        MdParser mdParser = new MdParser("/Users/chenzhuo/home/tmp/README.md");
+        MdCourse course = mdParser.read(MdCourse.class);
 
-		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+        mdParser.write(course, new File("/Users/chenzhuo/home/tmp/course.md"));
 
-		// 执行课程数据导入
-		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
-				courseImportReq.getEnvReqs(), authContext);
+        return new BaseRsp<>(true);
+    }
 
-		return new BaseRsp<>(result);
-	}
+    @ApiOperation("资管课程数据导入")
+    @PostMapping("/rm/import")
+    public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
 
-	@ApiOperation("资管组合课程数据导入")
-	@PostMapping("/rm/import-combine")
-	public BaseRsp<Boolean> RMCombinedCourseImport(@RequestBody RMCombinedCourseImportReq courseImportReq) {
+        // 路径是否存在校验
+        File file = new File(courseImportReq.getPath());
+        if (!file.exists()) {
+            log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
+            throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+        }
 
-		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+        UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+        AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 
-		// 执行课程数据导入
-		Boolean result = courseImportService.rMCombinedCourseImport(courseImportReq.getCourseInfos(), authContext);
+        // 执行课程数据导入
+        Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
+                courseImportReq.getEnvReqs(), authContext);
 
-		return new BaseRsp<>(result);
-	}
+        return new BaseRsp<>(result);
+    }
 
-	@ApiOperation("课程重复校验")
-	@PostMapping("/import/inspect_duplication")
-	public BaseRsp<List<String>> duplicateCourseInspect(@RequestBody @Validated DuplicateCourseInspectReq courseNamesReq) {
+    @ApiOperation("资管组合课程数据导入")
+    @PostMapping("/rm/import-combine")
+    public BaseRsp<Boolean> RMCombinedCourseImport(@RequestBody RMCombinedCourseImportReq courseImportReq) {
 
-		List<String> result = courseService.duplicateCourseInspect(courseNamesReq.getFileNames());
+        UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+        AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 
-		return new BaseRsp<>(result);
+        // 执行课程数据导入
+        Boolean result = courseImportService.rMCombinedCourseImport(courseImportReq.getCourseInfos(), authContext);
 
-	}
+        return new BaseRsp<>(result);
+    }
+
+    @ApiOperation("课程重复校验")
+    @PostMapping("/import/inspect_duplication")
+    public BaseRsp<List<String>> duplicateCourseInspect(@RequestBody @Validated DuplicateCourseInspectReq courseNamesReq) {
+
+        List<String> result = courseService.duplicateCourseInspect(courseNamesReq.getFileNames());
+
+        return new BaseRsp<>(result);
+
+    }
 
 }

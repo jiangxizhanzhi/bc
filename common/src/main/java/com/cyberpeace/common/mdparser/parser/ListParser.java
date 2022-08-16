@@ -1,27 +1,60 @@
 package com.cyberpeace.common.mdparser.parser;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
+@Service
+public class ListParser implements MdContentParser<Collection, String> {
 
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.util.StreamApiUtils;
+    @Override
+    public List<String> parse(Object content) {
 
-public class ListParser implements MdContentParser<List<String>> {
+        if (ObjectUtils.isEmpty(content)) {
+            return Lists.newArrayList();
+        }
 
-	@Override
-	public List<String> parse(String content) {
-		if (StringUtils.isBlank(content.trim())) {
-			return Lists.newArrayList();
-		}
+        String value = (String) content;
+        if (StringUtils.isBlank(value.trim())) {
+            return Lists.newArrayList();
+        }
 
-		String[] items = content.split(PatternConstant.KNOWLEDGE_SPLIT_STR);
-		List<String> itemList = StreamApiUtils.map(Arrays.asList(items),
-				item -> StringUtils.isNotBlank(item) ? item.trim() : null);
+        String[] items = value.split(PatternConstant.MD_LIST);
+        List<String> itemList = StreamApiUtils.map(Arrays.asList(items),
+                item -> StringUtils.isNotBlank(item) ? item.trim() : null);
 
-		return itemList;
-	}
+        return itemList;
+    }
 
+    @Override
+    public String write(Collection content) {
+
+        if (ObjectUtils.isEmpty(content)) {
+            return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
+        }
+
+        if (CollectionUtils.isEmpty(content)) {
+            return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
+        }
+
+        String value = "";
+        for (Object o : content) {
+            value = value + PatternConstant.MD_LIST
+                    + (o instanceof String ? (String) o : JsonUtil.toJsonString(o))
+                    + System.lineSeparator();
+        }
+
+        return LocalStringUtil.frontBackLine(value);
+    }
 }

@@ -1,18 +1,5 @@
 package com.cyberpeace.integratation.service.impl;
 
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -27,8 +14,18 @@ import com.cyberpeace.integratation.constant.SessionType;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 @Slf4j
 @Service
@@ -95,6 +92,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String CONNECTION_STATUS_URL;
 
+	private String SCENE_DUMP_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -111,6 +110,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.pause");
 
 		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
+
+		SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.dump");
 
 		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 
@@ -206,6 +207,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean sceneDump(SceneDumpContext sceneDumpContext) {
+		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, Boolean.class);
 	}
 
 	@Override

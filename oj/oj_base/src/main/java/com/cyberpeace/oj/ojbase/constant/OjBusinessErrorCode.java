@@ -200,4 +200,7 @@ public interface OjBusinessErrorCode {
 
 	/** 附件数量和答案长度不一致*/
 	String PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT = "102065";
+
+	/** 方法未实现*/
+	String NOT_IMPLEMENTED_EXCEPTION = "102066";
 }

@@ -1,19 +1,17 @@
 package com.cyberpeace.common.util;
 
-import java.io.*;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
-
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * markdown操作工具类
@@ -200,6 +198,52 @@ public class MdUtil {
 	 * @param markdownPath
 	 * @return
 	 */
+	public static String dumpMarkdownImages(String markdownPath, String dumpFilePath) {
+
+		// 获取当前文件夹
+		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
+
+		// 获取markdown文件内容
+		File markdownFile = new File(markdownPath);
+		String content = FileUtil.getContent(markdownFile);
+		String withOutCode = getContentWithOutCode(markdownFile, CommonConstant.ONE);
+
+		// 匹配文件路径
+		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_MD_URL);
+
+		// 匹配文件src地址
+		List<String> matchSrcStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
+
+		matchStrList.addAll(matchSrcStrList);
+
+		// markdown中引用重复文件, 避免String.replace替换多次, 转为Set（zentao 9894）
+		Set<String> matchStrSet = Sets.newHashSet(matchStrList);
+
+		// 文件路径替换
+		for (String imagePath : matchStrSet) {
+			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
+			String[] split = imagePath.split("/");
+			String relativePath = dumpFilePath + File.separator + split[split.length-1];
+			FileUtil.copyFile(imagePath, relativePath , false);
+			if (imagePath.startsWith(CommonConstant.PERIOD)) {
+				relativePath = imagePath.replaceFirst(CommonConstant.PERIOD,
+						CommonConstant.EMPTY_STRING);
+			}
+
+			content = content.replace(imagePath, relativePath);
+		}
+
+		return content;
+	}
+
+
+	/**
+	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
+	 * @param markdownPath
+	 * @return
+	 */
 	public static String parseMarkdown(String markdownPath) {
 
 		// 获取当前文件夹
@@ -332,6 +376,28 @@ public class MdUtil {
 				// 不做任何处理
 			} catch (NullPointerException e) {
 				// 对象未创建空指针异常捕获，不做任何处理
+			}
+		}
+	}
+
+	public static void saveAsFileWriter(String content, String classsName, String path) {
+		String savefile = path + File.separator + classsName;
+		FileWriter fwriter = null;
+		try {
+			File file = new File(savefile);
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+			fwriter = new FileWriter(savefile);
+			fwriter.write(content);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				fwriter.flush();
+				fwriter.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
 			}
 		}
 	}

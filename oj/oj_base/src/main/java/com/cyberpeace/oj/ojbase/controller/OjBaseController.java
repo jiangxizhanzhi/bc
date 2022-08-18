@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.service.OJBaseService;
 import io.swagger.annotations.Api;
@@ -19,13 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 @Api(tags = "靶场公用接口")
 @RestController
 @Slf4j
-@RequestMapping("/cr/common")
+@RequestMapping("/oj/common")
 @RequiresAuthentication
 public class OjBaseController {
 
@@ -38,21 +37,18 @@ public class OjBaseController {
 
 	@ApiOperation("资管课程导出")
 	@GetMapping("/rm/dump/course")
-	public BaseRsp RMCourseDump(HttpServletResponse response) {
-//		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+	public BaseRsp<String> RMCourseDump(HttpServletResponse response) {
 
         // TODO 存放路径
         String path = "";
-        File file = new File(path);
-
         UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
         AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-        Map<String, String> envReqs = new HashMap<>();
         // 执行课程数据导出
-        File result = ojBaseService.rMCourseDump(path, envReqs, authContext);
+        File result = ojBaseService.rMCourseDump(path, authContext);
         FileUtil.setResponse(result, true, response);
-
-        return new BaseRsp<>();
+        BaseRsp<String> rsp = new BaseRsp<>();
+        rsp.setData(ResourceDumpConstant.DUMP_ALL_FILE_STORE_PATH +File.separator + ResourceDumpConstant.DUMP_ALL_COURSE_FILE_STORE_PATH + ".zip");
+        return rsp;
     }
 
 }

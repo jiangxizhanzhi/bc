@@ -1,4 +1,4 @@
-package com.cyberpeace.cs.constant;
+package com.cyberpeace.oj.ojbase.constant;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;
@@ -10,10 +10,6 @@ public enum DumpModule implements GenericEnum {
 
 	COURSE(0, "course"),
 	CTF_PRACTICE(1, "ctf");
-//	/** 课程附件*/
-//	ATTACHMENT(2, "oj/course_attachment/"),
-//	MARKDOWN(3, "oj/course/%s/markdown/"),
-//	OUTLINE(4, "oj/outline/");
 
 
 	@Getter

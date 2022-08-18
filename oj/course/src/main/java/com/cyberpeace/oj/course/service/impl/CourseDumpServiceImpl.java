@@ -532,9 +532,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 	@Override
-	public File rMCourseDump(String path, Map<String, String> envReqs, AuthContext authContext) {
-
-
+	public File rMCourseDump(String path, AuthContext authContext) {
 		// 1.获取所有课程数据 内容及文件
 		List<Course> courses = courseMapper.selectList(null);
 		// 2.获取所有课时数据 内容及文件
@@ -577,8 +575,6 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
 		FileUtil.deleteDir(destDir, true);
 		return new File(zipDest);
-
-//		return null;
 	}
 
 	private void combineLessons(String courseFileName, List<LessonConfig> currentLessonConfigs, List<CourseLesson> currentLessons, List<Paper> papers,
@@ -635,8 +631,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	private void combineLessonReadmeMD(String pathname, CourseLesson lesson) {
 		String readmeMDFileName = pathname + File.separator + "README.md";
-		MdParser mdParser = new MdParser(ResourceDumpConstant.DUMP_LESSON_MD_FILE_STORE_PATH);
-		MdLesson mdLesson = mdParser.read(MdLesson.class);
+		MdParser mdParser = new MdParser();
+		MdLesson mdLesson = new MdLesson();
 		mdLesson.setLessonName(lesson.getName());
 		String lessonType = Arrays.stream(CourseLesson.LessonType.values()).filter(it -> Objects.equals(it.getCode(), lesson.getType())).collect(Collectors.toList()).get(0).getDesc();
 		mdLesson.setType(lessonType);
@@ -694,9 +690,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				FileUtil.copyFile(handoutUrl, handoutFile + File.separator + handoutFileName, false);
 			} else {
 				MdParser mdParser = new MdParser();
-//				MdOutline mdOutline = mdParser.read(MdOutline.class);
 				String handoutMd = handoutFile + File.separator + "handout.md";
-//				mdParser.write(handoutFile,new File(handoutMd));
 				saveAsFileWriter(handoutUrl, "handout.md", handoutFile);
 				String markdown = MdUtil.dumpMarkdownImages(handoutMd, img);
 				markdown = utilService.replaceMarkdownFile(markdown);
@@ -733,7 +727,6 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String practices = pathname + File.separator + "practices";
 
 		FileUtil.mkdirs(practices);
-		Map<String, Object> filterMap = new HashMap<>();
 		String paperId = lesson.getPaperId();
 		List<Paper> papers1 = papers.stream().filter(s -> s.getResourceId().equals(paperId)).collect(Collectors.toList());
 		if (papers1.size() > 0) {
@@ -742,7 +735,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 			List<PracticeOperationRef> operationRefs = practiceOperationRefs.stream().filter(s -> s.getPaperId().equals(paperId)).collect(Collectors.toList());
 			// TODO习题导出excel
-//			FileUtil.copyFile(videoUrl, videoPath, false);
+			// FileUtil.copyFile(videoUrl, videoPath, false);
 		}
 
 	}
@@ -777,8 +770,6 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	private void generateOutlineMD(String destFilePath, String outline) {
 		String readmeMDFileName = destFilePath + File.separator + OUTLINE_NAME;
 		MdParser mdParser = new MdParser();
-//		MdOutline mdOutline = mdParser.read(MdOutline.class);
-//		mdOutline.setOutline(outline);
 
 		// TODO 待写入
 		mdParser.write(outline, new File(readmeMDFileName));
@@ -788,7 +779,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String readmeMDFileName = pathname + File.separator + "README.md";
 		MdParser mdParser = new MdParser();
 		CourseMd courseMd = BeanUtils.copy(course, CourseMd.class);
-		//
+		courseMd.setCategoryId(categoryName);
+		courseMd.setCreateUserId(null == userName ? "" : userName);
 		mdParser.write(courseMd, new File(readmeMDFileName));
 
 	}

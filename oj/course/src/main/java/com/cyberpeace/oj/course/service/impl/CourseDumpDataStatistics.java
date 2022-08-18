@@ -5,7 +5,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
-import com.cyberpeace.cs.constant.DumpModule;
+import com.cyberpeace.oj.ojbase.constant.DumpModule;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
@@ -44,7 +44,7 @@ public class CourseDumpDataStatistics extends DumpDataStatistics {
 		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 		Map<String, String> envReqs = new HashMap<>();
-		courseDumpService.rMCourseDump(path, envReqs, authContext);
+		courseDumpService.rMCourseDump(path, authContext);
 		return null;
 	}
 

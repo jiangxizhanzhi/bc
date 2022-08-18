@@ -1,9 +1,4 @@
 
--- pending comment
--- 1. oj_course.outline
--- 2. oj_practice_random_flag.type
--- 3. oj_local_scene.local_scene_id
-
 -- oj_classroom
 alter table oj_classroom modify start_time datetime not null comment '课堂开始时间';
 
@@ -118,6 +113,8 @@ alter table oj_course modify name varchar(256) not null comment '课程名称';
 alter table oj_course modify description longtext null comment '课程描述';
 
 alter table oj_course modify logo varchar(512) null comment '课程封面id';
+
+alter table oj_course modify outline longtext charset utf8mb4 null comment '课程大纲';
 
 alter table oj_course modify difficulty int not null comment '难度';
 
@@ -253,7 +250,7 @@ alter table oj_local_scene modify business_id varchar(128) not null comment '关
 
 alter table oj_local_scene modify business_type int not null comment '关联场景的业务类型';
 
-alter table oj_local_scene modify local_scene_id varchar(64) not null comment '本地场景id';
+alter table oj_local_scene modify local_scene_id varchar(64) not null comment '关联的local_scene.resource_id';
 
 alter table oj_local_scene comment '实训场景关联表';
 
@@ -364,6 +361,8 @@ alter table oj_practice_random_flag modify attachment_id varchar(64) not null co
 alter table oj_practice_random_flag modify practice_id varchar(64) not null comment '关联实践操作id';
 
 alter table oj_practice_random_flag modify flag varchar(1028) not null comment 'FLAG';
+
+alter table oj_practice_random_flag modify type int null comment '区别使用业务（习题、课后练习...）';
 
 alter table oj_practice_random_flag comment '实训实践操作随机FLAG记录';
 

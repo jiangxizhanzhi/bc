@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -21,7 +23,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -29,7 +33,6 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
@@ -78,6 +81,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
 	public AdminPracticeSetBo selectById(String resourceId, AuthContext authContext) {
@@ -266,13 +271,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 遍历习题数据处理
 		List<String> ctfPracticeDirs = Lists.newArrayList();
-		for (String name: envReqs.keySet()) {
+		for (String name : envReqs.keySet()) {
 			File tmpFile = new File(path, name);
-			if (tmpFile.exists()){
+			if (tmpFile.exists()) {
 				ctfPracticeDirs.add(tmpFile.getAbsolutePath());
 			}
 		}
-		if (ctfPracticeDirs.size() == 0){
+		if (ctfPracticeDirs.size() == 0) {
 			return Lists.newArrayList();
 		}
 
@@ -437,16 +442,110 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public List<String> duplicatePracticeSetInspect(List<String> practiceSets) {
 		List<String> duplicateName = Lists.newArrayList();
-		if (null == practiceSets || practiceSets.size() == 0){
+		if (null == practiceSets || practiceSets.size() == 0) {
 			return duplicateName;
 		}
 
 		List<PracticeSet> practiceSetList = practiceSetMapper.selectByNames(practiceSets);
-		for (PracticeSet practiceSet: practiceSetList){
+		for (PracticeSet practiceSet : practiceSetList) {
 			duplicateName.add(practiceSet.getName());
 		}
 
 		return duplicateName;
+	}
+
+	@Override
+	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath) {
+
+		// 查询要导出的习题集
+		List<PracticeSet> setList = setListByIds(practiceSetId, practiceId);
+		List<String> setIds = StreamApiUtils.map(setList, PracticeSet::getResourceId);
+
+		// 查询导出的习题数据
+		List<PracticeOperation> operationList = practiceOperationService
+				.selectExportPractice(setIds, practiceId);
+		Map<String, List<PracticeOperation>> operationMap = StreamApiUtils.groupBy(operationList,
+				PracticeOperation::getPracticeSetId);
+		
+		String destPath = newPath ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
+				: CommonConstant.EXPORT_CTF_PATH;
+
+		for (PracticeSet practiceSet : setList) {
+			EXPORT_LOG.info("Start export {}....", practiceSet.getName());
+			String setPath = doExportSet(destPath, practiceSet);
+			practiceOperationService.exportPractice(setPath, operationMap.get(practiceSet.getResourceId()));
+
+			EXPORT_LOG.info("End export {}.....", practiceSet.getName());
+		}
+		
+		return destPath;
+	}
+	
+	private String doExportSet(String destPath, PracticeSet practiceSet) {
+		String path = createPath(destPath, practiceSet.getName());
+
+		if (StringUtils.isNotBlank(practiceSet.getLogo())) {
+			String realPath = utilService.getRealPath(practiceSet.getLogo());
+			File destLogoFile = new File(path, ResourceImportConstant.PNG_LOGO);
+
+			if (!destLogoFile.exists()) {
+				FileUtil.copyFile(new File(realPath), destLogoFile);
+			}
+		}
+		
+		File README = new File(path, ResourceImportConstant.README_NAME);
+		if (!README.exists()) {
+			MdPracticeSet mdPracticeSet = entityToMd(practiceSet);
+			mdPracticeSet.setLogo(ResourceImportConstant.PNG_LOGO);
+
+			MdParser mdParser = new MdParser();
+			mdParser.write(mdPracticeSet, README);
+		}
+
+		return path;
+	}
+
+	private String createPath(String destPath, String setName) {
+		File setPath = new File(destPath, setName);
+		FileUtil.createPath(setPath);
+		return setPath.getAbsolutePath();
+	}
+
+	/** 数据类型转换*/
+	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
+		MdPracticeSet mdPracticeSet = BeanUtils.copy(practiceSet, MdPracticeSet.class);
+		return mdPracticeSet;
+	}
+	
+	private List<PracticeSet> setListByIds(String setId, String practiceId) {
+
+		if (StringUtils.isNotBlank(practiceId)) {
+			List<PracticeOperation> operations = practiceListByIds(practiceId);
+
+			List<PracticeSet> setList = StreamApiUtils.map(operations,
+					operation -> practiceValidateHandler.validateSetType(
+							operation.getPracticeSetId(),
+							PracticeSet.PracticeType.OPERATION.getCode()));
+			return StreamApiUtils.distinctByColumn(setList, PracticeSet::getResourceId);
+		}
+
+		if (StringUtils.isNotBlank(setId)) {
+			return StreamApiUtils.map(Arrays.asList(setId.split(CommonConstant.CODE_COMMA)),
+					id -> practiceValidateHandler.validateSetType(id,
+							PracticeSet.PracticeType.OPERATION.getCode()));
+		}
+
+		return practiceSetMapper.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), false);
+	}
+	
+	private List<PracticeOperation> practiceListByIds(String practiceId) {
+		if (StringUtils.isBlank(practiceId)) {
+			return Lists.newArrayList();
+		}
+
+		List<String> practiceIds = Lists.newArrayList(practiceId.split(CommonConstant.CODE_COMMA));
+		return StreamApiUtils.map(practiceIds,
+				id -> practiceValidateHandler.validateOperationExist(id));
 	}
 
 	/**
@@ -656,7 +755,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		if (StringUtils.isBlank(existSetId)) {
 			practiceSet.setResourceId(IDGeneratorUtil.getID());
-		}else {
+		} else {
 			practiceSet.setResourceId(existSetId);
 		}
 

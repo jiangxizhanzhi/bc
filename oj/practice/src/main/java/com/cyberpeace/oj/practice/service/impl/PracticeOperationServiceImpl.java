@@ -1,11 +1,31 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -48,22 +68,9 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import com.google.common.collect.Maps;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -139,6 +146,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
+
+	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
 	public Integer addPracticeOperation(PracticeOperation practiceOperation,
@@ -1283,4 +1292,169 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				OperationType.EXERCISE, LogContent.EXERCISE.getMsg(), content);
 	}
 
+	@Override
+	public List<PracticeOperation> selectExportPractice(List<String> setIds, String practiceId) {
+
+		// 查询所有的习题
+		return practiceListByIds(setIds, practiceId);
+	}
+
+	@Override
+	public void exportPractice(String setPath, List<PracticeOperation> operations) {
+
+		for (PracticeOperation operation : operations) {
+			EXPORT_LOG.info("Start export {}....", operation.getTitle());
+
+			String path = createOperationPath(setPath, operation);
+
+			// README文件导出
+			File readmeFile = new File(path, ResourceImportConstant.README_NAME);
+			if (!readmeFile.exists()) {
+				MdCtfBase mdCtfBase = entityToMd(operation);
+				MdParser mdParser = new MdParser();
+				mdParser.write(mdCtfBase, readmeFile);
+			}
+			EXPORT_LOG.info("{} README.md export finish....", operation.getTitle());
+
+			// 附件导出
+			File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
+			exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
+
+			// 题解文件导出
+
+			// topo和镜像导出
+			EXPORT_LOG.info("End Export {}....", operation.getTitle());
+		}
+	}
+
+	/**
+	 * 附件导出 存在不进行再次导出
+	 * @param dir
+	 * @param attachmentId
+	 */
+	private void exportAttachment(String dir, String attachmentId) {
+		if (StringUtils.isBlank(attachmentId)) {
+			return;
+		}
+
+		String[] fileIds = StringUtils.split(attachmentId, CommonConstant.CODE_COMMA);
+		for (String fileId : fileIds) {
+			Attachment attachment = attachmentMapper.selectById(fileId);
+			String realPath = utilService.getRealPath(attachment.getFilePath());
+
+			File source = new File(realPath);
+			File distFile = new File(dir, source.getName());
+			if (!distFile.exists()) {
+				FileUtil.copyFile(source, distFile);
+			}
+		}
+	}
+
+	/**
+	 * 数据类型转换
+	 * @param operation
+	 * @return
+	 */
+	private MdCtfBase entityToMd(PracticeOperation operation) {
+
+		MdCtfBase ctfBase = BeanUtils.copy(operation, MdCtfBase.class);
+		UserInfo byId = remoteUserService.getById(operation.getCreateUserId());
+		if (null != byId) {
+			ctfBase.setAuthor(byId.getName());
+		}
+
+		PracticeCategory category = practiceCategoryMapper.selectById(operation.getCategoryId());
+		if (null != category) {
+			ctfBase.setCategory(category.getName());
+		}
+
+		if (StringUtils.isNotBlank(operation.getKnowledge())) {
+			ctfBase.setKnowledge(
+					JsonUtil.toJsonObjectArray(operation.getKnowledge(), String.class));
+		}
+
+		List<String> answers = JsonUtil.toJsonObjectArray(operation.getAnswer(), String.class);
+
+		if (operation.getDynamicFlag().intValue() == PracticeOperation.DynamicFlag.RANDOM
+				.getCode()) {
+			MdCtfRandom copy = BeanUtils.copy(ctfBase, MdCtfRandom.class);
+			Map<String, String> fileFlag = formatterRandom(operation.getAttachmentId(), answers);
+			copy.setFlag(fileFlag);
+			return copy;
+
+		} else {
+			MdCtf copy = BeanUtils.copy(ctfBase, MdCtf.class);
+			copy.setFlag(answers);
+			return copy;
+		}
+	}
+
+	/**
+	 * 随机flag数据转换
+	 * @param attachmentId
+	 * @param answers
+	 * @return
+	 */
+	private Map<String, String> formatterRandom(String attachmentId, List<String> answers) {
+		Map<String, String> fileFlag = Maps.newTreeMap();
+		String[] files = attachmentId.split(CommonConstant.CODE_COMMA);
+
+		if (files.length != answers.size()) {
+			throw new BusinessException(
+					OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
+		}
+
+		for (int i = 0; i < files.length; i++) {
+			Attachment attachment = attachmentMapper.selectById(files[i]);
+			String realPath = utilService.getRealPath(attachment.getFilePath());
+
+			File file = new File(realPath);
+			if (!file.exists()) {
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
+			}
+
+			fileFlag.put(file.getName(), answers.get(i));
+		}
+
+		return fileFlag;
+
+	}
+
+	/**
+	 * 创建操作习题文件夹
+	 * @param setPath
+	 * @param operation
+	 * @return
+	 */
+	private String createOperationPath(String setPath, PracticeOperation operation) {
+		File practicePath = new File(setPath, operation.getTitle());
+		FileUtil.createPath(practicePath);
+
+		FileUtil.createManyPath(practicePath.getAbsolutePath(),
+				ResourceImportConstant.PRACTICE_ATTACHMENT, ResourceImportConstant.ENV,
+				ResourceImportConstant.SCRIPT, ResourceImportConstant.WRITEUP);
+
+		return practicePath.getAbsolutePath();
+	}
+
+	/**
+	 * 查询习题列表
+	 * @param setIds 习题集编号
+	 * @param practiceId 习题编号 ,分割
+	 * @return
+	 */
+	private List<PracticeOperation> practiceListByIds(List<String> setIds, String practiceId) {
+
+		List<String> practiceIds = Lists.newArrayList();
+
+		if (StringUtils.isNotBlank(practiceId)) {
+			String[] tmpIds = practiceId.split(CommonConstant.CODE_COMMA);
+			practiceIds.addAll(Arrays.asList(tmpIds));
+		} else {
+			List<String> ids = practiceOperationMapper.selectBySetIds(setIds, false);
+			practiceIds.addAll(ids);
+		}
+
+		return practiceOperationMapper.selectBatchIds(practiceIds);
+	}
 }

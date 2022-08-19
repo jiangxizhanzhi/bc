@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -649,4 +650,35 @@ public class FileUtil {
 		}
 	}
 
+	public static void copyFile(String originFile, String destFile) {
+		copyFile(new File(originFile), new File(destFile));
+	}
+
+	public static void copyFile(File file, File destFile) {
+
+		try {
+			FileUtils.copyFile(file, destFile);
+		} catch (Exception e) {
+			log.error("File copy failed! origin_path=[{}], dest_path=[{}], catch error:",
+					file.getAbsolutePath(), destFile.getAbsolutePath());
+			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
+		}
+	}
+
+	public static void createPath(File file) {
+
+		if (file.exists()) {
+			return;
+		}
+
+		if (file.isDirectory()) {
+			file.mkdirs();
+		}
+	}
+
+	public static void createManyPath(String parentPath, String... children) {
+		for (String child : children) {
+			createPath(new File(parentPath, child));
+		}
+	}
 }

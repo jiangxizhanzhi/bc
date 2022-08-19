@@ -105,4 +105,12 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @return
 	 */
 	List<String> duplicatePracticeSetInspect(List<String> practiceSets);
+
+	/**
+	 * 实操习题数据导出
+	 * @param practiceSetId
+	 * @param practiceId
+	 * @return 导出的文件路径
+	 */
+    String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath);
 }

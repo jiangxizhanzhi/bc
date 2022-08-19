@@ -64,4 +64,6 @@ public interface PatternConstant {
 	String CODING_BLOCK = "`(?:(.*$)\\n)?([\\s\\S]*)`";
 
     String MD_LIST = "- ";
+
+	String SECOND_MD_LIST = "  - ";
 }

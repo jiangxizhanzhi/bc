@@ -109,4 +109,6 @@ public interface ResourceImportConstant {
 	 * 页面导入导出数据存储文件地址
 	 */
 	String DATA_JSON = "data.json";
+
+	String SCRIPT = "script";
 }

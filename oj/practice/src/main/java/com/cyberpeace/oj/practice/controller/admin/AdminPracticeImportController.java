@@ -59,9 +59,21 @@ public class AdminPracticeImportController {
 	}
 
 
-	@ApiOperation("习题集重复校验")
-	@PostMapping("/inspect_duplication")
-	public BaseRsp duplicatePracticeSetInspect(@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {
+	@ApiOperation("实操习题导出")
+	@GetMapping("/rm/ctf/export")
+	public BaseRsp<String> export(
+			@RequestParam(value = "set_id", required = false) String practiceSetId,
+			@RequestParam(value = "practice_Id", required = false) String practiceId,
+			@RequestParam(value = "new_path", required = false, defaultValue = "false") Boolean newPath) {
+
+		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath);
+
+		return new BaseRsp<>("");
+	}
+    
+    @ApiOperation("习题集重复校验")
+    @PostMapping("/inspect_duplication")
+    public BaseRsp duplicatePracticeSetInspect(@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {
 
 		List<String> result = practiceSetService.duplicatePracticeSetInspect(practiceSetsReq.getFileNames());
 

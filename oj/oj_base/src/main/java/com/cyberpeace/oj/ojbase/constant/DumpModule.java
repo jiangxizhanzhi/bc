@@ -18,12 +18,9 @@ public enum DumpModule implements GenericEnum {
 	@Getter
 	private String desc;
 
-	@Getter
-	private String originDesc;
 
 	DumpModule(Integer code, String desc) {
 		this.code = code;
-		this.originDesc = desc;
 		this.desc = desc;
 	}
 

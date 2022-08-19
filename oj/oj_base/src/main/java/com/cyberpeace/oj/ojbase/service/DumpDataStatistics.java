@@ -6,7 +6,6 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 
 import static com.cyberpeace.oj.ojbase.service.impl.OjBaseServiceImpl.register;
 
@@ -24,11 +23,7 @@ public class DumpDataStatistics {
 		return null;
 	}
 
-	public File getCourseFile(String userId, String resource_id) {
-		throw new BusinessException(OjBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
-	}
-
-	public File getCtfPracticeFile(String userId) {
+	public String getCourseFile(String resource_id) {
 		throw new BusinessException(OjBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

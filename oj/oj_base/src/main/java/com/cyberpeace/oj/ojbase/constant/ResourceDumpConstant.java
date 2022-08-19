@@ -89,8 +89,12 @@ public interface ResourceDumpConstant {
 	/**
 	 * 资源导入导出文件存放根目录
 	 */
-	String DUMP_ALL_FILE_STORE_PATH = "E:\\resource\\apache-tomcat-8.5.72\\bin";
-//	String DUMP_ALL_FILE_STORE_PATH = "/data/resource";
+	String DUMP_ALL_FILE_STORE_PATH = "/data/resource";
+
+	/**
+	 * 课程默认logo
+	 */
+	String DUMP_COURSE_DEFAULT_LOGO_STORE_PATH = "/data/resource/logo.png";
 
 	/**
 	 * 课程资源导出文件存放根目录

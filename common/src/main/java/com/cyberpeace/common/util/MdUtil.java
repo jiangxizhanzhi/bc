@@ -121,7 +121,7 @@ public class MdUtil {
                 throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
             }
 
-            File dist = new File(imagePath, source.getName());
+            File dist = new File(img, source.getName());
             if (!dist.exists()) {
                 FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
             }

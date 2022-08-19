@@ -11,4 +11,9 @@
             </if>
         </where>
     </select>
+    <select id="batchGetByBusinessId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate">
+        select *
+        from cr_single_template
+        where business_template_id in <foreach collection="businessTemplateIds" separator="," open="(" close=")" item="business_template_id">#{business_template_id}</foreach>
+    </select>
 </mapper>

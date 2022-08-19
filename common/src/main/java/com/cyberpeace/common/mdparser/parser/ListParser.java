@@ -54,7 +54,9 @@ public class ListParser implements MdContentParser<Collection, String> {
                     + (o instanceof String ? (String) o : JsonUtil.toJsonString(o))
                     + System.lineSeparator();
         }
-
-        return LocalStringUtil.frontBackLine(value);
+        if (StringUtils.isBlank(value)) {
+            value = CommonConstant.EMPTY_STRING;
+        }
+        return System.lineSeparator() + value;
     }
 }

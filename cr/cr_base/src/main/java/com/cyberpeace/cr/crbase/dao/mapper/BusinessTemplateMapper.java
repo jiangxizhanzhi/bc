@@ -2,8 +2,10 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
 
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.xmlbeans.impl.inst2xsd.SalamiSliceStrategy;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -47,4 +49,8 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
 			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
+
+	List<String> getBatchIdsByNames(@Param("business_template_names")List<String> businessTemplateNames, @Param("type")Integer type);
+
+	List<BusinessTemplate> getAllByIds(List<String> resourceIds);
 }

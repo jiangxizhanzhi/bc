@@ -62,5 +62,10 @@
             #{id}
         </foreach>
     </select>
+    <select id="batchGetByBusinessId" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate">
+        select *
+        from cr_team_template
+        where business_template_id in <foreach collection="businessTemplateIds" separator="," open="(" close=")" item="business_template_id">#{business_template_id}</foreach>
+    </select>
 
 </mapper>

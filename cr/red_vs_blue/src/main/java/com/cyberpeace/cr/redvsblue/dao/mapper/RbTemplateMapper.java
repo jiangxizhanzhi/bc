@@ -22,4 +22,6 @@ public interface RbTemplateMapper extends BaseMapper<RbTemplate> {
 	List<RbTemplate> getRbTemplateByBusinessIds(List<String> ids);
 
 	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
+
+	List<RbTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 }

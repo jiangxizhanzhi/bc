@@ -391,4 +391,10 @@ public interface CrBusinessErrorCode {
 	/** 最大支持7个分类 */
 	String MAX_7_CATEGORIES = "101117";
 
+	/** 训练资管导出类型不正确 */
+	String EXPORT_TRAIN_ERROR_TYPE = "101118";
+
+	/** 图片找不到 */
+	String IMG_NOT_FIND = "101119";
+
 }

@@ -1,18 +1,10 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdLesson;
 import com.cyberpeace.common.mdparser.MdParser;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -24,35 +16,28 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
-import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseDumpService;
-import com.cyberpeace.oj.ojbase.constant.*;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
-import com.cyberpeace.oj.practice.service.PaperService;
-import com.cyberpeace.oj.practice.service.bo.PaperContext;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static com.cyberpeace.common.util.MdUtil.dumpMarkdownImages;
 import static com.cyberpeace.common.util.MdUtil.saveAsFileWriter;
-import static com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant.*;
+import static com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant.DUMP_COURSE_DEFAULT_LOGO_STORE_PATH;
+import static com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant.OUTLINE_NAME;
 
 @Slf4j
 @Service
 public class CourseDumpServiceImpl implements CourseDumpService {
 
-	@Autowired
-	private CourseCategoryService courseCategoryService;
 
 	@Autowired
 	private AttachmentService attachmentService;
@@ -68,9 +53,6 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
-
-	@Autowired
-	private PaperService paperService;
 
 	@Autowired
 	private PaperMapper paperMapper;
@@ -97,7 +79,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	private CourseCategoryMapper courseCategoryMapper;
 
 	@Override
-	public File rMCourseDump(AuthContext authContext, String resource_id) {
+	public String rMCourseDump(String resource_id) {
+		log.info("----course dump start----");
 		// 1.获取所有课程数据 内容及文件
 		Map<String, Object> courseFilterMap = new HashMap<>();
 		courseFilterMap.put("resource_id",resource_id);
@@ -105,6 +88,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		if(courses.size() == 0){
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST);
 		}
+		log.info("get course content successfully!");
 		// 2.获取所有课时数据 内容及文件
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("course_id",resource_id);
@@ -119,6 +103,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		List<CourseCategory> categories = courseCategoryMapper.selectByMap(categoryFilterMap);
 
 		List<UserInfo> allUsers = remoteUserService.getAllUsers();
+		log.info("get all users successfully!");
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("type",3);
@@ -142,28 +127,26 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		combineCourseContent(destFilePath, course, categories, allUsers);
 		List<CourseLesson> currentLessons = lessonCol.get(resourceId);
 		combineLessons(destFilePath,currentLessonConfigs,currentLessons,papers,practiceTheoryRefs,practiceOperationRefs);
-
-		String destDir = "course";
-		FileUtil.mkdirs(destDir);
+		log.info("----course dump finish----");
 		// 压缩当前文件夹
-		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
-		FileUtil.deleteDir(destDir, true);
-		return new File(zipDest);
+		return destFilePath;
 	}
 
 	private void combineLessons(String courseFileName, List<LessonConfig> currentLessonConfigs, List<CourseLesson> currentLessons, List<Paper> papers,
 								List<PracticeTheoryRef> practiceTheoryRefs, List<PracticeOperationRef> practiceOperationRefs) {
 		Map<String, List<CourseLesson>> lessonCols = currentLessons.stream().collect(Collectors.groupingBy(CourseLesson::getResourceId));
 
-		List<LessonConfig> chapterFirsts = currentLessonConfigs.stream().filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode())).
+		List<LessonConfig> chapterFirsts = currentLessonConfigs.stream().filter(s -> null != s.getNodeType() && s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode())).
 				sorted(Comparator.comparing(LessonConfig::getIndex).reversed()).collect(Collectors.toList());
 		log.info("get chapterFirst of the current lesson successfully");
+
 		if (chapterFirsts.size() == 0) {
 			int index = 1;
-			List<LessonConfig> chapterSeconds = currentLessonConfigs.stream().filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode())).sorted(Comparator.comparing(LessonConfig::getIndex).reversed()).collect(Collectors.toList());
+			List<LessonConfig> chapterSeconds = currentLessonConfigs.stream().filter(s -> null != s.getNodeType() && s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode())).sorted(Comparator.comparing(LessonConfig::getIndex).reversed()).collect(Collectors.toList());
 			for(LessonConfig chapterSecond:chapterSeconds){
 				combineChapterSecond(1, index, chapterSecond, courseFileName + File.separator + "1_chapter",
 						lessonCols, papers, practiceTheoryRefs, practiceOperationRefs);
+				index += 1;
 			}
 		} else {
 			StreamApiUtils.map(chapterFirsts, chapterFirst -> combineChapterFirst(chapterFirst, currentLessonConfigs, lessonCols, courseFileName, papers, practiceTheoryRefs, practiceOperationRefs));
@@ -179,7 +162,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String chapterFileName = courseFileName + File.separator + currentChapter + "_" + chapterOne.getName();
 		FileUtil.mkdirs(chapterFileName);
 		int index = 1;
-		List<LessonConfig> chapterSeconds = lessonConfigs.stream().filter(s -> s.getParentId().equals(chapterOne.getResourceId())).
+		List<LessonConfig> chapterSeconds = lessonConfigs.stream().filter(s -> null != s.getParentId() && s.getParentId().equals(chapterOne.getResourceId())).
 				sorted(Comparator.comparing(LessonConfig::getIndex).reversed()).collect(Collectors.toList());
 		for (LessonConfig chapterSecond:chapterSeconds){
 			combineChapterSecond(currentChapter, index, chapterSecond, chapterFileName, lessons, papers, practiceTheoryRefs, practiceOperationRefs);
@@ -194,16 +177,20 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String pathname = chapterFileName + File.separator + lastChapter + "-" + index + "_" + lesson.getName();
 
 		FileUtil.mkdirs(pathname);
-		index += 1;
 		// 课时内容基础保存
 		generateLessonBase(pathname, lesson, papers, practiceTheoryRefs,practiceOperationRefs);
 		// TODO文件是否均
-//		if(Objects.equals(lesson.getType(), CourseLesson.LessonType.THEORY.getCode())){
-		// 理论课文件保存
-		combineTheoryLesson(pathname,lesson);
+		if(Objects.equals(lesson.getType(), CourseLesson.LessonType.THEORY.getCode())) {
+			// 理论课文件保存
+			combineTheoryLesson(pathname, lesson);
+		} else {
+			// 实验课文件保存
+			String dumpTopoDataFlag = ConfigUtil.getContextProperty("ojj.dumpTopoData");
+			if (Boolean.parseBoolean(dumpTopoDataFlag)) {
+				combineOperationLesson(pathname, lesson, chapterFileName);
+			}
 
-		// 实验课文件保存
-//		combineOperationLesson(pathname,lesson, chapterFileName);
+		}
 
 	}
 
@@ -238,8 +225,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		FileUtil.mkdirs(envFile);
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
 		sceneDumpContext.setId(lesson.getTopoId());
-		sceneDumpContext.setEnvPath(envFile);
-		sceneDumpContext.setImagePath(destFilePath + File.separator + "images");
+		sceneDumpContext.setEnv_path(envFile);
+		sceneDumpContext.setImage_path(destFilePath + File.separator + "images");
 		remoteSceneService.sceneDump(sceneDumpContext);
 		log.info("dump lesson env & images successfully!");
 	}
@@ -308,15 +295,17 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 		FileUtil.mkdirs(practices);
 		String paperId = lesson.getPaperId();
-		List<Paper> papers1 = papers.stream().filter(s -> s.getResourceId().equals(paperId)).collect(Collectors.toList());
-		if (papers1.size() > 0) {
-			// TODO模板为空　待写入
-			List<PracticeTheoryRef> theoryRefs = practiceTheoryRefs.stream().filter(s -> s.getPaperId().equals(paperId)).collect(Collectors.toList());
+		if (null != paperId && !paperId.isEmpty()){
+			List<Paper> papers1 = papers.stream().filter(s -> s.getResourceId().equals(paperId)).collect(Collectors.toList());
+			if (papers1.size() > 0) {
+				// TODO模板为空　待写入
+				List<PracticeTheoryRef> theoryRefs = practiceTheoryRefs.stream().filter(s -> s.getPaperId().equals(paperId)).collect(Collectors.toList());
 
-			List<PracticeOperationRef> operationRefs = practiceOperationRefs.stream().filter(s -> s.getPaperId().equals(paperId)).collect(Collectors.toList());
-			log.info("get lesson practices successfully!");
-			// TODO习题导出excel
-			// FileUtil.copyFile(videoUrl, videoPath, false);
+				List<PracticeOperationRef> operationRefs = practiceOperationRefs.stream().filter(s -> s.getPaperId().equals(paperId)).collect(Collectors.toList());
+				log.info("get lesson practices successfully!");
+				// TODO习题导出excel
+				// FileUtil.copyFile(videoUrl, videoPath, false);
+			}
 		}
 
 		// 课时readme.md生成
@@ -333,10 +322,17 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	private void combineCourseContent(String destFilePath, Course course, List<CourseCategory> categories, List<UserInfo> allUsers) {
 		// logo保存
-		String realPath = utilService.getRealPath(course.getLogo());
-		String fileSuffix = FileUtil.getFileSuffix(realPath);
+		String logo = course.getLogo();
+		String fileSuffix = "png";
 		String logoUrl = destFilePath + File.separator + "logo." + fileSuffix;
-		FileUtil.copyFile(realPath, logoUrl, false);
+		if(logo.isEmpty()){
+			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, logoUrl, false);
+		} else {
+			String realPath = utilService.getRealPath(logo);
+			fileSuffix = FileUtil.getFileSuffix(realPath);
+			logoUrl = destFilePath + File.separator + "logo." + fileSuffix;
+			FileUtil.copyFile(realPath, logoUrl, false);
+		}
 		log.info("dump course logo successfully!");
 		// 3.生成READEME.md
 		String categoryName = categories.stream().filter(s -> s.getResourceId().equals(course.getCategoryId())).collect(Collectors.toList()).get(0).getName();
@@ -350,14 +346,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		log.info("dump course outline successfully!");
 		// TODO 文件待校验
 		FileUtil.mkdirs(destFilePath + File.separator + "images");
-		FileUtil.mkdirs(destFilePath + File.separator + STAGE_EXAM);
-		FileUtil.mkdirs(destFilePath + File.separator + FINAL_EXAM);
 	}
 
 	private void generateOutlineMD(String destFilePath, String outline) {
 		File file = new File(destFilePath,OUTLINE_NAME);
-		// TODO 待写入
-		saveAsFileWriter(outline, file.getAbsolutePath());
+		String outlineWithImagesCopied = dumpMarkdownImages(file, outline);
+		saveAsFileWriter(outlineWithImagesCopied, file.getAbsolutePath());
 	}
 
 	private void generateReadmeMD(String pathname, Course course, String categoryName, String userName) {

@@ -2,6 +2,7 @@ package com.cyberpeace.common.mdparser.annotations;
 
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 import com.cyberpeace.common.mdparser.convert.NoConvert;
+import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.mdparser.parser.StringParser;
 
 import java.lang.annotation.*;
@@ -33,7 +34,7 @@ public @interface MdHeadLine {
      *
      * @return
      */
-    Class parser() default StringParser.class;
+    Class<? extends MdContentParser> parser() default StringParser.class;
 
     /**
      * 转换器 将获取到的值 通过枚举进行转换

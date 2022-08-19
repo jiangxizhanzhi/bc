@@ -471,11 +471,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				: CommonConstant.EXPORT_CTF_PATH;
 
 		for (PracticeSet practiceSet : setList) {
-			EXPORT_LOG.info("Start export {}....", practiceSet.getName());
+			EXPORT_LOG.info("Start export {} practice set....", practiceSet.getName());
+
 			String setPath = doExportSet(destPath, practiceSet);
 			practiceOperationService.exportPractice(setPath, operationMap.get(practiceSet.getResourceId()));
 
-			EXPORT_LOG.info("End export {}.....", practiceSet.getName());
+			EXPORT_LOG.info("End export {} practice set.....", practiceSet.getName());
 		}
 		
 		return destPath;
@@ -483,20 +484,22 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 		String path = createPath(destPath, practiceSet.getName());
-
-		if (StringUtils.isNotBlank(practiceSet.getLogo())) {
-			String realPath = utilService.getRealPath(practiceSet.getLogo());
-			File destLogoFile = new File(path, ResourceImportConstant.PNG_LOGO);
-
-			if (!destLogoFile.exists()) {
-				FileUtil.copyFile(new File(realPath), destLogoFile);
-			}
-		}
 		
 		File README = new File(path, ResourceImportConstant.README_NAME);
 		if (!README.exists()) {
 			MdPracticeSet mdPracticeSet = entityToMd(practiceSet);
-			mdPracticeSet.setLogo(ResourceImportConstant.PNG_LOGO);
+
+			if (StringUtils.isNotBlank(practiceSet.getLogo())) {
+				String realPath = utilService.getRealPath(practiceSet.getLogo());
+				File destLogoFile = new File(path, ResourceImportConstant.PNG_LOGO);
+
+				if (!destLogoFile.exists()) {
+					FileUtil.copyFile(new File(realPath), destLogoFile);
+				}
+
+				mdPracticeSet.setLogo(String.format(CommonConstant.MD_IMAGE_TEMPLATE,
+						ResourceImportConstant.PNG_LOGO));
+			}
 
 			MdParser mdParser = new MdParser();
 			mdParser.write(mdPracticeSet, README);

@@ -7,10 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IntegerParser implements MdContentParser<Integer, String> {
+public class IntegerParser implements MdContentParser<Object, String> {
 
     @Override
-    public Integer parse(Object content) {
+    public Object parse(Object content) {
 
         String value = (String) content;
         if (StringUtils.isBlank(value.trim())) {
@@ -21,7 +21,7 @@ public class IntegerParser implements MdContentParser<Integer, String> {
     }
 
     @Override
-    public String write(Integer value) {
+    public String write(Object value) {
         if (ObjectUtils.isEmpty(value)) {
             return LocalStringUtil.frontBackLine(CommonConstant.EMPTY_STRING);
         }

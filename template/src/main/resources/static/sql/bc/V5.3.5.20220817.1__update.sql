@@ -85,18 +85,6 @@ alter table oj_comment_like modify comment_id varchar(64) not null comment '点�
 alter table oj_comment_like comment '实训留言点赞';
 
 
--- oj_constants_config
-alter table oj_constants_config modify code tinyint null comment '常量值';
-
-alter table oj_constants_config modify type tinyint not null comment '常量类型';
-
-alter table oj_constants_config modify cn_name varchar(255) not null comment '常量中文名称';
-
-alter table oj_constants_config modify en_name varchar(255) not null comment '常量英文名称';
-
-alter table oj_constants_config comment '实训模块常量数据';
-
-
 -- oj_course
 alter table oj_course modify builtin int not null comment '课程是否属于内置资源';
 

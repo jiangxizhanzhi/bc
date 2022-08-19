@@ -12,4 +12,6 @@ public class SceneDumpContext implements Serializable {
 	private String envPath;
 
 	private String imagePath;
+
+	private String singleImagePath;
 }

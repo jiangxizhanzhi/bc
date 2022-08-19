@@ -38,13 +38,10 @@ public class CourseDumpDataStatistics extends DumpDataStatistics {
 	}
 
 	@Override
-	public File getCourseFile(String userId) {
-		String path = "";
-		File file = new File(path);
+	public File getCourseFile(String userId, String resource_id) {
 		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-		Map<String, String> envReqs = new HashMap<>();
-		courseDumpService.rMCourseDump(path, authContext);
+		courseDumpService.rMCourseDump(authContext, resource_id);
 		return null;
 	}
 

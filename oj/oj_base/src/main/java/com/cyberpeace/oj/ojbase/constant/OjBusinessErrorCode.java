@@ -203,4 +203,7 @@ public interface OjBusinessErrorCode {
 
 	/** 方法未实现*/
 	String NOT_IMPLEMENTED_EXCEPTION = "102066";
+
+	/** 导出resource_id错误 资源不存在*/
+	String RESOURCE_ID_NOT_EXIST = "102067";
 }

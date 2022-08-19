@@ -97,11 +97,4 @@ public interface ResourceDumpConstant {
 	 */
 	String DUMP_ALL_COURSE_FILE_STORE_PATH = "course";
 
-	/**
-	 * 课程资源导出课程MDdemo文件存放目录
-	 */
-	String DUMP_COURSE_MD_FILE_STORE_PATH = "E:\\resource\\apache-tomcat-8.5.72\\bin\\course_readme.md";
-	String DUMP_COURSE_OUTLINE_MD_FILE_STORE_PATH = "E:\\resource\\apache-tomcat-8.5.72\\bin\\课程大纲.md";
-	String DUMP_LESSON_MD_FILE_STORE_PATH = "E:\\resource\\apache-tomcat-8.5.72\\bin\\README.md";
-
 }

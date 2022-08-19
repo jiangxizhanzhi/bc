@@ -170,8 +170,6 @@ public class UtilServiceImpl implements UtilService {
 		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
 
-//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
 		realPathList.addAll(matchSrcList);
 
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {

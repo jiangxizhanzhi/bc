@@ -16,6 +16,7 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,16 +38,20 @@ public class OjBaseController {
 
 	@ApiOperation("资管课程导出")
 	@GetMapping("/rm/dump/course")
-	public BaseRsp<String> RMCourseDump(HttpServletResponse response) {
+	public BaseRsp<String> RMCourseDump(@RequestParam(value = "resource_id", required = false)String resource_id, HttpServletResponse response) {
 
         // TODO 存放路径
         String path = "";
+        BaseRsp<String> rsp = new BaseRsp<>();
         UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
         AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+        if (null == resource_id){
+            rsp.setMessage("resource_id is needed");
+            return rsp;
+        }
         // 执行课程数据导出
-        File result = ojBaseService.rMCourseDump(path, authContext);
+        File result = ojBaseService.rMCourseDump(path, authContext, resource_id);
         FileUtil.setResponse(result, true, response);
-        BaseRsp<String> rsp = new BaseRsp<>();
         rsp.setData(ResourceDumpConstant.DUMP_ALL_FILE_STORE_PATH +File.separator + ResourceDumpConstant.DUMP_ALL_COURSE_FILE_STORE_PATH + ".zip");
         return rsp;
     }

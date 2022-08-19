@@ -3,16 +3,15 @@ package com.cyberpeace.oj.ojbase.service;
 import com.cyberpeace.common.model.AuthContext;
 
 import java.io.File;
-import java.util.Map;
 
 public interface OJBaseService {
 
 	/**
 	 * @param path
-	 * @param envReqs
 	 * @param authContext
+	 * @param resource_id
 	 * @return
 	 */
-	File rMCourseDump(String path, Map<String, String> envReqs, AuthContext authContext);
+	File rMCourseDump(String path, AuthContext authContext, String resource_id);
 
 }

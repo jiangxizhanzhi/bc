@@ -68,7 +68,7 @@ public class AdminPracticeImportController {
 
 		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath);
 
-		return new BaseRsp<>("");
+		return new BaseRsp<>(filePath);
 	}
     
     @ApiOperation("习题集重复校验")

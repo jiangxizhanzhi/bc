@@ -122,6 +122,7 @@ public class MdParser {
             bw.flush();
         } catch (Exception e) {
             log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
+            file.delete();
             throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
         } finally {
             try {

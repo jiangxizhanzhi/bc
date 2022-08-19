@@ -111,4 +111,6 @@ public interface ResourceImportConstant {
 	String DATA_JSON = "data.json";
 
 	String SCRIPT = "script";
+
+	String WRITEUP_MD = "writeup.md";
 }

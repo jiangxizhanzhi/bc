@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -1319,12 +1320,50 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			// 附件导出
 			File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
 			exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
+			EXPORT_LOG.info("{} attachment export finish....", operation.getTitle());
 
 			// 题解文件导出
+			if (StringUtils.isNotBlank(operation.getWriteup())) {
+				File file = new File(path, ResourceImportConstant.WRITEUP);
+				exportWriteup(file.getAbsolutePath(), operation.getContent());
+			}
+			EXPORT_LOG.info("{} writeup.md export finish....", operation.getTitle());
 
 			// topo和镜像导出
+			if (StringUtils.isNotBlank(operation.getTopoId())) {
+				SceneDumpContext dumpContext = exportSceneReq(operation, path);
+				remoteSceneService.sceneDump(dumpContext);
+				EXPORT_LOG.info("{} topo and images export finish....", operation.getTitle());
+			}
+
 			EXPORT_LOG.info("End Export {}....", operation.getTitle());
 		}
+	}
+
+	/**
+	 * 获取场景导出请求体
+	 * @param operation
+	 * @return
+	 */
+	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath) {
+		SceneDumpContext dumpContext = new SceneDumpContext();
+		dumpContext.setId(operation.getTopoId());
+
+		File envPath = new File(practicePath, ResourceImportConstant.ENV);
+		dumpContext.setSingleImagePath(envPath.getAbsolutePath());
+		dumpContext.setEnvPath(envPath.getAbsolutePath());
+
+		return dumpContext;
+	}
+
+	/**
+	 * 导出题解文件
+	 * @param writeupDir
+	 * @param content
+	 */
+	private void exportWriteup(String writeupDir, String content) {
+		File writeupFile = new File(writeupDir, ResourceImportConstant.WRITEUP_MD);
+		MdUtil.dumpMarkdownImages(writeupFile, content);
 	}
 
 	/**
@@ -1434,6 +1473,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				ResourceImportConstant.PRACTICE_ATTACHMENT, ResourceImportConstant.ENV,
 				ResourceImportConstant.SCRIPT, ResourceImportConstant.WRITEUP);
 
+		EXPORT_LOG.info("{} file directory create finish....", operation.getTitle());
 		return practicePath.getAbsolutePath();
 	}
 

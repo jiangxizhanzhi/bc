@@ -671,9 +671,7 @@ public class FileUtil {
 			return;
 		}
 
-		if (file.isDirectory()) {
-			file.mkdirs();
-		}
+		file.mkdirs();
 	}
 
 	public static void createManyPath(String parentPath, String... children) {

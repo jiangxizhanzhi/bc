@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.service.context.md;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.parser.ListParser;
 import com.cyberpeace.cs.service.context.RoleBo;
-import com.cyberpeace.cs.service.context.paraser.TaskParser;
+import com.cyberpeace.cr.crbase.service.context.paraser.TaskParser;
 import lombok.Data;
 
 import java.io.Serializable;

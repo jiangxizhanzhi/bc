@@ -164,6 +164,7 @@
         <foreach collection="resourceIds" separator="," open="(" close=")" item="resource_id">
             #{resource_id}
         </foreach>
+        and business_type = #{type}
     </select>
 
 

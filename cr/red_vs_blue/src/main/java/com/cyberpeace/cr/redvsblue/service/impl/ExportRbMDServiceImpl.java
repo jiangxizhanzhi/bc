@@ -1,9 +1,9 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
@@ -60,18 +60,22 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 		if(businessTemplateList.size() == 0){
 			return;
 		}
-
+		//获取红蓝对抗模板
 		List<RbTemplate> rbTemplateList =
 				rbTemplateMapper.batchGetByBusinessId(businessTemplateList.stream()
 																			.map(BusinessTemplate::getResourceId)
 																			.collect(Collectors.toList()));
 		Map<String, RbTemplate> teamTemplateMap = StreamApiUtils.toMap(rbTemplateList,
 				RbTemplate::getBusinessTemplateId, rbTemplate -> rbTemplate);
+		//获取任务分类
 		List<CrConstantsConfig> constants =
 				crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
 		Map<String, String> constantMap = StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId,
 				CrConstantsConfig::getCnName);
+
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			//单个训练导出
+			log.info("红蓝对抗【" + businessTemplate.getName() + "】开始导出");
 			RbTemplate rbTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(rbTemplate.getSubType());
@@ -80,13 +84,15 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			if (!file.exists()) {
 				file.mkdir();
 			}
+			//LOGO
 			MdParser mdParser = new MdParser();
 			if(!StringUtils.isBlank(businessTemplate.getLogo())){
 				String imgUrl = businessTemplate.getLogo();
-				trainMD.setLogo("./logo.png");
+				trainMD.setLogo(MD_LOGO);
 				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
 
 			}
+
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(rbTemplate.getPreSkill(), String.class));
 			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(rbTemplate.getTrainSkill(), String.class));
 			List<RoleBo> roleBos = new ArrayList<>();
@@ -113,7 +119,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
 
-			File taskFile = new File(file.getPath() + File.separator + "task");
+			File taskFile = new File(file.getPath() + File.separator + TASK);
 
 			if (!taskFile.exists()) {
 				taskFile.mkdirs();
@@ -162,11 +168,13 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 
 						switch (missionTemplate.getType()) {
 							case 0:
+								//判断
 								JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
 								judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 								mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							case 1:
+								//单选
 								RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
 								options = JSONArray.parseArray(missionTemplate.getOption());
 								optionList = new ArrayList<>();
@@ -179,6 +187,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 								mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							case 2:
+								//多选
 								MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
 										MultipleChoiceMD.class);
 								options = JSONArray.parseArray(missionTemplate.getOption());
@@ -192,6 +201,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 								mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							default:
+								//其他
 								FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
 								fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 								mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
@@ -199,14 +209,14 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 						}
 
 						String writeUp = missionTemplate.getWriteUp();
-
+						//导出图片
 						List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
 						for (int j = 0; j < strList.size(); j++) {
 							String str = strList.get(j);
 							String imgUrl = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
 							FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
-							writeUp = writeUp.replace(str, "![](./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl) + ")");
-							System.out.println(imgUrl);
+							imgUrl = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl);
+							writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
 						}
 
 						FileWriter fw = null;
@@ -245,7 +255,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + role.getString("name") + ".md"));
 
 			}
-
+			log.info("红蓝对抗【" + businessTemplate.getName() + "】导出结束");
 		}
 
 	}

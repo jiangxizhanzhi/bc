@@ -2,8 +2,8 @@ package com.cyberpeace.cr.crbase.service.context.md;
 
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.parser.IntegerParser;
-import com.cyberpeace.cr.crbase.service.context.convert.JudgeConvert;
-import com.cyberpeace.cr.crbase.service.context.convert.QuestionTypeConvert;
+import com.cyberpeace.common.mdparser.convert.JudgeConvert;
+import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
 import lombok.Data;
 
 import java.io.Serializable;

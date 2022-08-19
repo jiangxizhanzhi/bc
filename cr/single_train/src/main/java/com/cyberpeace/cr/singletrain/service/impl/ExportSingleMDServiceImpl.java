@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
@@ -58,38 +59,41 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 		if(businessTemplateList.size() == 0){
 			return;
 		}
-
+		//获取单兵训练模板
 		List<SingleTemplate> singleTemplateList =
 				singleTemplateMapper.batchGetByBusinessId(businessTemplateList.stream()
 																			  .map(BusinessTemplate::getResourceId)
 																			  .collect(Collectors.toList()));
 		Map<String, SingleTemplate> singleTemplateMap = StreamApiUtils.toMap(singleTemplateList,
 				SingleTemplate::getBusinessTemplateId, singleTemplate -> singleTemplate);
+		//获取任务分类
 		List<CrConstantsConfig> constants =
 				crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
 		Map<String, String> constantMap = StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId,
 				CrConstantsConfig::getCnName);
+
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
-			SingleTemplate singleTemplate = singleTemplateMap.get(businessTemplate.getResourceId());
-			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
-			trainMD.setTrainType(singleTemplate.getSubType());
-			BeanUtils.copyProperties(singleTemplate, trainMD);
+			//单个训练导出
+			log.info("单兵训练【" + businessTemplate.getName() + "】开始导出");
+
 			File file = new File(path + File.separator + businessTemplate.getName());
 			if (!file.exists()) {
 				file.mkdirs();
 			}
+
+			SingleTemplate singleTemplate = singleTemplateMap.get(businessTemplate.getResourceId());
+			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
+			trainMD.setTrainType(singleTemplate.getSubType());
+			BeanUtils.copyProperties(singleTemplate, trainMD);
+			//导出logo
 			MdParser mdParser = new MdParser();
 			if(!StringUtils.isBlank(businessTemplate.getLogo())){
 				String imgUrl = businessTemplate.getLogo();
-				trainMD.setLogo("./logo.png");
-				try{
-					FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-				}
-				catch (Exception e){
-					throw new BusinessException();
-				}
+				trainMD.setLogo(MD_LOGO);
+				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
 
 			}
+			//导出README.md
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(singleTemplate.getPreSkills(), String.class));
 			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(singleTemplate.getTrainSkills(), String.class));
 			List<RoleBo> roleBos = new ArrayList<>();
@@ -98,18 +102,22 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			roleBos.add(new RoleBo("学员组", roleName));
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
-			File taskFile = new File(file.getPath() + File.separator + "task");
+			//导出task
+			File taskFile = new File(file.getPath() + File.separator + TASK);
 			if (!taskFile.exists()) {
 				taskFile.mkdir();
 			}
 
 			SingleRoleMD singleRoleMD = new SingleRoleMD();
+			//获取任务信息
 			CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
 					CrRoleConfigMissionsScheme.class);
 			Map<String, MissionTemplate> mapping =
 					missionTemplateService.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 			List<RoleBo> roleBoList = new ArrayList<>();
+
 			for (CrRoleConfigSchemeStage crRoleConfigSchemeStage : rspMissionsScheme.getSchemeData()) {
+				//单个任务导出
 				RoleBo roleBo = new RoleBo();
 				List<String> taskList = new ArrayList<>();
 				for (CrRoleConfigMission crRoleConfigMission : crRoleConfigSchemeStage.getMissions()) {
@@ -120,20 +128,18 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 					if (!task.exists()) {
 						task.mkdir();
 					}
-					File img = new File(task.getPath() + File.separator + IMG);
-					if (!img.exists()) {
-						img.mkdir();
-					}
 					JSONArray options = null;
 					List<String> optionList = null;
 
 					switch (missionTemplate.getType()) {
 						case 0:
+							//判断
 							JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
 							judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 							mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 							break;
 						case 1:
+							//单选
 							RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
 							options = JSONArray.parseArray(missionTemplate.getOption());
 							optionList = new ArrayList<>();
@@ -146,6 +152,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 							mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 							break;
 						case 2:
+							//多选
 							MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
 									MultipleChoiceMD.class);
 							options = JSONArray.parseArray(missionTemplate.getOption());
@@ -159,21 +166,26 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 							mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 							break;
 						case 7:
+							//其他
 							FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
 							fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 							mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 							break;
 					}
-
+					//导出writeUp
 					String writeUp = missionTemplate.getWriteUp();
-
+					//导出img
+					File img = new File(task.getPath() + File.separator + IMG);
+					if (!img.exists()) {
+						img.mkdir();
+					}
 					List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
 					for (int i = 0; i < strList.size(); i++) {
 						String str = strList.get(i);
 						String imgUrl = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
 						FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
-						writeUp = writeUp.replace(str, "![](./img/" + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl) + ")");
-						System.out.println(imgUrl);
+						imgUrl = "./img/" + (i+1) + "." + FileUtil.getFileSuffix(imgUrl);
+						writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
 					}
 
 					FileWriter fw = null;
@@ -208,6 +220,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			}
 			singleRoleMD.setTask(roleBoList);
 			mdParser.write(singleRoleMD, new File(taskFile.getPath() + File.separator + "学员.md"));
+			log.info("单兵训练【" + businessTemplate.getName() + "】导出结束");
 		}
 	}
 

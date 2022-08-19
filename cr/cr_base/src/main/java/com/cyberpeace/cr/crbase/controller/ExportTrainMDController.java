@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 
@@ -10,6 +11,7 @@ import com.cyberpeace.cr.crbase.controller.req.ExportTrainMDReq;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
 import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Api(tags = "训练资管导出")
 @RestController
 @RequestMapping("/export")
 public class ExportTrainMDController {
@@ -37,22 +39,22 @@ public class ExportTrainMDController {
 	@ApiOperation("训练资管导出")
 	@PostMapping("/train")
 	public BaseRsp<String> exportTrainMD(@RequestBody @Validated ExportTrainMDReq exportTrainMDReq) {
-
+		//判断type是否正确
 		if (!Arrays.stream(BusinessTypeConvert.values())
 				   .map(BusinessTypeConvert::to)
 				   .collect(Collectors.toList())
 				   .contains(exportTrainMDReq.getType())) {
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE);
 		}
-
+		//导出路径
 		String path;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
 			path = ConfigUtil.getContextProperty("win.tmp.path");
 		} else {
-			path = ConfigUtil.getContextProperty("linux.export.train.path");
+			path = CommonConstant.SHARE_DIR + "cr/export_train/";
 		}
 		path = path + IDGeneratorUtil.getID();
-
+		//获取导出资源id
 		List<String> resourceIds = new ArrayList<>();
 		if (exportTrainMDReq.getResourceIds() != null && exportTrainMDReq.getResourceIds().size() > 0) {
 			resourceIds = exportTrainMDReq.getResourceIds();

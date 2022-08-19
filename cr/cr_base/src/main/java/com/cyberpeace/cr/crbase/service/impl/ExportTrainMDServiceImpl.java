@@ -2,9 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
-import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ExportTrainMDServiceImpl implements ExportTrainMDService {
@@ -26,11 +23,12 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	public static final String WRITE_UP_File = "writeup.md";
 
-	@Autowired
-	private BusinessTemplateMapper businessTemplateMapper;
+	public static final String TASK = "task";
+
+	public static final String MD_LOGO = "./logo.png";
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
+	private BusinessTemplateMapper businessTemplateMapper;
 
 	@PostConstruct
 	public void init() {
@@ -48,7 +46,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	@Override
 	public void chooseType(List<String> resourceIds, String path, Integer type) {
 
-		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds);
+		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
 		if(businessTemplateList.size() == 0){
 			File file = new File(path);
 			file.mkdirs();

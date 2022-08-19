@@ -394,7 +394,4 @@ public interface CrBusinessErrorCode {
 	/** 训练资管导出类型不正确 */
 	String EXPORT_TRAIN_ERROR_TYPE = "101118";
 
-	/** 图片找不到 */
-	String IMG_NOT_FIND = "101119";
-
 }

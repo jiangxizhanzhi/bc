@@ -4,12 +4,12 @@ import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.parser.IntegerParser;
 import com.cyberpeace.common.mdparser.parser.ListParser;
 import com.cyberpeace.cs.service.context.RoleBo;
-import com.cyberpeace.cs.service.context.paraser.PictureParser;
-import com.cyberpeace.cs.service.context.paraser.RoleParser;
-import com.cyberpeace.cs.service.context.paraser.TrainSkillParser;
+import com.cyberpeace.common.mdparser.parser.PictureParser;
+import com.cyberpeace.cr.crbase.service.context.paraser.RoleParser;
+import com.cyberpeace.cr.crbase.service.context.paraser.TrainSkillParser;
 import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
 import com.cyberpeace.cr.crbase.service.context.convert.DifficultyConvert;
-import com.cyberpeace.cr.crbase.service.context.convert.TrainTypeConvert;
+import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import lombok.Data;
 
 import java.io.Serializable;

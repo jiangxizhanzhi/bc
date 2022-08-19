@@ -1,8 +1,9 @@
-package com.cyberpeace.cr.crbase.service.context.convert;
+package com.cyberpeace.common.mdparser.convert;
 
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 
 public enum TrainTypeConvert implements MdConvertEnum<Integer, String> {
+
 	TEST(1, "渗透测试"), MAINTENANCE(2, "运维防护"),
 	SIMULATION(3, "系统仿真"), SCENES(4, "综合场景"), OTHER(5, "其他");
 

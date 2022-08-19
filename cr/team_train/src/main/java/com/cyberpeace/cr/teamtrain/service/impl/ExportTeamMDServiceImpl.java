@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
@@ -60,18 +61,22 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 		if(businessTemplateList.size() == 0){
 			return;
 		}
-
+		//获取团队训练模板
 		List<TeamTemplate> teamTemplateList =
 				teamTemplateMapper.batchGetByBusinessId(businessTemplateList.stream()
 																			  .map(BusinessTemplate::getResourceId)
 																			  .collect(Collectors.toList()));
 		Map<String, TeamTemplate> teamTemplateMap = StreamApiUtils.toMap(teamTemplateList,
 				TeamTemplate::getBusinessTemplateId, teamTemplate -> teamTemplate);
+		//获取任务分类
 		List<CrConstantsConfig> constants =
 				crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
 		Map<String, String> constantMap = StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId,
 				CrConstantsConfig::getCnName);
+
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			//单个训练导出
+			log.info("团队训练【" + businessTemplate.getName() + "】开始导出");
 			TeamTemplate teamTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(teamTemplate.getSubType());
@@ -80,26 +85,27 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 			if (!file.exists()) {
 				file.mkdirs();
 			}
+			//logo导出
 			MdParser mdParser = new MdParser();
 			if(!StringUtils.isBlank(businessTemplate.getLogo())){
 				String imgUrl = businessTemplate.getLogo();
-				trainMD.setLogo("./logo.png");
+				trainMD.setLogo(MD_LOGO);
 				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-
 			}
+
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(teamTemplate.getPreSkills(), String.class));
 			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(teamTemplate.getTrainSkills(), String.class));
 			List<RoleBo> roleBos = new ArrayList<>();
 			List<String> roleName = new ArrayList<>();
 			JSONArray roleList = JSON.parseArray(teamTemplate.getRoleConfig());
-			File taskFile = new File(file.getPath() + File.separator + "task");
+			File taskFile = new File(file.getPath() + File.separator + TASK);
 
 			if (!taskFile.exists()) {
 				taskFile.mkdir();
 			}
 
-
 			for (int i = 0; i < roleList.size(); i++) {
+				//单个角色
 				JSONObject role = roleList.getJSONObject(i);
 				roleName.add(role.getString("name"));
 
@@ -126,6 +132,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 					RoleBo roleBo = new RoleBo();
 					List<String> taskList = new ArrayList<>();
 					for (CrRoleConfigMission crRoleConfigMission : crRoleConfigSchemeStage.getMissions()) {
+						//单个任务导出
 						MissionTemplate missionTemplate = mapping.get(crRoleConfigMission.getResourceId());
 						taskList.add(missionTemplate.getTitle());
 
@@ -142,11 +149,13 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 
 						switch (missionTemplate.getType()) {
 							case 0:
+								//判断
 								JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
 								judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 								mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							case 1:
+								//单选
 								RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
 								options = JSONArray.parseArray(missionTemplate.getOption());
 								optionList = new ArrayList<>();
@@ -159,6 +168,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 								mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							case 2:
+								//多选
 								MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
 										MultipleChoiceMD.class);
 								options = JSONArray.parseArray(missionTemplate.getOption());
@@ -172,21 +182,22 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 								mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 							default:
+								//其他
 								FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
 								fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 								mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 								break;
 						}
-
+						//导出writeUp
 						String writeUp = missionTemplate.getWriteUp();
-
+						//导出图片
 						List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
 						for (int j = 0; j < strList.size(); j++) {
 							String str = strList.get(j);
 							String imgUrl = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
 							FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
-							writeUp = writeUp.replace(str, "![](./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl) + ")");
-							System.out.println(imgUrl);
+							imgUrl = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl);
+							writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
 						}
 
 						FileWriter fw = null;
@@ -219,17 +230,15 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 					roleBo.setRoleName(taskList);
 					roleBoList.add(roleBo);
 
-
 				}
 				teamAndRBMD.setTask(roleBoList);
 				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + role.getString("name") + ".md"));
-
 
 			}
 			roleBos.add(new RoleBo("学员组", roleName));
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
-
+			log.info("团队训练【" + businessTemplate.getName() + "】导出结束");
 		}
 
 	}

@@ -1,11 +1,9 @@
-package com.cyberpeace.cs.service.context.paraser;
+package com.cyberpeace.cr.crbase.service.context.paraser;
 
 
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cs.service.context.RoleBo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +28,6 @@ public class TaskParser implements MdContentParser<List<RoleBo>, String> {
 				str = str + "- " + task + System.lineSeparator();
 			}
 		}
-		if (StringUtils.isBlank(str)) {
-			str = CommonConstant.EMPTY_STRING;
-		}
-		return System.lineSeparator() + str;
+		return LocalStringUtil.frontBackLine(str);
 	}
 }

@@ -12,37 +12,11 @@ import java.util.Map;
 public interface CourseDumpService {
 
 	/**
-	 * 根据导入数据路径获取课程信息
-	 * @param path
-	 * @return
+	 * 课程数据资管格式导出
+	 * @param authContext 用户
+	 * @param resource_id 资源id
+	 * @return file
 	 */
-	Course parseRmCourse(String path);
-
-	/**
-	 * 组装资源导入的课时信息
-	 * @param course
-	 * @param path
-	 * @param envReqs
-	 * @return
-	 */
-	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
-			Map<String, String> lessonPathMap);
-
-	/**
-	 * 组装课时路径信息
-	 * @param course
-	 * @param path
-	 * @param nameMap
-	 * @return
-	 */
-	List<LessonConfig> parseRmLessonConfig(Course course, String path, Map<String, String> nameMap);
-
-	/**
-	 * 课程数据导入
-	 * @param path 课程资源所在地址
-	 * @param envReqs topo与课时绑定数据 key=课时文件夹名称 value=topo编号
-	 * @return
-	 */
-	File rMCourseDump(String path, Map<String, String> envReqs, AuthContext authContext);
+	File rMCourseDump(AuthContext authContext, String resource_id);
 
 }

@@ -18,13 +18,13 @@ public class OjBaseServiceImpl implements OJBaseService {
 	public static Map<DumpModule, DumpDataStatistics> register = Maps.newHashMap();
 
 	@Override
-	public File rMCourseDump(String path, AuthContext authContext) {
+	public File rMCourseDump(String path, AuthContext authContext, String resource_id) {
 		File file = new File("default");
 		for (Map.Entry<DumpModule, DumpDataStatistics> entry : register.entrySet()) {
 			DumpModule key = entry.getKey();
 			if (key == DumpModule.COURSE) {
 				DumpDataStatistics value = entry.getValue();
-				file = value.getCourseFile(authContext.getUserId());
+				file = value.getCourseFile(authContext.getUserId(), resource_id);
 			} else {
 				DumpDataStatistics value = entry.getValue();
 				file = value.getCtfPracticeFile(authContext.getUserId());

@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class CourseMd extends AuthTable {
+public class CourseMd {
 
 	@MdHeadLine(level = 2, name = "课程名称")
 	private String name;
@@ -35,4 +35,7 @@ public class CourseMd extends AuthTable {
 	@MdHeadLine(level = 3, name = "简介")
 	private String description;
 
+	public void setLogo(String logo) {
+		this.logo = "![](" + logo + ")";
+	}
 }

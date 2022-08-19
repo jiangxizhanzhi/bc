@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.ojbase.service;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cs.constant.DumpModule;
+import com.cyberpeace.oj.ojbase.constant.DumpModule;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +24,11 @@ public class DumpDataStatistics {
 		return null;
 	}
 
-	public File getCourseFile(String userId) {
+	public File getCourseFile(String userId, String resource_id) {
 		throw new BusinessException(OjBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	public File getCtfPracticeFile(String userId) {
 		throw new BusinessException(OjBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
-
-//	public List<TrainingData> getRelatedTraining(String userId) {
-//		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
-//	}
 }

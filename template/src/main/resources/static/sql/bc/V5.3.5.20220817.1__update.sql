@@ -884,6 +884,10 @@ ALTER TABLE `cr_train_record` COMMENT '训练历史',
     CHANGE `end_time` `end_time` DATETIME NULL COMMENT '结束时间',
     CHANGE `extra` `extra` LONGTEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '附加信息';
 
+ALTER TABLE `cr_radar_label`
+    MODIFY COLUMN `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '维度' AFTER `resource_id`,
+    COMMENT = '雷达图维度表';
+
 
 ALTER TABLE  `attachment`
     MODIFY COLUMN `id` int NOT NULL AUTO_INCREMENT COMMENT '自增id' FIRST,

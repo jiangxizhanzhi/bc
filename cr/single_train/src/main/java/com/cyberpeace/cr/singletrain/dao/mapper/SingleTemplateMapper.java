@@ -6,10 +6,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface SingleTemplateMapper extends BaseMapper<SingleTemplate> {
 
     SingleTemplate getByBusinessId(@Param("resource_id") String trainBusinessId);
+
+    List<SingleTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 
 }

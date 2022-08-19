@@ -27,4 +27,6 @@ public interface TeamTemplateMapper extends BaseMapper<TeamTemplate> {
 	List<TeamTemplate> getTeamTemplateByBusinessIds(List<String> ids);
 
 	Boolean deleteByBusinessTemplateId(@Param("businessTemplateId") String businessTemplateId);
+
+	List<TeamTemplate> batchGetByBusinessId(List<String> businessTemplateIds);
 }

@@ -28,7 +28,7 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+//@Slf4j
 @Service
 public class ClassroomEventListener extends MessageListener {
 
@@ -68,7 +68,7 @@ public class ClassroomEventListener extends MessageListener {
 			UserInfoContext.setUserContext(userInfo);
 			classroomSceneService.deleteScene(ojLocalScene.getBusinessId(), null);
 		} catch (Exception e) {
-			log.error("ClassroomEventListener.onSceneDelete error:", e);
+//			log.error("ClassroomEventListener.onSceneDelete error:", e);
 			throw e;
 		} finally {
 			UserInfoContext.removeUserContext();
@@ -167,8 +167,8 @@ public class ClassroomEventListener extends MessageListener {
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectById(ojLocalSceneId);
 		if (null == ojLocalScene) {
-			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", ojLocalSceneId);
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+//			log.error("OjLocalScene not found! oj_local_scene_id=[{}]", ojLocalSceneId);
+//			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		return ojLocalScene;

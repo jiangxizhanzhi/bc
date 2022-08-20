@@ -1350,8 +1350,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		dumpContext.setId(operation.getTopoId());
 
 		File envPath = new File(practicePath, ResourceImportConstant.ENV);
-		dumpContext.setSingleImagePath(envPath.getAbsolutePath());
-		dumpContext.setEnvPath(envPath.getAbsolutePath());
+		dumpContext.setSingle_image_path(envPath.getAbsolutePath());
+		dumpContext.setEnv_path(envPath.getAbsolutePath());
 
 		return dumpContext;
 	}

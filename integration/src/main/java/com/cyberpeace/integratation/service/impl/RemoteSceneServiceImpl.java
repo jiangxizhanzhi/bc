@@ -111,7 +111,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
 
-		SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.dump");
+		SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.dump");
 
 		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 

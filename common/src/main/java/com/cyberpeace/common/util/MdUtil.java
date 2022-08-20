@@ -31,43 +31,30 @@ public class MdUtil {
 	public static JSONObject parseJsonMarkdown(File file) {
 
 		// 获取markdown行数据
-		List<String> contentList = FileUtil.listContent(file);
-
+		List<String> content = FileUtil.listContent(file);
 		// 新建json对象存储数据
 		JSONObject valueObj = new JSONObject();
 
 		// 遍历content数据
-		String key = "";
-		Integer startIndex = -1;
-		for (int index = 0; index < contentList.size(); index++) {
+		String key = CommonConstant.BLANK_STR;
+		Integer startIndex = CommonConstant.NEGATIVE_ONE;
 
-			if (contentList.get(index).matches(PatternConstant.MARKDOWN_TITLE)) {
-				// 数据校验
-				key = validateMarkdownContent(contentList.get(index), file.getAbsolutePath());
+		for (int index = 0; index < content.size(); index++) {
 
+			if (content.get(index).matches(PatternConstant.PARSER_MD_TITLE)) {
 				// 标题数据获取
 				if (StringUtils.isNotBlank(key) && startIndex != CommonConstant.NEGATIVE_ONE) {
-					String value = ListUtil.joinList(contentList, startIndex, index);
+					String value = ListUtil.joinList(content, startIndex, index);
 					valueObj.put(key, value);
 				}
-				startIndex = index + CommonConstant.ONE;
-			}
-
-			if (contentList.get(index).matches(PatternConstant.MARKDOWN_TAG)) {
-
-				// 标签数据获取
-				if (StringUtils.isNotBlank(key) && startIndex != CommonConstant.NEGATIVE_ONE) {
-					String value = ListUtil.joinList(contentList, startIndex, index);
-					valueObj.put(key, value);
-				}
-				startIndex = index + CommonConstant.ONE;
 
 				// 数据校验
-				key = validateMarkdownContent(contentList.get(index), file.getAbsolutePath());
+				key = validateMarkdownContent(content.get(index), file.getAbsolutePath());
+				startIndex = index + CommonConstant.ONE;
 			}
 
-			if (index + 1 == contentList.size()) {
-				String value = ListUtil.joinList(contentList, startIndex, contentList.size());
+			if (index + 1 == content.size()) {
+				String value = ListUtil.joinList(content, startIndex, content.size());
 				valueObj.put(key, value);
 			}
 		}

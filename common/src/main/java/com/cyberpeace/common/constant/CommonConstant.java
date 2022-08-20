@@ -96,7 +96,7 @@ public interface CommonConstant {
 	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
 
 	/** 底层 中台 靶场 竞赛共享目录*/
-	String SHARE_DIR = "/Users/chenzhuo/home/data/resource/";
+	String SHARE_DIR = "/data/resource/";
 
 	String EXPORT_CTF_PATH = SHARE_DIR + "export_file";
 

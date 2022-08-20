@@ -1325,7 +1325,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			// 题解文件导出
 			if (StringUtils.isNotBlank(operation.getWriteup())) {
 				File file = new File(path, ResourceImportConstant.WRITEUP);
-				exportWriteup(file.getAbsolutePath(), operation.getContent());
+				exportWriteup(file.getAbsolutePath(), operation.getWriteup());
 			}
 			EXPORT_LOG.info("{} writeup.md export finish....", operation.getTitle());
 
@@ -1363,7 +1363,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 */
 	private void exportWriteup(String writeupDir, String content) {
 		File writeupFile = new File(writeupDir, ResourceImportConstant.WRITEUP_MD);
-		MdUtil.dumpMarkdownImages(writeupFile, content);
+		MdUtil.writeMdToFile(writeupFile, content);
 	}
 
 	/**

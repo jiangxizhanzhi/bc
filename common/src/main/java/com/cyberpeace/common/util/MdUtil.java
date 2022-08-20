@@ -77,6 +77,16 @@ public class MdUtil {
 	}
 
 	/**
+	 * md内容写入文件 对应的文件写入md同级的img目录
+	 * @param file
+	 * @param content
+	 */
+	public static void writeMdToFile(File file, String content) {
+		String mdContent = dumpMarkdownImages(file, content);
+		FileUtil.writeToDestFile(mdContent, file.getAbsolutePath());
+	}
+
+	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param mdFile md文件
      * @param content md内容

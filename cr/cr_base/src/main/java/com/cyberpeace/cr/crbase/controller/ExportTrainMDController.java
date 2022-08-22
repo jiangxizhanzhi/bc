@@ -40,18 +40,22 @@ public class ExportTrainMDController {
 	@PostMapping("/train")
 	public BaseRsp<String> exportTrainMD(@RequestBody @Validated ExportTrainMDReq exportTrainMDReq) {
 		//判断type是否正确
-		if (!Arrays.stream(BusinessTypeConvert.values())
-				   .map(BusinessTypeConvert::to)
-				   .collect(Collectors.toList())
-				   .contains(exportTrainMDReq.getType())) {
-			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE);
+		List<Integer> sustainType = Arrays.stream(BusinessTypeConvert.values())
+										  .map(BusinessTypeConvert::to)
+										  .collect(Collectors.toList());
+		if (!sustainType.contains(exportTrainMDReq.getType())) {
+			String typeString = " ";
+			for (Integer type:sustainType){
+				typeString += type + " ";
+			}
+			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE,typeString);
 		}
 		//导出路径
 		String path;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
 			path = ConfigUtil.getContextProperty("win.tmp.path");
 		} else {
-			path = CommonConstant.SHARE_DIR + "cr/export_train/";
+			path = CommonConstant.EXPORT_TRAIN_PATH;
 		}
 		path = path + IDGeneratorUtil.getID();
 		//获取导出资源id

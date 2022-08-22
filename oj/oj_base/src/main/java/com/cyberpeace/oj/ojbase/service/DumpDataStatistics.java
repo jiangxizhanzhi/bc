@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+import java.io.IOException;
+
 import static com.cyberpeace.oj.ojbase.service.impl.OjBaseServiceImpl.register;
 
 @Service(value = "DumpDataStatistics")
@@ -23,7 +25,7 @@ public class DumpDataStatistics {
 		return null;
 	}
 
-	public String getCourseFile(String resource_id) {
+	public String getCourseFile(String resource_id, Boolean is_dump_topo) throws IOException {
 		throw new BusinessException(OjBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

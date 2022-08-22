@@ -8,6 +8,8 @@ import com.cyberpeace.oj.ojbase.service.DumpDataStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class CourseDumpDataStatistics extends DumpDataStatistics {
 
@@ -26,7 +28,7 @@ public class CourseDumpDataStatistics extends DumpDataStatistics {
 	}
 
 	@Override
-	public String getCourseFile(String resource_id) {
-		return courseDumpService.rMCourseDump(resource_id);
+	public String getCourseFile(String resource_id, Boolean is_dump_topo) throws IOException {
+		return courseDumpService.rMCourseDump(resource_id,is_dump_topo);
 	}
 }

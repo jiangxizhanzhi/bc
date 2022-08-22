@@ -85,6 +85,11 @@ public interface ResourceDumpConstant {
 	 */
 	String PRACTICE_ATTACHMENT = "attachment";
 
+	/**
+	 * 版本信息文件
+	 */
+	String VERSION_FILE = "version.txt";
+
 
 	/**
 	 * 资源导入导出文件存放根目录
@@ -99,6 +104,11 @@ public interface ResourceDumpConstant {
 	/**
 	 * 课程资源导出文件存放根目录
 	 */
-	String DUMP_ALL_COURSE_FILE_STORE_PATH = "course";
+	String DUMP_ALL_COURSE_FILE_STORE_PATH = "/course";
+
+	/**
+	 * 课程资源导出文件存放根目录
+	 */
+	String DUMP_OJ_FILE_STORE_PATH = "/oj";
 
 }

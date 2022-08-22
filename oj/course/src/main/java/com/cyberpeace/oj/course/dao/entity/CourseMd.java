@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.dao.entity;
 import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
 import com.cyberpeace.common.mdparser.parser.ListParser;
-import com.cyberpeace.common.model.AuthTable;
 import lombok.Data;
 
 import java.util.List;
@@ -36,6 +35,10 @@ public class CourseMd {
 	private String description;
 
 	public void setLogo(String logo) {
+		if(null != logo){
+			String[] split = logo.split("/");
+			logo = split[split.length-1];
+		}
 		this.logo = "![](" + logo + ")";
 	}
 }

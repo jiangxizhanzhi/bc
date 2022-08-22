@@ -15,11 +15,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,10 +87,11 @@ public class MdParser {
 
         FileWriter fw = null;
         BufferedWriter bw = null;
+        OutputStreamWriter osw = null;
 
         try {
-            fw = new FileWriter(file, true);
-            bw = new BufferedWriter(fw);
+            osw = new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8);
+            bw = new BufferedWriter(osw);
 
             for (Field field : fields) {
                 MdHeadLine annotation = field.getAnnotation(MdHeadLine.class);

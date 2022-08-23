@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
@@ -9,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +33,12 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	public static final String MD_LOGO = "./logo.png";
 
+	public static final String ENV = "env";
+
+	public static final String IMAGES = "images";
+
+	public static final String VERSION = "version.txt";
+
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
@@ -44,7 +56,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	@Override
-	public void chooseType(List<String> resourceIds, String path, Integer type) {
+	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type) throws IOException {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
 		if(businessTemplateList.size() == 0){
@@ -53,7 +65,14 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 			return;
 		}
 		ExportTrainMDService exportTrainMDService = register.get(type);
-		exportTrainMDService.exportTrainMD(businessTemplateList, path);
+		File file = new File(path);
+		FileUtil.deleteDir(file);
+		exportTrainMDService.exportTrainMD(businessTemplateList,
+				path + File.separator + "cr" + File.separator + "场景库");
+
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path + File.separator + VERSION),
+				StandardCharsets.UTF_8);
+		FileUtil.writeString(IDGeneratorUtil.getID(), osw);
 
 	}
 

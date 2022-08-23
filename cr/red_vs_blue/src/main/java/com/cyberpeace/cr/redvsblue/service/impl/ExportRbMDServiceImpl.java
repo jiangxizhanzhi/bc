@@ -22,8 +22,12 @@ import com.cyberpeace.cr.crbase.service.impl.ExportTrainMDServiceImpl;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
+import com.cyberpeace.integratation.model.scene.SceneDumpContext;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +41,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 
 	@Autowired
@@ -48,6 +51,11 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
+
+	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	@Override
 	public Integer getCode(){
@@ -81,9 +89,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			trainMD.setTrainType(rbTemplate.getSubType());
 			BeanUtils.copyProperties(rbTemplate, trainMD);
 			File file = new File(path + File.separator + businessTemplate.getName());
-			if (!file.exists()) {
-				file.mkdir();
-			}
+			FileUtil.mkdirs(file.getPath());
 			//LOGO
 			MdParser mdParser = new MdParser();
 			if(!StringUtils.isBlank(businessTemplate.getLogo())){
@@ -222,9 +228,6 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 						FileWriter fw = null;
 						BufferedWriter bw = null;
 						File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_File);
-						if (file.exists()) {
-							file.delete();
-						}
 						try {
 							fw = new FileWriter(writeUpFile);
 							bw = new BufferedWriter(fw);
@@ -255,6 +258,17 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + role.getString("name") + ".md"));
 
 			}
+			//场景信息导出
+			SceneDumpContext sceneDumpContext = new SceneDumpContext();
+			sceneDumpContext.setId(businessTemplate.getTopoId());
+			File envFile = new File(file.getPath() + File.separator + ENV);
+			FileUtil.mkdirs(envFile.getPath());
+			sceneDumpContext.setEnv_path(envFile.getPath());
+			File imagesFile = new File(envFile.getPath() + File.separator + IMAGES);
+			FileUtil.mkdirs(imagesFile.getPath());
+			sceneDumpContext.setImage_path(imagesFile.getPath());
+			remoteSceneService.sceneDump(sceneDumpContext);
+
 			log.info("红蓝对抗【" + businessTemplate.getName() + "】导出结束");
 		}
 

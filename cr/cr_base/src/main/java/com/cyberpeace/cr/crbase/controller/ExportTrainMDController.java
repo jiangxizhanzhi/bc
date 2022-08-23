@@ -2,10 +2,11 @@ package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.convert.MdConvert;
 import com.cyberpeace.common.model.BaseRsp;
 
 import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ExportTrainMDReq;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -13,16 +14,18 @@ import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
 import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Api(tags = "训练资管导出")
 @RestController
@@ -36,18 +39,16 @@ public class ExportTrainMDController {
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	private static final Logger log = LoggerFactory.getLogger("resourceImport");
+
 	@ApiOperation("训练资管导出")
 	@PostMapping("/train")
 	public BaseRsp<String> exportTrainMD(@RequestBody @Validated ExportTrainMDReq exportTrainMDReq) {
+
 		//判断type是否正确
-		List<Integer> sustainType = Arrays.stream(BusinessTypeConvert.values())
-										  .map(BusinessTypeConvert::to)
-										  .collect(Collectors.toList());
-		if (!sustainType.contains(exportTrainMDReq.getType())) {
-			String typeString = " ";
-			for (Integer type:sustainType){
-				typeString += type + " ";
-			}
+		List<Integer> sceneTypeList = EnumUtils.getListCode(BusinessTypeConvert.class);
+		if (!sceneTypeList.contains(exportTrainMDReq.getType())) {
+			String typeString = StringUtils.join(sceneTypeList, ",");
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE,typeString);
 		}
 		//导出路径
@@ -56,8 +57,7 @@ public class ExportTrainMDController {
 			path = ConfigUtil.getContextProperty("win.tmp.path");
 		} else {
 			path = CommonConstant.EXPORT_TRAIN_PATH;
-		}
-		path = path + IDGeneratorUtil.getID();
+		};
 		//获取导出资源id
 		List<String> resourceIds = new ArrayList<>();
 		if (exportTrainMDReq.getResourceIds() != null && exportTrainMDReq.getResourceIds().size() > 0) {
@@ -70,7 +70,12 @@ public class ExportTrainMDController {
 			resourceIds = new ArrayList<>(new HashSet<>(resourceIds));
 		}
 
-		exportTrainMDService.chooseType(resourceIds, path, exportTrainMDReq.getType());
+		try{
+			exportTrainMDService.chooseTypeAndExportTrain(resourceIds, path, exportTrainMDReq.getType());
+		}catch (IOException e){
+			log.error("export [{}] failed",StringUtils.join(resourceIds, ","));
+			log.error("export error:", e);
+		}
 
 		return new BaseRsp<>(path);
 	}

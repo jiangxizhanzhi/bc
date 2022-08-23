@@ -1304,40 +1304,51 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public void exportPractice(String setPath, List<PracticeOperation> operations) {
 
 		for (PracticeOperation operation : operations) {
-			EXPORT_LOG.info("Start export {}....", operation.getTitle());
-
-			String path = createOperationPath(setPath, operation);
-
-			// README文件导出
-			File readmeFile = new File(path, ResourceImportConstant.README_NAME);
-			if (!readmeFile.exists()) {
-				MdCtfBase mdCtfBase = entityToMd(operation);
-				MdParser mdParser = new MdParser();
-				mdParser.write(mdCtfBase, readmeFile);
+			try {
+				doExport(setPath, operation);
+			} catch (Exception e) {
+				EXPORT_LOG.error(
+						"Practice operation export failed!, set_path=[{}], practice_name=[{}], catch error:",
+						setPath, operation.getTitle(), e);
+				throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_FAILED, operation.getTitle());
 			}
-			EXPORT_LOG.info("{} README.md export finish....", operation.getTitle());
-
-			// 附件导出
-			File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
-			exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
-			EXPORT_LOG.info("{} attachment export finish....", operation.getTitle());
-
-			// 题解文件导出
-			if (StringUtils.isNotBlank(operation.getWriteup())) {
-				File file = new File(path, ResourceImportConstant.WRITEUP);
-				exportWriteup(file.getAbsolutePath(), operation.getWriteup());
-			}
-			EXPORT_LOG.info("{} writeup.md export finish....", operation.getTitle());
-
-			// topo和镜像导出
-			if (StringUtils.isNotBlank(operation.getTopoId())) {
-				SceneDumpContext dumpContext = exportSceneReq(operation, path);
-				remoteSceneService.sceneDump(dumpContext);
-				EXPORT_LOG.info("{} topo and images export finish....", operation.getTitle());
-			}
-
-			EXPORT_LOG.info("End Export {}....", operation.getTitle());
 		}
+	}
+	
+	private void doExport(String setPath, PracticeOperation operation) {
+		EXPORT_LOG.info("Start export {}....", operation.getTitle());
+
+		String path = createOperationPath(setPath, operation);
+
+		// README文件导出
+		File readmeFile = new File(path, ResourceImportConstant.README_NAME);
+		if (!readmeFile.exists()) {
+			MdCtfBase mdCtfBase = entityToMd(operation);
+			MdParser mdParser = new MdParser();
+			mdParser.write(mdCtfBase, readmeFile);
+		}
+		EXPORT_LOG.info("{} README.md export finish....", operation.getTitle());
+
+		// 附件导出
+		File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
+		exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
+		EXPORT_LOG.info("{} attachment export finish....", operation.getTitle());
+
+		// 题解文件导出
+		if (StringUtils.isNotBlank(operation.getWriteup())) {
+			File file = new File(path, ResourceImportConstant.WRITEUP);
+			exportWriteup(file.getAbsolutePath(), operation.getWriteup());
+		}
+		EXPORT_LOG.info("{} writeup.md export finish....", operation.getTitle());
+
+		// topo和镜像导出
+		if (StringUtils.isNotBlank(operation.getTopoId())) {
+			SceneDumpContext dumpContext = exportSceneReq(operation, path);
+			remoteSceneService.sceneDump(dumpContext);
+			EXPORT_LOG.info("{} topo and images export finish....", operation.getTitle());
+		}
+
+		EXPORT_LOG.info("End Export {}....", operation.getTitle());
 	}
 
 	/**

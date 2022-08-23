@@ -206,4 +206,13 @@ public interface OjBusinessErrorCode {
 
 	/** 导出resource_id错误 资源不存在*/
 	String RESOURCE_ID_NOT_EXIST = "102067";
+
+	/** 实操习题导出失败*/
+	String OPERATION_EXPORT_FAILED = "102068";
+
+	/** 实操习题集导出失败*/
+	String OPERATION_SET_EXPORT_FAILED = "102069";
+
+	/** 实操习题查询失败*/
+	String OPERATION_EXPORT_QUERY_FAILED = "102070";
 }

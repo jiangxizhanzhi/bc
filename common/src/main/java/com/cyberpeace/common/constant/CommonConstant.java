@@ -100,7 +100,7 @@ public interface CommonConstant {
 
 	String EXPORT_CTF_PATH = SHARE_DIR + "export_file";
 
-	String EXPORT_TRAIN_PATH =  SHARE_DIR + "cr/export_train/";
+	String EXPORT_TRAIN_PATH =  SHARE_DIR + "task_import/";
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 

@@ -62,9 +62,9 @@ public class AdminPracticeImportController {
 	@ApiOperation("实操习题导出")
 	@GetMapping("/rm/ctf/export")
 	public BaseRsp<String> export(
-			@RequestParam(value = "set_id", required = false) String practiceSetId,
-			@RequestParam(value = "practice_Id", required = false) String practiceId,
-			@RequestParam(value = "new_path", required = false, defaultValue = "false") Boolean newPath) {
+			@RequestParam(name = "set_id", required = false) String practiceSetId,
+			@RequestParam(name = "practice_id", required = false) String practiceId,
+			@RequestParam(name = "new_path", required = false, defaultValue = "false") Boolean newPath) {
 
 		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath);
 

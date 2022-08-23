@@ -461,6 +461,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<PracticeOperation> operationList;
 		List<PracticeSet> setList;
 		
+		EXPORT_LOG.info(System.lineSeparator() + System.lineSeparator()
+				+ "Start....................." + System.lineSeparator());
+
 		try {
 			// 查询要导出的习题集
 			EXPORT_LOG.info("Practice set query....");
@@ -501,6 +504,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			EXPORT_LOG.info("End export {} practice set.....", practiceSet.getName());
 		}
 		
+		EXPORT_LOG.info(System.lineSeparator() + "End....................." + System.lineSeparator()
+				+ System.lineSeparator());
 		return destPath;
 	}
 	

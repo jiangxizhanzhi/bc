@@ -191,4 +191,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param practiceOperations
 	 */
     void exportPractice(String setPath, List<PracticeOperation> practiceOperations);
+
+	/**
+	 * 获取实操习题附件
+	 * @param attachmentId
+	 * @return
+	 */
+	List<PracticeOperationFileBo> getOperationFile(String attachmentId);
 }

@@ -60,7 +60,7 @@ public class MdParser {
         try {
             return doRead(cls);
         } catch (IllegalAccessException e) {
-            log.error("Markdown file to entity failed! cls=[], catch error:", cls.getName(), e);
+            log.error("Markdown file to entity failed! cls=[{}], catch error:", cls.getName(), e);
             throw new BusinessException(ErrorCode.FILE_READ_FAIL);
         }
     }

@@ -215,4 +215,7 @@ public interface OjBusinessErrorCode {
 
 	/** 实操习题查询失败*/
 	String OPERATION_EXPORT_QUERY_FAILED = "102070";
+
+	/** 部分附件缺失*/
+	String ATTACHMENT_MISSION = "102071";
 }

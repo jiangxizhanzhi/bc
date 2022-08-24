@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.MissionSkillEvaluation;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionSkillEvaluationMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
@@ -65,9 +63,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
-
-	@Autowired
-	private MissionSkillEvaluationMapper missionSkillEvaluationMapper;
 
 	@Autowired
 	private LessonRecordService lessonRecordService;
@@ -559,38 +554,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return MathUtils.ceil(calculation.solve());
 	}
 
-	/**
-	 * 查询技能技能点得分
-	 * @param userId
-	 * @param skills
-	 * @return
-	 */
-	private List<SkillScore> getSkillScore(String userId, List<Skill> skills) {
-		// 查询技能点得分 为空则为零分
-		List<MissionSkillEvaluation> skillScores = skills.stream().map(skill -> {
-			MissionSkillEvaluation skillEvaluation = missionSkillEvaluationMapper
-					.selectLastOne(userId, skill.getResourceId());
-
-			// 设置零分返回
-			if (null == skillEvaluation) {
-				skillEvaluation = new MissionSkillEvaluation();
-				skillEvaluation.setSkill(skill.getResourceId());
-				skillEvaluation.setScore(0);
-			}
-			return skillEvaluation;
-		}).collect(Collectors.toList());
-
-		// 数据类型转换
-		List<SkillScore> scores = skillScores.stream().map(missionSkillEvaluation -> {
-			SkillScore skillScore = new SkillScore();
-			skillScore.setScore(
-					DataTransferUtils.nullToZero(missionSkillEvaluation.getScore()).toString());
-			skillScore.setSkillId(missionSkillEvaluation.getSkill());
-			return skillScore;
-		}).collect(Collectors.toList());
-
-		return scores;
-	}
 
 	/**
 	 * 计算角色对应的知识点得分

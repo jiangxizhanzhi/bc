@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -68,6 +69,12 @@ public class ExportTrainMDController {
 					exportTrainMDReq.getType());
 			resourceIds.addAll(idsByName);
 			resourceIds = new ArrayList<>(new HashSet<>(resourceIds));
+		}
+
+		if(resourceIds.size() == 0){
+			File file = new File(path);
+			file.mkdirs();
+			return new BaseRsp<>(path);
 		}
 
 		try{

@@ -15,6 +15,7 @@ import com.cyberpeace.oj.course.controller.req.DuplicateCourseInspectReq;
 import com.cyberpeace.oj.course.controller.req.RMCombinedCourseImportReq;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
+import com.cyberpeace.oj.practice.service.bo.MdCtf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,17 +42,6 @@ public class AdminCourseImportController {
 
     @Autowired
     private CourseService courseService;
-
-    @GetMapping("/test")
-    public BaseRsp<Boolean> test() {
-
-        MdParser mdParser = new MdParser("/Users/chenzhuo/home/tmp/README.md");
-        MdCourse course = mdParser.read(MdCourse.class);
-
-        mdParser.write(course, new File("/Users/chenzhuo/home/tmp/course.md"));
-
-        return new BaseRsp<>(true);
-    }
 
     @ApiOperation("资管课程数据导入")
     @PostMapping("/rm/import")

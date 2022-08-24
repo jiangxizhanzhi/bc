@@ -131,6 +131,9 @@ public class MdParser {
                 if (null != bw) {
                     bw.close();
                 }
+                if (osw != null) {
+                    osw.close();
+                }
             } catch (IOException e) {
             }
 
@@ -141,7 +144,7 @@ public class MdParser {
         mdKeyMap();
         Object instance = BeanUtils.instantiateClass(cls);
 
-        Field[] fields = cls.getDeclaredFields();
+        Field[] fields = ObjUtil.getFields(cls);
         for (Field field : fields) {
             MdHeadLine annotation = field.getAnnotation(MdHeadLine.class);
             if (null == annotation) {

@@ -26,8 +26,7 @@ public class MdCtfBase implements Serializable {
 	@MdHeadLine(level = 3, name = "知识点", parser = ListParser.class)
 	private List<String> knowledge;
 
-	@MdHeadLine(level = 3, name = "难度", parser = IntegerParser.class,
-			convert = DifficultyConvert.class)
+	@MdHeadLine(level = 3, name = "难度", convert = DifficultyConvert.class)
 	private Integer difficulty;
 
 	@MdHeadLine(level = 3, name = "内容")

@@ -184,12 +184,17 @@ public class ObjUtil {
 
 	public static Field[] getFields(Object obj) {
 		Class<?> cls = obj.getClass();
+		return getFields(cls);
+	}
 
+	public static Field[] getFields(Class<?> target) {
+
+		Class<?> cls = target;
 		List<Field[]> result = Lists.newArrayList();
 		Field[] fs = cls.getDeclaredFields();
 
 		do {
-			result.add(fs);
+			result.add(0, fs);
 			cls = cls.getSuperclass();
 			fs = cls.getDeclaredFields();
 		} while (null != fs && fs.length > 0);
@@ -208,5 +213,6 @@ public class ObjUtil {
 		}
 
 		return ret;
+
 	}
 }

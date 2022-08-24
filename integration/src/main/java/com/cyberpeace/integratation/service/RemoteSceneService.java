@@ -35,7 +35,7 @@ public interface RemoteSceneService {
 
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
-	Boolean sceneDump(SceneDumpContext sceneDumpContext);
+	JSONObject sceneDump(SceneDumpContext sceneDumpContext);
 
 	/**
 	 * 获取流量信息

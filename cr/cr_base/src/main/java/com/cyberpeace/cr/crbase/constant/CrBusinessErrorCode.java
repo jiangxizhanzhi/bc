@@ -394,4 +394,7 @@ public interface CrBusinessErrorCode {
 	/** 训练资管导出类型不正确 */
 	String EXPORT_TRAIN_ERROR_TYPE = "101118";
 
+	/** 训练资管导出id都不存在 */
+	String EXPORT_TRAIN_ID_NOT_EXIST = "101119";
+
 }

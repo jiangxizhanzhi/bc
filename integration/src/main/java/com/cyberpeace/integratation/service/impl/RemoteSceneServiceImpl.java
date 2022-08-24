@@ -210,8 +210,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean sceneDump(SceneDumpContext sceneDumpContext) {
-		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, Boolean.class);
+	public JSONObject sceneDump(SceneDumpContext sceneDumpContext) {
+		return HttpClientUtil.post(SCENE_DUMP_URL, sceneDumpContext, JSONObject.class);
 	}
 
 	@Override

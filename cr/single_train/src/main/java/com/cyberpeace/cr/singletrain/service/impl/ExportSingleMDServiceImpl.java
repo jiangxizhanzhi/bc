@@ -1,10 +1,8 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -23,17 +21,13 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +44,6 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
-
-	@Autowired
-	private RemoteSceneService remoteSceneService;
 
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
@@ -87,6 +78,12 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			File file = new File(path + File.separator + businessTemplate.getName());
 			FileUtil.mkdirs(file.getPath());
 
+			//场景信息导出
+			log.info(businessTemplate.getName() + DOUBLE_BLANK + "开始导出场景信息");
+			dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
+					file.getPath() + File.separator + ENV + File.separator + IMAGES);
+			log.info((businessTemplate.getName() + DOUBLE_BLANK + "场景信息导出结束"));
+
 			SingleTemplate singleTemplate = singleTemplateMap.get(businessTemplate.getResourceId());
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(singleTemplate.getSubType());
@@ -97,7 +94,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 				String imgUrl = businessTemplate.getLogo();
 				trainMD.setLogo(MD_LOGO);
 				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-
+				log.info(businessTemplate.getName() + "logo.png导出结束");
 			}
 			//导出README.md
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(singleTemplate.getPreSkills(), String.class));
@@ -108,6 +105,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			roleBos.add(new RoleBo("学员组", roleName));
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
+			log.info(businessTemplate.getName() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
 			//导出task
 			File taskFile = new File(file.getPath() + File.separator + TASK);
 			if (!taskFile.exists()) {
@@ -123,10 +121,10 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			List<RoleBo> roleBoList = new ArrayList<>();
 
 			for (CrRoleConfigSchemeStage crRoleConfigSchemeStage : rspMissionsScheme.getSchemeData()) {
-				//单个任务导出
 				RoleBo roleBo = new RoleBo();
 				List<String> taskList = new ArrayList<>();
 				for (CrRoleConfigMission crRoleConfigMission : crRoleConfigSchemeStage.getMissions()) {
+					//单个任务导出
 					MissionTemplate missionTemplate = mapping.get(crRoleConfigMission.getResourceId());
 					taskList.add(missionTemplate.getTitle());
 
@@ -178,6 +176,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 							mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 							break;
 					}
+					log.info(missionTemplate.getTitle() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
 					//导出writeUp
 					String writeUp = missionTemplate.getWriteUp();
 					//导出img
@@ -192,28 +191,8 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 						writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
 					}
 
-					FileWriter fw = null;
-					BufferedWriter bw = null;
-					File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_File);
-					try{
-						fw = new FileWriter(writeUpFile);
-						bw = new BufferedWriter(fw);
-						bw.write(writeUp);
-						bw.flush();
-					}catch (Exception e) {
-						log.error("Markdown content write failed！file_path=[{}], catch error:", file.getAbsolutePath(), e);
-						throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
-					} finally {
-						try {
-							if (null != fw) {
-								fw.close();
-							}
-							if (null != bw) {
-								bw.close();
-							}
-						} catch (IOException e) {
-						}
-					}
+					File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_FILE);
+					super.writeStringWriteUp(writeUp, writeUpFile, missionTemplate.getTitle());
 				}
 				roleBo.setTeamName(crRoleConfigSchemeStage.getStage());
 				roleBo.setRoleName(taskList);
@@ -221,16 +200,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			}
 			singleRoleMD.setTask(roleBoList);
 			mdParser.write(singleRoleMD, new File(taskFile.getPath() + File.separator + "学员.md"));
-			//场景信息导出
-			SceneDumpContext sceneDumpContext = new SceneDumpContext();
-			sceneDumpContext.setId(businessTemplate.getTopoId());
-			File envFile = new File(file.getPath() + File.separator + ENV);
-			FileUtil.mkdirs(envFile.getPath());
-			sceneDumpContext.setEnv_path(envFile.getPath());
-			File imagesFile = new File(envFile.getPath() + File.separator + IMAGES);
-			FileUtil.mkdirs(imagesFile.getPath());
-			sceneDumpContext.setImage_path(imagesFile.getPath());
-			remoteSceneService.sceneDump(sceneDumpContext);
+			log.info(businessTemplate.getName() + DOUBLE_BLANK + "学员.md导出结束");
 
 			log.info("单兵训练【" + businessTemplate.getName() + "】导出结束");
 		}

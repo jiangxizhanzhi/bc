@@ -84,6 +84,8 @@ public class ExportTrainMDController {
 			log.error("export error:", e);
 		}
 
+		log.info("本次导出结束");
+
 		return new BaseRsp<>(path);
 	}
 }

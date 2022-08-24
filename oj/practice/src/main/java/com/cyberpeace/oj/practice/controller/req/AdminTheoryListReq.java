@@ -18,12 +18,19 @@ public class AdminTheoryListReq extends PageReqBase {
 	@ApiModelProperty("难度 0=初级 1=中级 2=高级")
 	private Integer difficulty;
 
+	@ApiModelProperty(name = "theory_type", value = "题目类型:0-单选, 1-多选, 2-判断, 3-填空, 4-简答", allowableValues = "0, 1, 2, 3, 4")
+	private Integer theoryType;
+
 	public void setPractice_set_id(String practiceSetId) {
 		this.practiceSetId = practiceSetId;
 	}
 
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;
+	}
+
+	public void setTheory_type(Integer theoryType){
+		this.theoryType = theoryType;
 	}
 
 }

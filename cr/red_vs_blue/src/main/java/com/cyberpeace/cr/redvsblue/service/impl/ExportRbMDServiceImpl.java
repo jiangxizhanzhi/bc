@@ -24,7 +24,6 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				roleName.add(role.getString("name"));
 				roleList.add(role);
 			}
-			roleBos.add(new RoleBo("红方", roleName));
+			roleBos.add(new RoleBo("蓝方", roleName));
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
 

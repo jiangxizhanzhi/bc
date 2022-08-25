@@ -37,7 +37,14 @@ public class CourseMd {
 	public void setLogo(String logo) {
 		if(null != logo){
 			String[] split = logo.split("/");
-			logo = split[split.length-1];
+			if(split.length > 0){
+				logo = split[split.length-1];
+				String[] split1 = logo.split("\\.");
+				if (split1.length > 0){
+					logo = "logo." + split1[split1.length - 1];
+				}
+			}
+
 		}
 		this.logo = "![](" + logo + ")";
 	}

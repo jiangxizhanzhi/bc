@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -213,6 +214,9 @@ public class ExternalOperationController {
 		allowAccess(key);
 		UserInfo userInfo = validateUser(req.getUserId());
 		Page page = req.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
 
 		// 条件组装
 		OperationListQuery listQuery = BeanUtils.copy(req, OperationListQuery.class);

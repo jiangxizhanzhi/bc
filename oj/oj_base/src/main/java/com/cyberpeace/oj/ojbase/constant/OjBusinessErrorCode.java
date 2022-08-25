@@ -218,4 +218,10 @@ public interface OjBusinessErrorCode {
 
 	/** 部分附件缺失*/
 	String ATTACHMENT_MISSION = "102071";
+
+	/** 该课程包含课时没有所属章节*/
+	String LESSON_WITHOUT_CHAPTER = "102072";
+
+	/** 课程导出失败*/
+	String COURSE_EXPORT_FAILED = "102073";
 }

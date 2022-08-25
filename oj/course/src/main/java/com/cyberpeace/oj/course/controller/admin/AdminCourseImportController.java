@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -13,6 +14,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.controller.req.DuplicateCourseInspectReq;
 import com.cyberpeace.oj.course.controller.req.RMCombinedCourseImportReq;
+import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.bo.MdCtf;
@@ -43,6 +45,9 @@ public class AdminCourseImportController {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private CourseDumpService courseDumpService;
+
     @ApiOperation("资管课程数据导入")
     @PostMapping("/rm/import")
     public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
@@ -62,6 +67,17 @@ public class AdminCourseImportController {
                 courseImportReq.getEnvReqs(), authContext);
 
         return new BaseRsp<>(result);
+    }
+
+    @ApiOperation("课程导出")
+    @GetMapping("/rm/course/export")
+    public BaseRsp<String> export(
+            @RequestParam(value = "resource_id", required = true) String resourceId,
+            @RequestParam(value = "is_dump_topo", required = false, defaultValue = "0") Integer isDumpTopo) throws IOException {
+        boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
+        String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal);
+
+        return new BaseRsp<>(filePath);
     }
 
     @ApiOperation("资管组合课程数据导入")

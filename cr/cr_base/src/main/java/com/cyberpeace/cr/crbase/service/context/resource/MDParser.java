@@ -561,7 +561,9 @@ public class MDParser {
 		// score
 		template.setScore(new Integer(missionData.get(ZiguanConstants.SCORE)));
 		// skill points
-		template.setSkillPoints(genSkillPoints());
+		String skillPointsText = missionData.get(ZiguanConstants.SKILL_POINTS);
+		template.setSkillPoints(
+				StringUtils.isBlank(skillPointsText) ? genSkillPoints() : skillPointsText);
 		// type
 		template.setType(
 				ZiguanConstants.MISSION_TYPE_MAPPING.get(missionData.get(ZiguanConstants.TYPE)));

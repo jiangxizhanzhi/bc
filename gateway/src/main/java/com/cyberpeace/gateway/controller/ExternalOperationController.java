@@ -2,6 +2,7 @@ package com.cyberpeace.gateway.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.CommonConstant;
@@ -174,9 +175,13 @@ public class ExternalOperationController {
 						.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
 				if (!CollectionUtils.isEmpty(fileIds)) {
 					List<Attachment> attachments = attachmentMapper.selectBatchIds(fileIds, false);
-					List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachments,
-							file -> {
+					Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+							Attachment::getResourceId, attachment -> attachment);
+
+					List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(fileIds,
+							fileId -> {
 								PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+								Attachment file = attachmentMap.get(fileId);
 								fileBo.setFileUrl(utilService.handlerFileUrl(file.getFilePath()));
 								fileBo.setFileName(file.getFileName());
 								return fileBo;

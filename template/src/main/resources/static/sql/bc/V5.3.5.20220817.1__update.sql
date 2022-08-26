@@ -1300,4 +1300,5 @@ ALTER TABLE `system_use_status`
     COMMENT = '系统使用状态表';
 
 
-
+UPDATE cr_constants_config t SET t.en_name = 'Q & A' WHERE t.code = 4 and t.type = 21;
+UPDATE cr_constants_config t SET t.en_name = 'Completion' WHERE t.code = 3 and t.type = 21;

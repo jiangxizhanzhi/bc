@@ -6,8 +6,10 @@ import lombok.Data;
 @Data
 public class WebAttackType {
 
+	@ApiModelProperty("动效编码")
 	private String code;
 
+	@ApiModelProperty("动效名称")
 	private String msg;
 
 	@ApiModelProperty("目标节点支持类型：compound: 同时支持节点和区域、element: 只支持节点、area: 只支持区域")

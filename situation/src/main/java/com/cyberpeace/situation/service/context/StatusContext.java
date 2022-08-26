@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.cyberpeace.situation.constant.ElementStatus;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -12,6 +13,7 @@ public class StatusContext implements Serializable {
 	/**
 	 * 状态
 	 */
+	@ApiModelProperty("状态")
 	private String status;
 
 	public void setStatus(Integer status) {

@@ -5,21 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.practice.service.PracticeSetService;
-import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -28,15 +13,26 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.gateway.controller.req.ExternalBatchReq;
 import com.cyberpeace.gateway.controller.req.OperationPageReq;
 import com.cyberpeace.gateway.service.bo.ExternalOperationBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeCategoryBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -44,10 +40,13 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
+import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "外部接口-实操习题相关api")
 @Slf4j

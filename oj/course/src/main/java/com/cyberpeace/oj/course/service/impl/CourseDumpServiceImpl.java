@@ -118,15 +118,11 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		}
 
 		List<CourseLesson> currentLessons = lessonCol.get(resourceId);
-		List<String> lessonIds = StreamApiUtils.getColumn(currentLessons, CourseLesson::getResourceId);
-		List<String> configLessonIds = StreamApiUtils.getColumn(currentLessonConfigs, LessonConfig::getLessonId);
-		if(lessonIds != configLessonIds){
-			throw new BusinessException(OjBusinessErrorCode.LESSON_WITHOUT_CHAPTER, "");
-		}
 
 		List<LessonConfig> lessonWithNoChapter = currentLessonConfigs.stream().
 					filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode()) && s.getParentId().equals(courseConfigId.get(0))).collect(Collectors.toList());
-		if(lessonWithNoChapter.size() > 0){
+		List<LessonConfig> chapterOnes = StreamApiUtils.filter(currentLessonConfigs, s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode()));
+		if(chapterOnes.size() > 0 && lessonWithNoChapter.size() > 0){
 			List<String> lessonids = StreamApiUtils.getColumn(lessonWithNoChapter, LessonConfig::getLessonId);
 			List<CourseLesson> lessons = courseLessonMapper.selectBatchIds(lessonids);
 			List<String> lessonNames = StreamApiUtils.getColumn(lessons, CourseLesson::getName);

@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.practice.service.PracticeSetService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
@@ -36,6 +36,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -153,9 +154,14 @@ public class ExternalTheoryController {
 			return new BaseRsp<>(PageUtil.getNullResult());
 		}
 
-		IPage<PracticeTheory> result = practiceTheoryMapper.getList(queryParams.toPageParam(),
-				queryParams.getPattern(), setIds, queryParams.getCategory(),
-				queryParams.getQuestionType(), queryParams.getDifficulty());
+		Page page = queryParams.toPageParam();
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+		}
+
+		IPage<PracticeTheory> result = practiceTheoryMapper.getList(page, queryParams.getPattern(),
+				setIds, queryParams.getCategory(), queryParams.getQuestionType(),
+				queryParams.getDifficulty());
 		return new BaseRsp<>(PageUtil.getListResult(result));
 	}
 

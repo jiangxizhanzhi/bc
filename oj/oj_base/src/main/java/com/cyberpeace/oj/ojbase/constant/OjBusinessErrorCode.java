@@ -224,4 +224,7 @@ public interface OjBusinessErrorCode {
 
 	/** 课程导出失败*/
 	String COURSE_EXPORT_FAILED = "102073";
+
+	/** xxx习题集无LOGO*/
+	String PRACTICE_SET_NO_LOGO = "102074";
 }

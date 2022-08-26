@@ -491,6 +491,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			String setPath;
 			try {
 				setPath = doExportSet(destPath, practiceSet);
+			} catch (BusinessException e) {
+				throw e;
 			} catch (Exception e) {
 				EXPORT_LOG.error("Practice set export failed! set_name=[{}], catch error:",
 						practiceSet.getName(), e);
@@ -510,6 +512,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 	
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
+
+		if (StringUtils.isBlank(practiceSet.getLogo())) {
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO, practiceSet.getName());
+		}
 
 		String path = createPath(destPath, practiceSet.getName());
 		EXPORT_LOG.info("Practice set path create finish! set_path=[{}]", path);

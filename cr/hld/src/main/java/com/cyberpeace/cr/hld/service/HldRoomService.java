@@ -32,4 +32,5 @@ public interface HldRoomService extends IService<HldRoom> {
 
 	HldRoom getHldRoom(String roomId);
 
+	HldTaskContext getHldTaskContext(String taskId);
 }

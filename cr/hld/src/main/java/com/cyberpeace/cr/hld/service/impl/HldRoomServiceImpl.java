@@ -355,30 +355,30 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		// 当用户角色中不包含管理员且角色数大于2时，
 		CrRole adminRole = crRoleMapper.getCrRoleByRoomIdAndRoleName(roomId,
 				HldRoleName.ADMIN.getCrName());
-		//当用户角色中包含管理员且角色数=2时，
+		// 当用户角色中包含管理员且角色数=2时，
 		if (adminRole != null && crRoles.remove(adminRole) && crRoles.size() == 1) {
 
 			return crRoles.get(0);
 		}
-		//当用户角色中包含管理员且角色数大于2时，如果有学员，就报错
+		// 当用户角色中包含管理员且角色数大于2时，如果有学员，就报错
 		else if (adminRole != null && crRoles.remove(adminRole) && crRoles.size() > 1) {
 
 			for (CrRole crRole : crRoles) {
-				if(crRole.isHldStudent()){
-					log.error("task role conflict! crRoles=[{}], roomId=[{}], userId=[{}]", crRoles.toString(), roomId,userId
-					);
+				if (crRole.isHldStudent()) {
+					log.error("task role conflict! crRoles=[{}], roomId=[{}], userId=[{}]",
+							crRoles.toString(), roomId, userId);
 					throw new BusinessException(CrBusinessErrorCode.TASK_ROLE_CONFLICT);
 				}
 			}
 			return crRoles.get(0);
 		} else {
-		//当用户角色中包含白方时，如果有学员，就报错
+			// 当用户角色中包含白方时，如果有学员，就报错
 			for (CrRole crRole : crRoles) {
-				if(crRole.isHldWhite()){
+				if (crRole.isHldWhite()) {
 					for (CrRole crRole1 : crRoles) {
-						if(crRole1.isHldStudent()){
-							log.error("task role conflict! crRoles=[{}], roomId=[{}], userId=[{}]", crRoles.toString(), roomId,userId
-							);
+						if (crRole1.isHldStudent()) {
+							log.error("task role conflict! crRoles=[{}], roomId=[{}], userId=[{}]",
+									crRoles.toString(), roomId, userId);
 							throw new BusinessException(CrBusinessErrorCode.TASK_ROLE_CONFLICT);
 						}
 					}
@@ -430,6 +430,19 @@ public class HldRoomServiceImpl extends ServiceImpl<HldRoomMapper, HldRoom> impl
 		}
 
 		return hldRoom;
+	}
+
+	@Override
+	public HldTaskContext getHldTaskContext(String taskId) {
+
+		JSONObject taskInfo = getTaskInfo(taskId);
+
+		HldTaskContext hldTaskContext = taskInfo.toJavaObject(HldTaskContext.class);
+		hldTaskContext.setTaskName(taskInfo.getJSONObject("baseInfo").getString("taskName"));
+		hldTaskContext.setAttackTaskSceneDes(
+				taskInfo.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
+
+		return hldTaskContext;
 	}
 
 }

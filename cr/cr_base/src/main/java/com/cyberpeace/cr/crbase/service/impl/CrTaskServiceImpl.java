@@ -56,16 +56,22 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
 			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
+
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
 	@Autowired
 	private MissionMapper missionMapper;
+
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
+
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 

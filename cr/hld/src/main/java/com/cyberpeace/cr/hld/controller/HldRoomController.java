@@ -184,7 +184,7 @@ public class HldRoomController {
             @ApiParam(name = "task_id", value = "HLD任务id") String task_id) {
 
         // 接口获取任务角色信息
-        HldTaskContext hldTaskContext = getHldTaskContext(task_id);
+        HldTaskContext hldTaskContext = hldRoomService.getHldTaskContext(task_id);
         List<TaskRoleConfig> taskRoleConfigs = hldRoomService.getTaskRoleConfig(hldTaskContext);
 
         if (room_id != null && !room_id.isEmpty()) {
@@ -219,17 +219,6 @@ public class HldRoomController {
 
     }
 
-    private HldTaskContext getHldTaskContext(String taskId) {
-
-        JSONObject taskInfo = hldRoomService.getTaskInfo(taskId);
-
-        HldTaskContext hldTaskContext = taskInfo.toJavaObject(HldTaskContext.class);
-        hldTaskContext.setTaskName(taskInfo.getJSONObject("baseInfo").getString("taskName"));
-        hldTaskContext.setAttackTaskSceneDes(
-                taskInfo.getJSONObject("baseInfo").getString("attackTaskSceneDes"));
-
-        return hldTaskContext;
-    }
 
     private HldRoomContext reqToHldRoomContext(HldRoomAddReq addReq) {
 
@@ -237,7 +226,7 @@ public class HldRoomController {
         HldRolesConfig hldRolesConfig = BeanUtils.copy(addReq, HldRolesConfig.class);
 
         // 提取基础信息
-        HldTaskContext hldTaskContext = getHldTaskContext(addReq.getTaskId());
+        HldTaskContext hldTaskContext = hldRoomService.getHldTaskContext(addReq.getTaskId());
         HldBaseInfo baseInfo = hldRoomService.getHldBaseInfo(hldTaskContext);
         baseInfo.setSceneConfigData(addReq.getSceneConfigData());
 

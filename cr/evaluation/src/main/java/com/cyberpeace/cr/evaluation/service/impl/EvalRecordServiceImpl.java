@@ -1030,9 +1030,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public List<EvalRoomIntPairRsp> recordStatusEnum() {
 
-        return Arrays.stream(EvalRecord.Status.values()).map(item -> {
+        return crConstantsService.getByType(CrConstantsConfig.ConstantsType.EVAL_STATUS.getCode()).stream().map(item -> {
             EvalRoomIntPairRsp result = new EvalRoomIntPairRsp();
-            result.setLabel(item.getDesc());
+            result.setLabel(item.selectI18nName());
             result.setId(item.getCode());
             return result;
         }).collect(Collectors.toList());

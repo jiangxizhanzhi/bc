@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +170,7 @@ public class ExternalTheoryController {
 	@GetMapping("/batch-get")
 	public BaseRsp<List<PracticeTheory>> batchGet(
 			@RequestHeader(WebConstant.OJ_HEADER_KEY) @NotBlank String key,
-			@RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
+			@ApiParam("资源编号数组") @RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
 		allowAccess(key);
 		if (resourceIds == null) {
 			return new BaseRsp<>(Lists.newArrayList());

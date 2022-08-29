@@ -3,6 +3,7 @@ package com.cyberpeace.gateway.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -103,7 +104,7 @@ public class ExternalOperationController {
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
 	public BaseRsp practiceSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			@RequestParam("userId") String userId) {
+			@ApiParam("用户id") @RequestParam("userId") String userId) {
 
 		allowAccess(key);
 		UserInfo userInfo = validateUser(userId);

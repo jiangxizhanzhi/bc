@@ -14,13 +14,17 @@ import lombok.Getter;
 @TableName("oj_practice_theory")
 public class PracticeTheory extends PracticeBase {
 
+	@ApiModelProperty("理论基础题型")
 	private Integer theoryType;
 
+	@ApiModelProperty("填空题填空内容")
 	private String blank;
 
+	@ApiModelProperty("选择题选项")
 	@TableField("`option`")
 	private String option;
 
+	@ApiModelProperty("简答题参考关键字")
 	private String keyword;
 
 	public enum TheoryType implements GenericEnum {

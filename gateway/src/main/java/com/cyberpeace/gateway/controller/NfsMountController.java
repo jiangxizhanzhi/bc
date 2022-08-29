@@ -1,6 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.common.util.FileUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 
 import java.io.File;
 
+@Api(tags = "外部接口-挂载相关api")
 @RestController
 @RequestMapping("/exec/nfs/mount")
 public class NfsMountController {
@@ -23,6 +25,7 @@ public class NfsMountController {
 
 	private String MKDIR = "mkdir -p %s";
 
+	@ApiOperation("挂载")
 	@PostMapping("/mount")
 	public BaseRsp<Boolean> nfsMount(@RequestBody NfsMountReq nfsMountReq) {
 
@@ -36,6 +39,7 @@ public class NfsMountController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@ApiOperation("卸载")
 	@PostMapping("/umount")
 	public BaseRsp<Boolean> nfsUmount(@RequestBody NfsUmountReq umountReq) {
 		ShellUtils.execShell(String.format(UMOUNT_SHELL, umountReq.getPath()));

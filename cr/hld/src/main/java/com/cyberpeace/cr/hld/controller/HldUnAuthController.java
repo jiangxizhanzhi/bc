@@ -83,12 +83,6 @@ public class HldUnAuthController {
 		// 执行创建
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
-		// // 远程写入映射关系
-		// if (!hldTaskService.updateTaskZt(addReq.getTaskId(),
-		// hldRoom.getResourceId())) {
-		// throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
-		// }
-
 		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
 	}
 

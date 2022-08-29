@@ -149,7 +149,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时信息新增")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp add(@Validated(Create.class) LessonAddReq lessonAddReq) {
+	public BaseRsp<CourseLesson> add(@Validated(Create.class) LessonAddReq lessonAddReq) {
 
 		// 数据转换
 		CourseLesson courseLesson = addReqToEntity(lessonAddReq);
@@ -174,7 +174,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
+	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
 		// 修改数据转换 进行视频和讲义地址是否修改判断
 		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
@@ -304,7 +304,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
+	public BaseRsp<Boolean> importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),
 				importLessonReq.getLessonIds());
 		return new BaseRsp(result);

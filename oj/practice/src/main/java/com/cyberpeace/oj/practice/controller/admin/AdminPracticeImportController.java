@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.controller.admin;
 import java.util.List;
 
 import com.cyberpeace.oj.practice.controller.req.DuplicatePracticeSetInspectReq;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -61,6 +63,11 @@ public class AdminPracticeImportController {
 
 	@ApiOperation("实操习题导出")
 	@GetMapping("/rm/ctf/export")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "set_id", value = "习题编号"),
+			@ApiImplicitParam(name = "practice_id", value = "习题编号"),
+			@ApiImplicitParam(name = "new_path", value = "是否生成新路径")
+	})
 	public BaseRsp<String> export(
 			@RequestParam(name = "set_id", required = false) String practiceSetId,
 			@RequestParam(name = "practice_id", required = false) String practiceId,
@@ -73,7 +80,8 @@ public class AdminPracticeImportController {
     
     @ApiOperation("习题集重复校验")
     @PostMapping("/inspect_duplication")
-    public BaseRsp duplicatePracticeSetInspect(@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {
+	public BaseRsp<List<String>> duplicatePracticeSetInspect(
+			@RequestBody @Validated DuplicatePracticeSetInspectReq practiceSetsReq) {
 
 		List<String> result = practiceSetService.duplicatePracticeSetInspect(practiceSetsReq.getFileNames());
 

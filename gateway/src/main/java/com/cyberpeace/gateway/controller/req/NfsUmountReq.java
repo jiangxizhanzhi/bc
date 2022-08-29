@@ -10,8 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class NfsUmountReq implements Serializable {
 
-	@ApiModelProperty("挂载路径")
 	@NotBlank
+	@ApiModelProperty(value = "卸载路径", required = true)
 	private String path;
 
 }

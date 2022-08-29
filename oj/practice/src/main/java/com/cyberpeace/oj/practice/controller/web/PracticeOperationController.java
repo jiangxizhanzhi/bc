@@ -150,7 +150,7 @@ public class PracticeOperationController {
 	@ApiOperation("场景删除")
 	@DeleteMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
@@ -195,7 +195,7 @@ public class PracticeOperationController {
 	@ApiOperation("场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
+	public BaseRsp<Boolean> sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);

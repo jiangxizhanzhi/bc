@@ -106,11 +106,11 @@ public class WebClassroomController {
 	@PatchMapping("/need_help")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)
-	public BaseRsp needHelp(@RequestBody @Validated RemoteHelpReq req) {
+	public BaseRsp<Boolean> needHelp(@RequestBody @Validated RemoteHelpReq req) {
 
 		classroomSignService.needHelp(req.getLessonId(), req.getNodeId());
 
-		return new BaseRsp();
+		return new BaseRsp(true);
 
 	}
 

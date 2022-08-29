@@ -1,20 +1,27 @@
 package com.cyberpeace.common.model.room;
 
+import java.io.Serializable;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class DashboardGroup {
+public class DashboardGroup implements Serializable {
 
+	@ApiModelProperty("分组名称")
 	private String groupname;
 
+	@ApiModelProperty("角色")
 	private String role;
 
+	@ApiModelProperty("分组编号")
 	private String id;
 
+	@ApiModelProperty("头像")
 	private String avatar;
 
+	@ApiModelProperty("组员编号")
 	private List<String> members;
 
 	public DashboardGroup(String role) {

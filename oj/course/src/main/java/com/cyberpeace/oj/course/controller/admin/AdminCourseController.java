@@ -270,7 +270,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp exportCourse(
+	public BaseRsp<Boolean> exportCourse(
 			@ApiParam(name = "ids",
 					value = "课程编号") @RequestParam("ids") @NotEmpty List<String> courseIds,
 			HttpServletResponse response) {
@@ -278,13 +278,13 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false);
 		String zipPath = courseService.dumpCourse(courseIds, authContext);
 		FileUtil.setResponse(new File(zipPath), true, response);
-		return new BaseRsp();
+		return new BaseRsp(Boolean.TRUE);
 	}
 
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp importCourse(@Validated LoadCourseReq loadCourseReq) {
+	public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq) {
 		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());
 
 		AttachmentBo attachmentBo = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),

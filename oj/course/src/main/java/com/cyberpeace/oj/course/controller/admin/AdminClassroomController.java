@@ -108,7 +108,7 @@ public class AdminClassroomController {
 	@ApiOperation("后台课程表创建")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp
+	public BaseRsp<Classroom>
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
 		// 基本数据设置
@@ -166,11 +166,11 @@ public class AdminClassroomController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
-	public BaseRsp toHelp(@RequestParam("resource_id") String classroomId,
+	public BaseRsp<Boolean> toHelp(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 
 		classroomSignService.toHelp(classroomId, userId);
-		return new BaseRsp();
+		return new BaseRsp(Boolean.TRUE);
 	}
 
 	@ApiOperation("结束远程协助")
@@ -179,11 +179,11 @@ public class AdminClassroomController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "resource_id", value = "课堂编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "user_id", value = "用户编号", dataTypeClass = String.class) })
-	public BaseRsp endHelp(@RequestParam("resource_id") String classroomId,
+	public BaseRsp<Boolean> endHelp(@RequestParam("resource_id") String classroomId,
 			@RequestParam("user_id") String userId) {
 
 		classroomSignService.endHelp(classroomId, userId);
-		return new BaseRsp();
+		return new BaseRsp(Boolean.TRUE);
 	}
 
 	@ApiOperation("获取远程协助地址")
@@ -303,7 +303,7 @@ public class AdminClassroomController {
 	@ApiOperation("训练计划导入")
 	@PostMapping("/train_plan/import")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp importTrainPlan(@RequestParam("file") MultipartFile excelFile,
+	public BaseRsp<Boolean> importTrainPlan(@RequestParam("file") MultipartFile excelFile,
 			@RequestParam("cover") Boolean cover) {
 
 		FileUtil.validateSuffix(excelFile, FileSunffixConstant.XLSX.getDesc(),
@@ -326,19 +326,20 @@ public class AdminClassroomController {
 			}
 		}
 
-		return new BaseRsp();
+		return new BaseRsp(Boolean.TRUE);
 	}
 
 	@ApiOperation("训练计划导出")
 	@GetMapping("/train_plan/export")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public void exportTrainPlan(HttpServletResponse response) {
+	public BaseRsp<Boolean> exportTrainPlan(HttpServletResponse response) {
 
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
 				+ CommonConstant.PERIOD + FileSunffixConstant.XLSX.getDesc();
 		classroomService.exportTrainPlan(UserInfoContext.getUserContext(), filePath);
 		FileUtil.setResponse(new File(filePath), true, response);
 
+		return new BaseRsp<>(Boolean.TRUE);
 	}
 
 }

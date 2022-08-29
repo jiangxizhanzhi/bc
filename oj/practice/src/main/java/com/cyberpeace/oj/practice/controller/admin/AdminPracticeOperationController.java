@@ -200,7 +200,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@ApiOperation("获取场景拓扑信息")
 	@GetMapping("/scene_topo")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
-	public BaseRsp sceneTopo(@ApiParam(name = "resource_id",
+	public BaseRsp<TopoSceneDataBo> sceneTopo(@ApiParam(name = "resource_id",
 			value = "习题编号") @RequestParam("resource_id") String operationId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -245,7 +245,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@ApiOperation("后台场景删除")
 	@DeleteMapping("/delete_scene")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
-	public BaseRsp deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated SceneOperationReq sceneOperationReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
@@ -288,7 +288,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	@ApiOperation("后台场景暂停与恢复")
 	@PatchMapping("/scene_update_status")
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
-	public BaseRsp sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
+	public BaseRsp<Boolean> sceneUpdateStatus(@RequestBody @Validated SceneStatusReq sceneStatusReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

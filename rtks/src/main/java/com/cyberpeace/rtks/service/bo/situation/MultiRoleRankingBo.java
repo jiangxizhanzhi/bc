@@ -20,6 +20,7 @@ public class MultiRoleRankingBo implements Serializable {
 	@ApiModelProperty("合格岗位数")
 	private Integer qualified;
 
+	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;
 
 	public MultiRoleRankingBo(String userId, String name) {

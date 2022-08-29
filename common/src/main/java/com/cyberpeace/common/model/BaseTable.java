@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class BaseTable implements Serializable {
 
-	@ApiModelProperty("数据库自增主键")
+	@ApiModelProperty("自增ID")
 	private Integer id;
 
 	@ApiModelProperty("创建时间")

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class FrameItemBase implements Serializable {
 
-	@ApiModelProperty("ID")
+	@ApiModelProperty("资源id")
 	private String resourceId;
 
 	@ApiModelProperty("名称")

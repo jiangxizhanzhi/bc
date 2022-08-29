@@ -29,6 +29,7 @@ public class RoleDetailRes implements Serializable {
 
 	public final static String RELATED_COURSE_ALL = "all";// 同时都传
 
+	@ApiModelProperty(value = "岗位id")
 	private String resourceId;
 
 	@ApiModelProperty(value = "岗位名称")
@@ -49,34 +50,49 @@ public class RoleDetailRes implements Serializable {
 	@ApiModelProperty(value = "岗位匹配度")
 	private String percent;
 
+	@ApiModelProperty(value = "岗位任务id列表")
 	private List<String> taskIds;
 
+	@ApiModelProperty(value = "岗位任务数量")
 	private Integer taskCount;
 
+	@ApiModelProperty(value = "岗位知识点id列表")
 	private List<String> knowledgeIds;
 
+	@ApiModelProperty(value = "岗位知识点数量")
 	private Integer knowledgeCount;
 
+	@ApiModelProperty(value = "岗位技能点id列表")
 	private List<String> skillIds;
 
+	@ApiModelProperty(value = "岗位技能点数量")
 	private Integer skillCount;
 
+	@ApiModelProperty(value = "岗位能力id列表")
 	private List<String> abilityIds;
 
+	@ApiModelProperty(value = "岗位能力数量")
 	private Integer abilityCount;
 
+	@ApiModelProperty("任务列表")
 	private List<Task> taskDataList;
 
+	@ApiModelProperty("能力列表")
 	private List<Ability> abilityDataList;
 
+	@ApiModelProperty("知识点列表")
 	private List<Knowledge> knowledgeDataList;
 
+	@ApiModelProperty("技能列表")
 	private List<Skill> skillDataList;
 
+	@ApiModelProperty("知识点列表")
 	private List<KnowledgeRes> knowledgeResDataList;
 
+	@ApiModelProperty("技能列表")
 	private List<SkillRes> skillResDataList;
 
+	@ApiModelProperty("框架子层级")
 	private LevelTreeOutput levelTreeOutput;
 
 	@ApiModelProperty("基础课程")

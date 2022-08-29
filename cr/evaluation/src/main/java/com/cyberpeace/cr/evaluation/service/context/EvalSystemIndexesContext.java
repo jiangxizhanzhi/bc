@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EvalSystemIndexesContext implements Serializable {
-    @ApiModelProperty("ID")
+    @ApiModelProperty("资源id")
     private String resourceId;
 
     @ApiModelProperty("名称")

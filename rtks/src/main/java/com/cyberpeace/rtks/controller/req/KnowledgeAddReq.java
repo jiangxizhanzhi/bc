@@ -22,18 +22,21 @@ import org.apache.commons.collections4.CollectionUtils;
 @ApiModel("")
 public class KnowledgeAddReq implements Serializable {
 
-	@ApiModelProperty()
+	@ApiModelProperty("知识点id")
 	private String resourceId;
 
 	@NotBlank
+	@ApiModelProperty("知识点名称")
 	private String content;
 
 	@NotBlank
+	@ApiModelProperty("知识点类别id")
 	private String categoryId;
 
+	@ApiModelProperty("知识点课程权重")
 	private Integer weight = 1;
 
-	@ApiModelProperty
+ 	@ApiModelProperty("知识点关联课程")
 	private List<RelatedCourse> courseList;
 
 	public void validate() {

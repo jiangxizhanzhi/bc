@@ -18,6 +18,7 @@ public class CourseLayoutInput {
 	 * 岗位id
 	 * */
 	@NotBlank
+	@ApiModelProperty("岗位id")
 	String resourceId;
 
 	@ApiModelProperty(allowableValues = "knowledge, skill")
@@ -25,5 +26,6 @@ public class CourseLayoutInput {
 	String field;
 
 	@NotNull
+	@ApiModelProperty("课程id列表")
 	List<String> courseIds;
 }

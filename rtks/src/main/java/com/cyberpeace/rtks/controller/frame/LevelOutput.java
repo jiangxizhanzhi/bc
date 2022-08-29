@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class LevelOutput {
 
+	@ApiModelProperty(value = "层级id")
 	private String resourceId;
 
 	@ApiModelProperty(value = "层级名称")

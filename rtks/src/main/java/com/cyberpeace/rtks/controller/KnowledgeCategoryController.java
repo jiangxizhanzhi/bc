@@ -100,7 +100,7 @@ public class KnowledgeCategoryController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
-			modifyKnowledge(@RequestBody @Validated AbilityAddReq knowledgeCategoryOrSystemAddReq) {
+			modifyKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryOrSystemAddReq) {
 		validate(knowledgeCategoryOrSystemAddReq.getContent(),
 				knowledgeCategoryOrSystemAddReq.getResourceId());
 		KnowledgeCategory knowledgeCategory = new KnowledgeCategory();

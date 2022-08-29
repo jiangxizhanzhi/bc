@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class DetailPageReq extends BTPageReq {
 
-	@ApiModelProperty("ID")
+	@ApiModelProperty("资源id")
 	@NotNull
 	private String resourceId;
 

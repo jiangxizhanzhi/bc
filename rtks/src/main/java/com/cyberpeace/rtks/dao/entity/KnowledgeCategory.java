@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -16,7 +17,9 @@ import lombok.Data;
 public class KnowledgeCategory extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("知识点类别id")
 	private String resourceId;
 
+	@ApiModelProperty("知识点类别名称")
 	private String content;
 }

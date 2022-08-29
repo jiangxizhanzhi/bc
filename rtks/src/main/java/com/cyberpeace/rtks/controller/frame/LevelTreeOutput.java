@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class LevelTreeOutput {
 
+	@ApiModelProperty(value = "框架/层级id")
 	private String resourceId;
 
 	@ApiModelProperty(value = "框架/层级名称")

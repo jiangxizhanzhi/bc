@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -12,7 +13,9 @@ import lombok.Data;
 public class Task extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("任务id")
 	private String resourceId;
 
+	@ApiModelProperty("名称")
 	private String content;
 }

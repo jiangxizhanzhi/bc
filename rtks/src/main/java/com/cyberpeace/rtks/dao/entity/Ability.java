@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -12,7 +13,9 @@ import lombok.Data;
 public class Ability extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("能力id")
 	private String resourceId;
 
+	@ApiModelProperty("能力名称")
 	private String content;
 }

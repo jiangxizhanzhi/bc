@@ -28,6 +28,7 @@ public class OrgRankingBo implements Serializable {
 	/**
 	 * 排序用，优秀人数>合格人数>优秀人员的匹配度合计
 	 */
+	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;
 
 	public OrgRankingBo(RtksMatch match) {

@@ -142,12 +142,15 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		List<String> titleList = new ArrayList<>();
 		for (CrRoleConfigSchemeStage crRoleConfigSchemeStage:schemeData){
 			for (CrRoleConfigMission crRoleConfigMission: crRoleConfigSchemeStage.getMissions()){
-				String taskName = missionTemplateMap.get(crRoleConfigMission.getResourceId()).getTitle();
-				if(titleList.contains(taskName)){
-					throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_DUPLICATED_TASK_TITLE,
-							trainName, taskName);
+				MissionTemplate missionTemplate = missionTemplateMap.get(crRoleConfigMission.getResourceId());
+				if(missionTemplate != null){
+					String taskName = missionTemplate.getTitle();
+					if(titleList.contains(taskName)){
+						throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_DUPLICATED_TASK_TITLE,
+								trainName, taskName);
+					}
+					titleList.add(taskName);
 				}
-				titleList.add(taskName);
 			}
 		}
 	}

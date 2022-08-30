@@ -1,12 +1,9 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -23,8 +20,6 @@ import com.cyberpeace.cr.crbase.service.impl.ExportTrainMDServiceImpl;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
-import com.cyberpeace.integratation.model.scene.SceneDumpContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -100,15 +94,14 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			}
 			roleBos.add(new RoleBo("蓝方", roleName));
 			List<CrRoleConfigSchemeStage> allSchemeStage = new ArrayList<>();
-			Map<String, MissionTemplate> allMissionTemplate = new HashMap<>();
+			List<String> schemeJsonList = new ArrayList<>();
 			for (int i = 0; i < roleList.size(); i++) {
 				JSONObject role = roleList.getJSONObject(i);
 				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
 				allSchemeStage.addAll(rspMissionsScheme.getSchemeData());
-				Map<String, MissionTemplate> mapping =
-						missionTemplateService.getMappingBySchemeJson(role.getString("missions_scheme"));
-				allMissionTemplate.putAll(mapping);
+				schemeJsonList.add(role.getString("missions_scheme"));
 			}
+			Map<String, MissionTemplate> allMissionTemplate = missionTemplateService.getMappingBySchemeJsonList(schemeJsonList);
 			validateTaskTile(allMissionTemplate, allSchemeStage, businessTemplate.getName());
 
 			//单个训练导出

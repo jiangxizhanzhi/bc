@@ -68,4 +68,11 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @return
 	 */
 	List<String> getIdsByBusinessTemplateId(String businessTemplateId);
+
+	/**
+	 * 从 roleConfig, missionScheme 中解析出 id，再获取任务模板字典
+	 * @param schemeJsonList
+	 * @return
+	 */
+	Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList);
 }

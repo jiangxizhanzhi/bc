@@ -21,8 +21,6 @@ import com.cyberpeace.cr.crbase.service.impl.ExportTrainMDServiceImpl;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
-import com.cyberpeace.integratation.model.scene.SceneDumpContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -79,15 +76,14 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 			TeamTemplate teamTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
 			JSONArray roleList = JSON.parseArray(teamTemplate.getRoleConfig());
 			List<CrRoleConfigSchemeStage> allSchemeStage = new ArrayList<>();
-			Map<String, MissionTemplate> allMissionTemplate = new HashMap<>();
+			List<String> schemeJsonList = new ArrayList<>();
 			for (int i = 0; i < roleList.size(); i++) {
 				JSONObject role = roleList.getJSONObject(i);
 				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
 				allSchemeStage.addAll(rspMissionsScheme.getSchemeData());
-				Map<String, MissionTemplate> mapping =
-						missionTemplateService.getMappingBySchemeJson(role.getString("missions_scheme"));
-				allMissionTemplate.putAll(mapping);
+				schemeJsonList.add(role.getString("missions_scheme"));
 			}
+			Map<String, MissionTemplate> allMissionTemplate = missionTemplateService.getMappingBySchemeJsonList(schemeJsonList);
 			validateTaskTile(allMissionTemplate, allSchemeStage, businessTemplate.getName());
 
 			//单个训练导出

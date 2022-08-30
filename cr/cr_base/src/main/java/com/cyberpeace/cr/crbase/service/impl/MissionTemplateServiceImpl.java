@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -121,5 +122,14 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	@Override
 	public List<String> getIdsByBusinessTemplateId(String businessTemplateId) {
 		return missionTemplateMapper.selectByBusinessTemplateId(businessTemplateId);
+	}
+
+	@Override
+	public Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList) {
+		List<String> templateIds = new ArrayList<>();
+		for (String schemeJson: schemeJsonList){
+			templateIds.addAll(getIdsByMissionsSchemeJson(schemeJson));
+		}
+		return getMappingByIds(templateIds);
 	}
 }

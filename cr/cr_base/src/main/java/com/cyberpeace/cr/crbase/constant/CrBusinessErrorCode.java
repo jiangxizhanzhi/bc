@@ -403,4 +403,7 @@ public interface CrBusinessErrorCode {
 	/** 动态修改任务不可与角色既有任务重名 */
 	String DUPLICATE_DYNAMIC_MISSION_TITLE = "101121";
 
+	/** 请指定一个学员 */
+	String PLZ_SPECIFY_ONE_STUDENT = "101122";
+
 }

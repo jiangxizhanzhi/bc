@@ -1,15 +1,12 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import io.swagger.annotations.ApiModel;
+import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
 @Data
-@ApiModel("进度数据")
 public class AdminLessonStatisticsDetailRes implements Serializable {
 
     @ApiModelProperty("课程资源编号")

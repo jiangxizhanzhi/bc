@@ -134,10 +134,12 @@ public class PersonController {
 
 	@ApiOperation("当前用户30天内课程、实验报告数量")
 	@GetMapping("/study_period_records")
-	@RequiresPermissions(value = {MenuConstant.WEB_PERSON_CENTER, MenuConstant.CMS_COURSE_STATISTICS},
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_PERSON_CENTER, MenuConstant.CMS_COURSE_STATISTICS },
 			logical = Logical.OR)
-	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(@RequestParam(value = "user_id", required = false) String userId,
-															   @RequestParam(value = "isWeb", required = false) Boolean isWeb) {
+	public BaseRsp<BrokenLine> courseAndPracticeRecordsByMonth(
+			@RequestParam(value = "user_id", required = false) String userId,
+			@RequestParam(value = "isWeb", required = false) Boolean isWeb) {
 		Date endTime = new Date();
 		Date startTime = DateUtils.addDays(endTime, -CommonConstant.THIRTY);
 		if (StringUtils.isEmpty(userId)){

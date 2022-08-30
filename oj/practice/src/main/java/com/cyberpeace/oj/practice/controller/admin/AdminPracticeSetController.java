@@ -107,7 +107,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("习题集更新")
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
-	public BaseRsp update(@RequestBody @Validated(Update.class) PracticeSetUpdateReq updateReq) {
+	public BaseRsp<Boolean> update(@RequestBody @Validated(Update.class) PracticeSetUpdateReq updateReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
@@ -205,7 +205,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("习题集资源数据导出")
 	@GetMapping("/batch_dumps")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
-	public BaseRsp exportPracticeSet(
+	public BaseRsp<Boolean> exportPracticeSet(
 			@ApiParam(name = "ids",
 					value = "习题集编号") @RequestParam("ids") @NotEmpty List<String> ids,
 			HttpServletResponse response) {
@@ -215,13 +215,13 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		File dumpFile = practiceSetService.dumpPracticeSet(ids, authContext);
 		FileUtil.setResponse(dumpFile, true, response);
 
-		return new BaseRsp();
+		return new BaseRsp(Boolean.TRUE);
 	}
 
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
-	public BaseRsp importPracticeSet(@Validated LoadResourceReq loadReq) {
+	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
 
 		FileUtil.validateFileSuffix(loadReq.getFile().getOriginalFilename(),
 				FileTypeContant.RESOURCE_DATA_IMPORT_TYPE);

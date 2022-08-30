@@ -1,19 +1,24 @@
 package com.cyberpeace.common.model.room;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.constant.BaseI18n;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
-public class DashboardFriend {
+public class DashboardFriend implements Serializable {
 
+	@ApiModelProperty("分组名称")
 	private String groupname;
 
+	@ApiModelProperty("编号")
 	private Integer id;
 
+	@ApiModelProperty("好友列表")
 	private List<DashboardUser> list;
 
 	public enum GROUP_NAME implements GenericEnum, BaseI18n {

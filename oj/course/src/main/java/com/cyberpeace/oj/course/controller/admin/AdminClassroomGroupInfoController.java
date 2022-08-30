@@ -72,7 +72,7 @@ public class AdminClassroomGroupInfoController {
 	@ApiOperation("删除课堂分组模板")
 	@DeleteMapping("/delete")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
-	public BaseRsp deleteGroupInfo(@RequestBody @Validated ClassroomArchiveReq deleteReq) {
+	public BaseRsp<Integer> deleteGroupInfo(@RequestBody @Validated ClassroomArchiveReq deleteReq) {
 
 		int result = classroomGroupInfoService.deleteClassroomArchive(deleteReq.getClassroomId(),
 				deleteReq.getGroupArchiveId());

@@ -3,6 +3,7 @@ package com.cyberpeace.gateway.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.ListRsp;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,8 +104,9 @@ public class ExternalOperationController {
 
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
-	public BaseRsp practiceSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			@ApiParam("用户id") @RequestParam("userId") String userId) {
+	public BaseRsp<List<ExternalPracticeSetBo>> practiceSetList(
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
+				@ApiParam("用户id") @RequestParam("userId") String userId) {
 
 		allowAccess(key);
 		UserInfo userInfo = validateUser(userId);
@@ -141,8 +143,8 @@ public class ExternalOperationController {
 
 	@ApiOperation("实操习题批量查询")
 	@GetMapping("/batch-get")
-	public BaseRsp batchGet(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			ExternalBatchReq batchReq) {
+	public BaseRsp<List<ExternalOperationBo>> batchGet(
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) String key, ExternalBatchReq batchReq) {
 
 		allowAccess(key);
 		List<PracticeOperation> operationList = practiceOperationMapper
@@ -196,8 +198,8 @@ public class ExternalOperationController {
 
 	@ApiOperation("实操习题分页查询")
 	@GetMapping("/list")
-	public BaseRsp pageList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			OperationPageReq req) {
+	public BaseRsp<ListRsp<ExternalOperationBo>>
+			pageList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key, OperationPageReq req) {
 
 		allowAccess(key);
 		UserInfo userInfo = validateUser(req.getUserId());

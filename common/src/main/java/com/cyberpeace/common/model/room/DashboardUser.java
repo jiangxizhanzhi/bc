@@ -1,19 +1,28 @@
 package com.cyberpeace.common.model.room;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@Data
-public class DashboardUser {
+import java.io.Serializable;
 
+@Data
+public class DashboardUser implements Serializable {
+
+	@ApiModelProperty("用户名")
 	private String username;
 
+	@ApiModelProperty("角色")
 	private String role;
 
+	@ApiModelProperty("编号")
 	private String id;
 
+	@ApiModelProperty("头像地址")
 	private String avatar;
 
+	@ApiModelProperty("登陆")
 	private String sign;
 
+	@ApiModelProperty("状态")
 	private String status;
 }

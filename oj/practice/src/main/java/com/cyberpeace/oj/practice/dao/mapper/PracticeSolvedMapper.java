@@ -19,4 +19,14 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 			@Param("isCollect") Boolean isCollect);
 
 	int updateSolved(@Param("solved") PracticeSolved practiceSolved);
+
+	/**
+	 * 删除对应习题的提交记录
+	 * @param userId
+	 * @param practiceType
+	 * @param practiceIds
+	 */
+	Integer deleteUserSubmit(@Param("userId") String userId,
+			@Param("practiceType") Integer practiceType,
+			@Param("practiceIds") List<String> practiceIds);
 }

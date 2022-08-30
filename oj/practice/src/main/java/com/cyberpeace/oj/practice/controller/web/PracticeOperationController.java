@@ -9,6 +9,7 @@ import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -21,6 +22,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
@@ -114,6 +116,23 @@ public class PracticeOperationController {
 		practiceOperationService.createMpLog(answerReq.getResourceId(), logContent);
 
 		return new BaseRsp<>(evaluateResult);
+	}
+
+	@ApiOperation("清除指定实操习题提交记录")
+	@DeleteMapping("/submit")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<Integer> clearSubmit(@RequestBody @Validated ResourceDelReq delReq) {
+		Integer result = practiceOperationService.clearSubmit(UserInfoContext.getUserContext(),
+				delReq.getResourceIds());
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("清除所有实操习题提交记录")
+	@DeleteMapping("/submit/all")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<Integer> clearAllSubmit() {
+		Integer result = practiceOperationService.clearAllSubmit(UserInfoContext.getUserContext());
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("获取所有实操习题编号")

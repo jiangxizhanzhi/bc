@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -109,4 +110,18 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param logContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
+
+	/**
+	 * 清除指定实操习题提交记录
+	 * @param userContext
+	 * @param practiceIds
+	 * @return
+	 */
+    Integer clearSubmit(UserInfo userContext, List<String> practiceIds);
+
+	/**
+	 * 清除全部理论习题提交记录
+	 * @return
+	 */
+	Integer clearAllSubmit(UserInfo userInfo);
 }

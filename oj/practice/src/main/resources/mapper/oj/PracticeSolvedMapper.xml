@@ -51,4 +51,22 @@
         and practice_type = #{solved.practiceType}
         and practice_id = #{solved.practiceId}
     </update>
+
+    <delete id="deleteUserSubmit">
+        delete from oj_practice_solved
+        <where>
+            <if test="userId != null and userId != ''">
+                submit_user_id = #{userId}
+            </if>
+            <if test="practiceType != null">
+                and practice_type = #{practiceType}
+            </if>
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                and practice_id in
+                <foreach collection="practiceIds" open="(" close=")" item="practiceId" separator=",">
+                    #{practiceId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
 </mapper>

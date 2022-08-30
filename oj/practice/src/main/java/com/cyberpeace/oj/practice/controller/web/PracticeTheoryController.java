@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.oj.practice.controller.req.ResourceDelReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -101,6 +102,23 @@ public class PracticeTheoryController {
 		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
 		return new BaseRsp<>(evaluateResult);
+	}
+	
+	@ApiOperation("清除指定理论习题提交记录")
+	@DeleteMapping("/submit")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Integer> clearSubmit(@RequestBody @Validated ResourceDelReq delReq) {
+		Integer result = practiceTheoryService.clearSubmit(UserInfoContext.getUserContext(),
+				delReq.getResourceIds());
+		return new BaseRsp<>(result);
+	}
+	
+	@ApiOperation("清除所有理论习题提交记录")
+	@DeleteMapping("/submit/all")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<Integer> clearAllSubmit() {
+		Integer result = practiceTheoryService.clearAllSubmit(UserInfoContext.getUserContext());
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("获取所有理论习题编号列表")

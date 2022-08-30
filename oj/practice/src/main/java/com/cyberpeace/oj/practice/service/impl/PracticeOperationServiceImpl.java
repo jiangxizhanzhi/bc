@@ -1276,6 +1276,23 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
+	public Integer clearSubmit(UserInfo userInfo, List<String> practiceIds) {
+		
+		if (CollectionUtils.isEmpty(practiceIds)) {
+			return CommonConstant.ZERO;
+		}
+		Integer practiceType = PracticeSet.PracticeType.OPERATION.getCode();
+
+		return practiceSolvedMapper.deleteUserSubmit(userInfo.getUserId(), practiceType, practiceIds);
+	}
+
+	@Override
+	public Integer clearAllSubmit(UserInfo userContext) {
+		Integer practiceType = PracticeSet.PracticeType.OPERATION.getCode();
+		return practiceSolvedMapper.deleteUserSubmit(userContext.getUserId(), practiceType, null);
+	}
+
+	@Override
 	public void createMpLog(String practiceId, LogContent logContent) {
 		PracticeOperation operation = practiceOperationMapper.selectById(practiceId);
 		String content = LogContent.PRACTICE_FORMAT.format(operation.getContent(), logContent);

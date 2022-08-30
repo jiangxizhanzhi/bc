@@ -703,4 +703,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
 	}
 
+	@Override
+	public Integer clearSubmit(UserInfo userContext, List<String> practiceIds) {
+		Integer practiceType = PracticeSet.PracticeType.THEORY.getCode();
+		return practiceSolvedMapper.deleteUserSubmit(userContext.getUserId(), practiceType,
+				practiceIds);
+	}
+
+	@Override
+	public Integer clearAllSubmit(UserInfo userInfo) {
+		Integer type = PracticeSet.PracticeType.THEORY.getCode();
+		return practiceSolvedMapper.deleteUserSubmit(userInfo.getUserId(), type, null);
+	}
 }

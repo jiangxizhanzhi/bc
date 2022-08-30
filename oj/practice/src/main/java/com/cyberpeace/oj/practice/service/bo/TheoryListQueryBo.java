@@ -18,4 +18,6 @@ public class TheoryListQueryBo implements Serializable {
 
     private Integer difficulty;
 
+    private Integer theoryType;
+
 }

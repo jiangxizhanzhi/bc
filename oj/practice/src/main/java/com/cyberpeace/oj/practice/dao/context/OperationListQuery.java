@@ -18,4 +18,6 @@ public class OperationListQuery implements Serializable {
 
 	private String pattern;
 
+	private Integer dynamicFlag;
+
 }

@@ -31,6 +31,9 @@
                         #{categoryId}
                     </foreach>
                 </if>
+                <if test="listQuery.dynamicFlag != null">
+                    and dynamic_flag = #{listQuery.dynamicFlag}
+                </if>
                 <if test="listQuery.pattern != null and listQuery.pattern != ''">
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}

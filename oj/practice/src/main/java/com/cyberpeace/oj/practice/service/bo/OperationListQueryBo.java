@@ -20,4 +20,6 @@ public class OperationListQueryBo implements Serializable {
 
     private Boolean solved;
 
+    private Integer dynamicFlag;
+
 }

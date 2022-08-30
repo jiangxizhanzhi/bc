@@ -16,11 +16,18 @@ public class AdminOperationListReq extends PageReqBase {
     @ApiModelProperty(name = "category_id", value = "方向")
     private String categoryId;
 
+    @ApiModelProperty(name = "dynamic_flag", value = "flag类型", allowableValues = "0, 1, 2")
+    private Integer dynamicFlag;
+
     public void setPractice_set_id(String practiceSetId) {
         this.practiceSetId = practiceSetId;
     }
 
     public void setCategory_id(String categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public void setDynamic_flag(Integer dynamicFlag){
+        this.dynamicFlag = dynamicFlag;
     }
 }

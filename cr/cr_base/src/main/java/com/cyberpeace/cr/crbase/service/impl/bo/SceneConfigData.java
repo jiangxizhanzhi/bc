@@ -12,10 +12,11 @@ import lombok.Data;
 @Data
 public class SceneConfigData implements Serializable {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "拓扑配置", required = true)
 	@NotNull
 	private JSONObject sceneConfig;
 
+	@ApiModelProperty(value = "拓扑LOGO")
 	private String logo;
 
 }

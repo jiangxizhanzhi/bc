@@ -1,5 +1,13 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -19,15 +27,9 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "单兵训练模板")
 @RestController
@@ -63,7 +65,7 @@ public class SingleTemplateController {
 	@PostMapping
 	@ApiOperation("单兵训练模板创建")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
-	public BaseRsp<SingleTemplateBo> create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
+	public BaseRsp create(@RequestBody SingleTrainTemplateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
 				SingleTrainTemplateReq.class);
@@ -99,7 +101,7 @@ public class SingleTemplateController {
 	@PatchMapping
 	@ApiOperation("单兵训练模板更新")
 	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
-	public BaseRsp<SingleTemplateBo>
+	public BaseRsp
 			update(@RequestBody SingleTrainTemplateUpdateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SingleTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,

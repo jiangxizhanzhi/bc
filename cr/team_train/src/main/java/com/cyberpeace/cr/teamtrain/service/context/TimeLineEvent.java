@@ -2,20 +2,26 @@ package com.cyberpeace.cr.teamtrain.service.context;
 
 import java.util.Date;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 public class TimeLineEvent {
 
+	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
+	@ApiModelProperty(value = "时间")
 	private Date time;
 
+	@ApiModelProperty(value = "标题")
 	private String title;
 
+	@ApiModelProperty(value = "用户名")
 	private String userName;
 
+	@ApiModelProperty(value = "类型")
 	private Integer type;
 
 	public enum SendDataType {

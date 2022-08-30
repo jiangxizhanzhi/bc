@@ -12,26 +12,37 @@ import lombok.Data;
 @Data
 public class RbRoomRsp implements Serializable {
 
+	@ApiModelProperty(value = "红蓝对抗房间id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "名称")
 	private String name;
 
+	@ApiModelProperty(value = "描述")
 	private String description;
 
+	@ApiModelProperty(value = "类别")
 	private Integer category;
 
+	@ApiModelProperty(value = "前置技能")
 	private List<String> preSkill;
 
+	@ApiModelProperty(value = "训练目标")
 	private List<String> trainSkill;
 
+	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
+	@ApiModelProperty(value = "结束时间")
 	private Date endTime;
 
+	@ApiModelProperty(value = "模板id")
 	private String template;
 
+	@ApiModelProperty(value = "模板名称")
 	private String templateName;
 
+	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
 	@ApiModelProperty(value = "自己岗位，基本信息，查列表会查询其他学员角色的内容列表")
@@ -40,16 +51,22 @@ public class RbRoomRsp implements Serializable {
 	@ApiModelProperty(value = "所有岗位(包含教员)，单独查时使用")
 	private List<RbRoomRoleRes> rolesData;
 
+	@ApiModelProperty(value = "训练时长")
 	private Integer durationTime;
 
+	@ApiModelProperty(value = "场景开启时间")
 	private Date sceneStartTime;
 
+	@ApiModelProperty(value = "场景关闭时间")
 	private Date sceneEndTime;
 
+	@ApiModelProperty(value = "训练状态")
 	private Integer trainingStatus;
 
+	@ApiModelProperty(value = "运行时间")
 	private Integer runtime;
 
+	@ApiModelProperty(value = "节点数")
 	private Integer nodesCount;
 
 	@ApiModelProperty(value = "录屏开关")

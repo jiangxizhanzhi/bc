@@ -1,12 +1,15 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class MissionCompletion {
 
+	@ApiModelProperty(value = "任务状态")
 	private Integer missionStatus;
 
+	@ApiModelProperty(value = "任务完成数")
 	private Integer completeNum;
 
 	public void addCompletionNum() {

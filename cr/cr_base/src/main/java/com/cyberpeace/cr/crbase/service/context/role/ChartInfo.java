@@ -4,14 +4,17 @@ import java.util.List;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 public class ChartInfo {
 
+	@ApiModelProperty(value = "用户对抗状态")
 	private Integer infoType;
 
+	@ApiModelProperty(value = "角色用户列表")
 	private List<RoleUsers> roleDataList;
 
 	public enum ChartInfoType implements GenericEnum {

@@ -32,13 +32,13 @@ public class MonitorSession implements Serializable {
 	@ApiModelProperty(value = "用户id")
 	private String user;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "用户名")
 	private String username;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "头像")
 	private String avatar;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "IP地址")
 	private String ip;
 
 }

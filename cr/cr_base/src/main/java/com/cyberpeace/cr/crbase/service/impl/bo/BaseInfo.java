@@ -14,19 +14,19 @@ import lombok.Data;
 @Data
 public class BaseInfo {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "模板名称", required = true)
 	@NotBlank
 	private String name;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "训练类型", required = true)
 	@NotNull
 	private Integer type;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "训练类别", required = true)
 	@NotNull
 	private Integer category;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
 	private String description;
 
@@ -34,27 +34,27 @@ public class BaseInfo {
 	@NotNull
 	private String logo;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "难度", required = true)
 	@NotNull
 	private Integer difficult;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "持续时长", required = true)
 	@NotNull
 	private Integer durationTime;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "前置技能", required = true)
 	@NotNull
 	private List<String> preSkill;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "训练目标", required = true)
 	@NotNull
 	private List<String> trainSkill;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "建议人数", required = true)
 	@NotNull
 	private Integer peopleNumber;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "场景配置", required = true)
 	@NotNull
 	private SceneConfigData sceneConfigData;
 

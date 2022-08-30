@@ -3,22 +3,29 @@ package com.cyberpeace.cr.crbase.service.context.mission;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 public class MissionsStatistic {
 
+	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
+	@ApiModelProperty(value = "用户名")
 	private String userName;
 
+	@ApiModelProperty(value = "用户id")
 	private String userResourceId;
 
+	@ApiModelProperty(value = "下发任务数")
 	private Integer releaseMissionsCount;
 
+	@ApiModelProperty(value = "任务总数")
 	private Integer schemeMissionsCount;
 
+	@ApiModelProperty(value = "完成任务数")
 	private Integer completeMissionsCount;
 
 	public MissionsStatistic(Integer roleCode, String userId, TaskCounter taskCounter) {

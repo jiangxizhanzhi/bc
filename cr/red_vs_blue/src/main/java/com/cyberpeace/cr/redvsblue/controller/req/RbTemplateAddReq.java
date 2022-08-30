@@ -13,11 +13,11 @@ import lombok.Data;
 @Data
 public class RbTemplateAddReq extends BasicTemplate {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "红方角色")
 	@NotNull
 	private List<CrRoleConfig> redRoles;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "蓝方角色")
 	@NotNull
 	private List<CrRoleConfig> blueRoles;
 

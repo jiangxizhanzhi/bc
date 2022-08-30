@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.google.common.collect.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +13,16 @@ import lombok.NoArgsConstructor;
 @Data
 public class RoleScore {
 
+	@ApiModelProperty(value = "角色名称")
 	private String roleName;
 
+	@ApiModelProperty(value = "角色组")
 	private Integer roleGroup;
 
+	@ApiModelProperty(value = "得分")
 	private Integer score;
 
+	@ApiModelProperty(value = "任务信息")
 	private List<Integer> missionsInfo;
 
 	public RoleScore(String role, Integer code, Integer score, Integer finishedTaskCount,

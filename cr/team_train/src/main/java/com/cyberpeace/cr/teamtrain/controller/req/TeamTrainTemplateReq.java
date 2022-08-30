@@ -13,13 +13,13 @@ import lombok.Data;
 @Data
 public class TeamTrainTemplateReq extends BasicTemplate {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "角色列表", required = true)
 	@NotNull
 	private List<CrRoleConfig> roleList;
 
 	private Integer peopleNumber;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "时间轴配置", required = true)
 	@NotNull
 	private Object timeLineConfig = "{}";
 

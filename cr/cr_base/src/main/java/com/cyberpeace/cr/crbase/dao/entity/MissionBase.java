@@ -8,33 +8,45 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 public class MissionBase extends BaseTable {
 
+	@ApiModelProperty(value = "分值")
 	protected Integer score;
 
+	@ApiModelProperty(value = "任务id")
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "任务名称")
 	private String title;
 
+	@ApiModelProperty(value = "任务描述")
 	private String description;
 
+	@ApiModelProperty(value = "技能点")
 	private String skillPoints;
 
+	@ApiModelProperty(value = "任务答案")
 	private String answer;
 
+	@ApiModelProperty(value = "选项")
 	private String option;
 
+	@ApiModelProperty(value = "类型")
 	private Integer type;
 
+	@ApiModelProperty(value = "类别")
 	private String categoryId;
 
+	@ApiModelProperty(value = "题解")
 	private String writeUp;
 
+	@ApiModelProperty(value = "创建者id")
 	private String createUserId;
 
 	public enum MissionType {

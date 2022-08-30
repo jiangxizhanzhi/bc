@@ -24,6 +24,7 @@ public class TeamRoomListReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
+	@ApiModelProperty(value = "id列表")
 	private List<String> ids;
 
 }

@@ -1,5 +1,23 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -33,27 +51,12 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Api(tags = "任务相关接口")
 @RestController
@@ -107,7 +110,7 @@ public class MissionController {
 	@ApiOperation("后台更新任务技能点")
 	@PostMapping("/missions/radar_labels")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp<MissionTemplate> updateRadarLabel(@RequestBody @Validated LabelReq labels) {
+	public BaseRsp updateRadarLabel(@RequestBody @Validated LabelReq labels) {
 		// 只有超级用户有权修改
 		UserInfo user = UserInfoContext.getUserContext();
 		if (!user.isSuperuser()) {
@@ -138,14 +141,7 @@ public class MissionController {
 		if (missionTemplate == null) {
 			return new BaseRsp<>(null);
 		}
-
-		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate,
-				MissionTemplateRsp.class);
-		missionTemplateRsp.setSkillPoints(
-				JsonUtil.toJsonObjectArray(missionTemplate.getSkillPoints(), Integer.class));
-		missionTemplateRsp.setCategory(missionTemplate.getCategoryId());
-
-		return new BaseRsp<>(missionTemplateRsp);
+		return new BaseRsp<>(missionTemplateToRsp(missionTemplate));
 	}
 
 	@ApiOperation("新增任务")
@@ -154,7 +150,7 @@ public class MissionController {
 			value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.CMS_RED_VS_BLUE,
 					MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_TEAM_TRAIN },
 			logical = Logical.OR)
-	public BaseRsp<MissionTemplate>
+	public BaseRsp<MissionTemplateRsp>
 			addMission(@RequestBody @Validated MissionTemplateReq missionTemplateReq) {
 		missionTemplateReq.validate();
 		MissionTemplate toAddMissionTemplate = requestToMissionTemplate(missionTemplateReq);
@@ -164,13 +160,14 @@ public class MissionController {
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
 				OperationType.CREATE, missionTemplateReq.getTitle());
 
-		return new BaseRsp(missionTemplate);
+		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(missionTemplate);
+		return new BaseRsp(missionTemplateRsp);
 	}
 
 	@ApiOperation("后台更新任务")
 	@PutMapping("/missions")
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
-	public BaseRsp<MissionTemplate>
+	public BaseRsp<MissionTemplateRsp>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
@@ -184,13 +181,14 @@ public class MissionController {
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TASK,
 				OperationType.UPDATE, modifyReq.getTitle());
 
-		return new BaseRsp(ret);
+		MissionTemplateRsp missionTemplateRsp = missionTemplateToRsp(ret);
+		return new BaseRsp(missionTemplateRsp);
 	}
 
 	@ApiOperation("前台更新任务")
 	@PutMapping("/mission_update")
 	@RequiresPermissions(value = {MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL}, logical = Logical.OR)
-	public BaseRsp<Mission>
+	public BaseRsp<?>
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
@@ -447,6 +445,15 @@ public class MissionController {
 		}
 
 		return mission;
+	}
+
+	private MissionTemplateRsp missionTemplateToRsp(MissionTemplate missionTemplate) {
+		MissionTemplateRsp missionTemplateRsp = BeanUtils.copy(missionTemplate,
+				MissionTemplateRsp.class);
+		missionTemplateRsp.setSkillPoints(
+				JsonUtil.toJsonObjectArray(missionTemplate.getSkillPoints(), Integer.class));
+		missionTemplateRsp.setCategory(missionTemplate.getCategoryId());
+		return missionTemplateRsp;
 	}
 
 }

@@ -14,24 +14,32 @@ import lombok.Data;
 @Data
 public class TeamTrainRoomModifyReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "实例编号", required = true)
 	@NotNull
 	private String resourceId;
 
+	@ApiModelProperty(value = "类别")
 	private Integer category;
 
+	@ApiModelProperty(value = "名称")
 	private String name;
 
+	@ApiModelProperty(value = "前置技能")
 	private List<String> preSkill;
 
+	@ApiModelProperty(value = "训练目标")
 	private List<String> trainSkill;
 
+	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
+	@ApiModelProperty(value = "结束时间")
 	private Date endTime;
 
+	@ApiModelProperty(value = "描述")
 	private String description;
 
+	@ApiModelProperty(value = "角色配置")
 	private String roleConfig;
 
 	@ApiModelProperty(value = "录屏开关")

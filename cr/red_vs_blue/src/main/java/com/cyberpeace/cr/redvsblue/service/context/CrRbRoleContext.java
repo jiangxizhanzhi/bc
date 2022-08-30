@@ -6,16 +6,21 @@ import java.util.Map;
 import com.cyberpeace.cr.crbase.service.context.MissionCompletion;
 import com.cyberpeace.cr.crbase.service.context.role.ShowWriteup;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class CrRbRoleContext {
 
+	@ApiModelProperty(value = "角色数据")
 	private List<GroupData> groups;
 
+	@ApiModelProperty(value = "任务完成状态")
 	private Map<String, MissionCompletion> missionMapping;
 
+	@ApiModelProperty(value = "题解显示状态")
 	private Map<String, ShowWriteup> showWriteupMapping;
 
+	@ApiModelProperty(value = "动态任务")
 	private List<String> dynamic;
 }

@@ -13,10 +13,10 @@ import lombok.Data;
 @Data
 public class MissionSchemeStage {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "阶段名", required = true)
 	private String stage;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务列表", required = true)
 	private List<MissionSchemeMission> templates;
 
 	public void validate() {
@@ -38,10 +38,10 @@ public class MissionSchemeStage {
 @Data
 class MissionSchemeMission {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务标题", required = true)
 	private String title;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务描述", required = true)
 	private String description;
 
 	public void validate() {

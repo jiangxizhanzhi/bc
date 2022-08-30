@@ -3,13 +3,15 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class CrRoleNodesData implements Serializable {
 
+	@ApiModelProperty(value = "资产节点")
 	private List<CrRoleNode> assetNodes;
 
+	@ApiModelProperty(value = "战争迷雾")
 	private List<CrRoleNode> visibleNodes;
 }

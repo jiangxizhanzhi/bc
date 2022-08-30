@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class RbDeviceContext implements Serializable {
 
-	@ApiModelProperty(value = "id")
+	@ApiModelProperty(value = "自增id")
 	private String id;
 
 	@ApiModelProperty(value = "红蓝对抗id")

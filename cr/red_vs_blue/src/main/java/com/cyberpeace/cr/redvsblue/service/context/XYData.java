@@ -2,13 +2,16 @@ package com.cyberpeace.cr.redvsblue.service.context;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 public class XYData {
 
+	@ApiModelProperty(value = "X轴数据")
 	private List<String> xData;
 
+	@ApiModelProperty(value = "Y轴数据")
 	private List<Integer> yData;
 
 	public XYData(List<String> xData, List<Integer> yData) {

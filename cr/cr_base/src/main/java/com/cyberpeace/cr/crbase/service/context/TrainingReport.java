@@ -6,18 +6,24 @@ import java.util.List;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.constant.BaseI18n;
 import com.google.common.collect.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
 public class TrainingReport {
 
+	@ApiModelProperty(value = "教员姓名")
 	private String teacherName = "";
 
+	@ApiModelProperty(value = "场景开启时间")
 	private Date sceneStartTime;
 
+	@ApiModelProperty(value = "训练时间")
 	private Integer trainingTime = 0;
 
+	@ApiModelProperty(value = "用户列表")
 	private List<UserReport> users = Lists.newArrayList();
 
 	public enum TIME implements GenericEnum, BaseI18n {

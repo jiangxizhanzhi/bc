@@ -22,5 +22,6 @@ public class RbTemplateListReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
+	@ApiModelProperty(value = "id列表")
 	private List<String> ids;
 }

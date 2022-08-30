@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class LabelReq {
 
+	@ApiModelProperty(value = "雷达图维度")
  	@NotNull
 	private List<String> labels;
  

@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class TeamTrainTemplateModifyReq extends TeamTrainTemplateReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "模板编号")
 	@NotNull
 	private String resourceId;
 }

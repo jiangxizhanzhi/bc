@@ -8,14 +8,14 @@ import lombok.Data;
 @Data
 public class SubmitMissionsReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "用户id")
 	@NotNull
 	private String resourceId;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "任务id")
 	@NotNull
 	private String missionHash;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "提交答案")
  	private String answer;
 }

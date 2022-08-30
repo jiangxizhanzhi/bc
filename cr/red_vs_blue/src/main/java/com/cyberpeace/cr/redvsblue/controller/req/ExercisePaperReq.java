@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class ExercisePaperReq implements Serializable {
 
+	@ApiModelProperty(value = "演习文书")
 	private String exercisePaper;
 
 	@ApiModelProperty(value = "房间id", required = true)

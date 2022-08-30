@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class BasicTemplate {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "基础信息", required = true)
 	@NotNull
 	private BaseInfo baseInfo;
 }

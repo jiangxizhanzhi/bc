@@ -277,14 +277,14 @@ public class TeamTrainRoomController {
 		teamTrainRoomReq.validate();
 		TeamTrainRoomContext teamTrainRoomContext = BeanUtils.copy(teamTrainRoomReq,
 				TeamTrainRoomContext.class);
+		List<RoomRole> roles = BeanUtils.deepCopyList(teamTrainRoomReq.getRoleConfig(),
+				RoomRole.class);
+		teamTrainRoomContext.setRoleConfig(roles);
 		teamTrainRoomContext.setPreSkill(
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getPreSkill(), String.class));
 		teamTrainRoomContext.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
-
-		// 重命名mp场景模板为房间名称
-		// localSceneService.renameTopo(teamRoom.getCopyedTopoId(), teamRoom.getName());
 
 		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
 		String teamTemplateName = businessTemplateMapper

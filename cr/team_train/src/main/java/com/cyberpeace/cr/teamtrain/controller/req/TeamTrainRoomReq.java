@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,45 +15,45 @@ import lombok.Data;
 @Data
 public class TeamTrainRoomReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "模板id", required = true)
 	@NotNull
 	private String template;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "类别", required = true)
 	@NotNull
 	private Integer category;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "名称", required = true)
 	@NotBlank
 	private String name;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "前置技能", required = true)
 	@NotNull
 	private String preSkill;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "训练目标", required = true)
 	@NotNull
 	private String trainSkill;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "难度", required = true)
 	@NotNull
 	private Integer difficult;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "开始时间", required = true)
 	@NotNull
 	private Date startTime;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "结束时间", required = true)
 	@NotNull
 	private Date endTime;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "描述", required = true)
 	@NotNull
 	private String description;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "角色配置", required = true)
 	@NotNull
-	private List<RoomRole> roleConfig;
+	private List<RoleConfig> roleConfig;
 
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
@@ -66,4 +65,14 @@ public class TeamTrainRoomReq {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 	}
+}
+
+@Data
+class RoleConfig {
+
+	@ApiModelProperty(value = "角色组")
+	private Integer roleGroup;
+
+	@ApiModelProperty(value = "用户id列表")
+	private List<String> users;
 }

@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public class WriteUpReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "房间id", required = true)
 	private String roomId;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "任务id", required = true)
 	private String missionResourceId;
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(value = "是否显示题解", required = true)
 	private Boolean writeUpShow;
 
 }

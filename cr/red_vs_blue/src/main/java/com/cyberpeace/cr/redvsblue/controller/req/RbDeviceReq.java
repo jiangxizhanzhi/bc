@@ -10,11 +10,11 @@ import lombok.Data;
 @Data
 public class RbDeviceReq implements Serializable {
 
-	@ApiModelProperty
+	@ApiModelProperty(value = "红蓝房间id")
 	@NotEmpty
 	private String roomId;
 
-	@ApiModelProperty
+	@ApiModelProperty(value = "设备id")
 	@NotEmpty
 	private String deviceId;
 }

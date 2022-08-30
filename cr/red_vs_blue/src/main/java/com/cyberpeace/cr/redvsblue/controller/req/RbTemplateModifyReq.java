@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class RbTemplateModifyReq extends RbTemplateAddReq {
 
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, value = "模板id")
 	@NotNull
 	private String resourceId;
 }

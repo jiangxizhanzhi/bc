@@ -10,7 +10,7 @@ import lombok.Data;
 @ApiModel
 public class ResourceIdReq implements Serializable {
 
-	@ApiModelProperty()
+	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
 }

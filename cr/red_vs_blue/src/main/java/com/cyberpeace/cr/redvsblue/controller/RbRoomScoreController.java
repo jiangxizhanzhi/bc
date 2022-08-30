@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -187,7 +187,7 @@ public class RbRoomScoreController {
 	@ApiOperation("提交学员评分")
 	@PostMapping("/student_score")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<StudentScoreRsp> updateStudentScore(@ApiParam(name = "studentScoreReq",
+	public BaseRsp updateStudentScore(@ApiParam(name = "studentScoreReq",
 			value = "学员评分") @RequestBody StudentScoreReq studentScoreReq) {
 		rbRoomService.checkRefereePermission(studentScoreReq.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());

@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -680,6 +682,20 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 
 		return batchGet(missionIds);
+	}
+
+	@Override
+	public void updateMissionValidate(MissionModifyReq missionModifyReq, CrRole crRole) {
+		// 校验是否和角色既存任务重名
+		List<MissionStageScheme> missionStageSchemeList = crRole.getMissionStageSchemes();
+		List<String> missionIds = Lists.newArrayList();
+		for (MissionStageScheme scheme : missionStageSchemeList) {
+			missionIds.addAll(scheme.getMissions());
+		}
+		missionIds.remove(missionModifyReq.getResourceId());
+		if (checkNameDuplicate(missionModifyReq.getTitle(), missionIds)) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATE_DYNAMIC_MISSION_TITLE);
+		}
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

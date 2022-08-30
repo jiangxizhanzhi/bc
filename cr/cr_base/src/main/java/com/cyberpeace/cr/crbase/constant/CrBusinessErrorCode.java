@@ -391,6 +391,18 @@ public interface CrBusinessErrorCode {
 	/** 最大支持7个分类 */
 	String MAX_7_CATEGORIES = "101117";
 
+	/** 训练资管导出类型不正确 */
+	String EXPORT_TRAIN_ERROR_TYPE = "101118";
+
+	/** 训练资管导出id都不存在 */
+	String EXPORT_TRAIN_ID_NOT_EXIST = "101119";
+
+	/** 训练资管导出时当前训练下存在重名任务名称 */
+	String EXPORT_TRAIN_DUPLICATED_TASK_TITLE = "101120";
+
+	/** 动态修改任务不可与角色既有任务重名 */
+	String DUPLICATE_DYNAMIC_MISSION_TITLE = "101121";
+
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 }

@@ -26,6 +26,9 @@ public class MissionModifyReq implements Serializable {
 	@ApiModelProperty(value = "技能点", required = true)
 	private String skillPoints;
 
+	@ApiModelProperty(value = "角色id", required = true)
+	private String roleResourceId;
+
 	public void validate() {
 		// 验证名称长度
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);

@@ -72,6 +72,14 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 				CrConstantsConfig::getCnName);
 
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			//校验任务名称
+			SingleTemplate singleTemplate = singleTemplateMap.get(businessTemplate.getResourceId());
+			CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
+					CrRoleConfigMissionsScheme.class);
+			Map<String, MissionTemplate> mapping =
+					missionTemplateService.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
+			validateTaskTile(mapping, rspMissionsScheme.getSchemeData(), businessTemplate.getName());
+
 			//单个训练导出
 			log.info("单兵训练【" + businessTemplate.getName() + "】开始导出");
 
@@ -84,7 +92,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 					file.getPath() + File.separator + ENV + File.separator + IMAGES);
 			log.info((businessTemplate.getName() + DOUBLE_BLANK + "场景信息导出结束"));
 
-			SingleTemplate singleTemplate = singleTemplateMap.get(businessTemplate.getResourceId());
+
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(singleTemplate.getSubType());
 			BeanUtils.copyProperties(singleTemplate, trainMD);
@@ -114,10 +122,6 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 
 			SingleRoleMD singleRoleMD = new SingleRoleMD();
 			//获取任务信息
-			CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(singleTemplate.getMissionsScheme(),
-					CrRoleConfigMissionsScheme.class);
-			Map<String, MissionTemplate> mapping =
-					missionTemplateService.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
 			List<RoleBo> roleBoList = new ArrayList<>();
 
 			for (CrRoleConfigSchemeStage crRoleConfigSchemeStage : rspMissionsScheme.getSchemeData()) {

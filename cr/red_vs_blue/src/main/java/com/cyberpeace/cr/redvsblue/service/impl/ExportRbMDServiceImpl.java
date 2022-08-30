@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -66,7 +68,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				rbTemplateMapper.batchGetByBusinessId(businessTemplateList.stream()
 																			.map(BusinessTemplate::getResourceId)
 																			.collect(Collectors.toList()));
-		Map<String, RbTemplate> teamTemplateMap = StreamApiUtils.toMap(rbTemplateList,
+		Map<String, RbTemplate> rbTemplateMap = StreamApiUtils.toMap(rbTemplateList,
 				RbTemplate::getBusinessTemplateId, rbTemplate -> rbTemplate);
 		//获取任务分类
 		List<CrConstantsConfig> constants =
@@ -75,34 +77,10 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				CrConstantsConfig::getCnName);
 
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
-			//单个训练导出
-			log.info("红蓝对抗【" + businessTemplate.getName() + "】开始导出");
-			File file = new File(path + File.separator + businessTemplate.getName());
-			FileUtil.mkdirs(file.getPath());
-			//场景信息导出
-			log.info(businessTemplate.getName() + "开始导出场景信息");
-			Map<String, String> nodeIdMap = dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
-					file.getPath() + File.separator + ENV + File.separator + IMAGES);
-			log.info(businessTemplate.getName() + "场景信息导出结束");
-
-			RbTemplate rbTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
-			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
-			trainMD.setTrainType(rbTemplate.getSubType());
-			BeanUtils.copyProperties(rbTemplate, trainMD);
-			//LOGO
-			MdParser mdParser = new MdParser();
-			if(!StringUtils.isBlank(businessTemplate.getLogo())){
-				String imgUrl = businessTemplate.getLogo();
-				trainMD.setLogo(MD_LOGO);
-				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-				log.info(businessTemplate.getName() + DOUBLE_BLANK + "logo.png导出结束");
-			}
-
-			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(rbTemplate.getPreSkill(), String.class));
-			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(rbTemplate.getTrainSkill(), String.class));
+			//校验任务名称
+			RbTemplate rbTemplate = rbTemplateMap.get(businessTemplate.getResourceId());
 			List<RoleBo> roleBos = new ArrayList<>();
 			List<String> roleName = new ArrayList<>();
-
 			JSONArray roleList = new JSONArray();
 			JSONObject roleObject = JSONObject.parseObject(rbTemplate.getRoleConfig());
 			JSONArray redList = roleObject.getJSONArray("red_roles");
@@ -121,6 +99,44 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				roleList.add(role);
 			}
 			roleBos.add(new RoleBo("蓝方", roleName));
+			List<CrRoleConfigSchemeStage> allSchemeStage = new ArrayList<>();
+			Map<String, MissionTemplate> allMissionTemplate = new HashMap<>();
+			for (int i = 0; i < roleList.size(); i++) {
+				JSONObject role = roleList.getJSONObject(i);
+				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
+				allSchemeStage.addAll(rspMissionsScheme.getSchemeData());
+				Map<String, MissionTemplate> mapping =
+						missionTemplateService.getMappingBySchemeJson(role.getString("missions_scheme"));
+				allMissionTemplate.putAll(mapping);
+			}
+			validateTaskTile(allMissionTemplate, allSchemeStage, businessTemplate.getName());
+
+			//单个训练导出
+			log.info("红蓝对抗【" + businessTemplate.getName() + "】开始导出");
+
+			File file = new File(path + File.separator + businessTemplate.getName());
+			FileUtil.mkdirs(file.getPath());
+			//场景信息导出
+			log.info(businessTemplate.getName() + "开始导出场景信息");
+			Map<String, String> nodeIdMap = dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
+					file.getPath() + File.separator + ENV + File.separator + IMAGES);
+			log.info(businessTemplate.getName() + "场景信息导出结束");
+
+			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
+			trainMD.setTrainType(rbTemplate.getSubType());
+			BeanUtils.copyProperties(rbTemplate, trainMD);
+			//LOGO
+			MdParser mdParser = new MdParser();
+			if(!StringUtils.isBlank(businessTemplate.getLogo())){
+				String imgUrl = businessTemplate.getLogo();
+				trainMD.setLogo(MD_LOGO);
+				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
+				log.info(businessTemplate.getName() + DOUBLE_BLANK + "logo.png导出结束");
+			}
+
+			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(rbTemplate.getPreSkill(), String.class));
+			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(rbTemplate.getTrainSkill(), String.class));
+
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
 			log.info(businessTemplate.getName() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -74,8 +75,24 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 				CrConstantsConfig::getCnName);
 
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			//校验任务名称
+			TeamTemplate teamTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
+			JSONArray roleList = JSON.parseArray(teamTemplate.getRoleConfig());
+			List<CrRoleConfigSchemeStage> allSchemeStage = new ArrayList<>();
+			Map<String, MissionTemplate> allMissionTemplate = new HashMap<>();
+			for (int i = 0; i < roleList.size(); i++) {
+				JSONObject role = roleList.getJSONObject(i);
+				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
+				allSchemeStage.addAll(rspMissionsScheme.getSchemeData());
+				Map<String, MissionTemplate> mapping =
+						missionTemplateService.getMappingBySchemeJson(role.getString("missions_scheme"));
+				allMissionTemplate.putAll(mapping);
+			}
+			validateTaskTile(allMissionTemplate, allSchemeStage, businessTemplate.getName());
+
 			//单个训练导出
 			log.info("团队训练【" + businessTemplate.getName() + "】开始导出");
+
 			File file = new File(path + File.separator + businessTemplate.getName());
 			FileUtil.mkdirs(file.getPath());
 
@@ -85,7 +102,6 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 					file.getPath() + File.separator + ENV + File.separator + IMAGES);
 			log.info(businessTemplate.getName() + "场景信息导出结束");
 
-			TeamTemplate teamTemplate = teamTemplateMap.get(businessTemplate.getResourceId());
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(teamTemplate.getSubType());
 			BeanUtils.copyProperties(teamTemplate, trainMD);
@@ -102,7 +118,6 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 			trainMD.setTrainSkills(JsonUtil.toJsonObjectArray(teamTemplate.getTrainSkills(), String.class));
 			List<RoleBo> roleBos = new ArrayList<>();
 			List<String> roleName = new ArrayList<>();
-			JSONArray roleList = JSON.parseArray(teamTemplate.getRoleConfig());
 			File taskFile = new File(file.getPath() + File.separator + TASK);
 
 			if (!taskFile.exists()) {

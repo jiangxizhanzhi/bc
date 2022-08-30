@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -8,8 +7,11 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
@@ -21,9 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ExportTrainMDServiceImpl implements ExportTrainMDService {
@@ -136,5 +136,19 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 			convertMap.put(convert.getString("origin_id"), convert.getString("id"));
 		}
 		return convertMap;
+	}
+
+	public void validateTaskTile(Map<String, MissionTemplate> missionTemplateMap, List<CrRoleConfigSchemeStage> schemeData, String trainName){
+		List<String> titleList = new ArrayList<>();
+		for (CrRoleConfigSchemeStage crRoleConfigSchemeStage:schemeData){
+			for (CrRoleConfigMission crRoleConfigMission: crRoleConfigSchemeStage.getMissions()){
+				String taskName = missionTemplateMap.get(crRoleConfigMission.getResourceId()).getTitle();
+				if(titleList.contains(taskName)){
+					throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_DUPLICATED_TASK_TITLE,
+							trainName, taskName);
+				}
+				titleList.add(taskName);
+			}
+		}
 	}
 }

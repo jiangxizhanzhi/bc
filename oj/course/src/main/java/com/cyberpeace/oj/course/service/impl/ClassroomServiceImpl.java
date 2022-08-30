@@ -35,10 +35,8 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
@@ -122,12 +120,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private CourseValidateHandler courseValidateHandler;
-
-	@Autowired
-	private LocalSceneMapper localSceneMapper;
-
-	@Autowired
-	private RemoteSceneService remoteSceneService;
 
 	@Autowired
 	private PaperMapper paperMapper;
@@ -564,25 +556,26 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
 				true);
 
-		List<UserInfo> pageUser;
-		if (CollectionUtils.isEmpty(page.getOrders())) {
-			pageUser = StreamApiUtils.pageByList(userInfos, page.getCurrent(), page.getSize());
-		} else {
-			pageUser = userInfos;
-		}
-
-		List<UserInfo> filterUsers = StreamApiUtils.filter(pageUser,
+		List<UserInfo> filterUsers = StreamApiUtils.filter(userInfos,
 				userInfo -> StringUtils.isBlank(userName)
 						|| userInfo.getUserName().contains(userName)
 						|| userInfo.getName().contains(userName));
+
+		List<UserInfo> pageUser;
+		if (CollectionUtils.isEmpty(page.getOrders())) {
+			pageUser = StreamApiUtils.pageByList(filterUsers, page.getCurrent(), page.getSize());
+		} else {
+			pageUser = filterUsers;
+		}
+
 		Map<String, String> orgMap = remoteOrganizationService
 				.childrenMap(classroom.getOrganizationId(), true);
 
 		// 供评估人员使用
 		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
-		List<ClassroomReportBo> data = StreamApiUtils.map(filterUsers,
+		List<ClassroomReportBo> data = StreamApiUtils.map(pageUser,
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
-		return new PageReportBo(data, (long) userInfos.size());
+		return new PageReportBo(data, (long) filterUsers.size());
 	}
 
 	@Override

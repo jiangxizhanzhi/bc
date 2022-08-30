@@ -192,4 +192,12 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonInfoBo
 	 */
 	void createMpLog(LessonInfoBo lessonInfoBo);
+
+	/**
+	 * 场景倒计时延时
+	 * @param sceneId
+	 * @return
+	 */
+	Long sceneDelayTime(String sceneId);
+
 }

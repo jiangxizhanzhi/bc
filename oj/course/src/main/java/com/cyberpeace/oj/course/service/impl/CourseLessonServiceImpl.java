@@ -1466,4 +1466,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.COURSE,
 				OperationType.STUDY, operationTarget, content);
 	}
+
+	@Override
+	public Long sceneDelayTime(String sceneId) {
+		return localSceneService.delaySceneTime(sceneId);
+	}
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.controller.req.SceneIdReq;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -62,6 +63,14 @@ public class WebLessonController {
 		courseLessonService.createMpLog(infoBo);
 
 		return new BaseRsp<>(infoBo);
+	}
+
+	@ApiOperation("课时场景剩余时间延时")
+	@PatchMapping("/delay_scene")
+	@RequiresPermissions(MenuConstant.WEB_OJ_COURSE)
+	public BaseRsp<Long> sceneDelayTime(@RequestBody @Validated SceneIdReq sceneIdReq) {
+		Long countDownTime = courseLessonService.sceneDelayTime(sceneIdReq.getSceneId());
+		return new BaseRsp<>(countDownTime);
 	}
 
 	@ApiOperation("课后练习数据查询")

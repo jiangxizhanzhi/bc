@@ -140,4 +140,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return
 	 */
 	Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId);
+
+    Long delaySceneTime(String sceneId);
 }

@@ -136,4 +136,11 @@ public interface ErrorCode {
 
 	/** 无操作权限*/
 	String INTERFACE_UNAUTHORIZED = "100047";
+
+	/** 场景状态为不限时模式*/
+	String SCENE_UNLIMITED_TIME = "100048";
+
+	/** 场景正在被回收*/
+	String SCENE_IS_RECLAIMED = "100049";
+
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -457,6 +458,28 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		deleteContext.setSnapshotId(snapshotId);
 
 		return remoteSceneService.deleteSnapshot(deleteContext);
+	}
+
+	@Override
+	public Long delaySceneTime(String sceneId) {
+		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
+		if (null == localScene) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		if (localScene.getEndTime() == null) {
+			throw new BusinessException(ErrorCode.SCENE_UNLIMITED_TIME);
+		}
+
+		if (localScene.getEndTime().before(new Date())) {
+			throw new BusinessException(ErrorCode.SCENE_IS_RECLAIMED);
+		}
+
+		Date date = TimeUtil.addMins(localScene.getEndTime(), CommonConstant.TEN);
+		localScene.setEndTime(date);
+
+		localSceneMapper.updateEndTime(localScene);
+		return TimeUtil.getIntervalSeconds(new Date(), date);
 	}
 
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,

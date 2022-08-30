@@ -391,4 +391,6 @@ public interface CrBusinessErrorCode {
 	/** 最大支持7个分类 */
 	String MAX_7_CATEGORIES = "101117";
 
+	/** 请指定一个学员 */
+	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 }

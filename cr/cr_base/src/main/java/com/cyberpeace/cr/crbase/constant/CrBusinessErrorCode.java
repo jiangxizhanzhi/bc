@@ -400,4 +400,7 @@ public interface CrBusinessErrorCode {
 	/** 训练资管导出时当前训练下存在重名任务名称 */
 	String EXPORT_TRAIN_DUPLICATED_TASK_TITLE = "101120";
 
+	/** 动态修改任务不可与角色既有任务重名 */
+	String DUPLICATE_DYNAMIC_MISSION_TITLE = "101121";
+
 }

@@ -95,13 +95,13 @@ public class PageUtil {
 		ListRsp<K> listRsp = new ListRsp<>();
 
 		// 如果只传一页数据 默认则作为数据体直接返回
-		if (data.size() == page.getSize() && total > page.getSize()) {
-			listRsp.setList(data);
-		} else {
+		if (data.size() > page.getSize()) {
 			long start = (page.getCurrent() - CommonConstant.ONE) * page.getSize();
 			long end = page.getCurrent() == totalPage ? total : start + page.getSize();
 			List<K> subList = data.subList(new Long(start).intValue(), new Long(end).intValue());
 			listRsp.setList(subList);
+		} else {
+			listRsp.setList(data);
 		}
 
 		listRsp.setCurrentPage(page.getCurrent());

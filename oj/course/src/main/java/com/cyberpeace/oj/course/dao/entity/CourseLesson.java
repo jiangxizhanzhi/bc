@@ -10,6 +10,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.google.common.collect.Lists;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
@@ -18,49 +19,71 @@ import lombok.Getter;
 public class CourseLesson extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("资源编号")
 	private String resourceId;
 
+	@ApiModelProperty("是否为内置")
 	private Boolean builtin;
 
+	@ApiModelProperty("课程编号")
 	private String courseId;
 
+	@ApiModelProperty("名称")
 	private String name;
 
+	@ApiModelProperty("课时类型")
 	private Integer type;
 
+	@ApiModelProperty("讲义类型")
 	private Integer handoutType;
 
+	@ApiModelProperty("讲义路径或者内容")
 	private String handoutUrl;
 
+	@ApiModelProperty("视频地址")
 	private String videoUrl;
 
+	@ApiModelProperty("难度")
 	private Integer difficulty;
 
 	@TableField("public")
+	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("附件编号")
 	private String attachmentIds;
 
+	@ApiModelProperty("必修")
 	private Integer compulsory;
 
+	@ApiModelProperty("销毁延时")
 	private Integer destroyDelay;
 
+	@ApiModelProperty("课时时长")
 	private Integer duration;
 
+	@ApiModelProperty("拓扑编号")
 	private String topoId;
 
+	@ApiModelProperty("知识点")
 	private String knowledge;
 
+	@ApiModelProperty("场景模式")
 	private Integer sceneShareMode;
 
+	@ApiModelProperty("md讲义原文件地址")
 	private String originMarkdownFile;
 
+	@ApiModelProperty("创建用户")
 	private String createUserId;
 
+	@ApiModelProperty("试卷编号")
 	private String paperId;
 
+	@ApiModelProperty("热度")
 	private Integer heat;
 
+	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
 	public enum HandoutType implements GenericEnum {

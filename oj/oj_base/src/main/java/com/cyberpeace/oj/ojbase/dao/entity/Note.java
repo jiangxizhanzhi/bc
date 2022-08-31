@@ -8,6 +8,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
@@ -18,19 +19,26 @@ import java.lang.reflect.Type;
 public class Note extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("笔记编号")
 	private String resourceId;
 
+	@ApiModelProperty("笔记类型")
 	private Integer noteType;
 
+	@ApiModelProperty("业务类型")
 	private Integer businessType;
 
+	@ApiModelProperty("内容")
 	private String content;
 
+	@ApiModelProperty("用户编号")
 	private String userId;
 
+	@ApiModelProperty("业务编号")
 	private String businessId;
 
 	@TableField("public")
+	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
 	public enum NoteType implements GenericEnum {

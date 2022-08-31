@@ -17,6 +17,7 @@ import lombok.Data;
 public class LessonInfoBo implements Serializable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("课时编号")
 	private String resourceId;
 
 	@ApiModelProperty("课程编号")

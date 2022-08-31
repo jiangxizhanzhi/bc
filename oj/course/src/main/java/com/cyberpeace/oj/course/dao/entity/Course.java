@@ -10,6 +10,7 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseTable;
 
 import com.cyberpeace.common.util.ConfigUtil;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -19,40 +20,57 @@ import org.apache.commons.lang3.StringUtils;
 public class Course extends AuthTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	@ApiModelProperty("课程编号")
 	private String resourceId;
 
+	@ApiModelProperty("是否内置")
 	private Boolean builtin;
 
+	@ApiModelProperty("课程名称")
 	private String name;
 
+	@ApiModelProperty("描述")
 	private String description;
 
+	@ApiModelProperty("分类编号")
 	private String categoryId;
 
+	@ApiModelProperty("图片路径")
 	private String logo;
 
+	@ApiModelProperty("大纲")
 	private String outline;
 
+	@ApiModelProperty("难度")
 	private Integer difficulty;
 
+	@ApiModelProperty("创建人编号")
 	private String createUserId;
 
+	@ApiModelProperty("修改人编号")
 	private String modifyUserId;
 
 	@TableField("public")
+	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("课程类型")
 	private Integer courseType;
 
+	@ApiModelProperty("热度")
 	private Integer heat;
 
+	@ApiModelProperty("讲师")
 	private String lecturer;
 
+	@ApiModelProperty("学分")
 	private Integer score;
 
+	@ApiModelProperty("课程编号")
 	private String courseNum;
 
 	@TableField(exist = false)
+	@ApiModelProperty("课时数量")
 	private Integer lessonCount;
 
 	public enum Difficulty implements GenericEnum {

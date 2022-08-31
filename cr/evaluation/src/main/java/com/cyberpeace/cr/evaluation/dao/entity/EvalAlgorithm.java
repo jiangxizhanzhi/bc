@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
@@ -24,48 +25,57 @@ public class EvalAlgorithm extends BaseTable {
     /**
      * 名称
      */
+    @ApiModelProperty("名称")
     private String name;
 
     /**
      * 描述
      */
+    @ApiModelProperty("描述")
     private String description;
 
     /**
      * 格式化算法：1，匹配算法：2，评分算法：3，聚合算法：4
      */
+    @ApiModelProperty("算法类型")
     private Integer type;
 
     /**
      * 
      */
+    @ApiModelProperty("算法语言")
     private Integer algorithmLanguage;
 
     /**
      * 算法语言
         1：python
      */
+    @ApiModelProperty("算法内容")
     private String code;
 
 	/**
 	 * 状态
 	 0：代表正常，1：代表编辑过，页面看不到
 	 */
+	@ApiModelProperty("算法状态。0：代表正常，1：代表编辑过，页面看不到")
 	private Integer state = 0;
 
     /**
      * 
      */
+    @ApiModelProperty("算法可配置参数")
     private String params;
 
     /**
      * 
      */
+    @ApiModelProperty("算法可配置参数数量")
     private Integer paramsNum;
 
     /**
      * 创建人
      */
+    @ApiModelProperty("创建者ID")
     private String createUserId;
 
 	public enum Type implements GenericEnum {

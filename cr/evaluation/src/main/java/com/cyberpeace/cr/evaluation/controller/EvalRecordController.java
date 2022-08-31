@@ -18,6 +18,7 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -88,7 +89,7 @@ public class EvalRecordController {
     @ApiOperation("获取单个评估")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("")
-    public BaseRsp<EvalRecordRsp> get(@RequestParam("resource_id") String recordId) {
+    public BaseRsp<EvalRecordRsp> get(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String recordId) {
         return new BaseRsp<>(evalRecordService.get(recordId));
     }
 
@@ -102,28 +103,29 @@ public class EvalRecordController {
     @ApiOperation("场景终端节点获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/nodes")
-    public BaseRsp<List<EvalRoomPairRsp>> getNodes(@RequestParam("room_id") String roomId) {
+    public BaseRsp<List<EvalRoomPairRsp>> getNodes(@ApiParam(name = "room_id", value = "测评任务ID") @RequestParam("room_id") String roomId) {
         return new BaseRsp<>(evalRecordService.getNodes(roomId));
     }
 
     @ApiOperation("终端使用探针信息获取")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes")
-    public BaseRsp<List<EvalRoomPairRsp>> getProbes(@RequestParam("room_id") String roomId, @RequestParam("node_id") String nodeId) {
+    public BaseRsp<List<EvalRoomPairRsp>> getProbes(@ApiParam(name = "room_id", value = "测评任务ID") @RequestParam("room_id") String roomId,
+                                                    @ApiParam(name = "node_id", value = "场景节点ID") @RequestParam("node_id") String nodeId) {
         return new BaseRsp<>(evalRecordService.getProbes(roomId, nodeId));
     }
 
     @ApiOperation("终端使用探针信息获取-批量")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes-map")
-    public BaseRsp<Map<String, List<EvalRoomPairRsp>>> getProbes(@RequestParam("room_id") String roomId) {
+    public BaseRsp<Map<String, List<EvalRoomPairRsp>>> getProbes(@ApiParam(name = "room_id", value = "测评任务ID") @RequestParam("room_id") String roomId) {
         return new BaseRsp<>(evalRecordService.getProbes(roomId));
     }
 
     @ApiOperation("场景使用终端/探针")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/probes/all")
-    public BaseRsp<List<EvalRecordNodeProbeReq>> getNodeProbe(@RequestParam("room_id") String roomId) {
+    public BaseRsp<List<EvalRecordNodeProbeReq>> getNodeProbe(@ApiParam(name = "room_id", value = "测评任务ID") @RequestParam("room_id") String roomId) {
         return new BaseRsp<>(evalRecordService.getNodeProbe(roomId));
     }
 
@@ -153,21 +155,21 @@ public class EvalRecordController {
     @ApiOperation("评估任务结果")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result")
-    public BaseRsp<EvalRecordResultRsp> result(@RequestParam("resource_id") String recordId) {
+    public BaseRsp<EvalRecordResultRsp> result(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String recordId) {
         return new BaseRsp<>(evalRecordService.result(recordId));
     }
 
     @ApiOperation("获取某一级指标项下全部变量项")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables")
-    public BaseRsp<List<EvalRoomPairRsp>> variables(@RequestParam("index_id") String indexId) {
+    public BaseRsp<List<EvalRoomPairRsp>> variables(@ApiParam(name = "index_id", value = "指标项ID") @RequestParam("index_id") String indexId) {
         return new BaseRsp<>(evalIndexRefService.selectVariables(indexId));
     }
 
     @ApiOperation("变量项采集信息（折线图）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/variables/graph")
-    public BaseRsp<EvalVariableGraphRsp> variableGraph(@RequestParam("variable_id") String variableId) {
+    public BaseRsp<EvalVariableGraphRsp> variableGraph(@ApiParam(name = "variable_id", value = "变量项ID") @RequestParam("variable_id") String variableId) {
         return new BaseRsp<>(evalVariableRefService.graph(variableId));
     }
 
@@ -181,14 +183,14 @@ public class EvalRecordController {
     @ApiOperation("评估任务结果（指标项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/index")
-    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@RequestParam("index_id") String indexId) {
+    public BaseRsp<EvalRecordResultIndexRsp> resultIndex(@ApiParam(name = "index_id", value = "指标项ID") @RequestParam("index_id") String indexId) {
         return new BaseRsp<>(evalIndexRefService.resultIndex(indexId));
     }
 
     @ApiOperation("评估任务结果（变量项信息）")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/variable")
-    public BaseRsp<EvalRecordResultVariableRsp> resultVariable(@RequestParam("variable_id") String variableId) {
+    public BaseRsp<EvalRecordResultVariableRsp> resultVariable(@ApiParam(name = "variable_id", value = "变量项ID") @RequestParam("variable_id") String variableId) {
         return new BaseRsp<>(evalVariableRefService.resultVariable(variableId));
     }
 
@@ -196,8 +198,8 @@ public class EvalRecordController {
     @RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
     @GetMapping("/train2pdf")
     public void dumpEvalRecord2PDF(HttpServletResponse httpServletResponse,
-                                   @RequestParam("resource_id") String resourceId,
-                                   @RequestParam("task_id")String taskId) {
+                                   @ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId,
+                                   @ApiParam(name = "task_id", value = "测评任务ID") @RequestParam("task_id")String taskId) {
         FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
 }

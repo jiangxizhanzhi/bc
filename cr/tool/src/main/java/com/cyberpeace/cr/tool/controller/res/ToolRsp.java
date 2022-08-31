@@ -36,6 +36,7 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("发布时间")
 	private String publishTime;
 
+	@ApiModelProperty("ID")
 	private String resourceId;
 
 	@ApiModelProperty("工具类型")
@@ -65,21 +66,30 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("是否可见")
 	private Boolean visible;
 
+	@ApiModelProperty("创建时间")
 	private String createTime;
 
+	@ApiModelProperty("更新时间")
 	private String updateTime;
 
+	@ApiModelProperty("设备资源ID")
 	private String deviceResourceId = "";
 
+	@ApiModelProperty("主页")
 	private String homePage = "";
 
+	@ApiModelProperty("镜像资源ID")
 	private String imageResourceId = "";
 
+	@ApiModelProperty("手册")
 	private String manual;
 
+	@ApiModelProperty("场景ID")
 	private String scene;
 
+	@ApiModelProperty("场景数据")
 	private String sceneData;
 
+	@ApiModelProperty("标签")
 	private String tag;
 }

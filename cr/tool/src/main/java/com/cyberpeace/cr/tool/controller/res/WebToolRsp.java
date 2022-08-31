@@ -21,6 +21,7 @@ public class WebToolRsp implements Serializable {
     @ApiModelProperty("名称")
     private String name;
 
+    @ApiModelProperty("ID")
     private String resourceId;
 
     @ApiModelProperty("发布时间")

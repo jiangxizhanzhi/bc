@@ -11,11 +11,17 @@ import java.util.List;
 
 public interface EvalVariableRefProbeDataService extends IService<EvalVariableRefProbeData> {
     /**
-     * 变量项探针
-     * @param variableId
-     * @return
+     * 获取单次评估关联变量项探针数据
+     * @param variableId 变量项id
+     * @return 单次评估关联变量项探针数据
      */
     List<EvalVariableRefProbeDataContext> variableProbeDataResult(String variableId);
 
+    /**
+     * 获取变量项关联探针原始数据
+     * @param page 分页信息
+     * @param variableId 变量项id
+     * @return 探针采集原始数据
+     */
     ListRsp<EvalVariableDataPageRsp> variableProbeData(Page page, String variableId);
 }

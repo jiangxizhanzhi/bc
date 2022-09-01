@@ -10,6 +10,11 @@ import com.cyberpeace.cr.evaluation.service.context.EvalVariableRefProbeDataCont
 import java.util.List;
 
 public interface EvalVariableRefProbeDataService extends IService<EvalVariableRefProbeData> {
+    /**
+     * 变量项探针
+     * @param variableId
+     * @return
+     */
     List<EvalVariableRefProbeDataContext> variableProbeDataResult(String variableId);
 
     ListRsp<EvalVariableDataPageRsp> variableProbeData(Page page, String variableId);

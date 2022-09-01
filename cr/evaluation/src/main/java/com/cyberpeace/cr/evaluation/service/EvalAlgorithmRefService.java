@@ -8,5 +8,10 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface EvalAlgorithmRefService extends IService<EvalAlgorithmRef> {
+    /**
+     * 解析算法可配置参数
+     * @param argumentsString 算法可配置参数JsonString
+     * @return 参数列表
+     */
     List<Serializable> buildOtherArguments(String argumentsString);
 }

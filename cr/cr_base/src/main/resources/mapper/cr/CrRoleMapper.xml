@@ -106,6 +106,12 @@
         </if>
         )
     </select>
+    <select id="selectByRoomIdAndMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        <bind name="mission_id" value="'%' + missionId + '%'"/>
+        select * from cr_role
+        where room_id = #{roomId}
+        and mission_scheme like #{mission_id}
+    </select>
 
 
 </mapper>

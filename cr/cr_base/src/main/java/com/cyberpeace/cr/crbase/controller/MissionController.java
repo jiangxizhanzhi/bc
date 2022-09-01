@@ -37,11 +37,13 @@ import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionTemplateRsp;
-import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.MissionSchemeTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionSchemeTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
@@ -194,9 +196,6 @@ public class MissionController {
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-
-		CrRole crRole = crRoleService.getById(missionModifyReq.getRoleResourceId());
-		missionService.updateMissionValidate(missionModifyReq, crRole);
 		Mission toUpdateMission = requestToMission(missionModifyReq);
 		missionService.updateById(toUpdateMission);
 
@@ -435,6 +434,8 @@ public class MissionController {
 	private Mission requestToMission(MissionModifyReq missionModifyReq) {
 		Mission mission = missionService.getById(missionModifyReq.getResourceId());
 		if (StringUtils.isNotBlank(missionModifyReq.getTitle())) {
+			missionService.updateMissionValidate(missionModifyReq.getResourceId(),
+					mission.getRoomId(), missionModifyReq.getTitle());
 			mission.setTitle(missionModifyReq.getTitle());
 		}
 		if ((missionModifyReq.getScore() != null)) {

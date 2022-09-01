@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
@@ -153,5 +152,11 @@ public interface MissionService extends IService<Mission> {
 	 */
 	ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq);
 
-	void updateMissionValidate(MissionModifyReq missionModifyReq, CrRole crRole);
+	/**
+	 * 前台修改任务，校验是否阶段内重名
+	 * @param missionId 
+	 * @param roomId
+	 * @param title
+	 */
+	void updateMissionValidate(String missionId, String roomId, String title);
 }

@@ -471,6 +471,11 @@ public class MDParser {
 					ZiguanConstants.ROLE_NODES_CATEGORY);
 			parseNodes(nodeDict.get(ZiguanConstants.ASSET_NODES), roleInfo.getAssetNodes());
 			parseNodes(nodeDict.get(ZiguanConstants.VISIBLE_NODES), roleInfo.getVisibleNodes());
+			// 当markdown中不存在资产数据时，导入资产数据等于迷雾数据
+			if (roleInfo.getAssetNodes().isEmpty()) {
+				roleInfo.setAssetNodes(
+						BeanUtils.deepCopyList(roleInfo.getVisibleNodes(), Node.class));
+			}
 		}
 	}
 

@@ -915,9 +915,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		List<ClassroomGroupInfo> groupInfoList = classroomGroupInfoMapper.selectByRoom(roomId);
-		List<String> userIds = StreamApiUtils.distinctFlatMap(groupInfoList,
-				groupInfo -> JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(), String.class));
+		List<String> userIds = remoteUserService.idsByOrgId(classroom.getOrganizationId());
 		if (CollectionUtils.isEmpty(userIds)) {
 			log.error("Classroom user is null! classroom_id=[{}]", roomId);
 			return null;
@@ -1009,6 +1007,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (null == userMap.get(ResourceImportConstant.SUPER_ADMIN_HASH)) {
 			UserInfo superAdmin = remoteUserService
 					.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+			userMap.put(superAdmin.getUserId(), superAdmin.getUserId());
 			userInfos.add(superAdmin);
 		}
 		if (null == userMap.get(classroom.getCreateUserId())) {

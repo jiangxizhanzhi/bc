@@ -328,11 +328,16 @@ public class CrScoreController {
 						if (crTask != null) {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
-							if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
-								String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
-								if (StringUtils.isNotEmpty(time)) {
-									trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
+							if (crTask.getBusinessType()
+									  .equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())){
+								if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
+									String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
+									if (StringUtils.isNotEmpty(time)) {
+										trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
+									}
 								}
+							}else {
+								trainingRecord.setTime(crTask.getLastSubmitTime());
 							}
 						} else {
 							trainingRecordMissionRsp

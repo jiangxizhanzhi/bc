@@ -68,7 +68,9 @@ public class SingleTemplateController {
 		JSONObject sceneConfig = requestDataRel.getEventData().getSceneConfigData().getSceneConfig();
 		try {
 			// 默认开启流量采集
-			sceneConfig.getJSONObject("plugins").getJSONObject("cpcollection").getJSONObject("scene").fluentPut("enable_flow_collect", true);
+			String sceneObjStr = "{\"scene\": {\"enable_flow_collect\": true}}";
+			JSONObject sceneObj = JSONObject.parseObject(sceneObjStr);
+			sceneConfig.getJSONObject("plugins").put("cpcollection", sceneObj);
 		} catch (Exception e) {
 			// 不处理
 			log.error("set enable_flow_collect error !!!");

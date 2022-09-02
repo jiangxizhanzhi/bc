@@ -10,7 +10,7 @@ alter table oj_classroom modify lesson_id varchar(64) not null comment '关联�
 
 alter table oj_classroom modify organization_id varchar(64) not null comment '关联组织id';
 
-alter table oj_classroom modify organization_ids varchar(1024) not null comment '关联组织下所有组织id';
+alter table oj_classroom modify organization_ids longtext not null comment '关联组织下所有组织id';
 
 alter table oj_classroom modify create_user_id varchar(64) not null comment '创建者（课堂教师）';
 

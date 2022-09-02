@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 训练统计中间体
+ */
 @Data
 public class TrainingCount implements Serializable {
 

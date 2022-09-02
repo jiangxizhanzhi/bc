@@ -10,6 +10,9 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务编排阶段
+ */
 @Data
 public class MissionSchemeStage {
 

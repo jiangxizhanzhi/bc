@@ -11,6 +11,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 训练报告
+ */
 @Data
 public class TrainingReport {
 

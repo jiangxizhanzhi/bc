@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 红蓝时间线事件
+ */
 @Data
 public class TimeLineEvent {
 

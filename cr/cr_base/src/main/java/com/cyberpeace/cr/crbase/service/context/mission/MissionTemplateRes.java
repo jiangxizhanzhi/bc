@@ -5,6 +5,9 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务模板返回体
+ */
 @Data
 public class MissionTemplateRes implements Serializable {
 

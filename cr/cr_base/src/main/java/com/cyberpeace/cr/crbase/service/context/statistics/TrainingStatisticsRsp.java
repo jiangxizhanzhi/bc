@@ -8,6 +8,9 @@ import com.cyberpeace.common.model.ListRsp;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练统计总体情况
+ */
 @Data
 public class TrainingStatisticsRsp implements Serializable {
 

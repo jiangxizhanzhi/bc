@@ -7,6 +7,9 @@ import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝模板
+ */
 @Data
 public class RbTemplateContext extends BasicTemplate {
 

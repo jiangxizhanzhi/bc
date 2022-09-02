@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练得分
+ */
 @Data
 public class TrainingScore {
 

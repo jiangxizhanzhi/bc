@@ -1,10 +1,14 @@
 package com.cyberpeace.cr.crbase.service.context.paraser;
 
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
-import org.springframework.stereotype.Service;
 
+/**
+ * 多选题解析
+ */
 @Service
 public class MultipleChoiceParser implements MdContentParser<String, String> {
 

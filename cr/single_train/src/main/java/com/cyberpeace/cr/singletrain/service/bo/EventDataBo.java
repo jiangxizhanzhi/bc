@@ -8,6 +8,9 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 单兵事件数据
+ */
 @Data
 public class EventDataBo implements Serializable {
 

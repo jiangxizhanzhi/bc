@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 任务得分
+ */
 @Data
 public class CrTaskScore implements Serializable {
 

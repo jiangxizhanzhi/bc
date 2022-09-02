@@ -6,6 +6,9 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练实例数据
+ */
 @Data
 public class TrainingData implements Serializable {
 

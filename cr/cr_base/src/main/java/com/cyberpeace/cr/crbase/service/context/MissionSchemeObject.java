@@ -6,6 +6,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务编排中间模型
+ */
 @Data
 public class MissionSchemeObject<T> implements Serializable {
 

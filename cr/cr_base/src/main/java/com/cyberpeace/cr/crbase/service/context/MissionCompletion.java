@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务完成数
+ */
 @Data
 public class MissionCompletion {
 

@@ -1,11 +1,15 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
+import java.io.Serializable;
+
 import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * 任务训练记录
+ */
 @Data
 public class MissionRecordBo implements Serializable {
     private String resourceId;

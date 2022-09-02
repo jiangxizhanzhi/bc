@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * @author SN
+ * 任务类别
  */
 @Data
 public class MissionCategory {

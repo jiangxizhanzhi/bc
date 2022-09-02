@@ -1,15 +1,19 @@
 package com.cyberpeace.cr.crbase.service.context.md;
 
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.parser.IntegerParser;
-import com.cyberpeace.common.mdparser.parser.ListParser;
-import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
-import com.cyberpeace.cr.crbase.service.context.paraser.MultipleChoiceParser;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
+import com.cyberpeace.common.mdparser.parser.IntegerParser;
+import com.cyberpeace.common.mdparser.parser.ListParser;
+import com.cyberpeace.cr.crbase.service.context.paraser.MultipleChoiceParser;
+
+import lombok.Data;
+
+/**
+ * 多选题MarkDown
+ */
 @Data
 public class MultipleChoiceMD implements Serializable {
 	@MdHeadLine(level = 3, name = "任务名称")

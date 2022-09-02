@@ -11,6 +11,9 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练模板基础信息
+ */
 @Data
 public class BaseInfo {
 

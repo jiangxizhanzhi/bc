@@ -5,6 +5,9 @@ import java.util.Map;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务统计报告
+ */
 @Data
 public class MissionReport {
 

@@ -7,6 +7,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 任务统计
+ */
 @Data
 public class MissionsStatistic {
 

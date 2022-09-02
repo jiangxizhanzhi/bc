@@ -1,12 +1,16 @@
 package com.cyberpeace.cr.crbase.service.context.md;
 
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.parser.IntegerParser;
-import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
-import lombok.Data;
-
 import java.io.Serializable;
 
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
+import com.cyberpeace.common.mdparser.parser.IntegerParser;
+
+import lombok.Data;
+
+/**
+ * 文件题Markdown
+ */
 @Data
 public class FileMD implements Serializable {
 

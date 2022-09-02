@@ -97,8 +97,6 @@ public interface MissionService extends IService<Mission> {
 	 */
 	String getTeamTrainingManual(String roomId);
 
-	List<MissionTemplate> batchInsertMissionTemplate(List<LoadMission> templateQuestions);
-
 	/**
 	 * 导入场景模板时批量导入 mission
 	 * @param missionTemplates

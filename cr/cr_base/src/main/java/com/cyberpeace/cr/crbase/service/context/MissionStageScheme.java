@@ -4,6 +4,9 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 任务阶段编排
+ */
 @Data
 public class MissionStageScheme {
 

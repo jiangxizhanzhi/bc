@@ -6,6 +6,9 @@ import com.cyberpeace.common.model.PageReqBase;
 
 import lombok.Data;
 
+/**
+ * 训练统计分页
+ */
 @Data
 public class TrainingStatisticsPage implements Serializable {
 

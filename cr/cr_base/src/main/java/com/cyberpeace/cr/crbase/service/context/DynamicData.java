@@ -5,6 +5,9 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 动态数据
+ */
 @Data
 public class DynamicData {
 

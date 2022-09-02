@@ -9,6 +9,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 角色成绩
+ */
 @NoArgsConstructor
 @Data
 public class RoleScore {

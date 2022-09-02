@@ -5,6 +5,9 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务模型
+ */
 @Data
 public class MissionContext extends Mission {
 

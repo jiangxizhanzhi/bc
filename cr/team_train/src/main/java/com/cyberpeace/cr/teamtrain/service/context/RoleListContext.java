@@ -6,8 +6,12 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+
 import lombok.Data;
 
+/**
+ * 团队训练角色列表
+ */
 @Data
 public class RoleListContext<T> implements Serializable {
 

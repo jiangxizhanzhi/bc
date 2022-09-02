@@ -5,6 +5,9 @@ import java.util.Map;
 
 import lombok.Data;
 
+/**
+ * 包含时间信息的obj
+ */
 @Data
 public class ObjWithTime implements Comparable<ObjWithTime> {
 

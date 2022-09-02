@@ -9,6 +9,9 @@ import com.cyberpeace.cr.crbase.service.context.role.ShowWriteup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝角色模型
+ */
 @Data
 public class CrRbRoleContext {
 

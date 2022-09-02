@@ -1,14 +1,18 @@
 package com.cyberpeace.cr.crbase.service.context.md;
 
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.parser.IntegerParser;
-import com.cyberpeace.common.mdparser.parser.ListParser;
-import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
+import com.cyberpeace.common.mdparser.parser.IntegerParser;
+import com.cyberpeace.common.mdparser.parser.ListParser;
+
+import lombok.Data;
+
+/**
+ * 单选题Markdown
+ */
 @Data
 public class RadioMD implements Serializable {
 

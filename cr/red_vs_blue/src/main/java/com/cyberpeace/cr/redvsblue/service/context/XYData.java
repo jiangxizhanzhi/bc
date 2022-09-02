@@ -5,6 +5,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 二维曲线数据
+ */
 @Data
 public class XYData {
 

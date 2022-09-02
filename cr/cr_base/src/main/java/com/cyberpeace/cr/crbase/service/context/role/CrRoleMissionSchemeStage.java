@@ -5,6 +5,9 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 角色任务编排阶段模型
+ */
 @Data
 public class CrRoleMissionSchemeStage implements Serializable {
 

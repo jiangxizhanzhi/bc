@@ -6,6 +6,9 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝靶标占用
+ */
 @Data
 public class RbDeviceContext implements Serializable {
 

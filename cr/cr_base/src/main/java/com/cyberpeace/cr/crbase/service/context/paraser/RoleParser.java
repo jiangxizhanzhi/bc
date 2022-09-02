@@ -1,13 +1,17 @@
 package com.cyberpeace.cr.crbase.service.context.paraser;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cs.service.context.RoleBo;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+/**
+ * 角色解析
+ */
 @Service
 public class RoleParser implements MdContentParser<List<RoleBo>, String> {
 

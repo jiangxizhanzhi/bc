@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 实例角色
+ */
 @Data
 public class RoomRole {
 

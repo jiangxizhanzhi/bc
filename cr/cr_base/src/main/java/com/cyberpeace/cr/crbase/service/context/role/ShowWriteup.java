@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context.role;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 题解开放状态
+ */
 @Data
 public class ShowWriteup {
 

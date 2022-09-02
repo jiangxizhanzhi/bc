@@ -9,6 +9,9 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝实例
+ */
 @Data
 public class RbRoomContext {
 

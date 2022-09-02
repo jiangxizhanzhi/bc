@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context.convert;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 
+/**
+ * 资管训练类型转换
+ */
 public enum BusinessTypeConvert implements GenericEnum, MdConvertEnum<Integer, String> {
 
 	SINGLE(1, "单兵训练"),TEAM(3, "团队训练"),REDVSBLUE(4,"红蓝对抗");

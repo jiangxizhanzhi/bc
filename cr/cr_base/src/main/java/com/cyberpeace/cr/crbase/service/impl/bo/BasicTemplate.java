@@ -5,6 +5,9 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 基础模板基础信息
+ */
 @Data
 public class BasicTemplate {
 

@@ -10,6 +10,9 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 
 import lombok.Data;
 
+/**
+ * 任务模型
+ */
 @Data
 public class TaskContext extends BaseTable {
 

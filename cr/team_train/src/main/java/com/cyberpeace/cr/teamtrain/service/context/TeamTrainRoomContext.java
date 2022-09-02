@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 团队训练实例模型
+ */
 @Data
 public class TeamTrainRoomContext implements Serializable {
 

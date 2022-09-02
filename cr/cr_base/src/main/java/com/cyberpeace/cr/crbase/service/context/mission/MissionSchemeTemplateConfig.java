@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 任务编排模板配置
+ */
 @Data
 public class MissionSchemeTemplateConfig implements Serializable {
 

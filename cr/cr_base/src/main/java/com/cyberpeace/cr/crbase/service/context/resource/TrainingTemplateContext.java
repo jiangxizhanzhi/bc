@@ -2,6 +2,9 @@ package com.cyberpeace.cr.crbase.service.context.resource;
 
 import lombok.Data;
 
+/**
+ * 训练模板中间模型
+ */
 @Data
 public class TrainingTemplateContext {
 

@@ -9,6 +9,9 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 场景配置数据
+ */
 @Data
 public class SceneConfigData implements Serializable {
 

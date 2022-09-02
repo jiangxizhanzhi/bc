@@ -7,6 +7,9 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 场景展示模型
+ */
 @Data
 public class SceneViewContext implements Serializable {
 

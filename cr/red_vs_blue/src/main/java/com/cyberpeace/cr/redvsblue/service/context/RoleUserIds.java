@@ -4,6 +4,9 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * 角色、用户id集合
+ */
 @Data
 public class RoleUserIds {
 

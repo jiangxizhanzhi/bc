@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.Data;
 
+/**
+ * 节点包含流量
+ */
 @Data
 public class ElementFlowListContext implements Serializable {
 

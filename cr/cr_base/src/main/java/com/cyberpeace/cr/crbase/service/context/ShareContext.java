@@ -5,6 +5,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 授权模型
+ */
 @Data
 public class ShareContext {
 

@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 授权的教员
+ */
 @Data
 public class ShareTeacher {
 

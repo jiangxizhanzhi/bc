@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.context;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 任务统计计数结果
+ */
 @Data
 public class TaskCounter {
 

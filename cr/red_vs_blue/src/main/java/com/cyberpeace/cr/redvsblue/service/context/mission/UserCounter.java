@@ -6,6 +6,9 @@ import com.google.common.collect.Lists;
 
 import lombok.Data;
 
+/**
+ * 用户统计完成任务和分数
+ */
 @Data
 public class UserCounter {
 

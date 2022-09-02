@@ -10,6 +10,9 @@ import com.google.common.collect.Lists;
 
 import lombok.Data;
 
+/**
+ * 时间数据
+ */
 @Data
 public class TimeData {
 

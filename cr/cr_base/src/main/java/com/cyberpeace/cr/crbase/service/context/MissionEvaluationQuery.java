@@ -5,6 +5,9 @@ import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务评估查询体
+ */
 @Data
 public class MissionEvaluationQuery extends PageReqBase {
 

@@ -1,16 +1,20 @@
 package com.cyberpeace.cr.crbase.service.context.paraser;
 
+import java.util.Collection;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-
+/**
+ * 训练技能解析
+ */
 @Service
 public class TrainSkillParser implements MdContentParser<Collection, String> {
 

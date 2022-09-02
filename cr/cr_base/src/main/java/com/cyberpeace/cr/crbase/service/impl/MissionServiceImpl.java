@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -421,22 +420,6 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		TrainingManualTeam manual = new TrainingManualTeam(allStages, missionMap);
 		return manual.toMarkDown();
-	}
-
-	@Override
-	public List<MissionTemplate> batchInsertMissionTemplate(List<LoadMission> templateQuestions) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		List<MissionTemplate> missionTemplates = templateQuestions.stream().map(loadMission -> {
-			MissionTemplate missionTemplate = BeanUtils.copy(loadMission, MissionTemplate.class);
-			missionTemplate.setCreateUserId(userId);
-			missionTemplate.setCategoryId(loadMission.getCategory());
-			missionTemplate.setResourceId(IDGeneratorUtil.getID());
-
-			return missionTemplate;
-		}).collect(Collectors.toList());
-
-		missionTemplateMapper.batchInsert(missionTemplates);
-		return missionTemplates;
 	}
 
 	@Override

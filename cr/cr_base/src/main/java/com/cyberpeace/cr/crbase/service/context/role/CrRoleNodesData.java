@@ -6,6 +6,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 角色拥有的节点
+ */
 @Data
 public class CrRoleNodesData implements Serializable {
 

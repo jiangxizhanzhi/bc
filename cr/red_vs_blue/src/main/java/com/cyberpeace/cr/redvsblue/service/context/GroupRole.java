@@ -6,6 +6,9 @@ import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
 
 import lombok.Data;
 
+/**
+ * 角色
+ */
 @Data
 public class GroupRole {
 

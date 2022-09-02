@@ -1,13 +1,17 @@
 package com.cyberpeace.cr.crbase.service.context.md;
 
-import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
-import com.cyberpeace.common.mdparser.parser.IntegerParser;
-import com.cyberpeace.common.mdparser.convert.JudgeConvert;
-import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
-import lombok.Data;
-
 import java.io.Serializable;
 
+import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
+import com.cyberpeace.common.mdparser.convert.JudgeConvert;
+import com.cyberpeace.common.mdparser.convert.QuestionTypeConvert;
+import com.cyberpeace.common.mdparser.parser.IntegerParser;
+
+import lombok.Data;
+
+/**
+ * 判断题Markdown
+ */
 @Data
 public class JudgeMD implements Serializable {
 	@MdHeadLine(level = 3, name = "任务名称")

@@ -5,6 +5,9 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练记录
+ */
 @Data
 public class TrainingRecord {
 

@@ -5,6 +5,9 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练统计返回体
+ */
 @Data
 public class TrainingCountRsp implements Serializable {
 

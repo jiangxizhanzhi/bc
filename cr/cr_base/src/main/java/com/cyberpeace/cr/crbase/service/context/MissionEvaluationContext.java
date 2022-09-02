@@ -6,6 +6,9 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 
 import lombok.Data;
 
+/**
+ * 任务评估模型
+ */
 @Data
 public class MissionEvaluationContext {
 

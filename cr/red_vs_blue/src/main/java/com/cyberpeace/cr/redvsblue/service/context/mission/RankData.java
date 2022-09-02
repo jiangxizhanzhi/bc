@@ -2,6 +2,9 @@ package com.cyberpeace.cr.redvsblue.service.context.mission;
 
 import lombok.Data;
 
+/**
+ * 排名信息
+ */
 @Data
 public class RankData implements Comparable<RankData> {
 

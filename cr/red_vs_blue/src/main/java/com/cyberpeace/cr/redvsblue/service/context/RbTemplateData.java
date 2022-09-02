@@ -5,6 +5,9 @@ import java.util.Date;
 
 import lombok.Data;
 
+/**
+ * 红蓝模板数据
+ */
 @Data
 public class RbTemplateData implements Serializable {
 

@@ -1,9 +1,13 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 角色查询体
+ */
 @Data
 @NoArgsConstructor
 public class RoleQuery {

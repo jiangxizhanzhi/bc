@@ -9,6 +9,9 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 团队训练模板角色
+ */
 @Data
 public class TeamTrainTemplateRole {
 

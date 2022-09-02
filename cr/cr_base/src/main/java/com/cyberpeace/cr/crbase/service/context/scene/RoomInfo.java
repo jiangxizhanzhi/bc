@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 训练实例简要信息
+ */
 @Data
 public class RoomInfo implements Serializable {
 

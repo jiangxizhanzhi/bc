@@ -10,6 +10,9 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 
 import lombok.Data;
 
+/**
+ * 资源导出中间模型
+ */
 @Data
 public class ResourceDumpContext<T> implements Serializable {
 

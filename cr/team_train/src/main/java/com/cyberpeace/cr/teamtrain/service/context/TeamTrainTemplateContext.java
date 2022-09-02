@@ -2,12 +2,14 @@ package com.cyberpeace.cr.teamtrain.service.context;
 
 import javax.validation.constraints.NotNull;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 团队训练模板
+ */
 @Data
 public class TeamTrainTemplateContext extends BasicTemplate {
 

@@ -8,6 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 角色图表
+ */
 @Data
 public class ChartInfo {
 

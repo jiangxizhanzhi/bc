@@ -5,6 +5,9 @@ import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 阶段内包含问题
+ */
 @Data
 public class StageQuestion {
 

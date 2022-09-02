@@ -5,6 +5,9 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 监控中间模型
+ */
 @Data
 public class MonitorSession implements Serializable {
 

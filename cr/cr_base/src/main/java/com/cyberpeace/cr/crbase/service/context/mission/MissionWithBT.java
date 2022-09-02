@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 任务模板返回体with训练模板id
+ */
 @Data
 public class MissionWithBT extends MissionTemplateRes implements Serializable {
 

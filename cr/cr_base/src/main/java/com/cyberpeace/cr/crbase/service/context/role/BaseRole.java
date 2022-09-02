@@ -5,6 +5,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 基础角色信息
+ */
 @Data
 public class BaseRole {
 

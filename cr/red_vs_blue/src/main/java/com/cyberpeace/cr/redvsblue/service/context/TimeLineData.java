@@ -6,6 +6,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 红蓝时间线数据
+ */
 @Data
 public class TimeLineData {
 

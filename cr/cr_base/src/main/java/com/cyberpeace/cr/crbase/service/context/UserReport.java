@@ -5,6 +5,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 用户训练报告
+ */
 @Data
 public class UserReport {
 

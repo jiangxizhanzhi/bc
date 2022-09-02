@@ -6,9 +6,13 @@ import java.util.Map;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 团队训练手册
+ */
 @Data
 public class TrainingManualTeam {
 

@@ -5,6 +5,9 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 训练模板简要信息
+ */
 @Data
 public class BusinessTemplateSimple implements Serializable {
 

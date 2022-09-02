@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 任务ws推送状态更新
+ */
 @Data
 public class MissionWsUpdateStatusMessage implements Serializable {
 

@@ -7,6 +7,9 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 角色数据
+ */
 @Data
 public class RoleData<T> {
 

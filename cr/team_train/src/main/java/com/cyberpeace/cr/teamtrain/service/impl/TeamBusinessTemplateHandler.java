@@ -6,20 +6,21 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.cr.crbase.service.context.LoadTemplateData;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
@@ -28,7 +29,6 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateRole;
-import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,52 +144,6 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
 		TeamTemplate teamTemplate = BeanUtils.copy(templateContext, TeamTemplate.class);
 		teamTemplateService.save(teamTemplate);
-	}
-
-	private void replaceMissions(LoadTemplateData loadTemplateData,
-			List<MissionTemplate> missions) {
-		// 从python版5.3导出的数据，在导入该版本时，role_list的mission字段要进行替换
-		JSONArray roleList = loadTemplateData.getTemplateData().getJSONArray("role_list");
-		for (int i = 0; i < roleList.size(); i++) {
-			JSONObject missionScheme = roleList.getJSONObject(i).getJSONObject("missions_scheme");
-			if (null == missionScheme) {
-				continue;
-			}
-
-			JSONArray schemaData = missionScheme.getJSONArray("scheme_data");
-			if (null == schemaData) {
-				continue;
-			}
-
-			for (int j = 0; j < schemaData.size(); j++) {
-				JSONObject stage = schemaData.getJSONObject(j);
-				if (null == stage) {
-					continue;
-				}
-
-				List<Integer> missionIds = JsonUtil.toJsonObjectArray(stage.getString("missions"),
-						Integer.class);
-
-				if (missionIds.isEmpty()) {
-					continue;
-				}
-
-				List<AddTemplateMission> replacedMissions = Lists.newArrayList();
-				for (Integer index : missionIds) {
-					replacedMissions.add(getAddTemplateMission(index, missions));
-				}
-
-				stage.put("missions", replacedMissions);
-			}
-		}
-	}
-
-	private AddTemplateMission getAddTemplateMission(Integer missionIndex,
-			List<MissionTemplate> missions) {
-		MissionTemplate origin = missions.get(missionIndex);
-
-		AddTemplateMission result = BeanUtils.copy(origin, AddTemplateMission.class);
-		return result;
 	}
 
 }

@@ -2,6 +2,8 @@ package com.cyberpeace.oj.ojbase.controller.req;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.baseinterface.EnumValid;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +24,7 @@ public class ResourceShareReq {
 
 	@ApiModelProperty("授权模式, 1-所有, 2-自定义")
 	@NotNull
+	@EnumValid(message = "操作权限参数错误！", target = AuthTable.AuthType.class)
 	private Integer operationAuthType;
 
 }

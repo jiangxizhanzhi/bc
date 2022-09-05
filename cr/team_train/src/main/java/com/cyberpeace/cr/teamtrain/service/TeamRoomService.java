@@ -18,78 +18,82 @@ import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 public interface TeamRoomService extends IService<TeamRoom> {
 
 	/** 通过id获取团队训练
-	 * @param resourceId
-	 * @return
+	 * @param resourceId 训练实例id
+	 * @return 团队训练实例数据
 	 */
 	TeamRoomData getTeamRoomDataByRoomId(String resourceId);
 
 	/** 创建实例
-	 * @param teamTrainRoomContext
-	 * @return
+	 * @param teamTrainRoomContext 团队训练实例数据
+	 * @return 团队训练实例
 	 */
 	TeamRoom create(TeamTrainRoomContext teamTrainRoomContext);
 
 	/** 更新实例
-	 * @param teamTrainRoomContext
-	 * @param teamRoom
-	 * @return
+	 * @param teamTrainRoomContext 团队训练实例数据
+	 * @param teamRoom 目标团队实例
 	 */
 	void updateTeamRoom(TeamTrainRoomContext teamTrainRoomContext, TeamRoom teamRoom);
 
 	/** 列表查询团队训练
-	 * @param listQuery
-	 * @return
+	 * @param listQuery 分页查询体
+	 * @return 团队训练实例分页数据
 	 */
 	IPage<TeamRoomData> list(ListQuery listQuery);
 
 	/** 修改团队训练状态
-	 * @param roomId
-	 * @return
+	 * @param roomId 团队训练实例id
+	 * @return 团队训练实例状态
 	 */
 	Integer changeTrainingStatus(String roomId);
 
 	/** 获取团队训练状态
-	 * @param roomId
-	 * @return
+	 * @param roomId 团队训练实例id
+	 * @return 团队训练实例状态
 	 */
 	Integer getTrainingStatus(String roomId);
 
 	/** 通过businessInstanceId获取学员id
-	 * @param roomId
-	 * @return
+	 * @param roomId 团队训练实例id
+	 * @return 学员列表
 	 */
 	List<UserRole> getUserList(String roomId);
 
 	/**教员获取时间线
-	 * @param roomId
-	 * @return
+	 * @param roomId 团队训练实例id
+	 * @return 教员时间线数据
 	 */
 	TimeLineData getTimeLine(String roomId);
 
 	/** 检查是否有教员权限
-	 * @param roomId
-	 * @param userId
+	 * @param roomId 团队训练实例id
+	 * @param userId 用户id
 	 */
 	void checkTeacherPermission(String roomId, String userId);
 
 	/** 检查团队训练是否是已启动状态
-	 * @param roomId
+	 * @param roomId 团队训练实例id
 	 */
 	void checkRoomOpening(String roomId);
 
 	/** 学员获取时间线
-	 * @param roomId
-	 * @return
+	 * @param roomId 团队训练实例id
+	 * @return 学员时间线数据
 	 */
 	StudentsTimeLineData getStudentsTimeLine(String roomId);
 
 	TeamRoom getByLocalSceneId(String localSceneId);
 
+	/**
+	 * 根据id获取团队训练实例
+	 * @param roomId 团队训练实例id
+	 * @return 团队训练实例
+	 */
 	TeamRoom getById(String roomId);
 
 	/** 检查是否有学员权限
-	 * @param roomId
-	 * @param userId
+	 * @param roomId 团队训练实例id
+	 * @param userId 用户id
 	 */
 	void checkStudentPermission(String roomId, String userId);
 }

@@ -10,17 +10,34 @@ import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
 
 public interface SingleTemplateService extends IService<SingleTemplate> {
 
+	/**
+	 * 获取单兵模板数据
+	 * @param businessTemplateId 业务模板id 
+	 * @return 单兵训练模板数据
+	 */
 	SingleTemplateBo get(String businessTemplateId);
 
+	/**
+	 * 更新单兵训练模板
+	 * @param businessTemplateId 业务模板id 
+	 * @param baseInfo 模板基础信息
+	 * @param missionsScheme 任务编排
+	 * @return 更新后的单兵模板
+	 */
 	SingleTemplateBo update(String businessTemplateId, BaseInfo baseInfo,
 			JSONObject missionsScheme);
 
-	SingleTemplate getByBusinessTemplateId(String resourceId);
+	/**
+	 * 获取单兵模板
+	 * @param businessTemplateId 业务模板id
+	 * @return 单兵模板
+	 */
+	SingleTemplate getByBusinessTemplateId(String businessTemplateId);
 
 	/**
 	 * 根据 missions_scheme 获取任务模板id列表
-	 * @param missionsScheme
-	 * @return
+	 * @param missionsScheme 任务编排json
+	 * @return 任务模板id列表
 	 */
 	List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme);
 }

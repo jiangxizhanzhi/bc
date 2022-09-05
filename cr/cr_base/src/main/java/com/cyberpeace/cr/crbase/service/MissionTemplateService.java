@@ -11,54 +11,55 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 
 	/**
 	 * 从 roleConfig, missionScheme 中解析出 id，再获取任务模板列表
-	 * @param schemeJson
-	 * @return
+	 * @param schemeJson json字符串
+	 * @return 任务模板列表
 	 */
 	List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson);
 
 	/**
 	 * 传入id列表，获取id：missionTemplate的字典
-	 * @param templateIds
-	 * @return
+	 * @param templateIds 任务模板id列表
+	 * @return 任务模板集合
 	 */
 	Map<String, MissionTemplate> getMappingByIds(List<String> templateIds);
 
 	/**
 	 * 从 roleConfig, missionScheme 中解析出 id，再获取任务模板字典
-	 * @param schemeJson
-	 * @return
+	 * @param schemeJson json字符串
+	 * @return 任务模板集合
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson);
 
 	/**
-	 * 批量插入
-	 * @param missionTemplateList
+	 * 批量插入任务模板
+	 * @param missionTemplateList 任务模板列表
 	 */
 	void batchInsert(List<MissionTemplate> missionTemplateList);
 
 	/**
-	 * 批量删除
-	 * @param missionTemplateIds
+	 * 批量删除任务模板
+	 * @param missionTemplateIds 任务模板id列表
 	 */
 	void batchDelete(List<String> missionTemplateIds);
 
 	/**
 	 * 创建、更新BusinessTemplate时，批量更新任务的关联
-	 * @param businessTemplateId
-	 * @param missionTemplateIds
+	 * @param businessTemplateId 业务模板id
+	 * @param missionTemplateIds 任务模板id列表
 	 */
 	void batchUpdateBusinessTemplateId(String businessTemplateId, List<String> missionTemplateIds);
 
 	/**
 	 * 从role_config json字符串中正则匹配出所有的任务模板id
-	 * @param missionSchemeJson
-	 * @return
+	 * @param missionSchemeJson json字符串
+	 * @return 任务模板id列表
 	 */
 	List<String> getIdsByMissionsSchemeJson(String missionSchemeJson);
 
 	/**
-	 * @param missionTemplateIds
-	 * @return
+	 * 用于rtks，连同场景名称返回任务信息
+	 * @param missionTemplateIds 任务模板id列表
+	 * @return 任务信息集合
 	 */
 	Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds);
 
@@ -71,8 +72,8 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 
 	/**
 	 * 从 roleConfig, missionScheme 中解析出 id，再获取任务模板字典
-	 * @param schemeJsonList
-	 * @return
+	 * @param schemeJsonList json字符串列表
+	 * @return 任务模板集合
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList);
 }

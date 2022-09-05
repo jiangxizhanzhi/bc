@@ -311,7 +311,7 @@ public class RbRoomController {
 	}
 
 	/**
-	 * 查询团队训练学员用户列表
+	 * 查询红蓝对抗学员用户列表
 	 * @return
 	 */
 	@ApiOperation("获取群组成员列表")

@@ -14,26 +14,32 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 public interface CrScoreService extends IService<CrScore> {
 
 	/** 获取学员的成绩
-	 * @param roomId
-	 * @param userId
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param userId 用户id
+	 * @return 学员成绩
 	 */
 	CrScore getByRoomIdAndUser(String roomId, String userId);
 
-	/**获取训练实战任务统计信息
-	 * @param roomId
-	 * @param studentId
-	 * @return (已完成，未下发，已下发)
-	 */
-
 	/** 获取任务统计
-	 * @param roomId
-	 * @param crRoleList
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param crRoleList 角色列表
+	 * @return 任务统计
 	 */
 	MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList);
 
+	/**
+	 * 批量获取某训练的学员成绩
+	 * @param roomId  训练实例id
+	 * @param userIds 学员id列表
+	 * @return 学员成绩列表
+	 */
 	List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds);
 
+	/**
+	 * 获取训练中角色拥有的任务的类别统计
+	 * @param roomId 训练实例id
+	 * @param crRoleList 角色列表
+	 * @return 任务类别统计
+	 */
 	Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList);
 }

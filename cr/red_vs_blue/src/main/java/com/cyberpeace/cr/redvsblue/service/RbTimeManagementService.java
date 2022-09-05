@@ -9,9 +9,9 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 public interface RbTimeManagementService extends IService<RbTimeManagement> {
 
 	/**
-	 * 根据红蓝房间id获取
-	 * @param roomId 
-	 * @return
+	 * 根据红蓝房间id获取时间管理
+	 * @param roomId 红蓝房间id
+	 * @return 时间管理
 	 */
 	RbTimeManagement getByRoomId(String roomId);
 
@@ -22,7 +22,7 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	List<String> getStartedRoomIds();
 
 	/**
-	 * 获取所有
+	 * 获取所有时间管理
 	 * @return
 	 */
 	List<RbTimeManagement> getAll();
@@ -41,19 +41,20 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 
 	/**
 	 * 更新时间管理器
-	 * @param timeManagement
-	 * @param room
-	 * @param status
-	 * @param userId
+	 * @param timeManagement 时间管理实例
+	 * @param room 红蓝对抗实例
+	 * @param status 更新状态
+	 * @param userId 用户id
 	 */
 	void updateTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status,
 			String userId);
+	
 	/**
 	 * 创建时间管理器
-	 * @param timeManagement
-	 * @param room
-	 * @param status
-	 * @param userId
+	 * @param timeManagement 时间管理
+	 * @param room 红蓝实例
+	 * @param status 初始状态
+	 * @param userId 用户id
 	 */
 	void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status, String userId);
 }

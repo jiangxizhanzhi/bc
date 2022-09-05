@@ -123,8 +123,8 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 	}
 
 	@Override
-	public SingleTemplate getByBusinessTemplateId(String resourceId) {
-		return singleTemplateMapper.getByBusinessId(resourceId);
+	public SingleTemplate getByBusinessTemplateId(String businessTemplateId) {
+		return singleTemplateMapper.getByBusinessId(businessTemplateId);
 	}
 
 	@Override

@@ -16,95 +16,136 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
  */
 public interface CrRoleService extends IService<CrRole> {
 
+	/**
+	 * 由id查询角色
+	 * @param roleId 角色id
+	 * @return 角色
+	 */
 	CrRole getById(String roleId);
 
 	/** 获取团队训练的权限人员
-	 * @param roomId
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param roleGroup 角色组
+	 * @return 角色相关数据
 	 */
 	CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup);
 
 	/**
 	 * 获取训练分组信息
-	 * @param roomId
-	 * @param businessType
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param businessType 业务类型
+	 * @return 角色列表
 	 */
 	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
 
-	/**获取学员在团队训练的角色任务列表(目前只去掉了答案)
-	 * @param crRole 
-	 * @return
+	/**
+	 * 获取学员在团队训练的角色任务列表(目前只去掉了答案)
+	 * @param crRole 角色
+	 * @return 角色任务列表
 	 */
 	List<MissionSchemeObject<MissionContext>> getBaseMissionByRole(CrRole crRole);
 
 	/** 获取用户有权限的团队训练ID列表
-	 * @param userId
-	 * @return
+	 * @param userId 用户id
+	 * @return 有权限的团队训练ID列表
 	 */
 	List<String> getRoomIdsByUserId(String userId);
 
 	/** 通过roomId查询角色用户列表
-	 * @param roleQuery
-	 * @return
+	 * @param roleQuery 查询体
+	 * @return 角色列表
 	 */
 	List<CrRole> selectCrRoleByRoomId(RoleQuery roleQuery);
 
 	/** 获取学员在团队训练的角色
-	 * @param roomId
-	 * @param userId
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param userId 用户id
+	 * @return 角色
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
 	/** 获取学员在训练的角色任务列表
-	 * @param roomId
-	 * @param userId
-	 * @return
+	 * @param roomId 训练实例id
+	 * @param userId 用户id
+	 * @return 角色任务列表
 	 */
 	List<MissionSchemeObject<MissionContext>> getCrRoleMissionByRoomIdAndUserId(String roomId,
 			String userId);
 
 	/** 计算当前角色的任务数量
-	 * @param crRole
-	 * @return
+	 * @param crRole 角色
+	 * @return 任务数量
 	 */
 	Integer getMissionCount(CrRole crRole);
 
 	/** 将用户id替换为用户名字
-	 * @param userList
-	 * @return
+	 * @param userList 用户id列表
+	 * @return 用户名列表
 	 */
 	String getUserNamesByRoleUsers(List<String> userList);
 
 	/**获取团队训练实战任务统计信息
-	 * @param roomId
-	 * @param studentId
+	 * @param roomId 训练实例id
+	 * @param studentId 学员id
 	 * @return (已完成，未下发，已下发)
 	 */
 	TaskCounter getTaskCounter(String roomId, String studentId);
 
+	/**
+	 * 获取用户信息
+	 * @param userIdList 用户id列表
+	 * @return 用户信息列表
+	 */
 	List<UserData> getUserDatas(List<String> userIdList);
 
+	/**
+	 * 获取红蓝实例的学员角色列表
+	 * @param roomId 训练实例id
+	 * @return 角色列表
+	 */
 	List<CrRole> selectRbStudentsRoleByRoomId(String roomId);
 
 	/**
 	 * 删除训练房间后删除训练角色
-	 * @param roomId
+	 * @param roomId 训练实例id
 	 */
 	void clearRoomRoles(String roomId);
 
+	/**
+	 * 根据登录用户的角色来查询其能看到的分组角色
+	 * @param roomId 训练实例id
+	 * @param roleId 角色id
+	 * @return 其能看到的分组角色列表
+	 */
 	List<CrRole> selectCrRoleByRoomIdAndRoleId(String roomId, String roleId);
 
+	/**
+	 * 获取某用户在单个训练中的雷达图
+	 * @param roomId 训练实例id
+	 * @param userId 用户id
+	 * @return 雷达数值
+	 */
 	List<Integer> getRadar(String roomId, String userId);
 
 	/** 根据模板的任务id，复制任务并获取新的id，返回新的json字符串
-	 * @param missionsScheme
-	 * @return
+	 * @param missionsScheme 任务编排json字符串
+	 * @param roomId 训练实例id
+	 * @return 新的任务编排json字符串
 	 */
 	String getNewRoomScheme(String missionsScheme, String roomId);
 
+	/**
+	 * 根据红蓝实例id和角色组查询学员角色
+	 * @param roomId 训练实例id
+	 * @param roleGroup 角色组
+	 * @return 角色列表
+	 */
 	List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup);
 
+	/**
+	 * 查询用户是否有接入训练实例权限
+	 * @param roomId 训练实例id
+	 * @param userId 用户id
+	 */
 	void checkPermission(String roomId, String userId);
 }

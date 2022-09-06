@@ -11,9 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,7 +19,8 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
-import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
@@ -217,23 +215,31 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public List<UserInfo> ListByOrgId(String organizationId, boolean children) {
 
-		if (StringUtils.isBlank(organizationId)) {
-			log.error("Org id is blank!");
+		List<String> orgIds = Lists.newArrayList();
+		if (children) {
+			List<String> childrenList = remoteOrganizationService.childrenList(organizationId,
+					true);
+			orgIds.addAll(childrenList);
+		} else {
+			orgIds.add(organizationId);
 		}
 
-		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + organizationId,
-				JSONArray.class);
-		List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
-				obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
+		List<UserInfo> userInfos = Lists.newArrayList();
 
-		return orgUsers;
+		for (String orgId : orgIds) {
+			JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
+			List<UserInfo> orgUsers = StreamApiUtils.map(userArray,
+					obj -> userToOrgUserInfo((JSONObject) obj, organizationId));
+			userInfos.addAll(orgUsers);
+		}
+
+		return userInfos;
 	}
 
 	@Override
 	public List<String> idsByOrgId(String orgId) {
-		JSONArray userArray = HttpClientUtil.rawGet(ORG_INFO_LIST_URL + orgId, JSONArray.class);
-		return StreamApiUtils.map(userArray,
-				user -> ((JSONObject) user).getString(JsonKeyConstant.ID));
+		List<UserInfo> userInfos = ListByOrgId(orgId, true);
+		return StreamApiUtils.map(userInfos, UserInfo::getUserId);
 	}
 
 	/**

@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.controller.req.MissionModifyReq;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -685,16 +683,23 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public void updateMissionValidate(MissionModifyReq missionModifyReq, CrRole crRole) {
-		// 校验是否和角色既存任务重名
-		List<MissionStageScheme> missionStageSchemeList = crRole.getMissionStageSchemes();
-		List<String> missionIds = Lists.newArrayList();
-		for (MissionStageScheme scheme : missionStageSchemeList) {
-			missionIds.addAll(scheme.getMissions());
+	public void updateMissionValidate(String missionId, String roomId, String title) {
+		CrRole role = crRoleMapper.selectByRoomIdAndMissionId(roomId, missionId);
+		if (role == null) {
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
-		missionIds.remove(missionModifyReq.getResourceId());
-		if (checkNameDuplicate(missionModifyReq.getTitle(), missionIds)) {
-			throw new BusinessException(CrBusinessErrorCode.DUPLICATE_DYNAMIC_MISSION_TITLE);
+		// 校验是否和角色既存任务重名
+		List<MissionStageScheme> missionStageSchemeList = role.getMissionStageSchemes();
+		List<String> missionIds = Lists.newArrayList();
+		for (MissionStageScheme stage : missionStageSchemeList) {
+			missionIds = stage.getMissions();
+			if (missionIds.contains(missionId)) {
+				missionIds.remove(missionId);
+				break;
+			}
+		}
+		if (checkNameDuplicate(title, missionIds)) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
 		}
 	}
 

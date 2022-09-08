@@ -107,6 +107,10 @@ public class RabbitMQConf {
 		return container;
 	}
 
+	public String getDeleteQueryName() {
+		return queuePrefix + getProjectName() + ".scene.element";
+	}
+
 	private String getProjectName() {
 		String projectName = SystemPropUtil.getProp("PROJECT_NAME");
 

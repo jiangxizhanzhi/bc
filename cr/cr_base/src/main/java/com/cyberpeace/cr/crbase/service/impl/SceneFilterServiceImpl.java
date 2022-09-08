@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
@@ -13,6 +14,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.google.common.collect.Sets;
 
 import lombok.Data;
 
@@ -32,6 +34,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		JSONArray elements = topoData.getJSONObject("topology").getJSONArray("elements");
 
 		filterElements(topoData, elements, visibleNodeIds, assetNodeIds);
+		removeInvalidConnections(topoData, elements);
 
 		// remove empty areas
 		JSONArray areas = topoData.getJSONObject("topology").getJSONArray("areas");
@@ -53,6 +56,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 			String elementId = element.getString("id");
 			Integer elementType = element.getInteger("type");
 			if (!visibleNodeIds.contains(elementId)) {
+				// remove invisible element
 				elements.remove(i);
 			} else {
 				// 非资产节点去除接入方式
@@ -110,6 +114,39 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 			}
 		}
 	}
+
+	/**
+	 * 移除不可见的节点之后，需要额外移除节点间的连线
+	 * @param topoData 拓扑数据
+	 * @param elements 剩余的节点
+	 */
+	private void removeInvalidConnections(JSONObject topoData, JSONArray elements) {
+		JSONArray connections = topoData.getJSONObject("topology").getJSONArray("connections");
+		Set<String> existingPorts = Sets.newHashSet();
+		// collect existing ports
+		for (int i = 0; i < elements.size(); i++) {
+			JSONObject element = elements.getJSONObject(i);
+			JSONArray ports = element.getJSONArray("ports");
+			for (int j = 0; j < ports.size(); j++) {
+				String portId = ports.getJSONObject(j).getString("id");
+				existingPorts.add(portId);
+			}
+		}
+		int k = 0;
+		while (k < connections.size()) {
+			JSONObject connection = connections.getJSONObject(k);
+			String source = connection.getString("source");
+			String target = connection.getString("target");
+			if (existingPorts.contains(source) && existingPorts.contains(target)) {
+				// source and target both exist, valid connection
+				k++;
+			} else {
+				// remove invalid connection
+				connections.remove(k);
+			}
+		}
+	}
+
 }
 
 /**

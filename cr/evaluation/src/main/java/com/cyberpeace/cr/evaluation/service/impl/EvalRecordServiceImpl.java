@@ -32,7 +32,6 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
 import com.cyberpeace.integratation.model.scene.CollectionEventPageContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -53,7 +52,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -104,9 +102,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalAlgorithmRefService evalAlgorithmRefService;
 
     @Autowired
-    private MpEnvService mpEnvService;
-
-    @Autowired
     private EvalTaskMapper evalTaskMapper;
 
     @Autowired
@@ -118,15 +113,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Autowired
     private LocalSceneService localSceneService;
-
-    @Autowired
-    private EvalSystemService evalSystemService;
-
-    @Resource
-    private EvalIndexMapper evalIndexMapper;
-
-    @Resource
-    private EvalCollectionMapper evalCollectionMapper;
 
     @Autowired
     private EvalVariableRefProbeDataService evalVariableRefProbeDataService;
@@ -1033,7 +1019,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecord evalRecord = getById(resourceId);
         String templateId = evalTaskMapper.getTemplateIdByTaskId(evalRecord.getTaskId());
         EvalTemplate template = evalTemplateService.getById(templateId);
-        List<String> evalIndicatorIdList = new ArrayList<>();
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
 
         if (StringUtils.isEmpty(evalRecord.getTaskId()) || StringUtils.isEmpty(templateId)) {
@@ -1045,7 +1030,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (StringUtils.isEmpty(topoLogo)) {
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
         }
-        evalRecord.getSystemId();
         data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);
         //设置测试基本信息
         data.put("taskName", evalTask.getTaskName());
@@ -1071,15 +1055,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         //测试步骤
         data.put("steps", evalTaskStepService.getTaskSteps(taskId));
         //指标体系结构和评估结果数据
-        EvalSystem evalSystem = evalSystemService.getById(evalRecord.getSystemId());
-        convertEvalSystemToEvalSystemRsp(evalSystem, evalIndicatorIdList);
         EvalRecordResultRsp result = result(resourceId);
         List<EvalSystemIndexesContext> indexes = result.getIndexes();
         if (CollectionUtils.isNotEmpty(indexes)) {
             String variableId = indexes.get(0).getResourceId();
             data.put("evalSystem", parseGraph(result, variableId));
         }
-        List<EvalCollectionContextRsp> evalCollection = getEvalCollection(evalIndicatorIdList);
+        List<EvalVariableRef> EvalVariableRefList = evalVariableRefMapper.getByRecordId(resourceId);
+        List<EvalCollectionContextRsp> evalCollection = getEvalCollection(EvalVariableRefList);
         //变量项算法
         data.put("evalCollection", evalCollection);
         List<EvalVariableGraphListRsp> evalVariableGraphListRspList = new ArrayList<>();
@@ -1094,49 +1077,19 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return data;
     }
 
-    private EvalSystemRsp convertEvalSystemToEvalSystemRsp(EvalSystem evalSystem, List<String> evalIndicatorIdList) {
-        if (evalSystem == null) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        EvalSystemRsp evalSystemRsp = BeanUtils.copy(evalSystem, EvalSystemRsp.class);
-        evalSystemRsp.setEvalSystemId(evalSystem.getResourceId());
-        evalSystemRsp.setFirstIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.FIRST.getCode(), evalIndicatorIdList));
-        evalSystemRsp.setSecondIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.SECOND.getCode(), evalIndicatorIdList));
-        evalSystemRsp.setThirdIndexes(getIndexes(evalSystem.getResourceId(), EvalIndex.Level.THIRD.getCode(), evalIndicatorIdList));
-
-        return evalSystemRsp;
-    }
-
-    private List<IndexContext> getIndexes(String systemId, Integer level, List<String> evalIndicatorIdList) {
-
-        List<EvalIndex> evalIndexList = evalIndexMapper.selectListBySystemIdAndLevel(systemId, level);
-
-        List<IndexContext> indexContextList = evalIndexList.stream().map(evalIndex -> {
-            IndexContext indexContext = BeanUtils.copy(evalIndex, IndexContext.class);
-
-            indexContext.setIndexId(evalIndex.getResourceId());
-            indexContext.setChildrenIds(JsonUtil.toJsonObjectArray(evalIndex.getChildrenIds(), String.class));
-            EvalAlgorithm evalAlgorithm = evalAlgorithmService.getById(evalIndex.getAggregatingAlgorithmId());
-            if (evalAlgorithm != null) {
-                indexContext.setAlgorithmId(evalAlgorithm.getName());
-            }
-            if (StringUtils.isNotEmpty(evalIndex.getEvalIndicatorId())) {
-                evalIndicatorIdList.add(evalIndex.getEvalIndicatorId());
-            }
-            indexContext.setParams(evalIndex.getAggregatingAlgorithmParams());
-            return indexContext;
-        }).collect(Collectors.toList());
-
-        return indexContextList;
-    }
-
-    private List<EvalCollectionContextRsp> getEvalCollection(List<String> evalIndicatorIdList) {
+    private List<EvalCollectionContextRsp> getEvalCollection(List<EvalVariableRef> EvalVariableRefList) {
         List<EvalCollectionContextRsp> evalCollectionContextList = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(evalIndicatorIdList)) {
-            evalCollectionContextList = evalCollectionMapper.selectByEvalIndicatorIds(evalIndicatorIdList).stream().map(evalCollectionContextRsp -> {
-                evalCollectionContextRsp.setDetectionAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getDetectionAlgorithmId()).getName());
-                evalCollectionContextRsp.setFormatAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getFormatAlgorithmId()).getName());
-                evalCollectionContextRsp.setScoreAlgorithmName(evalAlgorithmService.getById(evalCollectionContextRsp.getScoreAlgorithmId()).getName());
+        if (CollectionUtils.isNotEmpty(EvalVariableRefList)) {
+            evalCollectionContextList = EvalVariableRefList.stream().map(EvalVariableRef -> {
+                EvalCollectionContextRsp evalCollectionContextRsp = new EvalCollectionContextRsp();
+                evalCollectionContextRsp.setResourceId(EvalVariableRef.getResourceId());
+                evalCollectionContextRsp.setName(EvalVariableRef.getName());
+                evalCollectionContextRsp.setDetectionAlgorithmId(EvalVariableRef.getMatchAlgorithmId());
+                evalCollectionContextRsp.setFormatAlgorithmId(EvalVariableRef.getFormatAlgorithmId());
+                evalCollectionContextRsp.setScoreAlgorithmId(EvalVariableRef.getMarkAlgorithmId());
+                evalCollectionContextRsp.setDetectionAlgorithmName(evalAlgorithmRefService.getById(EvalVariableRef.getMatchAlgorithmId()).getName());
+                evalCollectionContextRsp.setFormatAlgorithmName(evalAlgorithmRefService.getById(EvalVariableRef.getFormatAlgorithmId()).getName());
+                evalCollectionContextRsp.setScoreAlgorithmName(evalAlgorithmRefService.getById(EvalVariableRef.getMarkAlgorithmId()).getName());
                 return evalCollectionContextRsp;
             }).collect(Collectors.toList());
         }

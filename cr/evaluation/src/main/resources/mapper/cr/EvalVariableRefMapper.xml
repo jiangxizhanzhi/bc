@@ -8,4 +8,8 @@
     <select id="getVariableIdByRecordId" resultType="java.lang.String">
         select resource_id from cr_eval_variable_ref where record_id = #{recordId}
     </select>
+    <select id="getByRecordId" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef">
+        select resource_id, name, format_algorithm_id, match_algorithm_id, mark_algorithm_id from cr_eval_variable_ref
+        where record_id = #{recordId}
+    </select>
 </mapper>

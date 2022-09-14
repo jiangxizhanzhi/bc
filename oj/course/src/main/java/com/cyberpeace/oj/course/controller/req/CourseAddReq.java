@@ -8,7 +8,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,5 +58,19 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("课程编号")
 	@NotBlank
 	private String courseNum;
+
+	public void validate() {
+		// 校验分数最大值
+		int scoreMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.score.max"));
+		if (null != score ) {
+			CrCommonValidator.validateScore(score, scoreMax, OjBusinessErrorCode.MAX_SCORE_1000);
+		}
+		// 验证名称长度
+		if(null != lecturer){
+			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
+			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
+			CrCommonValidator.validateRange(lecturer.length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CHARACTERS);
+		}
+	}
 
 }

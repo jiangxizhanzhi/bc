@@ -232,6 +232,9 @@ public interface OjBusinessErrorCode {
 	String TYPE_ERROR = "102075";
 
 	/** 讲师最大字符数为64*/
-	String MAX_64_CATEGORIES = "102076";
+	String MAX_64_CHARACTERS = "102076";
+
+	/** 课程分数最大字符数为1000*/
+	String MAX_SCORE_1000 = "102077";
 
 }

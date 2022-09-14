@@ -32,7 +32,6 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -148,12 +147,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
-		if(null != addReq.getLecturer()){
-			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
-			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
-			CrCommonValidator.validateRange(addReq.getLecturer().length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CATEGORIES);
-		}
 
+		addReq.validate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(addReq, Course.class);

@@ -227,4 +227,8 @@ public interface OjBusinessErrorCode {
 
 	/** xxx习题集无LOGO*/
 	String PRACTICE_SET_NO_LOGO = "102074";
+
+	/** 传入类型参数错误*/
+	String TYPE_ERROR = "102075";
+
 }

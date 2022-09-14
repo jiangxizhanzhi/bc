@@ -2,6 +2,9 @@ package com.cyberpeace.oj.ojbase.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,10 +19,6 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SpringContextUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceAuthReq;
 import com.cyberpeace.oj.ojbase.controller.req.ResourceShareReq;
@@ -112,6 +111,10 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 			logical = Logical.OR)
 	public BaseRsp<Boolean> batchShare(@RequestBody @Validated ResourceShareReq requestData) {
 
+		List<Integer> listCode = EnumUtils.getListCode(AuthTable.AuthType.class);
+		if (!listCode.contains(requestData.getOperationAuthType())) {
+			throw new BusinessException(OjBusinessErrorCode.TYPE_ERROR,requestData.getOperationAuthType());
+		}
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {
 			AuthAndPublicData data = new AuthAndPublicData();
 			data.setResourceId((String) resourceId);

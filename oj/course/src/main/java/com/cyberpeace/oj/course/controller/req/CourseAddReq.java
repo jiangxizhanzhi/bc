@@ -66,7 +66,7 @@ public class CourseAddReq implements Serializable {
 			CrCommonValidator.validateScore(score, scoreMax, OjBusinessErrorCode.MAX_SCORE_1000);
 		}
 		// 验证名称长度
-		if(null != lecturer){
+		if(null != lecturer && !lecturer.isEmpty()){
 			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
 			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
 			CrCommonValidator.validateRange(lecturer.length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CHARACTERS);

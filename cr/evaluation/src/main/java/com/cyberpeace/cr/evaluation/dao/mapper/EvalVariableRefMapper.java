@@ -17,4 +17,11 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      * @return
      */
     List<String>  getVariableIdByRecordId(@Param("recordId") String recordId);
+
+    /**
+     * 通过评估获取测评
+     * @param recordId
+     * @return
+     */
+    List<EvalVariableRef> getByRecordId(@Param("recordId") String recordId);
 }

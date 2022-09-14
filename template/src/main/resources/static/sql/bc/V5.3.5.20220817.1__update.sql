@@ -1303,4 +1303,4 @@ ALTER TABLE `system_use_status`
 UPDATE cr_constants_config t SET t.en_name = 'Q & A' WHERE t.code = 4 and t.type = 21;
 UPDATE cr_constants_config t SET t.en_name = 'Completion' WHERE t.code = 3 and t.type = 21;
 
-alter table oj_paper modify read_auth_ids longtext null comment '授权访问组织id'
+alter table oj_paper modify read_auth_ids longtext null comment '授权访问组织id';

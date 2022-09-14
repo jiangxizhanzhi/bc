@@ -237,4 +237,7 @@ public interface OjBusinessErrorCode {
 	/** 课程分数最大字符数为1000*/
 	String MAX_SCORE_1000 = "102077";
 
+	/** 习题方向最长为128*/
+	String MAX_PRACTICE_CATEGORY_128 = "102078";
+
 }

@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
@@ -31,6 +32,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -146,6 +148,11 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
+		if(null != addReq.getLecturer()){
+			int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
+			int lenMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.max"));
+			CrCommonValidator.validateRange(addReq.getLecturer().length(),lenMin, lenMax, OjBusinessErrorCode.MAX_64_CATEGORIES);
+		}
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 

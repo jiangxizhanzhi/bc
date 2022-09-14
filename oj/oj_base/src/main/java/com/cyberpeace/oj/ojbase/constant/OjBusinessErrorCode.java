@@ -231,4 +231,7 @@ public interface OjBusinessErrorCode {
 	/** 传入类型参数错误*/
 	String TYPE_ERROR = "102075";
 
+	/** 讲师最大字符数为64*/
+	String MAX_64_CATEGORIES = "102076";
+
 }

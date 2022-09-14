@@ -82,9 +82,13 @@ class TrainingComparator implements Comparator<TrainingData> {
 	@Override
 	public int compare(TrainingData o1, TrainingData o2) {
 		if (asc) {
-			return (int) (o1.getStartTime().getTime() - o2.getStartTime().getTime());
+			return Long.compare(o1.getStartTime()
+								  .getTime(), o2.getStartTime()
+												.getTime());
 		} else {
-			return (int) (o2.getStartTime().getTime() - o1.getStartTime().getTime());
+			return Long.compare(o2.getStartTime()
+								  .getTime(), o1.getStartTime()
+												.getTime());
 		}
 	}
 }

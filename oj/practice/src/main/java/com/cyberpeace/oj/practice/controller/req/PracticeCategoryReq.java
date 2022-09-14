@@ -42,7 +42,7 @@ public class PracticeCategoryReq {
         // 校验方向长度
         int lenMin = Integer.parseInt(ConfigUtil.getContextProperty("oj.str.len.name.min"));
         int categoryMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max"));
-        if (null != name) {
+        if (null != name && !name.isEmpty()) {
             CrCommonValidator.validateRange(name.length(),lenMin, categoryMax, OjBusinessErrorCode.MAX_PRACTICE_CATEGORY_128);
         }
     }

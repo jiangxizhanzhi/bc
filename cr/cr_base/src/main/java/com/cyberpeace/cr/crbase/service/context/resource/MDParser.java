@@ -240,6 +240,8 @@ public class MDParser {
 
 	private static final String LOGO_SUFFIX = ".png";
 
+	private static final String TOPO_YAML = "/env/topo.yml";
+
 	private final String dirPath;
 
 	private final String topoId;
@@ -476,6 +478,10 @@ public class MDParser {
 				roleInfo.setAssetNodes(
 						BeanUtils.deepCopyList(roleInfo.getVisibleNodes(), Node.class));
 			}
+			// filter invalid nodes
+			List<String> validNodeIds = getValidNodes();
+			filterInvalidNodes(roleInfo.getVisibleNodes(), validNodeIds);
+			filterInvalidNodes(roleInfo.getAssetNodes(), validNodeIds);
 		}
 	}
 
@@ -649,6 +655,39 @@ public class MDParser {
 		}
 		template.setWriteUp(ret.toString());
 		template.setAttachment(JsonUtil.arrayToString(attachments));
+	}
+
+	/**
+	 * 读取topo.yaml里的节点id列表
+	 * @return 节点id列表
+	 */
+	private List<String> getValidNodes() {
+		File topoYaml = new File(dirPath + TOPO_YAML);
+		if (!topoYaml.isFile()) {
+			return Lists.newArrayList();
+		}
+		String text = FileUtil.getContent(topoYaml);
+		return LocalStringUtil.getMatchStr(text, "\\n-[ ]id:[ ](.+)\\s", 1);
+	}
+
+	/**
+	 * 筛除节点脏数据
+	 * @param nodes 节点列表
+	 * @param validNodeIds 存在的节点id列表
+	 */
+	private void filterInvalidNodes(List<Node> nodes, List<String> validNodeIds) {
+		if (validNodeIds.isEmpty()) {
+			return;
+		}
+		int i = 0;
+		while (i < nodes.size()) {
+			String nodeId = nodes.get(i).getId();
+			if (!validNodeIds.contains(nodeId)) {
+				nodes.remove(i);
+			} else {
+				i++;
+			}
+		}
 	}
 
 	/**

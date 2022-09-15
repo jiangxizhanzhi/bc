@@ -78,6 +78,7 @@ public class AdminPracticeCategoryController {
 	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
+		updateReq.validate();
 		// 分类数据处理
 		PracticeCategory category = BeanUtils.copy(updateReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(updateReq.getParentId())) {
@@ -94,6 +95,7 @@ public class AdminPracticeCategoryController {
 	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
 	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
+		categoryReq.validate();
 		// 分类数据处理
 		PracticeCategory practiceCategory = BeanUtils.copy(categoryReq, PracticeCategory.class);
 		if (StringUtils.isNotBlank(categoryReq.getParentId())) {

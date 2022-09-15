@@ -200,4 +200,14 @@ public interface OjBusinessErrorCode {
 
 	/** 附件数量和答案长度不一致*/
 	String PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT = "102065";
+
+	/** 讲师最大字符数为64*/
+	String MAX_64_CHARACTERS = "102076";
+
+	/** 课程分数最大字符数为1000*/
+	String MAX_SCORE_1000 = "102077";
+
+	/** 习题方向最长为128*/
+	String MAX_PRACTICE_CATEGORY_128 = "102078";
+
 }

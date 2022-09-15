@@ -146,7 +146,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> add(@ApiParam(name = "addReq",
 			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseAddReq addReq) {
-
+		addReq.validate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(addReq, Course.class);

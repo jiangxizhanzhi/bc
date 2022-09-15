@@ -1301,7 +1301,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				return utilService.handlerFileUrl(fileUrl);
 			});
 
-			String content = LocalStringUtil.replaceAll(lessonDumpLoadBo.getHandoutUrl(), matchList,
+			String content = LocalStringUtil.replaceAll(lessonDumpLoadBo.getHandoutUrl(), matchPathList,
 					urlList);
 			lesson.setHandoutUrl(content);
 		}

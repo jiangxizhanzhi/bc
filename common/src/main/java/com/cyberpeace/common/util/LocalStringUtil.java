@@ -207,4 +207,16 @@ public class LocalStringUtil {
 
 		return randomStr + getRandomStr(length - randomStr.length());
 	}
+
+	public static String replaceToBlank(String content, List<String> matchStr) {
+		if (StringUtils.isBlank(content) || CollectionUtils.isEmpty(matchStr)) {
+			return content;
+		}
+
+		for (int i = 0; i < matchStr.size(); i++) {
+			content = content.replace(matchStr.get(i), "");
+		}
+
+		return content;
+	}
 }

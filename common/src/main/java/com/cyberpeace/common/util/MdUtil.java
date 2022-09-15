@@ -1,19 +1,21 @@
 package com.cyberpeace.common.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import java.io.*;
-import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * markdown操作工具类
@@ -164,7 +166,7 @@ public class MdUtil {
 		// 获取markdown文件内容
 		File markdownFile = new File(markdownPath);
 		String content = FileUtil.getContent(markdownFile);
-		String withOutCode = getContentWithOutCode(markdownFile, CommonConstant.ONE);
+		String withOutCode = getContentWithOutCode(markdownFile);
 
 		// 匹配文件路径
 		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
@@ -206,15 +208,13 @@ public class MdUtil {
 	 * @return
 	 */
 	public static String filterCodeContent(String content) {
-		boolean coding = false;
-		StringBuilder builder = new StringBuilder();
-		String[] contentList = StringUtils.split(content, System.lineSeparator());
-		for (String contentStr : contentList) {
-			coding = append(contentStr, coding, builder, CommonConstant.ONE);
-			builder.append(System.lineSeparator());
-		}
+		// 匹配```代码块```
+		List<String> matchStr = LocalStringUtil.getMatchStr(content, PatternConstant.MULTIPLE_CODING_BLOCK);
+		String tmp = LocalStringUtil.replaceToBlank(content, matchStr);
 
-		return builder.toString();
+		// 匹配`代码块`｜``代码块``
+		List<String> singleMatchStr = LocalStringUtil.getMatchStr(tmp, PatternConstant.SINGLE_CODING_BLOCK);
+		return LocalStringUtil.replaceToBlank(tmp, singleMatchStr);
 	}
 
 	private static boolean append(String content, boolean coding, StringBuilder builder, int type) {
@@ -259,37 +259,11 @@ public class MdUtil {
 	/**
 	 * 读取md文件内容 不包含代码块
 	 * @param file
-	 * @param type 0=读取全部内容 1=过滤掉代码块
 	 * @return
 	 */
-	public static String getContentWithOutCode(File file, int type) {
-
-		BufferedReader br = null;
-		StringBuilder builder = new StringBuilder();
-		boolean coding = false;
-
-		try {
-			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
-			String content;
-
-			while ((content = br.readLine()) != null) {
-				coding = append(content, coding, builder, type);
-			}
-
-			return builder.toString();
-		} catch (Exception e) {
-			// 文件读取失败
-			log.error("file read failed! filePath={} error:", file.getAbsolutePath(), e);
-			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				// 不做任何处理
-			} catch (NullPointerException e) {
-				// 对象未创建空指针异常捕获，不做任何处理
-			}
-		}
+	public static String getContentWithOutCode(File file) {
+		String content = FileUtil.getContent(file);
+		return filterCodeContent(content);
 	}
 
 	public static File saveAsFileWriter(String content, String savefile) {

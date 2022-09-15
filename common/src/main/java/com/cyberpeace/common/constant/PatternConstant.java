@@ -61,7 +61,15 @@ public interface PatternConstant {
 	 */
 	String VERTICAL_LINE = "\\|";
 
-	String CODING_BLOCK = "`(?:(.*$)\\n)?([\\s\\S]*)`";
+	/**
+	 * `代码块`｜``代码块``
+	 */
+	String SINGLE_CODING_BLOCK = "`{1,2}[^`](.*?)`{1,2}";
+
+	/**
+	 * ```代码块```
+	 */
+	String MULTIPLE_CODING_BLOCK = "```([\\s\\S]*?)```[\\s]?";
 
     String MD_LIST = "- ";
 

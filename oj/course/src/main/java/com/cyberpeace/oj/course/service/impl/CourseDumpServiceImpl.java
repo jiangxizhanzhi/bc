@@ -135,7 +135,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			combineLessons(destFilePath, currentLessonConfigs, currentLessons, is_dump_topo);
 			log.info("course [{}] dump finish the path is [{}]", course.getName(), version.getAbsolutePath());
 		} catch (Exception e) {
-			log.error("resource dump failed! catch error: {} ", e.getMessage());
+			log.error("resource dump failed! catch error: ", e);
 			throw new BusinessException(OjBusinessErrorCode.COURSE_EXPORT_FAILED, course.getName());
 		}
 		log.info("success");

@@ -253,7 +253,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		Integer handoutType = lesson.getHandoutType();
 		String handoutUrl = lesson.getHandoutUrl();
 
-		if (null != handoutUrl) {
+		if (null != handoutUrl && !handoutUrl.isEmpty()) {
 			if (!handoutType.equals(CourseLesson.HandoutType.MD.getCode())) {
 
 				if (!handoutUrl.startsWith("/cpms")) {

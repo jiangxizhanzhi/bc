@@ -1304,3 +1304,8 @@ UPDATE cr_constants_config t SET t.en_name = 'Q & A' WHERE t.code = 4 and t.type
 UPDATE cr_constants_config t SET t.en_name = 'Completion' WHERE t.code = 3 and t.type = 21;
 
 alter table oj_paper modify read_auth_ids longtext null comment '授权访问组织id';
+
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 38, '未评估', 'No Assess');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 38, '评估中', 'Assessing');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 38, '已评估', 'Has Assessed');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 38, '异常', 'Abnormal');

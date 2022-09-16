@@ -2,9 +2,12 @@ package com.cyberpeace.oj.course.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
 import java.util.List;
@@ -26,6 +29,12 @@ public interface ClassroomSceneService {
 	 * @return 存在场景删除完成后为空字符串 不存在场景则返回组编号
 	 */
 	String deleteScene(String groupId, AuthContext authContext);
+
+	/**
+	 * 清除课程表本地信息
+	 * @param groupInfo
+	 */
+	void deleteLocalScene(LocalScene localScene, ClassroomGroupInfo groupInfo);
 
 	/**
 	 * 批量启动场景

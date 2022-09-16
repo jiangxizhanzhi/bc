@@ -2,6 +2,7 @@ package com.cyberpeace.cs.dao.entity;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -9,6 +10,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
+import com.cyberpeace.cs.constant.SceneEvent;
+import com.cyberpeace.cs.constant.SceneEventStatus;
+import com.cyberpeace.cs.service.impl.SceneStatusCompute;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.Getter;
 
@@ -117,10 +122,10 @@ public class LocalScene extends BaseTable {
 	public enum SceneStatusEnum implements GenericEnum {
 
 		/***/
-		INIT(0, "未启动"),
-		START(1, "启动"),
-		DESTROY(2, "删除"),
-		PAUSE(3, "暂停");
+		INIT(0, "未启动", SceneEvent.DEFAULT, SceneEventStatus.INITIALIZE),
+		START(1, "启动", SceneEvent.CREATE, SceneEventStatus.FINISH),
+		DESTROY(2, "删除", SceneEvent.CLOSE, SceneEventStatus.FINISH),
+		PAUSE(3, "暂停", SceneEvent.PAUSE, SceneEventStatus.FINISH);
 
 		@Getter
 		private final Integer code;
@@ -128,9 +133,24 @@ public class LocalScene extends BaseTable {
 		@Getter
 		private final String desc;
 
-		SceneStatusEnum(Integer code, String desc) {
+		private final SceneEvent event;
+
+		private final SceneEventStatus eventStatus;
+
+		SceneStatusEnum(Integer code, String desc, SceneEvent event, SceneEventStatus eventStatus) {
 			this.code = code;
 			this.desc = desc;
+			this.event = event;
+			this.eventStatus = eventStatus;
+		}
+
+		public Boolean isCurrent(Integer event, Integer eventStatus) {
+			return event.intValue() == this.event.getCode().intValue()
+					&& eventStatus.intValue() == this.eventStatus.getCode().intValue();
+		}
+
+		public Boolean isClose() {
+			return this.code.intValue() == DESTROY.code.intValue();
 		}
 
 	}

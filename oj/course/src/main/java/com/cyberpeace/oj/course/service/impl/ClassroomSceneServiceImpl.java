@@ -166,39 +166,14 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			return groupId;
 		}
 
-		// 远程场景删除
-		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		localSceneService.deleteRemoteScene(localScene);
-
 		// 课堂批量启动场景中，手动关闭某个启动中小组场景，将小组由启动队列中移除
 		BatchStartSceneHandler sceneHandler = batchSceneMap.get(groupInfo.getClassroomId());
 		if (null != sceneHandler) {
 			sceneHandler.finish(groupId);
 		}
 
-		// 查询签到的用户
-		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
-				String.class);
-		List<ClassroomSign> signList = StreamApiUtils.map(userIds, userId -> {
-			ClassroomSign classroomSign = classroomSignMapper
-					.selectByRoomAndUser(groupInfo.getClassroomId(), userId);
-			if (null == classroomSign) {
-				return null;
-			}
-			classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
-			classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
-			return classroomSign;
-		});
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				ojLocalSceneMapper.deleteById(ojLocalScene);
-				localSceneMapper.deleteById(localScene);
-				classroomSignService.updateBatchById(signList);
-			}
-		});
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		deleteLocalScene(localScene, groupInfo);
 
 		// 给前台课程websocket推送删除消息 重新加载课程场景
 		toLessonSocketMessage(groupInfo.getGroupUserIds(), courseLesson, OjEvent.SCENE_DELETE_SYNC);
@@ -206,6 +181,44 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		pushMessageHandler.pushClassroomMessage(pushMessageHandler.getDeleteMessage(),
 				ojLocalScene);
 		return CommonConstant.EMPTY_STRING;
+	}
+
+	@Override
+	public void deleteLocalScene(LocalScene localScene, ClassroomGroupInfo groupInfo) {
+
+		List<ClassroomSign> signList = resetNeedHelp(groupInfo);
+
+		// 远程场景删除
+		localSceneService.deleteRemoteScene(localScene);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				ojLocalSceneMapper.deleteById(localScene.getBusinessInstanceId());
+				localSceneMapper.deleteById(localScene.getResourceId());
+				classroomSignService.updateBatchById(signList);
+			}
+		});
+	}
+
+	/** 重置远程协助信息*/
+	private List<ClassroomSign> resetNeedHelp(ClassroomGroupInfo groupInfo) {
+		// 查询签到的用户
+		List<String> userIds = JsonUtil.toJsonObjectArray(groupInfo.getGroupUserIds(),
+				String.class);
+		return StreamApiUtils.map(userIds,
+				userId -> resetNeedHelp(groupInfo.getClassroomId(), userId));
+	}
+	
+	private ClassroomSign resetNeedHelp(String classroomId, String userId) {
+		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
+		if (null == classroomSign) {
+			return null;
+		}
+
+		classroomSign.setNodeId(CommonConstant.EMPTY_STRING);
+		classroomSign.setNeedHelp(ClassroomSign.NEED_HELP.NEED_HELP.getCode());
+		return classroomSign;
 	}
 
 	/**

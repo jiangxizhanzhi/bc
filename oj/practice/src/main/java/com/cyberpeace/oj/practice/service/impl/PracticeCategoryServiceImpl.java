@@ -78,7 +78,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			PracticeCategory data = practiceCategoryMapper.selectById(category);
 			String categoryId = practiceCategoryMapper.selectByName(data.getPracticeType(),
 					category.getName());
-			if (StringUtils.isNotBlank(categoryId)) {
+			if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(category.getResourceId())) {
 				throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 			}
 		}

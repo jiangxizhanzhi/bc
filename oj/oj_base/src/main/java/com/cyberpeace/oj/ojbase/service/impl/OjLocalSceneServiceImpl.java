@@ -247,8 +247,8 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				localSceneMapper.deleteById(localScene.getResourceId());
 				ojLocalSceneMapper.deleteById(ojLocalScene.getResourceId());
+				localSceneMapper.deleteById(localScene.getResourceId());
 			}
 		});
 

@@ -434,6 +434,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	@Override
 	public void replaceAccessIpExe(JSONObject elementPorts) {
+		if (elementPorts == null) {
+			return;
+		}
 		for (String key: elementPorts.keySet()) {
 			JSONArray accessModes = elementPorts.getJSONObject(key).getJSONArray("access_modes");
 			if (!accessModes.isEmpty()) {

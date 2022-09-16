@@ -136,4 +136,8 @@ public interface ErrorCode {
 
 	/** 无操作权限*/
 	String INTERFACE_UNAUTHORIZED = "100047";
+
+	String SCENE_NOT_EXIST_ZH = "场景不存在";
+
+	String SCENE_NOT_EXIST_EN = "Scene not exist";
 }

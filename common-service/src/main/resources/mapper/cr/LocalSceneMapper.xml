@@ -38,4 +38,8 @@
         select * from local_scene
         where mp_scene_id = #{sceneId}
     </select>
+
+    <select id="selectAll" resultMap="baseResultMap">
+        select * from local_scene
+    </select>
 </mapper>

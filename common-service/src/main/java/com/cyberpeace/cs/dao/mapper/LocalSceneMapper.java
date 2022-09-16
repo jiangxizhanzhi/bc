@@ -39,4 +39,6 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 			@Param("end_time") Date endTime);
 
 	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
+
+	List<LocalScene> selectAll();
 }

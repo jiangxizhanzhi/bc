@@ -97,7 +97,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 		Map<String, List<CourseLesson>> lessonCol = courseLessons.stream().collect(Collectors.groupingBy(CourseLesson::getCourseId));
 		Map<String, List<LessonConfig>> lessonConfigCol = lessonConfigs.stream().collect(Collectors.groupingBy(LessonConfig::getCourseId));
-		String oj = DUMP_ALL_FILE_STORE_PATH + DUMP_OJ_FILE_STORE_PATH;
+		String oj = DUMP_ALL_FILE_STORE_PATH;
 		FileUtil.mkdirs(oj);
 		String coursePath = oj + ResourceDumpConstant.DUMP_ALL_COURSE_FILE_STORE_PATH;
 		File version = new File(DUMP_ALL_FILE_STORE_PATH, VERSION_FILE);
@@ -318,7 +318,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String fileSuffix = "png";
 		String logoUrl = destFilePath + File.separator + "logo." + fileSuffix;
 		if(logo.isEmpty()){
-			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, logoUrl, false);
+			throw new BusinessException(OjBusinessErrorCode.COURSE_NO_LOGO, course.getName());
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);

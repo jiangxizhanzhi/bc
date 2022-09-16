@@ -240,4 +240,7 @@ public interface OjBusinessErrorCode {
 	/** 习题方向最长为128*/
 	String MAX_PRACTICE_CATEGORY_128 = "102078";
 
+	/** 课程无LOGO*/
+	String COURSE_NO_LOGO = "102079";
+
 }

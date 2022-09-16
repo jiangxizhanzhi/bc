@@ -473,15 +473,17 @@ public class MDParser {
 					ZiguanConstants.ROLE_NODES_CATEGORY);
 			parseNodes(nodeDict.get(ZiguanConstants.ASSET_NODES), roleInfo.getAssetNodes());
 			parseNodes(nodeDict.get(ZiguanConstants.VISIBLE_NODES), roleInfo.getVisibleNodes());
+
+			// filter invalid nodes
+			List<String> validNodeIds = getValidNodes();
+			filterInvalidNodes(roleInfo.getVisibleNodes(), validNodeIds);
 			// 当markdown中不存在资产数据时，导入资产数据等于迷雾数据
 			if (roleInfo.getAssetNodes().isEmpty()) {
 				roleInfo.setAssetNodes(
 						BeanUtils.deepCopyList(roleInfo.getVisibleNodes(), Node.class));
+			} else {
+				filterInvalidNodes(roleInfo.getAssetNodes(), validNodeIds);
 			}
-			// filter invalid nodes
-			List<String> validNodeIds = getValidNodes();
-			filterInvalidNodes(roleInfo.getVisibleNodes(), validNodeIds);
-			filterInvalidNodes(roleInfo.getAssetNodes(), validNodeIds);
 		}
 	}
 
@@ -665,7 +667,10 @@ public class MDParser {
 			return Lists.newArrayList();
 		}
 		String text = FileUtil.getContent(topoYaml);
-		return LocalStringUtil.getMatchStr(text, "\\n-[ ]id:[ ](.+)\\s", 1);
+		List<String> nodes = LocalStringUtil.getMatchStr(text, "\\n-[ ]id:[ ](.+)\\s", 1);
+		List<String> networks = LocalStringUtil.getMatchStr(text, "\\n[ ]{2}id:[ ](.+)\\s", 1);
+		nodes.addAll(networks);
+		return nodes;
 	}
 
 	/**

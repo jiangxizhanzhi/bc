@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 
 public interface RemoteTopoService {
@@ -20,6 +21,8 @@ public interface RemoteTopoService {
 	 * @return 返回拷贝后的拓扑id
 	 */
 	String copyTopo(String originTopoId);
+
+	MpTopoStatistic getTopoStatistic(String topoId);
 
 	TopoDigest getTopoDigest(String topoId);
 

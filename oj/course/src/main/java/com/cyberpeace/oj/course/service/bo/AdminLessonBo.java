@@ -23,6 +23,9 @@ public class AdminLessonBo implements Serializable {
 	@ApiModelProperty("类型")
 	private Integer type;
 
+	@ApiModelProperty("新课时类型 0=文档节 1=视频节 2=单机实验节 3=网络实验节")
+	private Integer lessonType;
+
 	@ApiModelProperty("讲义类型 0=什么都不是 1=markdown 2=ppt 4=pdf")
 	private Integer handoutType;
 

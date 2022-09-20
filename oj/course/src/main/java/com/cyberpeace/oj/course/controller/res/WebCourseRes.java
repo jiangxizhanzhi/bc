@@ -1,12 +1,9 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import com.cyberpeace.common.util.ConfigUtil;
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.io.Serializable;
 
 @Data
 public class WebCourseRes implements Serializable {
@@ -16,6 +13,9 @@ public class WebCourseRes implements Serializable {
 
 	@ApiModelProperty("名称")
 	private String name;
+
+	@ApiModelProperty("课程类型 0=文档 1=视频 2=单机实验 3=网络实验")
+	private Integer courseType;
 
 	@ApiModelProperty("课程简介")
 	private String description;

@@ -243,4 +243,10 @@ public interface OjBusinessErrorCode {
 	/** 课程无LOGO*/
 	String COURSE_NO_LOGO = "102079";
 
+	/** 参数类型错误*/
+	String PARAM_ERROR = "102080";
+
+	/** 参数类型缺失*/
+	String PARAM_MISSION = "102081";
+
 }

@@ -34,6 +34,9 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("课时类型")
 	private Integer type;
 
+	@ApiModelProperty("课时类型")
+	private Integer lessonType;
+
 	@ApiModelProperty("讲义类型")
 	private Integer handoutType;
 
@@ -85,6 +88,25 @@ public class CourseLesson extends BaseTable {
 
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
+
+	public enum Type implements GenericEnum {
+		/**对应type*/
+		DOCUMENT(0, "文档节"),
+		VIDEO(1, "视频节"),
+		SINGLE(2, "单机实验节"),
+		MULTIPLE(3, "网络实验节");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		Type(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 
 	public enum HandoutType implements GenericEnum {
 
@@ -146,6 +168,11 @@ public class CourseLesson extends BaseTable {
 			this.code = code;
 			this.desc = desc;
 		}
+	}
+
+	public static Boolean judgeExperiment(int type) {
+		return type == Type.MULTIPLE.getCode().intValue()
+				|| type == Type.SINGLE.getCode().intValue();
 	}
 
 }

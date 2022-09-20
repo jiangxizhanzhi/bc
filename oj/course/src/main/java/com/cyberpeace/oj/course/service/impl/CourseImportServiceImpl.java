@@ -3,6 +3,9 @@ package com.cyberpeace.oj.course.service.impl;
 import java.io.File;
 import java.util.*;
 
+import com.cyberpeace.common.baseinterface.Compute;
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
 import org.apache.commons.collections.CollectionUtils;
@@ -87,6 +90,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -318,6 +324,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 			courseLesson.setTopoId(envReqs.get(new File(path).getName()));
 		}
 
+		// 计算课时类型
+		Compute typeCompute = new LessonTypeCompute(remoteTopoService);
+		GenericEnum compute = typeCompute.compute(courseLesson);
+		courseLesson.setLessonType(compute.getCode());
+
 		return courseLesson;
 	}
 
@@ -528,8 +539,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 		// 课时信息组装
 		Map<String, String> lessonNameMap = Maps.newHashMap();
 		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);
-
 		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonNameMap);
+
+		// 课时类型计算
+		Compute typeCompute = new CourseTypeCompute(lessons);
+		GenericEnum compute = typeCompute.compute(course);
+		course.setCourseType(compute.getCode());
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -745,7 +760,12 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 
 		List<LessonConfig> lessonConfigs = generateLessonConfig(course, courseInfos, lessonNameMap);
-
+		// 设置课程类型
+		if (null == course.getCourseType()) {
+			Compute compute = new CourseTypeCompute(lessons);
+			GenericEnum genericEnum = compute.compute(course);
+			course.setCourseType(genericEnum.getCode());
+		}
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

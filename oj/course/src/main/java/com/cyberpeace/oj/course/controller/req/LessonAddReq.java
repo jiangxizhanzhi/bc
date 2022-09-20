@@ -25,6 +25,10 @@ public class LessonAddReq implements Serializable {
 	@NotNull(groups = { Create.class })
 	private Integer type;
 
+	@ApiModelProperty("新课时类型 0=文档节 1=视频节 2=单机实验节 3=网络实验节")
+	@NotNull(groups = {Create.class})
+	private Integer lessonType;
+
 	@ApiModelProperty("知识点")
 	private String knowledge;
 

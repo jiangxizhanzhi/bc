@@ -1309,3 +1309,5 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 38, '未评估', 'No
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 38, '评估中', 'Assessing');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 38, '已评估', 'Has Assessed');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 38, '异常', 'Abnormal');
+
+ALTER TABLE oj_course_lesson ADD COLUMN lesson_type tinyint(1) NOT NULL COMMENT '新课时类型';

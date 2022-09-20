@@ -34,6 +34,9 @@ public class LessonConfigBo implements Serializable {
 	@ApiModelProperty("课时类型 0-理论 1-实验")
 	private Integer type;
 
+	@ApiModelProperty("新课时类型")
+	private Integer lessonType;
+
 	@ApiModelProperty("名称")
 	private String name;
 

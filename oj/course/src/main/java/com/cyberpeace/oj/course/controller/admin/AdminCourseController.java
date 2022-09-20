@@ -156,7 +156,6 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		course.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		course.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		course.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
-		course.setCourseType(CommonConstant.ZERO);
 
 		CourseCategory courseCategory = courseCategoryMapper.selectById(addReq.getCategoryId());
 		if (null == courseCategory) {

@@ -90,7 +90,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
-	public TopoDigest getTopoDigest(String topoId) {
+	public MpTopoStatistic getTopoStatistic(String topoId) {
 		String targetUrl = TOPO_DIGEST_URL + "?ids=" + topoId;
 
 		String data = HttpClientUtil.rawGet(targetUrl, String.class);
@@ -102,12 +102,19 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 			throw new RemoteServiceException();
 		}
 
-		MpTopoStatistic mpTopoStatistic = mpTopoStatistics.get(0);
-
+		return mpTopoStatistics.get(0);
+	}
+	
+	@Override
+	public TopoDigest getTopoDigest(String topoId) {
+		MpTopoStatistic mpTopoStatistic = getTopoStatistic(topoId);
+		return statisticToDigest(mpTopoStatistic);
+	}
+	
+	private TopoDigest statisticToDigest(MpTopoStatistic mpTopoStatistic) {
 		TopoDigest topoDigest = new TopoDigest();
 		topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
 		topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
-
 		return topoDigest;
 	}
 
@@ -124,13 +131,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		// throw new RemoteServiceException();
 		// }
 
-		return mpTopoStatistics.stream()
-				.collect(Collectors.toMap(MpTopoStatistic::getCsceneId, mpTopoStatistic -> {
-					TopoDigest topoDigest = new TopoDigest();
-					topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
-					topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
-					return topoDigest;
-				}));
+		return mpTopoStatistics.stream().collect(Collectors.toMap(MpTopoStatistic::getCsceneId,
+				mpTopoStatistic -> statisticToDigest(mpTopoStatistic)));
 	}
 
 	@Override

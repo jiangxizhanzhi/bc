@@ -4,22 +4,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.io.*;
 
 @Slf4j
 @Component
 public class RemoveLogJob {
 
-
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void removeLogFiles() {
         String logRootPath = System.getProperty("catalina.base") + "/logs/";
-        String cmd = String.format("find %s -name '*.log' -mtime +15 |xargs rm -f", logRootPath);
+        String cmd = String.format("find %s -type 'f' -mtime +15 | xargs rm -f", logRootPath);
+        DataOutputStream dos = null;
         try {
-            Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec("su");
+            dos = new DataOutputStream(p.getOutputStream());
             log.info(cmd);
-        } catch (IOException e) {
+            dos.writeBytes(cmd + "\n");
+            dos.flush();
+            dos.writeBytes("exit\n");
+            dos.flush();
+            p.waitFor();
+        } catch (Exception e) {
             log.error("Exec shell error! command=[{}], catch error:", cmd, e);
+        } finally {
+            if (dos != null) {
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         log.info("Successfully remove overdue logs.");
     }

@@ -12,6 +12,7 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 import com.cyberpeace.rtks.service.bo.skill.MissionContext;
 import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
+import com.cyberpeace.rtks.service.bo.xiamen2c.RoleSkillSimple;
 
 @Mapper
 @Repository
@@ -41,4 +42,6 @@ public interface RoleSkillRelationMapper extends BaseMapper<RoleSkillRelation> {
 	List<MissionContext> getMissionContextsByRoleId(@Param("roleId") String roleId);
 
 	void clearRoleSkillRel();
+
+	List<RoleSkillSimple> getSkillsByRoleIds(@Param("roleIds") List<String> roleIds);
 }

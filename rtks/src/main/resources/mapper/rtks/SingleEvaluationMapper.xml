@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.rtks.dao.mapper.SingleEvaluationMapper">
+    <select id="listSkills" resultType="com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationSkillBo">
+        select
+        rr.resource_id as role_id,
+        rr.name as role_name,
+        rs.resource_id as skill_id,
+        rs.content as skill_name
+        from rtks_role as rr
+        inner join rtks_role_skill_relation as rrsr on rr.resource_id = rrsr.role_id
+        inner join rtks_skill as rs on rrsr.skill_id = rs.resource_id
+        <if test="roleId != null and roleId != ''">
+            where rr.resource_id = #{roleId}
+        </if>
+        order by rr.id, rs.id
+    </select>
+    <select id="getTrainingStatisticsBySkillIds"
+            resultType="com.cyberpeace.rtks.service.bo.xiamen2c.SkillMissionUserContext">
+        select rtks_skill_mission_relation.skill_id as skill_id,
+        count(distinct rtks_skill_mission_relation.mission_template_id) as mission_count,
+        count(distinct cr_task.user_id) as trainee_count
+        from
+        rtks_skill_mission_relation left join cr_task on rtks_skill_mission_relation.mission_template_id =
+        cr_task.mission_template_id
+        where rtks_skill_mission_relation.skill_id in
+        <foreach collection="skillIds" item="skillId" separator="," open="(" close=")">
+            #{skillId}
+        </foreach>
+        group by rtks_skill_mission_relation.skill_id
+    </select>
+    <select id="listMissionBySkillId" resultType="com.cyberpeace.rtks.service.bo.xiamen2c.MissionIdAndTitle">
+        select cr_mission_template.resource_id as resource_id,
+               cr_mission_template.title       as title
+        from rtks_skill_mission_relation
+                 left join cr_mission_template
+                           on rtks_skill_mission_relation.mission_template_id = cr_mission_template.resource_id
+        where rtks_skill_mission_relation.skill_id = #{skillId}
+    </select>
+    <select id="getTraineeIdsByMissionIds" resultType="java.lang.String">
+        select distinct user_id
+        from cr_task where mission_template_id in
+        <foreach collection="missionIds" open="(" close=")" separator="," item="missionId">
+            #{missionId}
+        </foreach>
+    </select>
+    <select id="listTrainees" resultType="com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationTraineeBo">
+        select
+        rtks_user_role.user_id as user_id,
+        rtks_role.resource_id as role_id,
+        rtks_role.name as role_name
+        from rtks_user_role inner join rtks_role on rtks_user_role.role_id = rtks_role.resource_id
+        <if test="roleId != null and roleId != ''">
+            where rtks_role.resource_id = #{roleId}
+        </if>
+        order by rtks_role.id
+    </select>
+
+</mapper>

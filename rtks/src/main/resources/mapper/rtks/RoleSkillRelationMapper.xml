@@ -94,4 +94,16 @@
         where rtks_role_skill_relation.role_id = #{roleId}
         order by rtks_skill_mission_relation.id
     </select>
+    <select id="getSkillsByRoleIds" resultType="com.cyberpeace.rtks.service.bo.xiamen2c.RoleSkillSimple">
+        select
+        rtks_role_skill_relation.role_id as role_id,
+        rtks_skill.resource_id as resource_id,
+        rtks_skill.content as content
+        from rtks_role_skill_relation left join rtks_skill on rtks_role_skill_relation.skill_id = rtks_skill.resource_id
+        where rtks_role_skill_relation.role_id in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
 </mapper>

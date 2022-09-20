@@ -223,4 +223,14 @@ public class MathUtils {
 		return ret;
 	}
 
+	/**
+	 * 将正数的double四舍五入转为integer
+	 * @param digit
+	 * @return
+	 */
+	public static Integer roundDouble2Int(Double digit) {
+		double multi = digit * 2;
+		return roundDivide((int) multi, 2);
+	}
+
 }

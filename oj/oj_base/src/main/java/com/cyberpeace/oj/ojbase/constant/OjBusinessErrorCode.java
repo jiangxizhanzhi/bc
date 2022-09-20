@@ -243,4 +243,7 @@ public interface OjBusinessErrorCode {
 	/** 课程无LOGO*/
 	String COURSE_NO_LOGO = "102079";
 
+	/** 选择题选项过多*/
+	String CHOICE_OPTION_TOO_MANY = "102080";
+
 }

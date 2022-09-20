@@ -658,12 +658,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			JSONObject option = new JSONObject();
-			option.put("A", excelRowData.get(5));
-			option.put("B", excelRowData.get(6));
-			option.put("C", excelRowData.get(7));
-			option.put("D", excelRowData.get(8));
-			practiceTheory.setOption(JsonUtil.toJsonString(option));
+			String option = formatOption(excelRowData);
+			practiceTheory.setOption(option);
 			practiceTheory.setAnswer(excelRowData.get(4));
 		}
 
@@ -701,6 +697,32 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+	}
+
+	private String formatOption(List<String> excelRowData) {
+		if (CollectionUtils.isEmpty(excelRowData)) {
+			return CommonConstant.EMPTY_OBJECT;
+		}
+
+		if (excelRowData.size() - CommonConstant.FIVE > 26) {
+			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_MANY);
+		}
+
+		JSONObject options = new JSONObject();
+		for (char i = 'A'; i <= 'Z'; i++) {
+			int index = i - 'A' + 5;
+			if (index >= excelRowData.size()) {
+				break;
+			}
+
+			String option = excelRowData.get(index);
+			if (StringUtils.isBlank(option)) {
+				break;
+			}
+			options.put(String.valueOf(i), option);
+		}
+
+		return JsonUtil.toJsonString(options);
 	}
 
 }

@@ -210,4 +210,7 @@ public interface OjBusinessErrorCode {
 	/** 习题方向最长为128*/
 	String MAX_PRACTICE_CATEGORY_128 = "102078";
 
+	/** 选择题选项过多*/
+	String CHOICE_OPTION_TOO_MANY = "102080";
+
 }

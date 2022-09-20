@@ -68,7 +68,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	@Override
-	@CacheEvict
+	@CacheEvict(allEntries = true)
 	public ToolCategory saveCategory(String name) {
 		ToolCategory newCategory = new ToolCategory();
 
@@ -80,6 +80,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	}
 
 	@Override
+	@CacheEvict(allEntries = true)
 	public void batchDelete(List<String> resourceIds) {
 		// 查询该分类是否有被工具库使用
 		for (String resourceId : resourceIds) {
@@ -98,5 +99,17 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		if (toolCategoryObject != null) {
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME);
 		}
+	}
+
+	@Override
+	@CacheEvict(allEntries = true)
+	public void saveToolCategory(ToolCategory toolCategory){
+		toolCategoryMapper.insert(toolCategory);
+	}
+
+	@Override
+	@CacheEvict(allEntries = true)
+	public void updateToolCategoryById(ToolCategory toolCategory){
+		toolCategoryMapper.updateById(toolCategory);
 	}
 }

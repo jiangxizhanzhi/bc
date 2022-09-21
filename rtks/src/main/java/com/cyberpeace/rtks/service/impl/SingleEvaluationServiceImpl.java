@@ -14,6 +14,7 @@ import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.dao.mapper.SingleEvaluationMapper;
 import com.cyberpeace.rtks.service.SingleEvaluationService;
@@ -38,6 +39,9 @@ public class SingleEvaluationServiceImpl implements SingleEvaluationService {
 
 	@Autowired
 	private RoleSkillRelationMapper roleSkillRelationMapper;
+
+	@Autowired
+	private RoleMapper roleMapper;
 
 	@Override
 	public ListRsp<EvaluationSkillBo> listSkill(Page page, String roleId) {
@@ -124,5 +128,10 @@ public class SingleEvaluationServiceImpl implements SingleEvaluationService {
 			traineeBo.count();
 		}
 		return PageUtil.getListResult(traineePage);
+	}
+
+	@Override
+	public List<RoleSimple> listRoles() {
+		return roleMapper.getAllRoleSimples();
 	}
 }

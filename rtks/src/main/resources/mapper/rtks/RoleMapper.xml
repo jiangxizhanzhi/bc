@@ -97,4 +97,10 @@
         end
         as result
     </select>
+    <select id="getAllRoleSimples" resultType="com.cyberpeace.rtks.service.bo.xiamen2c.RoleSimple">
+        select resource_id,
+               name
+        from rtks_role
+        order by id
+    </select>
 </mapper>

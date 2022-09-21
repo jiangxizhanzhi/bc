@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.dao.entity.Level;
 import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.service.bo.xiamen2c.RoleSimple;
 
 @Mapper
 @Repository
@@ -38,4 +39,6 @@ public interface RoleMapper extends BaseMapper<Role> {
 	void clearRole();
 
 	Boolean ifNameDuplicate(@Param("name") String name, @Param("resourceId") String resourceId);
+
+	List<RoleSimple> getAllRoleSimples();
 }

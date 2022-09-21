@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.controller;
 
+import java.util.List;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,10 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.service.SingleEvaluationService;
-import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationSkillBo;
-import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationSkillDetail;
-import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationTraineeBo;
-import com.cyberpeace.rtks.service.bo.xiamen2c.PageReqWithRole;
+import com.cyberpeace.rtks.service.bo.xiamen2c.*;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -62,5 +62,13 @@ public class SingleEvaluationController {
 		ListRsp<EvaluationTraineeBo> res = singleEvaluationService.listTrainee(page,
 				pageReq.getRole_id());
 		return new BaseRsp<>(res);
+	}
+
+	@ApiModelProperty("人员评估-岗位列表")
+	@GetMapping("/role/list")
+	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
+	public BaseRsp<List<RoleSimple>> listRoles() {
+		List<RoleSimple> roles = singleEvaluationService.listRoles();
+		return new BaseRsp<>(roles);
 	}
 }

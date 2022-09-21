@@ -1,10 +1,13 @@
 package com.cyberpeace.rtks.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationSkillBo;
 import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationSkillDetail;
 import com.cyberpeace.rtks.service.bo.xiamen2c.EvaluationTraineeBo;
+import com.cyberpeace.rtks.service.bo.xiamen2c.RoleSimple;
 
 public interface SingleEvaluationService {
 
@@ -30,4 +33,10 @@ public interface SingleEvaluationService {
 	 * @return 参训人员信息分页列表
 	 */
 	ListRsp<EvaluationTraineeBo> listTrainee(Page page, String roleId);
+
+	/**
+	 * 岗位列表下拉菜单
+	 * @return 岗位列表
+	 */
+	List<RoleSimple> listRoles();
 }

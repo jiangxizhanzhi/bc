@@ -1,14 +1,10 @@
 package com.cyberpeace.cr.tool.dao.entity;
 
-import java.io.File;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.*;
 import org.apache.commons.lang3.StringUtils;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.ConfigUtil;
 
@@ -62,6 +58,7 @@ public class Tool extends BaseTable {
 	@Deprecated
 	private String tag;
 
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private Date publishTime;
 
 	private String scene;

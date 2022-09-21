@@ -213,4 +213,10 @@ public interface OjBusinessErrorCode {
 	/** 选择题选项过多*/
 	String CHOICE_OPTION_TOO_MANY = "102080";
 
+	/** 存在课时和组织相同的数据*/
+	String DUPLICATE_DATA_ORG_LESSON = "102081";
+
+	/** 存在组织相同时间冲突的数据*/
+	String TIME_INTERSECTION_UNDER_ORG = "102082";
+
 }

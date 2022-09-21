@@ -94,12 +94,12 @@ public interface ResourceDumpConstant {
 	/**
 	 * 资源导入导出文件存放根目录
 	 */
-	String DUMP_ALL_FILE_STORE_PATH = "/data/resource";
+	String DUMP_ALL_FILE_STORE_PATH = "/data/resource/export";
 
 	/**
 	 * 课程默认logo
 	 */
-	String DUMP_COURSE_DEFAULT_LOGO_STORE_PATH = "/data/resource/logo.png";
+	String DUMP_COURSE_DEFAULT_LOGO_STORE_PATH = "/cpms/built_in/logo.png";
 
 	/**
 	 * 课程资源导出文件存放根目录

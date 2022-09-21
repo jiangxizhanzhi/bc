@@ -1056,9 +1056,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
 					orgMap);
+
+			// 校验是否已存在课程表
 			Classroom existClassRoom = classroomMapper
 					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
-
 			if (null != existClassRoom && (StringUtils.isBlank(existClassRoom.getTrainPlanId())
 					|| !existClassRoom.getTrainPlanId().equals(trainPlan.getResourceId()))) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
@@ -1066,6 +1067,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			classroom.setTrainPlanId(trainPlan.getResourceId());
 			classrooms.add(classroom);
 		}
+
+		// 数据插入前校验
+		validateOrgLessonSame(classrooms);
+		validateClassroomTime(classrooms);
 
 		// 数据库插入前 最好再次校验训练计划 防止解析时间过长
 		List<Classroom> coverRoomList = StreamApiUtils.flatMap(trainPlanMap.values(),
@@ -1088,6 +1093,50 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 
 		return classrooms;
+	}
+
+	private void validateClassroomTime(List<Classroom> classrooms) {
+		if (CollectionUtils.isEmpty(classrooms)) {
+			return;
+		}
+
+		Map<String, List<Classroom>> orgMap = StreamApiUtils.groupBy(classrooms,
+				Classroom::getOrganizationId);
+		for (String key : orgMap.keySet()) {
+			timeIntersection(orgMap.get(key));
+		}
+	}
+
+	/**
+	 * 校验时间重合
+	 * @param classrooms
+	 */
+	private void timeIntersection(List<Classroom> classrooms) {
+		List<Classroom> sort = StreamApiUtils.sortByColumn(classrooms, Classroom::getEndTime);
+		if (sort.size() <= CommonConstant.TWO) {
+			return;
+		}
+		
+		for (int i = 1; i < sort.size(); i++) {
+			Classroom previous = sort.get(i - 1);
+			Classroom current = sort.get(i);
+			if (previous.getEndTime().after(current.getStartTime())) {
+				throw new BusinessException(OjBusinessErrorCode.TIME_INTERSECTION_UNDER_ORG);
+			}
+		}
+	}
+
+	private void validateOrgLessonSame(List<Classroom> classrooms) {
+		if (CollectionUtils.isEmpty(classrooms)) {
+			return;
+		}
+
+		// 根据课时和组织去重
+		List<Classroom> distinct = StreamApiUtils.distinctByColumn(classrooms,
+				classroom -> classroom.getOrganizationId() + classroom.getLessonId());
+		if (distinct.size() < classrooms.size()) {
+			throw new BusinessException(OjBusinessErrorCode.DUPLICATE_DATA_ORG_LESSON);
+		}
 	}
 
 	/** 校验数据长度*/

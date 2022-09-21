@@ -47,6 +47,9 @@ public class SingleEvaluationServiceImpl implements SingleEvaluationService {
 	public ListRsp<EvaluationSkillBo> listSkill(Page page, String roleId) {
 		// get skills
 		IPage<EvaluationSkillBo> skillBoPage = singleEvaluationMapper.listSkills(page, roleId);
+		if (skillBoPage.getRecords().size() == 0) {
+			return PageUtil.getListResult(skillBoPage);
+		}
 		List<String> skillIds = skillBoPage.getRecords().stream().map(EvaluationSkillBo::getSkillId)
 				.collect(Collectors.toList());
 		// count missions and users
@@ -66,20 +69,25 @@ public class SingleEvaluationServiceImpl implements SingleEvaluationService {
 
 	@Override
 	public EvaluationSkillDetail getSkillDetail(String skillId) {
+		EvaluationSkillDetail detail = new EvaluationSkillDetail(skillId);
 		// get related missions
 		List<MissionIdAndTitle> missions = singleEvaluationMapper.listMissionBySkillId(skillId);
+		if (missions.isEmpty()) {
+			return detail;
+		}
 		List<String> missionIds = missions.stream().map(MissionIdAndTitle::getResourceId)
 				.collect(Collectors.toList());
 		// get trainees
 		List<String> userIds = singleEvaluationMapper.getTraineeIdsByMissionIds(missionIds);
-		// get trainee names
-		Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
-		// make result
-		EvaluationSkillDetail detail = new EvaluationSkillDetail(skillId);
-		for (Map.Entry<String, String> user : userNameMap.entrySet()) {
-			// calculate score
-			Double score = skillService.calculateScore(skillId, user.getKey());
-			detail.addTrainee(user.getValue(), MathUtils.roundDouble2Int(score));
+		if (!userIds.isEmpty()) {
+			// get trainee names
+			Map<String, String> userNameMap = remoteUserService.getIdNameMap(userIds);
+			// make result
+			for (Map.Entry<String, String> user : userNameMap.entrySet()) {
+				// calculate score
+				Double score = skillService.calculateScore(skillId, user.getKey());
+				detail.addTrainee(user.getValue(), MathUtils.roundDouble2Int(score));
+			}
 		}
 		detail.setMissionNames(
 				missions.stream().map(MissionIdAndTitle::getTitle).collect(Collectors.toList()));
@@ -93,6 +101,9 @@ public class SingleEvaluationServiceImpl implements SingleEvaluationService {
 	public ListRsp<EvaluationTraineeBo> listTrainee(Page page, String roleId) {
 		// get trainees
 		IPage<EvaluationTraineeBo> traineePage = singleEvaluationMapper.listTrainees(page, roleId);
+		if (traineePage.getRecords().size() == 0) {
+			return PageUtil.getListResult(traineePage);
+		}
 		List<String> userIds = traineePage.getRecords().stream().map(EvaluationTraineeBo::getUserId)
 				.collect(Collectors.toList());
 		// get skills

@@ -18,13 +18,13 @@ public class EvaluationSkillDetail implements Serializable {
 	private String skillId;
 
 	@ApiModelProperty("技能关联任务个数")
-	private Integer missionCount;
+	private Integer missionCount = 0;
 
 	@ApiModelProperty("关联任务名称")
 	private List<String> missionNames;
 
 	@ApiModelProperty("参训人员计数")
-	private Integer traineeCount;
+	private Integer traineeCount = 0;
 
 	@ApiModelProperty("参训人员得分情况")
 	private List<TraineeContext> trainees;

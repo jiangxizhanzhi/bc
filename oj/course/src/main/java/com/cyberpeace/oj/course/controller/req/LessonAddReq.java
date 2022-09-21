@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.baseinterface.Create;
@@ -22,7 +23,6 @@ public class LessonAddReq implements Serializable {
 	private String name;
 
 	@ApiModelProperty("课时类型 0=理论课 1=实验课")
-	@NotNull(groups = { Create.class })
 	private Integer type;
 
 	@ApiModelProperty("新课时类型 0=文档节 1=视频节 2=单机实验节 3=网络实验节")
@@ -99,5 +99,19 @@ public class LessonAddReq implements Serializable {
 
 	public void setPractice_list(String practiceList) {
 		this.practiceList = practiceList;
+	}
+	
+	public Integer getType() {
+		if (null == this.lessonType) {
+			return null;
+		}
+
+		return CourseLesson.judgeExperiment(lessonType)
+				? CourseLesson.LessonType.EXPERIMENT.getCode()
+				: CourseLesson.LessonType.THEORY.getCode();
+	}
+
+	public void setLesson_type(Integer lessonType) {
+		this.lessonType = lessonType;
 	}
 }

@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.ojbase.controller.res;
+package com.cyberpeace.cs.controller.res;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -38,5 +38,11 @@ public class EvalSystemRsp {
 	@ApiModelProperty(value = "三级指标列表", required = true)
 	@NotNull
 	private List<IndexContext> thirdIndexes;
+	
+    @ApiModelProperty("授权访问类型")
+    private Integer auth;
+
+    @ApiModelProperty("授权访问数量")
+    private Integer authCount;
 
 }

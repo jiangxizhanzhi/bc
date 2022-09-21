@@ -27,7 +27,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
+import com.cyberpeace.cs.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;

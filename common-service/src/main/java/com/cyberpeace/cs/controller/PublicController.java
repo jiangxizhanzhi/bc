@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.ojbase.controller;
+package com.cyberpeace.cs.controller;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
+import com.cyberpeace.cs.controller.req.ResourcePublicReq;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;

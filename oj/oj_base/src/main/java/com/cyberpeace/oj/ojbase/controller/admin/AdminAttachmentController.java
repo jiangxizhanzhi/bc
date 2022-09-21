@@ -3,7 +3,7 @@ package com.cyberpeace.oj.ojbase.controller.admin;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
+import com.cyberpeace.cs.controller.req.ResourcePublicReq;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

@@ -18,6 +18,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.AuthTable.AuthType;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -39,6 +41,7 @@ import com.cyberpeace.cr.evaluation.service.EvalIndexService;
 import com.cyberpeace.cr.evaluation.service.EvalSystemService;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.cyberpeace.cr.evaluation.service.context.IndexContext;
+import com.cyberpeace.cs.controller.AuthAndPublicController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiresAuthentication
 @RequestMapping("/cr/eval/system")
 @Slf4j
-public class EvalSystemIndexAdminController {
+public class EvalSystemIndexAdminController  extends AuthAndPublicController<EvalSystemService, EvalSystem> {
 
 	@Autowired
 	private EvalIndexService evalIndexService;
@@ -256,7 +259,15 @@ public class EvalSystemIndexAdminController {
 		listQuery.setSort("-create_time");
 
 		IPage<EvalSystem> data = evalSystemService.page(listQuery);
+		IPage<EvalSystemRsp> rspData = data.convert(es -> {
+			EvalSystemRsp rsp = BeanUtils.copy(es, EvalSystemRsp.class);
+			rsp.setAuth(es.getReadAuthType());
+			if (es.getReadAuthType().equals(AuthType.CUSTOM_SHARE_MODE.getCode())) {
+				rsp.setAuthCount(JsonUtil.toJsonObjectArray(es.getReadAuthIds(), String.class).size());
+			}
+			return rsp;
+		});
 
-		return new BaseRsp(PageUtil.getListResult(data));
+		return new BaseRsp(PageUtil.getListResult(rspData));
 	}
 }

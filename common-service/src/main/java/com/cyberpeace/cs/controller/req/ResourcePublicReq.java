@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.ojbase.controller.req;
+package com.cyberpeace.cs.controller.req;
 
 import java.util.List;
 

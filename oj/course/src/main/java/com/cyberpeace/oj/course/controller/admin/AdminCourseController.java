@@ -32,7 +32,7 @@ import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
+import com.cyberpeace.cs.controller.AuthAndPublicController;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

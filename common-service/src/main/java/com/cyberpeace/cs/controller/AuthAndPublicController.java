@@ -1,10 +1,10 @@
-package com.cyberpeace.oj.ojbase.controller;
+package com.cyberpeace.cs.controller;
 
 import java.util.List;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,11 +20,11 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.controller.req.ResourceAuthReq;
-import com.cyberpeace.oj.ojbase.controller.req.ResourceShareReq;
-import com.cyberpeace.oj.ojbase.controller.res.OperationAuthInfo;
-import com.cyberpeace.oj.ojbase.controller.res.OperationUserInfo;
-import com.cyberpeace.oj.ojbase.controller.res.ReadAuthInfo;
+import com.cyberpeace.cs.controller.req.ResourceAuthReq;
+import com.cyberpeace.cs.controller.req.ResourceShareReq;
+import com.cyberpeace.cs.controller.res.OperationAuthInfo;
+import com.cyberpeace.cs.controller.res.OperationUserInfo;
+import com.cyberpeace.cs.controller.res.ReadAuthInfo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@PatchMapping("/batch-auth")
 	@ApiOperation("资源授权访问")
-	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES, MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM },
 			logical = Logical.OR)
 	public BaseRsp<Boolean> batchAuth(@RequestBody @Validated ResourceAuthReq requestData) {
 
@@ -53,7 +53,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 	@GetMapping("/get_auth")
 	@ApiOperation("获取资源的授权访问信息")
-	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES, MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM },
 			logical = Logical.OR)
 	public BaseRsp<ReadAuthInfo> getAuth(@ApiParam(name = "resource_id",
 			value = "资源编号") @RequestParam("resource_id") String resourceId) {
@@ -113,7 +113,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 		List<Integer> listCode = EnumUtils.getListCode(AuthTable.AuthType.class);
 		if (!listCode.contains(requestData.getOperationAuthType())) {
-			throw new BusinessException(OjBusinessErrorCode.TYPE_ERROR,requestData.getOperationAuthType());
+			throw new BusinessException(ErrorCode.TYPE_ERROR,requestData.getOperationAuthType());
 		}
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {
 			AuthAndPublicData data = new AuthAndPublicData();

@@ -20,7 +20,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.oj.ojbase.controller.PublicController;
+import com.cyberpeace.cs.controller.PublicController;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;

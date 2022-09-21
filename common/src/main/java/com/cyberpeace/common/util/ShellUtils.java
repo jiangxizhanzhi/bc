@@ -1,6 +1,7 @@
 package com.cyberpeace.common.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -21,12 +22,12 @@ public class ShellUtils {
 		log.info("Start exec shell! command=[{}]", shell);
 
 		Process process;
+		BufferedReader input = null;
 		List<String> processResult = Lists.newArrayList();
 
 		try {
 			process = Runtime.getRuntime().exec(shell);
-			BufferedReader input = new BufferedReader(
-					new InputStreamReader(process.getInputStream()));
+			input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 			String line;
 			while ((line = input.readLine()) != null) {
@@ -38,6 +39,13 @@ public class ShellUtils {
 			log.error("Exec shell error! command=[{}], catch error:", shell, e);
 			throw new BusinessException(ErrorCode.LOCAL_SHELL_EXEC_FAILED);
 		} finally {
+			try {
+				if (null != input) {
+					input.close();
+				}
+			} catch (IOException e) {
+
+			}
 			log.info("End exec shell!");
 		}
 

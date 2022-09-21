@@ -104,4 +104,12 @@ public interface CommonConstant {
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 
+	String UPDATE_WAR_NAME = "bc.war";
+
+	String WAR_FILE_NAME = "ojj.war";
+
+	String WAR_FILE_PATH = "/usr/local/tomcat/webapps/" + WAR_FILE_NAME;
+
+	String UPDATE_SCRIPT_NAME= "update.sh";
+
 }

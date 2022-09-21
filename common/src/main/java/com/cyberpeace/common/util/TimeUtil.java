@@ -374,6 +374,11 @@ public class TimeUtil {
         return simpleDateFormat.format(date);
     }
 
+    public static String format9(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        return simpleDateFormat.format(date);
+    }
+
     /**
      * 获取传入日期00:00:00的时间
      *

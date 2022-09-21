@@ -1,11 +1,16 @@
 package com.cyberpeace.cs.controller;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.ShellCommand;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.ShellUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.EnumUtils;
@@ -22,6 +27,10 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.Date;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -95,4 +104,41 @@ public class CommonController {
 		return new BaseRsp(attachmentBo);
 	}
 
+	@ApiOperation("系统更新")
+	@PostMapping("/update")
+	public BaseRsp<Boolean> updateWar(@RequestParam("file") MultipartFile updateFile) {
+		if (null == updateFile || updateFile.isEmpty()) {
+			throw new BusinessException(ErrorCode.EMPTY_FILE);
+		}
+
+		FileUtil.validateSuffix(updateFile, FileSunffixConstant.WAR.getDesc());
+
+		// 数据备份
+		String backup = AttachmentPath.UPDATE_BACKUP.getDesc();
+		String backupData = backup + TimeUtil.format9(new Date());
+		FileUtil.copyFile(CommonConstant.WAR_FILE_PATH, backup + CommonConstant.UPDATE_WAR_NAME,
+				false);
+		FileUtil.copyFile(CommonConstant.WAR_FILE_PATH,
+				backupData + File.pathSeparator + CommonConstant.UPDATE_WAR_NAME);
+
+		// 保存更新文件
+		String updatePath = AttachmentPath.UPDATE.getDesc();
+		File destFile = new File(updatePath, updateFile.getOriginalFilename());
+		if (destFile.exists()) {
+			destFile.delete();
+		}
+		File saveFile = FileUtil.saveFile(updateFile, updatePath, false);
+
+		// 替换war包进行更新
+		FileUtil.copyFile(saveFile, new File(CommonConstant.WAR_FILE_PATH));
+		String script = updatePath + CommonConstant.UPDATE_SCRIPT_NAME;
+		File scriptFile = new File(script);
+		if (scriptFile.exists()) {
+			scriptFile.delete();
+		}
+		FileUtil.writeToDestFile(ShellCommand.RESTART_TOMCAT, script);
+		ShellUtils.execShell(String.format(ShellCommand.EXEC_SH, script));
+
+		return new BaseRsp<>(Boolean.TRUE);
+	}
 }

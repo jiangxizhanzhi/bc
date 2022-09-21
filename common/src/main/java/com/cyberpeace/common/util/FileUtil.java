@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +62,26 @@ public class FileUtil {
 			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
 				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 			}
+		}
+	}
+
+	public static File saveFile(MultipartFile file, String basePath, boolean reName) {
+		String originName = file.getOriginalFilename();
+		if (reName) {
+			String fileSuffix = getFileSuffix(originName);
+			originName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
+		}
+		
+		mkdirs(basePath);
+
+		try {
+			File destFile = new File(basePath, originName);
+			file.transferTo(destFile);
+			return destFile;
+		} catch (Exception e) {
+			log.error("File save failed! save_path=[{}], file_name=[{}], catch error:", basePath,
+					originName, e);
+			throw new BusinessException(ErrorCode.FILE_UPLOAD_FAIL);
 		}
 	}
 
@@ -583,9 +604,13 @@ public class FileUtil {
 	public static String getFileSuffix(String filePath) {
 		int indexOf = filePath.lastIndexOf(CommonConstant.PERIOD);
 		if (indexOf == -1) {
-			return "";
+			return CommonConstant.EMPTY_STRING;
 		}
-
+		
+		if (filePath.endsWith(FileSunffixConstant.TAR.getDesc())) {
+			return FileSunffixConstant.TAR.getDesc();
+		}
+		
 		return filePath.substring(indexOf + 1);
 	}
 

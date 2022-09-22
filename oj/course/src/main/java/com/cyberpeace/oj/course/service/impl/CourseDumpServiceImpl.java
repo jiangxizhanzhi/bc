@@ -20,6 +20,7 @@ import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -325,13 +326,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String logo = course.getLogo();
 		String fileSuffix;
 		String logoUrl;
-		File file = new File(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH);
-		if(logo.isEmpty()){
-			if(!file.exists()){
-				log.error("no default course logo! please manually copy logo.png under /cpms/built_in!");
-				throw new BusinessException(OjBusinessErrorCode.NO_DEFAULT_COURSE_LOGO, course.getName());
-			}
-			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
+		if(StringUtils.isBlank(logo)){
+			log.error("No logo for course [{}]!", course.getName());
+			throw new BusinessException(OjBusinessErrorCode.NO_COURSE_LOGO, course.getName());
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);

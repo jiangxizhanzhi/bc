@@ -241,7 +241,7 @@ public interface OjBusinessErrorCode {
 	String MAX_PRACTICE_CATEGORY_128 = "102078";
 
 	/** 课程无LOGO*/
-	String NO_DEFAULT_COURSE_LOGO = "102079";
+	String NO_COURSE_LOGO = "102079";
 
 	/** 选择题选项过多*/
 	String CHOICE_OPTION_TOO_MANY = "102080";

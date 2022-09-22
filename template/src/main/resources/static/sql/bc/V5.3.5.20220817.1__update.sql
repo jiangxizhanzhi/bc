@@ -1311,3 +1311,6 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 38, '已评估', 'Ha
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 38, '异常', 'Abnormal');
 
 ALTER TABLE oj_course_lesson ADD COLUMN lesson_type tinyint(1) NOT NULL COMMENT '新课时类型';
+
+alter table oj_course add column `direction_int` longtext DEFAULT NULL comment '方向简介';
+alter table oj_course_lesson add column `recording_status` int NOT NULL DEFAULT 1 comment '录制状态';

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.google.common.collect.Lists;
@@ -14,9 +15,14 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @TableName("oj_course_lesson")
 public class CourseLesson extends BaseTable {
+
+	@ApiModelProperty("录制状态")
+	private Integer recordingStatus;
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	@ApiModelProperty("资源编号")

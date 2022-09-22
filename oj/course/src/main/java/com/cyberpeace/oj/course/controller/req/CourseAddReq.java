@@ -28,6 +28,9 @@ public class CourseAddReq implements Serializable {
 	@ApiModelProperty("课程描述")
 	private String description;
 
+	@ApiModelProperty("方向简介")
+	private String directionInt;
+
 	@ApiModelProperty("课程方向")
 	@NotBlank(groups = { Create.class })
 	private String categoryId;

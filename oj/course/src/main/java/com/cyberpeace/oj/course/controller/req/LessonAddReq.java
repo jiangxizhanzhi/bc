@@ -18,6 +18,9 @@ import lombok.Data;
 @ApiModel
 public class LessonAddReq implements Serializable {
 
+	@ApiModelProperty("录制状态 0=未完成 1=完成 ")
+	private Integer recordingStatus;
+
 	@ApiModelProperty("课时名称")
 	@NotBlank(groups = { Create.class })
 	private String name;

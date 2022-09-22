@@ -32,6 +32,9 @@ public class Course extends AuthTable {
 	@ApiModelProperty("描述")
 	private String description;
 
+	@ApiModelProperty("方向简介")
+	private String directionInt;
+
 	@ApiModelProperty("分类编号")
 	private String categoryId;
 

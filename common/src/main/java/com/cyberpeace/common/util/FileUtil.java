@@ -71,7 +71,7 @@ public class FileUtil {
 			String fileSuffix = getFileSuffix(originName);
 			originName = IDGeneratorUtil.getID() + CommonConstant.PERIOD + fileSuffix;
 		}
-		
+
 		mkdirs(basePath);
 
 		try {
@@ -124,6 +124,11 @@ public class FileUtil {
 		// 无后缀名称直接返回文件名
 		if (file.getName().lastIndexOf(CommonConstant.PERIOD) == -1) {
 			return file.getName();
+		}
+
+		String fileName = file.getName();
+		if (fileName.endsWith(FileSunffixConstant.TAR.getDesc()) && !suffix) {
+			return fileName.replace(CommonConstant.PERIOD + FileSunffixConstant.TAR.getDesc(), "");
 		}
 
 		return !suffix
@@ -343,6 +348,10 @@ public class FileUtil {
 	 * @return true: 删除成功； false: 删除失败
 	 */
 	public static Boolean deleteDir(File dir) {
+		if (!dir.exists()) {
+			return true;
+		}
+
 		if (dir.isDirectory()) {
 			File[] children = dir.listFiles();
 			assert children != null;
@@ -606,20 +615,19 @@ public class FileUtil {
 		if (indexOf == -1) {
 			return CommonConstant.EMPTY_STRING;
 		}
-		
+
 		if (filePath.endsWith(FileSunffixConstant.TAR.getDesc())) {
 			return FileSunffixConstant.TAR.getDesc();
 		}
-		
+
 		return filePath.substring(indexOf + 1);
 	}
 
 	/**
 	 * 文件夹目录删除
 	 * @param destDir
-	 * @param self
 	 */
-	public static void deleteDir(String destDir, boolean self) {
+	public static void deleteDir(String destDir) {
 		File file = new File(destDir);
 		if (!file.exists()) {
 			return;
@@ -627,19 +635,14 @@ public class FileUtil {
 
 		// 文件直接删除
 		if (file.isFile()) {
-			file.deleteOnExit();
+			file.delete();
 			return;
 		}
-
-		// 目录遍历删除
-		File[] files = file.listFiles();
-		for (File children : files) {
-			children.deleteOnExit();
-		}
-
-		// 是否删除自身
-		if (self) {
-			file.deleteOnExit();
+		try {
+			FileUtils.deleteDirectory(file);
+		} catch (Exception e) {
+			log.error("File delete failed! file_path=[{}]", destDir);
+			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
 	}
 

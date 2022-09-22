@@ -1,17 +1,13 @@
 package com.cyberpeace.cs.controller;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.ShellCommand;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.ShellUtils;
-import com.cyberpeace.common.util.TimeUtil;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.FileUtil;
@@ -21,16 +17,13 @@ import com.cyberpeace.cs.constant.UploadAttachmentPermission;
 import com.cyberpeace.cs.constant.UploadImagePermission;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UpdateService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.util.Date;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -44,6 +37,9 @@ public class CommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private UpdateService updateService;
 
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
@@ -110,35 +106,28 @@ public class CommonController {
 		if (null == updateFile || updateFile.isEmpty()) {
 			throw new BusinessException(ErrorCode.EMPTY_FILE);
 		}
-
-		FileUtil.validateSuffix(updateFile, FileSunffixConstant.WAR.getDesc());
+		FileUtil.validateFileSuffix(updateFile.getOriginalFilename(),
+				FileTypeContant.UPDATE_FILE_TYPE);
 
 		// 数据备份
-		String backup = AttachmentPath.UPDATE_BACKUP.getDesc();
-		String backupData = backup + TimeUtil.format9(new Date());
-		FileUtil.copyFile(CommonConstant.WAR_FILE_PATH, backup + CommonConstant.UPDATE_WAR_NAME,
-				false);
-		FileUtil.copyFile(CommonConstant.WAR_FILE_PATH,
-				backupData + File.pathSeparator + CommonConstant.UPDATE_WAR_NAME);
+		updateService.backup();
 
 		// 保存更新文件
-		String updatePath = AttachmentPath.UPDATE.getDesc();
-		File destFile = new File(updatePath, updateFile.getOriginalFilename());
-		if (destFile.exists()) {
-			destFile.delete();
-		}
-		File saveFile = FileUtil.saveFile(updateFile, updatePath, false);
+		String outPath = updateService.decompress(updateFile);
 
 		// 替换war包进行更新
-		FileUtil.copyFile(saveFile, new File(CommonConstant.WAR_FILE_PATH));
-		String script = updatePath + CommonConstant.UPDATE_SCRIPT_NAME;
-		File scriptFile = new File(script);
-		if (scriptFile.exists()) {
-			scriptFile.delete();
-		}
-		FileUtil.writeToDestFile(ShellCommand.RESTART_TOMCAT, script);
-		ShellUtils.execShell(String.format(ShellCommand.EXEC_SH, script));
+		updateService.update(outPath);
 
+		// 重启代码
+		updateService.restart();
 		return new BaseRsp<>(Boolean.TRUE);
+	}
+
+	@ApiOperation("系统恢复")
+	@PatchMapping("/restore")
+	public BaseRsp<Boolean> restore() {
+		updateService.restore();
+		updateService.restart();
+		return new BaseRsp<>(true);
 	}
 }

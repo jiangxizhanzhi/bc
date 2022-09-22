@@ -363,7 +363,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		// 压缩当前文件夹
 		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
-		FileUtil.deleteDir(destDir, true);
+		FileUtil.deleteDir(destDir);
 		return new File(zipDest);
 	}
 

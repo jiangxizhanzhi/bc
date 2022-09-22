@@ -46,4 +46,7 @@ public interface SituationErrorCode {
 
 	/** 非场景态势暂时无法使用控制台 */
 	String UNAVAILABLE_FOR_NON_SCENE_SITUATION = "104015";
+
+	/** 当前场景节点无坐标 */
+	String NODE_HAS_NO_COORDINATES = "104016";
 }

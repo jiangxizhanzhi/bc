@@ -10,6 +10,8 @@ public class LessonContext implements Serializable {
 
     private Integer type;
 
+    private Integer lessonType;
+
     private String pattern;
 
     private List<String> courseIds;

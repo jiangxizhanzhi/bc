@@ -42,6 +42,9 @@
             <if test="context.type != null">
                 and `type` = #{context.type}
             </if>
+            <if test="context.lessonType != null">
+                and `lesson_type` = #{context.lessonType}
+            </if>
             <if test="context.pattern != null and context.pattern != ''">
                 <bind name="context.pattern" value="'%' + context.pattern + '%'"/>
                 and `name` like #{context.pattern}

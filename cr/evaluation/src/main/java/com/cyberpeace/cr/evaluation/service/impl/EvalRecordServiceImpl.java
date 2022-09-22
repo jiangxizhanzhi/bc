@@ -128,6 +128,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
+    private final Map<String, EvalSyncProbeHandler> probeInSyncTaskMap = Maps.newHashMap();
+
     @Override
     public void isExist(EvalRecordAddReq requestData) {
         LambdaQueryChainWrapper<EvalRecord> querySet = lambdaQuery().eq(EvalRecord::getTaskId, requestData.getTaskId()).eq(EvalRecord::getName, requestData.getName());
@@ -206,6 +208,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecordRsp create(EvalRecordAddReq requestData) {
+        // todo 仅允许参与的红/蓝方创建
         // 评估对象构建
         EvalRecord evalRecord = BeanUtils.copy(requestData, EvalRecord.class);
         // 当evalRecord.resourceId不为空时, 视为更新
@@ -569,7 +572,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 循环同步采集数据
         EvalLog.info(evalRecord, "sync remote server [MP] probe data start...");
-        syncProbeData(evalRecord, evalTask, variableIds);
+        SyncProbeDataContext syncProbeDataContext = new SyncProbeDataContext();
+        syncProbeDataContext.setEvalRecord(evalRecord);
+        syncProbeDataContext.setEvalTask(evalTask);
+        syncProbeDataContext.setVariableIds(variableIds);
+        EvalSyncProbeHandler handler = probeInSyncTaskMap.get(evalTask.getResourceId());
+        if (handler != null && handler.getRecordId() != null) {
+            EvalLog.info(evalRecord, String.format("Waiting %s probe sync by record %s...", evalTask.getResourceId(), handler.getRecordId()));
+        } else {
+            handler = new EvalSyncProbeHandler();
+            probeInSyncTaskMap.put(evalTask.getResourceId(), handler);
+        }
+        handler.run(this::syncProbeData, syncProbeDataContext);
         EvalLog.info(evalRecord, "sync remote server [MP] probe data completed.");
 
         // 执行变量项
@@ -664,7 +678,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
     }
 
-    private void syncProbeData(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
+    private void syncProbeData(SyncProbeDataContext syncProbeDataContext) {
+        EvalRecord evalRecord = syncProbeDataContext.getEvalRecord();
+        EvalTask evalTask = syncProbeDataContext.getEvalTask();
+        Set<String> variableIds = syncProbeDataContext.getVariableIds();
+
+        // todo 需要支持场景未关闭，进行评估启动。重新检查同步探针数据
+        // todo 如果多评估同时进行, 是否会出现探针数据被重复同步？
         if (variableIds.isEmpty()) {
             EvalLog.info(evalRecord, "variables id is empty, continue.");
             return;
@@ -741,6 +761,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<MpCollectionEvent> collectionEventList = Lists.newArrayList();
         // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
         if (isFirstCall && !collectionEventPageContext.getPage().equals(1L)) {
+            // todo 场景运行中可评估, 已经同步数据需要跳过同步, 避免重复入库
             // es需要循环数次跳过已同步数据
             if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
                 EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");
@@ -748,10 +769,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 collectionEventPageContext.setPage(1L);  // es同requestId第一次查询生成快照时传入page需要为1, 否则报错
                 for (int i = 0; i < currentPage; i++) {
                     collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+                    // todo 返回数据`collectionEventList`需要跳过一部分, 另一部分进入`forEach`进行入库.
                 }
                 collectionEventPageContext.setPage(currentPage);
-                // 非es查询的探针类型, 根据分页入参`page`、`per_page`获取数据
             } else {
+                // 非es查询的探针类型, 根据正常分页入参`page`、`per_page`获取数据
                 collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
             }
         } else {
@@ -950,6 +972,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecordResultRsp result(String recordId) {
+        // todo 红蓝方各自预览个人评估
         EvalRecordResultRsp result = new EvalRecordResultRsp();
         BeanUtils.copyProperties(getById(recordId), result);
 

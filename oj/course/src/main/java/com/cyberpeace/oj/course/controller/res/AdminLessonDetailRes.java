@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
@@ -52,5 +53,8 @@ public class AdminLessonDetailRes implements Serializable {
     private String sceneConfigName;
 
     private Boolean scenePermission;
+
+    @ApiModelProperty("录制状态")
+    private Integer recordingStatus;
 
 }

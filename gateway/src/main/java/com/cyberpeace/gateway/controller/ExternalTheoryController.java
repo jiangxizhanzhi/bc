@@ -162,7 +162,7 @@ public class ExternalTheoryController {
 
 		IPage<PracticeTheory> result = practiceTheoryMapper.getList(page, queryParams.getPattern(),
 				setIds, queryParams.getCategory(), queryParams.getQuestionType(),
-				queryParams.getDifficulty());
+				queryParams.getDifficulty(),queryParams.getKeyword(), queryParams.getKnowledge());
 		return new BaseRsp<>(PageUtil.getListResult(result));
 	}
 

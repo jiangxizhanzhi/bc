@@ -35,6 +35,10 @@
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}
                 </if>
+                <if test="listQuery.knowledge != null and listQuery.knowledge != ''">
+                    <bind name="knowledge" value="'%' + listQuery.knowledge + '%'"/>
+                    and `knowledge` like #{knowledge}
+                </if>
             </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}

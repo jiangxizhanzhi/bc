@@ -28,4 +28,10 @@ public class PracticeTheoryListReq extends PageReqBase {
     @ApiModelProperty(value = "用户编号")
     private String userId;
 
+    @ApiModelProperty(name = "knowledge", value = "知识点")
+    private String knowledge;
+
+    @ApiModelProperty(name = "keyword", value = "关键字")
+    private String keyword;
+
 }

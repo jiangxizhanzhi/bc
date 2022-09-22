@@ -22,4 +22,8 @@ public class OperationPageReq extends PageReqBase {
     @ApiModelProperty("用户编号")
     @NotBlank(message = ErrorCode.USER_INFO_MISSING)
     private String userId;
+
+    @ApiModelProperty(name = "knowledge", value = "知识点")
+    private String knowledge;
+
 }

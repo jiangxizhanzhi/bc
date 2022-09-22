@@ -23,11 +23,14 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 	 * @param category
 	 * @param questionType
 	 * @param difficulty
+	 * @param keyword 关键字
+	 * @param knowledge 知识点
 	 * @return
 	 */
 	IPage<PracticeTheory> getList(Page page, @Param("pattern") String pattern,
-			@Param("practice_set_ids") List<String> practiceSetIds, @Param("category") String category,
-			@Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty);
+								  @Param("practice_set_ids") List<String> practiceSetIds, @Param("category") String category,
+								  @Param("question_type") Integer questionType, @Param("difficulty") Integer difficulty,
+								  @Param("keyword")String keyword, @Param("knowledge")String knowledge);
 
 	/**
 	 * 随机查询理论习题 #外部接口使用

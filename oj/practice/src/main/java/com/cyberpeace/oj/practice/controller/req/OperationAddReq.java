@@ -28,6 +28,9 @@ import lombok.Data;
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
 
+	@ApiModelProperty(value ="实操题类型 1=夺旗练习 2=真实漏洞练习")
+	private Integer type;
+
 	@ApiModelProperty("标题")
 	@NotBlank(groups = { Create.class })
 	private String title;

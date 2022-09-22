@@ -11,6 +11,9 @@ import lombok.Getter;
 @TableName("oj_practice_operation")
 public class PracticeOperation extends PracticeBase {
 
+	@ApiModelProperty(value ="实操题类型 1=夺旗练习 2=真实漏洞练习")
+	private Integer type;
+
 	/** 附件*/
 	@ApiModelProperty("附件编号")
 	private String attachmentId;
@@ -54,6 +57,23 @@ public class PracticeOperation extends PracticeBase {
 		private String desc;
 
 		DynamicFlag(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
+	public enum Type implements GenericEnum {
+
+		CAPTURE_FLAG(1, "夺旗"), REAL_VLUN(2, "真实漏洞");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		Type(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

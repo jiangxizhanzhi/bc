@@ -208,7 +208,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 						for (int j = 0; j < strList.size(); j++) {
 							String str = strList.get(j);
 							String imgUrl = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
-							FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
+							FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
 							imgUrl = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl);
 							writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
 						}

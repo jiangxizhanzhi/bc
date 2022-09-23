@@ -103,7 +103,15 @@ public class UpdateServiceImpl implements UpdateService {
 		String updateScript = update + CommonConstant.UPDATE_SCRIPT_NAME;
 		FileUtil.writeToDestFile(ShellCommand.RESTART_TOMCAT, updateScript);
 		String updateLog = update + CommonConstant.UPDATE_SCRIPT_LOG;
-		ShellUtils.execShell(String.format(ShellCommand.EXEC_SH, updateScript, updateLog));
+		new Thread(() -> {
+			try {
+				Thread.sleep(2000);
+				ShellUtils.execShell(String.format(ShellCommand.EXEC_SH, updateScript, updateLog));
+			} catch (Exception e) {
+				log.error("Bc service restart failed! catch error:", e);
+			}
+		}).start();
+
 	}
 
 	@Override

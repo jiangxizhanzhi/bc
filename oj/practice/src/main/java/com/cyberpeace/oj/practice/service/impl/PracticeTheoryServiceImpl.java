@@ -537,12 +537,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				answer = String.join("|", answerArray);
 			}
 			practiceTheory.setAnswer(answer);
-			JSONObject option = new JSONObject();
-			option.put("A", excelRowData.get(3));
-			option.put("B", excelRowData.get(4));
-			option.put("C", excelRowData.get(5));
-			option.put("D", excelRowData.get(6));
-			practiceTheory.setOption(JsonUtil.toJsonString(option));
+			String option = formatOption(excelRowData, 3);
+			practiceTheory.setOption(option);
 		}
 
 		// 判断题
@@ -658,7 +654,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			String option = formatOption(excelRowData);
+			String option = formatOption(excelRowData, 5);
 			practiceTheory.setOption(option);
 			practiceTheory.setAnswer(excelRowData.get(4));
 		}
@@ -699,7 +695,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
 	}
 
-	private String formatOption(List<String> excelRowData) {
+	private String formatOption(List<String> excelRowData, Integer start) {
 		if (CollectionUtils.isEmpty(excelRowData)) {
 			return CommonConstant.EMPTY_OBJECT;
 		}
@@ -710,7 +706,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		JSONObject options = new JSONObject();
 		for (char i = 'A'; i <= 'Z'; i++) {
-			int index = i - 'A' + 5;
+			int index = i - 'A' + start;
 			if (index >= excelRowData.size()) {
 				break;
 			}

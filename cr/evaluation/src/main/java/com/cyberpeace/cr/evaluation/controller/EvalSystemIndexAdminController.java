@@ -18,7 +18,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.AuthTable.AuthType;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -259,15 +258,13 @@ public class EvalSystemIndexAdminController  extends AuthAndPublicController<Eva
 		listQuery.setSort("-create_time");
 
 		IPage<EvalSystem> data = evalSystemService.page(listQuery);
-		IPage<EvalSystemRsp> rspData = data.convert(es -> {
-			EvalSystemRsp rsp = BeanUtils.copy(es, EvalSystemRsp.class);
-			rsp.setAuth(es.getReadAuthType());
+		data.getRecords().forEach(es  -> {
+			es.setAuth(es.getReadAuthType());
 			if (es.getReadAuthType().equals(AuthType.CUSTOM_SHARE_MODE.getCode())) {
-				rsp.setAuthCount(JsonUtil.toJsonObjectArray(es.getReadAuthIds(), String.class).size());
+				es.setAuthCount(JsonUtil.toJsonObjectArray(es.getReadAuthIds(), String.class).size());
 			}
-			return rsp;
 		});
 
-		return new BaseRsp(PageUtil.getListResult(rspData));
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 }

@@ -59,4 +59,13 @@ public class EvalSystem extends BaseTable {
 	@ApiModelProperty("授权访问组织编号 ,为分割符")
 	private String readAuthIds;
 	
+	/**
+	 * 前端返回
+	 */
+	@ApiModelProperty("授权访问类型")
+    private Integer auth;
+
+    @ApiModelProperty("授权访问数量")
+    private Integer authCount;
+	
 }

@@ -51,17 +51,22 @@ public interface ErrorCode {
 	/** 类型错误 */
 	String TYPE_ERROR = "100019";
 
+	/** 场景启动失败*/
 	String SCENE_RUNNING_FAILED = "100020";
 
 	/** 无效文件错误 */
 	String FILE_CONTENT_INVALID = "100021";
 
+	/** 复制文件失败*/
 	String FAILED_TO_COPY_FILE = "100022";
 
+	/** 场景未暂停*/
 	String NOT_PAUSED = "100023";
 
+	/** 保存文件失败*/
 	String FAILED_TO_SAVE_FILE = "100024";
 
+	/** 获取Office文件信息失败*/
 	String FAILED_TO_OBTAIN_OFFICE_FILE_INFO = "100025";
 
 	/** 未配置 */
@@ -132,6 +137,7 @@ public interface ErrorCode {
 	/** 名称已存在*/
 	String REPEAT_PRACTICE_SET_NANE = "100045";
 
+	/** 找不到文件: [%s]*/
 	String FILE_ERROR_FAIL = "100046";
 
 	/** 无操作权限*/
@@ -140,4 +146,7 @@ public interface ErrorCode {
 	String SCENE_NOT_EXIST_ZH = "场景不存在";
 
 	String SCENE_NOT_EXIST_EN = "Scene not exist";
+
+	/** 文件删除失败*/
+	String FILE_DELETE_FAILED = "100048";
 }

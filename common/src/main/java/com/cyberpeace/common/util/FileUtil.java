@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -599,22 +600,34 @@ public class FileUtil {
 			return;
 		}
 
-		// 文件直接删除
-		if (file.isFile()) {
-			file.deleteOnExit();
-			return;
+		try {
+			if (file.isFile()) {
+				FileUtils.delete(file);
+				return;
+			}
+
+			if (self) {
+				FileUtils.deleteDirectory(file);
+				return;
+			}
+
+			File[] files = file.listFiles();
+			if (null == files || files.length == 0) {
+				return;
+			}
+
+			for (File subFile : files) {
+				if (subFile.isFile()) {
+					subFile.delete();
+				} else {
+					FileUtils.deleteDirectory(subFile);
+				}
+ 			}
+		} catch (Exception e) {
+			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
+			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
 
-		// 目录遍历删除
-		File[] files = file.listFiles();
-		for (File children : files) {
-			children.deleteOnExit();
-		}
-
-		// 是否删除自身
-		if (self) {
-			file.deleteOnExit();
-		}
 	}
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {

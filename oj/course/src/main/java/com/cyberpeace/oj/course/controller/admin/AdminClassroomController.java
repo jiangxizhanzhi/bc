@@ -318,7 +318,7 @@ public class AdminClassroomController {
 			classroomService.importTrainPlan(realPath, UserInfoContext.getUserContext(), cover);
 		} finally {
 			try {
-				FileUtil.deleteDir(realPath, CommonConstant.TRUE);
+				FileUtil.deleteDir(realPath);
 			} catch (Exception e) {
 				// 不影响导入逻辑就行
 				log.error("Import train plan delete file failed! file_url=[{}], catch error:",

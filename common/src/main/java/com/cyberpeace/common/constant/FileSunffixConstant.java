@@ -17,7 +17,7 @@ public enum FileSunffixConstant implements GenericEnum {
 	PNG(10, "png"), JPEG(11, "jpeg"),
 	JPG(12, "jpg"), MP4(13, "mp4"),
 	M4V(14, "m4v"), TAR(15, "tar.gz"),
-	WAR(16, "war");
+	WAR(16, "war"), TGZ(16, "tgz");
 
 	@Getter
 	private Integer code;

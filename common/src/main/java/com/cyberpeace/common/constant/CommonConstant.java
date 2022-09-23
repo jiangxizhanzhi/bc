@@ -1,5 +1,7 @@
 package com.cyberpeace.common.constant;
 
+import java.io.File;
+
 public interface CommonConstant {
 
 	/** 常量定义 便于后续查找代码中默认值使用*/
@@ -93,14 +95,14 @@ public interface CommonConstant {
 
 	String SPACE = " ";
 
-	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
+	long TOOL_ATTACHMENT_FILE_SIZE = 500 * 1024 * 1024;
 
 	/** 底层 中台 靶场 竞赛共享目录*/
 	String SHARE_DIR = "/data/resource/export/";
 
 	String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
 
-	String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
+	String EXPORT_TRAIN_PATH = SHARE_DIR + "train/";
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 
@@ -110,6 +112,14 @@ public interface CommonConstant {
 
 	String WAR_FILE_PATH = "/usr/local/tomcat/webapps/" + WAR_FILE_NAME;
 
-	String UPDATE_SCRIPT_NAME= "update.sh";
+	String APPS_FILE_PATH = "/home/apps";
+
+	String PAGES_FILE_PATH = APPS_FILE_PATH + File.separator + "pages";
+
+	String BACKUP_PAGES_NAME = "pages.tar.gz";
+
+	String UPDATE_SCRIPT_NAME = "update.sh";
+
+	String UPDATE_SCRIPT_LOG = "update.log";
 
 }

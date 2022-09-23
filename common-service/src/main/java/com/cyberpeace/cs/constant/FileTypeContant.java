@@ -23,4 +23,7 @@ public interface FileTypeContant {
 	/** 工具库文件上传*/
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
+	/** 更新包文件类型*/
+	String UPDATE_FILE_TYPE = "TAR.GZ";
+
 }

@@ -1113,7 +1113,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 */
 	private void timeIntersection(List<Classroom> classrooms) {
 		List<Classroom> sort = StreamApiUtils.sortByColumn(classrooms, Classroom::getEndTime);
-		if (sort.size() <= CommonConstant.TWO) {
+		if (sort.size() < CommonConstant.TWO) {
 			return;
 		}
 		

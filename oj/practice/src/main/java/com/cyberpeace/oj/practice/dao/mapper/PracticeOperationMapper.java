@@ -17,6 +17,9 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 	IPage<PracticeOperation> pageByQuery(@Param("page") Page page,
 			@Param("listQuery") OperationListQuery listQuery, @Param("isPublic") Boolean isPublic);
 
+	IPage<PracticeOperation> pageByQueryExternal(@Param("page") Page page,
+										 @Param("listQuery") OperationListQuery listQuery, @Param("isPublic") Boolean isPublic);
+
 	List<String> selectBySetIds(@Param("setIds") List<String> setIds,
 			@Param("isPublic") Boolean isPublic);
 

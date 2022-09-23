@@ -35,6 +35,42 @@
                     <bind name="title" value="'%' + listQuery.pattern + '%'"/>
                     and title like #{title}
                 </if>
+            </if>
+            <if test="isPublic != null and isPublic">
+                and `public` = #{isPublic}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageByQueryExternal" resultMap="operation">
+        select * from oj_practice_operation
+        <where>
+            <if test="listQuery != null">
+                <if test="listQuery.resourceIds != null and listQuery.resourceIds.size() != 0">
+                    resource_id in
+                    <foreach collection="listQuery.resourceIds" separator="," item="resourceId" open="(" close=")">
+                        #{resourceId}
+                    </foreach>
+                </if>
+                <if test="listQuery.practiceSetIds != null and listQuery.practiceSetIds.size() != 0">
+                    and practice_set_id in
+                    <foreach collection="listQuery.practiceSetIds" open="(" close=")" separator="," item="setId">
+                        #{setId}
+                    </foreach>
+                </if>
+                <if test="listQuery.difficulty != null">
+                    and difficulty = #{listQuery.difficulty}
+                </if>
+                <if test="listQuery.categoryIds != null and listQuery.categoryIds.size() != 0">
+                    and category_id in
+                    <foreach collection="listQuery.categoryIds" open="(" close=")" item="categoryId" separator=",">
+                        #{categoryId}
+                    </foreach>
+                </if>
+                <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                    <bind name="title" value="'%' + listQuery.pattern + '%'"/>
+                    and title like #{title}
+                </if>
                 <if test="listQuery.knowledge != null and listQuery.knowledge != ''">
                     <bind name="knowledge" value="'%' + listQuery.knowledge + '%'"/>
                     and `knowledge` like #{knowledge}
@@ -45,6 +81,7 @@
             </if>
         </where>
     </select>
+
 
     <select id="selectBySetIds" resultType="java.lang.String">
         select resource_id from oj_practice_operation

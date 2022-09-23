@@ -7,21 +7,6 @@
         <result property="isPublic" column="public"/>
     </resultMap>
 
-    <sql id="filterByKw">
-        <if test="keyword != null and keyword != ''">
-            <bind name="keyword" value="'%' + keyword + '%'"/>
-
-            and `keyword` like #{keyword}
-        </if>
-    </sql>
-
-    <sql id="filterByknowledge">
-        <if test="knowledge != null and knowledge != ''">
-            <bind name="knowledge" value="'%' + knowledge + '%'"/>
-            and `knowledge` like #{knowledge}
-        </if>
-    </sql>
-
     <select id="getList" resultMap="theory">
         select * from oj_practice_theory
         <where>
@@ -44,8 +29,6 @@
             <if test="difficulty != null">
                 and difficulty = #{difficulty}
             </if>
-            <include refid="filterByKw"/>
-            <include refid="filterByknowledge"/>
             and `public` = true
         </where>
         order by id desc
@@ -125,32 +108,10 @@
                 <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
                 and content like #{pattern}
             </if>
-            <if test="listQuery.knowledge != null and listQuery.knowledge != ''">
-                <bind name="knowledge" value="'%' + listQuery.knowledge + '%'"/>
-                and `knowledge` like #{knowledge}
-            </if>
-            <if test="listQuery.keyword != null and listQuery.keyword != ''">
-                <bind name="keyword" value="'%' + listQuery.keyword + '%'"/>
-                and `keyword` like #{keyword}
-            </if>
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}
             </if>
         </where>
-    </select>
-
-    <select id="selectBySetIdsAndKws" resultType="java.lang.String">
-        select resource_id from oj_practice_theory
-        where practice_set_id in
-        <foreach collection="setIds" separator="," open="(" close=")" item="setId">
-            #{setId}
-        </foreach>
-        <if test="isPublic != null and isPublic">
-            and `public` = #{isPublic}
-        </if>
-        <include refid="filterByKw"/>
-        <include refid="filterByknowledge"/>
-        order by `update_time` desc,`id`;
     </select>
 
     <select id="selectBySetIds" resultType="java.lang.String">

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.gateway.controller.req.OperationListQueryExternal;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,7 +210,7 @@ public class ExternalOperationController {
 		}
 
 		// 条件组装
-		OperationListQuery listQuery = BeanUtils.copy(req, OperationListQuery.class);
+		OperationListQueryExternal listQuery = BeanUtils.copy(req, OperationListQueryExternal.class);
 		List<String> setIds = practiceSetService.getSetIds(AuthContextUtils.constructAuth(userInfo, false), req.getPracticeSet());
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp(PageUtil.getNullResult());
@@ -223,7 +224,7 @@ public class ExternalOperationController {
 		}
 
 		// 条件查询
-		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
+		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQueryExternal(page, listQuery,
 				true);
 		IPage<ExternalOperationBo> convert = iPage
 				.convert(practiceOperation -> entityToExternal(practiceOperation));

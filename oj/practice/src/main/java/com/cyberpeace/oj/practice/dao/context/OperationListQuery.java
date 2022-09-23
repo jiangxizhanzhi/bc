@@ -18,6 +18,4 @@ public class OperationListQuery implements Serializable {
 
 	private String pattern;
 
-	private String knowledge;
-
 }

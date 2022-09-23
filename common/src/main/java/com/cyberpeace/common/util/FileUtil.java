@@ -641,7 +641,7 @@ public class FileUtil {
 		try {
 			FileUtils.deleteDirectory(file);
 		} catch (Exception e) {
-			log.error("File delete failed! file_path=[{}]", destDir);
+			log.error("File delete failed! file_path=[{}]", destDir, e);
 			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
 	}
@@ -688,7 +688,7 @@ public class FileUtil {
 			FileUtils.copyFile(file, destFile);
 		} catch (Exception e) {
 			log.error("File copy failed! origin_path=[{}], dest_path=[{}], catch error:",
-					file.getAbsolutePath(), destFile.getAbsolutePath());
+					file.getAbsolutePath(), destFile.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
 		}
 	}

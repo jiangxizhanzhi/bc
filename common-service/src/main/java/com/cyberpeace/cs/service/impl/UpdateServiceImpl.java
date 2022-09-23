@@ -81,7 +81,14 @@ public class UpdateServiceImpl implements UpdateService {
 		FileUtil.copyFile(backupWar, CommonConstant.WAR_FILE_PATH);
 
 		// 回滚页面
-		FileUtil.deleteDir(CommonConstant.PAGES_FILE_PATH);
+		File page = new File(CommonConstant.PAGES_FILE_PATH);
+		File[] subPages = page.listFiles();
+		if (null != subPages && subPages.length > 0) {
+			for (File subPage : subPages) {
+				FileUtil.deleteDir(subPage.getAbsolutePath());
+			}
+		}
+
 		TarGzUtils.decompress(backPage, CommonConstant.APPS_FILE_PATH);
 	}
 

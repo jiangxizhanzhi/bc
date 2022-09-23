@@ -599,23 +599,35 @@ public class FileUtil {
 		if (!file.exists()) {
 			return;
 		}
+		
+		try {
+			if (file.isFile()) {
+				FileUtils.delete(file);
+				return;
+			}
+			
+			if (self) {
+				FileUtils.deleteDirectory(file);
+				return;
+			}
 
-		// 文件直接删除
-		if (file.isFile()) {
-			file.deleteOnExit();
-			return;
-		}
+			File[] files = file.listFiles();
+			if (null == files || files.length == 0) {
+				return;
+			}
 
-		// 目录遍历删除
-		File[] files = file.listFiles();
-		for (File children : files) {
-			children.deleteOnExit();
+			for (File subFile : files) {
+				if (subFile.isFile()) {
+					subFile.delete();
+				} else {
+					FileUtils.deleteDirectory(subFile);
+				}
+ 			}
+		} catch (Exception e) {
+			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
+			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
-
-		// 是否删除自身
-		if (self) {
-			file.deleteOnExit();
-		}
+		
 	}
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {
@@ -660,7 +672,7 @@ public class FileUtil {
 			FileUtils.copyFile(file, destFile);
 		} catch (Exception e) {
 			log.error("File copy failed! origin_path=[{}], dest_path=[{}], catch error:",
-					file.getAbsolutePath(), destFile.getAbsolutePath());
+					file.getAbsolutePath(), destFile.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FILE_COPY_FAIL);
 		}
 	}

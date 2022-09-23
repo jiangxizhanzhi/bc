@@ -16,6 +16,17 @@ public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 
 	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery,
 			String userId);
+	
+	/**
+	 * 前台展示模板列表
+	 * 
+	 * @param page
+	 * @param evalTemplateListQuery
+	 * @param userId
+	 * @return
+	 */
+	IPage<EvalTemplate> listDisplayEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery,
+			String userId);
 
 	/**
 	 * 校验模板名称

@@ -15,6 +15,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -32,6 +33,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -132,13 +134,25 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		// 构建步骤对象
 		List<EvalTaskStep> evalTaskSteps = Lists.newArrayList();
-		List<EvalTaskStepConfig> evalTaskStepConfigList = JsonUtil
-				.toJsonObjectArray(evalTemplate.getStepConfig(), EvalTaskStepConfig.class);
-		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
-			EvalTaskStep evalTaskStep = BeanUtils.copy(evalTaskStepConfig, EvalTaskStep.class);
-			evalTaskStep.setTaskId(evalTask.getResourceId());
-			evalTaskStep.setType(EvalTaskStep.Type.MANUAL.getCode());
-			evalTaskSteps.add(evalTaskStep);
+		List<EvalRoleConfig> evalRoleConfigs = JsonUtil
+				.toJsonObjectArray(evalTemplate.getStepConfig(), EvalRoleConfig.class);
+		for (EvalRoleConfig evalRoleConfig : evalRoleConfigs) {
+			String roleName = evalRoleConfig.getName();
+			List<String> users = evalRoleConfig.getUsers();
+			JSONArray nodes = new JSONArray();
+			nodes.add(evalRoleConfig.getAssetNodes());
+			nodes.add(evalRoleConfig.getVisibleNodes());
+			
+			for(EvalTaskStepConfig step : evalRoleConfig.getSteps()) {
+				EvalTaskStep evalTaskStep = BeanUtils.copy(step, EvalTaskStep.class);
+				evalTaskStep.setTaskId(evalTask.getResourceId());
+				evalTaskStep.setType(EvalTaskStep.Type.MANUAL.getCode());
+				evalTaskStep.setRoleName(roleName);
+				evalTaskStep.setNodes(JsonUtil.toJsonString(nodes));
+				evalTaskStep.setUserIds(JsonUtil.toJsonString(users));
+				
+				evalTaskSteps.add(evalTaskStep);
+			}
 		}
 
 		// 构建本地scene对象

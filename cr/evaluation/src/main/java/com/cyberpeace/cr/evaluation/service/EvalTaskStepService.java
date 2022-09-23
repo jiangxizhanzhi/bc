@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
@@ -40,7 +41,7 @@ public interface EvalTaskStepService extends IService<EvalTaskStep> {
 	 * @param taskId
 	 * @return
 	 */
-	List<EvalTaskStepContext> getTaskSteps(String taskId);
+	List<EvalTaskStepContext> getTaskSteps(String taskId, String userId);
 
 	/** 获取模板下所有步骤
 	 * @param stepConfig
@@ -53,5 +54,10 @@ public interface EvalTaskStepService extends IService<EvalTaskStep> {
 	 * @return
 	 */
 	List<EvalTimeLineContext> getFinishedSteps(String taskId);
-
+	
+	/**
+	 * 获取nodes节点数据
+	 */
+	CrRoleNodesData getNodes(String taskId, String userId);
+	
 }

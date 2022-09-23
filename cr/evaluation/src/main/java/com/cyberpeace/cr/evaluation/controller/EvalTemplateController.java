@@ -1,5 +1,8 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +28,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -138,7 +142,13 @@ public class EvalTemplateController {
 		if (StringUtils.isNotEmpty(evalTemplate.getCurrentTaskId())) {
 			evalTemplateTaskListRsp.setCurrentTaskId(evalTemplate.getCurrentTaskId());
 		}
-
+		
+		// 任务角色配置
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(evalTemplate.getStepConfig(), EvalRoleConfig.class);
+		List<EvalRoleConfig> myConfigs = roleConfigs.stream().filter(rc -> rc.getUsers().contains(userId)).collect(Collectors.toList());
+		evalTemplateTaskListRsp.setRoleConfigs(myConfigs.isEmpty() ? roleConfigs : myConfigs);
+		
 		return new BaseRsp<>(evalTemplateTaskListRsp);
 	}
 
@@ -190,7 +200,9 @@ public class EvalTemplateController {
 		evalTemplateService.validateBaseInfo(evalTemplateBaseInfoContext);
 
 		// 校验测评步骤配置
-		evalTemplateService.validateStepConfig(evaTemplateAddReq.getStepConfig());
+		for(EvalRoleConfig config : evaTemplateAddReq.getStepConfig()) {
+			evalTemplateService.validateStepConfig(config.getSteps());
+		}
 
 	}
 

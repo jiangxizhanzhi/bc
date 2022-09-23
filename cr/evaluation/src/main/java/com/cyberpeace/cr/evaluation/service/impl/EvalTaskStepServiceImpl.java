@@ -13,6 +13,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
@@ -103,12 +104,12 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	}
 
 	@Override
-	public List<EvalTaskStepContext> getTaskSteps(String taskId) {
+	public List<EvalTaskStepContext> getTaskSteps(String taskId, String userId) {
 
 		// 获取任务步骤列表
 		EvalTask evalTask = evalTaskMapper.selectById(taskId);
 		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
-		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
+		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectSteps(taskId, userId);
 
 		// 处理步骤信息
 		for (int i = 0; i < evalTaskSteps.size(); i++) {
@@ -159,7 +160,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 		List<EvalTimeLineContext> evalTimeLineContextList = Lists.newArrayList();
 
-		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectStepsByTaskId(taskId);
+		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectSteps(taskId, null);
 
 		for (EvalTaskStep evalTaskStep : evalTaskSteps) {
 			if (evalTaskStep.getEndTime() != null) {
@@ -169,6 +170,11 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		}
 
 		return evalTimeLineContextList;
+	}
+
+	@Override
+	public CrRoleNodesData getNodes(String taskId, String userId) {
+		return JsonUtil.toJsonObject(evalTaskStepMapper.getNodes(taskId, userId), CrRoleNodesData.class);
 	}
 
 }

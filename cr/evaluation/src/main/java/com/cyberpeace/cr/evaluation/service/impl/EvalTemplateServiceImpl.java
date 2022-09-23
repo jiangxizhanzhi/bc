@@ -79,7 +79,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		// 校验用户权限
 		if (!Objects.equals(evalTemplate.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			// 由于加入了红蓝角色，去除该权限校验
+			// throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
 		return evalTemplate;
@@ -90,9 +91,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		Page page = evalTemplateListQuery.toPageParam();
 
+		String userId = UserInfoContext.getUserContext().getUserId();
 		// 根据用户获取模板列表
-		IPage<EvalTemplate> data = evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
-				UserInfoContext.getUserContext().getUserId());
+		IPage<EvalTemplate> data = evalTemplateMapper.listDisplayEvalTemplates(page, evalTemplateListQuery, userId);
+		
 
 		return data;
 	}

@@ -12,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.*;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskIdRsp;
@@ -54,6 +57,9 @@ public class EvalTaskController {
 
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
+	
+	@Autowired
+	private SceneFilterService sceneFilterService;
 
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -165,6 +171,9 @@ public class EvalTaskController {
 			evalTaskRsp.setTaskId(taskId);
 			evalTaskRsp.setTaskName(evalTask.getTaskName());
 			sceneViewContext.setLocalSceneId(evalTask.getLocalSceneId());
+			
+			JSONObject topoData = sceneViewContext.getTopoData();
+			sceneFilterService.filterVisibleTopo(topoData, evalTaskStepService.getNodes(taskId, UserInfoContext.getUserContext().getUserId()));
 		}
 
 		BeanUtils.copyProperties(sceneViewContext, evalTaskRsp);
@@ -191,7 +200,9 @@ public class EvalTaskController {
 			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
 			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
-					value = "task_id", required = false) String taskId) {
+					value = "task_id", required = false) String taskId,
+			@ApiParam(name = "user_id", value = "用户id", required = false) @RequestParam(
+					value = "user_id", required = false) String userId) {
 
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
@@ -206,7 +217,7 @@ public class EvalTaskController {
 			evalTaskStepContextList = evalTaskStepService
 					.getTemplateSteps(evalTemplate.getStepConfig());
 		} else {
-			evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId);
+			evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId, userId);
 		}
 
 		return new BaseRsp<>(evalTaskStepContextList);

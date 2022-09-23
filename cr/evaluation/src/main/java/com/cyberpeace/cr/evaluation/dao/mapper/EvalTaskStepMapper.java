@@ -15,8 +15,10 @@ public interface EvalTaskStepMapper extends BaseMapper<EvalTaskStep> {
 
 	List<String> selectStepIdsByTaskId(@Param("taskId") String taskId);
 
-	List<EvalTaskStep> selectStepsByTaskId(@Param("taskId") String taskId);
+	List<EvalTaskStep> selectSteps(String taskId, String userId);
 
 	Boolean isNotFinished(String taskId, Integer stage);
 
+	String getNodes(String taskId, String userId);
+	
 }

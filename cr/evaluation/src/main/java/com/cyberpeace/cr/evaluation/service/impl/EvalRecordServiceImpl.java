@@ -1076,7 +1076,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         }
         //测试步骤
-        data.put("steps", evalTaskStepService.getTaskSteps(taskId));
+        data.put("steps", evalTaskStepService.getTaskSteps(taskId, null));
         //指标体系结构和评估结果数据
         EvalRecordResultRsp result = result(resourceId);
         List<EvalSystemIndexesContext> indexes = result.getIndexes();

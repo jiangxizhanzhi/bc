@@ -31,6 +31,21 @@ public class EvalTaskStep extends BaseTable {
 	private Date startTime;
 
 	private Date endTime;
+	
+	/**
+	 * 角色名
+	 */
+	private String roleName;
+	
+	/**
+	 * 角色节点
+	 */
+	private String nodes;
+
+	/**
+	 * 角色用户
+	 */
+	private String userIds;
 
 	public enum Type implements GenericEnum {
 

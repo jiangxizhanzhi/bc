@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,6 +19,6 @@ public class EvaTemplateAddReq extends EvaTemplateBaseInfoReq {
 
 	@ApiModelProperty(value = "步骤配置", required = true)
 	@NotNull
-	private List<EvalTaskStepConfig> stepConfig;
+	private List<EvalRoleConfig> stepConfig;
 
 }

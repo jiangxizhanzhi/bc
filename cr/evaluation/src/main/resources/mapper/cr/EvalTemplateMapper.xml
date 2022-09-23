@@ -23,6 +23,31 @@
             </if>
         </where>
     </select>
+    
+    <select id="listDisplayEvalTemplates" resultMap="evalTemplate">
+
+        select *
+        from cr_eval_template
+        <where>
+            <if test="evalTemplateListQuery.categoryCode != null and evalTemplateListQuery.categoryCode != ''">
+                and category_code = #{evalTemplateListQuery.categoryCode}
+            </if>
+            <if test="userId != null and userId != ''">
+            	<bind name="userIdPattern" value="'%' + userId + '%'"/>
+                and ( create_user_id = #{userId} or 
+                	resource_id in 
+                		(
+                			select te.resource_id from cr_eval_template te, cr_eval_task ta, cr_eval_task_step st 
+                			where te.resource_id = ta.template_id and ta.resource_id = st.task_id and st.user_ids like #{userIdPattern}
+                		) 
+                	)
+            </if>
+            <if test="evalTemplateListQuery.pattern != null and evalTemplateListQuery.pattern != ''">
+                <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>
+                and name like #{pattern}
+            </if>
+        </where>
+    </select>
 
     <select id="existByNameAndUserIdAndId" resultType="java.lang.Boolean">
         select case

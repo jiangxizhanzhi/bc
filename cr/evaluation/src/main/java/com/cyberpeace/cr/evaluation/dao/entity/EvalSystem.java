@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -63,9 +64,11 @@ public class EvalSystem extends BaseTable {
 	 * 前端返回
 	 */
 	@ApiModelProperty("授权访问类型")
+	@TableField(exist = false)
     private Integer auth;
 
     @ApiModelProperty("授权访问数量")
+    @TableField(exist = false)
     private Integer authCount;
 	
 }

@@ -5,11 +5,15 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -64,6 +68,9 @@ public class ExternalTheoryController {
 
 	@Autowired
 	private PracticeSetService practiceSetService;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
 
 	/**
 	 * 接口认证(key获取方式后续可能调整)
@@ -211,6 +218,29 @@ public class ExternalTheoryController {
 			item.setScore(queryParams.getScore());
 		}
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("查询各类型理论习题数量")
+	@GetMapping("/type/count")
+	public BaseRsp<ExternalTheoryCountBo> searchCount(
+			@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
+			@Validated PracticeTheoryListReq listReq) {
+		allowAccess(key);
+		UserInfo userInfo = validateUser(listReq.getUserId());
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			return new BaseRsp<>(new ExternalTheoryCountBo());
+		}
+
+		// 设置查询条件
+		TheoryListQueryBo queryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
+		if (StringUtils.hasText(listReq.getCategory())) {
+			queryBo.setCategoryIds(Lists.newArrayList(listReq.getCategory()));
+		}
+		queryBo.setPracticeSetId(listReq.getPracticeSet());
+
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		ExternalTheoryCountBo countBo = practiceTheoryService.typeCount(queryBo, authContext);
+		return new BaseRsp<>(countBo);
 	}
 
 }

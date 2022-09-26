@@ -222,9 +222,22 @@ public interface OjBusinessErrorCode {
 	/** 存在组织相同时间冲突的数据*/
 	String TIME_INTERSECTION_UNDER_ORG = "102082";
 
+	/** 习题类型存在错误*/
+	String PRACTICE_TYPE_ERROR = "102083";
+
+	/** 选择题答案格式错误*/
+	String CHOICE_ANSWER_ERROR = "102084";
+
 	/** 填空题答案至少一个*/
 	String FILL_BLANK_TOO_LITTLE = "102085";
 
+	/** 选择题选项至少两个*/
+	String CHOICE_OPTION_TOO_LITTLE = "102086";
+
 	/** 判断题答案格式错误*/
+	String JUDGEMENT_ANSWER_ERROR = "102087";
+
+	/** 简答题答案格式错误*/
 	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
+
 }

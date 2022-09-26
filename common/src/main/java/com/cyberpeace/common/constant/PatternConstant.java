@@ -20,6 +20,8 @@ public interface PatternConstant {
 	/** 解析markdown文件匹配标题*/
 	String MARKDOWN_TITLE = "#{2}[^#]+";
 
+	String PARSER_MD_TITLE = "#{1,6}[^#]+";
+
 	/** 解析markdown文件匹配标签*/
 	String MARKDOWN_TAG = "#{3}[^#]+";
 
@@ -68,4 +70,16 @@ public interface PatternConstant {
 	 * ```代码块```
 	 */
 	String MULTIPLE_CODING_BLOCK = "```([\\s\\S]*?)```[\\s]?";
+
+	/** 一级列表*/
+    String MD_LIST = "- ";
+
+	/** 二级列表*/
+	String SECOND_MD_LIST = "  - ";
+
+	/** 选择题答案匹配*/
+	String CHOICE_ANSWER = "^[a-zA-Z|]+$";
+
+	/** 判断题答案*/
+	String JUDGEMENT_ANSWER = "^[a-zA-Z]$";
 }

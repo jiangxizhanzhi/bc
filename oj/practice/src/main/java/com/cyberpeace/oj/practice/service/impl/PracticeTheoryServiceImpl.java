@@ -621,7 +621,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
 		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
+		Integer theoryType = handleTheoryType(String.valueOf(Integer.parseInt(excelRowData.get(3)) - 1));
+		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
 		String categoryName = excelRowData.get(1);
@@ -653,11 +654,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 						.getCode().intValue()) {
 			String option = formatOption(excelRowData, 5);
 			practiceTheory.setOption(option);
-			practiceTheory.setAnswer(excelRowData.get(4));
+			String answer = handleChoiceAnswer(excelRowData.get(4));
+			practiceTheory.setAnswer(answer);
 		}
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
 				.getCode().intValue()) {
+			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
 			practiceTheory.setAnswer(excelRowData.get(4));
 			practiceTheory.setOption(JsonUtil.toJsonString(null));
 		}
@@ -732,6 +735,46 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		return JsonUtil.arrayToString(blankAnswers);
 	}
+
+	/**
+	 * 处理选择题答案
+	 * @param answer
+	 * @return
+	 */
+	private String handleChoiceAnswer(String answer) {
+		practiceValidateHandler.validateChoiceAnswer(answer);
+
+		if (answer.length() > 1 && !answer.contains("|")) {
+			String[] answerArray = answer.split("");
+			answer = String.join("|", answerArray);
+		}
+
+		return answer;
+	}
+
+	/**
+	 * 处理习题类型
+	 * @param theoryType 习题类型
+	 * @return
+	 */
+	private Integer handleTheoryType(String theoryType) {
+
+		Integer realType;
+
+		try {
+			Double practiceType = new Double(theoryType);
+			realType = practiceType.intValue() - 1;
+		} catch (Exception e) {
+			log.error("Parse theory type failed! value=[{}] catch error:", theoryType, e);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+
+		practiceValidateHandler.validateTheoryType(realType);
+		return realType;
+	}
+
+
+
 
 
 

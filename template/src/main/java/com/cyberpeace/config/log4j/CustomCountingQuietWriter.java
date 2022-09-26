@@ -1,4 +1,4 @@
-package com.cyberpeace.config.CustomLog4j;
+package com.cyberpeace.config.log4j;
 
 import org.apache.log4j.helpers.QuietWriter;
 import org.apache.log4j.spi.ErrorHandler;

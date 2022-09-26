@@ -1,4 +1,4 @@
-package com.cyberpeace.config.CustomLog4j;
+package com.cyberpeace.config.log4j;
 
 import java.io.File;
 import java.io.IOException;

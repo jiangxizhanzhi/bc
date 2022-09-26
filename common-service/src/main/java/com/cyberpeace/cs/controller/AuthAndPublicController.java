@@ -2,12 +2,15 @@ package com.cyberpeace.cs.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,12 +28,16 @@ import com.cyberpeace.cs.controller.req.ResourceShareReq;
 import com.cyberpeace.cs.controller.res.OperationAuthInfo;
 import com.cyberpeace.cs.controller.res.OperationUserInfo;
 import com.cyberpeace.cs.controller.res.ReadAuthInfo;
+import com.cyberpeace.cs.service.context.AuthUser;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@PatchMapping("/batch-auth")
 	@ApiOperation("资源授权访问")
@@ -56,15 +63,31 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES, MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM },
 			logical = Logical.OR)
 	public BaseRsp<ReadAuthInfo> getAuth(@ApiParam(name = "resource_id",
-			value = "资源编号") @RequestParam("resource_id") String resourceId) {
+			value = "资源编号") @RequestParam("resource_id") String resourceId, 	HttpServletRequest httpServletRequest) {
 
 		E entity = (E) baseService.getById(resourceId);
 		AuthTable publicData = BeanUtils.copy(entity, AuthTable.class);
+		List<String> readAuthIds = JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(), String.class);
 
 		ReadAuthInfo authInfo = new ReadAuthInfo();
 		authInfo.setReadAuthType(publicData.getReadAuthType());
-		authInfo.setReadAuthIds(
-				JsonUtil.toJsonObjectArray(publicData.getReadAuthIds(), String.class));
+		authInfo.setReadAuthIds(readAuthIds);
+		
+		// 指标系统授权用户信息
+		List<AuthUser> authUsers = Lists.newArrayList();
+		authInfo.setReadAuthUsers(authUsers);
+		if(httpServletRequest.getRequestURI().contains("eval/system") && CollectionUtils.isNotEmpty(readAuthIds)) {
+			List<UserInfo> userInfos = remoteUserService.getByIdList(readAuthIds);
+			userInfos.forEach(userInfo -> {
+				AuthUser authUser = new AuthUser();
+				authUser.setId(userInfo.getUserId());
+				authUser.setName(userInfo.getName());
+				authUser.setUsername(userInfo.getUserName());
+				authUser.setOrganization(userInfo.getOrganizationId());
+				authUser.setOrganizationNameAll(userInfo.getOrganizationData());
+				authUsers.add(authUser);
+			});
+		}
 
 		return new BaseRsp<>(authInfo);
 	}

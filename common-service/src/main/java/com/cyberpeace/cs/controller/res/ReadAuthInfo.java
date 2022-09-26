@@ -6,6 +6,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cs.service.context.AuthUser;
+
 @Data
 public class ReadAuthInfo implements Serializable {
 
@@ -15,4 +17,6 @@ public class ReadAuthInfo implements Serializable {
 	@ApiModelProperty("授权访问组织编号")
 	private List<String> readAuthIds;
 
+	@ApiModelProperty("授权用户详细信息")
+	private List<AuthUser> readAuthUsers;
 }

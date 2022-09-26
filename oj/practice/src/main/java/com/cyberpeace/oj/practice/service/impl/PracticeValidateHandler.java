@@ -1,7 +1,10 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,75 @@ public class PracticeValidateHandler {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	/**
+	 * 校验导入时选择题答案长度
+	 * @param excelRowData
+	 * @param index
+	 */
+	public void validateChoiceAnswerLength(List<String> excelRowData, int index) {
+		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 <= index) {
+			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_LITTLE);
+		}
+
+		if (StringUtils.isBlank(excelRowData.get(index))
+				|| StringUtils.isBlank(excelRowData.get(index + 1))) {
+			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_LITTLE);
+		}
+
+	}
+
+	/**
+	 * 校验导入时填空题答案数量
+	 * @param excelRowData
+	 */
+	public void validateFillBlankAnswerLength(List<String> excelRowData, int index) {
+		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
+			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
+		}
+		if (StringUtils.isBlank(excelRowData.get(index))) {
+			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
+		}
+	}
+
+	/**
+	 * 校验导入时选择题
+	 * @param answer
+	 */
+	public void validateChoiceAnswer(String answer) {
+		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.CHOICE_ANSWER))) {
+			log.error("The format of the answer:[{}] is wrong", answer);
+			throw new BusinessException(OjBusinessErrorCode.CHOICE_ANSWER_ERROR);
+		}
+	}
+
+	/**
+	 * 校验导入时判断题
+	 * @param answer
+	 */
+	public void validateJudgementAnswer(String answer) {
+		if (StringUtils.isBlank(answer) || !(answer.matches(PatternConstant.JUDGEMENT_ANSWER))) {
+			log.error("The format of the answer:[{}] is wrong", answer);
+			throw new BusinessException(OjBusinessErrorCode.JUDGEMENT_ANSWER_ERROR);
+		}
+	}
+
+	/**
+	 * 校验习题类型
+	 * @param type 习题类型值
+	 */
+	public void validateTheoryType(int type) {
+
+		boolean right = false;
+		for (PracticeTheory.TheoryType theoryType : PracticeTheory.TheoryType.values()) {
+			right |= theoryType.getCode().intValue() == type;
+		}
+
+		if (!right) {
+			log.error("Theory type error! type=[{}]", type);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+	}
 
 	/**
 	 * 字段数据长度校验
@@ -254,7 +326,8 @@ public class PracticeValidateHandler {
 			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
 				&& attachments.size() > CommonConstant.ONE) {
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY, practiceName);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
+					practiceName);
 		}
 	}
 }

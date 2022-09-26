@@ -71,7 +71,15 @@ public interface PatternConstant {
 	 */
 	String MULTIPLE_CODING_BLOCK = "```([\\s\\S]*?)```[\\s]?";
 
+	/** 一级列表*/
     String MD_LIST = "- ";
 
+	/** 二级列表*/
 	String SECOND_MD_LIST = "  - ";
+
+	/** 选择题答案匹配*/
+	String CHOICE_ANSWER = "^[a-zA-Z|]+$";
+
+	/** 判断题答案*/
+	String JUDGEMENT_ANSWER = "^[a-zA-Z]$";
 }

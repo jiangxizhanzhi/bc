@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,13 +20,13 @@ public class EvalTemplateRsp extends EvalTemplateListRsp implements Serializable
 	private JSONObject sceneConfigData;
 
 	@ApiModelProperty(value = "步骤配置", required = true)
-	private List<EvalTaskStepConfig> stepConfig;
+	private List<EvalRoleConfig> stepConfig;
 
 	@ApiModelProperty(value = "当前测评任务")
 	private String currentTask;
 
 	public void setStepConfig(String stepConfig) {
-		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalTaskStepConfig.class);
+		this.stepConfig = JsonUtil.toJsonObjectArray(stepConfig, EvalRoleConfig.class);
 	}
 
 }

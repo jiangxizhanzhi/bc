@@ -11,7 +11,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple;
 
 @Mapper
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {

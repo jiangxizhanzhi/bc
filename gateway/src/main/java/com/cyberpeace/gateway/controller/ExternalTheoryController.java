@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +39,9 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -63,6 +67,9 @@ public class ExternalTheoryController {
 
 	@Autowired
 	private PracticeSetService practiceSetService;
+
+	@Autowired
+	private PracticeTheoryService practiceTheoryService;
 
 	@ApiOperation("理论基础习题集")
 	@GetMapping("/practice-set/list")
@@ -171,6 +178,26 @@ public class ExternalTheoryController {
 			item.setScore(queryParams.getScore());
 		}
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("查询各类型理论习题数量")
+	@GetMapping("/type/count")
+	public BaseRsp<ExternalTheoryCountBo> searchCount(@Validated PracticeTheoryListReq listReq) {
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			return new BaseRsp<>(new ExternalTheoryCountBo());
+		}
+
+		// 设置查询条件
+		TheoryListQueryBo queryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);
+		if (StringUtils.hasText(listReq.getCategory())) {
+			queryBo.setCategoryIds(Lists.newArrayList(listReq.getCategory()));
+		}
+		queryBo.setPracticeSetId(listReq.getPracticeSet());
+
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		ExternalTheoryCountBo countBo = practiceTheoryService.typeCount(queryBo, authContext);
+		return new BaseRsp<>(countBo);
 	}
 
 }

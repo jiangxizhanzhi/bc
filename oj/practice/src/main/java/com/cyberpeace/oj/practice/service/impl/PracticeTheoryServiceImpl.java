@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,8 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -785,6 +789,31 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+	}
+
+	@Override
+	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext) {
+
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new ExternalTheoryCountBo();
+		}
+
+		// 设置查询条件
+		TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
+		String searchSet = theoryListQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet) && setIds.contains(searchSet)) {
+			listQuery.setPracticeSetIds(Lists.newArrayList(searchSet));
+		} else {
+			listQuery.setPracticeSetIds(setIds);
+		}
+
+		// 数据查询转换
+		List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
+		Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
+				TheorySimpleBo::getTheoryType);
+		ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
+		return countBo;
 	}
 
 	private String formatOption(List<String> excelRowData, Integer start) {

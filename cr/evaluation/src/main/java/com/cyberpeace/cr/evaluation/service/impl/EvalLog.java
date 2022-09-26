@@ -37,4 +37,17 @@ public class EvalLog {
         error(evalRecord, newMsg);
     }
 
+    static void debug(EvalRecord evalRecord, String msg) {
+        LOG.debug(String.format("ID %s: %s", evalRecord.getResourceId(), msg));
+    }
+
+    static void debug(EvalRecord evalRecord, EvalVariableRef evalVariableRef, String msg) {
+        String newMsg = String.format("variable %s [%s] %s", evalVariableRef.getResourceId(), evalVariableRef.getName(), msg);
+        debug(evalRecord, newMsg);
+    }
+
+    static void debug(EvalRecord evalRecord, EvalIndexRef evalIndexRef, String msg) {
+        String newMsg = String.format("index %s [%s] %s", evalIndexRef.getResourceId(), evalIndexRef.getName(), msg);
+        debug(evalRecord, newMsg);
+    }
 }

@@ -126,6 +126,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		// 构建任务对象
 		EvalTask evalTask = new EvalTask();
 		evalTask.setTemplateId(templateId);
+		evalTask.setStepConfig(evalTemplate.getStepConfig());
 		evalTask.setCopyedTopoId(remoteTopoService.copyTopo(evalTemplate.getTopoId()));
 		evalTask.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		evalTask.setEnableRecording(evalTemplate.getEnableRecording());

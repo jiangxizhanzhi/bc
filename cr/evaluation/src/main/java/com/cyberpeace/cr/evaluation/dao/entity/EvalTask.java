@@ -23,6 +23,8 @@ public class EvalTask extends BaseTable {
 	private String templateName;
 
 	private String taskName;
+	
+	private String stepConfig;
 
 	private String localSceneId;
 

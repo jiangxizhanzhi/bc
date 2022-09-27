@@ -41,6 +41,14 @@ public interface LocalSceneService extends IService<LocalScene> {
 	String saveTopo(JSONObject topoData, String topoId);
 
 	/**
+	 * 设定topo的类型
+	 * @param topoId 拓扑id
+	 * @param referenceType 类型
+	 * @return 拓扑id
+	 */
+	String setTopoType(String topoId, Integer referenceType);
+
+	/**
 	 * delete mp topo
 	 * @param topoId 
 	 * @return

@@ -32,6 +32,13 @@ public interface RemoteTopoService {
 	String save(JSONObject json);
 
 	/**
+	 * 保存mp拓扑，但不限制节点数量
+	 * @param json 拓扑数据
+	 * @return 拓扑id
+	 */
+	String saveUnlimited(JSONObject json);
+
+	/**
 	 * 返回同步之后的拓扑数据
 	 */
 	JSONObject sync(JSONObject json);

@@ -171,4 +171,10 @@ public class EvalSystemController {
 		return evalSystemTreeRsp;
 	}
 
+	@ApiOperation("查询体系指标列表")
+	@GetMapping("/list")
+	public List<EvalSystem> list() {
+		return evalSystemService.fullList();
+	}
+
 }

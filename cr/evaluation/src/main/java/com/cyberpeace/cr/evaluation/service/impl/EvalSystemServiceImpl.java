@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -59,5 +61,17 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 		IPage<EvalSystem> data = evalSystemMapper.listEvalSystems(page, listQuery);
 
 		return data;
+	}
+
+	@Override
+	public List<EvalSystem> fullList() {
+		return lambdaQuery()
+				.eq(EvalSystem::getReadAuthType, AuthTable.AuthType.ALL_SHARE_MODE.getCode())
+				.or()
+				.eq(EvalSystem::getReadAuthType, AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode())
+				.like(EvalSystem::getReadAuthIds, UserInfoContext.getUserContext().getUserId())
+				.or()
+				.eq(EvalSystem::getCreateUserId, UserInfoContext.getUserContext().getUserId())
+				.list();
 	}
 }

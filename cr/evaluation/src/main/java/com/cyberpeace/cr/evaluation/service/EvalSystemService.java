@@ -23,4 +23,10 @@ public interface EvalSystemService extends IService<EvalSystem> {
 	 * @return
 	 */
 	IPage<EvalSystem> page(EvalListQuery listQuery);
+
+	/**
+	 * 权限过滤后评估体系列表
+	 * @return List
+	 */
+	List<EvalSystem> fullList();
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -28,6 +29,9 @@ public class EvalRoleConfig extends CrRoleConfig {
 	@ApiModelProperty(value = "角色用户", required = true)
 	@NotNull
 	private List<String> users;
+	
+	@ApiModelProperty(value = "角色数据", required = false)
+	private List<UserData> usersData;
 	
 	@ApiModelProperty(value = "步骤配置", required = true)
 	@NotNull

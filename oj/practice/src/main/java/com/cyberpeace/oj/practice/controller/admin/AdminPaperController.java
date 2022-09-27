@@ -62,7 +62,7 @@ public class AdminPaperController {
 
 		// 查询数据组装
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.FALSE);
+				CommonConstant.TRUE);
 		Page page = practiceListReq.toPageParam();
 		LibPracticeQueryBo queryBo = BeanUtils.copy(practiceListReq, LibPracticeQueryBo.class);
 
@@ -175,7 +175,7 @@ public class AdminPaperController {
 	 */
 	private List<PracticeSetRes> selectPracticeSet(AuthContext authContext) {
 
-		List<String> practiceSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		List<String> practiceSetIds = practiceSetMapper.selectByAuthAndPublic(authContext, true);
 		if (CollectionUtils.isEmpty(practiceSetIds)) {
 			return Lists.newArrayList();
 		}

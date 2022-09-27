@@ -54,4 +54,16 @@ public interface ToolCategoryService extends IService<ToolCategory> {
 	 * @param toolCategory 工具分类数据对象
 	 */
 	void validateToolCategoryNameExist(ToolCategory toolCategory);
+
+	/**
+	 * 新增工具分类
+	 * @param toolCategory 工具分类数据对象
+	 */
+	void saveToolCategory(ToolCategory toolCategory);
+
+	/**
+	 * 更新工具分类
+	 * @param toolCategory 工具分类数据对象
+	 */
+	void updateToolCategoryById(ToolCategory toolCategory);
 }

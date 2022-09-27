@@ -489,7 +489,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 文件压缩
 		String zipPath = ZipUtil.toZipDest(destPath, AttachmentPath.OTHER.getDesc());
-		FileUtil.deleteDir(destPath);
+		FileUtil.deleteDir(destPath, true);
 		return zipPath;
 	}
 

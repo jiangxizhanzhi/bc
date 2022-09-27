@@ -11,6 +11,6 @@ public class CrTaskReject {
 
 	private Integer rejectReason;
 
-	private Object referee;
+	private String referee;
 
 }

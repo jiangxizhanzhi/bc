@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -263,9 +265,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		IPage<BusinessTemplateData> result = businessTemplateMapper.listTeamTemplate(page,
 				businessTemplateQuery);
 
+		// get node count
+		List<String> topoIds = result.getRecords().stream().map(BusinessTemplate::getTopoId)
+				.collect(Collectors.toList());
+		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
-			String topoId = businessTemplate.getTopoId();
-			businessTemplate.setNodesNum(remoteTopoService.getTopoDigest(topoId).getNodeCounts());
+			businessTemplate.setNodesNum(nodeCountMap
+					.getOrDefault(businessTemplate.getTopoId(), new TopoDigest()).getNodeCounts());
 		}
 
 		return result;

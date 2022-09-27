@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -274,8 +275,8 @@ public class EvalTaskController {
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
 				.getFinishedSteps(taskId);
-		evalTimeLineContextList.add(0, new EvalTimeLineContext("场景启动", evalTask.getStartTime()));
-		evalTimeLineContextList.add(new EvalTimeLineContext("场景结束", evalTask.getEndTime()));
+		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
+		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);

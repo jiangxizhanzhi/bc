@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,8 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -422,7 +426,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		List<PracticeTheory> theoryList = StreamApiUtils.distinctByColumn(theories,
 				PracticeTheory::getContent);
 
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theories.size());
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
@@ -520,34 +524,25 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
 		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(1)).intValue() - 1);
+		Integer theoryType = handleTheoryType(excelRowData.get(1));
+		practiceTheory.setTheoryType(theoryType);
+		
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			String answer = excelRowData.get(2);
-			if (!(answer.matches("^[a-zA-Z|]+$"))) {
-				log.error("The format of the answer:[{}] is wrong", answer);
-				return null;
-			}
-			if (answer.length() > 1 && !answer.contains("|")) {
-				String[] answerArray = answer.split("");
-				answer = String.join("|", answerArray);
-			}
+			String answer = handleChoiceAnswer(excelRowData.get(2));
 			practiceTheory.setAnswer(answer);
-			JSONObject option = new JSONObject();
-			option.put("A", excelRowData.get(3));
-			option.put("B", excelRowData.get(4));
-			option.put("C", excelRowData.get(5));
-			option.put("D", excelRowData.get(6));
-			practiceTheory.setOption(JsonUtil.toJsonString(option));
+			String option = formatOption(excelRowData, 3);
+			practiceTheory.setOption(option);
 		}
 
 		// 判断题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
 				.getCode().intValue()) {
+			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(2));
 			practiceTheory.setAnswer(excelRowData.get(2));
 			practiceTheory.setOption(JsonUtil.toJsonString(null));
 		}
@@ -555,35 +550,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 填空题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 				.getCode().intValue()) {
-			// 获取填空题答案
-			List<String> blanks = Lists.newArrayList();
-			for (int i = 3; i < excelRowData.size(); i++) {
-				String blank = excelRowData.get(i);
-				if (StringUtils.isBlank(blank)) {
-					break;
-				}
-				blanks.add(blank);
-			}
-
-			Integer weight = CommonConstant.HUNDRED / blanks.size();
-			Integer remainder = CommonConstant.HUNDRED % blanks.size();
-
-			// 填空题答案数据组装
-			List<BlankAnswer> blankAnswers = Lists.newArrayList();
-			for (int i = 0; i < blanks.size(); i++) {
-				BlankAnswer blankAnswer = new BlankAnswer();
-				blankAnswer.setValue(blanks.get(i));
-				if (i == (blanks.size() - CommonConstant.ONE)
-						&& remainder.intValue() != CommonConstant.ZERO) {
-					blankAnswer.setWeight(weight + remainder);
-				} else {
-					blankAnswer.setWeight(weight);
-				}
-				blankAnswers.add(blankAnswer);
-			}
-
-			practiceTheory.setBlank(JsonUtil.arrayToString(blankAnswers));
-			practiceTheory.setAnswer(JsonUtil.arrayToString(blankAnswers));
+			String blankAnswers = handleFillBlank(excelRowData, 3);
+			practiceTheory.setBlank(blankAnswers);
+			practiceTheory.setAnswer(blankAnswers);
 		}
 
 		// 简答题
@@ -594,14 +563,98 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			if (excelRowData.size() > 3) {
 				keywordsString = excelRowData.get(3);
 			}
-			List<String> keywords = Lists
-					.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
+			if (StringUtils.isNotBlank(keywordsString)) {
+				List<String> keywords = Lists
+						.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
+				practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
+			} else {
+				practiceTheory.setKeyword(CommonConstant.EMPTY_LIST_JSON);
+			}
+
 			practiceTheory.setAnswer(shortAnswer);
-			practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
+
 		}
 
 		return practiceTheory;
 	}
+
+	/**
+	 * 处理填空题答案
+	 * @param excelRowData
+	 * @param index
+	 * @return
+	 */
+	private String handleFillBlank(List<String> excelRowData, int index) {
+		practiceValidateHandler.validateFillBlankAnswerLength(excelRowData, index);
+
+		// 获取填空题答案
+		List<String> blanks = Lists.newArrayList();
+		for (int i = index; i < excelRowData.size(); i++) {
+			String blank = excelRowData.get(i);
+			if (StringUtils.isBlank(blank)) {
+				break;
+			}
+			blanks.add(blank);
+		}
+
+		Integer weight = CommonConstant.HUNDRED / blanks.size();
+		Integer remainder = CommonConstant.HUNDRED % blanks.size();
+
+		// 填空题答案数据组装
+		List<BlankAnswer> blankAnswers = Lists.newArrayList();
+		for (int i = 0; i < blanks.size(); i++) {
+			BlankAnswer blankAnswer = new BlankAnswer();
+			blankAnswer.setValue(blanks.get(i));
+			if (i == (blanks.size() - CommonConstant.ONE)
+					&& remainder.intValue() != CommonConstant.ZERO) {
+				blankAnswer.setWeight(weight + remainder);
+			} else {
+				blankAnswer.setWeight(weight);
+			}
+			blankAnswers.add(blankAnswer);
+		}
+
+		return JsonUtil.arrayToString(blankAnswers);
+	}
+
+	/**
+	 * 处理选择题答案
+	 * @param answer
+	 * @return
+	 */
+	private String handleChoiceAnswer(String answer) {
+		practiceValidateHandler.validateChoiceAnswer(answer);
+
+		if (answer.length() > 1 && !answer.contains("|")) {
+			String[] answerArray = answer.split("");
+			answer = String.join("|", answerArray);
+		}
+		
+		return answer;
+	}
+	
+	/**
+	 * 处理习题类型
+	 * @param theoryType 习题类型
+	 * @return
+	 */
+	private Integer handleTheoryType(String theoryType) {
+
+		Integer realType;
+
+		try {
+			Double practiceType = new Double(theoryType);
+			realType = practiceType.intValue() - 1;
+		} catch (Exception e) {
+			log.error("Parse theory type failed! value=[{}] catch error:", theoryType, e);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+
+		practiceValidateHandler.validateTheoryType(realType);
+		return realType;
+	}
+
+
 
 	/**
 	 * excel数据转化为实体类
@@ -658,12 +711,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
-			JSONObject option = new JSONObject();
-			option.put("A", excelRowData.get(5));
-			option.put("B", excelRowData.get(6));
-			option.put("C", excelRowData.get(7));
-			option.put("D", excelRowData.get(8));
-			practiceTheory.setOption(JsonUtil.toJsonString(option));
+			String option = formatOption(excelRowData, 5);
+			practiceTheory.setOption(option);
 			practiceTheory.setAnswer(excelRowData.get(4));
 		}
 
@@ -701,6 +750,64 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+	}
+
+	@Override
+	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext) {
+
+
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new ExternalTheoryCountBo();
+		}
+
+		String searchSet = theoryListQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet)) {
+			if (setIds.contains(searchSet)) {
+				setIds.clear();
+				setIds.add(searchSet);
+			} else {
+				return new ExternalTheoryCountBo();
+			}
+		}
+
+		// 设置查询条件
+		TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
+		listQuery.setPracticeSetIds(setIds);
+
+		// 数据查询转换
+		List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
+		Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
+				TheorySimpleBo::getTheoryType);
+		ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
+		return countBo;
+	}
+
+	private String formatOption(List<String> excelRowData, Integer start) {
+		if (CollectionUtils.isEmpty(excelRowData)) {
+			return CommonConstant.EMPTY_OBJECT;
+		}
+
+		practiceValidateHandler.validateChoiceAnswerLength(excelRowData, start);
+		if (excelRowData.size() - CommonConstant.FIVE > 26) {
+			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_MANY);
+		}
+
+		JSONObject options = new JSONObject();
+		for (char i = 'A'; i <= 'Z'; i++) {
+			int index = i - 'A' + start;
+			if (index >= excelRowData.size()) {
+				break;
+			}
+
+			String option = excelRowData.get(index);
+			if (StringUtils.isBlank(option)) {
+				break;
+			}
+			options.put(String.valueOf(i), option);
+		}
+
+		return JsonUtil.toJsonString(options);
 	}
 
 }

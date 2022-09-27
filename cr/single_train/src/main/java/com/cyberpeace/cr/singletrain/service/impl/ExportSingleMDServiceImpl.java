@@ -189,7 +189,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 					List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
 					for (int i = 0; i < strList.size(); i++) {
 						String str = strList.get(i);
-						String imgUrl = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
+						String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
 						FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
 						imgUrl = "./img/" + (i+1) + "." + FileUtil.getFileSuffix(imgUrl);
 						writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));

@@ -58,7 +58,7 @@ public class ToolCategoryController {
 	public BaseRsp<String> create(@RequestBody @Validated CategoryAddReq categoryAddReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
 		toolCategoryService.validateToolCategoryNameExist(toolCategory);
-		toolCategoryService.save(toolCategory);
+		toolCategoryService.saveToolCategory(toolCategory);
 		return new BaseRsp<>();
 	}
 
@@ -67,7 +67,7 @@ public class ToolCategoryController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated CategoryUpdateReq categoryUpdateReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryUpdateReq, ToolCategory.class);
-		toolCategoryService.updateById(toolCategory);
+		toolCategoryService.updateToolCategoryById(toolCategory);
 		return new BaseRsp<>();
 	}
 

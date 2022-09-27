@@ -587,7 +587,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     @Async
-    public void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart) {
+    public void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language) {
+        CommonContext.setLanguage(language);
         EvalLog.info(evalRecord, String.format("Range Test evaluation %s %s.", evalRecord.getName(), isRestart ? "RESTART" : "START"));
         if (StringUtils.isEmpty(evalRecord.getMessage())) {
             evalRecord.setMessage("");

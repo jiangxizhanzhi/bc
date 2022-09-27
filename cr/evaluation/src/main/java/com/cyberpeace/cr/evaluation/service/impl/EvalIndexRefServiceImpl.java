@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +60,13 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 	};
 
+	private String getLevelText(Integer level) {
+		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
+			return Integer.toString(level);
+		}
+		return int2cn.get(level);
+	}
+
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
 			Map<String, EvalIndexRef> evalIndexRefMap,
@@ -107,12 +116,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				msg = String.format(
 						BusinessException.getMessageByLanguage(
 								CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
-						this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			} else {
 				msg = String.format(
 						BusinessException
 								.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
-						this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			}
 			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
@@ -123,7 +132,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			msg = String.format(
 					BusinessException.getMessageByLanguage(
 							CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
-					this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+					this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			score = 0;
 		}

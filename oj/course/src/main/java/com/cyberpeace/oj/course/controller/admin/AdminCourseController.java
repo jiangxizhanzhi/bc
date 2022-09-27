@@ -176,6 +176,8 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 	@PatchMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Course> patch(@RequestBody @Validated(Update.class) CourseUpdateReq updateReq) {
+
+		updateReq.validate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		Course course = BeanUtils.copy(updateReq, Course.class);

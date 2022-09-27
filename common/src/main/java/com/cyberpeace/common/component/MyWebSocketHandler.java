@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -110,34 +111,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 			Set<CpWebSession> sessions = item.getValue();
 
-			for (CpWebSession userSession : sessions) {
-				if (null == userSession) {
-					log.warn(
-							"businessId=[{}], userId=[{}] send ws message fail! userSession is null!");
-					continue;
-				}
-
-				if (!userSession.isOpen()) {
-					log.warn(
-							"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!");
-					removeSession(userSession);
-					continue;
-				}
-
-				String jsonMessage = JsonUtil.toJsonString(message.getData());
-				TextMessage toSendMessage = new TextMessage(jsonMessage);
-				try {
-					userSession.sendMessage(toSendMessage);
-				} catch (IOException e) {
-					log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
-							new Object[] { businessId, userId, jsonMessage });
-				}
-
-				if (log.isDebugEnabled()) {
-					log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
-							new Object[] { businessId, userId, jsonMessage });
-				}
-			}
+			pushToSessions(message, sessions, userId, businessId);
 		}
 	}
 
@@ -169,16 +143,19 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
 	private void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
 			String userId, String businessId) {
+		List<CpWebSession> toBeRemoved = Lists.newArrayList();
 		for (CpWebSession userSession : sessions) {
 			if (null == userSession) {
-				log.warn("businessId=[{}], userId=[{}] send ws message fail! userSession is null!");
+				log.warn("businessId=[{}], userId=[{}] send ws message fail! userSession is null!",
+						businessId, userId);
 				continue;
 			}
 
 			if (!userSession.isOpen()) {
 				log.warn(
-						"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!");
-				removeSession(userSession);
+						"businessId=[{}], userId=[{}] send ws message fail! userSession is closed!",
+						businessId, userId);
+				toBeRemoved.add(userSession);
 				continue;
 			}
 
@@ -188,13 +165,17 @@ public class MyWebSocketHandler implements WebSocketHandler {
 				userSession.sendMessage(toSendMessage);
 			} catch (IOException e) {
 				log.error("businessId=[{}], userId=[{}], message=[{}] send fail!",
-						new Object[] { businessId, userId, jsonMessage });
+						businessId, userId, jsonMessage);
 			}
 
 			if (log.isDebugEnabled()) {
 				log.debug("businessId=[{}], userId=[{}], message=[{}] send fail!",
-						new Object[] { businessId, userId, jsonMessage });
+						businessId, userId, jsonMessage);
 			}
+		}
+		// remove closed sessions
+		for (CpWebSession userSession : toBeRemoved) {
+			removeSession(userSession);
 		}
 	}
 

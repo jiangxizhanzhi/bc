@@ -18,6 +18,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -314,8 +315,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		// 获取团队训练业务模板id
-		String businessTemplateId = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId())
-				.getBusinessTemplateId();
+		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamRoom.getTeamTemplateId());
+		String businessTemplateId;
+		// 模板可能已被删除。
+		if (teamTemplate == null) {
+			businessTemplateId = teamRoom.getTeamTemplateId();
+		} else {
+			businessTemplateId = teamTemplate.getBusinessTemplateId();
+		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -366,6 +373,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
+		if (userInfoList.size() != userList.size()) {
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
 
 		Map<String, UserInfo> userInfoMap = userInfoList.stream()
 				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));

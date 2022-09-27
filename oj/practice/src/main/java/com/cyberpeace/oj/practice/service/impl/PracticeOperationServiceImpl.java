@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalOperationCountBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -342,7 +343,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 	@Override
 	public List<PracticeOperationFileBo> getOperationFile(String attachmentId) {
-		
+
 		if (StringUtils.isBlank(attachmentId)) {
 			return Lists.newArrayList();
 		}
@@ -361,14 +362,41 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				Attachment::getResourceId, attachment -> attachment);
 		List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachmentIds,
 				attachment -> fileToBo(attachment, attachmentMap));
-		
+
 		return fileBos;
 	}
-	
+
+	@Override
+	public ExternalOperationCountBo typeCount(AuthContext authContext,
+			OperationListQueryBo listQueryBo) {
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new ExternalOperationCountBo();
+		}
+		String searchSet = listQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet)) {
+			if (setIds.contains(searchSet)) {
+				setIds.clear();
+				setIds.add(searchSet);
+			} else {
+				return new ExternalOperationCountBo();
+			}
+		}
+
+		OperationListQuery listQuery = BeanUtils.copy(listQueryBo, OperationListQuery.class);
+		listQuery.setPracticeSetIds(setIds);
+
+		List<PracticeOperation> operationList = practiceOperationMapper.listByQuery(listQuery,
+				true);
+		Map<Integer, List<PracticeOperation>> typeMap = StreamApiUtils.groupBy(operationList,
+				PracticeOperation::getDynamicFlag);
+		return new ExternalOperationCountBo(typeMap);
+	}
+
 	private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
 		PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
 		Attachment attachment = fileMap.get(fileId);
-		
+
 		fileBo.setFileName(attachment.getFileName());
 		fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
 		return fileBo;
@@ -1326,11 +1354,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				EXPORT_LOG.error(
 						"Practice operation export failed!, set_path=[{}], practice_name=[{}], catch error:",
 						setPath, operation.getTitle(), e);
-				throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_FAILED, operation.getTitle());
+				throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_FAILED,
+						operation.getTitle());
 			}
 		}
 	}
-	
+
 	private void doExport(String setPath, PracticeOperation operation) {
 		EXPORT_LOG.info("Start export {}....", operation.getTitle());
 

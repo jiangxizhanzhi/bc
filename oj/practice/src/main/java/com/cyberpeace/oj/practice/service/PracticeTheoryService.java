@@ -8,6 +8,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
 
 import java.util.List;
 
@@ -109,4 +110,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param logContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
+
+	/**
+	 * 查询理论习题各类型对应数量
+	 * @param theoryListQueryBo
+	 * @return
+	 */
+	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
 }

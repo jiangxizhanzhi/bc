@@ -1,4 +1,4 @@
-package com.cyberpeace.config.CustomLog4j;
+package com.cyberpeace.config.log4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,6 @@ public class CustomLogAppender extends FileAppender {
     private long maxFileSize = 20971520L;
 
     private String scheduledFilename;
-
-    private long nextRollover = 0L;
 
     private long nextCheck = System.currentTimeMillis() - 1;
 
@@ -175,11 +173,6 @@ public class CustomLogAppender extends FileAppender {
      * 按文件大小切片
      */
     void rollOverBySize() {
-        if (this.qw != null) {
-            long size = ((CustomCountingQuietWriter) this.qw).getCount();
-            log.debug("rolling over count=" + size);
-            this.nextRollover = size + this.maxFileSize;
-        }
 
         log.debug("maxBackupIndex=" + this.maxBackupIndex);
         boolean renameSucceeded = true;
@@ -223,7 +216,6 @@ public class CustomLogAppender extends FileAppender {
         if (renameSucceeded) {
             try {
                 this.setFile(this.fileName, false, this.bufferedIO, this.bufferSize);
-                this.nextRollover = 0L;
             } catch (IOException var5) {
                 if (var5 instanceof InterruptedIOException) {
                     Thread.currentThread().interrupt();
@@ -259,9 +251,9 @@ public class CustomLogAppender extends FileAppender {
 
         super.subAppend(event);
 
-        if (this.fileName != null && this.qw != null) {
-            long size = ((CustomCountingQuietWriter) this.qw).getCount();
-            if (size >= this.maxFileSize && size >= this.nextRollover) {
+        if (this.fileName != null) {
+            File file = new File(fileName);
+            if (file.length() >= this.maxFileSize ) {
                 this.rollOverBySize();
             }
         }

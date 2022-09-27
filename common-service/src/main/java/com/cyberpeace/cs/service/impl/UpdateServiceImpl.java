@@ -31,7 +31,7 @@ public class UpdateServiceImpl implements UpdateService {
 
 		try {
 			String backupWar = backup + CommonConstant.UPDATE_WAR_NAME;
-			FileUtil.deleteDir(backupWar);
+			FileUtil.deleteDir(backupWar, true);
 
 			// 备份后台代码
 			FileUtil.copyFile(CommonConstant.WAR_FILE_PATH, backupWar);
@@ -39,7 +39,7 @@ public class UpdateServiceImpl implements UpdateService {
 					backupData + File.separator + CommonConstant.UPDATE_WAR_NAME);
 
 			String backupPage = backup + CommonConstant.BACKUP_PAGES_NAME;
-			FileUtil.deleteDir(backupPage);
+			FileUtil.deleteDir(backupPage, true);
 
 			// 备份前端代码
 			TarGzUtils.compress(CommonConstant.PAGES_FILE_PATH, backup,
@@ -85,7 +85,7 @@ public class UpdateServiceImpl implements UpdateService {
 		File[] subPages = page.listFiles();
 		if (null != subPages && subPages.length > 0) {
 			for (File subPage : subPages) {
-				FileUtil.deleteDir(subPage.getAbsolutePath());
+				FileUtil.deleteDir(subPage.getAbsolutePath(), true);
 			}
 		}
 
@@ -178,7 +178,7 @@ public class UpdateServiceImpl implements UpdateService {
 		}
 		String fileName = FileUtil.getFileName(subPage.getAbsolutePath(), false);
 		String rmPage = CommonConstant.PAGES_FILE_PATH + File.separator + fileName;
-		FileUtil.deleteDir(rmPage);
+		FileUtil.deleteDir(rmPage, true);
 		TarGzUtils.decompress(subPage.getAbsolutePath(), CommonConstant.PAGES_FILE_PATH);
 	}
 }

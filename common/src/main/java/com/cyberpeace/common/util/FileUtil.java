@@ -626,24 +626,42 @@ public class FileUtil {
 	/**
 	 * 文件夹目录删除
 	 * @param destDir
+	 * @param self
 	 */
-	public static void deleteDir(String destDir) {
+	public static void deleteDir(String destDir, boolean self) {
 		File file = new File(destDir);
 		if (!file.exists()) {
 			return;
 		}
 
-		// 文件直接删除
-		if (file.isFile()) {
-			file.delete();
-			return;
-		}
 		try {
-			FileUtils.deleteDirectory(file);
+			if (file.isFile()) {
+				FileUtils.delete(file);
+				return;
+			}
+
+			if (self) {
+				FileUtils.deleteDirectory(file);
+				return;
+			}
+
+			File[] files = file.listFiles();
+			if (null == files || files.length == 0) {
+				return;
+			}
+
+			for (File subFile : files) {
+				if (subFile.isFile()) {
+					subFile.delete();
+				} else {
+					FileUtils.deleteDirectory(subFile);
+				}
+ 			}
 		} catch (Exception e) {
-			log.error("File delete failed! file_path=[{}]", destDir, e);
+			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
 			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
+
 	}
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {

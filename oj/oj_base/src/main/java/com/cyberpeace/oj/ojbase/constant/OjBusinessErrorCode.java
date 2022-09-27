@@ -241,12 +241,36 @@ public interface OjBusinessErrorCode {
 	String MAX_PRACTICE_CATEGORY_128 = "102078";
 
 	/** 课程无LOGO*/
-	String COURSE_NO_LOGO = "102079";
+	String NO_DEFAULT_COURSE_LOGO = "102079";
+
+	/** 选择题选项过多*/
+	String CHOICE_OPTION_TOO_MANY = "102080";
+
+	/** 存在课时和组织相同的数据*/
+	String DUPLICATE_DATA_ORG_LESSON = "102081";
+
+	/** 存在组织相同时间冲突的数据*/
+	String TIME_INTERSECTION_UNDER_ORG = "102082";
+
+	/** 习题类型存在错误*/
+	String PRACTICE_TYPE_ERROR = "102083";
+
+	/** 选择题答案格式错误*/
+	String CHOICE_ANSWER_ERROR = "102084";
+
+	/** 填空题答案至少一个*/
+	String FILL_BLANK_TOO_LITTLE = "102085";
+
+	/** 选择题选项至少两个*/
+	String CHOICE_OPTION_TOO_LITTLE = "102086";
+
+	/** 判断题答案格式错误*/
+	String JUDGEMENT_ANSWER_ERROR = "102087";
 
 	/** 参数类型错误*/
-	String PARAM_ERROR = "102080";
+	String PARAM_ERROR = "102088";
 
 	/** 参数类型缺失*/
-	String PARAM_MISSION = "102081";
+	String PARAM_MISSION = "102089";
 
 }

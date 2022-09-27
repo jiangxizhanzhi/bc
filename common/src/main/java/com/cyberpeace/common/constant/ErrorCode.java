@@ -137,6 +137,7 @@ public interface ErrorCode {
 	/** 名称已存在*/
 	String REPEAT_PRACTICE_SET_NANE = "100045";
 
+	/** 找不到文件: [%s]*/
 	String FILE_ERROR_FAIL = "100046";
 
 	/** 无操作权限*/

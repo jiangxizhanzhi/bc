@@ -10,6 +10,6 @@ public interface CourseDumpService {
 	 * @param is_dump_topo 是否下载topo数据
 	 * @return file
 	 */
-	String rMCourseDump(String resource_id, Boolean is_dump_topo) throws IOException;
+	String rMCourseDump(String resource_id, Boolean is_dump_topo);
 
 }

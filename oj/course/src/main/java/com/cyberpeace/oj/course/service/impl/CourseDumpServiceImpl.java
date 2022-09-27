@@ -20,6 +20,7 @@ import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,12 +70,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 
 	@Override
-	public String rMCourseDump(String resource_id, Boolean is_dump_topo) throws IOException {
-		log.info("course dump start");
+	public String rMCourseDump(String resource_id, Boolean is_dump_topo) {
+		log.info("----------course dump start-----------");
 		String destFilePath = "";
 		// 1.获取所有课程数据 内容及文件
 		Course course = courseMapper.selectById(resource_id);
 		if (course == null) {
+			log.error("The course export ID [{}] does not match any course in db!", resource_id);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST, resource_id);
 		}
 		log.info("get course [{}] successfully!", course.getName());
@@ -100,10 +102,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String oj = DUMP_ALL_FILE_STORE_PATH;
 		FileUtil.mkdirs(oj);
 		String coursePath = oj + ResourceDumpConstant.DUMP_ALL_COURSE_FILE_STORE_PATH;
-		File version = new File(DUMP_ALL_FILE_STORE_PATH, VERSION_FILE);
-		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(version),
-				StandardCharsets.UTF_8);
-		FileUtil.writeString(course.getName() + IDGeneratorUtil.getID(), osw);
+
 
 		destFilePath = coursePath +
 				File.separatorChar + course.getName();
@@ -114,6 +113,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		List<String> courseConfigId = currentLessonConfigs.stream().
 				filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_COURSE.getCode())).map(LessonConfig::getResourceId).collect(Collectors.toList());
 		if(courseConfigId.size() == 0){
+			log.error("The lesson config  to course export ID [{}] does not exist!", resource_id);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST);
 		}
 
@@ -126,6 +126,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			List<String> lessonids = StreamApiUtils.getColumn(lessonWithNoChapter, LessonConfig::getLessonId);
 			List<CourseLesson> lessons = courseLessonMapper.selectBatchIds(lessonids);
 			List<String> lessonNames = StreamApiUtils.getColumn(lessons, CourseLesson::getName);
+			log.error("Lesson [{}] has no assigned chapter.", String.join(",", lessonNames));
 			throw new BusinessException(OjBusinessErrorCode.LESSON_WITHOUT_CHAPTER, String.join(",", lessonNames));
 		}
 
@@ -133,12 +134,14 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			combineCourseContent(destFilePath, course, categories, allUsers);
 
 			combineLessons(destFilePath, currentLessonConfigs, currentLessons, is_dump_topo);
-			log.info("course [{}] dump finish the path is [{}]", course.getName(), version.getAbsolutePath());
+			log.info("course [{}] dump finish the path is [{}]", course.getName(), destFilePath);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("resource dump failed! catch error: ", e);
-			throw new BusinessException(OjBusinessErrorCode.COURSE_EXPORT_FAILED, course.getName());
+			throw new BusinessException("course [{}] dump failed: [{}]",course.getName(),e);
 		}
-		log.info("success");
+		log.info("---------dump course [{}] success--------", course.getName());
 		return destFilePath;
 	}
 
@@ -203,6 +206,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 	private void combineLessonReadmeMD(String pathname, CourseLesson lesson) {
+		log.info("start dump lesson [{}] readme.md!", lesson.getName());
 		String readmeMDFileName = pathname + File.separator + "README.md";
 		MdParser mdParser = new MdParser();
 		MdLesson mdLesson = new MdLesson();
@@ -229,6 +233,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		generateHandout(lesson, docFile);
 
 		// env 文件夹包含topo.yml
+		log.info("start dump lesson [{}] env & images!", lesson.getName());
 		String envFile = pathname + File.separator + "env";
 		FileUtil.mkdirs(envFile);
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
@@ -254,6 +259,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String handoutUrl = lesson.getHandoutUrl();
 
 		if (null != handoutUrl && !handoutUrl.isEmpty()) {
+			log.info("start dump lesson [{}] handout!", lesson.getName());
 			if (!handoutType.equals(CourseLesson.HandoutType.MD.getCode())) {
 
 				if (!handoutUrl.startsWith("/cpms")) {
@@ -273,6 +279,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	private void generateLessonBase(String pathname, CourseLesson lesson) {
 		// 存储附件
+		log.info("start dump lesson [{}] attachFile!", lesson.getName());
 		String attachFile = pathname + File.separator + "attachments";
 		FileUtil.mkdirs(attachFile);
 		String attachmentIds = lesson.getAttachmentIds();
@@ -287,6 +294,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		}
 
 		// 存储video
+		log.info("start dump lesson [{}] video!", lesson.getName());
 		String videoPath = pathname + File.separator + "video";
 		FileUtil.mkdirs(videoPath);
 		String videoUrl = lesson.getVideoUrl();
@@ -314,11 +322,17 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	private void combineCourseContent(String destFilePath, Course course, List<CourseCategory> categories, List<UserInfo> allUsers) {
 		// logo保存
+		log.info("start dump course [{}] logo!", course.getName());
 		String logo = course.getLogo();
-		String fileSuffix = "png";
-		String logoUrl = destFilePath + File.separator + "logo." + fileSuffix;
+		String fileSuffix;
+		String logoUrl;
+		File file = new File(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH);
 		if(logo.isEmpty()){
-			throw new BusinessException(OjBusinessErrorCode.COURSE_NO_LOGO, course.getName());
+			if(!file.exists()){
+				log.error("no default course logo! please manually copy logo.png under /cpms/built_in!");
+				throw new BusinessException(OjBusinessErrorCode.NO_DEFAULT_COURSE_LOGO, course.getName());
+			}
+			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);
@@ -331,9 +345,12 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		List<UserInfo> users = allUsers.stream().filter(s -> s.getUserId().equals(course.getCreateUserId())).collect(Collectors.toList());
 		String userName = users.size() > 0 ? users.get(0).getName() : "";
 
+		log.info("start dump course [{}] readme.md!", course.getName());
 		generateReadmeMD(destFilePath, course, categoryName, userName);
 		log.info("dump course [{}] readme.md successfully!", course.getName());
 		// 4.生成课程大纲md
+
+		log.info("start dump course [{}] outline.md!", course.getName());
 		generateOutlineMD(destFilePath, course.getOutline());
 		log.info("dump course [{}] outline.md successfully!", course.getName());
 

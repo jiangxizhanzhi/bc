@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -219,15 +221,21 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 
 		// 获取全部用户
-		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userInfoList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
-		for (DashboardUser dashboardUser : friend) {
-			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
-			dashboardUser.setRole(userInfo.getUserName());
-			dashboardUser.setAvatar(userInfo.getAvatarUrl());
-			dashboardUser.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+		// 去掉不存在的用户
+		Iterator<DashboardUser> userIterator = friend.iterator();
+		while (userIterator.hasNext()) {
+			DashboardUser dashboardUser = userIterator.next();
+			UserInfo userInfo = userInfoMap.get(dashboardUser.getId());
+			if (userInfo == null) {
+				userIterator.remove();
+			} else {
+				dashboardUser.setRole(userInfo.getUserName());
+				dashboardUser.setAvatar(userInfo.getAvatarUrl());
+				dashboardUser
+						.setUsername(userInfo.getUserName() + "/" + dashboardUser.getUsername());
+			}
 		}
 
 		return friend;
@@ -315,18 +323,18 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			groups.add(selfGroup);
 		}
 		// 获取全部用户
-		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userInfoList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		mine.setUsername(userInfoMap.get(mine.getId()).getName());
 		mine.setAvatar(userInfoMap.get(mine.getId()).getAvatarUrl());
+		// 去掉不存在的用户
+		friend = StreamApiUtils.filter(friend,
+				dashboardUser -> userInfoMap.containsKey(dashboardUser.getId()));
 
 		for (DashboardUser dashboardUser : friend) {
-			UserInfo userInfo = userInfoMap.getOrDefault(dashboardUser.getId(), new UserInfo());
+			UserInfo userInfo = userInfoMap.get(dashboardUser.getId());
 			dashboardUser.setAvatar(userInfo.getAvatarUrl());
 			dashboardUser.setUsername(userInfo.getName());
-
 		}
 
 		DashboardFriend dashboardFriend = new DashboardFriend();
@@ -529,15 +537,19 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			});
 		}
 
-		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
+		// 获取全部用户
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userList);
 
-		Map<String, UserInfo> userInfoMap = userInfoList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
-
-		for (UserRole userRole : userRoleList) {
-			if (userInfoMap.containsKey(userRole.getResourceId())) {
-				userRole.setName(userInfoMap.get(userRole.getResourceId()).getName());
-				userRole.setLogo(userInfoMap.get(userRole.getResourceId()).getAvatarUrl());
+		// 去掉不存在的用户
+		Iterator<UserRole> userIterator = userRoleList.iterator();
+		while (userIterator.hasNext()) {
+			UserRole userRole = userIterator.next();
+			UserInfo userInfo = userInfoMap.get(userRole.getResourceId());
+			if (userInfo == null) {
+				userIterator.remove();
+			} else {
+				userRole.setName(userInfo.getName());
+				userRole.setLogo(userInfo.getAvatarUrl());
 			}
 		}
 
@@ -591,13 +603,16 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		}
 
-		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
-
-		Map<String, UserInfo> userInfoMap = userInfoList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, bo -> bo));
-
-		for (TimeLineEvent timeLineEvent : timeLineEventList) {
-			timeLineEvent.setUserName(userInfoMap.get(timeLineEvent.getUserName()).getName());
+		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userList);
+		Iterator<TimeLineEvent> eventIterator = timeLineEventList.iterator();
+		while (eventIterator.hasNext()) {
+			TimeLineEvent timeLineEvent = eventIterator.next();
+			String userName = idNameMap.get(timeLineEvent.getUserName());
+			if (userName == null) {
+				eventIterator.remove();
+			} else {
+				timeLineEvent.setUserName(userName);
+			}
 		}
 
 		timeLineData.setData(timeLineEventList);

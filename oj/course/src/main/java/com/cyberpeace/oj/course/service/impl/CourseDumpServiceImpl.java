@@ -326,9 +326,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		String logo = course.getLogo();
 		String fileSuffix;
 		String logoUrl;
-		if(StringUtils.isBlank(logo)){
-			log.error("No logo for course [{}]!", course.getName());
-			throw new BusinessException(OjBusinessErrorCode.NO_COURSE_LOGO, course.getName());
+		File file = new File(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH);
+		if(logo.isEmpty()){
+			if(!file.exists()){
+				log.error("no default course logo! please manually copy logo.png under /cpms/built_in!");
+				throw new BusinessException(OjBusinessErrorCode.NO_DEFAULT_COURSE_LOGO, course.getName());
+			}
+			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);

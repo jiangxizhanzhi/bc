@@ -56,7 +56,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		// 处理态势数据
 		Map<String, AreaInfo> areasInfo = getAreas(sceneData);
 		Map<String, ElementInfo> elementsInfo = getElements(sceneData, areasInfo);
-		List<ConnectionInfo> connectionsInfo = getConnections(sceneData, elementsInfo);
+		List<ConnectionInfo> connectionsInfo = getConnections(sceneData);
 		SceneInfo sceneInfo = getSceneInfo(sceneData);
 
 		// 构造返回数据
@@ -253,12 +253,10 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return nodeConfig;
 	}
 
-	private List<ConnectionInfo> getConnections(SceneData sceneData,
-			Map<String, ElementInfo> elements) {
+	private List<ConnectionInfo> getConnections(SceneData sceneData) {
 
 		JSONArray connections = sceneData.getConnections();
 		Map<String, String> portElementMap = sceneData.getPortElementMap();
-		List<String> externalNetwork = sceneData.getExternalNetwork();
 
 		List<ConnectionInfo> connectionsInfo = Lists.newArrayList();
 
@@ -266,17 +264,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			JSONObject connection = connections.getJSONObject(i);
 			String source = portElementMap.get(connection.getString("source"));
 			String target = portElementMap.get(connection.getString("target"));
-
-			// // 二次处理层级数据
-			// if (externalNetwork.contains(source)
-			// && !"终端节点".equals(elements.get(target).getRole())) {
-			// elements.get(target).setHierarchy(1);
-			// }
-			//
-			// if (externalNetwork.contains(target)
-			// && !"终端节点".equals(elements.get(source).getRole())) {
-			// elements.get(source).setHierarchy(1);
-			// }
 
 			// 构造返回连线数据
 			ConnectionInfo connectionInfo = new ConnectionInfo();

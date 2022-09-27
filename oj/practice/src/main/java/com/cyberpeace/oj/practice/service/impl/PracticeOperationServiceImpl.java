@@ -7,8 +7,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.cyberpeace.oj.practice.service.externalBo.ExternalOperationCountBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -357,7 +360,34 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		
 		return fileBos;
 	}
-	
+
+	@Override
+	public ExternalOperationCountBo typeCount(AuthContext authContext,
+			OperationListQueryBo listQueryBo) {
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new ExternalOperationCountBo();
+		}
+
+		if (StringUtils.isNotBlank(listQueryBo.getPracticeSetId())
+				&& !setIds.contains(listQueryBo.getPracticeSetId())) {
+			return new ExternalOperationCountBo();
+		}
+
+		OperationListQuery listQuery = BeanUtils.copy(listQueryBo, OperationListQuery.class);
+		if (StringUtils.isNotBlank(listQueryBo.getPracticeSetId())) {
+			listQuery.setPracticeSetIds(Lists.newArrayList(listQueryBo.getPracticeSetId()));
+		} else {
+			listQuery.setPracticeSetIds(setIds);
+		}
+
+		List<PracticeOperation> operationList = practiceOperationMapper.listByQuery(listQuery,
+				true);
+		Map<Integer, List<PracticeOperation>> typeMap = StreamApiUtils.groupBy(operationList,
+				PracticeOperation::getDynamicFlag);
+		return new ExternalOperationCountBo(typeMap);
+	}
+
 	private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
 		PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
 		Attachment attachment = fileMap.get(fileId);

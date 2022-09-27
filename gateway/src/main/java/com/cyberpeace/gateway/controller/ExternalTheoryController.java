@@ -77,6 +77,11 @@ public class ExternalTheoryController {
 
 		// 组织校验
 		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			log.warn("The current user has no organization information！User=[id={}, user_name={}]",
+					userInfo.getUserId(), userInfo.getUserName());
+			return new BaseRsp<>(Lists.newArrayList());
+		}
 
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
@@ -183,6 +188,7 @@ public class ExternalTheoryController {
 	@ApiOperation("查询各类型理论习题数量")
 	@GetMapping("/type/count")
 	public BaseRsp<ExternalTheoryCountBo> searchCount(@Validated PracticeTheoryListReq listReq) {
+
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
 			return new BaseRsp<>(new ExternalTheoryCountBo());

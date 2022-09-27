@@ -1,8 +1,11 @@
 package com.cyberpeace.gateway.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalOperationCountBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -15,6 +18,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.annoations.AuthKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -31,6 +35,7 @@ import com.cyberpeace.gateway.controller.req.OperationPageReq;
 import com.cyberpeace.gateway.service.bo.ExternalOperationBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeCategoryBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
+import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -194,6 +199,58 @@ public class ExternalOperationController {
 		IPage<ExternalOperationBo> convert = iPage
 				.convert(practiceOperation -> entityToExternal(practiceOperation));
 		return new BaseRsp(PageUtil.getListResult(convert));
+	}
+
+	@ApiOperation("实操习题随机获取数条")
+	@GetMapping("/random-choice")
+	public BaseRsp<List<ExternalOperationBo>>
+			getOperationRandom(PracticeRandomChoiceReq choiceReq) {
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			return new BaseRsp<>(new ArrayList<>());
+		}
+
+		OperationListQuery listQuery = BeanUtils.copy(choiceReq, OperationListQuery.class);
+		if (StringUtils.hasText(choiceReq.getCategory())) {
+			listQuery.setCategoryIds(Lists.newArrayList(choiceReq.getCategory()));
+		}
+
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		List<String> setIds = practiceSetService.getSetIds(authContext, choiceReq.getPracticeSet());
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new BaseRsp<>(new ArrayList<>());
+		}
+		listQuery.setPracticeSetIds(setIds);
+
+		List<PracticeOperation> operationList = practiceOperationMapper.randomChoice(listQuery,
+				choiceReq.getCount());
+		List<ExternalOperationBo> boList = StreamApiUtils.map(operationList,
+				operation -> entityToExternal(operation));
+		for (ExternalOperationBo operationBo : boList) {
+			operationBo.setScore(choiceReq.getScore());
+		}
+
+		return new BaseRsp<>(boList);
+	}
+
+	@ApiOperation("获取各类型习题数量")
+	@GetMapping("/type/count")
+	public BaseRsp<ExternalOperationCountBo> searchCount(OperationPageReq pageReq) {
+
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
+			return new BaseRsp<>(new ExternalOperationCountBo());
+		}
+
+		OperationListQueryBo queryBo = BeanUtils.copy(pageReq, OperationListQueryBo.class);
+		queryBo.setPracticeSetId(pageReq.getPracticeSet());
+		if (StringUtils.hasText(pageReq.getCategory())) {
+			queryBo.setCategoryIds(Lists.newArrayList(pageReq.getCategory()));
+		}
+
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		ExternalOperationCountBo countBo = practiceOperationService.typeCount(authContext, queryBo);
+		return new BaseRsp<>(countBo);
 	}
 
 }

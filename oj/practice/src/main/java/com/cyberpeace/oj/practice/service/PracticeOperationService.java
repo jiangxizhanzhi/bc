@@ -10,6 +10,7 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalOperationCountBo;
 
 import java.util.List;
 import java.util.Map;
@@ -179,9 +180,17 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	void createMpLog(String practiceId, LogContent logContent);
 
 	/**
-	 * 附件数据组装
+	 * 获取实操习题附件
 	 * @param attachmentId
 	 * @return
 	 */
-    List<PracticeOperationFileBo> getOperationFile(String attachmentId);
+	List<PracticeOperationFileBo> getOperationFile(String attachmentId);
+
+	/**
+	 * 计算各类型习题数量
+	 * @param authContext
+	 * @param listQueryBo
+	 * @return
+	 */
+    ExternalOperationCountBo typeCount(AuthContext authContext, OperationListQueryBo listQueryBo);
 }

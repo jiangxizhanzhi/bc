@@ -84,9 +84,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 		JSONObject jsonObject = HttpClientUtil.post(targetUrl, body, JSONObject.class);
 
-		String result = jsonObject.getString("id");
-
-		return result;
+		return jsonObject.getString("id");
 	}
 
 	@Override

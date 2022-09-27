@@ -625,9 +625,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 排名数据统计
 		List<UserNoteScoreBo> topNum = statisticTopNum(evaluates, notes, 20);
-		ClassroomStatisticBo statisticBo = ClassroomStatisticBo.builder().signInfo(signInfoBo)
+		return ClassroomStatisticBo.builder().signInfo(signInfoBo)
 				.top20(topNum).gradeDistribution(distributionBo).build();
-		return statisticBo;
 	}
 
 	/**

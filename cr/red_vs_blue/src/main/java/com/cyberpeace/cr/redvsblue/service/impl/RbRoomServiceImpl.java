@@ -118,9 +118,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
-		IPage<RbRoomData> data = rbRoomMapper.listRbRoom(page, listQuery);
-
-		return data;
+		return rbRoomMapper.listRbRoom(page, listQuery);
 	}
 
 	@Override

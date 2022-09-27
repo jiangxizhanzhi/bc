@@ -66,9 +66,7 @@ public class EvalAlgorithmServiceImpl extends ServiceImpl<EvalAlgorithmMapper, E
 
 		Page page = listQuery.toPageParam();
 
-		IPage<EvalAlgorithm> data = evalAlgorithmMapper.listEvalAlgorithm(page, listQuery);
-
-		return data;
+        return evalAlgorithmMapper.listEvalAlgorithm(page, listQuery);
 	}
 
 	@Override

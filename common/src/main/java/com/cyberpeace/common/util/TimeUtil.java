@@ -22,8 +22,7 @@ public class TimeUtil {
             return 0;
         }
 
-        long interval = (end.getTime() - start.getTime()) / 1000;
-        return interval;
+        return (end.getTime() - start.getTime()) / 1000;
     }
 
     /**
@@ -41,8 +40,7 @@ public class TimeUtil {
         start = getEndOfDay(start);
         end = getEndOfDay(end);
 
-        long interval = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-        return interval;
+        return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
     }
 
     /**
@@ -95,9 +93,8 @@ public class TimeUtil {
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-        Date start = calendar.getTime();
 
-        return start;
+        return calendar.getTime();
     }
 
     /**
@@ -112,9 +109,8 @@ public class TimeUtil {
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
-        Date start = calendar.getTime();
 
-        return start;
+        return calendar.getTime();
     }
 
     /**
@@ -154,9 +150,8 @@ public class TimeUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, -1 * input);
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyyMM");
-        String lastMonth = sdFormat.format(calendar.getTime());
 
-        return lastMonth;
+        return sdFormat.format(calendar.getTime());
     }
 
     /**
@@ -398,8 +393,7 @@ public class TimeUtil {
      * @return
      */
     public static Date addSeconds(Date base, long toAdd) {
-        Date result = new Date(base.getTime() + toAdd * 1000);
-        return result;
+        return new Date(base.getTime() + toAdd * 1000);
     }
 
     /**
@@ -408,8 +402,7 @@ public class TimeUtil {
      * @return
      */
     public static Date addMins(Date base, long toAdd) {
-        Date result = new Date(base.getTime() + toAdd * 1000 * 60);
-        return result;
+        return new Date(base.getTime() + toAdd * 1000 * 60);
     }
 
     /**
@@ -418,8 +411,7 @@ public class TimeUtil {
      * @return
      */
     public static Date addHours(Date base, long toAdd) {
-        Date result = new Date(base.getTime() + toAdd * 1000 * 60 * 60);
-        return result;
+        return new Date(base.getTime() + toAdd * 1000 * 60 * 60);
     }
 
     /**
@@ -464,8 +456,7 @@ public class TimeUtil {
      * @return
      */
     public static Date reduceHours(Date base, long toReduce) {
-        Date result = new Date(base.getTime() - toReduce * 1000 * 60 * 60);
-        return result;
+        return new Date(base.getTime() - toReduce * 1000 * 60 * 60);
     }
 
     /**
@@ -516,8 +507,7 @@ public class TimeUtil {
      */
     public static String getDay() {
         SimpleDateFormat sd = new SimpleDateFormat("dd");
-        String day = sd.format(new Date()).toString();
-        return day;
+        return sd.format(new Date()).toString();
     }
 
 }

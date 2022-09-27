@@ -55,12 +55,8 @@ public class TeamTrainRoleController {
 				List<MissionContext> missions = crRoleContext.getRoles().get(i).getMissionsList()
 						.get(j).getMissions();
 
-				List<RoleMissionRsp> roleMissionRspList = missions.stream().map(roleMission -> {
-					RoleMissionRsp roleMissionRsp = BeanUtils.copy(roleMission,
-							RoleMissionRsp.class);
-
-					return roleMissionRsp;
-				}).collect(Collectors.toList());
+				List<RoleMissionRsp> roleMissionRspList = missions.stream().map(roleMission -> BeanUtils.copy(roleMission,
+						RoleMissionRsp.class)).collect(Collectors.toList());
 				roleMissionObject.setMissions(roleMissionRspList);
 			}
 		}

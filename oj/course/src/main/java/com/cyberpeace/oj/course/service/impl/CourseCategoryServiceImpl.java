@@ -192,10 +192,7 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
 			return Lists.newArrayList();
 		}
 
-		List<CourseCategoryBo> courseCategoryBos = StreamApiUtils.map(categories,
-				courseCategory -> packageCategoryBo(courseCategory, categoryMap));
-
-		return courseCategoryBos;
+		return StreamApiUtils.map(categories, courseCategory -> packageCategoryBo(courseCategory, categoryMap));
 	}
 
 	/**

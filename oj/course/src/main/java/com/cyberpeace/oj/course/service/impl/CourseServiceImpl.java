@@ -306,8 +306,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
 		}
-		List<String> ids = courseMapper.notDeleteIdsByIds(courseIds);
-		return ids;
+		return courseMapper.notDeleteIdsByIds(courseIds);
 	}
 
 	@Override
@@ -387,10 +386,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			childrenIds = courseCategoryService.getChildrenIds(category, CommonConstant.TRUE);
 		}
 
-		List<String> courseIds = courseMapper.selectIdsByCategory(authIds, childrenIds,
+		return courseMapper.selectIdsByCategory(authIds, childrenIds,
 				authContext.getIsWeb());
-
-		return courseIds;
 	}
 
 	@Override

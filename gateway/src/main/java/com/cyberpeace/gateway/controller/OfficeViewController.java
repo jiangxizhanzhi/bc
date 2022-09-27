@@ -47,8 +47,7 @@ public class OfficeViewController {
 			@ApiParam(name = "fileId", value = "课时编号") @RequestParam("fileId") String lessonId) {
 
 		OfficeFileInfoBo officeFileInfoBo = officeViewService.lessonHandoutInfo(lessonId);
-		Map<String, Object> dataMap = ObjUtil.obj2map(officeFileInfoBo);
-		return dataMap;
+        return ObjUtil.obj2map(officeFileInfoBo);
 	}
 
 	@ApiOperation("获取课时文件流")

@@ -106,8 +106,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		authContext.setIsSuperAdmin(true);
 		// 数据查询
 		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, authContext);
-		BaseRsp rsp = new BaseRsp(courseInfos);
-		return rsp;
+		return new BaseRsp(courseInfos);
 	}
 
 	@ApiOperation("后台课程列表分页查询")

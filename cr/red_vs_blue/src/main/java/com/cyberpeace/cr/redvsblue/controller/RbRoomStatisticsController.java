@@ -241,9 +241,7 @@ public class RbRoomStatisticsController {
 
 		rbRoomService.checkRoomPermission(resource_id, userId);
 
-		JSONObject data = rbRoomScoreService.getAllRbScoreProgress(resource_id, role_type);
-
-		return data;
+		return rbRoomScoreService.getAllRbScoreProgress(resource_id, role_type);
 	}
 
 	private void permissionCheckTeacherOrGroup(String resource_id, String userId, Integer role_type) {

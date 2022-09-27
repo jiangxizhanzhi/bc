@@ -359,10 +359,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据类型转换
 		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
 				Attachment::getResourceId, attachment -> attachment);
-		List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachmentIds,
-				attachment -> fileToBo(attachment, attachmentMap));
-		
-		return fileBos;
+
+		return StreamApiUtils.map(attachmentIds, attachment -> fileToBo(attachment, attachmentMap));
 	}
 	
 	private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
@@ -530,11 +528,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page,
 				operationListQuery, authContext.getIsWeb());
 
-		IPage<AdminOperationListBo> listBoIPage = iPage
-				.convert(practiceOperation -> entityToListBo(practiceOperation, authContext,
-						listQuery.getSolved()));
-
-		return listBoIPage;
+		return iPage.convert(practiceOperation -> entityToListBo(practiceOperation, authContext, listQuery.getSolved()));
 	}
 
 	/**
@@ -591,8 +585,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		PracticeSolved solved = practiceSolvedMapper.selectUserAndId(userId,
 				PracticeCategory.PracticeType.OPERATION.getCode(), resourceId, isCollected);
 		if (solved != null && solved.getSolved()) {
-			EvaluateResult evaluateResult = BeanUtils.copy(solved, EvaluateResult.class);
-			return evaluateResult;
+			return BeanUtils.copy(solved, EvaluateResult.class);
 		}
 
 		EvaluateResult evaluateResult = practiceEvaluateHandler.evaluateByBusiness(userId,
@@ -699,16 +692,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public Boolean nodeRestart(String resourceId, String nodeId, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
-		Boolean result = localSceneService.restartNode(localScene.getResourceId(), nodeId);
-		return result;
+		return localSceneService.restartNode(localScene.getResourceId(), nodeId);
 	}
 
 	@Override
 	public Boolean nodeRecreate(String resourceId, String nodeId, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
-		Boolean result = localSceneService.recreateNode(localScene.getResourceId(), nodeId);
-		return result;
+		return localSceneService.recreateNode(localScene.getResourceId(), nodeId);
 	}
 
 	@Override
@@ -1059,8 +1050,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				// 替换文件路径为数据库可存储
 				String storePath = utilService.replaceFileUrl(destFilePath);
 				// 获取页面可访问
-				String fileUrl = utilService.handlerFileUrl(storePath);
-				return fileUrl;
+				return utilService.handlerFileUrl(storePath);
 			});
 			String content = LocalStringUtil.replaceAll(dumpLoadBo.getWriteup(), matchPathList,
 					urlList);
@@ -1252,9 +1242,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.dynamicFlag(operation.getDynamicFlag()).flags(operation.getAnswer())
 				.sharedType(operation.getSceneShareMode()).fromWeb(authContext.getIsWeb())
 				.userId(authContext.getUserId()).build();
-		OjLocalScene ojLocalScene = ojLocalSceneService.initOjLocalScene(initOjSceneContext);
 
-		return ojLocalScene;
+		return ojLocalSceneService.initOjLocalScene(initOjSceneContext);
 	}
 
 	/**

@@ -170,10 +170,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 			IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
 					true);
 
-			IPage<LibPracticeListBo> convert = iPage
-					.convert(practiceOperation -> operationToListBo(practiceOperation));
-
-			return convert;
+			return iPage.convert(practiceOperation -> operationToListBo(practiceOperation));
 		}
 	}
 
@@ -286,10 +283,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 		}
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery, true);
 
-		IPage<LibPracticeListBo> convert = iPage
-				.convert(practiceTheory -> theoryToListBo(practiceTheory));
-
-		return convert;
+		return iPage.convert(practiceTheory -> theoryToListBo(practiceTheory));
 	}
 
 	/**

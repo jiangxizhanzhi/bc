@@ -154,8 +154,6 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	public PracticeOperation selectByPracticeId(String paperId, String practiceId) {
 		PracticeOperationRef operationRef = practiceOperationRefMapper.selectByPracticeId(paperId,
 				practiceId);
-		PracticeOperation practiceOperation = JsonUtil.toJsonObject(operationRef.getSnapshot(),
-				PracticeOperation.class);
-		return practiceOperation;
+		return JsonUtil.toJsonObject(operationRef.getSnapshot(), PracticeOperation.class);
 	}
 }

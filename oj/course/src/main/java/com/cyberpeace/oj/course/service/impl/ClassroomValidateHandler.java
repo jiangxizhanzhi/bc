@@ -117,8 +117,7 @@ public class ClassroomValidateHandler {
 	 */
 	public List<String> validateClassroomOrgHasUser(String orgId) {
 
-		List<String> orgIds = remoteOrganizationService.childrenList(orgId, true);
-		return orgIds;
+		return remoteOrganizationService.childrenList(orgId, true);
 	}
 
 	/**

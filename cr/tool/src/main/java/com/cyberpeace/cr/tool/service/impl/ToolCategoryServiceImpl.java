@@ -46,8 +46,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	@Override
 	@Cacheable
 	public List<ToolCategory> selectAll() {
-		List<ToolCategory> result = toolCategoryMapper.selectList(null);
-		return result;
+		return toolCategoryMapper.selectList(null);
 	}
 
 	public List<WebToolCategoryRsp> webSelectAll() {
@@ -62,9 +61,8 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	@Override
 	@Cacheable(key = "#p0")
 	public ToolCategory getByName(String name) {
-		ToolCategory toolCategory = toolCategoryMapper.getByCnName(name);
 
-		return toolCategory;
+		return toolCategoryMapper.getByCnName(name);
 	}
 
 	@Override

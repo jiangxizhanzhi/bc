@@ -372,9 +372,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				rowData -> rmExcelDataToEntity(rowData, practiceSet));
 
 		// 数据去重
-		List<PracticeTheory> distinctList = StreamApiUtils.distinctByColumn(theoryList,
-				practiceTheory -> practiceTheory.getContent().toUpperCase(Locale.ROOT));
-		return distinctList;
+		return StreamApiUtils.distinctByColumn(theoryList, practiceTheory -> practiceTheory.getContent()
+				.toUpperCase(Locale.ROOT));
 	}
 
 	@Override

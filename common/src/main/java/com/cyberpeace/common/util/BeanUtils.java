@@ -43,9 +43,7 @@ public class BeanUtils {
 
 		MapperFacade mapper = mapperFactory.getMapperFacade();
 
-		T result = mapper.map(source, target);
-
-		return result;
+        return mapper.map(source, target);
 	}
 
 	/**

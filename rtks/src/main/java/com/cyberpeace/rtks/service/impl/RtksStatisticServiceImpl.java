@@ -92,9 +92,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 3、技能得分和知识点得分加权平均
 		Integer result = knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight);
 
-		Integer ret = floor(result);
-
-		return ret;
+		return floor(result);
 	}
 
 	@Override
@@ -183,9 +181,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				userId);
 
 		// 2、获取技能点对应的课程
-		RoleStudyBo studyBo = getStudyBo(processBoList);
-
-		return studyBo;
+		return getStudyBo(processBoList);
 	}
 
 	@Override
@@ -583,9 +579,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 				knowledge.setWeight(null == weight ? 1 : weight);
 			}
 		});
-		Integer percent = calculateFinishPercent(knowledges, userId);
 
-		return percent;
+		return calculateFinishPercent(knowledges, userId);
 	}
 
 	/**

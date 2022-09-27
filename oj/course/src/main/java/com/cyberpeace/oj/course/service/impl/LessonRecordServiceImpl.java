@@ -20,9 +20,7 @@ public class LessonRecordServiceImpl implements LessonRecordService {
     @Override
     public List<LessonRecord> selectByTime(String userId, Date startTime, Date endTime) {
 
-        List<LessonRecord> lessonRecords = lessonRecordMapper.selectByTime(userId, startTime,
-                endTime);
-        return lessonRecords;
+        return lessonRecordMapper.selectByTime(userId, startTime, endTime);
     }
 
     @Override
@@ -31,8 +29,6 @@ public class LessonRecordServiceImpl implements LessonRecordService {
                 .filter(courseLesson -> recordLesson.contains(courseLesson.getResourceId()))
                 .collect(Collectors.toList());
 
-        List<String> courseIds = lessonList.stream().map(CourseLesson::getCourseId).distinct()
-                .collect(Collectors.toList());
-        return courseIds;
+        return lessonList.stream().map(CourseLesson::getCourseId).distinct().collect(Collectors.toList());
     }
 }

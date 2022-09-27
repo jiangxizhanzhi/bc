@@ -296,9 +296,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		Page page = listQuery.toPageParam();
 		listQuery.setIds(crRoleService.getRoomIdsByUserId(userId));
 
-		IPage<TeamRoomData> data = teamRoomMapper.listTeamRoom(page, listQuery);
-
-		return data;
+		return teamRoomMapper.listTeamRoom(page, listQuery);
 	}
 
 	@Override

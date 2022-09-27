@@ -73,9 +73,7 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 
 		PracticeTheoryRef theoryRef = practiceTheoryRefMapper.selectByPracticeId(paperId,
 				practiceId);
-		PracticeTheory practiceTheory = JsonUtil.toJsonObject(theoryRef.getSnapshot(),
-				PracticeTheory.class);
 
-		return practiceTheory;
+		return JsonUtil.toJsonObject(theoryRef.getSnapshot(), PracticeTheory.class);
 	}
 }

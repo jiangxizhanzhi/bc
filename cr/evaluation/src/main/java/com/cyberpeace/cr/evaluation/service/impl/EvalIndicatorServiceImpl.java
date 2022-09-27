@@ -130,9 +130,7 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 	public IPage<EvalIndicator> page(EvalListQuery listQuery) {
 		Page page = listQuery.toPageParam();
 
-		IPage<EvalIndicator> data = evalIndicatorMapper.listEvalIndicator(page, listQuery);
-
-		return data;
+		return evalIndicatorMapper.listEvalIndicator(page, listQuery);
 	}
 
 	@Override

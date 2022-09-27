@@ -58,9 +58,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public LocalScene getByBusinessInstanceId(String businessInstanceId) {
-		LocalScene localScene = getBaseMapper().getByBusinessInstanceId(businessInstanceId);
 
-		return localScene;
+        return getBaseMapper().getByBusinessInstanceId(businessInstanceId);
 	}
 
 	@Override

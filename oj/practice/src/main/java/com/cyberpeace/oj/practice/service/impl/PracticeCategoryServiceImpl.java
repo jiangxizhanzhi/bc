@@ -58,10 +58,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		IPage<PracticeCategory> categoryIPage = practiceCategoryMapper.pageByTypeAndName(page,
 				query.getPattern(), query.getPracticeType());
 
-		IPage<CategoryListBo> boIPage = categoryIPage
-				.convert(practiceCategory -> entityToListBo(practiceCategory, children));
-
-		return boIPage;
+		return categoryIPage.convert(practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
 	@Override
@@ -142,10 +139,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(listQuery.getPracticeType(), listQuery.getPattern());
 
-		List<CategoryListBo> listBos = StreamApiUtils.map(categoryList,
-				practiceCategory -> entityToListBo(practiceCategory, children));
-
-		return listBos;
+		return StreamApiUtils.map(categoryList, practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
 	@Override

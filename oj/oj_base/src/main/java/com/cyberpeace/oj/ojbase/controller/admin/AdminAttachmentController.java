@@ -51,11 +51,8 @@ public class AdminAttachmentController {
 	public BaseRsp<Boolean> batchPublic(@RequestBody @Validated ResourcePublicReq publicReq) {
 
 		List<Attachment> attachments = StreamApiUtils.map(publicReq.getResourceIds(),
-				resourceId -> {
-					Attachment build = Attachment.builder().isPublic(publicReq.getIsPublic())
-							.resourceId(resourceId).build();
-					return build;
-				});
+				resourceId -> Attachment.builder().isPublic(publicReq.getIsPublic())
+						.resourceId(resourceId).build());
 
 		boolean result = attachmentService.updateBatchById(attachments);
 		return new BaseRsp<>(result);

@@ -490,9 +490,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 				messageIdentifier.setUserId(userId);
 				messageIdentifier.setPath(WsPath.LESSON_SCENE);
 
-				WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-						.builder().data(data).messageIdentifier(messageIdentifier).build();
-				return messageContext;
+				return WebSocketMessageContext.builder().data(data).messageIdentifier(messageIdentifier).build();
 			});
 		}
 	}

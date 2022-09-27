@@ -91,10 +91,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		Page page = evalTemplateListQuery.toPageParam();
 
 		// 根据用户获取模板列表
-		IPage<EvalTemplate> data = evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
-				UserInfoContext.getUserContext().getUserId());
-
-		return data;
+        return evalTemplateMapper.listEvalTemplates(page, evalTemplateListQuery,
+                UserInfoContext.getUserContext().getUserId());
 	}
 
 	@Override

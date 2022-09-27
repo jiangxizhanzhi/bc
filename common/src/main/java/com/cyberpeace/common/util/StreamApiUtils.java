@@ -26,8 +26,7 @@ public class StreamApiUtils {
 		if (null == collection) {
 			return Lists.newArrayList();
 		}
-		List<V> list = collection.stream().map(mapperValue).collect(Collectors.toList());
-		return list;
+		return collection.stream().map(mapperValue).collect(Collectors.toList());
 	}
 
 	/**

@@ -308,27 +308,21 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Override
 	public String getLineColor() {
 
-		String color = Color.getRandomValue(Color.values());
-
-		return color;
+		return Color.getRandomValue(Color.values());
 
 	}
 
 	@Override
 	public Integer getLineWidth() {
 
-		Integer lineWidth = 5;
-
-		return lineWidth;
+		return 5;
 
 	}
 
 	@Override
 	public String getLineType() {
 
-		String lineType = LineType.getRandomValue(LineType.values());
-
-		return lineType;
+		return LineType.getRandomValue(LineType.values());
 
 	}
 
@@ -345,9 +339,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Override
 	public List<String> getLineEffect() {
 
-		List<String> effect = LineEffect.getRandomEffect(LineEffect.values());
-
-		return effect;
+		return LineEffect.getRandomEffect(LineEffect.values());
 	}
 
 	@Override

@@ -64,9 +64,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		listQuery.setIds(businessTemplateService
 				.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));
 
-		IPage<TeamTemplateData> data = teamTemplateMapper.listTeamTemplate(page, listQuery);
-
-		return data;
+        return teamTemplateMapper.listTeamTemplate(page, listQuery);
 	}
 
 	@Override

@@ -176,9 +176,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public Boolean stopScene(SceneOpsContext sceneOpsContext) {
 		String targetUrl = SCENE_DELETE_URL;
 
-		Boolean result = HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
-
-		return result;
+		return HttpClientUtil.delete(targetUrl, sceneOpsContext, Boolean.class);
 	}
 
 	@Override
@@ -412,10 +410,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
 		String mpNodeStatus = JsonUtil.toJsonString(
 				jsonObject.getOrDefault("node_link_status_list", Lists.newArrayList()));
-		List<MpNodeStatus> nodeStatusList = JsonUtil.toJsonObjectArray(mpNodeStatus,
-				MpNodeStatus.class);
 
-		return nodeStatusList;
+		return JsonUtil.toJsonObjectArray(mpNodeStatus, MpNodeStatus.class);
 	}
 
 	private JSONObject replaceAccessIp(JSONObject topoData) {

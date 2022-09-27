@@ -416,9 +416,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 
 		RoleQuery roleQuery = new RoleQuery(roomId, roleGroup);
-		List<CrRole> crRoles = selectCrRoleByRoomId(roleQuery);
 
-		return crRoles;
+		return selectCrRoleByRoomId(roleQuery);
 	}
 
 	@Override

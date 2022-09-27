@@ -158,17 +158,15 @@ public class ObjUtil {
 		try {
 			String getter = "get" + firstLetter + fieldName.substring(1);
 			Method method = obj.getClass().getMethod(getter, new Class[] {});
-			Object value = method.invoke(obj, new Object[] {});
 
-			return value;
+			return method.invoke(obj, new Object[] {});
 		} catch (NoSuchMethodException e) {
 			// 如果是方法未找到，可能变量是boolean类型，用is重新尝试一把
 			try {
 				String getter = "is" + firstLetter + fieldName.substring(1);
 				Method method = obj.getClass().getMethod(getter, new Class[] {});
-				Object value = method.invoke(obj, new Object[] {});
 
-				return value;
+				return method.invoke(obj, new Object[] {});
 			} catch (Exception e1) {
 				LOG.error("ObjUtil.getFieldValueByName error, obj=[" + obj + "],fieldName=["
 						+ fieldName + "]", e);

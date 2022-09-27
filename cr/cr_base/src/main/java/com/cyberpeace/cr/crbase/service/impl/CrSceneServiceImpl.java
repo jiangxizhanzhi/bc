@@ -73,10 +73,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		Integer resourceType = mpFlow.getResourceType();
-		String flowFilePath = resourceType.equals(MpFlow.resourceTypeEnum.PCAP.getCode())
+		return resourceType.equals(MpFlow.resourceTypeEnum.PCAP.getCode())
 				? mpFlow.getPcapFile()
 				: mpFlow.getScriptFile();
-		return flowFilePath;
 	}
 
 	@Override
@@ -149,10 +148,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		// 分页
-		ListRsp<ElementFlow> flowListRsp = PageUtil.getListResult(elementFlowList, page,
-				elementFlowList.size());
-
-		return flowListRsp;
+		return PageUtil.getListResult(elementFlowList, page, elementFlowList.size());
 	}
 
 	@Override
@@ -219,10 +215,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, context.getTopoId(), nodeId);
 
 		// 按照条件过滤并分页
-		ListRsp<ElementFlow> flowListRsp = filterFlowList(elementFlowList, interactiveType,
-				context.getPage());
-
-		return flowListRsp;
+		return filterFlowList(elementFlowList, interactiveType, context.getPage());
 	}
 
 	@Override

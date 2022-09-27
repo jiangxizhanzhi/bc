@@ -116,8 +116,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(origin.getName(), storeInDbName);
-			return attachmentBo;
+			return create(origin.getName(), storeInDbName);
 		}
 
 		// 返回给前端对展示名称
@@ -250,8 +249,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		}
 
 		if (null != insertDb && insertDb) {
-			AttachmentBo attachmentBo = create(fileName, storeInDbName, renameFile);
-			return attachmentBo;
+			return create(fileName, storeInDbName, renameFile);
 		}
 
 		// 返回给前端对展示名称

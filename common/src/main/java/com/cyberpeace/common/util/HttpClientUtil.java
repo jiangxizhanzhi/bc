@@ -230,10 +230,8 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static HttpClient getClient() {
-		CloseableHttpClient httpClient = HttpClients.custom().setDefaultHeaders(defaultHeader())
-				.build();
 
-		return httpClient;
+		return HttpClients.custom().setDefaultHeaders(defaultHeader()).build();
 	}
 
 	/**

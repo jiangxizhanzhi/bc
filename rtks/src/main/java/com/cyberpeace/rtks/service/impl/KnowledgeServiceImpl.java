@@ -128,9 +128,7 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 		}
 		List<CourseRelatedRes> knowledgeList = knowledgeMapper.getKnowledgeByCourseId(ids);
 
-		Map<String, List<CourseRelatedRes>> courseKnowledgeResMap = knowledgeList.stream()
-				.collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
-		return courseKnowledgeResMap;
+		return knowledgeList.stream().collect(Collectors.groupingBy(CourseRelatedRes::getResourceId));
 	}
 
 	@Override

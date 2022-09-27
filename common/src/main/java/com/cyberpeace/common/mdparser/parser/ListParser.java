@@ -31,10 +31,8 @@ public class ListParser implements MdContentParser<Collection, String> {
         }
 
         String[] items = value.split(PatternConstant.MD_LIST);
-        List<String> itemList = StreamApiUtils.map(Arrays.asList(items),
-                item -> StringUtils.isNotBlank(item) ? item.trim() : null);
 
-        return itemList;
+        return StreamApiUtils.map(Arrays.asList(items), item -> StringUtils.isNotBlank(item) ? item.trim() : null);
     }
 
     @Override

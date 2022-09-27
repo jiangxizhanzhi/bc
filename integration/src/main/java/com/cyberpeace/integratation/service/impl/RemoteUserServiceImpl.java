@@ -93,9 +93,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				MpAuthenticatedUser.class);
 
 		// 2、转化mp的用户模型为本地模型
-		UserInfo userInfo = convertToLocal(mpAuthenticatedUser);
-
-		return userInfo;
+		return convertToLocal(mpAuthenticatedUser);
 	}
 
 	@Override

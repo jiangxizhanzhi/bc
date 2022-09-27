@@ -87,8 +87,7 @@ public class WebCourseController {
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
-		BaseRsp rsp = new BaseRsp(courseRes);
-		return rsp;
+        return new BaseRsp(courseRes);
 	}
 
 }

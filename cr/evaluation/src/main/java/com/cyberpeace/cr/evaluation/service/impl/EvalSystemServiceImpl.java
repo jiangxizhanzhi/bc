@@ -56,8 +56,6 @@ public class EvalSystemServiceImpl extends ServiceImpl<EvalSystemMapper, EvalSys
 
 		Page page = listQuery.toPageParam();
 
-		IPage<EvalSystem> data = evalSystemMapper.listEvalSystems(page, listQuery);
-
-		return data;
+        return evalSystemMapper.listEvalSystems(page, listQuery);
 	}
 }

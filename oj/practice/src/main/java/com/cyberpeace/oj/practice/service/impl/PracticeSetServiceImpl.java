@@ -180,9 +180,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery,
 				authContext.getIsWeb());
 
-		IPage<AdminPracticeSetBo> boIPage = iPage
-				.convert(practiceSet -> entityToSetBo(practiceSet, authContext));
-		return boIPage;
+		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, authContext));
 	}
 
 	@Override
@@ -558,8 +556,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	/** 数据类型转换*/
 	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
-		MdPracticeSet mdPracticeSet = BeanUtils.copy(practiceSet, MdPracticeSet.class);
-		return mdPracticeSet;
+		return BeanUtils.copy(practiceSet, MdPracticeSet.class);
 	}
 	
 	private List<PracticeSet> setListByIds(String setId, String practiceId) {

@@ -32,15 +32,13 @@ public class RbTimeManagement extends BaseTable {
 	private String updateUserId;
 
 	public Boolean isStopped() {
-		boolean result = status.intValue() == TimeManagementStatus.STOP.getCode();
 
-		return result;
+        return status.intValue() == TimeManagementStatus.STOP.getCode();
 	}
 
 	public Boolean isPaused() {
-		boolean result = status.intValue() == TimeManagementStatus.PAUSE.getCode();
 
-		return result;
+		return status.intValue() == TimeManagementStatus.PAUSE.getCode();
 	}
 
 	public Boolean isRunning() {

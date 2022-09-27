@@ -226,9 +226,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
-		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 
-		return task;
+		return crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 	}
 
 	@Override

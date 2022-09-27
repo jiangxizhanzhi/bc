@@ -125,9 +125,7 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		listQuery.setIds(businessTemplateService
 				.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));
 
-		IPage<RbTemplateData> data = rbTemplateMapper.listRbTemplate(page, listQuery);
-
-		return data;
+        return rbTemplateMapper.listRbTemplate(page, listQuery);
 	}
 
 	@Override

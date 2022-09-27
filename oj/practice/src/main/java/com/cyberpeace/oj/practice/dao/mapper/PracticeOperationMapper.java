@@ -42,4 +42,7 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 			@Param("title") String title);
 
 	List<String> topoIdsByIds(@Param("resource_ids") List<String> resourceIds);
+
+	List<PracticeOperation> listByQuery(@Param("listQuery") OperationListQuery listQuery,
+			@Param("isPublic") Boolean isPublic);
 }

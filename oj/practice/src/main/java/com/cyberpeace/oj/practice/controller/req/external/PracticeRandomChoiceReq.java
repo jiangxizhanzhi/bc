@@ -4,9 +4,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
-public class PracticeRandomChoiceReq {
+public class PracticeRandomChoiceReq implements Serializable {
+
     @ApiModelProperty("习题集查询")
     private String practiceSet;
 
@@ -22,11 +25,11 @@ public class PracticeRandomChoiceReq {
     @ApiModelProperty("内容查询")
     private String pattern;
 
-    @NotBlank
+    @NotNull
     @ApiModelProperty("获取数量")
     private Integer count;
 
-    @NotBlank
+    @NotNull
     @ApiModelProperty("设置默认分值")
     private Double score;
 

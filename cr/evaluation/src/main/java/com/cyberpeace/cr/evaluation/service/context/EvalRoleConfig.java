@@ -21,6 +21,10 @@ public class EvalRoleConfig extends CrRoleConfig {
 
 	private static final long serialVersionUID = 1L;
 
+	@ApiModelProperty(value = "角色类型", required = true)
+	@NotNull
+	private String type;
+	
 	@ApiModelProperty(value = "角色用户", required = true)
 	@NotNull
 	private List<String> users;

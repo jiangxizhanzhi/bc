@@ -1,14 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -34,8 +25,15 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -55,7 +53,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		// 处理态势数据
 		Map<String, AreaInfo> areasInfo = getAreas(sceneData);
-		Map<String, ElementInfo> elementsInfo = getElements(sceneData, areasInfo);
+		Map<String, ElementInfo> elementsInfo = getElements(sceneData);
 		List<ConnectionInfo> connectionsInfo = getConnections(sceneData);
 		SceneInfo sceneInfo = getSceneInfo(sceneData);
 
@@ -136,8 +134,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
-	private Map<String, ElementInfo> getElements(SceneData sceneData,
-			Map<String, AreaInfo> areasInfo) {
+	private Map<String, ElementInfo> getElements(SceneData sceneData) {
 
 		JSONArray elements = sceneData.getElements();
 		JSONObject extendElementInfo = sceneData.getExtendElementInfo();
@@ -216,7 +213,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setType(type);
 			elementInfo.setActionStatus(getElementActionStatus(element));
 			elementInfo.setStatus(getElementStatus(element));
-			// elementInfo.setAreas(topoHandlerService.getElementAreas(x, y, areasInfo));
 			elementInfo.setPosition(new PlaneCoordinate(x, y));
 			elementInfo.setPorts(portsInfo);
 			elementInfo.setHierarchy(hierarchy);

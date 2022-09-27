@@ -97,23 +97,23 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			List<String> schemeJsonList = new ArrayList<>();
 			for (int i = 0; i < roleList.size(); i++) {
 				JSONObject role = roleList.getJSONObject(i);
-				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
+				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString(MISSIONS_SCHEME), CrRoleConfigMissionsScheme.class);
 				allSchemeStage.addAll(rspMissionsScheme.getSchemeData());
-				schemeJsonList.add(role.getString("missions_scheme"));
+				schemeJsonList.add(role.getString(MISSIONS_SCHEME));
 			}
 			Map<String, MissionTemplate> allMissionTemplate = missionTemplateService.getMappingBySchemeJsonList(schemeJsonList);
 			validateTaskTile(allMissionTemplate, allSchemeStage, businessTemplate.getName());
 
 			//单个训练导出
-			log.info("红蓝对抗【" + businessTemplate.getName() + "】开始导出");
+			log.info("start export red_vs_blue [{}]", businessTemplate.getName());
 
 			File file = new File(path + File.separator + businessTemplate.getName());
 			FileUtil.mkdirs(file.getPath());
 			//场景信息导出
-			log.info(businessTemplate.getName() + "开始导出场景信息");
-			Map<String, String> nodeIdMap = dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
+			log.info("start export red_vs_blue [{}] scene", businessTemplate.getName());
+			Map<String, String> nodeIdMap = exportScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
 					file.getPath() + File.separator + ENV + File.separator + IMAGES);
-			log.info(businessTemplate.getName() + "场景信息导出结束");
+			log.info("export red_vs_blue [{}] scene successfully",businessTemplate.getName());
 
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(rbTemplate.getSubType());
@@ -124,7 +124,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				String imgUrl = businessTemplate.getLogo();
 				trainMD.setLogo(MD_LOGO);
 				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-				log.info(businessTemplate.getName() + DOUBLE_BLANK + "logo.png导出结束");
+				log.info("export red_vs_blue [{}] logo.png successfully", businessTemplate.getName());
 			}
 
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(rbTemplate.getPreSkill(), String.class));
@@ -132,7 +132,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
-			log.info(businessTemplate.getName() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
+			log.info("export red_vs_blue [{}] README.md successfully", businessTemplate.getName());
 
 			File taskFile = new File(file.getPath() + File.separator + TASK);
 
@@ -159,8 +159,8 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				teamAndRBMD.setUseNode(useNodeList);
 
 				Map<String, MissionTemplate> mapping =
-						missionTemplateService.getMappingBySchemeJson(role.getString("missions_scheme"));
-				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString("missions_scheme"), CrRoleConfigMissionsScheme.class);
+						missionTemplateService.getMappingBySchemeJson(role.getString(MISSIONS_SCHEME));
+				CrRoleConfigMissionsScheme rspMissionsScheme = JsonUtil.toJsonObject(role.getString(MISSIONS_SCHEME), CrRoleConfigMissionsScheme.class);
 
 				List<RoleBo> roleBoList = new ArrayList<>();
 				for (CrRoleConfigSchemeStage crRoleConfigSchemeStage : rspMissionsScheme.getSchemeData()) {
@@ -168,75 +168,8 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 					List<String> taskList = new ArrayList<>();
 					for (CrRoleConfigMission crRoleConfigMission : crRoleConfigSchemeStage.getMissions()) {
 						MissionTemplate missionTemplate = mapping.get(crRoleConfigMission.getResourceId());
-						taskList.add(missionTemplate.getTitle());
 
-						File task = new File(taskFile.getPath() + File.separator + missionTemplate.getTitle());
-						if (!task.exists()) {
-							task.mkdir();
-						}
-						File img = new File(task.getPath() + File.separator + IMG);
-						if (!img.exists()) {
-							img.mkdir();
-						}
-						JSONArray options = null;
-						List<String> optionList = null;
-
-						switch (missionTemplate.getType()) {
-							case 0:
-								//判断
-								JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
-								judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-								mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-								break;
-							case 1:
-								//单选
-								RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
-								options = JSONArray.parseArray(missionTemplate.getOption());
-								optionList = new ArrayList<>();
-								for (int j = 0; j < options.size(); j++) {
-									optionList.add(options.getJSONObject(j)
-														  .getString("optionValue"));
-								}
-								radioMD.setOptions(optionList);
-								radioMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-								mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-								break;
-							case 2:
-								//多选
-								MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
-										MultipleChoiceMD.class);
-								options = JSONArray.parseArray(missionTemplate.getOption());
-								optionList = new ArrayList<>();
-								for (int j = 0; j < options.size(); j++) {
-									optionList.add(options.getJSONObject(j)
-														  .getString("optionValue"));
-								}
-								multipleChoiceMD.setOptions(optionList);
-								multipleChoiceMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-								mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-								break;
-							default:
-								//其他
-								FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
-								fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-								mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-								break;
-						}
-						log.info(missionTemplate.getTitle() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
-
-						String writeUp = missionTemplate.getWriteUp();
-						//导出图片
-						List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
-						for (int j = 0; j < strList.size(); j++) {
-							String str = strList.get(j);
-							String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-							FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
-							imgUrl = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl);
-							writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
-						}
-
-						File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_FILE);
-						super.writeStringWriteUp(writeUp, writeUpFile, missionTemplate.getTitle());
+						exportMission(missionTemplate, taskList, constantMap, taskFile);
 					}
 					roleBo.setTeamName(crRoleConfigSchemeStage.getStage());
 					roleBo.setRoleName(taskList);
@@ -245,10 +178,9 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 				}
 				teamAndRBMD.setTask(roleBoList);
 				mdParser.write(teamAndRBMD, new File(taskFile.getPath() + File.separator + role.getString("name") + ".md"));
-				log.info(businessTemplate.getName() + DOUBLE_BLANK + role.getString("name") + ".md导出结束");
+				log.info("export red_vs_blue [{}] {}.md successfully", businessTemplate.getName(), role.getString("name"));
 			}
-
-			log.info("红蓝对抗【" + businessTemplate.getName() + "】导出结束");
+			log.info("export red_vs_blue [{}] successfully", businessTemplate.getName());
 		}
 
 	}

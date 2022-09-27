@@ -19,8 +19,6 @@ import com.cyberpeace.cr.crbase.service.impl.ExportTrainMDServiceImpl;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cs.service.context.RoleBo;
-import com.cyberpeace.integratation.model.scene.SceneDumpContext;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,17 +79,16 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			validateTaskTile(mapping, rspMissionsScheme.getSchemeData(), businessTemplate.getName());
 
 			//单个训练导出
-			log.info("单兵训练【" + businessTemplate.getName() + "】开始导出");
+			log.info("start export single training [{}]", businessTemplate.getName());
 
 			File file = new File(path + File.separator + businessTemplate.getName());
 			FileUtil.mkdirs(file.getPath());
 
 			//场景信息导出
-			log.info(businessTemplate.getName() + DOUBLE_BLANK + "开始导出场景信息");
-			dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
+			log.info("start export single training [{}] scene", businessTemplate.getName());
+			exportScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
 					file.getPath() + File.separator + ENV + File.separator + IMAGES);
-			log.info((businessTemplate.getName() + DOUBLE_BLANK + "场景信息导出结束"));
-
+			log.info("export single training [{}] scene successfully", businessTemplate.getName());
 
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);
 			trainMD.setTrainType(singleTemplate.getSubType());
@@ -102,7 +99,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 				String imgUrl = businessTemplate.getLogo();
 				trainMD.setLogo(MD_LOGO);
 				FileUtil.copyFile(imgUrl, file.getPath() + File.separator + "logo.png", false);
-				log.info(businessTemplate.getName() + "logo.png导出结束");
+				log.info("export single training [{}] logo.png successfully", businessTemplate.getName());
 			}
 			//导出README.md
 			trainMD.setPreSkills(JsonUtil.toJsonObjectArray(singleTemplate.getPreSkills(), String.class));
@@ -113,12 +110,10 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			roleBos.add(new RoleBo("学员组", roleName));
 			trainMD.setRoles(roleBos);
 			mdParser.write(trainMD, new File(file.getPath() + File.separator + BASE_MD_FILE));
-			log.info(businessTemplate.getName() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
+			log.info("export single training [{}] README.md successfully", businessTemplate.getName());
 			//导出task
 			File taskFile = new File(file.getPath() + File.separator + TASK);
-			if (!taskFile.exists()) {
-				taskFile.mkdir();
-			}
+			FileUtil.mkdirs(taskFile.getPath());
 
 			SingleRoleMD singleRoleMD = new SingleRoleMD();
 			//获取任务信息
@@ -130,73 +125,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 				for (CrRoleConfigMission crRoleConfigMission : crRoleConfigSchemeStage.getMissions()) {
 					//单个任务导出
 					MissionTemplate missionTemplate = mapping.get(crRoleConfigMission.getResourceId());
-					taskList.add(missionTemplate.getTitle());
-
-					File task = new File(taskFile.getPath() + File.separator + missionTemplate.getTitle());
-					if (!task.exists()) {
-						task.mkdir();
-					}
-					JSONArray options = null;
-					List<String> optionList = null;
-
-					switch (missionTemplate.getType()) {
-						case 0:
-							//判断
-							JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
-							judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-							mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-							break;
-						case 1:
-							//单选
-							RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
-							options = JSONArray.parseArray(missionTemplate.getOption());
-							optionList = new ArrayList<>();
-							for (int i = 0; i < options.size(); i++) {
-								optionList.add(options.getJSONObject(i)
-													  .getString("optionValue"));
-							}
-							radioMD.setOptions(optionList);
-							radioMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-							mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-							break;
-						case 2:
-							//多选
-							MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
-									MultipleChoiceMD.class);
-							options = JSONArray.parseArray(missionTemplate.getOption());
-							optionList = new ArrayList<>();
-							for (int i = 0; i < options.size(); i++) {
-								optionList.add(options.getJSONObject(i)
-													  .getString("optionValue"));
-							}
-							multipleChoiceMD.setOptions(optionList);
-							multipleChoiceMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-							mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-							break;
-						case 7:
-							//其他
-							FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
-							fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
-							mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
-							break;
-					}
-					log.info(missionTemplate.getTitle() + DOUBLE_BLANK + BASE_MD_FILE + "导出结束");
-					//导出writeUp
-					String writeUp = missionTemplate.getWriteUp();
-					//导出img
-					File img = new File(task.getPath() + File.separator + IMG);
-					FileUtil.mkdirs(img.getPath());
-					List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
-					for (int i = 0; i < strList.size(); i++) {
-						String str = strList.get(i);
-						String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-						FileUtil.copyFile(imgUrl, img.getPath() + File.separator + (i + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
-						imgUrl = "./img/" + (i+1) + "." + FileUtil.getFileSuffix(imgUrl);
-						writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
-					}
-
-					File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_FILE);
-					super.writeStringWriteUp(writeUp, writeUpFile, missionTemplate.getTitle());
+					exportMission(missionTemplate, taskList, constantMap, taskFile);
 				}
 				roleBo.setTeamName(crRoleConfigSchemeStage.getStage());
 				roleBo.setRoleName(taskList);
@@ -204,9 +133,8 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			}
 			singleRoleMD.setTask(roleBoList);
 			mdParser.write(singleRoleMD, new File(taskFile.getPath() + File.separator + "学员.md"));
-			log.info(businessTemplate.getName() + DOUBLE_BLANK + "学员.md导出结束");
-
-			log.info("单兵训练【" + businessTemplate.getName() + "】导出结束");
+			log.info("export single training [{}] 学员.md successfully", businessTemplate.getName());
+			log.info("export single training [{}] successfully", businessTemplate.getName());
 		}
 	}
 

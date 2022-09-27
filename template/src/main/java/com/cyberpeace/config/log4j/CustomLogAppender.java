@@ -85,10 +85,8 @@ public class CustomLogAppender extends FileAppender {
     public void activateOptions() {
         super.activateOptions();
         if (fileName != null) {
-            // perf.log now.setTime(System.currentTimeMillis());
             sdf = new SimpleDateFormat(datePattern);
             File file = new File(fileName);
-            String[] strings = fileName.split(".");
             // 获取最后更新时间拼成的文件名
             scheduledFilename = fileName.substring(0, fileName.lastIndexOf(".")) + "_" + sdf.format(new Date(file.lastModified())) + "." + FileUtil.getFileSuffix(fileName);
         } else {
@@ -265,7 +263,7 @@ public class CustomLogAppender extends FileAppender {
      */
     List<String> getMaxDaysIndexDates() {
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (maxDaysIndex > 0) {
             for (int i = 1; i <= maxDaysIndex; i++) {
                 Calendar calendar = Calendar.getInstance();
@@ -290,7 +288,7 @@ public class CustomLogAppender extends FileAppender {
                 this.type = i;
                 Date next = this.getNextCheckDate(calendar, epoch, 1).getTime();
                 String r1 = simpleDateFormat.format(next);
-                if (r0 != null && r1 != null && !r0.equals(r1)) {
+                if (!r0.equals(r1)) {
                     return i;
                 }
             }

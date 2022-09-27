@@ -1,15 +1,25 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MdConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.mdparser.MdParser;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
+import com.cyberpeace.cr.crbase.service.context.md.FileMD;
+import com.cyberpeace.cr.crbase.service.context.md.JudgeMD;
+import com.cyberpeace.cr.crbase.service.context.md.MultipleChoiceMD;
+import com.cyberpeace.cr.crbase.service.context.md.RadioMD;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
@@ -46,7 +56,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	public static final String VERSION = "version.txt";
 
-	public static final String DOUBLE_BLANK = "  ";
+	public static final String MISSIONS_SCHEME = "missions_scheme";
 
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
@@ -82,13 +92,15 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		ExportTrainMDService exportTrainMDService = register.get(type);
 		File file = new File(path);
 		FileUtil.deleteDir(file);
+		log.info("----------start export train-----------");
 		exportTrainMDService.exportTrainMD(businessTemplateList,
 				path + File.separator + "cr" + File.separator + "场景库");
 
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path + File.separator + VERSION),
 				StandardCharsets.UTF_8);
 		FileUtil.writeString(IDGeneratorUtil.getID(), osw);
-		log.info(VERSION + "导出结束");
+		log.info("export version.txt successfully");
+		log.info("----------export train successfully-----------");
 
 	}
 
@@ -97,7 +109,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	}
 
-	public void writeStringWriteUp(String writeUp, File writeUpFile, String title){
+	public void exportWriteUp(String writeUp, File writeUpFile, String title){
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try{
@@ -105,7 +117,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 			bw = new BufferedWriter(fw);
 			bw.write(writeUp);
 			bw.flush();
-			log.info(title + DOUBLE_BLANK + WRITE_UP_FILE + "导出结束");
+			log.info("export mission [{}] writeup.md successfully", title);
 		}catch (Exception e) {
 			log.error("Markdown content write failed！file_path=[{}], catch error:", writeUpFile.getAbsolutePath(), e);
 			throw new BusinessException(ErrorCode.FAILED_TO_WRITE_FILE);
@@ -122,7 +134,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		}
 	}
 
-	public Map<String, String> dumpScene(String topoId, String envPath, String imagePath){
+	public Map<String, String> exportScene(String topoId, String envPath, String imagePath){
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
 		sceneDumpContext.setId(topoId);
 		FileUtil.mkdirs(envPath);
@@ -153,5 +165,80 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 				}
 			}
 		}
+	}
+
+	public void exportImgAndWriteUp(String writeUp, String title, File task){
+		File imgFile = new File(task.getPath() + File.separator + IMG);
+		if (!imgFile.exists()) {
+			imgFile.mkdir();
+		}
+
+		List<String> strList = LocalStringUtil.getMatchStr(writeUp, PatternConstant.MARKDOWN_IMAGE);
+		for (int j = 0; j < strList.size(); j++) {
+			String str = strList.get(j);
+			String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
+			FileUtil.copyFile(imgUrl, imgFile.getPath() + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl), false);
+			imgUrl = "./img/" + (j + 1) + "." + FileUtil.getFileSuffix(imgUrl);
+			writeUp = writeUp.replace(str, String.format(MdConstant.ONLY_URL_IMG,imgUrl));
+		}
+		log.info("export mission [{}] img successfully", title);
+		File writeUpFile = new File(task.getPath() + File.separator + WRITE_UP_FILE);
+		exportWriteUp(writeUp, writeUpFile, title);
+	}
+
+	public void exportMission(MissionTemplate missionTemplate, List<String> taskList, Map<String, String> constantMap,File taskFile){
+		//单个任务导出
+		taskList.add(missionTemplate.getTitle());
+		MdParser mdParser = new MdParser();
+
+		File task = new File(taskFile.getPath() + File.separator + missionTemplate.getTitle());
+		FileUtil.mkdirs(task.getPath());
+		JSONArray options = null;
+		List<String> optionList = null;
+
+		switch (missionTemplate.getType()) {
+			case 0:
+				//判断
+				JudgeMD judgeMD = BeanUtils.copy(missionTemplate, JudgeMD.class);
+				judgeMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
+				mdParser.write(judgeMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
+				break;
+			case 1:
+				//单选
+				RadioMD radioMD = BeanUtils.copy(missionTemplate, RadioMD.class);
+				options = JSONArray.parseArray(missionTemplate.getOption());
+				optionList = new ArrayList<>();
+				for (int i = 0; i < options.size(); i++) {
+					optionList.add(options.getJSONObject(i)
+										  .getString("optionValue"));
+				}
+				radioMD.setOptions(optionList);
+				radioMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
+				mdParser.write(radioMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
+				break;
+			case 2:
+				//多选
+				MultipleChoiceMD multipleChoiceMD = BeanUtils.copy(missionTemplate,
+						MultipleChoiceMD.class);
+				options = JSONArray.parseArray(missionTemplate.getOption());
+				optionList = new ArrayList<>();
+				for (int i = 0; i < options.size(); i++) {
+					optionList.add(options.getJSONObject(i)
+										  .getString("optionValue"));
+				}
+				multipleChoiceMD.setOptions(optionList);
+				multipleChoiceMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
+				mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
+				break;
+			case 7:
+				//其他
+				FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
+				fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
+				mdParser.write(fileMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
+				break;
+		}
+		log.info("export mission [{}] README.md successfully", missionTemplate.getTitle());
+		//导出img和writeUp
+		exportImgAndWriteUp(missionTemplate.getWriteUp(),missionTemplate.getTitle(),task);
 	}
 }

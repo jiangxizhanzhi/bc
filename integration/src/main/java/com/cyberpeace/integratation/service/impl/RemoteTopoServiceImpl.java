@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -36,6 +36,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String TOPO_SYNC;
 
+	private String TOPO_SYNC_UNLIMITED;
+
 	private String TOPO_RETRIEVE;
 
 	private String TOPO_DELETE;
@@ -54,6 +56,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_DIGEST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.terminal.statistic");
 		TOPO_SYNC = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.sync");
+		TOPO_SYNC_UNLIMITED = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("scene.topo.sync.unlimited");
 		TOPO_RETRIEVE = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
@@ -141,6 +145,13 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		String targetUrl = TOPO_SYNC;
 		JSONObject jsonObject = HttpClientUtil.post(targetUrl, json, JSONObject.class);
 		return jsonObject.getString("id");
+	}
+
+	@Override
+	public String saveUnlimited(JSONObject json) {
+		String targetUrl = TOPO_SYNC_UNLIMITED;
+		JSONObject res = HttpClientUtil.post(targetUrl, json, JSONObject.class);
+		return res.getString("id");
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 
 	private static final Integer UNSUBMITTED = 0;
 
-	private static final Integer FINISHED = 50;
+	private static final Integer FINISHED = 0;
 
 	private static final Integer FULL_MARKS = 100;
 
@@ -448,7 +448,7 @@ public class SkillServiceImpl extends ServiceImpl<SkillMapper, Skill> implements
 		}
 		missionProcessBo.setProcess(process);
 		missionProcessBo
-				.setStatus(process.intValue() == UNSUBMITTED.intValue() ? UNSUBMITTED : DONE);
+				.setStatus(score == null ? UNSUBMITTED : DONE);
 		return missionProcessBo;
 	}
 

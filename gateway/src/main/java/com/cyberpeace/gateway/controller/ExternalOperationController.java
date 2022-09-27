@@ -1,25 +1,24 @@
 package com.cyberpeace.gateway.controller;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.annoations.AuthKey;
+import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.constant.OrderNameConstant;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
@@ -32,7 +31,6 @@ import com.cyberpeace.gateway.controller.req.OperationPageReq;
 import com.cyberpeace.gateway.service.bo.ExternalOperationBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeCategoryBo;
 import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -40,6 +38,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationFileBo;
 import com.google.common.collect.Lists;
@@ -50,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "外部接口-实操习题相关api")
 @Slf4j
+@AuthKeyUser
 @RestController
 @RequestMapping("/gateway/exercise")
 public class ExternalOperationController {
@@ -73,39 +73,13 @@ public class ExternalOperationController {
 	private PracticeSetService practiceSetService;
 
 	@Autowired
-	private RemoteUserService remoteUserService;
-
-	/**
-	 * 接口认证(key获取方式后续可能调整)
-	 * @param key headers: OPT-OJ-KEY
-	 */
-	private void allowAccess(String key) {
-		if (!key.equals(WebConstant.OJ_HEADER_KEY_VALUE)) {
-			throw new UnauthorizedException("secretKey is failed.");
-		}
-	}
-
-	/**
-	 * 校验用户
-	 * @param userId
-	 */
-	private UserInfo validateUser(String userId) {
-		UserInfo userInfo = remoteUserService.getById(userId);
-		if (null == userInfo) {
-			log.error("User does not exist！user_id=[{}]", userInfo.getUserId());
-			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
-		}
-
-		return userInfo;
-	}
+	private PracticeOperationService practiceOperationService;
 
 	@ApiOperation("习题集查询")
 	@GetMapping("/practice-set/list")
-	public BaseRsp practiceSetList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			@RequestParam("userId") String userId) {
+	public BaseRsp<List<ExternalPracticeSetBo>> practiceSetList() {
 
-		allowAccess(key);
-		UserInfo userInfo = validateUser(userId);
+		UserInfo userInfo = UserInfoContext.getUserContext();
 
 		List<String> practiceSetIds = practiceSetMapper
 				.selectByAuthContext(AuthContextUtils.constructAuth(userInfo, false));
@@ -124,12 +98,11 @@ public class ExternalOperationController {
 		return new BaseRsp(practiceSetBos);
 	}
 
+	@AuthKey
 	@ApiOperation("实操习题分类查询")
 	@GetMapping("/category/list")
-	public BaseRsp<List<ExternalPracticeCategoryBo>>
-			categoryList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key) {
+	public BaseRsp<List<ExternalPracticeCategoryBo>> categoryList() {
 
-		allowAccess(key);
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(PracticeCategory.PracticeType.OPERATION.getCode(), null);
 		List<ExternalPracticeCategoryBo> categoryBos = BeanUtils.deepCopyList(categoryList,
@@ -137,12 +110,11 @@ public class ExternalOperationController {
 		return new BaseRsp(categoryBos);
 	}
 
+	@AuthKey
 	@ApiOperation("实操习题批量查询")
 	@GetMapping("/batch-get")
-	public BaseRsp batchGet(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			ExternalBatchReq batchReq) {
+	public BaseRsp<List<ExternalOperationBo>> batchGet(ExternalBatchReq batchReq) {
 
-		allowAccess(key);
 		List<PracticeOperation> operationList = practiceOperationMapper
 				.selectBatchIds(batchReq.getResourceIds());
 		List<ExternalOperationBo> operationBos = StreamApiUtils.map(operationList,
@@ -171,23 +143,10 @@ public class ExternalOperationController {
 		if (StringUtils.hasText(operation.getAttachmentId())) {
 			if (null != operation.getDynamicFlag() && operation.getDynamicFlag()
 					.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()) {
-				List<String> fileIds = Arrays
-						.asList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
-				if (!CollectionUtils.isEmpty(fileIds)) {
-					List<Attachment> attachments = attachmentMapper.selectBatchIds(fileIds, false);
-					Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
-							Attachment::getResourceId, attachment -> attachment);
 
-					List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(fileIds,
-							fileId -> {
-								PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
-								Attachment file = attachmentMap.get(fileId);
-								fileBo.setFileUrl(utilService.handlerFileUrl(file.getFilePath()));
-								fileBo.setFileName(file.getFileName());
-								return fileBo;
-							});
-					externalOperationBo.setAttachment(fileBos);
-				}
+				List<PracticeOperationFileBo> fileBos = practiceOperationService
+						.getOperationFile(operation.getAttachmentId());
+				externalOperationBo.setAttachment(fileBos);
 
 			} else {
 				Attachment attachment = attachmentMapper.selectById(operation.getAttachmentId());
@@ -207,11 +166,9 @@ public class ExternalOperationController {
 
 	@ApiOperation("实操习题分页查询")
 	@GetMapping("/list")
-	public BaseRsp pageList(@RequestHeader(WebConstant.OJ_HEADER_KEY) String key,
-			OperationPageReq req) {
+	public BaseRsp<ListRsp<ExternalOperationBo>> pageList(OperationPageReq req) {
 
-		allowAccess(key);
-		UserInfo userInfo = validateUser(req.getUserId());
+		UserInfo userInfo = UserInfoContext.getUserContext();
 		Page page = req.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
 			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
@@ -219,7 +176,8 @@ public class ExternalOperationController {
 
 		// 条件组装
 		OperationListQuery listQuery = BeanUtils.copy(req, OperationListQuery.class);
-		List<String> setIds = practiceSetService.getSetIds(AuthContextUtils.constructAuth(userInfo, false), req.getPracticeSet());
+		List<String> setIds = practiceSetService
+				.getSetIds(AuthContextUtils.constructAuth(userInfo, false), req.getPracticeSet());
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new BaseRsp(PageUtil.getNullResult());
 		}
@@ -232,8 +190,7 @@ public class ExternalOperationController {
 		}
 
 		// 条件查询
-		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery,
-				true);
+		IPage<PracticeOperation> iPage = practiceOperationMapper.pageByQuery(page, listQuery, true);
 		IPage<ExternalOperationBo> convert = iPage
 				.convert(practiceOperation -> entityToExternal(practiceOperation));
 		return new BaseRsp(PageUtil.getListResult(convert));

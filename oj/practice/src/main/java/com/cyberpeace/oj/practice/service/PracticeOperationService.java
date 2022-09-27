@@ -177,4 +177,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param logContent
 	 */
 	void createMpLog(String practiceId, LogContent logContent);
+
+	/**
+	 * 附件数据组装
+	 * @param attachmentId
+	 * @return
+	 */
+    List<PracticeOperationFileBo> getOperationFile(String attachmentId);
 }

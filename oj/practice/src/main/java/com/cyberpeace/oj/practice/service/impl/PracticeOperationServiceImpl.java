@@ -1,5 +1,22 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -48,22 +65,8 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author chenz
@@ -298,26 +301,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		if (StringUtils.isNotBlank(operation.getAttachmentId())) {
 
 			if (!authContext.getIsWeb()) {
-				List<String> attachmentIds = Lists
-						.newArrayList(operation.getAttachmentId().split(CommonConstant.CODE_COMMA));
-				List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds,
-						false);
-
-				if (attachments.size() != attachmentIds.size()) {
-					throw new BusinessException(
-							OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
-				}
-
-				Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
-						Attachment::getResourceId, attachment -> attachment);
-				List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachmentIds,
-						attachment -> {
-							PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
-							fileBo.setFileName(attachmentMap.get(attachment).getFileName());
-							fileBo.setFileUrl(utilService
-									.handlerFileUrl(attachmentMap.get(attachment).getFilePath()));
-							return fileBo;
-						});
+				List<PracticeOperationFileBo> fileBos = getOperationFile(
+						operation.getAttachmentId());
 				operationBo.setFiles(fileBos);
 			}
 
@@ -346,6 +331,40 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		operationBo.setAttachmentId(operation.getAttachmentId());
 
 		return operationBo;
+	}
+
+	@Override
+	public List<PracticeOperationFileBo> getOperationFile(String attachmentId) {
+		
+		if (StringUtils.isBlank(attachmentId)) {
+			return Lists.newArrayList();
+		}
+
+		String[] fileIds = attachmentId.split(CommonConstant.CODE_COMMA);
+		List<String> attachmentIds = Lists.newArrayList(fileIds);
+		List<Attachment> attachments = attachmentMapper.selectBatchIds(attachmentIds, false);
+
+		// 附件数量判断
+		if (attachments.size() != attachmentIds.size()) {
+			throw new BusinessException(OjBusinessErrorCode.ATTACHMENT_MISSION);
+		}
+
+		// 数据类型转换
+		Map<String, Attachment> attachmentMap = StreamApiUtils.toMap(attachments,
+				Attachment::getResourceId, attachment -> attachment);
+		List<PracticeOperationFileBo> fileBos = StreamApiUtils.map(attachmentIds,
+				attachment -> fileToBo(attachment, attachmentMap));
+		
+		return fileBos;
+	}
+	
+	private PracticeOperationFileBo fileToBo(String fileId, Map<String, Attachment> fileMap) {
+		PracticeOperationFileBo fileBo = new PracticeOperationFileBo();
+		Attachment attachment = fileMap.get(fileId);
+		
+		fileBo.setFileName(attachment.getFileName());
+		fileBo.setFileUrl(utilService.handlerFileUrl(attachment.getFilePath()));
+		return fileBo;
 	}
 
 	/**

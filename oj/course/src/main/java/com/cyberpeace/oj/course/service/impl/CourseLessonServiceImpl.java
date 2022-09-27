@@ -431,6 +431,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				&& null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig, lessonExist.getTopoId());
 			courseLesson.setTopoId(topoId);
+		} else {
+			if (StringUtils.isNotBlank(lessonExist.getTopoId())) {
+				remoteTopoService.deleteById(lessonExist.getTopoId());
+			}
+			courseLesson.setTopoId(CommonConstant.EMPTY_STRING);
 		}
 
 		// 课时目录修改

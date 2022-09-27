@@ -1,13 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
@@ -34,8 +26,16 @@ import com.cyberpeace.situation.service.context.ConnectionStatusContext;
 import com.cyberpeace.situation.service.context.ElementStatusContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import static com.cyberpeace.situation.constant.SituationConstants.DEMO_SCENE_ID;
 
 @Log4j2
 @Service
@@ -165,7 +165,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Override
 	public JSONObject getSceneTopoBySceneId(String sceneId) {
-		if ("demo".equals(sceneId)) {
+		if (DEMO_SCENE_ID.equals(sceneId)) {
 			return getDemoSceneTopo();
 		} else {
 			return remoteSceneService.getById(sceneId, null);

@@ -35,6 +35,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
+
 @Slf4j
 @Service
 public class SituationHandlerServiceImpl implements SituationHandlerService {
@@ -298,7 +300,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Override
 	public Integer getLineWidth() {
 
-		return 5;
+		return DEFAULT_LINE_WIDTH;
 
 	}
 

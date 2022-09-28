@@ -167,8 +167,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecord getEntity(String resourceId) {
-        // todo 文本调整
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
+        // 非法请求
         if (evalRecord == null) {
             throw new BusinessException("评估未找到");
         }
@@ -178,9 +178,27 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalRecord;
     }
 
+    private String getRoleUserId(EvalTask evalTask) {
+        List<EvalRoleConfig> evalRoleConfigList = JsonUtil.toJsonObjectArray(evalTask.getStepConfig(), EvalRoleConfig.class);
+        for (EvalRoleConfig evalRoleConfig: evalRoleConfigList) {
+            if (evalRoleConfig.getUsers().contains(UserInfoContext.getUserContext().getUserId())) {
+                return UserInfoContext.getUserContext().getUserId();
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern) {
-        return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern));
+        EvalTask evalTask = getTask(taskId);
+        // 白方: 评估任务创建者, 可查看此任务下所有评估
+        if (evalTask.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId())) {
+            return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern, null));
+        }
+
+        // 红/蓝: 仅可查看我方角色（当前角色下仅一名用户）创建评估
+        return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern, getRoleUserId(evalTask)));
     }
 
     @Override
@@ -214,6 +232,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 当evalRecord.resourceId不为空时, 视为更新
         boolean isUpdate = !StringUtils.isEmpty(evalRecord.getResourceId());
         if (!isUpdate) {
+            EvalTask evalTask = getTask(requestData.getTaskId());
+            if (getRoleUserId(evalTask) == null) {
+                throw new BusinessException("非法请求, 白方不支持创建评估.");
+            }
+
             evalRecord.setResourceId(IDGeneratorUtil.getID());
             evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());
         }
@@ -424,6 +447,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecordRsp update(EvalRecordAddReq requestData) {
+        EvalTask evalTask = getTask(requestData.getTaskId());
+        if (getRoleUserId(evalTask) == null) {
+            throw new BusinessException("非法请求, 白方不支持创建评估.");
+        }
+
         EvalRecord originEvalRecord = getEntity(requestData.getResourceId());
 
         EvalRecord newEvalRecord = BeanUtils.copy(originEvalRecord, EvalRecord.class);

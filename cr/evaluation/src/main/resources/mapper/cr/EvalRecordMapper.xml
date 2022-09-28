@@ -20,6 +20,9 @@
             <if test="status != null and status != ''">
                 and T1.status = #{status}
             </if>
+            <if test="user_id != null and user_id != ''">
+                and T1.create_user_id = #{user_id}
+            </if>
         </where>
         order by T1.id desc
     </select>

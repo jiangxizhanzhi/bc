@@ -14,5 +14,6 @@ public interface EvalRecordMapper extends BaseMapper<EvalRecord> {
     Page<EvalRecordListRsp> pageList(@Param("page") Page page,
                                      @Param("task_id") String task_id,
                                      @Param("status") Integer status,
-                                     @Param("pattern") String pattern);
+                                     @Param("pattern") String pattern,
+                                     @Param("user_id") String userId);
 }

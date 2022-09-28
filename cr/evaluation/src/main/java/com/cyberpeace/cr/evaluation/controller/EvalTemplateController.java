@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,6 +19,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
@@ -52,6 +54,9 @@ public class EvalTemplateController {
 
 	@Autowired
 	private EvalTemplateService evalTemplateService;
+	
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -99,6 +104,12 @@ public class EvalTemplateController {
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
 		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		if(CollectionUtils.isNotEmpty(evalTemplateRsp.getStepConfig())) {
+			evalTemplateRsp.getStepConfig().stream().forEach(stepConfig -> {
+				stepConfig.setUsersData(crRoleService.getUserDatas(stepConfig.getUsers()));
+			});
+		}
+		
 		return new BaseRsp<>(evalTemplateRsp);
 	}
 

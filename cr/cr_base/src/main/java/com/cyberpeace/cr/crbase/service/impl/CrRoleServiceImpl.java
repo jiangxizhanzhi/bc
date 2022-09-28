@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -329,6 +330,10 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	@Override
 	public List<UserData> getUserDatas(List<String> userIdList) {
 		List<UserData> userDataList = Lists.newArrayList();
+		if(CollectionUtils.isEmpty(userIdList)) {
+			return userDataList;
+		}
+		
 		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIdList);
 		for (UserInfo userInfo : userInfoList) {
 			UserData userData = new UserData();

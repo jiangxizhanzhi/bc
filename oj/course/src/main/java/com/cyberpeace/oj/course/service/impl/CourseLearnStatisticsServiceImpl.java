@@ -30,6 +30,7 @@ import com.cyberpeace.oj.course.dao.mapper.CourseLearnStatisticsMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsService {
@@ -102,12 +103,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 
 		IPage<AdminCourseStatisticsRes> adminCourseStatisticsResIPage = courseLearnStatisticsMapper
 				.listCourseByPage(page, context, courseIds, false);
-		List<AdminCourseStatisticsRes> records = adminCourseStatisticsResIPage.getRecords();
-		List<AdminCourseStatisticsRes> realRecords = records.stream()
-				.filter(record -> null != remoteUserService.getById(record.getCreateUser()))
-				.collect(Collectors.toList());
-		adminCourseStatisticsResIPage.setRecords(realRecords);
-		adminCourseStatisticsResIPage.setTotal(adminCourseStatisticsResIPage.getTotal());
+
 		return PageUtil
 				.getListResult(adminCourseStatisticsResIPage.convert(this::curseStatisticToBo));
 	}
@@ -115,7 +111,7 @@ public class CourseLearnStatisticsServiceImpl implements CourseLearnStatisticsSe
 	private AdminCourseStatisticsRes
 			curseStatisticToBo(AdminCourseStatisticsRes adminCourseStatisticsRes) {
 		UserInfo userInfo = remoteUserService.getById(adminCourseStatisticsRes.getCreateUser());
-		adminCourseStatisticsRes.setCreateUser(userInfo.getUserName());
+		adminCourseStatisticsRes.setCreateUser(null == userInfo ? "" : userInfo.getUserName());
 		return adminCourseStatisticsRes;
 	}
 

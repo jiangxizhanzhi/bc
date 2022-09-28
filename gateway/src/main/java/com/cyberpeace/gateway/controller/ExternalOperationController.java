@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.annoations.AuthKey;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
@@ -103,7 +103,7 @@ public class ExternalOperationController {
 		return new BaseRsp(practiceSetBos);
 	}
 
-	@AuthKey
+	@AuthOjKey
 	@ApiOperation("实操习题分类查询")
 	@GetMapping("/category/list")
 	public BaseRsp<List<ExternalPracticeCategoryBo>> categoryList() {
@@ -115,7 +115,7 @@ public class ExternalOperationController {
 		return new BaseRsp(categoryBos);
 	}
 
-	@AuthKey
+	@AuthOjKey
 	@ApiOperation("实操习题批量查询")
 	@GetMapping("/batch-get")
 	public BaseRsp<List<ExternalOperationBo>> batchGet(ExternalBatchReq batchReq) {
@@ -206,9 +206,6 @@ public class ExternalOperationController {
 	public BaseRsp<List<ExternalOperationBo>>
 			getOperationRandom(PracticeRandomChoiceReq choiceReq) {
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(new ArrayList<>());
-		}
 
 		OperationListQuery listQuery = BeanUtils.copy(choiceReq, OperationListQuery.class);
 		if (StringUtils.hasText(choiceReq.getCategory())) {
@@ -221,6 +218,12 @@ public class ExternalOperationController {
 			return new BaseRsp<>(new ArrayList<>());
 		}
 		listQuery.setPracticeSetIds(setIds);
+
+		List<String> practiceIds = practiceOperationMapper.selectBySetIds(setIds, true);
+		if (CollectionUtils.isEmpty(practiceIds)) {
+			return new BaseRsp<>(new ArrayList<>());
+		}
+		listQuery.setResourceIds(practiceIds);
 
 		List<PracticeOperation> operationList = practiceOperationMapper.randomChoice(listQuery,
 				choiceReq.getCount());
@@ -238,9 +241,6 @@ public class ExternalOperationController {
 	public BaseRsp<ExternalOperationCountBo> searchCount(OperationPageReq pageReq) {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(new ExternalOperationCountBo());
-		}
 
 		OperationListQueryBo queryBo = BeanUtils.copy(pageReq, OperationListQueryBo.class);
 		queryBo.setPracticeSetId(pageReq.getPracticeSet());

@@ -368,18 +368,18 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new ExternalOperationCountBo();
 		}
-
-		if (StringUtils.isNotBlank(listQueryBo.getPracticeSetId())
-				&& !setIds.contains(listQueryBo.getPracticeSetId())) {
-			return new ExternalOperationCountBo();
+		String searchSet = listQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet)) {
+			if (setIds.contains(searchSet)) {
+				setIds.clear();
+				setIds.add(searchSet);
+			} else {
+				return new ExternalOperationCountBo();
+			}
 		}
 
 		OperationListQuery listQuery = BeanUtils.copy(listQueryBo, OperationListQuery.class);
-		if (StringUtils.isNotBlank(listQueryBo.getPracticeSetId())) {
-			listQuery.setPracticeSetIds(Lists.newArrayList(listQueryBo.getPracticeSetId()));
-		} else {
-			listQuery.setPracticeSetIds(setIds);
-		}
+		listQuery.setPracticeSetIds(setIds);
 
 		List<PracticeOperation> operationList = practiceOperationMapper.listByQuery(listQuery,
 				true);

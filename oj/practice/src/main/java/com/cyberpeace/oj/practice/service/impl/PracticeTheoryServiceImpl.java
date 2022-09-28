@@ -794,19 +794,25 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext) {
 
+
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(setIds)) {
 			return new ExternalTheoryCountBo();
 		}
 
+		String searchSet = theoryListQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet)) {
+			if (setIds.contains(searchSet)) {
+				setIds.clear();
+				setIds.add(searchSet);
+			} else {
+				return new ExternalTheoryCountBo();
+			}
+		}
+
 		// 设置查询条件
 		TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
-		String searchSet = theoryListQueryBo.getPracticeSetId();
-		if (StringUtils.isNotBlank(searchSet) && setIds.contains(searchSet)) {
-			listQuery.setPracticeSetIds(Lists.newArrayList(searchSet));
-		} else {
-			listQuery.setPracticeSetIds(setIds);
-		}
+		listQuery.setPracticeSetIds(setIds);
 
 		// 数据查询转换
 		List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);

@@ -5,6 +5,7 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class EvalRecordAddReq implements Serializable {
         if (name != null) {
             CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
         }
-        if (description != null) {
+        if (StringUtils.isNotEmpty(description)) {
             CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
         }
     }

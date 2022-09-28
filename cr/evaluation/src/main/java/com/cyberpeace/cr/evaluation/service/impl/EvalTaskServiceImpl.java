@@ -84,7 +84,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		// 校验用户权限
 		if (!Objects.equals(evalTask.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			// 由于测评中加入了红蓝方，去除该校验
+			// throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
 		return evalTask;

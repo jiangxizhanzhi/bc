@@ -8,14 +8,12 @@ import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -24,6 +22,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
@@ -85,7 +84,8 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		// 校验用户权限
 		if (!Objects.equals(evalTask.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
-			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+			// 由于测评中加入了红蓝方，去除该校验
+			// throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
 		return evalTask;
@@ -140,16 +140,16 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		for (EvalRoleConfig evalRoleConfig : evalRoleConfigs) {
 			String roleName = evalRoleConfig.getName();
 			List<String> users = evalRoleConfig.getUsers();
-			JSONArray nodes = new JSONArray();
-			nodes.add(evalRoleConfig.getAssetNodes());
-			nodes.add(evalRoleConfig.getVisibleNodes());
+			CrRoleNodesData data = new CrRoleNodesData();
+			data.setAssetNodes(evalRoleConfig.getAssetNodes());
+			data.setVisibleNodes(evalRoleConfig.getVisibleNodes());
 			
 			for(EvalTaskStepConfig step : evalRoleConfig.getSteps()) {
 				EvalTaskStep evalTaskStep = BeanUtils.copy(step, EvalTaskStep.class);
 				evalTaskStep.setTaskId(evalTask.getResourceId());
 				evalTaskStep.setType(EvalTaskStep.Type.MANUAL.getCode());
 				evalTaskStep.setRoleName(roleName);
-				evalTaskStep.setNodes(JsonUtil.toJsonString(nodes));
+				evalTaskStep.setNodes(JsonUtil.toJsonString(data));
 				evalTaskStep.setUserIds(JsonUtil.toJsonString(users));
 				
 				evalTaskSteps.add(evalTaskStep);

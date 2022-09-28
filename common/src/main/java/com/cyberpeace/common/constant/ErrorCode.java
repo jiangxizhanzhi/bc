@@ -149,4 +149,7 @@ public interface ErrorCode {
 
 	/** 文件删除失败*/
 	String FILE_DELETE_FAILED = "100048";
+
+	/** 竞赛服务异常*/
+	String ERROR_AD_SERVICE = "100049";
 }

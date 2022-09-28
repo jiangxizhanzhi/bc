@@ -146,7 +146,9 @@ public class EvalTaskController {
 			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
 			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
-					value = "task_id", required = false) String taskId) {
+					value = "task_id", required = false) String taskId,
+			@ApiParam(name = "user_id", value = "用户id", required = false) @RequestParam(
+					value = "user_id", required = false) String userId) {
 
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
@@ -172,8 +174,9 @@ public class EvalTaskController {
 			evalTaskRsp.setTaskName(evalTask.getTaskName());
 			sceneViewContext.setLocalSceneId(evalTask.getLocalSceneId());
 			
-			JSONObject topoData = sceneViewContext.getTopoData();
-			sceneFilterService.filterVisibleTopo(topoData, evalTaskStepService.getNodes(taskId, UserInfoContext.getUserContext().getUserId()));
+			if(userId != null) {
+				sceneFilterService.filterVisibleTopo(sceneViewContext.getTopoData(), evalTaskStepService.getNodes(taskId, userId));
+			}
 		}
 
 		BeanUtils.copyProperties(sceneViewContext, evalTaskRsp);

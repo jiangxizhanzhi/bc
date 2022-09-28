@@ -1115,7 +1115,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (sort.size() < CommonConstant.TWO) {
 			return;
 		}
-		
+
 		for (int i = 1; i < sort.size(); i++) {
 			Classroom previous = sort.get(i - 1);
 			Classroom current = sort.get(i);
@@ -1208,8 +1208,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		planExportBo.setCourseName(null != course ? course.getName() : CommonConstant.EMPTY_STRING);
-		planExportBo.setLessonName(null != lesson ? lesson.getName() : CommonConstant.EMPTY_STRING);
+		planExportBo.setCourseName(course.getName());
+		planExportBo.setLessonName(lesson.getName());
 
 		planExportBo.setStartTime(classroom.getStartTime());
 		planExportBo.setEndTime(classroom.getEndTime());
@@ -1240,9 +1240,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			return classroomList;
 		}
 
-		if (CollectionUtils
-				.isNotEmpty(classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId()))
-				&& !cover) {
+		classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+		if (CollectionUtils.isNotEmpty(classroomList) && !cover) {
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
 		}
 
@@ -1272,24 +1271,23 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	 */
 	private Classroom parseClassroom(List<String> roomData, UserInfo userInfo, int rowIndex,
 			Map<String, String> orgMap) {
-		String courseName;
-		if (StringUtils.isBlank(courseName = roomData.get(CommonConstant.ONE))) {
+		String courseName = roomData.get(CommonConstant.ONE);
+		if (StringUtils.isBlank(courseName)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
 		}
 
-		String courseId;
-		if (StringUtils.isBlank(courseId = courseMapper.selectByName(courseName))) {
+		String courseId = roomData.get(CommonConstant.ONE);
+		if (StringUtils.isBlank(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
 		}
 
-		String lessonName;
-		if (StringUtils.isBlank(lessonName = roomData.get(CommonConstant.TWO))) {
+		String lessonName = roomData.get(CommonConstant.ONE);
+		if (StringUtils.isBlank(lessonName)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
 		}
 
-		String lessonId;
-		if (StringUtils.isBlank(
-				lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName))) {
+		String lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName);
+		if (StringUtils.isBlank(lessonId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_EXIST, rowIndex);
 		}
 
@@ -1298,12 +1296,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_PUBLIC, rowIndex);
 		}
 
-		String startTime;
-		String endTime;
-		if (StringUtils.isBlank(startTime = roomData.get(CommonConstant.THREE))) {
+		String startTime = roomData.get(CommonConstant.THREE);
+		String endTime = roomData.get(CommonConstant.FOUR);
+		if (StringUtils.isBlank(startTime)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
-		if (StringUtils.isBlank(endTime = roomData.get(CommonConstant.FOUR))) {
+		if (StringUtils.isBlank(endTime)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
 
@@ -1316,8 +1314,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
 		}
 
-		String orgTree;
-		if (StringUtils.isBlank(orgTree = roomData.get(CommonConstant.FIVE))) {
+		String orgTree = roomData.get(CommonConstant.FOUR);
+		if (StringUtils.isBlank(orgTree)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL, rowIndex);
 		}
 		// 组织数据获取
@@ -1358,13 +1356,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			int rowIndex, Map<String, TrainPlan> trainPlanMap) {
 
 		// 数据校验
-		String planName;
-		if (StringUtils.isBlank(planName = rowData.get(CommonConstant.ZERO))) {
+		String planName = rowData.get(CommonConstant.ZERO);
+		if (StringUtils.isBlank(planName)) {
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NAME_IS_NULL, rowIndex);
 		}
 
-		TrainPlan trainPlan;
-		if (null != (trainPlan = trainPlanMap.get(planName))) {
+		TrainPlan trainPlan = trainPlanMap.get(planName);
+		if (null != (trainPlan)) {
 			return trainPlan;
 		}
 

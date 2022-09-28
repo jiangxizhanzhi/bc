@@ -112,8 +112,8 @@ public class HttpClientUtil {
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 
-		String jwt;
-		if (StringUtils.isNotBlank(jwt = CommonContext.getAuthorization())) {
+		String jwt = CommonContext.getAuthorization();
+		if (StringUtils.isNotBlank(jwt)) {
 			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + jwt);
 		}
 

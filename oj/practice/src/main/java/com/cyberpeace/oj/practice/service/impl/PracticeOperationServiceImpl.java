@@ -265,7 +265,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// topo更新
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
 			updateOperation.setTopoId(
-					localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));;
+					localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));
 		}
 
 		final Boolean updateRandom = operation.getDynamicFlag()
@@ -842,7 +842,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		String attachmentPath = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT)
 				.getAbsolutePath();
 		List<String> fileNames = FileUtil.listFileNamesByDir(attachmentPath, false);
-		PracticeOperation operation = JsonParseOperation(convertData, practiceSet, topoId,
+		PracticeOperation operation = jsonParseOperation(convertData, practiceSet, topoId,
 				fileNames);
 
 		// 校验实操习题标题
@@ -1066,13 +1066,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @param practiceSet
 	 * @return
 	 */
-	private PracticeOperation JsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
+	private PracticeOperation jsonParseOperation(JSONObject operationData, PracticeSet practiceSet,
 			String topoId, List<String> attachments) {
 
 		PracticeOperation operation = new PracticeOperation();
 		// 分类数据处理
-		String categoryName = (String) operationData.remove("category_id");
-		if (StringUtils.isBlank(categoryName = categoryName.trim())) {
+		String categoryName = ((String) operationData.remove("category_id")).trim();
+		if (StringUtils.isBlank(categoryName)) {
 			log.error("Practice category is empty! operation_data=[{}]",
 					JsonUtil.toJsonString(operationData));
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);

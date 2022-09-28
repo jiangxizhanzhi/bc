@@ -9,6 +9,9 @@ import com.cyberpeace.common.util.FileUtil;
 
 import lombok.Getter;
 
+/**
+ * @author chenzhuo
+ */
 public enum UploadAttachmentPermission implements GenericEnum {
 
     /** 文件上传权限枚举*/
@@ -21,14 +24,14 @@ public enum UploadAttachmentPermission implements GenericEnum {
     WEB_COURSE_MD_ATTACHMENT(7, "前台课程MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.WEB_OJ_COURSE });
 
     @Getter
-    public Integer code;
+    public final Integer code;
 
     @Getter
-    private String desc;
+    private final String desc;
 
-    public String fileSuffix;
+    public final String fileSuffix;
 
-    public String[] menuIds;
+    public final String[] menuIds;
 
     UploadAttachmentPermission(int type, String desc, String fileSuffix, String[] menuIds) {
         this.code = type;
@@ -43,11 +46,12 @@ public enum UploadAttachmentPermission implements GenericEnum {
 
     public void validatePermission(boolean all) {
 
-        Boolean access = false;
+        boolean access = false;
 
         if (!all) {
             for (String menuId : menuIds) {
-                if (access = SecurityUtils.getSubject().isPermitted(menuId)) {
+                access = SecurityUtils.getSubject().isPermitted(menuId);
+                if (access) {
                     break;
                 }
             }

@@ -680,8 +680,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
 
 		// 分类编号设置 不存在创建
-		String categoryName = excelRowData.get(1);
-		if (StringUtils.isBlank(categoryName = categoryName.trim())) {
+		String categoryName = excelRowData.get(1).trim();
+		if (StringUtils.isBlank(categoryName)) {
 			log.error("Practice category is empty! operation_data=[{}]",
 					JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);

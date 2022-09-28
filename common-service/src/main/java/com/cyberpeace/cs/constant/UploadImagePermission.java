@@ -9,6 +9,10 @@ import com.cyberpeace.common.util.FileUtil;
 
 import lombok.Getter;
 
+/**
+ * @author chenzhuo
+ */
+
 public enum UploadImagePermission implements GenericEnum {
 
 	/** 文件上传权限枚举*/
@@ -28,14 +32,14 @@ public enum UploadImagePermission implements GenericEnum {
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_PRACTICE_OPERATION});
 
 	@Getter
-	public Integer code;
+	public final Integer code;
 
 	@Getter
-	private String desc;
+	private final String desc;
 
-	public String fileSuffix;
+	public final String fileSuffix;
 
-	public String[] menuIds;
+	public final String[] menuIds;
 
 	UploadImagePermission(int type, String desc, String fileSuffix, String[] menuIds) {
 		this.code = type;
@@ -50,11 +54,12 @@ public enum UploadImagePermission implements GenericEnum {
 
 	public void validatePermission(boolean all) {
 
-		Boolean access = false;
+		boolean access = false;
 
 		if (!all) {
 			for (String menuId : menuIds) {
-				if (access = SecurityUtils.getSubject().isPermitted(menuId)) {
+				access = SecurityUtils.getSubject().isPermitted(menuId);
+				if (access) {
 					break;
 				}
 			}

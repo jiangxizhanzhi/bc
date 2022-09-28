@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @AuthUser
-@AuthKey
+@AuthOjKey
 public @interface AuthKeyUser {
 
     @AliasFor(annotation = AuthUser.class)

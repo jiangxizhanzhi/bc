@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.annoations.AuthKey;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
@@ -77,11 +77,6 @@ public class ExternalTheoryController {
 
 		// 组织校验
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			log.warn("The current user has no organization information！User=[id={}, user_name={}]",
-					userInfo.getUserId(), userInfo.getUserName());
-			return new BaseRsp<>(Lists.newArrayList());
-		}
 		
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
@@ -101,7 +96,7 @@ public class ExternalTheoryController {
 
 	@ApiOperation("理论基础分类-全量获取")
 	@GetMapping("/category/list")
-	@AuthKey
+	@AuthOjKey
 	public BaseRsp<List<ExternalPracticeCategoryBo>> getCategoryList() {
 
 		List<PracticeCategory> categoryList = practiceCategoryMapper
@@ -118,9 +113,6 @@ public class ExternalTheoryController {
 		
 		// 数据校验
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(PageUtil.getNullResult());
-		}
 
 		// 习题集权限查询
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
@@ -143,7 +135,7 @@ public class ExternalTheoryController {
 
 	@ApiOperation("理论基础题库-批量查询")
 	@GetMapping("/batch-get")
-	@AuthKey
+	@AuthOjKey
 	public BaseRsp<List<PracticeTheory>> batchGet(
 			@ApiParam("资源编号数组") @RequestParam("resource_ids") @NotBlank List<String> resourceIds) {
 		
@@ -158,10 +150,6 @@ public class ExternalTheoryController {
 	public BaseRsp<List<PracticeTheory>> getTheoryRandom(PracticeRandomChoiceReq queryParams) {
 		
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(Lists.newArrayList());
-		}
-
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
 		List<String> setIds = practiceSetService.getSetIds(authContext,
 				queryParams.getPracticeSet());
@@ -190,9 +178,6 @@ public class ExternalTheoryController {
 	public BaseRsp<ExternalTheoryCountBo> searchCount(@Validated PracticeTheoryListReq listReq) {
 
 		UserInfo userInfo = UserInfoContext.getUserContext();
-		if (!StringUtils.hasText(userInfo.getOrganizationId())) {
-			return new BaseRsp<>(new ExternalTheoryCountBo());
-		}
 
 		// 设置查询条件
 		TheoryListQueryBo queryBo = BeanUtils.copy(listReq, TheoryListQueryBo.class);

@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.cyberpeace.common.annoations.AuthKey;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
 import com.cyberpeace.common.annoations.AuthUser;
 import com.cyberpeace.common.constant.WebConstant;
@@ -35,22 +38,22 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 
 		if (handler instanceof HandlerMethod) {
 			Method method = ((HandlerMethod) handler).getMethod();
-			AuthKey authKey = method.getAnnotation(AuthKey.class);
+			AuthOjKey authKey = method.getAnnotation(AuthOjKey.class);
 			AuthUser authUser = method.getAnnotation(AuthUser.class);
 			AuthKeyUser authKeyUser = null;
 			if (null == authKey && null == authUser) {
 				authKeyUser = method.getAnnotation(AuthKeyUser.class);
 			}
 
-			if (null == authKeyUser) {
+			if (null == authKeyUser && authKey == null && authUser == null) {
 				authKeyUser = method.getDeclaringClass().getAnnotation(AuthKeyUser.class);
 			}
 
 			if (null == authKeyUser) {
-				authKey = method.getDeclaringClass().getAnnotation(AuthKey.class);
+				authKey = method.getDeclaringClass().getAnnotation(AuthOjKey.class);
 				authUser = method.getDeclaringClass().getAnnotation(AuthUser.class);
 			} else {
-				authKey = authKeyUser.annotationType().getAnnotation(AuthKey.class);
+				authKey = authKeyUser.annotationType().getAnnotation(AuthOjKey.class);
 				authUser = authKeyUser.annotationType().getAnnotation(AuthUser.class);
 			}
 
@@ -94,7 +97,13 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 		UserInfo userInfo = remoteUserService.getById(authParam);
 		if (null == userInfo) {
 			log.error("User does not exist！user_id=[{}]", authParam);
-			throw new UnauthenticatedException();
+			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
+		}
+
+		if (StringUtils.isBlank(userInfo.getOrganizationId())) {
+			log.error("User organization is blank! user_id=[{}], user_name=[{}]",
+					userInfo.getUserId(), userInfo.getUserName());
+			throw new BusinessException(OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL);
 		}
 
 		return userInfo;

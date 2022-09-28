@@ -40,6 +40,9 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("课时类型")
 	private Integer type;
 
+	@ApiModelProperty("内容描述")
+	private String description;
+
 	@ApiModelProperty("课时类型")
 	private Integer lessonType;
 

@@ -1314,6 +1314,7 @@ ALTER TABLE oj_course_lesson ADD COLUMN lesson_type tinyint(1) NOT NULL COMMENT 
 
 alter table oj_course add column `direction_int` longtext DEFAULT NULL comment '方向简介';
 alter table oj_course_lesson add column `recording_status` int NOT NULL DEFAULT 1 comment '录制状态';
+alter table oj_course_lesson add column `description` longtext DEFAULT NULL comment '内容描述';
 alter table oj_practice_operation add column `type` int NOT NULL DEFAULT 1 comment '实操题类型';
 
 alter table cr_eval_record add create_user_id varchar(64) null comment '创建者ID';

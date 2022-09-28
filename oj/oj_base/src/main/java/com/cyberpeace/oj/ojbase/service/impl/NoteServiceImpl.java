@@ -2,9 +2,8 @@ package com.cyberpeace.oj.ojbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.integratation.model.UserPageContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,9 +13,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -73,6 +74,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			UserPageContext pageContext = UserPageContext.builder()
 					.username(noteListQuery.getUserName()).build();
 			List<UserInfo> userList = remoteUserService.getFuzzyQueryUserList(pageContext);
+			if (userList.isEmpty()) {
+				return page;
+			}
 			List<String> userIds = StreamApiUtils.map(userList, UserInfo::getUserId);
 			listQuery.setUserIds(userIds);
 
@@ -91,11 +95,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 				return noteBo;
 			});
 		} else {
+			List<String> userIds = iPage.getRecords().stream().map(Note::getUserId)
+					.collect(Collectors.toList());
+			Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 
 			return iPage.convert(note -> {
-				UserInfo userInfo = remoteUserService.getById(note.getUserId());
 				NoteListBo noteBo = BeanUtils.copy(note, NoteListBo.class);
-				noteBo.setUserName(null != userInfo ? userInfo.getName() : "");
+				noteBo.setUserName(idNameMap.get(note.getUserId()));
 				return noteBo;
 			});
 		}

@@ -140,16 +140,11 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		for (EvalRoleConfig evalRoleConfig : evalRoleConfigs) {
 			String roleName = evalRoleConfig.getName();
 			List<String> users = evalRoleConfig.getUsers();
-			CrRoleNodesData data = new CrRoleNodesData();
-			data.setAssetNodes(evalRoleConfig.getAssetNodes());
-			data.setVisibleNodes(evalRoleConfig.getVisibleNodes());
-			
 			for(EvalTaskStepConfig step : evalRoleConfig.getSteps()) {
 				EvalTaskStep evalTaskStep = BeanUtils.copy(step, EvalTaskStep.class);
 				evalTaskStep.setTaskId(evalTask.getResourceId());
 				evalTaskStep.setType(EvalTaskStep.Type.MANUAL.getCode());
 				evalTaskStep.setRoleName(roleName);
-				evalTaskStep.setNodes(JsonUtil.toJsonString(data));
 				evalTaskStep.setUserIds(JsonUtil.toJsonString(users));
 				
 				evalTaskSteps.add(evalTaskStep);

@@ -13,7 +13,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
@@ -170,11 +169,6 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		}
 
 		return evalTimeLineContextList;
-	}
-
-	@Override
-	public CrRoleNodesData getNodes(String taskId, String userId) {
-		return JsonUtil.toJsonObject(evalTaskStepMapper.getNodes(taskId, userId), CrRoleNodesData.class);
 	}
 
 }

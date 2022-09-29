@@ -38,11 +38,6 @@ public class EvalTaskStep extends BaseTable {
 	private String roleName;
 	
 	/**
-	 * 角色节点
-	 */
-	private String nodes;
-
-	/**
 	 * 角色用户
 	 */
 	private String userIds;

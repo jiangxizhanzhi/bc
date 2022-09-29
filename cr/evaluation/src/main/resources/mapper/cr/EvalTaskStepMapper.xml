@@ -36,11 +36,4 @@
         as result;
     </select>
     
-    <select id="getNodes" resultType="java.lang.String">
-    	<bind name="userIdPattern" value="'%' + userId + '%'"/>
-        select nodes
-        from cr_eval_task_step
-        where task_id = #{taskId} and user_ids like #{userIdPattern} limit 1
-    </select>
-    
 </mapper>

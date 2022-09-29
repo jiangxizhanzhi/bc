@@ -17,7 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
@@ -33,6 +33,7 @@ import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
@@ -164,8 +165,12 @@ public class EvalTaskController {
 		evalTaskRsp.setTemplateName(evalTemplate.getName());
 		SceneViewContext sceneViewContext = null;
 
+		String stepConfig = null;
+		JSONObject topoData = null;
 		if (StringUtils.isEmpty(taskId)) {
 			sceneViewContext = evalSceneService.viewScene(null, evalTemplate.getTopoId());
+			stepConfig = evalTemplate.getStepConfig();
+			topoData = sceneViewContext.getTopoData();
 		} else {
 			EvalTask evalTask = evalTaskService.getById(taskId);
 			sceneViewContext = evalSceneService.viewScene(evalTask.getMpSceneId(),
@@ -173,10 +178,19 @@ public class EvalTaskController {
 			evalTaskRsp.setTaskId(taskId);
 			evalTaskRsp.setTaskName(evalTask.getTaskName());
 			sceneViewContext.setLocalSceneId(evalTask.getLocalSceneId());
+			stepConfig = evalTask.getStepConfig();
+			topoData = sceneViewContext.getSceneData();
 		}
 		
-		if(userId != null) {
-			sceneFilterService.filterVisibleTopo(sceneViewContext.getSceneData(), evalTaskStepService.getNodes(taskId, userId));
+		// 根据角色过滤显示节点
+		if (userId != null) {
+			List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(stepConfig, EvalRoleConfig.class);
+			for (EvalRoleConfig roleConfig : roleConfigs) {
+				if (roleConfig.getUsers().contains(userId)) {
+					sceneFilterService.filterVisibleTopo(topoData, roleConfig);
+					break;
+				}
+			}
 		}
 
 		BeanUtils.copyProperties(sceneViewContext, evalTaskRsp);

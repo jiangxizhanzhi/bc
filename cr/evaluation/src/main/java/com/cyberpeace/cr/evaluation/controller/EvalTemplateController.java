@@ -190,6 +190,10 @@ public class EvalTemplateController {
 		validateReq(evaTemplateAddReq);
 
 		// 复制模板信息
+		for(EvalRoleConfig roleConfig : evaTemplateAddReq.getStepConfig()) {
+			// 所属节点都是可见节点
+			roleConfig.setVisibleNodes(roleConfig.getAssetNodes());
+		}
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
 

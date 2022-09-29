@@ -176,7 +176,7 @@ public class EvalTaskController {
 			sceneViewContext.setLocalSceneId(evalTask.getLocalSceneId());
 			
 			if(userId != null) {
-				sceneFilterService.filterVisibleTopo(sceneViewContext.getTopoData(), evalTaskStepService.getNodes(taskId, userId));
+				sceneFilterService.filterVisibleTopo(sceneViewContext.getSceneData(), evalTaskStepService.getNodes(taskId, userId));
 			}
 		}
 

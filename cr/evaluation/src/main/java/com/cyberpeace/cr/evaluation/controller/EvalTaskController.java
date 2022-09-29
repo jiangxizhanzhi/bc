@@ -276,7 +276,10 @@ public class EvalTaskController {
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
 				.getFinishedSteps(taskId);
 		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
-		evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+		// 未结束测评任务没有结束时间点
+		if (evalTask.getEndTime() != null) {
+			evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+		}
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);

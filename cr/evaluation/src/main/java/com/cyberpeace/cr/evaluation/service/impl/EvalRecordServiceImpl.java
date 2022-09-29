@@ -758,6 +758,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 // 数据量向上取整, 生成当前页码
                 int count = new BigDecimal(probeDataCount).setScale(scale, BigDecimal.ROUND_UP).intValue();
                 collectionEventPageContext.setPage((count / onceProbeDataSize) + 1);
+                collectionEventPageContext.setSynchronizedDataNum(probeDataCount);
             }
             collectionEventPageContext.setPageSize(onceProbeDataSize);
 
@@ -790,7 +791,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<MpCollectionEvent> collectionEventList = Lists.newArrayList();
         // 第一次、非迭代调用, 并且分页不为第一页. 视作数据同步过程中断
         if (isFirstCall && !collectionEventPageContext.getPage().equals(1L)) {
-            // todo 场景运行中可评估, 已经同步数据需要跳过同步, 避免重复入库
             // es需要循环数次跳过已同步数据
             if (evalVariableRefService.ES_PROBES.contains(collectionEventPageContext.getProbeId())) {
                 EvalLog.info(evalRecord, evalVariableRef, "synced data skipping...");
@@ -798,7 +798,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 collectionEventPageContext.setPage(1L);  // es同requestId第一次查询生成快照时传入page需要为1, 否则报错
                 for (int i = 0; i < currentPage; i++) {
                     collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
-                    // todo 返回数据`collectionEventList`需要跳过一部分, 另一部分进入`forEach`进行入库.
                 }
                 collectionEventPageContext.setPage(currentPage);
             } else {
@@ -807,6 +806,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         } else {
             collectionEventList = remoteSceneService.getCollectionEvent(collectionEventPageContext);
+        }
+
+        // 测评任务进行中已使用过评估同步数据, 后续再次同步过滤掉已同步数据
+        if (isFirstCall && collectionEventPageContext.getSynchronizedDataNum() != null) {
+            long skipNum = collectionEventPageContext.getSynchronizedDataNum() % onceProbeDataSize;
+            if (collectionEventList.size() > skipNum && skipNum > 0) {
+                collectionEventList.subList(0, (int) skipNum).clear();
+            }
         }
 
         collectionEventList.forEach(mpCollectionEvent -> {

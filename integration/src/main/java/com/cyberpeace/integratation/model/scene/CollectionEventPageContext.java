@@ -35,4 +35,9 @@ public class CollectionEventPageContext implements Serializable {
      * es查询使用, 供数据量>10000时获取
      */
     private String requestId;
+
+    /**
+     * 已经同步数据量, 作为靶场程序内context, 不为查询探针数据入参.
+     */
+    private Integer synchronizedDataNum;
 }

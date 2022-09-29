@@ -66,6 +66,21 @@ public class EvalRecord extends BaseTable {
      */
     private Date evalEndTime;
 
+    /**
+     * 创建者id
+     */
+    private String createUserId;
+
+    /**
+     * 创建者所属角色
+     */
+    private String createRole;
+
+    /**
+     * 创建者所属角色名称
+     */
+    private String createRoleName;
+
     public enum Status implements GenericEnum {
         NOT_START(1, "未评估"),
         RUNNING(2, "评估中"),

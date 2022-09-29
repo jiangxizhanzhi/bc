@@ -45,4 +45,13 @@ public class EvalRecordListRsp implements Serializable {
 
     @ApiModelProperty("评估开始时间")
     private Date evalTime;
+
+    @ApiModelProperty("创建者id")
+    private String createUserId;
+
+    @ApiModelProperty("创建者所属角色")
+    private String createRole;
+
+    @ApiModelProperty("创建者所属角色名称")
+    private String createRoleName;
 }

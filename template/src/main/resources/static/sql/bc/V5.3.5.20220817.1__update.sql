@@ -1318,3 +1318,5 @@ alter table oj_course_lesson add column `description` longtext DEFAULT NULL comm
 alter table oj_practice_operation add column `type` int NOT NULL DEFAULT 1 comment '实操题类型';
 
 alter table cr_eval_record add create_user_id varchar(64) null comment '创建者ID';
+alter table cr_eval_record add create_role varchar(256) null comment '创建者所属角色';
+alter table cr_eval_record add create_role_name varchar(256) null comment '创建者所属角色名称';

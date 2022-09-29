@@ -181,11 +181,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         return evalRecord;
     }
 
-    private String getRoleUserId(EvalTask evalTask) {
+    private EvalRoleConfig getRoleUserId(EvalTask evalTask) {
         List<EvalRoleConfig> evalRoleConfigList = JsonUtil.toJsonObjectArray(evalTask.getStepConfig(), EvalRoleConfig.class);
         for (EvalRoleConfig evalRoleConfig: evalRoleConfigList) {
             if (evalRoleConfig.getUsers().contains(UserInfoContext.getUserContext().getUserId())) {
-                return UserInfoContext.getUserContext().getUserId();
+                return evalRoleConfig;
             }
         }
 
@@ -201,7 +201,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 红/蓝: 仅可查看我方角色（当前角色下仅一名用户）创建评估
-        return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern, getRoleUserId(evalTask)));
+        EvalRoleConfig evalRoleConfig = getRoleUserId(evalTask);
+        if (evalRoleConfig == null) {
+            throw new BusinessException("非法请求");
+        }
+        return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern, UserInfoContext.getUserContext().getUserId()));
     }
 
     @Override
@@ -236,9 +240,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         boolean isUpdate = !StringUtils.isEmpty(evalRecord.getResourceId());
         if (!isUpdate) {
             EvalTask evalTask = getTask(requestData.getTaskId());
-            if (getRoleUserId(evalTask) == null) {
+            EvalRoleConfig evalRoleConfig = getRoleUserId(evalTask);
+            if (evalRoleConfig == null) {
                 throw new BusinessException("非法请求, 白方不支持创建评估.");
             }
+            evalRecord.setCreateRole(evalRoleConfig.getType());
+            evalRecord.setCreateRoleName(evalRoleConfig.getName());
+            evalRecord.setCreateUserId(evalRoleConfig.getUsers().get(0));
 
             evalRecord.setResourceId(IDGeneratorUtil.getID());
             evalRecord.setStatus(EvalRecord.Status.NOT_START.getCode());

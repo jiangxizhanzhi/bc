@@ -166,7 +166,6 @@ public class EvalTaskController {
 
 		if (StringUtils.isEmpty(taskId)) {
 			sceneViewContext = evalSceneService.viewScene(null, evalTemplate.getTopoId());
-
 		} else {
 			EvalTask evalTask = evalTaskService.getById(taskId);
 			sceneViewContext = evalSceneService.viewScene(evalTask.getMpSceneId(),
@@ -174,10 +173,10 @@ public class EvalTaskController {
 			evalTaskRsp.setTaskId(taskId);
 			evalTaskRsp.setTaskName(evalTask.getTaskName());
 			sceneViewContext.setLocalSceneId(evalTask.getLocalSceneId());
-			
-			if(userId != null) {
-				sceneFilterService.filterVisibleTopo(sceneViewContext.getSceneData(), evalTaskStepService.getNodes(taskId, userId));
-			}
+		}
+		
+		if(userId != null) {
+			sceneFilterService.filterVisibleTopo(sceneViewContext.getSceneData(), evalTaskStepService.getNodes(taskId, userId));
 		}
 
 		BeanUtils.copyProperties(sceneViewContext, evalTaskRsp);

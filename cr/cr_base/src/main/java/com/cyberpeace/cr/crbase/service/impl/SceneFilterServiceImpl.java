@@ -122,6 +122,10 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 	 */
 	private void removeInvalidConnections(JSONObject topoData, JSONArray elements) {
 		JSONArray connections = topoData.getJSONObject("topology").getJSONArray("connections");
+		if(connections.isEmpty()) {
+			return;
+		}
+		
 		Set<String> existingPorts = Sets.newHashSet();
 		// collect existing ports
 		for (int i = 0; i < elements.size(); i++) {

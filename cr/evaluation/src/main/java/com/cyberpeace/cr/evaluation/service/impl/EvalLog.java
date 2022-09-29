@@ -1,10 +1,11 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EvalLog {
     private static final Logger LOG = LoggerFactory.getLogger("eval");

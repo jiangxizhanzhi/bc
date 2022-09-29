@@ -427,15 +427,21 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 
 		// 拓扑数据修改
-		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
-				&& null != ojSceneConfig) {
-			String topoId = localSceneService.saveTopo(ojSceneConfig, lessonExist.getTopoId());
-			courseLesson.setTopoId(topoId);
-		} else {
+		int lessonType = courseLesson.getType().intValue();
+		if (lessonType == CourseLesson.LessonType.THEORY.getCode()) {
 			if (StringUtils.isNotBlank(lessonExist.getTopoId())) {
 				remoteTopoService.deleteById(lessonExist.getTopoId());
+				courseLesson.setTopoId(CommonConstant.EMPTY_STRING);
 			}
-			courseLesson.setTopoId(CommonConstant.EMPTY_STRING);
+		} else {
+			if (StringUtils.isNotBlank(lessonExist.getTopoId())) {
+				String topoId = localSceneService.saveTopo(ojSceneConfig, lessonExist.getTopoId());
+				courseLesson.setTopoId(topoId);
+			} else {
+				String topo = localSceneService.saveTopo(ojSceneConfig,
+						LocalScene.BusinessCode.LESSON.getCode());
+				courseLesson.setTopoId(topo);
+			}
 		}
 
 		// 课时目录修改
@@ -561,7 +567,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					.businessType(Note.NoteResourceType.LESSON.getCode())
 					.businessId(courseLesson.getResourceId()).build();
 			List<String> noteIds = noteMapper.selectByContext(uniqueContext);
-			adminLessonListBo.setHasReport(CollectionUtils.isNotEmpty(noteIds));
+			adminLessonListBo.setHasReport(
+					courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+							.getCode() && CollectionUtils.isNotEmpty(noteIds));
 			return adminLessonListBo;
 		});
 		return boIPage;

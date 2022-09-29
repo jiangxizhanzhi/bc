@@ -1321,7 +1321,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 	
 	private void doExport(String setPath, PracticeOperation operation) {
-		EXPORT_LOG.info("Start export {}....", operation.getTitle());
+		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
 
 		String path = createOperationPath(setPath, operation);
 
@@ -1332,28 +1332,28 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			MdParser mdParser = new MdParser();
 			mdParser.write(mdCtfBase, readmeFile);
 		}
-		EXPORT_LOG.info("{} README.md export finish....", operation.getTitle());
+		EXPORT_LOG.info("{} README.md export successfully", operation.getTitle());
 
 		// 附件导出
 		File attachmentDir = new File(path, ResourceImportConstant.PRACTICE_ATTACHMENT);
 		exportAttachment(attachmentDir.getAbsolutePath(), operation.getAttachmentId());
-		EXPORT_LOG.info("{} attachment export finish....", operation.getTitle());
+		EXPORT_LOG.info("{} attachment export successfully", operation.getTitle());
 
 		// 题解文件导出
 		if (StringUtils.isNotBlank(operation.getWriteup())) {
 			File file = new File(path, ResourceImportConstant.WRITEUP);
 			exportWriteup(file.getAbsolutePath(), operation.getWriteup());
 		}
-		EXPORT_LOG.info("{} writeup.md export finish....", operation.getTitle());
+		EXPORT_LOG.info("{} writeup.md export successfully", operation.getTitle());
 
 		// topo和镜像导出
 		if (StringUtils.isNotBlank(operation.getTopoId())) {
 			SceneDumpContext dumpContext = exportSceneReq(operation, path);
 			remoteSceneService.sceneDump(dumpContext);
-			EXPORT_LOG.info("{} topo and images export finish....", operation.getTitle());
+			EXPORT_LOG.info("{} topo and images export successfully", operation.getTitle());
 		}
 
-		EXPORT_LOG.info("End Export {}....", operation.getTitle());
+		EXPORT_LOG.info("Export practice [{}] successfully", operation.getTitle());
 	}
 
 	/**

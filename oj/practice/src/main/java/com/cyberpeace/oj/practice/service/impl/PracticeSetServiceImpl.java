@@ -460,7 +460,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<PracticeSet> setList;
 		
 		EXPORT_LOG.info(System.lineSeparator() + System.lineSeparator()
-				+ "Start....................." + System.lineSeparator());
+				+ "----------start export practice-----------" + System.lineSeparator());
 
 		try {
 			// 查询要导出的习题集
@@ -481,7 +481,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		
 		String destPath = newPath ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
 				: CommonConstant.EXPORT_CTF_PATH;
-		EXPORT_LOG.info("Practice operation export path create finish, path=[{}]", destPath);
+		EXPORT_LOG.info("Practice operation export path create successfully, path=[{}]", destPath);
 
 		for (PracticeSet practiceSet : setList) {
 			EXPORT_LOG.info("Start export {} practice set....", practiceSet.getName());
@@ -501,10 +501,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			List<PracticeOperation> operations = operationMap.get(practiceSet.getResourceId());
 			practiceOperationService.exportPractice(setPath, operations);
 
-			EXPORT_LOG.info("End export {} practice set.....", practiceSet.getName());
+			EXPORT_LOG.info("export {} practice set successfully", practiceSet.getName());
 		}
 		
-		EXPORT_LOG.info(System.lineSeparator() + "End....................." + System.lineSeparator()
+		EXPORT_LOG.info(System.lineSeparator() + "----------end export practice-----------" + System.lineSeparator()
 				+ System.lineSeparator());
 		return destPath;
 	}
@@ -516,7 +516,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		String path = createPath(destPath, practiceSet.getName());
-		EXPORT_LOG.info("Practice set path create finish! set_path=[{}]", path);
+		EXPORT_LOG.info("Practice set path create successfully! set_path=[{}]", path);
 		
 		File README = new File(path, ResourceImportConstant.README_NAME);
 
@@ -532,7 +532,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 					EXPORT_LOG.info("Start export practice set logo, logo_path=[{}]",
 							destLogoFile.getAbsolutePath());
 					FileUtil.copyFile(new File(realPath), destLogoFile);
-					EXPORT_LOG.info("End export practice set logo");
+					EXPORT_LOG.info("export practice set logo successfully");
 				}
 
 				mdPracticeSet.setLogo(String.format(CommonConstant.MD_IMAGE_TEMPLATE,
@@ -542,7 +542,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			MdParser mdParser = new MdParser();
 			mdParser.write(mdPracticeSet, README);
 
-			EXPORT_LOG.info("End export practice set README.md");
+			EXPORT_LOG.info("export practice set README.md successfully");
 		}
 
 		return path;

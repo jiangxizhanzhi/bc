@@ -40,4 +40,9 @@ public class CollectionEventPageContext implements Serializable {
      * 已经同步数据量, 作为靶场程序内context, 不为查询探针数据入参.
      */
     private Integer synchronizedDataNum;
+
+    /**
+     * 探针数据总量, 调用接口后赋值, 不为查询探针数据入参
+     */
+    private Long remoteDataTotal;
 }

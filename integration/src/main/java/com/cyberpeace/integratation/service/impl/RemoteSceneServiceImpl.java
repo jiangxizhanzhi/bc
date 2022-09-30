@@ -373,6 +373,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		}
 		JSONObject result = JsonUtil.toJsonObject(mpCollectionEvents, JSONObject.class);
 		// todo 错误响应
+		collectionEventPageContext.setRemoteDataTotal(result.getLong("total"));
 		return JsonUtil.toJsonObjectArray(result.getString("list"), MpCollectionEvent.class);
 	}
 

@@ -1,12 +1,9 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.situation.dao.entity.SceneConfig;
-import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.service.SceneConfigService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;

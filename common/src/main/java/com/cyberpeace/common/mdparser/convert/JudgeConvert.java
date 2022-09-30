@@ -1,6 +1,5 @@
 package com.cyberpeace.common.mdparser.convert;
 
-import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 
 public enum JudgeConvert implements MdConvertEnum<String, String> {
 

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @TableName("cr_eval_record")

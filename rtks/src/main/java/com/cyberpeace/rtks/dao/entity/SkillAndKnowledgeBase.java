@@ -7,8 +7,6 @@ import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
 public class SkillAndKnowledgeBase extends BaseTable {
 

@@ -1,11 +1,8 @@
 package com.cyberpeace.oj.course.controller.res;
 
-import com.cyberpeace.common.util.ConfigUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.io.Serializable;
 
 @Data

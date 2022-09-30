@@ -1,10 +1,7 @@
 package com.cyberpeace.oj.course.controller.req;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 

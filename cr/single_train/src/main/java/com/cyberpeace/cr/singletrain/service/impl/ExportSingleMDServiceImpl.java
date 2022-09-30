@@ -1,8 +1,5 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.constant.MdConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;

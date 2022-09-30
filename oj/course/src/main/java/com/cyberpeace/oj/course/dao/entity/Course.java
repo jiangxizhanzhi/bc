@@ -5,15 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.model.BaseTable;
 
-import com.cyberpeace.common.util.ConfigUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 
 @Data
 @TableName("oj_course")

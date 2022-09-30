@@ -3,8 +3,6 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.MdConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;

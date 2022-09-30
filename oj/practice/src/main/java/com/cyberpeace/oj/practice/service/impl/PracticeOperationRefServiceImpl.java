@@ -1,8 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -11,9 +9,7 @@ import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;

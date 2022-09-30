@@ -5,7 +5,6 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
-import com.cyberpeace.oj.practice.service.bo.TestPaperPractice;
 
 import java.util.List;
 

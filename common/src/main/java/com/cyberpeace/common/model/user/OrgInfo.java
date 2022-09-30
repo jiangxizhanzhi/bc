@@ -3,7 +3,6 @@ package com.cyberpeace.common.model.user;
 import java.io.Serializable;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import lombok.Data;
 

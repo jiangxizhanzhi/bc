@@ -2,11 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import com.cyberpeace.oj.course.service.impl.BatchStartSceneHandler;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;

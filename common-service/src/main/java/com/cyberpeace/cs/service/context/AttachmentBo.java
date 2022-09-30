@@ -2,8 +2,6 @@ package com.cyberpeace.cs.service.context;
 
 import java.io.Serializable;
 
-import com.cyberpeace.common.util.ConfigUtil;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

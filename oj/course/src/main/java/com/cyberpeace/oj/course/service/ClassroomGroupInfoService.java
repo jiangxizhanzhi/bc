@@ -2,8 +2,6 @@ package com.cyberpeace.oj.course.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.oj.course.dao.entity.ClassroomGroupArchive;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.ClassroomGroupArchiveBo;

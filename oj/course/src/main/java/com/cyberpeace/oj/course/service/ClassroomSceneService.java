@@ -7,7 +7,6 @@ import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.service.bo.GroupInfoBo;
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
 import com.cyberpeace.oj.ojbase.constant.OjEvent;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 
 import java.util.List;

@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,6 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.RoleController;
-import com.cyberpeace.rtks.controller.TrainingPlanController;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
@@ -38,7 +35,6 @@ import com.cyberpeace.rtks.dao.mapper.KnowledgeMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleSkillRelationMapper;
 import com.cyberpeace.rtks.service.KnowledgeService;
-import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.TrainingPlanService;
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
@@ -51,11 +47,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TrainingPlanServiceImpl implements TrainingPlanService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(TrainingPlanController.class);
-
-	@Autowired
-	private SkillService skillService;
 
 	@Autowired
 	private RoleController roleController;

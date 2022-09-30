@@ -3,14 +3,10 @@ package com.cyberpeace.cr.evaluation.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
-import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @TableName("cr_eval_probe_data")

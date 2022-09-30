@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.TraceIdContext;
 
-import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 
 import lombok.Data;

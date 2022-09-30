@@ -4,13 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
-
-import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @TableName("oj_comment")

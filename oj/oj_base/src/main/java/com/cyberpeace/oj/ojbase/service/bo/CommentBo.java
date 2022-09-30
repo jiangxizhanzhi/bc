@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.cyberpeace.oj.ojbase.controller.res.CommentRes;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

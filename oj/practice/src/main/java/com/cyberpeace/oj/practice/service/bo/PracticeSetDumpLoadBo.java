@@ -1,7 +1,5 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-
 import lombok.Data;
 
 import java.io.Serializable;

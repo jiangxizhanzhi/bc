@@ -3,8 +3,6 @@ package com.cyberpeace.oj.course.service.bo;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.cyberpeace.common.model.ListRsp;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

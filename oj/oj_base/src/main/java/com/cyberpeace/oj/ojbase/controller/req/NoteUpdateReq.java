@@ -2,8 +2,6 @@ package com.cyberpeace.oj.ojbase.controller.req;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.exception.evaluate.TestItemAlreadyStartException;
-import com.cyberpeace.common.model.AuthTable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

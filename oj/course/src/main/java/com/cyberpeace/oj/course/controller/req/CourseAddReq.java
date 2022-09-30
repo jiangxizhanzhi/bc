@@ -1,15 +1,11 @@
 package com.cyberpeace.oj.course.controller.req;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;

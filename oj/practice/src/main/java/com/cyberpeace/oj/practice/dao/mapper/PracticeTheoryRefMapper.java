@@ -2,7 +2,6 @@ package com.cyberpeace.oj.practice.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
-import com.cyberpeace.oj.practice.service.bo.TestPaperPractice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

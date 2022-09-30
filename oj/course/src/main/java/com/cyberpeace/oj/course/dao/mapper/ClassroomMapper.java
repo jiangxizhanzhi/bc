@@ -6,7 +6,6 @@ import com.cyberpeace.oj.course.dao.entity.Classroom;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 
 @Mapper

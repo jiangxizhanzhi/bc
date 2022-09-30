@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.oj.ojbase.controller.req.DeleteResourceReq;
 import com.cyberpeace.oj.ojbase.controller.req.EvaluateNoteReq;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;

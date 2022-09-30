@@ -2,8 +2,6 @@ package com.cyberpeace.oj.ojbase.controller.req;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.baseinterface.EnumValid;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

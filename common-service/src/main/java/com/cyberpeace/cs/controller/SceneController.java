@@ -2,8 +2,6 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.integratation.model.scene.SnapshotDeleteContext;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -11,20 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cs.controller.req.MergeSnapshotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
-import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;

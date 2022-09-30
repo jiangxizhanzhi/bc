@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.practice.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
-import java.io.Serializable;
 
 @Data
 @TableName("oj_classroom_group_info")

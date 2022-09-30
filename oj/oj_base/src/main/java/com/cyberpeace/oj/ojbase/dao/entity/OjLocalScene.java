@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Data
 @Builder

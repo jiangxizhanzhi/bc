@@ -8,7 +8,6 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.*;
 
-import java.io.Serializable;
 
 @Data
 @Builder

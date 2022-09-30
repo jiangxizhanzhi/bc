@@ -1,8 +1,5 @@
 package com.cyberpeace.cs.dao.entity;
 
-import java.util.Date;
-
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,10 +9,10 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
-import com.cyberpeace.cs.service.impl.SceneStatusCompute;
-import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.Date;
 
 @Data
 @TableName("local_scene")

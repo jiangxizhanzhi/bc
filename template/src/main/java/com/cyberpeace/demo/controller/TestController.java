@@ -1,6 +1,5 @@
 package com.cyberpeace.demo.controller;
 
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.integratation.constant.OperationModule;

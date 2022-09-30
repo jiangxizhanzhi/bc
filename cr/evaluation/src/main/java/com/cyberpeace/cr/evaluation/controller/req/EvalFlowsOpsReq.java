@@ -3,7 +3,6 @@ package com.cyberpeace.cr.evaluation.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;

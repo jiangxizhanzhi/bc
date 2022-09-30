@@ -2,10 +2,7 @@ package com.cyberpeace.job;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.HttpclientContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.SceneStatusCompute;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;

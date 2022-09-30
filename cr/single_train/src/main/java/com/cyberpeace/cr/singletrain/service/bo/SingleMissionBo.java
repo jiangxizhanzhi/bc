@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.singletrain.service.bo;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

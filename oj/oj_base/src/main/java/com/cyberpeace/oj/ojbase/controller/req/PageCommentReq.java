@@ -4,8 +4,6 @@ import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 public class PageCommentReq extends PageReqBase {
 

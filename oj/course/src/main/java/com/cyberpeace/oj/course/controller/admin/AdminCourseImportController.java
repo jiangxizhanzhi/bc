@@ -1,13 +1,10 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.mdparser.MdCourse;
-import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.AuthContextUtils;
@@ -17,7 +14,6 @@ import com.cyberpeace.oj.course.controller.req.RMCombinedCourseImportReq;
 import com.cyberpeace.oj.course.service.CourseDumpService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.practice.service.bo.MdCtf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

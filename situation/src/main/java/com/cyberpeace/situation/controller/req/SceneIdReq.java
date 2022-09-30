@@ -2,8 +2,6 @@ package com.cyberpeace.situation.controller.req;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotBlank;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -1,9 +1,6 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.service.bo.PracticeOperationDumpLoadBo;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryDumpLoadBo;
 import lombok.Data;

@@ -37,4 +37,7 @@ public class EvalTaskRsp implements Serializable {
 	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 
+	@ApiModelProperty("创建者（白方）")
+	private String createUserId;
+
 }

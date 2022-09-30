@@ -163,6 +163,7 @@ public class EvalTaskController {
 		EvalTaskRsp evalTaskRsp = new EvalTaskRsp();
 		evalTaskRsp.setTemplateId(evalTemplate.getResourceId());
 		evalTaskRsp.setTemplateName(evalTemplate.getName());
+		evalTaskRsp.setCreateUserId(evalTemplate.getCreateUserId());
 		SceneViewContext sceneViewContext = null;
 
 		String stepConfig = null;

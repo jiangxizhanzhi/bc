@@ -161,9 +161,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 校验用户权限
-        if (!Objects.equals(evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId())) {
-            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
-        }
+//        if (!Objects.equals(evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId())) {
+//            throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+//        }
 
         return evalTask;
     }

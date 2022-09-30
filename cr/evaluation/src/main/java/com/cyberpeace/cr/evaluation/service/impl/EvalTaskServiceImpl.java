@@ -22,7 +22,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;

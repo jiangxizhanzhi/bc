@@ -43,6 +43,8 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	private String TOPO_DELETE;
 
 	private String TOPO_EXPORT;
+	
+	private String TOPO_MODIFY;
 
 	private String BATCH_DELETE_TOPO;
 
@@ -62,6 +64,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 				+ ConfigUtil.getContextProperty("scene.topo.retrieve");
 		TOPO_DELETE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.delete");
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
+		TOPO_MODIFY = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.modify");
 
 		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
 	}
@@ -218,5 +221,15 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		JSONObject userContext = new JSONObject();
 		userContext.put("access_user_id", currentUserId);
 		json.put("context", userContext);
+	}
+
+	@Override
+	public String dynamicModify(JSONObject json) {
+		// set userId
+		setUserContext(json);
+
+		String targetUrl = TOPO_MODIFY;
+		JSONObject jsonObject = HttpClientUtil.post(targetUrl, json, JSONObject.class);
+		return jsonObject.getString("id");
 	}
 }

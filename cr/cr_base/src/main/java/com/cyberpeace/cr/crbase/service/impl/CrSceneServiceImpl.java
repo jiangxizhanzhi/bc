@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.entity.LocalScene.BusinessCode;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.cs.service.context.scene.*;
@@ -303,5 +304,21 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		return true;
+	}
+
+	@Override
+	public String dynamicModifySceneTopo(SceneConfigData sceneConfigData, BusinessCode businessCode, String topoId,
+			String sceneId) {
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", sceneConfigData.getSceneConfig());
+		topoJson.put("logo", sceneConfigData.getLogo());
+		topoJson.put("reference_type", businessCode.getCode());
+		topoJson.put("cscene_instance_id", sceneId);
+
+		if (topoId != null) {
+			topoJson.put("id", topoId);
+		}
+
+		return remoteTopoService.dynamicModify(topoJson);
 	}
 }

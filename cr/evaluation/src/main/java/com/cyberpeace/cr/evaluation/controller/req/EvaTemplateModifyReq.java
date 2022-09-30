@@ -11,5 +11,8 @@ public class EvaTemplateModifyReq extends EvaTemplateAddReq {
 	@ApiModelProperty(value = "测评靶场模板id", required = true)
 	@NotEmpty
 	private String resourceId;
+	
+	@ApiModelProperty(value = "任务id", required = false)
+	private String taskId;
 
 }

@@ -84,5 +84,16 @@ public interface CrSceneService {
 	 */
 	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId,
 			String nodeId);
+	
+	/**
+	 * 动态更新场景拓扑
+	 * @param sceneConfigData
+	 * @param businessCode
+	 * @param topoId
+	 * @param sceneId
+	 * @return
+	 */
+	String dynamicModifySceneTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
+			String topoId, String sceneId);
 
 }

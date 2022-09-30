@@ -74,4 +74,11 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	Boolean batchDeleteTopo(List<String> topoIds);
+	
+	/**
+	 * 动态更新
+	 * @param json
+	 * @return
+	 */
+	String dynamicModify(JSONObject json);
 }

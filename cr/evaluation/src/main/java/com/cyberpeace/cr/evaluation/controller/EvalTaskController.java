@@ -19,6 +19,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.*;
@@ -37,6 +38,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,6 +64,9 @@ public class EvalTaskController {
 	
 	@Autowired
 	private SceneFilterService sceneFilterService;
+	
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@ApiOperation("启动步骤")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -298,5 +303,18 @@ public class EvalTaskController {
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);
 	}
+	
+	@ApiOperation("动态更新场景")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@PostMapping("/scene/modify")
+	public BaseRsp<EvalTaskIdRsp> modifyScene(@RequestBody @Validated EvaTemplateModifyReq evaTemplateModifyReq) {
+		String taskId = evaTemplateModifyReq.getTaskId();
+		EvalTask evalTask = evalTaskService.getTask(taskId);
+		crSceneService.dynamicModifySceneTopo(evaTemplateModifyReq.getSceneConfigData(),
+				LocalScene.BusinessCode.RANGE_EVALUATION, evalTask.getCopyedTopoId(), evalTask.getMpSceneId());
+
+		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
+	}
+
 
 }

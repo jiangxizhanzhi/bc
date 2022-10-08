@@ -46,7 +46,7 @@ public interface EvalTaskStepService extends IService<EvalTaskStep> {
 	 * @param stepConfig
 	 * @return
 	 */
-	List<EvalTaskStepContext> getTemplateSteps(String stepConfig);
+	List<EvalTaskStepContext> getTemplateSteps(String stepConfig, String userId);
 
 	/** 获取任务下所有已完成的步骤
 	 * @param taskId

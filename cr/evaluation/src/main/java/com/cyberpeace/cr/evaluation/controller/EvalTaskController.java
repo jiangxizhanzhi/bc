@@ -238,7 +238,7 @@ public class EvalTaskController {
 		// 处理模板下无任务的情况
 		if (StringUtils.isEmpty(taskId)) {
 			evalTaskStepContextList = evalTaskStepService
-					.getTemplateSteps(evalTemplate.getStepConfig());
+					.getTemplateSteps(evalTemplate.getStepConfig(), userId);
 		} else {
 			evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId, userId);
 		}

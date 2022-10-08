@@ -17,6 +17,6 @@ public interface EvalTaskStepMapper extends BaseMapper<EvalTaskStep> {
 
 	List<EvalTaskStep> selectSteps(String taskId, String userId);
 
-	Boolean isNotFinished(String taskId, Integer stage);
+	Boolean isNotFinished(String taskId, Integer stage, String userId);
 
 }

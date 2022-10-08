@@ -24,12 +24,13 @@
     </select>
 
     <select id="isNotFinished" resultType="java.lang.Boolean">
+        <bind name="userIdPattern" value="'%' + userId + '%'"/>
         select case
-        when exists(select 1
-        from cr_eval_task_step
-        where task_id = #{taskId}
-        and stage = #{stage}
-        and end_time is null)
+        when exists(select 1 from cr_eval_task_step
+        	where task_id = #{taskId}
+        	and stage = #{stage}
+        	and end_time is null
+            and user_ids like #{userIdPattern})
         then 1
         else 0
         end

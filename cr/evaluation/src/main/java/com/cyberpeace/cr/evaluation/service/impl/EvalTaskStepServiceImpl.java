@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -18,7 +19,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskStepMapper;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
-import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
 
@@ -63,7 +64,7 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 		// 校验，只有前序步骤完成才能启动此步骤
 		Integer stage = evalTaskStep.getStage();
 		String taskId = evalTaskStep.getTaskId();
-		if (stage > 1 && evalTaskStepMapper.isNotFinished(taskId, (stage - 1))) {
+		if (stage > 1 && evalTaskStepMapper.isNotFinished(taskId, (stage - 1), UserInfoContext.getUserContext().getUserId())) {
 			throw new BusinessException(CrBusinessErrorCode.PRECEDING_STEP_NOT_FINISHED);
 		}
 
@@ -138,17 +139,18 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	}
 
 	@Override
-	public List<EvalTaskStepContext> getTemplateSteps(String stepConfig) {
-
+	public List<EvalTaskStepContext> getTemplateSteps(String stepConfig, String userId) {
 		List<EvalTaskStepContext> evalTaskStepContexts = Lists.newArrayList();
+		if(userId == null) {
+			// 白方不显示任务列表
+			return evalTaskStepContexts;
+		}
 
-		List<EvalTaskStepConfig> evalTaskStepConfigList = JsonUtil.toJsonObjectArray(stepConfig,
-				EvalTaskStepConfig.class);
-
-		for (EvalTaskStepConfig evalTaskStepConfig : evalTaskStepConfigList) {
-			EvalTaskStepContext evalTaskStepContext = BeanUtils.copy(evalTaskStepConfig,
-					EvalTaskStepContext.class);
-			evalTaskStepContexts.add(evalTaskStepContext);
+		List<EvalRoleConfig> evalRoleConfigs = JsonUtil.toJsonObjectArray(stepConfig, EvalRoleConfig.class);
+		for (EvalRoleConfig config : evalRoleConfigs) {
+			if(config.getUsers().contains(userId)) {
+				return BeanUtils.deepCopyList(config.getSteps(), EvalTaskStepContext.class);
+			}
 		}
 
 		return evalTaskStepContexts;

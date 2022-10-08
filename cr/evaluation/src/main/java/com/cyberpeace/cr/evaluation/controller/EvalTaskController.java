@@ -307,7 +307,7 @@ public class EvalTaskController {
 	@ApiOperation("动态更新场景")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/scene/modify")
-	public BaseRsp<EvalTaskIdRsp> modifyScene(@RequestBody @Validated EvaTemplateModifyReq evaTemplateModifyReq) {
+	public BaseRsp<EvalTaskIdRsp> modifyScene(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
 		String taskId = evaTemplateModifyReq.getTaskId();
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		crSceneService.dynamicModifySceneTopo(evaTemplateModifyReq.getSceneConfigData(),

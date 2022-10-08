@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,27 +69,27 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 
 	@Override
-	public String rMCourseDump(String resource_id, Boolean is_dump_topo) {
+	public String rMCourseDump(String resourceId, Boolean isDumpTopo) {
 		log.info("----------course dump start-----------");
 		String destFilePath = "";
 		// 1.获取所有课程数据 内容及文件
-		Course course = courseMapper.selectById(resource_id);
+		Course course = courseMapper.selectById(resourceId);
 		if (course == null) {
-			log.error("The course export ID [{}] does not match any course in db!", resource_id);
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST, resource_id);
+			log.error("The course export ID [{}] does not match any course in db!", resourceId);
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST, resourceId);
 		}
 		log.info("get course [{}] successfully!", course.getName());
 
 		// 2.获取所有课时数据 内容及文件
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("course_id", resource_id);
+		filterMap.put("course_id", resourceId);
 		List<CourseLesson> courseLessons = courseLessonMapper.selectByMap(filterMap);
 		// 根据目录索引生成课时文件名 node_type分章节 课时 course_id查询
 		List<LessonConfig> lessonConfigs = lessonConfigMapper.selectByMap(filterMap);
 
 		Map<String, Object> categoryFilterMap = new HashMap<>();
-		String category_id = course.getCategoryId();
-		filterMap.put("resource_id", category_id);
+		String categoryId = course.getCategoryId();
+		filterMap.put("resource_id", categoryId);
 		List<CourseCategory> categories = courseCategoryMapper.selectByMap(categoryFilterMap);
 
 		List<UserInfo> allUsers = remoteUserService.getAllUsers();
@@ -108,67 +107,67 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				File.separatorChar + course.getName();
 		FileUtil.mkdirs(destFilePath);
 
-		String resourceId = course.getResourceId();
-		List<LessonConfig> currentLessonConfigs = lessonConfigCol.get(resourceId);
+		String courseId = course.getResourceId();
+		List<LessonConfig> currentLessonConfigs = lessonConfigCol.get(courseId);
 		List<String> courseConfigId = currentLessonConfigs.stream().
 				filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_COURSE.getCode())).map(LessonConfig::getResourceId).collect(Collectors.toList());
-		if(courseConfigId.size() == 0){
-			log.error("The lesson config  to course export ID [{}] does not exist!", resource_id);
+		if(courseConfigId.isEmpty()){
+			log.error("The lesson config  to course export ID [{}] does not exist!", resourceId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_ID_NOT_EXIST);
 		}
 
-		List<CourseLesson> currentLessons = lessonCol.get(resourceId);
+		List<CourseLesson> currentLessons = lessonCol.get(courseId);
 
 		List<LessonConfig> lessonWithNoChapter = currentLessonConfigs.stream().
 					filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode()) && s.getParentId().equals(courseConfigId.get(0))).collect(Collectors.toList());
 		List<LessonConfig> chapterOnes = StreamApiUtils.filter(currentLessonConfigs, s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode()));
-		if(chapterOnes.size() > 0 && lessonWithNoChapter.size() > 0){
+		if(!chapterOnes.isEmpty() && !lessonWithNoChapter.isEmpty()){
 			List<String> lessonids = StreamApiUtils.getColumn(lessonWithNoChapter, LessonConfig::getLessonId);
 			List<CourseLesson> lessons = courseLessonMapper.selectBatchIds(lessonids);
 			List<String> lessonNames = StreamApiUtils.getColumn(lessons, CourseLesson::getName);
-			log.error("Lesson [{}] has no assigned chapter.", String.join(",", lessonNames));
-			throw new BusinessException(OjBusinessErrorCode.LESSON_WITHOUT_CHAPTER, String.join(",", lessonNames));
+			String join = String.join(",", lessonNames);
+			log.error("Lesson [{}] has no assigned chapter.", join);
+			throw new BusinessException(OjBusinessErrorCode.LESSON_WITHOUT_CHAPTER, join);
 		}
 
 		try {
 			combineCourseContent(destFilePath, course, categories, allUsers);
 
-			combineLessons(destFilePath, currentLessonConfigs, currentLessons, is_dump_topo);
+			combineLessons(destFilePath, currentLessonConfigs, currentLessons, isDumpTopo);
 			log.info("course [{}] dump finish the path is [{}]", course.getName(), destFilePath);
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
 			log.error("resource dump failed! catch error: ", e);
-			throw new BusinessException("course [{}] dump failed: [{}]",course.getName(),e);
 		}
 		log.info("---------dump course [{}] success--------", course.getName());
 		return destFilePath;
 	}
 
-	private void combineLessons(String destFilePath, List<LessonConfig> currentLessonConfigs, List<CourseLesson> currentLessons, Boolean is_dump_topo) {
+	private void combineLessons(String destFilePath, List<LessonConfig> currentLessonConfigs, List<CourseLesson> currentLessons, Boolean isDumpTopo) {
 		Map<String, List<CourseLesson>> lessonCols = currentLessons.stream().collect(Collectors.groupingBy(CourseLesson::getResourceId));
 
 		List<LessonConfig> chapterFirsts = currentLessonConfigs.stream().filter(s -> null != s.getNodeType() && s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode())).
 				sorted(Comparator.comparing(LessonConfig::getIndex)).collect(Collectors.toList());
 		log.info("get chapterFirst of the current lesson successfully");
 
-		if (chapterFirsts.size() == 0) {
+		if (chapterFirsts.isEmpty()) {
 			int index = 1;
 			List<LessonConfig> chapterSeconds = currentLessonConfigs.stream().filter(s -> null != s.getNodeType() && s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode())).sorted(Comparator.comparing(LessonConfig::getIndex)).collect(Collectors.toList());
 			for(LessonConfig chapterSecond:chapterSeconds){
 				combineChapterSecond(destFilePath, 1, index, chapterSecond, destFilePath + File.separator + "1_chapter",
-						lessonCols, is_dump_topo);
+						lessonCols, isDumpTopo);
 				index += 1;
 			}
 		} else {
 			StreamApiUtils.map(chapterFirsts, chapterFirst ->
-					combineChapterFirst(destFilePath, chapterFirsts.indexOf(chapterFirst) + 1, chapterFirst, currentLessonConfigs, lessonCols, is_dump_topo));
+					combineChapterFirst(destFilePath, chapterFirsts.indexOf(chapterFirst) + 1, chapterFirst, currentLessonConfigs, lessonCols, isDumpTopo));
 		}
 
 	}
 
 	private Map<String, String> combineChapterFirst(String destFilePath,Integer chapterIndex,LessonConfig chapterOne, List<LessonConfig> lessonConfigs, Map<String, List<CourseLesson>> lessons,
-													Boolean is_dump_topo) {
+													Boolean isDumpTopo) {
 
 		Map<String, String> filePathMap = new HashMap<>();
 		Integer currentChapter = chapterOne.getIndex();
@@ -178,13 +177,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		List<LessonConfig> chapterSeconds = lessonConfigs.stream().filter(s -> null != s.getParentId() && s.getParentId().equals(chapterOne.getResourceId())).
 				sorted(Comparator.comparing(LessonConfig::getIndex)).collect(Collectors.toList());
 		for (LessonConfig chapterSecond:chapterSeconds){
-			combineChapterSecond(destFilePath, currentChapter, index, chapterSecond, chapterFileName, lessons, is_dump_topo);
+			combineChapterSecond(destFilePath, currentChapter, index, chapterSecond, chapterFileName, lessons, isDumpTopo);
 			index += 1;
 		}
 		return filePathMap;
 	}
 
-	private void combineChapterSecond(String destFilePath, Integer lastChapter, int index, LessonConfig chapterSecond, String chapterFileName, Map<String, List<CourseLesson>> lessons, Boolean is_dump_topo) {
+	private void combineChapterSecond(String destFilePath, Integer lastChapter, int index, LessonConfig chapterSecond, String chapterFileName, Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo) {
 		CourseLesson lesson = lessons.get(chapterSecond.getLessonId()).get(0);
 		String pathname = chapterFileName + File.separator + lastChapter + "-" + index + "_" + lesson.getName();
 
@@ -197,7 +196,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			combineTheoryLesson(pathname, lesson);
 		} else {
 			// 实验课文件保存
-			if (is_dump_topo) {
+			if (Boolean.TRUE.equals(isDumpTopo)) {
 				combineOperationLesson(destFilePath, pathname, lesson);
 			}
 
@@ -262,8 +261,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			log.info("start dump lesson [{}] handout!", lesson.getName());
 			if (!handoutType.equals(CourseLesson.HandoutType.MD.getCode())) {
 
-				if (!handoutUrl.startsWith("/cpms")) {
-					handoutUrl = "/cpms" + File.separator + handoutUrl;
+				if (!handoutUrl.startsWith(ConfigUtil.getContextProperty("cr.local.upload.path"))) {
+					handoutUrl = ConfigUtil.getContextProperty("cr.local.upload.path") + File.separator + handoutUrl;
 				}
 				String[] split = handoutUrl.split("/");
 				String handoutFileName = split[split.length - 1];
@@ -284,7 +283,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		FileUtil.mkdirs(attachFile);
 		String attachmentIds = lesson.getAttachmentIds();
 		List<AttachmentBo> attachmentBos = attachmentService.selectByIds(attachmentIds, false);
-		if(attachmentBos.size() > 0){
+		if(!attachmentBos.isEmpty()){
 			List<String> attachFiles = StreamApiUtils.map(attachmentBos, AttachmentBo::getFilePath);
 			for(String attach:attachFiles){
 				saveAttachFile(attach, attachFile);
@@ -339,7 +338,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		// 3.生成READEME.md
 		String categoryName = categories.stream().filter(s -> s.getResourceId().equals(course.getCategoryId())).collect(Collectors.toList()).get(0).getName();
 		List<UserInfo> users = allUsers.stream().filter(s -> s.getUserId().equals(course.getCreateUserId())).collect(Collectors.toList());
-		String userName = users.size() > 0 ? users.get(0).getName() : "";
+		String userName = !users.isEmpty() ? users.get(0).getName() : "";
 
 		log.info("start dump course [{}] readme.md!", course.getName());
 		generateReadmeMD(destFilePath, course, categoryName, userName);

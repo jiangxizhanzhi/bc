@@ -208,13 +208,13 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 
 		// 空数组校验
 		if (CollectionUtils.isEmpty(orgs)) {
-			return null;
+			return new JSONArray();
 		}
 
 		// 空对象校验
 		JSONObject realOrgTree = orgs.getJSONObject(CommonConstant.ZERO);
 		if (realOrgTree.isEmpty()) {
-			return null;
+			return new JSONArray();
 		}
 
 		return orgs;

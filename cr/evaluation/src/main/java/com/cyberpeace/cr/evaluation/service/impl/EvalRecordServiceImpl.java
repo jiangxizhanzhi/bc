@@ -821,18 +821,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 测评任务进行中已使用过评估同步数据, 后续再次同步过滤掉已同步数据
         // 探针获取数据为倒序, 将已同步数据量在最后数条去除
-        Long locationNum = collectionEventPageContext.getPage() * onceProbeDataSize;
-        boolean isOutOfBounds = locationNum + collectionEventPageContext.getSynchronizedDataNum() >= collectionEventPageContext.getRemoteDataTotal();
-        if (collectionEventPageContext.getSynchronizedDataNum() != null && isOutOfBounds) {
-            if (collectionEventPageContext.getSynchronizedDataNum() > onceProbeDataSize) {
-                collectionEventList.clear();
-                collectionEventPageContext.setSynchronizedDataNum(collectionEventPageContext.getSynchronizedDataNum() - (int) onceProbeDataSize);
-            } else {
-                collectionEventList.subList(
-                        collectionEventList.size() - collectionEventPageContext.getSynchronizedDataNum(),
-                        collectionEventList.size()
-                ).clear();
-                collectionEventPageContext.setSynchronizedDataNum(0);
+        if (SqlHelper.retBool(collectionEventPageContext.getSynchronizedDataNum())) {
+            Long locationNum = collectionEventPageContext.getPage() * onceProbeDataSize;
+            boolean isOutOfBounds = locationNum + collectionEventPageContext.getSynchronizedDataNum() >= collectionEventPageContext.getRemoteDataTotal();
+            if (collectionEventPageContext.getSynchronizedDataNum() != null && isOutOfBounds) {
+                if (collectionEventPageContext.getSynchronizedDataNum() > onceProbeDataSize) {
+                    collectionEventList.clear();
+                    collectionEventPageContext.setSynchronizedDataNum(collectionEventPageContext.getSynchronizedDataNum() - (int) onceProbeDataSize);
+                } else {
+                    collectionEventList.subList(
+                            collectionEventList.size() - collectionEventPageContext.getSynchronizedDataNum(),
+                            collectionEventList.size()
+                    ).clear();
+                    collectionEventPageContext.setSynchronizedDataNum(0);
+                }
             }
         }
 

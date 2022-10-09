@@ -6,11 +6,13 @@ import java.util.function.Consumer;
 import com.cyberpeace.cr.evaluation.service.context.SyncProbeDataContext;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class EvalSyncProbeHandler {
     @Getter
+    @Setter
     private String recordId;
 
     private final ReentrantLock syncProbeLock = new ReentrantLock();

@@ -4,6 +4,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -132,6 +133,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     private final Map<String, EvalSyncProbeHandler> probeInSyncTaskMap = Maps.newHashMap();
+
+    private final ReentrantLock syncProbeTaskLock = new ReentrantLock();
 
     @Override
     public void isExist(EvalRecordAddReq requestData) {
@@ -616,13 +619,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         syncProbeDataContext.setEvalRecord(evalRecord);
         syncProbeDataContext.setEvalTask(evalTask);
         syncProbeDataContext.setVariableIds(variableIds);
+
+        syncProbeTaskLock.lock();
         EvalSyncProbeHandler handler = probeInSyncTaskMap.get(evalTask.getResourceId());
         if (handler != null && handler.getRecordId() != null) {
             EvalLog.info(evalRecord, String.format("Waiting %s probe sync by record %s...", evalTask.getResourceId(), handler.getRecordId()));
         } else {
             handler = new EvalSyncProbeHandler();
+            handler.setRecordId(evalRecord.getResourceId());
             probeInSyncTaskMap.put(evalTask.getResourceId(), handler);
         }
+        syncProbeTaskLock.unlock();
+
         handler.run(this::syncProbeData, syncProbeDataContext);
         EvalLog.info(evalRecord, "sync remote server [MP] probe data completed.");
 

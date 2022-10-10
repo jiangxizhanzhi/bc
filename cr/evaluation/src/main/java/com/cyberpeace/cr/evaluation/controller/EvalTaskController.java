@@ -312,6 +312,7 @@ public class EvalTaskController {
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		crSceneService.dynamicModifySceneTopo(evaTemplateModifyReq.getSceneConfigData(),
 				LocalScene.BusinessCode.RANGE_EVALUATION, evalTask.getCopyedTopoId(), evalTask.getMpSceneId());
+		evalTaskService.updateTaskStepConfig(evalTask, evaTemplateModifyReq.getStepConfig());
 
 		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
 	}

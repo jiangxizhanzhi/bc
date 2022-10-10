@@ -328,4 +328,24 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		return true;
 	}
 
+	@Override
+	public void updateTaskStepConfig(EvalTask evalTask, List<EvalRoleConfig> stepConfig) {
+		List<EvalRoleConfig> evalRoleConfigs = JsonUtil.toJsonObjectArray(evalTask.getStepConfig(),
+				EvalRoleConfig.class);
+		for (EvalRoleConfig roleConfig : evalRoleConfigs) {
+			EvalRoleConfig newConfig = stepConfig.stream()
+					.filter(config -> roleConfig.getName().equals(config.getName())).findFirst().orElse(null);
+			if (newConfig == null) {
+				continue;
+			}
+
+			// 角色资产和战争迷雾合并，所属节点都是可见节点
+			roleConfig.setAssetNodes(newConfig.getAssetNodes());
+			roleConfig.setVisibleNodes(newConfig.getAssetNodes());
+		}
+
+		evalTask.setStepConfig(JsonUtil.toJsonString(evalRoleConfigs));
+		evalTaskMapper.updateById(evalTask);
+	}
+
 }

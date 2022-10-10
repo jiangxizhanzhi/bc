@@ -1,8 +1,11 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 
 /**
@@ -73,5 +76,12 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 * @return
 	 */
 	Boolean validateName(String taskName, String templateId, String taskId);
+	
+	/**
+	 * 更新任务配置信息
+	 * @param evalTask
+	 * @param stepConfig
+	 */
+	void updateTaskStepConfig(EvalTask evalTask, List<EvalRoleConfig> stepConfig);
 
 }

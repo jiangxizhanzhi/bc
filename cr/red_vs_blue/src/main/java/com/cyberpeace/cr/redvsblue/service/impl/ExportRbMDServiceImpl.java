@@ -108,6 +108,9 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			log.info("红蓝对抗【" + businessTemplate.getName() + "】开始导出");
 
 			File file = new File(path + File.separator + businessTemplate.getName());
+			if (file.exists()) {
+				FileUtil.deleteDir(file);
+			}
 			FileUtil.mkdirs(file.getPath());
 			//场景信息导出
 			log.info(businessTemplate.getName() + "开始导出场景信息");

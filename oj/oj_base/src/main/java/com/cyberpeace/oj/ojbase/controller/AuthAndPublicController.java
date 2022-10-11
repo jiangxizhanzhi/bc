@@ -116,9 +116,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 			AuthAndPublicData data = new AuthAndPublicData();
 			data.setResourceId((String) resourceId);
 			data.setOperationAuthType(requestData.getOperationAuthType());
-			if (CollectionUtils.isNotEmpty(requestData.getOperationAuthIds())) {
-				data.setOperationAuthIds(JsonUtil.arrayToString(requestData.getOperationAuthIds()));
-			}
+			data.setOperationAuthIds(JsonUtil.arrayToString(requestData.getOperationAuthIds()));
 			return data;
 		});
 		return new BaseRsp<>(result);

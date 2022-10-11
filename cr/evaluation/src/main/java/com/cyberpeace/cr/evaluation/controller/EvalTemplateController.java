@@ -113,14 +113,18 @@ public class EvalTemplateController {
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
 		// 任务未启动返回模板拓扑结构，任务已启动返回实例拓扑结构
-		JSONObject sceneData = null;
+		JSONObject sceneData = new JSONObject();
 		if(taskId == null) {
 			sceneData = localSceneService.getTopoData(evalTemplate.getTopoId());
 		} else {
 			EvalTask evalTask = evalTaskService.getTask(taskId);
 			SceneViewContext sceneViewContext = evalSceneService.viewScene(evalTask.getMpSceneId(),
 					evalTask.getCopyedTopoId());
-			sceneData = sceneViewContext.getSceneData();
+			JSONObject tempSceneData = sceneViewContext.getSceneData();
+			// 数据结构适配
+			sceneData.put("scene_config", tempSceneData);
+			// 任务配置
+			evalTemplate.setStepConfig(evalTask.getStepConfig());
 		}
 		
 		// 构造接口返回数据

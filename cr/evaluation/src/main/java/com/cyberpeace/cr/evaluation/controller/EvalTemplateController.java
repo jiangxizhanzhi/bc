@@ -218,7 +218,8 @@ public class EvalTemplateController {
 		validateReq(evaTemplateAddReq);
 
 		// 复制模板信息
-		List<String> users = Lists.newArrayList();
+		String createUserId = UserInfoContext.getUserContext().getUserId();
+		List<String> users = Lists.newArrayList(createUserId);
 		for(EvalRoleConfig roleConfig : evaTemplateAddReq.getStepConfig()) {
 			// 所属节点都是可见节点
 			roleConfig.setVisibleNodes(roleConfig.getAssetNodes());
@@ -229,7 +230,7 @@ public class EvalTemplateController {
 		evalTemplate.setUserIds(JsonUtil.arrayToString(users));
 
 		// 设置模板用户
-		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		evalTemplate.setCreateUserId(createUserId);
 
 		// 设置模板拓扑
 		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),

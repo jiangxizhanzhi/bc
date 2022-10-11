@@ -14,9 +14,6 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 @Repository
 public interface EvalTemplateMapper extends BaseMapper<EvalTemplate> {
 
-	IPage<EvalTemplate> listEvalTemplates(Page page, EvalTemplateListQuery evalTemplateListQuery,
-			String userId);
-	
 	/**
 	 * 前台展示模板列表
 	 * 

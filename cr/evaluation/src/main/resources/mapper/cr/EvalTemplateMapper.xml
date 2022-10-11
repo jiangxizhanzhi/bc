@@ -6,24 +6,6 @@
 
     <resultMap id="evalTemplate" type="com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate"/>
 
-    <select id="listEvalTemplates" resultMap="evalTemplate">
-
-        select *
-        from cr_eval_template
-        <where>
-            <if test="evalTemplateListQuery.categoryCode != null and evalTemplateListQuery.categoryCode != ''">
-                and category_code = #{evalTemplateListQuery.categoryCode}
-            </if>
-            <if test="userId != null and userId != ''">
-                and create_user_id = #{userId}
-            </if>
-            <if test="evalTemplateListQuery.pattern != null and evalTemplateListQuery.pattern != ''">
-                <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>
-                and name like #{pattern}
-            </if>
-        </where>
-    </select>
-    
     <select id="listDisplayEvalTemplates" resultMap="evalTemplate">
 
         select *
@@ -34,7 +16,7 @@
             </if>
             <if test="userId != null and userId != ''">
             	<bind name="userIdPattern" value="'%' + userId + '%'"/>
-                and user_ids like #{userIdPattern}
+                and (user_ids like #{userIdPattern} or create_user_id = #{userId})
             </if>
             <if test="evalTemplateListQuery.pattern != null and evalTemplateListQuery.pattern != ''">
                 <bind name="pattern" value="'%' + evalTemplateListQuery.pattern + '%'"/>

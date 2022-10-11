@@ -1320,3 +1320,21 @@ alter table oj_practice_operation add column `type` int NOT NULL DEFAULT 1 comme
 alter table cr_eval_record add create_user_id varchar(64) null comment '创建者ID';
 alter table cr_eval_record add create_role varchar(256) null comment '创建者所属角色';
 alter table cr_eval_record add create_role_name varchar(256) null comment '创建者所属角色名称';
+
+-- cr_eval_template
+alter table `cr_eval_template`
+	add column user_ids text default '[]' comment '角色用户' after step_config;
+
+-- cr_eval_system
+alter table `cr_eval_system`
+	add column read_auth_type int default 1 comment '前台预览权限类型' after third_index_num,
+	add column read_auth_ids longtext default '[]' comment '拥有前台预览权限的用户id' after read_auth_type;
+
+-- cr_eval_task
+alter table `cr_eval_task`
+	add column step_config text default '' comment '步骤配置' after task_name;
+	
+-- cr_eval_task_step
+alter table `cr_eval_task_step`
+	add column role_name varchar(255) default '' comment '角色名' after end_time,
+	add column user_ids text default '[]' comment '角色用户' after nodes;

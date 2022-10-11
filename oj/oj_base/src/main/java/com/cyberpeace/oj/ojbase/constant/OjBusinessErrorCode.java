@@ -266,4 +266,7 @@ public interface OjBusinessErrorCode {
 
 	/** 判断题答案格式错误*/
 	String JUDGEMENT_ANSWER_ERROR = "102087";
+
+	/** 判断题答案格式错误*/
+	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
 }

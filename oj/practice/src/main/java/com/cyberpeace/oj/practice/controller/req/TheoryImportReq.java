@@ -17,10 +17,6 @@ public class TheoryImportReq implements Serializable {
 	@NotBlank
 	private String practiceSetId;
 
-	@ApiModelProperty(name = "category_id", value = "分类编号")
-	@NotBlank
-	private String categoryId;
-
 	@ApiModelProperty("文件")
 	@NotNull
 	private MultipartFile file;
@@ -29,7 +25,4 @@ public class TheoryImportReq implements Serializable {
 		this.practiceSetId = practiceSetId;
 	}
 
-	public void setCategory_id(String categoryId) {
-		this.categoryId = categoryId;
-	}
 }

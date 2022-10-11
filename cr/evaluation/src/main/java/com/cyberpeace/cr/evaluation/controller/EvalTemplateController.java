@@ -40,6 +40,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -217,12 +218,15 @@ public class EvalTemplateController {
 		validateReq(evaTemplateAddReq);
 
 		// 复制模板信息
+		List<String> users = Lists.newArrayList();
 		for(EvalRoleConfig roleConfig : evaTemplateAddReq.getStepConfig()) {
 			// 所属节点都是可见节点
 			roleConfig.setVisibleNodes(roleConfig.getAssetNodes());
+			users.addAll(roleConfig.getUsers());
 		}
 		BeanUtils.copyProperties(evaTemplateAddReq, evalTemplate);
 		evalTemplate.setStepConfig(JsonUtil.arrayToString(evaTemplateAddReq.getStepConfig()));
+		evalTemplate.setUserIds(JsonUtil.arrayToString(users));
 
 		// 设置模板用户
 		evalTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());

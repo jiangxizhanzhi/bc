@@ -31,6 +31,11 @@ public class EvalTemplate extends BaseTable {
 	private String currentTaskId;
 
 	private String createUserId;
+	
+	/**
+	 * 所有角色用户
+	 */
+	private String userIds;
 
 	public void setLogoId(String logoId) {
 		this.logo = logoId;

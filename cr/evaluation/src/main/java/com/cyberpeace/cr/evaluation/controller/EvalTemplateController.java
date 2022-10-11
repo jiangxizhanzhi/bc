@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -21,6 +22,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvaTemplateModifyReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalTemplateDeleteReq;
@@ -28,7 +30,10 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateListRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTemplateTaskListRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
+import com.cyberpeace.cr.evaluation.service.EvalSceneService;
+import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalRoleConfig;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
@@ -57,6 +62,12 @@ public class EvalTemplateController {
 	
 	@Autowired
 	private CrRoleService crRoleService;
+	
+	@Autowired
+	private EvalTaskService evalTaskService;
+	
+	@Autowired
+	private EvalSceneService evalSceneService;
 
 	@ApiOperation("模板新增")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
@@ -94,16 +105,28 @@ public class EvalTemplateController {
 	@ApiOperation("模板查询")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("")
-	public BaseRsp<EvalTemplateRsp> getEvalTemplate(@ApiParam(name = "template_id",
-			value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId) {
+	public BaseRsp<EvalTemplateRsp> getEvalTemplate(
+			@ApiParam(name = "template_id", value = "测评靶场模板id", required = true) @RequestParam("template_id") String templateId,
+			@ApiParam(name = "task_id", value = "已启动任务id", required = false) @RequestParam(value = "task_id", required = false) String taskId) {
 
 		// 校验用户身份并获取测评靶场模板实体
 		EvalTemplate evalTemplate = evalTemplateService.getTemplate(templateId);
 
+		// 任务未启动返回模板拓扑结构，任务已启动返回实例拓扑结构
+		JSONObject sceneData = null;
+		if(taskId == null) {
+			sceneData = localSceneService.getTopoData(evalTemplate.getTopoId());
+		} else {
+			EvalTask evalTask = evalTaskService.getTask(taskId);
+			SceneViewContext sceneViewContext = evalSceneService.viewScene(evalTask.getMpSceneId(),
+					evalTask.getCopyedTopoId());
+			sceneData = sceneViewContext.getSceneData();
+		}
+		
 		// 构造接口返回数据
 		EvalTemplateRsp evalTemplateRsp = BeanUtils.copy(evalTemplate, EvalTemplateRsp.class);
 		evalTemplateRsp.setLogoPath(evalTemplateService.getLogoPath(evalTemplate.getLogo()));
-		evalTemplateRsp.setSceneConfigData(localSceneService.getTopoData(evalTemplate.getTopoId()));
+		evalTemplateRsp.setSceneConfigData(sceneData);
 		if(CollectionUtils.isNotEmpty(evalTemplateRsp.getStepConfig())) {
 			evalTemplateRsp.getStepConfig().stream().forEach(stepConfig -> {
 				stepConfig.setUsersData(crRoleService.getUserDatas(stepConfig.getUsers()));

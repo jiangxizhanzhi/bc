@@ -406,4 +406,8 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
+	/**
+	 * 当前测试实例
+	 */
+	String CURRENT_TEST_INSTANCE = "101123";
 }

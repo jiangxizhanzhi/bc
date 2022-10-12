@@ -1121,7 +1121,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
         data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);
         //设置测试基本信息
-        data.put("taskName", evalTask.getTaskName());
+        data.put("taskName", evalTask.getTaskName() != null ? evalTask.getTaskName() : new EvalTaskSlimContext().getTaskName());
         data.put("name", evalRecord.getName());
         data.put("templateName", template.getName());
         data.put("recordDescription", evalRecord.getDescription());

@@ -156,8 +156,11 @@ public class EvalSceneEventListener extends MessageListener {
 		if (evalTemplate != null) {
 			WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(data,
 					templateId);
-			webSocketHandler.pushMessageToUsers(messageContext,
-					Lists.newArrayList(evalTemplate.getCreateUserId()));
+
+			// 向所有靶场测评参与者推送消息
+			List<String> userIds = Lists.newArrayList(evalTemplate.getCreateUserId());
+			userIds.addAll(JsonUtil.toJsonObjectArray(evalTemplate.getUserIds(), String.class));
+			webSocketHandler.pushMessageToUsers(messageContext, userIds);
 		}
 
 	}

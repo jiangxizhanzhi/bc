@@ -80,11 +80,10 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	/**
 	 * 理论习题资源导入
 	 * @param practiceSetId
-	 * @param categoryId
 	 * @param realPath
 	 * @return
 	 */
-	Boolean importTheory(String practiceSetId, String categoryId, String realPath, String userId);
+	Boolean importTheory(String practiceSetId, String realPath, String userId);
 
 	/**
 	 * 加载理论习题数据

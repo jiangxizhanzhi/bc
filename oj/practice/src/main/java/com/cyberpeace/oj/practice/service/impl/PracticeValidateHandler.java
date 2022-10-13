@@ -66,6 +66,20 @@ public class PracticeValidateHandler {
 	}
 
 	/**
+	 * 校验导入时填空题答案数量
+	 * @param excelRowData
+	 */
+	public void validateFillBlankAnswerLength(List<String> excelRowData, int index) {
+		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
+			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
+		}
+		if (StringUtils.isBlank(excelRowData.get(index + 1))) {
+			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
+		}
+	}
+
+
+	/**
 	 * 校验操作题是否存在
 	 * @param practiceOperationId
 	 * @return

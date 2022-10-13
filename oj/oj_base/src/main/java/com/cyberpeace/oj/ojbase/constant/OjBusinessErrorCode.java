@@ -219,4 +219,9 @@ public interface OjBusinessErrorCode {
 	/** 存在组织相同时间冲突的数据*/
 	String TIME_INTERSECTION_UNDER_ORG = "102082";
 
+	/** 填空题答案至少一个*/
+	String FILL_BLANK_TOO_LITTLE = "102085";
+
+	/** 判断题答案格式错误*/
+	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
 }

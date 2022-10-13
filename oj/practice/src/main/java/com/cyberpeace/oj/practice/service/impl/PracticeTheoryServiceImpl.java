@@ -360,7 +360,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 获取excel数据
 		String oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLS.getDesc());
 		if (StringUtils.isBlank(oneFile)) {
-			FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
+			oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
 		}
 		ExcelDataHandler dataHandler = new ExcelDataHandler(oneFile, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
@@ -368,7 +368,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		dataHandler.closeIO();
 		// 数据类型转换
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
-				rowData -> rmExcelDataToEntity(rowData, practiceSet));
+				rowData -> excelDataToEntity(rowData, practiceSet, null));
 
 		// 数据去重
 		List<PracticeTheory> distinctList = StreamApiUtils.distinctByColumn(theoryList,
@@ -399,19 +399,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public Boolean importTheory(String practiceSetId, String categoryId, String filePath,
-			String userId) {
+	public Boolean importTheory(String practiceSetId, String filePath, String userId) {
 		// 基本数据校验
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
 				PracticeSet.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateCategoryType(categoryId,
-				PracticeCategory.PracticeType.THEORY.getCode());
 
 		// 数据读取
 		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
-				data -> ojExcelDataToEntity(data, practiceSetId, categoryId, userId));
+				data -> excelDataToEntity(data, practiceSet, userId));
 
 		if (CollectionUtils.isEmpty(theories)) {
 			return CommonConstant.TRUE;
@@ -421,7 +418,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		List<PracticeTheory> theoryList = StreamApiUtils.distinctByColumn(theories,
 				PracticeTheory::getContent);
 
-		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theories.size());
+		practiceSet.setPracticeCount(practiceSet.getPracticeCount() + theoryList.size());
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 
@@ -604,7 +601,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 * @param excelRowData
 	 * @return
 	 */
-	private PracticeTheory rmExcelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
+	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet, String userId) {
 
 		// 数据长度为零 返回空过滤掉
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
@@ -640,7 +637,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			PracticeCategory category = new PracticeCategory();
 			category.setResourceId(IDGeneratorUtil.getID());
 			category.setCode(category.getResourceId());
-			category.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+			// 跟页面导入区分人员
+			category.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
 			category.setName(excelRowData.get(1));
 			practiceCategoryMapper.insert(category);
@@ -664,27 +662,78 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			practiceTheory.setOption(JsonUtil.toJsonString(null));
 		}
 
-		// TODO 无参考数据 不知道怎么导入
+		// 参照页面导入解析填空题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 				.getCode().intValue()) {
+			String blankAnswers = handleFillBlank(excelRowData, 3);
+			practiceTheory.setBlank(blankAnswers);
+			practiceTheory.setAnswer(blankAnswers);
 
 		}
 
-		// TODO 无参考数据 不知道怎么导入
+		// 参考页面导入解析简答题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
 				.getCode().intValue()) {
+			String shortAnswer = excelRowData.get(4);
+			if(StringUtils.isBlank(shortAnswer)){
+				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
+			}
+			practiceTheory.setAnswer(shortAnswer);
 
 		}
 
 		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
-		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		// 跟页面导入区分人员
+		practiceTheory.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);
 		practiceTheory.setPracticeSetId(practiceSet.getResourceId());
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
 		return practiceTheory;
 	}
+
+	/**
+	 * 处理填空题答案
+	 * @param excelRowData
+	 * @param index
+	 * @return
+	 */
+	private String handleFillBlank(List<String> excelRowData, int index) {
+		practiceValidateHandler.validateFillBlankAnswerLength(excelRowData, index);
+
+		// 获取填空题答案
+		List<String> blanks = Lists.newArrayList();
+		String answers = excelRowData.get(index + 1);
+		String[] split = answers.split(PatternConstant.VERTICAL_LINE);
+		for (String blank : split) {
+			if (StringUtils.isBlank(blank)) {
+				break;
+			}
+			blanks.add(blank);
+		}
+
+		Integer weight = CommonConstant.HUNDRED / blanks.size();
+		Integer remainder = CommonConstant.HUNDRED % blanks.size();
+
+		// 填空题答案数据组装
+		List<BlankAnswer> blankAnswers = Lists.newArrayList();
+		for (int i = 0; i < blanks.size(); i++) {
+			BlankAnswer blankAnswer = new BlankAnswer();
+			blankAnswer.setValue(blanks.get(i));
+			if (i == (blanks.size() - CommonConstant.ONE)
+					&& remainder.intValue() != CommonConstant.ZERO) {
+				blankAnswer.setWeight(weight + remainder);
+			} else {
+				blankAnswer.setWeight(weight);
+			}
+			blankAnswers.add(blankAnswer);
+		}
+
+		return JsonUtil.arrayToString(blankAnswers);
+	}
+
+
 
 	@Override
 	public void createMpLog(String practiceId, LogContent logContent) {

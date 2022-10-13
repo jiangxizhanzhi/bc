@@ -56,4 +56,7 @@ public class AdminOperationListBo implements Serializable {
 	@ApiModelProperty("是否有场景")
 	private Boolean hasSceneData;
 
+	@ApiModelProperty("实践操作类型")
+	private Integer type;
+
 }

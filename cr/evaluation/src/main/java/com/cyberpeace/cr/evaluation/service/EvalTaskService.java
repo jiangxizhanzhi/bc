@@ -84,4 +84,11 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 */
 	void updateTaskStepConfig(EvalTask evalTask, List<EvalRoleConfig> stepConfig);
 
+	/**
+	 * 轮询检查当前实例是否运行中
+	 * @param templateId 测评模板id
+	 * @return bool
+	 */
+	Boolean taskRunningCheck (String templateId);
+
 }

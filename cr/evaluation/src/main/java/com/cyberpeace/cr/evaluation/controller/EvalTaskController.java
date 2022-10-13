@@ -61,10 +61,10 @@ public class EvalTaskController {
 
 	@Autowired
 	private EvalTaskStepService evalTaskStepService;
-	
+
 	@Autowired
 	private SceneFilterService sceneFilterService;
-	
+
 	@Autowired
 	private CrSceneService crSceneService;
 
@@ -187,10 +187,11 @@ public class EvalTaskController {
 			stepConfig = evalTask.getStepConfig();
 			topoData = sceneViewContext.getSceneData();
 		}
-		
+
 		// 根据角色过滤显示节点
 		if (userId != null) {
-			List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(stepConfig, EvalRoleConfig.class);
+			List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(stepConfig,
+					EvalRoleConfig.class);
 			for (EvalRoleConfig roleConfig : roleConfigs) {
 				if (roleConfig.getUsers().contains(userId)) {
 					sceneFilterService.filterVisibleTopo(topoData, roleConfig);
@@ -294,28 +295,39 @@ public class EvalTaskController {
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
 				.getFinishedSteps(taskId);
-		evalTimeLineContextList.add(0, new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
+		evalTimeLineContextList.add(0, new EvalTimeLineContext(
+				TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
 		// 未结束测评任务没有结束时间点
 		if (evalTask.getEndTime() != null) {
-			evalTimeLineContextList.add(new EvalTimeLineContext(TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
+			evalTimeLineContextList.add(new EvalTimeLineContext(
+					TrainingReport.TemplateI18n.scene_end.getMsg(), evalTask.getEndTime()));
 		}
 		evalTaskTimeNodesRsp.setData(evalTimeLineContextList);
 
 		return new BaseRsp<>(evalTaskTimeNodesRsp);
 	}
-	
+
 	@ApiOperation("动态更新场景")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@PostMapping("/scene/modify")
-	public BaseRsp<EvalTaskIdRsp> modifyScene(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
+	public BaseRsp<EvalTaskIdRsp>
+			modifyScene(@RequestBody EvaTemplateModifyReq evaTemplateModifyReq) {
 		String taskId = evaTemplateModifyReq.getTaskId();
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		crSceneService.dynamicModifySceneTopo(evaTemplateModifyReq.getSceneConfigData(),
-				LocalScene.BusinessCode.RANGE_EVALUATION, evalTask.getCopyedTopoId(), evalTask.getMpSceneId());
+				LocalScene.BusinessCode.RANGE_EVALUATION, evalTask.getCopyedTopoId(),
+				evalTask.getMpSceneId());
 		evalTaskService.updateTaskStepConfig(evalTask, evaTemplateModifyReq.getStepConfig());
 
 		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
 	}
 
+	@ApiOperation("红/蓝检查测评任务开启")
+	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+	@GetMapping("/scene/check/")
+	public BaseRsp<Boolean> runningCheck(@ApiParam(name = "template_id", value = "测评靶场模板id",
+			required = true) @RequestParam("template_id") String templateId) {
+		return new BaseRsp<>(evalTaskService.taskRunningCheck(templateId));
+	}
 
 }

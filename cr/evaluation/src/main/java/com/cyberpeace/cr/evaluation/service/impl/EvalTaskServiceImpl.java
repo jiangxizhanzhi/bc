@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.google.common.collect.Lists;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -348,4 +350,26 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		evalTaskMapper.updateById(evalTask);
 	}
 
+	@SneakyThrows
+	@Override
+	public Boolean taskRunningCheck(String templateId) {
+		// 轮询检查次数
+		int checkNum = 30;
+		// 每一次检查间隔时间/ms
+		int oncePendingTime = 1000;
+
+		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
+		for (int i = 0; i < checkNum; i++) {
+			if (evalTemplate == null) {
+				throw new BusinessException("非法请求.");
+			}
+			if (StringUtils.isNotEmpty(evalTemplate.getCurrentTaskId())) {
+				return true;
+			}
+
+			Thread.sleep(oncePendingTime);
+			evalTemplate = evalTemplateMapper.selectById(templateId);
+		}
+		return false;
+	}
 }

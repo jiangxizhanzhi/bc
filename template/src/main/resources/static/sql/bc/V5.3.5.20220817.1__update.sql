@@ -1338,3 +1338,14 @@ alter table `cr_eval_task`
 alter table `cr_eval_task_step`
 	add column role_name varchar(255) default '' comment '角色名' after end_time,
 	add column user_ids text default '[]' comment '角色用户' after nodes;
+
+
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 39, '文档节', 'Document');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 39, '视频节', 'Video');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 39, '单机实验节', 'Single Experiment');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 39, '网络实验节', 'Network Experiment');
+
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 40, '文档类', 'Document');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 40, '视频类', 'Video');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 40, '单机实验类', 'Single Experiment');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 40, '网络实验类', 'Network Experiment');

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.JsonKeyConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,6 +84,16 @@ public class EvalSceneEventListener extends MessageListener {
 
 		evalTaskService.clearTaskAndScene(evalTaskOpsContext);
 
+		EvalTemplate evalTemplate = evalTemplateService.getById(evalTaskOpsContext.getEvalTask().getTemplateId());
+		if (evalTemplate != null) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put(JsonKeyConstant.KEY, "RT-0");
+			jsonObject.put(JsonKeyConstant.DATA, "");
+
+			WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(jsonObject.toJSONString(),
+					evalTemplate.getResourceId());
+			webSocketHandler.pushMessageToUsers(messageContext, JsonUtil.toJsonObjectArray(evalTemplate.getUserIds(), String.class));
+		}
 		return true;
 	}
 

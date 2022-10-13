@@ -76,7 +76,7 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 * @return
 	 */
 	Boolean validateName(String taskName, String templateId, String taskId);
-	
+
 	/**
 	 * 更新任务配置信息
 	 * @param evalTask
@@ -89,6 +89,6 @@ public interface EvalTaskService extends IService<EvalTask> {
 	 * @param templateId 测评模板id
 	 * @return bool
 	 */
-	Boolean taskRunningCheck (String templateId);
+	Boolean taskRunningCheck(String templateId);
 
 }

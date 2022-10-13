@@ -72,7 +72,6 @@ public class EvalSceneEventListener extends MessageListener {
 		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
 				.getString(WebConstant.PASS_THROUGH_OPERATOR);
 		if (StringUtils.isNotEmpty(operator) && operator.equals(Operator.BC.getDesc())) {
-			pushToUsersByDelete(businessId, false);
 			return true;
 		}
 
@@ -84,11 +83,11 @@ public class EvalSceneEventListener extends MessageListener {
 		}
 
 		evalTaskService.clearTaskAndScene(evalTaskOpsContext);
-		pushToUsersByDelete(businessId, true);
+		pushToUsersByDelete(businessId);
 		return true;
 	}
 
-	private void pushToUsersByDelete(String businessId, boolean isMpOperation) {
+	private void pushToUsersByDelete(String businessId) {
 		String templateId = evalTaskMapper.getTemplateIdByTaskId(businessId);
 		EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
 
@@ -100,9 +99,6 @@ public class EvalSceneEventListener extends MessageListener {
 			WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(jsonObject.toJSONString(),
 					evalTemplate.getResourceId());
 			List<String> userIds = Lists.newArrayList(JsonUtil.toJsonObjectArray(evalTemplate.getUserIds(), String.class));
-			if (isMpOperation) {
-				userIds.add(evalTemplate.getCreateUserId());
-			}
 			webSocketHandler.pushMessageToUsers(messageContext, userIds);
 		}
 	}

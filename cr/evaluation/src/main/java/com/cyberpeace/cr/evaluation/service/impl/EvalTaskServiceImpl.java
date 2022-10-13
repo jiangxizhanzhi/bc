@@ -361,7 +361,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
 		for (int i = 0; i < checkNum; i++) {
 			if (evalTemplate == null) {
-				throw new BusinessException("非法请求.");
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			}
 			if (StringUtils.isNotEmpty(evalTemplate.getCurrentTaskId())) {
 				return true;

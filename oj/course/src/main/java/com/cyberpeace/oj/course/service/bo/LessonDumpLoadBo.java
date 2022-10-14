@@ -48,6 +48,8 @@ public class LessonDumpLoadBo implements Serializable {
 
 	private Boolean paperPublic;
 
+	private Integer lessonType;
+
 	private List<PracticeTheoryDumpLoadBo> theoryPractice;
 
 	private List<PracticeOperationDumpLoadBo> operationPractice;

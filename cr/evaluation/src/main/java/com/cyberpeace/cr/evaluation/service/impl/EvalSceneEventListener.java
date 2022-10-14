@@ -93,8 +93,10 @@ public class EvalSceneEventListener extends MessageListener {
 
 		if (evalTemplate != null) {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put(JsonKeyConstant.KEY, "RT-0");
-			jsonObject.put(JsonKeyConstant.DATA, "");
+			JSONObject payload = new JSONObject();
+			payload.put(JsonKeyConstant.KEY, "RT-0");
+			payload.put(JsonKeyConstant.DATA, "");
+			jsonObject.put("data", payload);
 
 			WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(jsonObject.toJSONString(),
 					evalTemplate.getResourceId());

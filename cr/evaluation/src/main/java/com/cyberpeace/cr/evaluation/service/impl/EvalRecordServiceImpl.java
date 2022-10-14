@@ -198,7 +198,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Override
     public ListRsp<EvalRecordListRsp> pageList(Page page, String taskId, Integer status, String pattern) {
         EvalTask evalTask = getTask(taskId);
-        // 白方: 评估任务创建者, 可查看此任务下所有评估
+        // 白方: 评估任务创建者, 可查看此任务下所有非“未开始”评估
         if (evalTask.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId())) {
             return PageUtil.getListResult(this.getBaseMapper().pageList(page, taskId, status, pattern, null));
         }

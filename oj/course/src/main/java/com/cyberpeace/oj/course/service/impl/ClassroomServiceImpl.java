@@ -1069,6 +1069,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 数据插入前校验
+		validateTime(classrooms);
 		validateOrgLessonSame(classrooms);
 		validateClassroomTime(classrooms);
 
@@ -1093,6 +1094,20 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 
 		return classrooms;
+	}
+
+	/**
+	 * 判断起止时间是否相同或起始时间大于结束时间
+	 *
+	 * @param classrooms 起止时间
+	 */
+	private void validateTime(List<Classroom> classrooms) {
+		for(Classroom cls:classrooms){
+			if(cls.getStartTime().equals(cls.getEndTime()) || cls.getStartTime().after(cls.getEndTime())){
+				throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
+			}
+		}
+
 	}
 
 	private void validateClassroomTime(List<Classroom> classrooms) {

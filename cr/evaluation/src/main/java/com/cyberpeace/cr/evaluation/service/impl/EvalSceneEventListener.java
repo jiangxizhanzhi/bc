@@ -72,6 +72,7 @@ public class EvalSceneEventListener extends MessageListener {
 		String operator = JSON.parseObject(context.getPassThrough(), JSONObject.class)
 				.getString(WebConstant.PASS_THROUGH_OPERATOR);
 		if (StringUtils.isNotEmpty(operator) && operator.equals(Operator.BC.getDesc())) {
+			pushToUsersByDelete(businessId);
 			return true;
 		}
 
@@ -83,7 +84,6 @@ public class EvalSceneEventListener extends MessageListener {
 		}
 
 		evalTaskService.clearTaskAndScene(evalTaskOpsContext);
-		pushToUsersByDelete(businessId);
 		return true;
 	}
 

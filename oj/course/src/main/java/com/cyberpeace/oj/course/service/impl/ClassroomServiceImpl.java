@@ -1046,6 +1046,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			classrooms.add(classroom);
 		}
 
+		validateTime(classrooms);
+
 		// 数据库插入前 最好再次校验训练计划 防止解析时间过长
 		List<Classroom> coverRoomList = StreamApiUtils.flatMap(trainPlanMap.values(),
 				trainPlan -> getCoverRoomByPlan(trainPlan.getName(), trainPlan.getCreateUserId(),
@@ -1067,6 +1069,20 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 
 		return classrooms;
+	}
+
+	/**
+	 * 判断起止时间是否相同或起始时间大于结束时间
+	 *
+	 * @param classrooms 起止时间
+	 */
+	private void validateTime(List<Classroom> classrooms) {
+		for(Classroom cls:classrooms){
+			if(cls.getStartTime().equals(cls.getEndTime()) || cls.getStartTime().after(cls.getEndTime())){
+				throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
+			}
+		}
+
 	}
 
 	/** 校验数据长度*/

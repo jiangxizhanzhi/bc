@@ -49,6 +49,9 @@
         <xmlworker.version>5.4.1</xmlworker.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.0.3</flying-saucer-pdf.version>
+        <dm-drive.version>7.6.0.142</dm-drive.version>
+        <dm-dialect.version>8.1.1.49</dm-dialect.version>
+        <dm-druid.version>1.1.10</dm-druid.version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -253,6 +256,21 @@
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${dm-druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dameng</groupId>
+                <artifactId>Dm7JdbcDriver18</artifactId>
+                <version>${dm-drive.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dameng</groupId>
+                <artifactId>DmDialect-for-hibernate4.0</artifactId>
+                <version>${dm-dialect.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

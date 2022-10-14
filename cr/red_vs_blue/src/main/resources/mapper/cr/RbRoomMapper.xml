@@ -8,7 +8,7 @@
         from cr_rb_room
     </select>
     <select id="countAll" resultType="java.lang.Integer">
-        select count(`id`)
+        select count(id)
         from cr_rb_room
     </select>
     <select id="getRbRoomDataByRoomId" resultType="com.cyberpeace.cr.redvsblue.service.context.RbRoomData"
@@ -16,7 +16,7 @@
         select cr_rb_room.resource_id,
                cr_rb_room.template_id template,
                cr_rb_room.template_name,
-               cr_rb_room.`NAME`,
+               cr_rb_room.NAME,
                cr_rb_room.description,
                cr_rb_room.sub_type    category,
                cr_rb_room.pre_skill,
@@ -46,7 +46,7 @@
         select cr_rb_room.resource_id,
         cr_rb_room.template_id template,
         cr_rb_room.template_name,
-        cr_rb_room.`NAME`,
+        cr_rb_room.NAME,
         cr_rb_room.description,
         cr_rb_room.sub_type category,
         cr_rb_room.pre_skill,
@@ -136,7 +136,7 @@
     <select id="countByName" resultType="java.lang.Integer">
         select count(id)
         from cr_rb_room
-        where `name` = #{name}
+        where name = #{name}
     </select>
 
 </mapper>

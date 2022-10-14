@@ -11,7 +11,7 @@
 
     <select id="selectCrRoleByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,
-        `name`,
+        "name",
         room_id,
         description,
         role_group,
@@ -40,7 +40,7 @@
 
         <bind name="userId" value="'%' + userId + '%'"/>
         select resource_id,
-        `name` ,
+        "name" ,
         room_id,
         description,
         role_group,
@@ -71,7 +71,7 @@
     </select>
     <select id="getRolesByRoom" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,
-               `name`,
+               "name",
                room_id,
                description,
                role_group,
@@ -87,7 +87,7 @@
     </select>
     <select id="selectCrRoleByRoomIdAndRoleId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         select resource_id,
-        `name`,
+        "name",
         room_id,
         description,
         role_group,

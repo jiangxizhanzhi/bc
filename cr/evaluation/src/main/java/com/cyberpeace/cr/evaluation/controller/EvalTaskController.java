@@ -322,7 +322,7 @@ public class EvalTaskController {
 		return new BaseRsp<>(new EvalTaskIdRsp(taskId));
 	}
 
-	@ApiOperation("红/蓝检查测评任务开启")
+	@ApiOperation("红蓝方检查测评任务开启")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
 	@GetMapping("/scene/check/")
 	public BaseRsp<Boolean> runningCheck(@ApiParam(name = "template_id", value = "测评靶场模板id",

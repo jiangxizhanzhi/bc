@@ -80,8 +80,6 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 			log.warn("部分id不存在");
 		}
 		ExportTrainMDService exportTrainMDService = register.get(type);
-		File file = new File(path);
-		FileUtil.deleteDir(file);
 		exportTrainMDService.exportTrainMD(businessTemplateList,
 				path + File.separator + "cr" + File.separator + "场景库");
 

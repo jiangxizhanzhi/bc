@@ -90,6 +90,9 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 			log.info("团队训练【" + businessTemplate.getName() + "】开始导出");
 
 			File file = new File(path + File.separator + businessTemplate.getName());
+			if (file.exists()) {
+				FileUtil.deleteDir(file);
+			}
 			FileUtil.mkdirs(file.getPath());
 
 			//场景信息导出

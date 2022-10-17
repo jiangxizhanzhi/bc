@@ -273,4 +273,6 @@ public interface OjBusinessErrorCode {
 	/** 参数类型缺失*/
 	String PARAM_MISSION = "102089";
 
+	/** 判断题答案格式错误*/
+	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102090";
 }

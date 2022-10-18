@@ -25,7 +25,7 @@ alter table `cr_eval_task`
 -- cr_eval_task_step
 alter table `cr_eval_task_step`
 	add column role_name varchar(255) default '' comment '角色名' after end_time,
-	add column user_ids text default '[]' comment '角色用户' after nodes;
+	add column user_ids text default '[]' comment '角色用户';
 
 
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 39, '文档节', 'Document');

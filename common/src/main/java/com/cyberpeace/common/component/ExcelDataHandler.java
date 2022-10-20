@@ -240,9 +240,9 @@ public class ExcelDataHandler {
 		Row row = sheet.createRow(CommonConstant.ZERO);
 
 		// 在excel表中添加表头
-		for (int i = 0; i < excelHeader.header.length; i++) {
+		for (int i = 0; i < excelHeader.getHeader().length; i++) {
 			Cell cell = row.createCell(i);
-			cell.setCellValue(excelHeader.header[i]);
+			cell.setCellValue(excelHeader.getHeader()[i]);
 		}
 
 		try {
@@ -362,10 +362,10 @@ public class ExcelDataHandler {
 			// 创建HSSFRow对象
 			HSSFRow row = sheet.createRow(0);
 			// 在excel表中添加表头
-			for (int i = 0; i < excelHeader.header.length; i++) {
+			for (int i = 0; i < excelHeader.getHeader().length; i++) {
 				// 创建HSSFCell对象
 				HSSFCell cell = row.createCell(i);
-				HSSFRichTextString text = new HSSFRichTextString(excelHeader.header[i]);
+				HSSFRichTextString text = new HSSFRichTextString(excelHeader.getHeader()[i]);
 				cell.setCellValue(text);
 			}
 			int rowNum = 1;

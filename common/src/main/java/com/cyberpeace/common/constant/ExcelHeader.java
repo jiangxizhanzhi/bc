@@ -6,17 +6,17 @@ import lombok.Getter;
 
 enum BaseHeader implements SelectI18nName {
 	NAME("姓名", "Name"),
-	ORG("组织", "Org"),
+	ORG("组织", "Organization"),
 	FINISHLESSONS("完成课时数", "Number of classes completed"),
 	FINISHPRACTICES("完成课后练习数", "Number of exercises completed after class"),
 	FINISHEXPS("完成实验数", "Number of completed experiments"),
 	FINISHEXAMS("参加考试次数", "Number of examinations taken"),
 	PARTICIPATION("人数", "participation"),
-	TRAINPLAN("计划名称", "Train plan"),
-	COURSE("课程名", "Course"),
-	LESSON("课时名", "Lesson"),
-	STARTTIME("开始时间", "StartTime"),
-	ENDTIME("结束时间", "EndTime"),
+	TRAINPLAN("计划名称", "Plan Name"),
+	COURSE("课程名", "Course Name"),
+	LESSON("课时名", "Course Hour Name"),
+	STARTTIME("开始时间", "Start time"),
+	ENDTIME("结束时间", "End time"),
 	STUDYDATA("学习数据", "Study data");
 
 	@Getter

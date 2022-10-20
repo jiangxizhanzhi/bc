@@ -116,7 +116,7 @@ public class AdminPersonalStatsController {
 
 		List<String> passFields = Lists.newArrayList("roles", "reportAverage", "resourceId",
 				"username", "avatar");
-		String sheetName = "学习数据";
+		String sheetName = ExcelHeader.SHEETNAME.header[0];
 		String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
 				+ CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
 
@@ -130,7 +130,7 @@ public class AdminPersonalStatsController {
         ListRsp<OrgStatsBo> orgStatsData = learnStatsService.getOrgStatsData(userStatsReq.toPageParam(), null, null,
                 userStatsReq.getStartTime(), userStatsReq.getEndTime(), false);
         List<String> passFields = Lists.newArrayList( "resourceId", "reportAverage");
-        String sheetName = "学习数据";
+        String sheetName = ExcelHeader.SHEETNAME.header[0];
         String filePath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID()
                 + CommonConstant.PERIOD + FileSunffixConstant.XLS.getDesc();
 

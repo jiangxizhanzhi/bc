@@ -12,6 +12,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import lombok.Synchronized;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -63,15 +64,17 @@ public class DebounceFilter implements Filter {
 
 			// 用 ip 做用户识别不能避免两个用户启动同一个场景 CommonContext.getIp()
 			String key = getSha256(body) + "_" + requestUri;
-			if (cache.getIfPresent(key) != null) {
-				throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
-			}
-			cache.put(key, "whatever");
-
+			localCache(key);
 			filterChain.doFilter(requestWrapper, servletResponse);
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);
 		}
+	}
+	public synchronized void localCache(String key){
+		if (cache.getIfPresent(key) != null) {
+			throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
+		}
+		cache.put(key, "whatever");
 	}
 
 	@Override

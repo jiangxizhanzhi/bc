@@ -640,7 +640,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		for (int i = 0; i < stages.size(); i++) {
 			CrRoleConfigSchemeStage item = stages.get(i);
 
-			writeup.append("## ").append(TrainI18n.STAGE).append(i + 1).append(": ").append(item.getStage())
+			writeup.append("## ").append(TrainI18n.STAGE.getMsg()).append(i + 1).append(": ").append(item.getStage())
 					.append("\n\n");
 			List<CrRoleConfigMission> missions = item.getMissions();
 			List<String> missionTemplateIds = Lists.newArrayList();
@@ -649,7 +649,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			}
 			for (int j = 0; j < missions.size(); j++) {
 				MissionTemplate missionTemplate = missionTemplateMap.get(missionTemplateIds.get(j));
-				writeup.append("#### ").append(TrainI18n.TASK).append(j + 1).append(": ")
+				writeup.append("#### ").append(TrainI18n.TASK.getMsg()).append(j + 1).append(": ")
 						.append(missionTemplate.getTitle()).append("\n\n");
 				writeup.append(String.format("%s: %n", TrainI18n.WRITEUP)).append(missionTemplate.getWriteUp()).append("\n\n");
 			}

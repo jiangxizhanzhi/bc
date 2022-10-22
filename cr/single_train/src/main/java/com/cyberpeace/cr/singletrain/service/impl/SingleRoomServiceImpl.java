@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -563,7 +564,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public String getTrainRecordMarkdown(String businessTemplateId) {
-		// 无运行中房间, 返回null todo 文本国际化
+		// 无运行中房间, 返回null
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
 		if (singleRoom == null) {
@@ -581,27 +582,27 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		StringBuilder trainRecordMd = new StringBuilder();
 		trainRecordMd.append("# <center> ").append(businessTemplate.getName())
 				.append(" </center> \n\n");
-		trainRecordMd.append("###### 人员: ").append(UserInfoContext.getUserContext().getUserName())
+		trainRecordMd.append(String.format("###### %s: ", TrainI18n.PEOPLE)).append(UserInfoContext.getUserContext().getUserName())
 				.append("\n\n");
-		trainRecordMd.append("###### 时间: ").append(
+		trainRecordMd.append(String.format("###### %s: ", TrainI18n.TIME)).append(
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(singleRoom.getStartTime()))
 				.append("\n\n\n");
-		trainRecordMd.append("## 场景描述\n\n").append(businessTemplate.getDescription())
+		trainRecordMd.append(String.format("## %s%n%n", TrainI18n.SCENE_DESC)).append(businessTemplate.getDescription())
 				.append("\n\n");
 
 		// 生成训练记录富文本
 		List<JSONObject> stages = schemeData.toJavaList(JSONObject.class);
 		for (int i = 0; i < stages.size(); i++) {
 			JSONObject stage = stages.get(i);
-			trainRecordMd.append("## 阶段").append(i + 1).append(": ")
+			trainRecordMd.append(String.format("## %s", TrainI18n.STAGE)).append(i + 1).append(": ")
 					.append(stage.getString("stage")).append("\n\n");
 			List<JSONObject> missions = stage.getJSONArray("missions").toJavaList(JSONObject.class);
 			for (int j = 0; j < missions.size(); j++) {
 				JSONObject mission = missions.get(j);
-				trainRecordMd.append("#### 任务").append(j + 1).append(": ")
+				trainRecordMd.append(String.format("#### %s", TrainI18n.TASK)).append(j + 1).append(": ")
 						.append(mission.getString("title")).append("\n\n");
-				trainRecordMd.append("> 任务说明\n\n").append(mission.getString("description"))
-						.append("\n\n").append("> 我的记录\n\n");
+				trainRecordMd.append(String.format("> %s%n%n", TrainI18n.TASK_STAT)).append(mission.getString("description"))
+						.append("\n\n").append(String.format("> %s%n%n", TrainI18n.MY_RECORD));
 				JSONObject singleMissionRecord = trainRecord
 						.getJSONObject(mission.getString("resource_id"));
 				if (singleMissionRecord != null) {
@@ -637,7 +638,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		StringBuilder writeup = new StringBuilder();
 		for (int i = 0; i < stages.size(); i++) {
 			CrRoleConfigSchemeStage item = stages.get(i);
-			writeup.append("## ").append("阶段").append(i + 1).append(": ").append(item.getStage())
+
+			writeup.append("## ").append(TrainI18n.STAGE).append(i + 1).append(": ").append(item.getStage())
 					.append("\n\n");
 			List<CrRoleConfigMission> missions = item.getMissions();
 			List<String> missionTemplateIds = Lists.newArrayList();
@@ -646,9 +648,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			}
 			for (int j = 0; j < missions.size(); j++) {
 				MissionTemplate missionTemplate = missionTemplateMap.get(missionTemplateIds.get(j));
-				writeup.append("#### ").append("任务").append(j + 1).append(": ")
+				writeup.append("#### ").append(TrainI18n.TASK).append(j + 1).append(": ")
 						.append(missionTemplate.getTitle()).append("\n\n");
-				writeup.append("题解: \n").append(missionTemplate.getWriteUp()).append("\n\n");
+				writeup.append(String.format("%s: %n", TrainI18n.WRITEUP)).append(missionTemplate.getWriteUp()).append("\n\n");
 			}
 		}
 

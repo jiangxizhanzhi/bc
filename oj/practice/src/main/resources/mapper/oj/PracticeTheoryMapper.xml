@@ -144,7 +144,7 @@
         limit 0,1
     </select>
 
-    <select id="selectSimple" resultType="com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo">
+    <select id="selectSimple" resultType="com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo">
         select resource_id, theory_type from oj_practice_theory
         <where>
             <if test="query.resourceIds != null and query.resourceIds.size() != 0">

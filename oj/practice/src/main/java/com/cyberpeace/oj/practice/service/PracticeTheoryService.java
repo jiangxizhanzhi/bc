@@ -8,7 +8,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
-import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 
 import java.util.List;
 

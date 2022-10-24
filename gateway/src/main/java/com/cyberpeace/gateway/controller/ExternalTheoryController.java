@@ -41,7 +41,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
-import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;

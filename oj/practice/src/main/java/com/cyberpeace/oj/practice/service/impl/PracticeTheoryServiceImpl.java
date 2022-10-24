@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,8 +24,8 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
-import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
-import com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +59,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static com.cyberpeace.common.constant.CommonConstant.VERTICAL_LINE;
 
 @Service
 @Slf4j

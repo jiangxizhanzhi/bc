@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.service.externalBo;
+package com.cyberpeace.oj.practice.service.externalbo;
 
 import java.io.Serializable;
 import java.util.ArrayList;

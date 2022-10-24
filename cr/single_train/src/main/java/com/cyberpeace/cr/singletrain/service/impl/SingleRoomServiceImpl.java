@@ -286,11 +286,12 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 */
 	@Override
 	public ListRsp<SingleRoomListBo> getSingleTrainPageList(SingleTrainListReq queryParams) {
-		// 分页查询结果
+		// 分页查询结果 todo 增加授权访问过滤
 		IPage<SingleRoomList> selectResult = singleRoomMapper.singleTrainSearch(
 				queryParams.toPageParam(), UserInfoContext.getUserContext().getUserId(),
 				queryParams.getPattern(), queryParams.getCategory(), queryParams.getDifficult(),
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), queryParams.getTitle());
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), queryParams.getTitle(),
+				UserInfoContext.getUserContext().getOrganizationId());
 		if (selectResult.getRecords().isEmpty()) {
 			return new ListRsp<>();
 		}

@@ -23,7 +23,8 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	IPage<SingleRoomList> singleTrainSearch(@Param("page") Page page,
 			@Param("user_id") String userId, @Param("pattern") String pattern,
 			@Param("category") Integer category, @Param("difficult") Integer difficult,
-			@Param("business_type") Integer businessType, @Param("title") String title);
+			@Param("business_type") Integer businessType, @Param("title") String title,
+											@Param("organization_id") String organizationId);
 
 	List<SingleTrainStats> singleTrainStats(
 			@Param("business_template_ids") List<String> businessTemplateIds,

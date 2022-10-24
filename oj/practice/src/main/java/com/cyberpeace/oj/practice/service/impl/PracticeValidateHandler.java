@@ -80,7 +80,7 @@ public class PracticeValidateHandler {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
 			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
 		}
-		if (StringUtils.isBlank(excelRowData.get(index))) {
+		if (StringUtils.isBlank(excelRowData.get(index + 1))) {
 			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
 		}
 	}

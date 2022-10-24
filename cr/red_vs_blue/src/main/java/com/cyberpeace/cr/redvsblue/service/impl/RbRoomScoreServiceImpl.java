@@ -427,7 +427,6 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 				userCounterHashMap.put(userId, userCounter);
 			}
 		}
-		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		// 获取所有用户的评估数据
 		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserIds(roomId, userIds);
@@ -452,7 +451,11 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		Map<String, CrRole> rolesMap = StreamApiUtils.toMap(studentRoles, CrRole::getResourceId,
 				pc -> pc);
 
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 		for (String key : userCounterHashMap.keySet()) {
+			if (!userInfoMap.containsKey(key)) {
+				continue;
+			}
 			UserCounter userCounter = userCounterHashMap.get(key);
 			Integer roleMissionCount = crRoleService
 					.getMissionCount(rolesMap.get(userCounter.getRoleId()));
@@ -461,8 +464,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 			RankData rankData = new RankData();
 
-			rankData.setName(userInfoMap.getOrDefault(key, new UserInfo()).getName());
-			rankData.setLogo(userInfoMap.getOrDefault(key, new UserInfo()).getAvatarUrl());
+			rankData.setName(userInfoMap.get(key).getName());
+			rankData.setLogo(userInfoMap.get(key).getAvatarUrl());
 			rankData.setScore(userCounter.getScore());
 			rankData.setCompletedMission(userCounter.getRemoteMissionIds().size());
 			rankData.setMissionRatio(missionRatio);

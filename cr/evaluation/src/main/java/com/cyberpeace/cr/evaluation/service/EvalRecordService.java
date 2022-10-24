@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
@@ -74,7 +75,7 @@ public interface EvalRecordService extends IService<EvalRecord> {
      * @param evalRecord 评估对象
      * @param evalTask 测评实例对象
      */
-    void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart);
+    void recordRun(EvalRecord evalRecord, EvalTask evalTask, Boolean isRestart, String language);
 
     /**
      * 获取测评实例中场景所有节点`id`, `name`

@@ -79,6 +79,9 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			log.info("start export single training [{}]", businessTemplate.getName());
 
 			File file = new File(path + File.separator + businessTemplate.getName());
+			if (file.exists()) {
+				FileUtil.deleteDir(file);
+			}
 			FileUtil.mkdirs(file.getPath());
 
 			//场景信息导出

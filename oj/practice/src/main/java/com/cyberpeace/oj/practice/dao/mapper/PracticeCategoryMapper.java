@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -31,12 +30,6 @@ public interface PracticeCategoryMapper extends BaseMapper<PracticeCategory> {
 	 * @return
 	 */
 	List<PracticeCategory> selectByCode(@Param("code") String parentCode);
-
-	/**
-	 * 仅仅查询一级 #外部接口使用
-	 * @return 所有理论基础类型一级分类
-	 */
-	List<PracticeCategorySimple> getAll();
 
 	/**
 	 * 查询列表 名称和类型

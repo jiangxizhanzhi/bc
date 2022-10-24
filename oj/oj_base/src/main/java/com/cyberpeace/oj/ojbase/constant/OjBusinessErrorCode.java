@@ -241,7 +241,7 @@ public interface OjBusinessErrorCode {
 	String MAX_PRACTICE_CATEGORY_128 = "102078";
 
 	/** 课程无LOGO*/
-	String NO_COURSE_LOGO = "102079";
+	String NO_DEFAULT_COURSE_LOGO = "102079";
 
 	/** 选择题选项过多*/
 	String CHOICE_OPTION_TOO_MANY = "102080";
@@ -266,4 +266,7 @@ public interface OjBusinessErrorCode {
 
 	/** 判断题答案格式错误*/
 	String JUDGEMENT_ANSWER_ERROR = "102087";
+
+	/** 判断题答案格式错误*/
+	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
 }

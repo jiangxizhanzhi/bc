@@ -1,11 +1,15 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +47,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	@Autowired
 	private EvalVariableRefService evalVariableRefService;
 
+	@Autowired
+	private EvalAlgorithmRefService evalAlgorithmRefService;
+
 	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
 
 		{
@@ -52,6 +59,13 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			put(4, "四");
 		}
 	};
+
+	private String getLevelText(Integer level) {
+		if (CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN)) {
+			return Integer.toString(level);
+		}
+		return int2cn.get(level);
+	}
 
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
@@ -84,13 +98,17 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (scoreList.contains(null)) {
 			return;
 		}
+		List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
 
-		// todo 格式化算法入参、算法日志
+		EvalLog.debug(evalRecord, evalIndexRef, String.format("code: %s", evalAlgorithmRef.getCode()));
+		EvalLog.debug(evalRecord, evalIndexRef, String.format("other arguments: %s", otherArguments));
+		EvalLog.debug(evalRecord, evalIndexRef, String.format("data argument: %s", JsonUtil.toJsonString(scoreList)));
+
 		Integer score;
 		try {
 			score = remotePythonService.indexPerform(evalAlgorithmRef.getResourceId(),
-					evalAlgorithmRef.getCode(), scoreList, null);
-			EvalLog.info(evalRecord, evalIndexRef,
+					evalAlgorithmRef.getCode(), scoreList, otherArguments);
+			EvalLog.debug(evalRecord, evalIndexRef,
 					String.format("system evaluation type index result: %s.", score));
 		} catch (RemoteServiceException e) {
 			score = 0;
@@ -98,12 +116,12 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				msg = String.format(
 						BusinessException.getMessageByLanguage(
 								CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
-						this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			} else {
 				msg = String.format(
 						BusinessException
 								.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
-						this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			}
 			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
@@ -114,7 +132,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			msg = String.format(
 					BusinessException.getMessageByLanguage(
 							CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
-					this.int2cn.get(evalIndexRef.getLevel()), evalIndexRef.getName());
+					this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
 			score = 0;
 		}

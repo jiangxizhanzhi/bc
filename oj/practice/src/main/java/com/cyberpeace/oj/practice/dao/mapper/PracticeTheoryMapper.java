@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,7 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	String selectByContent(
 			@Param("practiceSetId") String practiceSetId, @Param("content") String content);
+
+	List<TheorySimpleBo> selectSimple(@Param("query") TheoryListQuery theoryListQuery,
+			@Param("isPublic") Boolean isPublic);
 }

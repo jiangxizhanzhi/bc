@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
@@ -91,8 +90,7 @@ public class CrNoAuthController {
 			List<MissionTemplate> missionTemplateList = mdParser.getMissionTemplates();
 			Map<String, String> attachments = mdParser.getImages();
 			// edit topo
-			JSONObject topoData = localSceneService.getTopoData(topoId);
-			localSceneService.saveTopo(topoData, businessTemplateService
+			localSceneService.setTopoType(topoId, businessTemplateService
 					.convertTypeToCode(template.getBusinessType()).getCode());
 
 			// get handler

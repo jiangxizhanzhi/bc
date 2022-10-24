@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -512,9 +513,14 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO, practiceSet.getName());
-		}
+			if (new File(ResourceDumpConstant.DEFAULT_LOGO_PATH).exists()) {
+				log.warn("use default logo [{}]", ResourceDumpConstant.DEFAULT_LOGO_PATH);
+				practiceSet.setLogo(ResourceDumpConstant.DEFAULT_LOGO_PATH);
+			}else {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO, practiceSet.getName());
+			}
 
+		}
 		String path = createPath(destPath, practiceSet.getName());
 		EXPORT_LOG.info("Practice set path create successfully! set_path=[{}]", path);
 		

@@ -111,4 +111,8 @@ public interface ResourceDumpConstant {
 	 */
 	String DUMP_OJ_FILE_STORE_PATH = "/oj";
 
+	/**
+	 * 默认封面路径
+	 */
+	String DEFAULT_LOGO_PATH = "/cpms/built_in/logo.png";
 }

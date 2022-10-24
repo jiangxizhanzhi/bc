@@ -125,22 +125,21 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getFormatParams());
 
-        EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<String> formatReturn;
         try {
             formatReturn = remotePythonService.formatPerform(evalAlgorithmRef.getResourceId(), evalAlgorithmRef.getCode(), data, otherArguments);
-            // todo formatReturn返回值长度限制
         } catch (RemoteServiceException e) {
             if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
                 return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FORMAT_ALGORITHM_RESULT_IS_INVALID), evalVariableRef.getName());
             }
             return String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.VARIABLE_FORMAT_EXECUTE_FAILED), evalVariableRef.getName());
         }
-        EvalLog.info(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("size %s format algorithm calculate result %s", perFormatSize, formatReturn));
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = Lists.newArrayList();
         for (int i = 0; i < formatReturn.size(); i++) {
@@ -193,9 +192,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMatchParams());
-        EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行匹配算法
         List<Integer> matchReturn;
@@ -210,7 +209,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         }
         evalVariableRef.setMatchEndTime(new Date());
 
-        EvalLog.info(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("match algorithm calculate result %s", matchReturn));
 
         List<EvalVariableRefProbeData> evalVariableRefProbeDataList = evalVariableRefProbeDataService.lambdaQuery()
                 .eq(EvalVariableRefProbeData::getVariableId, evalVariableRef.getResourceId())
@@ -263,9 +262,9 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
         });
 
         List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalVariableRef.getMarkParams());
-        EvalLog.info(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
-        EvalLog.info(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("code: %s", evalAlgorithmRef.getCode()));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("other arguments: %s", otherArguments));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("data argument: %s", JsonUtil.toJsonString(data)));
 
         // 运行评分算法
         Integer score;
@@ -285,7 +284,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
 
         evalVariableRef.setMarkEndTime(new Date());
 
-        EvalLog.info(evalRecord, evalVariableRef, String.format("mark algorithm calculate result %s", score));
+        EvalLog.debug(evalRecord, evalVariableRef, String.format("mark algorithm calculate result %s", score));
 
         evalVariableRef.setScore(score);
         evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());

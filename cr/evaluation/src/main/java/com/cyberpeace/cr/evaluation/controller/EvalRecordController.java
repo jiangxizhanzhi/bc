@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
@@ -147,7 +148,7 @@ public class EvalRecordController {
 
         // 开始执行
         log.info(String.format("Range Test evaluation %s START.", evalRecord.getName()));
-        evalRecordService.recordRun(evalRecord, evalTask, false);
+        evalRecordService.recordRun(evalRecord, evalTask, false, CommonContext.getLanguage());
 
         return new BaseRsp<>(result);
     }

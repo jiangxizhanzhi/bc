@@ -106,6 +106,9 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			log.info("start export red_vs_blue [{}]", businessTemplate.getName());
 
 			File file = new File(path + File.separator + businessTemplate.getName());
+			if (file.exists()) {
+				FileUtil.deleteDir(file);
+			}
 			FileUtil.mkdirs(file.getPath());
 			//场景信息导出
 			log.info("start export red_vs_blue [{}] scene", businessTemplate.getName());

@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,8 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalBo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalBo.TheorySimpleBo;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +59,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static com.cyberpeace.common.constant.CommonConstant.VERTICAL_LINE;
 
 @Service
 @Slf4j
@@ -361,7 +367,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 获取excel数据
 		String oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLS.getDesc());
 		if (StringUtils.isBlank(oneFile)) {
-			FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
+			oneFile = FileUtil.getOneFile(path, FileSunffixConstant.XLSX.getDesc());
 		}
 		ExcelDataHandler dataHandler = new ExcelDataHandler(oneFile, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
@@ -369,7 +375,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		dataHandler.closeIO();
 		// 数据类型转换
 		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
-				rowData -> rmExcelDataToEntity(rowData, practiceSet));
+				rowData -> excelDataToEntity(rowData, practiceSet, null));
 
 		// 数据去重
 		return StreamApiUtils.distinctByColumn(theoryList, practiceTheory -> practiceTheory.getContent()
@@ -399,19 +405,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public Boolean importTheory(String practiceSetId, String categoryId, String filePath,
-			String userId) {
+	public Boolean importTheory(String practiceSetId, String filePath, String userId) {
 		// 基本数据校验
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(practiceSetId,
 				PracticeSet.PracticeType.THEORY.getCode());
-		practiceValidateHandler.validateCategoryType(categoryId,
-				PracticeCategory.PracticeType.THEORY.getCode());
 
 		// 数据读取
 		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
-				data -> ojExcelDataToEntity(data, practiceSetId, categoryId, userId));
+				data -> excelDataToEntity(data, practiceSet, userId));
 
 		if (CollectionUtils.isEmpty(theories)) {
 			return CommonConstant.TRUE;
@@ -584,8 +587,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		// 获取填空题答案
 		List<String> blanks = Lists.newArrayList();
-		for (int i = index; i < excelRowData.size(); i++) {
-			String blank = excelRowData.get(i);
+		String answers = excelRowData.get(index + 1);
+		String[] split = answers.split(PatternConstant.VERTICAL_LINE);
+		for (String blank : split) {
 			if (StringUtils.isBlank(blank)) {
 				break;
 			}
@@ -657,7 +661,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	 * @param excelRowData
 	 * @return
 	 */
-	private PracticeTheory rmExcelDataToEntity(List<String> excelRowData, PracticeSet practiceSet) {
+	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet, String userId) {
 
 		// 数据长度为零 返回空过滤掉
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
@@ -677,7 +681,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
 		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
+		Integer theoryType = handleTheoryType(String.valueOf(Integer.parseInt(excelRowData.get(3)) - 1));
+		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
 		String categoryName = excelRowData.get(1).trim();
@@ -693,7 +698,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			PracticeCategory category = new PracticeCategory();
 			category.setResourceId(IDGeneratorUtil.getID());
 			category.setCode(category.getResourceId());
-			category.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+			// 跟页面导入区分人员
+			category.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
 			category.setName(excelRowData.get(1));
 			practiceCategoryMapper.insert(category);
@@ -706,32 +712,43 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
+			String answer = handleChoiceAnswer(excelRowData.get(4));
 			String option = formatOption(excelRowData, 5);
 			practiceTheory.setOption(option);
-			practiceTheory.setAnswer(excelRowData.get(4));
+			practiceTheory.setAnswer(answer);
 		}
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
 				.getCode().intValue()) {
+			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
 			practiceTheory.setAnswer(excelRowData.get(4));
 			practiceTheory.setOption(JsonUtil.toJsonString(null));
 		}
 
-		// TODO 无参考数据 不知道怎么导入
+		// 参照页面导入解析填空题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 				.getCode().intValue()) {
+			String blankAnswers = handleFillBlank(excelRowData, 3);
+			practiceTheory.setBlank(blankAnswers);
+			practiceTheory.setAnswer(blankAnswers);
 
 		}
 
-		// TODO 无参考数据 不知道怎么导入
+		// 参考页面导入解析简答题
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
 				.getCode().intValue()) {
+			String shortAnswer = excelRowData.get(4);
+			if(StringUtils.isBlank(shortAnswer)){
+				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
+			}
+			practiceTheory.setAnswer(shortAnswer);
 
 		}
 
 		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
-		practiceTheory.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
+		// 跟页面导入区分人员
+		practiceTheory.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);
 		practiceTheory.setPracticeSetId(practiceSet.getResourceId());
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
@@ -745,6 +762,37 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		String content = LogContent.THEORY_FORMAT.format(practiceTheory.getContent(), logContent);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.THEORY,
 				OperationType.EXERCISE, LogContent.THEORY.getMsg(), content);
+	}
+
+	@Override
+	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext) {
+
+
+		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(setIds)) {
+			return new ExternalTheoryCountBo();
+		}
+
+		String searchSet = theoryListQueryBo.getPracticeSetId();
+		if (StringUtils.isNotBlank(searchSet)) {
+			if (setIds.contains(searchSet)) {
+				setIds.clear();
+				setIds.add(searchSet);
+			} else {
+				return new ExternalTheoryCountBo();
+			}
+		}
+
+		// 设置查询条件
+		TheoryListQuery listQuery = BeanUtils.copy(theoryListQueryBo, TheoryListQuery.class);
+		listQuery.setPracticeSetIds(setIds);
+
+		// 数据查询转换
+		List<TheorySimpleBo> bos = practiceTheoryMapper.selectSimple(listQuery, true);
+		Map<Integer, List<TheorySimpleBo>> typeMap = StreamApiUtils.groupBy(bos,
+				TheorySimpleBo::getTheoryType);
+		ExternalTheoryCountBo countBo = new ExternalTheoryCountBo(typeMap);
+		return countBo;
 	}
 
 	private String formatOption(List<String> excelRowData, Integer start) {

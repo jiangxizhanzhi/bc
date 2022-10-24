@@ -1,5 +1,6 @@
 package com.cyberpeace.job;
 
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalRecord;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTask;
 import com.cyberpeace.cr.evaluation.service.EvalRecordService;
@@ -39,7 +40,7 @@ public class EvaluationJob {
                 if (evalRecord.getEvalTime() == null) {
                     evalRecord.setEvalTime(new Date());
                 }
-                evalRecordService.recordRun(evalRecord, evalTask, true);
+                evalRecordService.recordRun(evalRecord, evalTask, true, WebConstant.LANGUAGE_ZH);
             });
         }
 

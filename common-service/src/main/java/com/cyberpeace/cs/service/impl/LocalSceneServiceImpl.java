@@ -327,6 +327,13 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public String setTopoType(String topoId, Integer referenceType) {
+		JSONObject topoData = getTopoData(topoId);
+		topoData.put("reference_type", referenceType);
+		return remoteTopoService.saveUnlimited(topoData);
+	}
+
+	@Override
 	public void deleteTopo(String topoId) {
 		remoteTopoService.deleteById(topoId);
 	}

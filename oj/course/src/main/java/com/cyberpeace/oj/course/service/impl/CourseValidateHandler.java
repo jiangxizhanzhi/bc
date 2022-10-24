@@ -74,11 +74,7 @@ public class CourseValidateHandler {
 				.selectByBusiness(courseLesson.getResourceId(), false);
 
 		// 无场景 不校验
-		if (CollectionUtils.isEmpty(webScenes) && CollectionUtils.isEmpty(adminScenes)) {
-			return;
-		}
-
-		if (!remoteTopoService.equalTopo(ojSceneConfig, courseLesson.getTopoId())) {
+		if (CollectionUtils.isNotEmpty(webScenes) || CollectionUtils.isNotEmpty(adminScenes)) {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}

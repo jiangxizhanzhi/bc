@@ -41,11 +41,6 @@
         where `code` like #{code}
     </select>
 
-    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.externalBo.PracticeCategorySimple">
-        select `id`, `resource_id`, `name`, `create_time`, `update_time`, `code`
-        from practice_category where status = 1 and practice_type = 0 and code not like '%|%' order by id desc
-    </select>
-
     <select id="selectByName" resultType="java.lang.String">
         select resource_id from oj_practice_category
         where practice_type = #{practiceType}

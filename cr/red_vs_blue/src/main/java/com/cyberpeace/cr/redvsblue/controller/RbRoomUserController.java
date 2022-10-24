@@ -6,14 +6,13 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -26,6 +25,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
@@ -122,8 +122,7 @@ public class RbRoomUserController {
 
 						crTaskReject.setRejectTime(taskSubmit.getUpdateTime());
 						crTaskReject.setRejectReason(taskSubmit.getReason());
-						crTaskReject.setReferee(userInfoMap
-								.getOrDefault(taskSubmit.getEvaluatorId(), "new UserInfo()"));
+						crTaskReject.setReferee(userInfoMap.get(taskSubmit.getEvaluatorId()));
 
 						rejectLogs.add(crTaskReject);
 					}

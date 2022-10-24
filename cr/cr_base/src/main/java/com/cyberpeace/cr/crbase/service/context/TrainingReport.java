@@ -78,7 +78,7 @@ public class TrainingReport {
 		total_score("总分", "Total Score"),
 		train_score("训练得分", "Train Score"),
 		train_stat("训练统计", "Train Statistics"),
-		skill_score("技能评分", "Skill score"),
+		skill_score("技能评分", "Skill Score"),
 		obj_question("客观题", "Objective Question"),
 		subj_question("主观题", "Subjective Question"),
 		ability_score("能力评分", "Ability Score"),

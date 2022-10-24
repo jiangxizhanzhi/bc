@@ -247,6 +247,30 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateBatchById(businessTemplateList);
 	}
 
+	@Override
+	public Auth getAuth(String resourceId) {
+		BusinessTemplate businessTemplate = getById(resourceId);
+
+		Auth auth = new Auth();
+		auth.setAuthMode(businessTemplate.getReadAuthType());
+		auth.setAuthIds(JsonUtil.toJsonObjectArray(businessTemplate.getReadAuthIds(), String.class));
+		return auth;
+	}
+
+	@Override
+	public boolean batchSetAuth(AuthContext authContext) {
+		String authIds = JsonUtil.toJsonString(authContext.getAuthIds());
+		List<BusinessTemplate> businessTemplateList = listByIds(authContext.getIds());
+
+		businessTemplateList.forEach(businessTemplate -> {
+			businessTemplate.setReadAuthType(authContext.getAuthMode());
+			businessTemplate.setReadAuthIds(authIds);
+		});
+		updateBatchById(businessTemplateList);
+
+		return !businessTemplateList.isEmpty();
+	}
+
 	private BusinessTemplate getBusinessTemplate(BasicTemplate basicTemplate) {
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();
 		BusinessTemplate businessTemplate = new BusinessTemplate();

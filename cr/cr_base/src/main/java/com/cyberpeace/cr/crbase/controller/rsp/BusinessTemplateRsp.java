@@ -34,5 +34,9 @@ public class BusinessTemplateRsp implements Serializable {
 
 	private List<String> shareTeachers;
 
+	private Integer auth;
+
+	private Integer authCount;
+
 	private SceneConfigRsp sceneConfigInfo;
 }

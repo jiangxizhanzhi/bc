@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.cr.crbase.controller.req.AuthReq;
+import com.cyberpeace.cr.crbase.service.context.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +39,6 @@ import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.Share;
-import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -102,6 +100,8 @@ public class BusinessTemplateController {
 			businessTemplateRsp.setShare(businessTemplateData.getOperationAuthType());
 			businessTemplateRsp.setShareTeachers(JsonUtil
 					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
+			businessTemplateRsp.setAuth(businessTemplateData.getReadAuthType());
+			businessTemplateRsp.setAuthCount(JsonUtil.toJsonObjectArray(businessTemplateData.getReadAuthIds(), String.class).size());
 			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
 			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
 			sceneConfigInfo
@@ -139,6 +139,21 @@ public class BusinessTemplateController {
 		businessTemplateService.batchSetShares(shareContext);
 
 		return new BaseRsp();
+	}
+
+	@ApiOperation("查询访问权限")
+	@GetMapping("/getAuth")
+	public BaseRsp<Auth> getAuth(@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
+		Auth data = businessTemplateService.getAuth(resource_id);
+
+		return new BaseRsp<>(data);
+	}
+
+	@ApiOperation("批量修改访问权限")
+	public BaseRsp<Boolean> batchSetAuth(@RequestBody @Validated AuthReq authReq) {
+		AuthContext authContext = BeanUtils.copy(authReq, AuthContext.class);
+
+		return new BaseRsp<>(businessTemplateService.batchSetAuth(authContext));
 	}
 
 	@DeleteMapping()

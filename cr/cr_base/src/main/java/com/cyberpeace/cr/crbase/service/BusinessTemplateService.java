@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
-import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.Share;
-import com.cyberpeace.cr.crbase.service.context.ShareContext;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -36,6 +33,10 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param shareContext
 	 */
 	void batchSetShares(ShareContext shareContext);
+
+	Auth getAuth(String resourceId);
+
+	boolean batchSetAuth(AuthContext authContext);
 
 	String addTemplate(BaseInfo baseInfo);
 

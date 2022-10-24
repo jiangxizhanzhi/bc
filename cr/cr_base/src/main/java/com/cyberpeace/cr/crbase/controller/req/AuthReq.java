@@ -14,7 +14,7 @@ public class AuthReq {
 
     @ApiModelProperty(value = "授权类别")
     @NotNull
-    private Integer shareMode;
+    private Integer authMode;
 
     @ApiModelProperty(value = "授权组织id")
     @NotNull

@@ -150,6 +150,7 @@ public class BusinessTemplateController {
 	}
 
 	@ApiOperation("批量修改访问权限")
+	@PostMapping("/batchSetAuth")
 	public BaseRsp<Boolean> batchSetAuth(@RequestBody @Validated AuthReq authReq) {
 		AuthContext authContext = BeanUtils.copy(authReq, AuthContext.class);
 

@@ -36,6 +36,7 @@
         left join cr_single_template T2 on T1.resource_id = T2.business_template_id
         left join cr_single_room R1 on T1.resource_id = R1.business_template_id and R1.user_id = #{user_id}
         <where>
+            <bind name="organization_id" value="'%' + organization_id + '%'"/>
             T1.business_type = #{business_type}
             and (
             T1.create_user_id = #{user_id}

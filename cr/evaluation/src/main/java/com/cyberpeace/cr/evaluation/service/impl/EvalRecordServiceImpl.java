@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
+
+import javax.el.ELClass;
 
 @Service
 @Slf4j
@@ -916,17 +919,34 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public List<EvalRoomPairRsp> getNodes(String roomId) {
         EvalTask evalTask = getTask(roomId);
 
+        String templateId = evalTask.getTemplateId();
+        String userId = UserInfoContext.getUserContext().getUserId();
+
+        //获取测评模板信息
+        EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
+        List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(evalTemplate.getStepConfig(), EvalRoleConfig.class);
+
+        List<CrRoleNode> assetNodes = new ArrayList<>();
+        //获取当前用户的节点
+        List<EvalRoleConfig> evalRoleConfigs = roleConfigs.stream().filter(rc -> rc.getUsers().contains(userId)).collect(Collectors.toList());
+        evalRoleConfigs.forEach(item -> {
+            if (CollectionUtils.isNotEmpty(item.getAssetNodes())) {
+                assetNodes.addAll(item.getAssetNodes());
+            }
+        });
+
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
-        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), userId);
         JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
         nodes.forEach(item -> {
             JSONObject nodeItem = (JSONObject) item;
-
-            EvalRoomPairRsp result = new EvalRoomPairRsp();
-            result.setId(nodeItem.getString("id"));
-            result.setLabel(nodeItem.getString("name"));
-            results.add(result);
+            if (assetNodes.toString().contains(nodeItem.getString("id"))){
+                EvalRoomPairRsp result = new EvalRoomPairRsp();
+                result.setId(nodeItem.getString("id"));
+                result.setLabel(nodeItem.getString("name"));
+                results.add(result);
+            }
         });
 
         return results;
@@ -1142,7 +1162,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         }
         //测试步骤
-        data.put("steps", evalTaskStepService.getTaskSteps(taskId, null));
+        data.put("steps", evalTaskStepService.getTaskSteps(taskId, UserInfoContext.getUserContext().getUserId()));
         //指标体系结构和评估结果数据
         EvalRecordResultRsp result = result(resourceId);
         List<EvalSystemIndexesContext> indexes = result.getIndexes();

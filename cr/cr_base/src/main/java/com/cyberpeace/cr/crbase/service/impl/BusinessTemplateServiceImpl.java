@@ -107,6 +107,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		businessTemplate.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
+		businessTemplate.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		businessTemplate.setReadAuthIds("[]");
 		businessTemplate.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		// 拓扑场景id保存获取

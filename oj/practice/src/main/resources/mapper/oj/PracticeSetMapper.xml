@@ -6,14 +6,6 @@
         <result property="isPublic" column="public"/>
     </resultMap>
 
-    <select id="getAll" resultType="com.cyberpeace.oj.practice.service.externalBo.PracticeSetSimple">
-        select *
-        from practice_set
-        where status = 1
-          and practice_type = 0
-        order by id desc
-    </select>
-
     <select id="selectByAuthContext" resultType="java.lang.String">
         select resource_id from oj_practice_set
         <where>

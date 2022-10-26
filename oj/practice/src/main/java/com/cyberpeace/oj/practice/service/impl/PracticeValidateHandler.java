@@ -330,4 +330,13 @@ public class PracticeValidateHandler {
 					practiceName);
 		}
 	}
+
+	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content, PracticeTheory practiceTheory) {
+		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
+		if (StringUtils.isNotBlank(practiceId) && !practiceId.equals(practiceTheory.getResourceId())) {
+			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
+					practiceSetId, practiceId);
+			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
 }

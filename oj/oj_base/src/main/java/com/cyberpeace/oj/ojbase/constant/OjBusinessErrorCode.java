@@ -194,4 +194,8 @@ public interface OjBusinessErrorCode {
 
 	/** 第xxx行 文件内容缺失*/
 	String TIME_FORMAT_ERROR = "102063";
+
+	/** 习题类型存在错误*/
+	String PRACTICE_TYPE_ERROR = "102083";
+
 }

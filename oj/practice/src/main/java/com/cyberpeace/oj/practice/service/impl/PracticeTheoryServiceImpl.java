@@ -334,6 +334,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
 		// 数据校验
+		practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),
+				practiceTheory.getContent(), practiceTheory);
 		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
 				PracticeCategory.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),

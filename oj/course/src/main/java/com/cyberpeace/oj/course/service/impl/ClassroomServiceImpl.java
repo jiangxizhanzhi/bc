@@ -206,7 +206,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
 		// 唯一索引 课时+组织id唯一性校验
-		classroomValidateHandler.validateClassroomLessonExist(classroom.getLessonId(), classroom.getOrganizationId());
+		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
 
 		// 课程权限校验
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);

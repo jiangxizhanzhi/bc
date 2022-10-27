@@ -598,7 +598,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			List<String> keywords = Lists
 					.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
 			practiceTheory.setAnswer(shortAnswer);
-			practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
+			if (!CollectionUtils.isEmpty(keywords)){
+				practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
+			}
 		}
 
 		return practiceTheory;

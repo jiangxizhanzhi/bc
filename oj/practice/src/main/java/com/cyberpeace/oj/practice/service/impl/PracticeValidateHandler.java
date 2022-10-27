@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,4 +250,33 @@ public class PracticeValidateHandler {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
+
+	/**
+	 * 校验习题类型
+	 * @param type 习题类型值
+	 */
+	public void validateTheoryType(int type) {
+
+		boolean right = false;
+		for (PracticeTheory.TheoryType theoryType : PracticeTheory.TheoryType.values()) {
+			right |= theoryType.getCode().intValue() == type;
+		}
+
+		if (!right) {
+			log.error("Theory type error! type=[{}]", type);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+	}
+
+	/**
+	 * 非填空题答案不能为空
+	 * @param type 习题类型值
+	 */
+	public void validateAnswerIsBlank(int type, String answer) {
+		if (type == PracticeTheory.TheoryType.FILL_BLANK.getCode() && StringUtils.isBlank(answer)) {
+			log.error("In addition to fill in the blank questions, the rest of the answers must be filled in!");
+			throw new BusinessException(OjBusinessErrorCode.ANSWER_NOT_NULL);
+		}
+	}
+
 }

@@ -519,7 +519,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
 		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(1)).intValue() - 1);
+		int theoryType = handleTheoryType(excelRowData.get(1));
+		practiceTheory.setTheoryType(theoryType);
+		practiceValidateHandler.validateAnswerIsBlank(theoryType,excelRowData.get(2));
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
 
@@ -601,6 +603,30 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		return practiceTheory;
 	}
+
+	/**
+	 * 处理习题类型
+	 * @param theoryType 习题类型
+	 * @return
+	 */
+	private Integer handleTheoryType(String theoryType) {
+
+		Integer realType;
+
+		try {
+			Double practiceType = new Double(theoryType);
+			realType = practiceType.intValue() - 1;
+		} catch (Exception e) {
+			log.error("Parse theory type failed! value=[{}] catch error:", theoryType, e);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+
+		practiceValidateHandler.validateTheoryType(realType);
+		return realType;
+	}
+
+
+
 
 	/**
 	 * excel数据转化为实体类

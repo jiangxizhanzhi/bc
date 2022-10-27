@@ -1,12 +1,15 @@
 package com.cyberpeace.config.auth;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,9 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -81,6 +87,8 @@ public class ExceptionFilter implements Filter {
 		if (e instanceof HttpMessageNotReadableException) {
 			e = (Exception) e.getCause().getCause();
 		}
+		// 打印请求信息
+		throwErrorMessage();
 
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);
@@ -254,5 +262,38 @@ public class ExceptionFilter implements Filter {
 		}
 
 		return cache.get(code);
+	}
+	private void throwErrorMessage(){
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		//存在请求时获取当前请求request
+		if (requestAttributes != null) {
+			HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+			StringBuffer sb = new StringBuffer();
+			//添加请求url和请求类型
+			sb.append(request.getMethod()).append("|");
+			sb.append(request.getRequestURI());
+			//获取参数列表
+			HashMap<String, String> paramMap = new HashMap<>();
+			Enumeration<String> paramNameEnu = request.getParameterNames();
+			while(paramNameEnu.hasMoreElements()) {
+				String parameterName = paramNameEnu.nextElement();
+				String value = request.getParameter(parameterName);
+				if (StringUtils.isNotEmpty(value)) {
+					paramMap.put(parameterName,value);
+				}
+			}
+			//处理参数列表
+			if (request.getMethod().equals("POST")) {
+				sb.append(paramMap);
+			}
+			if (request.getMethod().equals("GET")) {
+				sb.append("?");
+				for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+					sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+				}
+				sb.replace(sb.lastIndexOf("&") - 1 ,sb.length(),"");
+			}
+			log.error(sb.toString());
+		}
 	}
 }

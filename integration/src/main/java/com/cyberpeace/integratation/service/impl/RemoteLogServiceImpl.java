@@ -30,7 +30,8 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 		LOG_ADD_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.log.add");
 	}
 
-	private void addLog(MpLog mpLog) {
+	@Async
+	public void addLog(MpLog mpLog) {
 		try {
 			HttpClientUtil.post(LOG_ADD_URL, mpLog, JSONObject.class);
 		} catch (Exception e) {
@@ -56,7 +57,6 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 	}
 
 	@Override
-	@Async
 	public void addCrLog(UserInfo userInfo, OperationModule operationModule, OperationType operationType,
 						 String operationTarget) {
 
@@ -70,7 +70,6 @@ public class RemoteLogServiceImpl implements RemoteLogService {
 	}
 
 	@Override
-	@Async
 	public void addOjLog(UserInfo userInfo, OperationModule operationModule,
 			OperationType operationType, String operationTarget, String content) {
 

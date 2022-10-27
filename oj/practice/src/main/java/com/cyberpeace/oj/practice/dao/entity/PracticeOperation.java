@@ -52,4 +52,10 @@ public class PracticeOperation extends PracticeBase {
 
 	}
 
+	public Integer getDynamicFlag() {
+		if (dynamicFlag == null) {
+			return DynamicFlag.STATIC.getCode();
+		}
+		return dynamicFlag;
+	}
 }

@@ -273,7 +273,7 @@ public class PracticeValidateHandler {
 	 * @param type 习题类型值
 	 */
 	public void validateAnswerIsBlank(int type, String answer) {
-		if (type == PracticeTheory.TheoryType.FILL_BLANK.getCode() && StringUtils.isBlank(answer)) {
+		if (type != PracticeTheory.TheoryType.FILL_BLANK.getCode() && StringUtils.isBlank(answer)) {
 			log.error("In addition to fill in the blank questions, the rest of the answers must be filled in!");
 			throw new BusinessException(OjBusinessErrorCode.ANSWER_NOT_NULL);
 		}

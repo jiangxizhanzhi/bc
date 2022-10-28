@@ -408,7 +408,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				PracticeCategory.PracticeType.THEORY.getCode());
 
 		// 数据读取
-		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
+		ExcelDataHandler dataHandler = new ExcelDataHandler("E:" + filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
 		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
 				data -> ojExcelDataToEntity(data, practiceSetId, categoryId, userId));
@@ -598,7 +598,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			List<String> keywords = Lists
 					.newArrayList(keywordsString.split(PatternConstant.VERTICAL_LINE));
 			practiceTheory.setAnswer(shortAnswer);
-			if (!CollectionUtils.isEmpty(keywords)){
+			if (!StringUtils.isBlank(keywordsString)){
 				practiceTheory.setKeyword(JsonUtil.arrayToString(keywords));
 			}
 		}

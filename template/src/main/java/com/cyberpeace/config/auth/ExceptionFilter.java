@@ -89,8 +89,6 @@ public class ExceptionFilter implements Filter {
 		if (e instanceof HttpMessageNotReadableException) {
 			e = (Exception) e.getCause().getCause();
 		}
-		// 打印请求信息
-		throwErrorMessage();
 
 		if (e instanceof BindException) {
 			parseArgumentNotValidException(servletResponse, (BindException) e);
@@ -275,37 +273,5 @@ public class ExceptionFilter implements Filter {
 
 		return cache.get(code);
 	}
-	private void throwErrorMessage(){
-		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		//存在请求时获取当前请求request
-		if (requestAttributes != null) {
-			HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-			StringBuilder sb = new StringBuilder();
-			//添加请求url和请求类型
-			sb.append(request.getMethod()).append("|");
-			sb.append(request.getRequestURI());
-			//获取参数列表
-			HashMap<String, String> paramMap = new HashMap<>();
-			Enumeration<String> paramNameEnu = request.getParameterNames();
-			while(paramNameEnu.hasMoreElements()) {
-				String parameterName = paramNameEnu.nextElement();
-				String value = request.getParameter(parameterName);
-				if (StringUtils.isNotEmpty(value)) {
-					paramMap.put(parameterName,value);
-				}
-			}
-			//处理参数列表
-			if (request.getMethod().equals("POST")) {
-				sb.append(paramMap);
-			}
-			if (request.getMethod().equals("GET") && !paramMap.isEmpty()) {
-				sb.append("?");
-				for (Map.Entry<String, String> entry : paramMap.entrySet()) {
-					sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-				}
-				sb.replace(sb.lastIndexOf("&") - 1 ,sb.length(),"");
-			}
-			log.error(sb.toString());
-		}
-	}
+
 }

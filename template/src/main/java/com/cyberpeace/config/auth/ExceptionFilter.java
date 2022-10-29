@@ -38,6 +38,7 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -78,7 +79,8 @@ public class ExceptionFilter implements Filter {
 	private void dealException(HttpServletResponse servletResponse, Exception e) {
 		log.error("exceptionfilter catch error", e);
 
-		if (e instanceof ServletException) {
+		// 不支持的请求 e.getCause() is null
+		if (e instanceof ServletException && e.getCause() != null) {
 			// 如果拦截到的是spring封装过的异常，获取原始异常信息
 			e = (Exception) e.getCause();
 		}
@@ -106,7 +108,10 @@ public class ExceptionFilter implements Filter {
 			parseRemoteServiceException(servletResponse, (RemoteServiceException) e);
 		} else if (e instanceof BusinessException) {
 			parseBusinessException(servletResponse, (BusinessException) e);
-		} else {
+		} else if (e instanceof HttpRequestMethodNotSupportedException) {
+			notSupportedException(servletResponse);
+		}
+		else {
 			dealDefaultError(servletResponse);
 		}
 	}
@@ -170,6 +175,13 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseAuthenticationException(HttpServletResponse httpServletResponse) {
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	}
+
+	/**
+	 *
+	 */
+	private void notSupportedException(HttpServletResponse httpServletResponse) {
+		httpServletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
 	/**

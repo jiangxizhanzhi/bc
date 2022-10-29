@@ -268,7 +268,7 @@ public class ExceptionFilter implements Filter {
 		//存在请求时获取当前请求request
 		if (requestAttributes != null) {
 			HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			//添加请求url和请求类型
 			sb.append(request.getMethod()).append("|");
 			sb.append(request.getRequestURI());
@@ -286,7 +286,7 @@ public class ExceptionFilter implements Filter {
 			if (request.getMethod().equals("POST")) {
 				sb.append(paramMap);
 			}
-			if (request.getMethod().equals("GET")) {
+			if (request.getMethod().equals("GET") && !paramMap.isEmpty()) {
 				sb.append("?");
 				for (Map.Entry<String, String> entry : paramMap.entrySet()) {
 					sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");

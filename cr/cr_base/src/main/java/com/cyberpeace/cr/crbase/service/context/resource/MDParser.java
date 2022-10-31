@@ -316,6 +316,8 @@ public class MDParser {
 		// 设为全部可见
 		businessTemplate.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		businessTemplate.setOperationAuthIds("[]");
+		businessTemplate.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		businessTemplate.setReadAuthIds("[]");
 
 		// single training
 		if (businessTemplate.getBusinessType().equals(ZiguanConstants.SINGLE_TRAIN)) {

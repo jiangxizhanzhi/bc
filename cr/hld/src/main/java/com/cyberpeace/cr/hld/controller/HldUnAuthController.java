@@ -1,24 +1,20 @@
 package com.cyberpeace.cr.hld.controller;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.FtpUploadUtil;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.BusinessTemplateQuery;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -40,11 +36,17 @@ import com.cyberpeace.cr.hld.service.context.HldRoomSceneContext;
 import com.cyberpeace.cr.hld.service.context.HldTaskContext;
 import com.cyberpeace.integratation.model.mp.MpLogFile;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "HLD拓扑（非认证）")
 @Slf4j
@@ -84,6 +86,46 @@ public class HldUnAuthController {
 		HldRoom hldRoom = hldRoomService.create(hldRoomContext);
 
 		return new BaseRsp<>(new HldRoomIdRsp(hldRoom.getResourceId()));
+	}
+
+	@ApiOperation("查询所有训练模板")
+	@GetMapping("/listCrEvents")
+	public BaseRsp<HldRoomIdRsp> listCrEvents(TemplateReq listReq) {
+		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
+				BusinessTemplateQuery.class);
+		businessTemplateQuery.setSort("-cr_business_template.create_time");
+
+		IPage<BusinessTemplateData> data = businessTemplateService
+				.getAllList(businessTemplateQuery);
+
+		List<String> userIds = Lists.newArrayList();
+		for (BusinessTemplateData businessTemplateData : data.getRecords()) {
+			userIds.add(businessTemplateData.getCreateUserId());
+		}
+		// Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(businessTemplateData -> {
+			BusinessTemplateRsp businessTemplateRsp = BeanUtils.copy(businessTemplateData,
+					BusinessTemplateRsp.class);
+			businessTemplateRsp.setDifficult(businessTemplateData.getDifficulty());
+			// businessTemplateRsp
+			// .setCreateUser(idNameMap.get(businessTemplateData.getCreateUserId()));
+			businessTemplateRsp.setId(businessTemplateData.getResourceId());
+			businessTemplateRsp.setType(businessTemplateData.getBusinessType());
+			businessTemplateRsp.setSceneManagerId(businessTemplateData.getTopoId());
+			businessTemplateRsp.setShare(businessTemplateData.getOperationAuthType());
+			businessTemplateRsp.setShareTeachers(JsonUtil
+					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
+			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
+			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
+			sceneConfigInfo
+					.setHasScene(StringUtils.isNotBlank(businessTemplateData.getLocalSceneId()));
+			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
+
+			return businessTemplateRsp;
+		});
+
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 	private HldRoomContext copyToHldRoomContext(HldRoomCopyReq copyReq) {

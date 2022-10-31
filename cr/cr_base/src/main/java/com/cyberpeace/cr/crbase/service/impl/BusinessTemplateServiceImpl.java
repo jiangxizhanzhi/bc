@@ -237,6 +237,22 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public IPage<BusinessTemplateData> getAllList(BusinessTemplateQuery businessTemplateQuery) {
+
+		Page page = businessTemplateQuery.toPageParam();
+
+		IPage<BusinessTemplateData> result = businessTemplateMapper.listAllTemplate(page,
+				businessTemplateQuery);
+
+		for (BusinessTemplateData businessTemplate : result.getRecords()) {
+			String topoId = businessTemplate.getTopoId();
+			businessTemplate.setNodesNum(remoteTopoService.getTopoDigest(topoId).getNodeCounts());
+		}
+
+		return result;
+	}
+
+	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}

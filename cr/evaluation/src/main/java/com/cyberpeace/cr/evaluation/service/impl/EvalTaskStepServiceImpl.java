@@ -161,7 +161,10 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 
 		List<EvalTimeLineContext> evalTimeLineContextList = Lists.newArrayList();
 
-		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectSteps(taskId, null);
+		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectSteps(
+				taskId,
+				UserInfoContext.getUserContext().getUserId()
+		);
 
 		for (EvalTaskStep evalTaskStep : evalTaskSteps) {
 			if (evalTaskStep.getEndTime() != null) {

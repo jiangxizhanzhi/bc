@@ -254,7 +254,9 @@ public class EvalTaskController {
 			@ApiParam(name = "template_id", value = "测评靶场模板id",
 					required = true) @RequestParam("template_id") String templateId,
 			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
-					value = "task_id", required = false) String taskId) {
+					value = "task_id", required = false) String taskId,
+            @ApiParam(name = "user_id", value = "查询用户id") @RequestParam(
+                    required = false) String userId) {
 
 		// 未传入任务Id时提取当前活动任务
 		if (StringUtils.isEmpty(taskId)) {
@@ -272,7 +274,7 @@ public class EvalTaskController {
 		}
 
 		EvalTask evalTask = evalTaskService.getTask(taskId);
-		evalTaskTimeLineRsp.setData(evalTaskStepService.getFinishedSteps(taskId));
+		evalTaskTimeLineRsp.setData(evalTaskStepService.getFinishedSteps(taskId, userId));
 		evalTaskTimeLineRsp.setStartTime(evalTask.getStartTime());
 		evalTaskTimeLineRsp.setEndTime(evalTask.getEndTime());
 
@@ -294,7 +296,7 @@ public class EvalTaskController {
 
 		EvalTask evalTask = evalTaskService.getTask(taskId);
 		List<EvalTimeLineContext> evalTimeLineContextList = evalTaskStepService
-				.getFinishedSteps(taskId);
+				.getFinishedSteps(taskId, null);
 		evalTimeLineContextList.add(0, new EvalTimeLineContext(
 				TrainingReport.TemplateI18n.scene_start.getMsg(), evalTask.getStartTime()));
 		// 未结束测评任务没有结束时间点

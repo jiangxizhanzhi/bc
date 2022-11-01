@@ -157,13 +157,16 @@ public class EvalTaskStepServiceImpl extends ServiceImpl<EvalTaskStepMapper, Eva
 	}
 
 	@Override
-	public List<EvalTimeLineContext> getFinishedSteps(String taskId) {
+	public List<EvalTimeLineContext> getFinishedSteps(String taskId, String userId) {
 
 		List<EvalTimeLineContext> evalTimeLineContextList = Lists.newArrayList();
+		String searchUserId = StringUtils.isNotEmpty(userId)
+				? userId
+				: UserInfoContext.getUserContext().getUserId();
 
 		List<EvalTaskStep> evalTaskSteps = evalTaskStepMapper.selectSteps(
 				taskId,
-				UserInfoContext.getUserContext().getUserId()
+				searchUserId
 		);
 
 		for (EvalTaskStep evalTaskStep : evalTaskSteps) {

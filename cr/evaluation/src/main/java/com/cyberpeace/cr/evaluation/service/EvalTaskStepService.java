@@ -52,6 +52,6 @@ public interface EvalTaskStepService extends IService<EvalTaskStep> {
 	 * @param taskId
 	 * @return
 	 */
-	List<EvalTimeLineContext> getFinishedSteps(String taskId);
+	List<EvalTimeLineContext> getFinishedSteps(String taskId, String userId);
 	
 }

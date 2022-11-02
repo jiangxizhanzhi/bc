@@ -918,34 +918,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     public List<EvalRoomPairRsp> getNodes(String roomId) {
         EvalTask evalTask = getTask(roomId);
 
-        String templateId = evalTask.getTemplateId();
-        String userId = UserInfoContext.getUserContext().getUserId();
-
-        //获取测评模板信息
-        EvalTemplate evalTemplate = evalTemplateService.getById(templateId);
-        List<EvalRoleConfig> roleConfigs = JsonUtil.toJsonObjectArray(evalTemplate.getStepConfig(), EvalRoleConfig.class);
-
-        List<CrRoleNode> assetNodes = new ArrayList<>();
-        //获取当前用户的节点
-        List<EvalRoleConfig> evalRoleConfigs = roleConfigs.stream().filter(rc -> rc.getUsers().contains(userId)).collect(Collectors.toList());
-        evalRoleConfigs.forEach(item -> {
-            if (CollectionUtils.isNotEmpty(item.getAssetNodes())) {
-                assetNodes.addAll(item.getAssetNodes());
-            }
-        });
-
         List<EvalRoomPairRsp> results = Lists.newArrayList();
 
-        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), userId);
+        JSONObject jsonObject = remoteSceneService.getById(evalTask.getMpSceneId(), UserInfoContext.getUserContext().getUserId());
         JSONArray nodes = jsonObject.getJSONObject("scene").getJSONObject("topology").getJSONArray("elements");
         nodes.forEach(item -> {
             JSONObject nodeItem = (JSONObject) item;
-            if (assetNodes.toString().contains(nodeItem.getString("id"))){
-                EvalRoomPairRsp result = new EvalRoomPairRsp();
-                result.setId(nodeItem.getString("id"));
-                result.setLabel(nodeItem.getString("name"));
-                results.add(result);
-            }
+
+            EvalRoomPairRsp result = new EvalRoomPairRsp();
+            result.setId(nodeItem.getString("id"));
+            result.setLabel(nodeItem.getString("name"));
+            results.add(result);
         });
 
         return results;

@@ -63,7 +63,10 @@ public class WebLogAspect {
                 url = request.getRequestURI();
                 methodName = request.getMethod();
             }
-            String userId = UserInfoContext.getUserContext().getUserId();
+            String userId = null;
+            if (UserInfoContext.getUserContext() != null) {
+                userId = UserInfoContext.getUserContext().getUserId();
+            }
             String mapData;
             try {
                 mapData = objectMapper.writeValueAsString(map);

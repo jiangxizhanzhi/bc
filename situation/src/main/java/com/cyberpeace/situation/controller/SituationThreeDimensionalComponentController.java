@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsAddReq;
 import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsFilterReq;
 import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponents;
@@ -66,7 +67,7 @@ public class SituationThreeDimensionalComponentController {
 	}
 
 	@ApiOperation("查询三维组件类型")
-	@GetMapping("/category")
+	@GetMapping("/category/list")
 	public BaseRsp<List<ThreeDimensionalComponentsCategory>>
 	getThreeDimensionalComponentsCategory(String name) {
 
@@ -80,7 +81,7 @@ public class SituationThreeDimensionalComponentController {
 	}
 
 	@ApiOperation("查询三维组件类型详情")
-	@GetMapping("/category_detail")
+	@GetMapping("/category")
 	public BaseRsp<ThreeDimensionalComponentsCategory>
 	getThreeDimensionalComponentsCategoryDetail(String resourceId) {
 
@@ -93,7 +94,8 @@ public class SituationThreeDimensionalComponentController {
 
 	@ApiOperation("删除三维组件类型")
 	@DeleteMapping("/category")
-	public BaseRsp deleteThreeDimensionalComponentsCategory(@RequestBody List<String> resourceIds) {
+	public BaseRsp deleteThreeDimensionalComponentsCategory(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
 		List<ThreeDimensionalComponentsCategory> twoDimensionalComponents = threeDimensionalComponentsCategoryMapper.selectBatchIds(resourceIds);
 		if (twoDimensionalComponents.isEmpty()) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -157,7 +159,7 @@ public class SituationThreeDimensionalComponentController {
 	}
 
 	@ApiOperation("查询三维组件")
-	@GetMapping("")
+	@GetMapping("list")
 	public BaseRsp<List<ThreeDimensionalComponents>>
 	getThreeDimensionalComponents(ThreeDimensionalComponentsFilterReq threeDimensionalComponentsFilterReq) {
 		LambdaQueryWrapper<ThreeDimensionalComponents> queryWrapper = new LambdaQueryWrapper<>();
@@ -181,7 +183,7 @@ public class SituationThreeDimensionalComponentController {
 	}
 
 	@ApiOperation("查询三维组件详情")
-	@GetMapping("/detail")
+	@GetMapping("")
 	public BaseRsp<ThreeDimensionalComponents>
 	getThreeDimensionalComponentsDetail(String resourceId) {
 
@@ -195,7 +197,8 @@ public class SituationThreeDimensionalComponentController {
 
 	@ApiOperation("删除三维组件")
 	@DeleteMapping("")
-	public BaseRsp deleteThreeDimensionalComponents(@RequestBody List<String> resourceIds) {
+	public BaseRsp deleteThreeDimensionalComponents(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
 		if(resourceIds.isEmpty()){
 			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
 		}

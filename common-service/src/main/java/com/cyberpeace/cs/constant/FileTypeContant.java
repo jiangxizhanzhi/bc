@@ -23,4 +23,11 @@ public interface FileTypeContant {
 	/** 工具库文件上传*/
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
+	/** 园区资源库文件上传*/
+	String U3D_ATTACHMENT = ".U3D";
+
+	/** 三维组件图表标准文件上传*/
+	String CHART_STANDARD_ATTACHMENT = "fbx,tiff";
+
+
 }

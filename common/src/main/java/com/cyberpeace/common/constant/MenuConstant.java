@@ -184,4 +184,10 @@ public interface MenuConstant {
 
     //红蓝对抗统计
     String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
+
+    //态势三维组件
+    String CMS_SITUATION_THREE_DIMENSIONAL_COMPONENT = "three-dimensional-component";
+
+    //态势园区资源库
+    String CMS_SITUATION_PARK_RESOURCE_LIBRARY = "park-resource-library";
 }

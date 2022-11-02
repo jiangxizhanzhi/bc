@@ -1,0 +1,214 @@
+package com.cyberpeace.situation.controller;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.req.DynamicEffectLibraryAddReq;
+import com.cyberpeace.situation.controller.req.DynamicEffectLibraryFilterReq;
+import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsAddReq;
+import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsFilterReq;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
+import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponents;
+import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponentsCategory;
+import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.service.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
+
+@Api(tags = "组件库")
+@RestController
+@Slf4j
+@RequestMapping("/situation/dynamic_effect_library")
+public class SituationDynamicEffectLibraryController {
+
+	@Autowired
+	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
+
+	@Autowired
+	private DynamicEffectsLibraryCategoryMapper dynamicEffectsLibraryCategoryMapper;
+
+	@Autowired
+	private DynamicEffectsLibraryService dynamicEffectsLibraryService;
+
+	@Autowired
+	private DynamicEffectsLibraryCategoryService dynamicEffectsLibraryCategoryService;
+
+
+	@ApiOperation("新增动效库")
+	@PostMapping("")
+	public BaseRsp<DynamicEffectsLibrary>
+	setDynamicEffectsLibrary(@RequestBody @Validated(Create.class) DynamicEffectLibraryAddReq dynamicEffectLibraryAddReq) {
+
+		DynamicEffectsLibrary dynamicEffectsLibrary = BeanUtils.copy(dynamicEffectLibraryAddReq,
+				DynamicEffectsLibrary.class);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		dynamicEffectsLibrary.setCreateUserId(userId);
+
+		DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectLibraryAddReq.getDynamicEffectsLibraryCategory());
+		if(null == category){
+			throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
+		}
+
+		try{
+			dynamicEffectsLibraryMapper.insert(dynamicEffectsLibrary);
+		} catch (DuplicateKeyException e) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+		return new BaseRsp<>(dynamicEffectsLibrary);
+	}
+
+	@ApiOperation("查询动效库")
+	@GetMapping("")
+	public BaseRsp<List<DynamicEffectsLibrary>>
+	getDynamicEffectsLibrary(DynamicEffectLibraryFilterReq dynamicEffectLibraryFilterReq) {
+		LambdaQueryWrapper<DynamicEffectsLibrary> queryWrapper = new LambdaQueryWrapper<>();
+		String name = dynamicEffectLibraryFilterReq.getName();
+		if (null != name){
+			queryWrapper.like(DynamicEffectsLibrary::getName, name);
+
+		}
+		String type = dynamicEffectLibraryFilterReq.getDynamicEffectsLibraryCategory();
+		if (null != type) {
+			DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(type);
+			if (null == category) {
+				throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
+			}
+		}
+
+		if (null != type){
+			queryWrapper.eq(DynamicEffectsLibrary::getDynamicEffectsLibraryCategory, type);
+		}
+		List<DynamicEffectsLibrary> res = dynamicEffectsLibraryMapper.selectList(queryWrapper);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("删除动效库")
+	@DeleteMapping("")
+	public BaseRsp deleteDynamicEffectsLibrary(String resourceId) {
+		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper.selectById(resourceId);
+		if (null == dynamicEffectsLibrary) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		dynamicEffectsLibraryMapper.deleteById(resourceId);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("修改动效库")
+	@PatchMapping("")
+	public BaseRsp patchDynamicEffectsLibrary(@Validated(Update.class) DynamicEffectLibraryAddReq dynamicEffectLibraryAddReq) {
+		DynamicEffectsLibrary patchObj = BeanUtils.copy(dynamicEffectLibraryAddReq, DynamicEffectsLibrary.class);
+		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper.selectById(dynamicEffectLibraryAddReq.getResourceId());
+		if(null == dynamicEffectsLibrary){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectLibraryAddReq.getDynamicEffectsLibraryCategory());
+		if(null == category){
+			throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
+		}
+
+		LambdaQueryWrapper<DynamicEffectsLibrary> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(DynamicEffectsLibrary::getName, dynamicEffectLibraryAddReq.getName());
+		DynamicEffectsLibrary one = dynamicEffectsLibraryService.getOne(queryWrapper);
+		if (!Objects.equals(one.getResourceId(), dynamicEffectLibraryAddReq.getResourceId())) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+
+		dynamicEffectsLibraryMapper.updateById(patchObj);
+		return new BaseRsp<>();
+	}
+
+
+	@ApiOperation("新增动效库类型")
+	@PostMapping("/category")
+	public BaseRsp<DynamicEffectsLibraryCategory>
+	setDynamicEffectsLibraryCategory(String name) {
+
+		if(StringUtils.isBlank(name)){
+			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
+		}
+		DynamicEffectsLibraryCategory dynamicEffectsLibraryCategory = new DynamicEffectsLibraryCategory();
+		dynamicEffectsLibraryCategory.setName(name);
+		dynamicEffectsLibraryCategory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+
+		try{
+			dynamicEffectsLibraryCategoryMapper.insert(dynamicEffectsLibraryCategory);
+		} catch (DuplicateKeyException e) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+		return new BaseRsp<>(dynamicEffectsLibraryCategory);
+	}
+
+	@ApiOperation("查询动效库类型")
+	@GetMapping("/category")
+	public BaseRsp<List<DynamicEffectsLibraryCategory>>
+	getDynamicEffectsLibraryCategory(String name) {
+
+		LambdaQueryWrapper<DynamicEffectsLibraryCategory> queryWrapper = new LambdaQueryWrapper<>();
+		if (null != name){
+			queryWrapper.like(DynamicEffectsLibraryCategory::getName, name);
+
+		}
+		List<DynamicEffectsLibraryCategory> res = dynamicEffectsLibraryCategoryMapper.selectList(queryWrapper);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("删除动效库类型")
+	@DeleteMapping("/category")
+	public BaseRsp deleteDynamicEffectsLibraryCategory(String resourceId) {
+		DynamicEffectsLibraryCategory dynamicEffectsLibraryCategory = dynamicEffectsLibraryCategoryMapper.selectById(resourceId);
+		if (null == dynamicEffectsLibraryCategory) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		dynamicEffectsLibraryCategoryMapper.deleteById(resourceId);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("修改动效库类型")
+	@PatchMapping("/category")
+	public BaseRsp patchDynamicEffectsLibraryCategory(String resourceId, String name) {
+
+		if(StringUtils.isBlank(name)){
+			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
+		}
+		if(StringUtils.isBlank(resourceId)){
+			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
+		}
+
+		DynamicEffectsLibraryCategory patchObj = new DynamicEffectsLibraryCategory();
+		patchObj.setName(name);
+		patchObj.setResourceId(resourceId);
+
+		DynamicEffectsLibraryCategory dynamicEffectsLibraryCategory = dynamicEffectsLibraryCategoryMapper.selectById(resourceId);
+		if(null == dynamicEffectsLibraryCategory){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+
+		LambdaQueryWrapper<DynamicEffectsLibraryCategory> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(DynamicEffectsLibraryCategory::getName, name);
+		DynamicEffectsLibraryCategory one = dynamicEffectsLibraryCategoryService.getOne(queryWrapper);
+		if (!Objects.equals(one.getResourceId(), resourceId)) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+		dynamicEffectsLibraryCategoryMapper.updateById(patchObj);
+		return new BaseRsp<>();
+	}
+
+}

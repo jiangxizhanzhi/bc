@@ -49,4 +49,43 @@ public interface SituationErrorCode {
 
 	/** 当前场景节点无坐标 */
 	String NODE_HAS_NO_COORDINATES = "104016";
+
+	/** 二维组件名称不能为空 */
+	String NAME_EMPTY_ERROR = "104017";
+
+	/** 图表类型不能为空 */
+	String TYPE_EMPTY_ERROR = "104018";
+
+	/** 缩略图不能为空 */
+	String THUMBNAIL_EMPTY_ERROR = "104019";
+
+	/** 组件代码不能为空 */
+	String COMPONENT_CODE_EMPTY_ERROR = "104020";
+
+	/** 资源id不能为空 */
+	String RESOURCE_ID_EMPTY_ERROR = "104021";
+
+	/** 图表标准文件不能为空 */
+	String CHART_STANDARD_DOC_EMPTY_ERROR = "104022";
+
+	/** 类型参数无效 */
+	String TYPE_INVALID_ERROR = "104023";
+
+	/** 源节点动效文件不能为空 */
+	String SOURCE_NODE_DYNAMIC_FILE_EMPTY_ERROR = "104024";
+
+	/** 目标节点动效文件不能为空 */
+	String TARGET_NODE_DYNAMIC_FILE_EMPTY_ERROR = "104025";
+
+	/** 聚焦不能为空 */
+	String FOCUS_EMPTY_ERROR = "104026";
+
+	/** 颜色不能为空 */
+	String COLOR_EMPTY_ERROR = "104027";
+
+	/** 线形不能为空 */
+	String LINE_EMPTY_ERROR = "104028";
+
+	/** 线形大小不能为空 */
+	String LINE_SIZE_DOC_EMPTY_ERROR = "104029";
 }

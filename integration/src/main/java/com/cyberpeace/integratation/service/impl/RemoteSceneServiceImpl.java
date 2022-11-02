@@ -461,4 +461,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			}
 		}
 	}
+
+	@Override
+	public String startTarget(Integer accessOs) {
+		return null;
+	}
 }

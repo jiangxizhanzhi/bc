@@ -199,4 +199,10 @@ public interface RemoteSceneService {
 
 	void replaceAccessIpExe(JSONObject elementPorts);
 
+	/**
+	 * 启动用户流量靶机
+	 * @param accessOs 操作系统
+	 * @return 靶机ip
+	 */
+	String startTarget(Integer accessOs);
 }

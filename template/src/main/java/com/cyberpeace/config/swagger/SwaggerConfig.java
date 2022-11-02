@@ -1,10 +1,12 @@
 package com.cyberpeace.config.swagger;
 
+import java.time.LocalTime;
 import java.util.Arrays;
 
-import com.cyberpeace.common.util.ConfigUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.cyberpeace.common.util.ConfigUtil;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -77,6 +79,13 @@ public class SwaggerConfig {
 		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.gateway"))
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("outer");
+	}
+
+	@Bean
+	public Docket apiBehavioralSimulation() {
+		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.bs"))
+				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+				.directModelSubstitute(LocalTime.class, String.class).groupName("bs");
 	}
 
 	private ApiSelectorBuilder getDocket() {

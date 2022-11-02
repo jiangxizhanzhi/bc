@@ -1,0 +1,90 @@
+package com.cyberpeace.bs.service;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.bs.service.bo.BehaviorStatistic;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.behavior.UserBehaviorBo;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
+
+/**
+ * @author SN
+ */
+public class BsUtil {
+
+	private static final String JSON_LIST_INITIAL = "[";
+
+	/**
+	 * 解析存储的行为列表json
+	 * @param json 行为列表json
+	 * @return 行为列表
+	 */
+	public static List<BehaviorSimple> parseBehaviorList(String json) {
+		if (StringUtils.isBlank(json)) {
+			return Lists.newArrayList();
+		}
+		if (!json.startsWith(JSON_LIST_INITIAL)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+		return JsonUtil.toJsonObjectArray(json, BehaviorSimple.class);
+	}
+
+	/**
+	 * 按 start time 给行为列表排序
+	 * @param behaviorSimpleList 待排序的行为列表
+	 */
+	public static <T extends BehaviorSimple> void sortBehaviorList(List<T> behaviorSimpleList) {
+		behaviorSimpleList.sort(Comparator.comparing(T::getStartTime));
+	}
+
+	/**
+	 * 解析存储的行为列表json
+	 * @param json 行为列表json
+	 * @return 起止时间，行为个数
+	 */
+	public static BehaviorStatistic getBehaviorStatistic(String json) {
+		BehaviorStatistic statistic = new BehaviorStatistic();
+		List<BehaviorSimple> behaviorSimpleList = parseBehaviorList(json);
+		if (behaviorSimpleList.isEmpty()) {
+			return statistic;
+		}
+		// 顺序在创建和编辑UserBehavior时保证
+		statistic.setBehaviorCount(behaviorSimpleList.size());
+		statistic.setStartTime(behaviorSimpleList.get(0).getStartTime());
+		statistic.setEndTime(behaviorSimpleList.get(behaviorSimpleList.size() - 1).getStartTime());
+		return statistic;
+	}
+
+	/**
+	 * 解析存储的用户行为列表，获取起止时间和行为个数
+	 * @param json 行为列表json
+	 * @param <T> 设置的实例
+	 */
+	public static <T extends UserBehaviorBo> void setBehaviorStatistic(T bo, String json) {
+		BehaviorStatistic statistic = getBehaviorStatistic(json);
+		bo.setBehaviorCount(statistic.getBehaviorCount());
+		bo.setStartTime(statistic.getStartTime());
+		bo.setEndTime(statistic.getEndTime());
+	}
+
+	/**
+	 * 将localTime转为当天的Date
+	 * @return 当天的指定时间
+	 */
+	public static Date getDateToday(LocalTime localTime) {
+		LocalDate localDate = LocalDate.now();
+		Timestamp timestamp = Timestamp.valueOf(LocalDateTime.of(localDate, localTime));
+		return new Date(timestamp.getTime());
+	}
+}

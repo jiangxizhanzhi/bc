@@ -1,12 +1,15 @@
 package com.cyberpeace.config.auth;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,10 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -72,7 +79,8 @@ public class ExceptionFilter implements Filter {
 	private void dealException(HttpServletResponse servletResponse, Exception e) {
 		log.error("exceptionfilter catch error", e);
 
-		if (e instanceof ServletException) {
+		// 不支持的请求 e.getCause() is null
+		if (e instanceof ServletException && e.getCause() != null) {
 			// 如果拦截到的是spring封装过的异常，获取原始异常信息
 			e = (Exception) e.getCause();
 		}
@@ -98,7 +106,10 @@ public class ExceptionFilter implements Filter {
 			parseRemoteServiceException(servletResponse, (RemoteServiceException) e);
 		} else if (e instanceof BusinessException) {
 			parseBusinessException(servletResponse, (BusinessException) e);
-		} else {
+		} else if (e instanceof HttpRequestMethodNotSupportedException) {
+			notSupportedException(servletResponse);
+		}
+		else {
 			dealDefaultError(servletResponse);
 		}
 	}
@@ -162,6 +173,13 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseAuthenticationException(HttpServletResponse httpServletResponse) {
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	}
+
+	/**
+	 *
+	 */
+	private void notSupportedException(HttpServletResponse httpServletResponse) {
+		httpServletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
 	/**
@@ -255,4 +273,5 @@ public class ExceptionFilter implements Filter {
 
 		return cache.get(code);
 	}
+
 }

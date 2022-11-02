@@ -37,6 +37,7 @@
         <amqp.version>2.5.2</amqp.version>
         <springboot.web.version>2.5.2</springboot.web.version>
         <springboot.mybatis.version>2.2.0</springboot.mybatis.version>
+        <springboot.aop.version>2.5.14</springboot.aop.version>
         <springfox.version>3.0.0</springfox.version>
         <hibernate.validator.version>6.0.13.Final</hibernate.validator.version>
         <mysql.connector.version>8.0.25</mysql.connector.version>
@@ -199,6 +200,11 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${springboot.mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${springboot.aop.version}</version>
             </dependency>
 
             <dependency>

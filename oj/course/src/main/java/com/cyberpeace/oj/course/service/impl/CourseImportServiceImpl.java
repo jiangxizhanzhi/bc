@@ -316,11 +316,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 		courseLesson.setIsPublic(CommonConstant.TRUE);
 		courseLesson.setHeat(CommonConstant.ZERO);
 		courseLesson.setBuiltin(CommonConstant.TRUE);
-
+		// 修复课时类型理论变为实验时延时值为null异常
+		courseLesson.setDestroyDelay(CommonConstant.TWO);
 		// 是否具有环境地址
 		if (new File(path, ResourceImportConstant.ENV).exists()) {
 			courseLesson.setSceneShareMode(SceneShare.PRIVATE.getCode());
-			courseLesson.setDestroyDelay(CommonConstant.TWO);
 			courseLesson.setTopoId(envReqs.get(new File(path).getName()));
 		}
 

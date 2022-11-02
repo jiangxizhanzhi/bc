@@ -334,6 +334,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	public int updateTheory(PracticeTheory practiceTheory, AuthContext authContext) {
 
 		// 数据校验
+		practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),
+				practiceTheory.getContent(), practiceTheory);
 		practiceValidateHandler.validateCategoryType(practiceTheory.getCategoryId(),
 				PracticeCategory.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
@@ -682,7 +684,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
 		// excel数据中题型=当前代码枚举值+1
-		practiceTheory.setTheoryType(new Double(excelRowData.get(3)).intValue() - 1);
+		Integer theoryType = handleTheoryType(excelRowData.get(3));
+		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
 		String categoryName = excelRowData.get(1);
@@ -712,13 +715,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
 				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
 						.getCode().intValue()) {
+			String answer = handleChoiceAnswer(excelRowData.get(4));
 			String option = formatOption(excelRowData, 5);
 			practiceTheory.setOption(option);
-			practiceTheory.setAnswer(excelRowData.get(4));
+			practiceTheory.setAnswer(answer);
 		}
 
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
 				.getCode().intValue()) {
+			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
 			practiceTheory.setAnswer(excelRowData.get(4));
 			practiceTheory.setOption(JsonUtil.toJsonString(null));
 		}

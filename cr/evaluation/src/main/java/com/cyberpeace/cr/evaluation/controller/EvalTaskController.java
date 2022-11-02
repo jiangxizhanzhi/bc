@@ -256,7 +256,7 @@ public class EvalTaskController {
 			@ApiParam(name = "task_id", value = "测评任务id", required = false) @RequestParam(
 					value = "task_id", required = false) String taskId,
             @ApiParam(name = "user_id", value = "查询用户id") @RequestParam(
-                    required = false) String userId) {
+            		name = "user_id", required = false) String userId) {
 
 		// 未传入任务Id时提取当前活动任务
 		if (StringUtils.isEmpty(taskId)) {

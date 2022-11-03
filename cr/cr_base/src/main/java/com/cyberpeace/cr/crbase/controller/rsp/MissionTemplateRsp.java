@@ -37,4 +37,7 @@ public class MissionTemplateRsp {
     @ApiModelProperty(value = "题解")
     private String writeUp;
 
+    @ApiModelProperty(value = "时限")
+    private Integer time;
+
 }

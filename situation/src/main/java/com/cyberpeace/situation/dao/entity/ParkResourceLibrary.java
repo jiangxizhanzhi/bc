@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situational_park_resource_library")
+@TableName("situation_park_resource_library")
 public class ParkResourceLibrary extends BaseTable {
 
 	@TableId(value = "resource_id")

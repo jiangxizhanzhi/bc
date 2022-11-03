@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situational_three_dimensional_components_category")
+@TableName("situation_three_dimensional_components_category")
 public class ThreeDimensionalComponentsCategory extends BaseTable {
 
 	@TableId(value = "resource_id")

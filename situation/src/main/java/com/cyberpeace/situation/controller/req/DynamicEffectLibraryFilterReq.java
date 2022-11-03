@@ -19,7 +19,7 @@ public class DynamicEffectLibraryFilterReq implements Serializable {
 	private String name;
 
 	@ApiModelProperty(value = "动效类型")
-	private String dynamicEffectsLibraryCategory;
+	private String category;
 
 	@ApiModelProperty(value = "源节点动效文件")
 	private String sourceNodeDynamicFile;

@@ -1,7 +1,7 @@
 -- ----------------------------
--- Table structure for situational_two_dimensional_components
+-- Table structure for situation_two_dimensional_components
 -- ----------------------------
-CREATE TABLE `situational_two_dimensional_components`
+CREATE TABLE `situation_two_dimensional_components`
 (
     `id`             int(11)                                                  NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci   NOT NULL,
@@ -23,9 +23,9 @@ CREATE TABLE `situational_two_dimensional_components`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_three_dimensional_components
+-- Table structure for situation_three_dimensional_components
 -- ----------------------------
-CREATE TABLE `situational_three_dimensional_components`
+CREATE TABLE `situation_three_dimensional_components`
 (
     `id`                                    int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`                           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
@@ -46,9 +46,9 @@ CREATE TABLE `situational_three_dimensional_components`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_three_dimensional_components_category
+-- Table structure for situation_three_dimensional_components_category
 -- ----------------------------
-CREATE TABLE `situational_three_dimensional_components_category`
+CREATE TABLE `situation_three_dimensional_components_category`
 (
     `id`             int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
@@ -65,14 +65,14 @@ CREATE TABLE `situational_three_dimensional_components_category`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_park_resource_library
+-- Table structure for situation_park_resource_library
 -- ----------------------------
-CREATE TABLE `situational_park_resource_library`
+CREATE TABLE `situation_park_resource_library`
 (
     `id`                             int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`                    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
     `name`                           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '园区资源名称',
-    `park_resource_library_category` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '资源类型',
+    `category` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '资源类型',
     `thumbnail`                      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
     `resource_file`                  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '资源文件 u3d格式',
     `create_user_id`                 varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL,
@@ -88,9 +88,9 @@ CREATE TABLE `situational_park_resource_library`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_park_resource_library_category
+-- Table structure for situation_park_resource_library_category
 -- ----------------------------
-CREATE TABLE `situational_park_resource_library_category`
+CREATE TABLE `situation_park_resource_library_category`
 (
     `id`             int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
@@ -108,14 +108,14 @@ CREATE TABLE `situational_park_resource_library_category`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_dynamic_effects_library
+-- Table structure for situation_dynamic_effects_library
 -- ----------------------------
-CREATE TABLE `situational_dynamic_effects_library`
+CREATE TABLE `situation_dynamic_effects_library`
 (
     `id`                               int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`                      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
     `name`                             varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '动效名称',
-    `dynamic_effects_library_category` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '动效类型',
+    `category` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '动效类型',
     `thumbnail`                        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
     `source_node_dynamic_file`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '源节点动效文件',
     `target_node_dynamic_file`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '目标节点动效文件',
@@ -136,9 +136,9 @@ CREATE TABLE `situational_dynamic_effects_library`
   ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for situational_dynamic_effects_library_category
+-- Table structure for situation_dynamic_effects_library_category
 -- ----------------------------
-CREATE TABLE `situational_dynamic_effects_library_category`
+CREATE TABLE `situation_dynamic_effects_library_category`
 (
     `id`             int(11)                                                 NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,

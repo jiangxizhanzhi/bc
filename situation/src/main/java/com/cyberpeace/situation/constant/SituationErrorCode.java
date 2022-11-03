@@ -88,4 +88,10 @@ public interface SituationErrorCode {
 
 	/** 线形大小不能为空 */
 	String LINE_SIZE_DOC_EMPTY_ERROR = "104029";
+
+	/** 资源文件不能为空 */
+	String RESOURCE_FILE_EMPTY_ERROR = "104030";
+
+	/** 该类型下包含组件不能删除 */
+	String TYPE_WITH_COMPONENTS_ERROR = "104031";
 }

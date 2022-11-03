@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-@TableName("situational_two_dimensional_components")
+@TableName("situation_two_dimensional_components")
 public class TwoDimensionalComponents extends BaseTable {
 
 	@TableId(value = "resource_id")

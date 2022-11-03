@@ -23,7 +23,7 @@ public class DynamicEffectLibraryAddReq implements Serializable {
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.TYPE_EMPTY_ERROR)
 	@ApiModelProperty(value = "动效类型", required = true)
-	private String dynamicEffectsLibraryCategory;
+	private String category;
 
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.THUMBNAIL_EMPTY_ERROR)

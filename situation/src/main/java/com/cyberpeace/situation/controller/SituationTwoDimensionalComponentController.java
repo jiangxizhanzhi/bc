@@ -15,17 +15,20 @@ import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
 @Api(tags = "组件库")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/two_dimensional_component")
 public class SituationTwoDimensionalComponentController {
 
@@ -53,7 +56,7 @@ public class SituationTwoDimensionalComponentController {
 	}
 
 	@ApiOperation("查询二维组件")
-	@GetMapping("")
+	@GetMapping("list")
 	public BaseRsp<List<TwoDimensionalComponents>>
 			getTwoDimensionalComponents(TwoDimensionalComponentsFilterReq twoDimensionalComponentsFilterReq) {
 		LambdaQueryWrapper<TwoDimensionalComponents> queryWrapper = new LambdaQueryWrapper<>();
@@ -68,14 +71,27 @@ public class SituationTwoDimensionalComponentController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("删除二维组件")
-	@DeleteMapping("")
-	public BaseRsp deleteTwoDimensionalComponents(String resourceId) {
+	@ApiOperation("查询二维组件类型详情")
+	@GetMapping("/category")
+	public BaseRsp<TwoDimensionalComponents>
+	getThreeDimensionalComponentsCategoryDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
+
 		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(resourceId);
-		if (null == twoDimensionalComponents) {
+		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		twoDimensionalComponentsMapper.deleteById(resourceId);
+		return new BaseRsp<>(twoDimensionalComponents);
+	}
+
+	@ApiOperation("删除二维组件")
+	@DeleteMapping("")
+	public BaseRsp deleteTwoDimensionalComponents(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
+		List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectBatchIds(resourceIds);
+		if (twoDimensionalComponents.isEmpty()) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		twoDimensionalComponentsMapper.deleteBatchIds(resourceIds);
 		return new BaseRsp<>();
 	}
 

@@ -15,7 +15,7 @@ public class BatchDeleteReq implements Serializable {
 	List<String> ids;
 
 	public List<String> getIds() {
-		if (this.ids == null || this.ids.size() == 0) {
+		if (this.ids.isEmpty()) {
 			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
 		}
 		return this.ids;

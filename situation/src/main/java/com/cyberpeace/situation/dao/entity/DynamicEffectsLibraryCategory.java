@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situational_dynamic_effects_library_category")
+@TableName("situation_dynamic_effects_library_category")
 public class DynamicEffectsLibraryCategory extends BaseTable {
 
 	@TableId(value = "resource_id")

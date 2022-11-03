@@ -46,6 +46,8 @@ public class CrTask extends BaseTable {
 
 	private String missionTemplateId;
 
+	private Integer time;
+
 	public Boolean isFinished() {
 		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();
 		result = result || status.intValue() == TaskStatus.FAIL.getCode();
@@ -97,7 +99,9 @@ public class CrTask extends BaseTable {
 		WAIT(0, "待评估"),
 		SUCCESS(1, "成功"),
 		FAIL(2, "失败"),
-		REJECT(3, "驳回");
+		REJECT(3, "驳回"),
+		PAUSE(4, "暂停"),
+		CLOSED(5, "结束");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
@@ -107,6 +111,14 @@ public class CrTask extends BaseTable {
 
 		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(WAIT.getCode(), REJECT.getCode()));
+
+		public static List<Integer> L1_ONGOING_STATUS = Arrays.asList(
+				RELEASED.getCode(),
+				STARTED.getCode(),
+				WAIT.getCode(),
+				REJECT.getCode(),
+				PAUSE.getCode()
+		);
 
 		@Getter
 		private Integer code;

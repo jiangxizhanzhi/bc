@@ -444,6 +444,9 @@ public class MissionController {
 		if (missionModifyReq.getSkillPoints() != null) {
 			mission.setSkillPoints(missionModifyReq.getSkillPoints());
 		}
+		if (missionModifyReq.getTime() != null) {
+			mission.setTime(missionModifyReq.getTime());
+		}
 
 		return mission;
 	}

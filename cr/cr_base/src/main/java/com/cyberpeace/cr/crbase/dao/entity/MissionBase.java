@@ -49,6 +49,9 @@ public class MissionBase extends BaseTable {
 	@ApiModelProperty(value = "创建者id")
 	private String createUserId;
 
+	@ApiModelProperty(value = "任务时间限制")
+	private Integer time;
+
 	public enum MissionType {
 
 		JUDGE(0, "判断"), SINGLE_CHOICE(1, "单选"), MULTIPLE_CHOICE(2, "多选"), BLANK(3, "填空"), FAQ(4,

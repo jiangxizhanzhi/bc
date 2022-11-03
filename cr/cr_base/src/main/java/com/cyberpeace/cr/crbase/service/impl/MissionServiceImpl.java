@@ -255,9 +255,22 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 		List<CrTask> tasks = crTaskMapper.selectByRoomId(roomId);
 		Map<String, MissionCompletion> missionMap = Maps.newHashMap();
+
+		// 查询到关联某个missionId的task，表示此mission已被下发
 		for (CrTask task : tasks) {
 			if (!missionMap.containsKey(task.getMissionId())) {
-				missionMap.put(task.getMissionId(), new MissionCompletion(1, 0));
+				Integer missionStatus;
+				// task数据中状态为暂停，表示此mission状态为暂停中
+				if (task.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
+					missionStatus = CrTask.TaskStatus.PAUSE.getCode();
+				// task状态为关闭，mission状态为已关闭
+				} else if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()) {
+					missionStatus = CrTask.TaskStatus.CLOSED.getCode();
+				} else {
+					missionStatus = 1;
+				}
+
+				missionMap.put(task.getMissionId(), new MissionCompletion(missionStatus, 0));
 			}
 		}
 

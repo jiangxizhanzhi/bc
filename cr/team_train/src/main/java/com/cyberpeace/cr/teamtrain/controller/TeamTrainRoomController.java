@@ -595,6 +595,48 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("任务暂停/恢复")
+	@PostMapping("/pause")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> pause(@RequestBody @Validated ReleaseMissionReq pauseMissionReq) {
+		CrRole crRole = crRoleService.getById(pauseMissionReq.getRoleResourceId());
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", pauseMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(), UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+
+		Boolean result = crTaskService.pause(pauseMissionReq.getMissionResourceId(), crRole);
+
+		if (result) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		}
+
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("任务关闭")
+	@PostMapping("/close")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> close(@RequestBody @Validated ReleaseMissionReq closeMissionReq) {
+		CrRole crRole = crRoleService.getById(closeMissionReq.getRoleResourceId());
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", closeMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(), UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+		Boolean result = crTaskService.close(closeMissionReq.getMissionResourceId(), crRole);
+		if (result) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		}
+
+		return new BaseRsp<>(result);
+	}
+
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();

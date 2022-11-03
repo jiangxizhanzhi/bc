@@ -406,4 +406,18 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
+	/**
+	 * 任务限时不能为空
+	 */
+	String MISSION_TIME_IS_INVALID = "101123";
+
+	/**
+	 * 没有进行中的任务
+	 */
+	String NO_TASK_IN_PROGRESS = "101124";
+
+	/**
+	 * 任务不可关闭
+	 */
+	String TASK_NOT_CLOSEABLE = "101125";
 }

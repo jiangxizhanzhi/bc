@@ -584,4 +584,55 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);
 	}
 
+	@Override
+	public boolean pause(String missionId, CrRole role) {
+		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		List<CrTask> crTaskList = lambdaQuery()
+				.eq(CrTask::getRoomId, mission.getRoomId())
+				.eq(CrTask::getRoleId, role.getResourceId())
+				.eq(CrTask::getMissionId, mission.getResourceId())
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.list();
+
+		if (crTaskList.isEmpty()) {
+			throw new BusinessException(CrBusinessErrorCode.NO_TASK_IN_PROGRESS);
+		}
+
+		crTaskList.forEach(crTask -> {
+			if (crTask.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
+				crTask.setStatus(CrTask.TaskStatus.RELEASED.getCode());
+			} else {
+				crTask.setStatus(CrTask.TaskStatus.PAUSE.getCode());
+			}
+		});
+
+		return updateBatchById(crTaskList);
+	}
+
+	@Override
+	public boolean close(String missionId, CrRole role) {
+		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		List<CrTask> crTaskList = lambdaQuery()
+				.eq(CrTask::getRoomId, mission.getRoomId())
+				.eq(CrTask::getRoleId, role.getResourceId())
+				.eq(CrTask::getMissionId, mission.getResourceId())
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.list();
+
+		if (crTaskList.isEmpty()) {
+			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_CLOSEABLE);
+		}
+
+		crTaskList.forEach(crTask -> crTask.setStatus(CrTask.TaskStatus.CLOSED.getCode()));
+
+		return updateBatchById(crTaskList);
+	}
 }

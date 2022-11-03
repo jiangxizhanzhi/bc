@@ -48,6 +48,9 @@ public class MissionTemplateReq implements Serializable {
 	@ApiModelProperty(value = "题解", required = true)
 	private String writeUp;
 
+	@ApiModelProperty(value = "限时/单位：分钟", required = true)
+	private Integer time;
+
 	public void validate() {
 		// 验证名称长度
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
@@ -95,6 +98,10 @@ public class MissionTemplateReq implements Serializable {
 			}
 			CrCommonValidator.checkStringListDuplicate(realOptions,
 					CrBusinessErrorCode.OPTIONS_DUPLICATE);
+		}
+
+		if (time == null || time < 1) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_TIME_IS_INVALID);
 		}
 
 	}

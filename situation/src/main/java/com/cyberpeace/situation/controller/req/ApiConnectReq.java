@@ -20,6 +20,7 @@ import java.util.List;
 @Data
 public class ApiConnectReq implements Serializable {
 
+    @NotBlank(groups = {Update.class})
     private String resourceId;
 
     @ApiModelProperty("api名称")
@@ -28,11 +29,11 @@ public class ApiConnectReq implements Serializable {
     @ApiModelProperty("api描述")
     private String description;
 
-    @NotBlank(groups = {Create.class, Update.class})
+    @NotBlank(groups = {Create.class})
     @ApiModelProperty("url")
     private String requestUrl;
 
-    @NotBlank(groups = {Create.class, Update.class})
+    @NotBlank(groups = {Create.class})
     @ApiModelProperty("请求方法")
     private String requestMethod;
 

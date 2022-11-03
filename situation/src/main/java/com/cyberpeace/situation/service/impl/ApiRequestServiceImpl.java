@@ -78,7 +78,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
     @Override
     public ApiRequestInfoRes getApiConnectInfo(String resourceId) {
         ApiRequest apiRequest = apiRequestMapper.selectById(resourceId);
-        if (StringUtils.isEmpty(apiRequest.getResourceId())) {
+        if (apiRequest == null || StringUtils.isEmpty(apiRequest.getResourceId())) {
             log.error("API不存在");
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }

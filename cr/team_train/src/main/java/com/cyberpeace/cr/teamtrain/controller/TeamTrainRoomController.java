@@ -595,7 +595,7 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("任务暂停/恢复")
+	@ApiOperation("任务暂停与恢复")
 	@PostMapping("/pause")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Boolean> pause(@RequestBody @Validated ReleaseMissionReq pauseMissionReq) {

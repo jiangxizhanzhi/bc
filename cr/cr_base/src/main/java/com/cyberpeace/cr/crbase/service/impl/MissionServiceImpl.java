@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -152,6 +149,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Date releaseTime = new Date();
 
 		List<CrTask> tasks = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
 		for (String userId : role.getUserIdList()) {
 			CrTask task = new CrTask();
 			task.setMissionId(mission.getResourceId());
@@ -162,7 +160,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setRoleId(role.getResourceId());
 			task.setBusinessType(role.getBusinessType());
 			task.setMissionTemplateId(mission.getMissionTemplateId());
-			task.setTime(mission.getTime());
+
+			// 设置下发任务的关闭时间
+			calendar.setTime(new Date());
+			calendar.add(Calendar.MINUTE, mission.getTime());
+			task.setCloseTime(calendar.getTime());
 
 			tasks.add(task);
 		}
@@ -194,6 +196,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 
 		List<CrTask> pendingReleaseTasks = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
 
 		missions.forEach(mission -> {
 			CrTask task = new CrTask();
@@ -206,6 +209,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setRoomId(mission.getRoomId());
 			task.setRoleId(role.getResourceId());
 			task.setBusinessType(role.getBusinessType());
+
+			// 设置下发任务的关闭时间
+			calendar.setTime(new Date());
+			calendar.add(Calendar.MINUTE, mission.getTime());
+			task.setCloseTime(calendar.getTime());
 
 			pendingReleaseTasks.add(task);
 		});

@@ -6,11 +6,11 @@
     <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
         insert into cr_task
         (resource_id, `status`, mission_id, user_id,
-        release_time, room_id, role_id, business_type, mission_template_id, `time`, create_time, update_time)
+        release_time, room_id, role_id, business_type, mission_template_id, `close_time`, create_time, update_time)
         values
         <foreach collection="tasks" item="task" separator=",">
             (#{task.resourceId}, #{task.status}, #{task.missionId}, #{task.userId},
-            #{task.releaseTime}, #{task.roomId},#{task.roleId}, #{task.businessType}, #{task.missionTemplateId}, #{task.time},
+            #{task.releaseTime}, #{task.roomId},#{task.roleId}, #{task.businessType}, #{task.missionTemplateId}, #{task.closeTime},
             now(), now())
         </foreach>
     </insert>

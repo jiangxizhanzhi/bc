@@ -46,7 +46,9 @@ public class CrTask extends BaseTable {
 
 	private String missionTemplateId;
 
-	private Integer time;
+	private Date pauseTime;
+
+	private Date closeTime;
 
 	public Boolean isFinished() {
 		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();

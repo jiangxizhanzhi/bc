@@ -605,8 +605,18 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskList.forEach(crTask -> {
 			if (crTask.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
 				crTask.setStatus(CrTask.TaskStatus.RELEASED.getCode());
+
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(crTask.getCloseTime());
+				long pauseSeconds = new Date().getTime() - crTask.getPauseTime().getTime();
+				calendar.add(Calendar.SECOND, (int) (pauseSeconds / 1000));
+
+				crTask.setCloseTime(calendar.getTime());
+				crTask.setPauseTime(null);
 			} else {
 				crTask.setStatus(CrTask.TaskStatus.PAUSE.getCode());
+
+				crTask.setPauseTime(new Date());
 			}
 		});
 

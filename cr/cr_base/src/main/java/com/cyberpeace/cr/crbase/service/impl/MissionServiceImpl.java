@@ -162,6 +162,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setRoleId(role.getResourceId());
 			task.setBusinessType(role.getBusinessType());
 			task.setMissionTemplateId(mission.getMissionTemplateId());
+			task.setTime(mission.getTime());
 
 			tasks.add(task);
 		}

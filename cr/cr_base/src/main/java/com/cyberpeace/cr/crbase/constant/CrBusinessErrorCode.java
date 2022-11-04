@@ -420,4 +420,14 @@ public interface CrBusinessErrorCode {
 	 * 任务不可关闭
 	 */
 	String TASK_NOT_CLOSEABLE = "101125";
+
+	/**
+	 * 任务暂停中
+	 */
+	String TASK_IS_PAUSING = "101126";
+
+	/**
+	 * 任务已结束
+	 */
+	String TASK_IS_CLOSED = "101127";
 }

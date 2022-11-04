@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
@@ -46,6 +44,7 @@ public class CrTask extends BaseTable {
 
 	private String missionTemplateId;
 
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private Date pauseTime;
 
 	private Date closeTime;

@@ -278,6 +278,16 @@ public class CrScoreController {
 		statisticalInfo2.setValue(taskCounter.getNotReleased());
 		statisticalInfoList.add(statisticalInfo2);
 
+		StatisticalInfo statisticalInfo3 = new StatisticalInfo();
+		statisticalInfo3.setStatistical_state(TaskCounter.TaskType.PAUSED.getCode());
+		statisticalInfo3.setValue(taskCounter.getPaused());
+		statisticalInfoList.add(statisticalInfo3);
+
+		StatisticalInfo statisticalInfo4 = new StatisticalInfo();
+		statisticalInfo4.setStatistical_state(TaskCounter.TaskType.CLOSED.getCode());
+		statisticalInfo4.setValue(taskCounter.getClosed());
+		statisticalInfoList.add(statisticalInfo4);
+
 		List<DynamicData> dynamicDataList = missionService.getTaskLogByRoomIdAndUserId(resource_id,
 				student_id);
 

@@ -4,6 +4,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.situation.constant.ApiRequestType;
 import com.cyberpeace.situation.controller.req.ApiConnectDelReq;
 import com.cyberpeace.situation.controller.req.ApiConnectReq;
 import com.cyberpeace.situation.controller.req.ApiRequestPageReq;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author xuxz
@@ -66,5 +69,11 @@ public class ApiRequestController {
     @PostMapping("test")
     public BaseRsp<String> apiConnectTest(@RequestBody @Validated ApiConnectReq apiConnectReq) {
         return new BaseRsp<>(apiRequestService.apiConnectTest(apiConnectReq));
+    }
+
+    @ApiOperation("获取请求类型列表")
+    @GetMapping("type/list")
+    public BaseRsp<List<String>> getRequestType(){
+        return new BaseRsp<>(ApiRequestType.getRequestType());
     }
 }

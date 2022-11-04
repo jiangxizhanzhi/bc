@@ -59,10 +59,4 @@ public class DynamicEffectLibraryAddReq implements Serializable {
 			message = SituationErrorCode.LINE_SIZE_DOC_EMPTY_ERROR)
 	@ApiModelProperty(value = "线形大小", required = true)
 	private String lineSize;
-
-	@ApiModelProperty()
-	@NotBlank(groups = { Update.class },
-			message = ErrorCode.RESOURCE_NOT_FOUND)
-	private String resourceId;
-
 }

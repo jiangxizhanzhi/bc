@@ -24,10 +24,10 @@ public interface FileTypeContant {
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
 	/** 园区资源库文件上传*/
-	String U3D_ATTACHMENT = ".U3D";
+	String U3D_ATTACHMENT = "U3D";
 
 	/** 三维组件图表标准文件上传*/
-	String CHART_STANDARD_ATTACHMENT = "FBX,TIFF";
+	String CHART_STANDARD_ATTACHMENT = "FBX,OBJ";
 
 
 }

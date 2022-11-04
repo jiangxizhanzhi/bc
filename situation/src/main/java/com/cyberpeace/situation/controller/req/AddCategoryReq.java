@@ -13,7 +13,14 @@ import java.io.Serializable;
 public class AddCategoryReq implements Serializable {
 
 	@ApiModelProperty("分组")
-	@NotBlank(message = SituationErrorCode.NAME_EMPTY_ERROR)
+	@NotBlank(groups = {Create.class, Update.class},message = SituationErrorCode.NAME_EMPTY_ERROR)
 	String name;
+
+
+	@ApiModelProperty("资源id")
+	@NotBlank(groups={Update.class},message = SituationErrorCode.RESOURCE_ID_EMPTY_ERROR)
+	String resourceId;
+
+
 
 }

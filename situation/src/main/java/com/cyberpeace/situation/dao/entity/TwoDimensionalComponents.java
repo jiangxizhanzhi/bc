@@ -19,7 +19,7 @@ public class TwoDimensionalComponents extends BaseTable {
 	private String name;
 
 	@ApiModelProperty("图表类型")
-	private Integer type;
+	private String type;
 
 	private String description;
 

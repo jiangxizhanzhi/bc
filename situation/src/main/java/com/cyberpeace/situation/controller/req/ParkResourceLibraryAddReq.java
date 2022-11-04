@@ -2,7 +2,6 @@ package com.cyberpeace.situation.controller.req;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,10 +32,5 @@ public class ParkResourceLibraryAddReq implements Serializable {
 			message = SituationErrorCode.RESOURCE_FILE_EMPTY_ERROR)
 	@ApiModelProperty(value = "资源文件", required = true)
 	private String resourceFile;
-
-	@ApiModelProperty()
-	@NotBlank(groups = { Update.class },
-			message = ErrorCode.RESOURCE_NOT_FOUND)
-	private String resourceId;
 
 }

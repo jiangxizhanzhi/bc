@@ -20,10 +20,10 @@ public class TwoDimensionalComponentsAddReq implements Serializable {
 	@ApiModelProperty(value = "组件名称", required = true)
 	private String name;
 
-	@NotNull(groups = { Create.class, Update.class },
+	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.TYPE_EMPTY_ERROR)
 	@ApiModelProperty(value = "图表类型", required = true)
-	private Integer type;
+	private String type;
 
 	@ApiModelProperty(value = "描述")
 	private String description;
@@ -37,9 +37,5 @@ public class TwoDimensionalComponentsAddReq implements Serializable {
 			message = SituationErrorCode.COMPONENT_CODE_EMPTY_ERROR)
 	@ApiModelProperty(value = "组件代码", required = true)
 	private String componentCode;
-
-	@NotBlank(groups = { Update.class },
-			message = SituationErrorCode.RESOURCE_ID_EMPTY_ERROR)
-	private String resourceId;
 
 }

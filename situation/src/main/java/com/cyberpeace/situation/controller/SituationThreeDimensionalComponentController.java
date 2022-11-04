@@ -9,10 +9,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.AddCategoryReq;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsAddReq;
-import com.cyberpeace.situation.controller.req.ThreeDimensionalComponentsFilterReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponents;
 import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponentsCategory;
 import com.cyberpeace.situation.dao.mapper.*;
@@ -20,7 +17,6 @@ import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -31,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
-@Api(tags = "组件库")
+@Api(tags = "组件库-三维组件")
 @RestController
 @Slf4j
 @RequiresAuthentication
@@ -53,7 +49,7 @@ public class SituationThreeDimensionalComponentController {
 	@ApiOperation("新增三维组件类型")
 	@PostMapping("/category")
 	public BaseRsp<ThreeDimensionalComponentsCategory>
-	setThreeDimensionalComponentsCategory(@RequestBody @Validated AddCategoryReq addCategoryReq) {
+	setThreeDimensionalComponentsCategory(@RequestBody @Validated(Create.class) AddCategoryReq addCategoryReq) {
 		String name = addCategoryReq.getName();
 		ThreeDimensionalComponentsCategory threeDimensionalComponentsCategory = new ThreeDimensionalComponentsCategory();
 		threeDimensionalComponentsCategory.setName(name);
@@ -114,14 +110,9 @@ public class SituationThreeDimensionalComponentController {
 
 	@ApiOperation("修改三维组件类型")
 	@PatchMapping("/category")
-	public BaseRsp patchThreeDimensionalComponentsCategory(@RequestBody @NotBlank String resourceId,@RequestBody @NotBlank String name) {
-
-		if(StringUtils.isBlank(name)){
-			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
-		}
-		if(StringUtils.isBlank(resourceId)){
-			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
-		}
+	public BaseRsp patchThreeDimensionalComponentsCategory(@RequestBody @Validated(Update.class)AddCategoryReq addCategoryReq) {
+		String name = addCategoryReq.getName();
+		String resourceId = addCategoryReq.getResourceId();
 
 		ThreeDimensionalComponentsCategory patchObj = new ThreeDimensionalComponentsCategory();
 		patchObj.setName(name);
@@ -193,7 +184,7 @@ public class SituationThreeDimensionalComponentController {
 	@ApiOperation("查询三维组件详情")
 	@GetMapping("")
 	public BaseRsp<ThreeDimensionalComponents>
-	getThreeDimensionalComponentsDetail(String resourceId) {
+	getThreeDimensionalComponentsDetail(@RequestParam @NotBlank String resourceId) {
 
 		ThreeDimensionalComponents threeDimensionalComponents = threeDimensionalComponentsMapper.selectById(resourceId);
 		if(null == threeDimensionalComponents){
@@ -217,22 +208,22 @@ public class SituationThreeDimensionalComponentController {
 
 	@ApiOperation("修改三维组件")
 	@PatchMapping("")
-	public BaseRsp patchThreeDimensionalComponents(@Validated(Update.class) ThreeDimensionalComponentsAddReq threeDimensionalComponentsAddReq) {
-		ThreeDimensionalComponents patchObj = BeanUtils.copy(threeDimensionalComponentsAddReq, ThreeDimensionalComponents.class);
-		ThreeDimensionalComponents threeDimensionalComponents = threeDimensionalComponentsMapper.selectById(threeDimensionalComponentsAddReq.getResourceId());
+	public BaseRsp patchThreeDimensionalComponents(@Validated(Update.class) ThreeDimensionalComponentsUpdateReq threeDimensionalComponentsUpdateReq) {
+		ThreeDimensionalComponents patchObj = BeanUtils.copy(threeDimensionalComponentsUpdateReq, ThreeDimensionalComponents.class);
+		ThreeDimensionalComponents threeDimensionalComponents = threeDimensionalComponentsMapper.selectById(threeDimensionalComponentsUpdateReq.getResourceId());
 		if(null == threeDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		ThreeDimensionalComponentsCategory category = threeDimensionalComponentsCategoryMapper.selectById(threeDimensionalComponentsAddReq.getThreeDimensionalComponentsCategory());
+		ThreeDimensionalComponentsCategory category = threeDimensionalComponentsCategoryMapper.selectById(threeDimensionalComponentsUpdateReq.getThreeDimensionalComponentsCategory());
 		if(null == category){
 			throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
 		}
 
 		LambdaQueryWrapper<ThreeDimensionalComponents> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(ThreeDimensionalComponents::getName, threeDimensionalComponentsAddReq.getName());
+		queryWrapper.eq(ThreeDimensionalComponents::getName, threeDimensionalComponentsUpdateReq.getName());
 		ThreeDimensionalComponents one = threeDimensionalComponentsService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), threeDimensionalComponents.getResourceId())) {
+		if (null != one && !Objects.equals(one.getResourceId(), threeDimensionalComponents.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

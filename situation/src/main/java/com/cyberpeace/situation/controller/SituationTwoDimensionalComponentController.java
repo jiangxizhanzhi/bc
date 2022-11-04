@@ -25,7 +25,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
-@Api(tags = "组件库")
+@Api(tags = "组件库-二维组件")
 @RestController
 @Slf4j
 @RequiresAuthentication
@@ -38,6 +38,17 @@ public class SituationTwoDimensionalComponentController {
 	@Autowired
 	private TwoDimensionalComponentsService twoDimensionalComponentsService;
 
+	@Autowired
+	private TwoDimensionalComponentsCategoryMapper twoDimensionalComponentsCategoryMapper;
+
+	@ApiOperation("查询二维组件类型列表")
+	@GetMapping("/category/list")
+	public BaseRsp<List<TwoDimensionalComponentsCategory>> getTwoDimensionalComponents() {
+		LambdaQueryWrapper<TwoDimensionalComponentsCategory> queryWrapper = new LambdaQueryWrapper<>();
+		List<TwoDimensionalComponentsCategory> res = twoDimensionalComponentsCategoryMapper.selectList(queryWrapper);
+		return new BaseRsp<>(res);
+	}
+
 	@ApiOperation("新增二维组件")
 	@PostMapping("")
 	public BaseRsp<TwoDimensionalComponents>
@@ -45,6 +56,12 @@ public class SituationTwoDimensionalComponentController {
 
 		TwoDimensionalComponents twoDimensionalComponents = BeanUtils.copy(twoDimensionalComponentsAddReq,
 				TwoDimensionalComponents.class);
+		String type = twoDimensionalComponents.getType();
+		TwoDimensionalComponentsCategory twoDimensionalComponentsCategory = twoDimensionalComponentsCategoryMapper.selectById(type);
+		if(null == twoDimensionalComponentsCategory){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
 		String userId = UserInfoContext.getUserContext().getUserId();
 		twoDimensionalComponents.setCreateUserId(userId);
 		try{
@@ -97,18 +114,18 @@ public class SituationTwoDimensionalComponentController {
 
 	@ApiOperation("修改二维组件")
 	@PatchMapping("")
-	public BaseRsp patchTwoDimensionalComponents(@Validated(Update.class) TwoDimensionalComponentsAddReq twoDimensionalComponentsAddReq) {
-		TwoDimensionalComponents patchObj = BeanUtils.copy(twoDimensionalComponentsAddReq, TwoDimensionalComponents.class);
-		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(twoDimensionalComponentsAddReq.getResourceId());
+	public BaseRsp patchTwoDimensionalComponents(@Validated(Update.class) TwoDimensionalComponentsUpdateReq twoDimensionalComponentsUpdateReq) {
+		TwoDimensionalComponents patchObj = BeanUtils.copy(twoDimensionalComponentsUpdateReq, TwoDimensionalComponents.class);
+		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(twoDimensionalComponentsUpdateReq.getResourceId());
 		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 
 		LambdaQueryWrapper<TwoDimensionalComponents> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(TwoDimensionalComponents::getName, twoDimensionalComponentsAddReq.getName());
+		queryWrapper.eq(TwoDimensionalComponents::getName, twoDimensionalComponentsUpdateReq.getName());
 		TwoDimensionalComponents one = twoDimensionalComponentsService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), twoDimensionalComponentsAddReq.getResourceId())) {
+		if (null != one && !Objects.equals(one.getResourceId(), twoDimensionalComponentsUpdateReq.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

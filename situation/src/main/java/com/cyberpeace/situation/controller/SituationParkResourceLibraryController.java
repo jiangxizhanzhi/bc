@@ -9,8 +9,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.ParkResourceLibraryAddReq;
-import com.cyberpeace.situation.controller.req.ParkResourceLibraryFilterReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.ParkResourceLibrary;
 import com.cyberpeace.situation.dao.entity.ParkResourceLibraryCategory;
 import com.cyberpeace.situation.dao.mapper.ParkResourceLibraryCategoryMapper;
@@ -101,33 +100,34 @@ public class SituationParkResourceLibraryController {
 
 	@ApiOperation("删除园区资源库")
 	@DeleteMapping("")
-	public BaseRsp deleteParkResourceLibrary(String resourceId) {
-		ParkResourceLibrary parkResourceLibrary = parkResourceLibraryMapper.selectById(resourceId);
-		if (null == parkResourceLibrary) {
+	public BaseRsp deleteParkResourceLibrary(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
+		List<ParkResourceLibrary> parkResourceLibraries = parkResourceLibraryMapper.selectBatchIds(resourceIds);
+		if (parkResourceLibraries.isEmpty()) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		parkResourceLibraryMapper.deleteById(resourceId);
+		parkResourceLibraryMapper.deleteBatchIds(resourceIds);
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改园区资源库")
 	@PatchMapping("")
-	public BaseRsp patchParkResourceLibrary(@Validated(Update.class) ParkResourceLibraryAddReq parkResourceLibraryAddReq) {
-		ParkResourceLibrary patchObj = BeanUtils.copy(parkResourceLibraryAddReq, ParkResourceLibrary.class);
-		ParkResourceLibrary parkResourceLibrary = parkResourceLibraryMapper.selectById(parkResourceLibraryAddReq.getResourceId());
+	public BaseRsp patchParkResourceLibrary(@Validated(Update.class) ParkResourceLibraryUpdateReq parkResourceLibraryUpdateReq) {
+		ParkResourceLibrary patchObj = BeanUtils.copy(parkResourceLibraryUpdateReq, ParkResourceLibrary.class);
+		ParkResourceLibrary parkResourceLibrary = parkResourceLibraryMapper.selectById(parkResourceLibraryUpdateReq.getResourceId());
 		if(null == parkResourceLibrary){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		ParkResourceLibraryCategory category = parkResourceLibraryCategoryMapper.selectById(parkResourceLibraryAddReq.getParkResourceLibraryCategory());
+		ParkResourceLibraryCategory category = parkResourceLibraryCategoryMapper.selectById(parkResourceLibraryUpdateReq.getParkResourceLibraryCategory());
 		if(null == category){
 			throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
 		}
 
 		LambdaQueryWrapper<ParkResourceLibrary> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(ParkResourceLibrary::getName, parkResourceLibraryAddReq.getName());
+		queryWrapper.eq(ParkResourceLibrary::getName, parkResourceLibraryUpdateReq.getName());
 		ParkResourceLibrary one = parkRecourseLibraryService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), parkResourceLibraryAddReq.getResourceId())) {
+		if (null != one && !Objects.equals(one.getResourceId(), parkResourceLibraryUpdateReq.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
@@ -151,11 +151,9 @@ public class SituationParkResourceLibraryController {
 	@ApiOperation("新增园区资源库类型")
 	@PostMapping("/category")
 	public BaseRsp<ParkResourceLibraryCategory>
-	setParkResourceLibraryCategory(String name) {
+	setParkResourceLibraryCategory(@RequestBody @Validated(Create.class)AddCategoryReq addCategoryReq) {
 
-		if(StringUtils.isBlank(name)){
-			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
-		}
+		String name = addCategoryReq.getName();
 		ParkResourceLibraryCategory parkResourceLibraryCategory = new ParkResourceLibraryCategory();
 		parkResourceLibraryCategory.setName(name);
 		parkResourceLibraryCategory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -184,19 +182,30 @@ public class SituationParkResourceLibraryController {
 
 	@ApiOperation("删除园区资源库类型")
 	@DeleteMapping("/category")
-	public BaseRsp deleteParkResourceLibraryCategory(String resourceId) {
-		ParkResourceLibraryCategory parkResourceLibraryCategory = parkResourceLibraryCategoryMapper.selectById(resourceId);
-		if (null == parkResourceLibraryCategory) {
+	public BaseRsp deleteParkResourceLibraryCategory(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
+
+		LambdaQueryWrapper<ParkResourceLibrary> queryWrapper = new LambdaQueryWrapper<>();
+
+		queryWrapper.in(ParkResourceLibrary::getParkResourceLibraryCategory, resourceIds);
+		List<ParkResourceLibraryCategory> parkResourceLibraryCategories = parkResourceLibraryCategoryMapper.selectBatchIds(resourceIds);
+		if(parkResourceLibraryCategories.isEmpty()){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		parkResourceLibraryCategoryMapper.deleteById(resourceId);
+
+		List<ParkResourceLibrary> parkResourceLibraries = parkResourceLibraryMapper.selectList(queryWrapper);
+		if (!parkResourceLibraries.isEmpty()) {
+			throw new BusinessException(SituationErrorCode.TYPE_WITH_COMPONENTS_ERROR);
+		}
+
+		parkResourceLibraryCategoryMapper.deleteBatchIds(resourceIds);
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询三维组件类型详情")
+	@ApiOperation("查询园区资源库详情")
 	@GetMapping("/category")
 	public BaseRsp<ParkResourceLibraryCategory>
-	getParkResourceLibraryCategoryDetail(String resourceId) {
+	getParkResourceLibraryCategoryDetail(@RequestParam @NotBlank String resourceId) {
 
 		ParkResourceLibraryCategory parkResourceLibraryCategory = parkResourceLibraryCategoryMapper.selectById(resourceId);
 		if(null == parkResourceLibraryCategory){
@@ -207,14 +216,10 @@ public class SituationParkResourceLibraryController {
 
 	@ApiOperation("修改园区资源库类型")
 	@PatchMapping("/category")
-	public BaseRsp patchParkResourceLibraryCategory(String resourceId, String name) {
+	public BaseRsp patchParkResourceLibraryCategory(@RequestBody @Validated(Update.class) AddCategoryReq addCategoryReq) {
 
-		if(StringUtils.isBlank(name)){
-			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
-		}
-		if(StringUtils.isBlank(resourceId)){
-			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
-		}
+		String name = addCategoryReq.getName();
+		String resourceId = addCategoryReq.getResourceId();
 
 		ParkResourceLibraryCategory patchObj = new ParkResourceLibraryCategory();
 		patchObj.setName(name);
@@ -229,7 +234,7 @@ public class SituationParkResourceLibraryController {
 		LambdaQueryWrapper<ParkResourceLibraryCategory> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(ParkResourceLibraryCategory::getName, name);
 		ParkResourceLibraryCategory one = parkRecourseLibraryCategoryService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), resourceId)) {
+		if (null != one && !Objects.equals(one.getResourceId(), resourceId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		parkResourceLibraryCategoryMapper.updateById(patchObj);

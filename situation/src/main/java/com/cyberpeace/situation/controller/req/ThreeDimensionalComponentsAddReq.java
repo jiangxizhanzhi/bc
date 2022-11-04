@@ -35,10 +35,4 @@ public class ThreeDimensionalComponentsAddReq implements Serializable {
 			message = SituationErrorCode.CHART_STANDARD_DOC_EMPTY_ERROR)
 	@ApiModelProperty(value = "图表标准文件", required = true)
 	private String chartStandardDocument;
-
-	@ApiModelProperty()
-	@NotBlank(groups = { Update.class },
-			message = ErrorCode.RESOURCE_NOT_FOUND)
-	private String resourceId;
-
 }

@@ -9,19 +9,14 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.AddCategoryReq;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.DynamicEffectLibraryAddReq;
-import com.cyberpeace.situation.controller.req.DynamicEffectLibraryFilterReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
-import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponents;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -32,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
-@Api(tags = "组件库")
+@Api(tags = "组件库-动效库")
 @RestController
 @Slf4j
 @RequiresAuthentication
@@ -114,33 +109,36 @@ public class SituationDynamicEffectLibraryController {
 
 	@ApiOperation("删除动效库")
 	@DeleteMapping("")
-	public BaseRsp deleteDynamicEffectsLibrary(String resourceId) {
-		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper.selectById(resourceId);
-		if (null == dynamicEffectsLibrary) {
+	public BaseRsp deleteDynamicEffectsLibrary(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+
+		List<String> resourceIds = batchDeleteReq.getIds();
+
+		List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper.selectBatchIds(resourceIds);
+		if (dynamicEffectsLibraries.isEmpty()) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		dynamicEffectsLibraryMapper.deleteById(resourceId);
+		dynamicEffectsLibraryMapper.deleteBatchIds(resourceIds);
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("修改动效库")
 	@PatchMapping("")
-	public BaseRsp patchDynamicEffectsLibrary(@Validated(Update.class) DynamicEffectLibraryAddReq dynamicEffectLibraryAddReq) {
-		DynamicEffectsLibrary patchObj = BeanUtils.copy(dynamicEffectLibraryAddReq, DynamicEffectsLibrary.class);
-		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper.selectById(dynamicEffectLibraryAddReq.getResourceId());
+	public BaseRsp patchDynamicEffectsLibrary(@Validated(Update.class) DynamicEffectLibraryUpdateReq dynamicEffectLibraryUpdateReq) {
+		DynamicEffectsLibrary patchObj = BeanUtils.copy(dynamicEffectLibraryUpdateReq, DynamicEffectsLibrary.class);
+		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper.selectById(dynamicEffectLibraryUpdateReq.getResourceId());
 		if(null == dynamicEffectsLibrary){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectLibraryAddReq.getCategory());
+		DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectLibraryUpdateReq.getCategory());
 		if(null == category){
 			throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
 		}
 
 		LambdaQueryWrapper<DynamicEffectsLibrary> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(DynamicEffectsLibrary::getName, dynamicEffectLibraryAddReq.getName());
+		queryWrapper.eq(DynamicEffectsLibrary::getName, dynamicEffectLibraryUpdateReq.getName());
 		DynamicEffectsLibrary one = dynamicEffectsLibraryService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), dynamicEffectLibraryAddReq.getResourceId())) {
+		if (null != one && !Objects.equals(one.getResourceId(), dynamicEffectLibraryUpdateReq.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
@@ -152,7 +150,7 @@ public class SituationDynamicEffectLibraryController {
 	@ApiOperation("新增动效库类型")
 	@PostMapping("/category")
 	public BaseRsp<DynamicEffectsLibraryCategory>
-	setDynamicEffectsLibraryCategory(@RequestBody @Validated AddCategoryReq addCategoryReq) {
+	setDynamicEffectsLibraryCategory(@RequestBody @Validated(Create.class) AddCategoryReq addCategoryReq) {
 		String name = addCategoryReq.getName();
 		DynamicEffectsLibraryCategory dynamicEffectsLibraryCategory = new DynamicEffectsLibraryCategory();
 		dynamicEffectsLibraryCategory.setName(name);
@@ -209,14 +207,11 @@ public class SituationDynamicEffectLibraryController {
 
 	@ApiOperation("修改动效库类型")
 	@PatchMapping("/category")
-	public BaseRsp patchDynamicEffectsLibraryCategory(String resourceId, String name) {
+	public BaseRsp patchDynamicEffectsLibraryCategory(@RequestBody @Validated(Update.class) AddCategoryReq addCategoryReq) {
 
-		if(StringUtils.isBlank(name)){
-			throw new BusinessException(SituationErrorCode.NAME_EMPTY_ERROR);
-		}
-		if(StringUtils.isBlank(resourceId)){
-			throw new BusinessException(SituationErrorCode.RESOURCE_ID_EMPTY_ERROR);
-		}
+		String name = addCategoryReq.getName();
+
+		String resourceId = addCategoryReq.getResourceId();
 
 		DynamicEffectsLibraryCategory patchObj = new DynamicEffectsLibraryCategory();
 		patchObj.setName(name);

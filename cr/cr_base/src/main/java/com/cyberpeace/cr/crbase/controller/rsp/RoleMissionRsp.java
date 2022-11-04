@@ -46,4 +46,7 @@ public class RoleMissionRsp implements Serializable {
 
 	@ApiModelProperty("用户列表")
 	private List<RbUserData> deliveryDetails;
+
+	@ApiModelProperty("时限")
+	private Integer time;
 }

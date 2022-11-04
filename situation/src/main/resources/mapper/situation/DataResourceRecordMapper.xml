@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DataSourceRecordMapper">
+    <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.DataSourceRecordRes">
+        select * from datasource_record where 1 = 1
+        <if test="dataSourceRecordPageReq.name != null and dataSourceRecordPageReq.name != ''">
+            and name like concat('%', #{dataSourceRecordPageReq.name} ,'%')
+        </if>
+        <if test="dataSourceRecordPageReq.type != null and dataSourceRecordPageReq.type != ''">
+            and type like concat('%', #{dataSourceRecordPageReq.type} ,'%')
+        </if>
+        <if test="dataSourceRecordPageReq.connectAddress != null and dataSourceRecordPageReq.connectAddress != ''">
+            and connect_address like concat('%', #{apiRequestPageReq.connectAddress} ,'%')
+        </if>
+        <if test="dataSourceRecordPageReq.port != null and dataSourceRecordPageReq.port != ''">
+            and port = #{apiRequestPageReq.port}
+        </if>
+        <if test="authContext != null ">
+            and create_user_id = #{authContext.userId}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectById" resultType="com.cyberpeace.situation.dao.entity.DataSourceRecord">
+        select * from datasource_record where resource_id = #{resourceId}
+    </select>
+</mapper>

@@ -149,4 +149,10 @@ public interface ErrorCode {
 
 	/** 文件删除失败*/
 	String FILE_DELETE_FAILED = "100048";
+
+	/** 数据库连接失败 */
+	String CONNECT_DATABASE_FAILED = "100049";
+
+	/** 不支持数据库类型 */
+	String UNSUPPORTED_DB_TYPE = "100050";
 }

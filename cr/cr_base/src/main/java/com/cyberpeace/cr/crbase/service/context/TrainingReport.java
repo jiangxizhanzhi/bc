@@ -93,6 +93,8 @@ public class TrainingReport {
 		completed("已完成", "Completed"),
 		ongoing("进行中", "Ongoing"),
 		not_released("未下发", "Not Issued"),
+		pausing("已暂停", "Pausing"),
+		closed("已结束", "Ended"),
 		not_submitted("未提交", "Not submitted"),
 		not_finished("未完成", "Unfinished"),
 		release("下发", "Issue"),

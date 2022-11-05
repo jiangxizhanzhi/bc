@@ -196,7 +196,7 @@
             <div class="outer-block outer22 flex-col align-center" id='score-${user.userId}'></div>
             <script>
                 drawPersonalTaskStatusRing('score-${user.userId}',
-                    ['${locale.completed}', '${locale.ongoing}','${locale.not_released}'],
+                    ['${locale.completed}', '${locale.ongoing}','${locale.not_released}', '${locale.pausing}', '${locale.closed}'],
                     [<#list user.mission.statisticalInfo as statisticalInfo >${statisticalInfo.value},</#list>],
                     "${locale.pcs_task}");
             </script>

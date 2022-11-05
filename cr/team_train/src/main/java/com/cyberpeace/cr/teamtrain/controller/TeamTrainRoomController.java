@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.AttachmentService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -124,6 +125,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -347,6 +351,9 @@ public class TeamTrainRoomController {
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+		if (StringUtils.isNotEmpty(teamRoomData.getAttachmentId())) {
+			teamRoomRsp.setAttachment(attachmentService.getById(teamRoomData.getAttachmentId()));
+		}
 
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}

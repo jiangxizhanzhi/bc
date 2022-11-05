@@ -287,6 +287,7 @@ public class TeamTrainTemplateController {
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigs));
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(req.getTimeLineConfig()));
+		teamTemplate.setAttachmentId(req.getAttachmentId());
 
 		return teamTemplate;
 	}

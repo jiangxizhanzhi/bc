@@ -23,4 +23,7 @@ public interface FileTypeContant {
 	/** 工具库文件上传*/
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
+	/** 后台团队训练附件上传*/
+	String TEAM_TRAIN_ATTACHMENT = "MP4,PDF,PNG,JPG,JPEG";
+
 }

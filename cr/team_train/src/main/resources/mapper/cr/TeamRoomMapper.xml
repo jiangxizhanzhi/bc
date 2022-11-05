@@ -20,6 +20,7 @@
         <result property="sceneEndTime" column="scene_end_time" jdbcType="VARCHAR"/>
         <result property="difficult" column="difficulty" jdbcType="VARCHAR"/>
         <result property="durationTime" column="duration_time" jdbcType="VARCHAR"/>
+        <result property="attachmentId" column="attachment_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="getTeamRoomRspByRoomId" resultMap="TeamRoomData">
@@ -43,6 +44,7 @@
                cr_team_room.training_status,
                cr_team_room.logo,
                cr_team_template.duration_time,
+               cr_team_template.attachment_id,
                cr_train_record.start_time scene_start_time,
                cr_train_record.end_time   scene_end_time
         from cr_team_room

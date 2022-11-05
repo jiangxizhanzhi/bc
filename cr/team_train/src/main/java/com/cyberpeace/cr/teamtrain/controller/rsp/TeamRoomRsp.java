@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 
+import com.cyberpeace.cs.dao.entity.Attachment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -83,4 +84,7 @@ public class TeamRoomRsp implements Serializable {
 
 	@ApiModelProperty(value = "是否关联 Engage")
 	private Boolean isEngageRelated;
+
+	@ApiModelProperty(value = "附件")
+	private Attachment attachment;
 }

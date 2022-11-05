@@ -365,6 +365,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			throw new BusinessException(CrBusinessErrorCode.TASK_IS_PAUSING);
 		} else if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()) {
 			throw new BusinessException(CrBusinessErrorCode.TASK_IS_CLOSED);
+		} else if (new Date().getTime() > task.getCloseTime().getTime()) {
+			throw new BusinessException(CrBusinessErrorCode.TASK_IS_CLOSED);
 		}
 
 		// 校验该task是否可提交

@@ -43,6 +43,8 @@ public class TaskContext extends BaseTable {
 
 	private Mission mission;
 
+	private Date closeTime;
+
 	public boolean isFinished() {
 		return CrTask.TaskStatus.FINISHED_STATUS_LIST.contains(status);
 	}

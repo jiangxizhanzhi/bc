@@ -121,6 +121,13 @@ public class CrTask extends BaseTable {
 				PAUSE.getCode()
 		);
 
+		public static List<Integer> L1_RELEASED_STATUS = Arrays.asList(
+				RELEASED.getCode(),
+				STARTED.getCode(),
+				WAIT.getCode(),
+				REJECT.getCode()
+		);
+
 		@Getter
 		private Integer code;
 

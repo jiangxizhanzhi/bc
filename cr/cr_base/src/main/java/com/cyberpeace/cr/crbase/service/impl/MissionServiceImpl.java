@@ -266,6 +266,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Map<String, MissionCompletion> missionMap = Maps.newHashMap();
 
 		// 查询到关联某个missionId的task，表示此mission已被下发
+		Date now = new Date();
 		for (CrTask task : tasks) {
 			if (!missionMap.containsKey(task.getMissionId())) {
 				Integer missionStatus;
@@ -274,6 +275,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 					missionStatus = CrTask.TaskStatus.PAUSE.getCode();
 				// task状态为关闭，mission状态为已关闭
 				} else if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()) {
+					missionStatus = CrTask.TaskStatus.CLOSED.getCode();
+				} else if (now.getTime() > task.getCloseTime().getTime()) {
 					missionStatus = CrTask.TaskStatus.CLOSED.getCode();
 				} else {
 					missionStatus = 1;

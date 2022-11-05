@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -236,8 +237,17 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				crRole);
 
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(roomId, userId);
-		Map<String, Integer> taskStatusMap = tasks.stream().collect(Collectors
-				.toMap(TaskContext::getMissionId, taskContext -> taskContext.getStatus()));
+		Date now = new Date();
+		Map<String, Integer> taskStatusMap = tasks.stream().collect(Collectors.toMap(
+				TaskContext::getMissionId,
+				taskContext -> {
+					if (CrTask.TaskStatus.L1_RELEASED_STATUS.contains(taskContext.getStatus())
+							&& now.getTime() > taskContext.getCloseTime().getTime()) {
+						return CrTask.TaskStatus.CLOSED.getCode();
+					}
+					return taskContext.getStatus();
+				}
+		));
 
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 
@@ -310,12 +320,14 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		Integer closed = 0;
 		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
 
+		Date now = new Date();
 		for (TaskContext taskContext : taskContextList) {
 			if (taskContext.isFinished()) {
 				finished++;
 			} else if (taskContext.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
 				paused++;
-			} else if (taskContext.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()) {
+			} else if (taskContext.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()
+					|| now.getTime() > taskContext.getCloseTime().getTime()) {
 				closed++;
 			} else {
 				released++;

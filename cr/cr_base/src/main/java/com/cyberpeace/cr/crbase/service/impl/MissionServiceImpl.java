@@ -162,7 +162,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			task.setMissionTemplateId(mission.getMissionTemplateId());
 
 			// 设置下发任务的关闭时间
-			calendar.setTime(new Date());
+			calendar.setTime(task.getReleaseTime());
 			calendar.add(Calendar.MINUTE, mission.getTime());
 			task.setCloseTime(calendar.getTime());
 

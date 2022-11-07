@@ -1,8 +1,12 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +51,9 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 
 	@Autowired
 	MissionTemplateService missionTemplateService;
+
+	@Autowired
+	AttachmentService attachmentService;
 
 	@Override
 	public BusinessTemplate.BusinessType setBusinessType() {
@@ -108,6 +115,17 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 				.getByTemplateBusinessId(template.getResourceId());
 		teamTemplate.setId(null);
 		context.setBusiness(teamTemplate);
+
+		Map<String, String> fileMap = Maps.newHashMap();
+		context.setFiles(fileMap);
+
+		if (teamTemplate.getAttachmentId() != null) {
+			Attachment attachment = attachmentService.getById(teamTemplate.getAttachmentId());
+			if (attachment != null) {
+				fileMap.put(attachment.getResourceId(), attachment.getFileName());
+			}
+		}
+
 		// 获取任务
 		String missionScheme = teamTemplate.getRoleConfig();
 		context.setMissions(missionTemplateService.batchGetByMissionSchemeJson(missionScheme));

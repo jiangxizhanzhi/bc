@@ -598,6 +598,8 @@ public class MDParser {
 		// return
 		template.setResourceId(IDGeneratorUtil.getID());
 		template.setCreateUserId(CommonConstant.ADMIN_ID);
+		// 默认任务时限120
+		template.setTime(120);
 		missionTemplates.add(template);
 		return template.getResourceId();
 	}

@@ -529,8 +529,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
 		context.setSceneData(topoData);
 		// 4. 获取文件
-		Map<String, String> fileMap = Maps.newHashMap();
-		context.setFiles(fileMap);
+		Map<String, String> fileMap = context.getFiles();
+		if (fileMap == null) {
+			fileMap = Maps.newHashMap();
+			context.setFiles(fileMap);
+		}
 
 		for (MissionTemplate missionTemplate : context.getMissions()) {
 			List<String> attachmentIds = JSON.parseArray(missionTemplate.getAttachment(),

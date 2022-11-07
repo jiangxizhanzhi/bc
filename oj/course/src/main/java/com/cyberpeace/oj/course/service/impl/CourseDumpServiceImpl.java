@@ -120,7 +120,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		List<CourseLesson> currentLessons = lessonCol.get(resourceId);
 
 		List<LessonConfig> lessonWithNoChapter = currentLessonConfigs.stream().
-					filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode()) && s.getParentId().equals(courseConfigId.get(0))).collect(Collectors.toList());
+				filter(s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_LESSON.getCode()) && s.getParentId().equals(courseConfigId.get(0))).collect(Collectors.toList());
 		List<LessonConfig> chapterOnes = StreamApiUtils.filter(currentLessonConfigs, s -> s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode()));
 		if(chapterOnes.size() > 0 && lessonWithNoChapter.size() > 0){
 			List<String> lessonids = StreamApiUtils.getColumn(lessonWithNoChapter, LessonConfig::getLessonId);
@@ -132,8 +132,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 		try {
 			combineCourseContent(destFilePath, course, categories, allUsers);
-
-			combineLessons(destFilePath, currentLessonConfigs, currentLessons, is_dump_topo);
+			if (null != currentLessons) {
+				combineLessons(destFilePath, currentLessonConfigs, currentLessons, is_dump_topo);
+			}
 			log.info("course [{}] dump finish the path is [{}]", course.getName(), destFilePath);
 		} catch (BusinessException e) {
 			throw e;
@@ -333,6 +334,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				throw new BusinessException(OjBusinessErrorCode.NO_DEFAULT_COURSE_LOGO, course.getName());
 			}
 			FileUtil.copyFile(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH, destFilePath + File.separator + "logo.png", false);
+			course.setLogo(DUMP_COURSE_DEFAULT_LOGO_STORE_PATH);
 		} else {
 			String realPath = utilService.getRealPath(logo);
 			fileSuffix = FileUtil.getFileSuffix(realPath);

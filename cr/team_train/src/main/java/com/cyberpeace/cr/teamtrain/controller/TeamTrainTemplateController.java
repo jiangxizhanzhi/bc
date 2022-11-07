@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.AttachmentService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,9 @@ public class TeamTrainTemplateController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private AttachmentService attachmentService;
 
 
 	@ApiOperation("新增")
@@ -197,6 +201,11 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
+
+		teamTrainTemplateRsp.setAttachmentId(template.getAttachmentId());
+		if (template.getAttachmentId() != null) {
+			teamTrainTemplateRsp.setAttachment(attachmentService.getById(template.getAttachmentId()));
+		}
 
 		return new BaseRsp(teamTrainTemplateRsp);
 	}

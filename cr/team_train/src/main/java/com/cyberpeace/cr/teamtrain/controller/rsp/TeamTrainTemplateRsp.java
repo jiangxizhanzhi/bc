@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 
+import com.cyberpeace.cs.dao.entity.Attachment;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -31,5 +32,11 @@ public class TeamTrainTemplateRsp implements Serializable {
 
 	@ApiModelProperty(value = "时间轴配置")
 	private Object timeLineConfig = "{}";
+
+	@ApiModelProperty(value = "附件id")
+	private String attachmentId;
+
+	@ApiModelProperty(value = "附件信息")
+	private Attachment attachment;
 
 }

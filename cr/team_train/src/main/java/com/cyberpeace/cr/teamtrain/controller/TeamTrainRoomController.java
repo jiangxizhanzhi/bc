@@ -598,7 +598,7 @@ public class TeamTrainRoomController {
 				UserInfoContext.getUserContext().getUserId());
 
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
-
+		teamRoomService.resetOngoingTasks();
 		return new BaseRsp<>();
 	}
 
@@ -619,6 +619,7 @@ public class TeamTrainRoomController {
 
 		if (result) {
 			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+			teamRoomService.resetOngoingTasks();
 		}
 
 		return new BaseRsp<>(result);
@@ -639,6 +640,7 @@ public class TeamTrainRoomController {
 		Boolean result = crTaskService.close(closeMissionReq.getMissionResourceId(), crRole);
 		if (result) {
 			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+			teamRoomService.resetOngoingTasks();
 		}
 
 		return new BaseRsp<>(result);

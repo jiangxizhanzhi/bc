@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -571,4 +573,25 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 	}
 
+	private List<CrTask> ongoingTasks = Lists.newArrayList();
+
+	@Override
+	public void initOngoingTasks() {
+		List<String> roomIds = lambdaQuery()
+				.eq(TeamRoom::getTrainingStatus, TeamRoom.TrainingStatusCode.OPENING.getCode())
+				.list()
+				.stream().map(TeamRoom::getResourceId).collect(Collectors.toList());
+		ongoingTasks = crTaskService.getOngoingTasks(roomIds);
+	}
+
+	@Override
+	@Async
+	public void resetOngoingTasks() {
+		initOngoingTasks();
+	}
+
+	@Override
+	public List<CrTask> getOngoingTasks() {
+		return ongoingTasks;
+	}
 }

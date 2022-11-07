@@ -256,6 +256,14 @@ public interface CrTaskService {
 	void pushMissionWS(String businessId, Integer code);
 
 	/**
+	 * 推送任务更新ws消息
+	 * @param businessId 业务id
+	 * @param userId 用户id
+	 * @param code 推送编号
+	 */
+	void pushMissionWSByTaskUser(String businessId, String userId, Integer code);
+
+	/**
 	 * 推送训练状态的ws，暂停状态不允许答题
 	 * @param businessId 业务id
 	 * @param runningStatus 运行状态
@@ -330,5 +338,7 @@ public interface CrTaskService {
 	 * @return 是否关闭成功
 	 */
 	boolean close(String missionId, CrRole role);
+
+	List<CrTask> getOngoingTasks(List<String> roomIds);
 
 }

@@ -547,6 +547,20 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
+	public void pushMissionWSByTaskUser(String businessId, String userId, Integer code) {
+		TaskWsData data = new TaskWsData(code);
+
+		MissionWsIdentifier identifier = new MissionWsIdentifier();
+		identifier.setBusinessId(businessId);
+		identifier.setUserId(userId);
+		identifier.setPath(WsPath.CR_MISSION);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+		webSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
 	public void pushStatusWs(String businessId, Integer runningStatus) {
 		MissionWsUpdateStatusMessage message = new MissionWsUpdateStatusMessage(runningStatus);
 		sendWsData(message, businessId);
@@ -622,8 +636,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				crTask.setCloseTime(calendar.getTime());
 				crTask.setPauseTime(null);
 			} else {
-				crTask.setStatus(CrTask.TaskStatus.PAUSE.getCode());
+				if (new Date().getTime() >= crTask.getCloseTime().getTime()) {
+					throw new BusinessException(CrBusinessErrorCode.TASK_IS_TIMEOUT);
+				}
 
+				crTask.setStatus(CrTask.TaskStatus.PAUSE.getCode());
 				crTask.setPauseTime(new Date());
 			}
 		});
@@ -643,14 +660,28 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoleId, role.getResourceId())
 				.eq(CrTask::getMissionId, mission.getResourceId())
 				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.ge(CrTask::getCloseTime, new Date())
 				.list();
 
 		if (crTaskList.isEmpty()) {
-			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_CLOSEABLE);
+			throw new BusinessException(CrBusinessErrorCode.TASK_IS_TIMEOUT);
 		}
 
 		crTaskList.forEach(crTask -> crTask.setStatus(CrTask.TaskStatus.CLOSED.getCode()));
 
 		return updateBatchById(crTaskList);
+	}
+
+	@Override
+	public List<CrTask> getOngoingTasks(List<String> roomIds) {
+		if (roomIds == null || roomIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
+
+		return lambdaQuery()
+				.in(CrTask::getRoomId, roomIds)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
+				.ge(CrTask::getCloseTime, new Date())
+				.list();
 	}
 }

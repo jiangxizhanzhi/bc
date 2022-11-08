@@ -5,7 +5,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,6 +26,8 @@ public class TeamTaskJob {
     @Autowired
     private CrTaskService crTaskService;
 
+    private final int timeRate = 1000 * 5;
+
     @PostConstruct
     private void init() {
         teamRoomService.initOngoingTasks();
@@ -39,11 +40,21 @@ public class TeamTaskJob {
             return;
         }
 
-        log.info(String.format("Check that %s tasks in progress.", crTaskList.size()));
         Date now = new Date();
+        long remainingTime30s = now.getTime() + 1000 * 30;
+
         crTaskList.removeIf(crTask -> {
-            log.info(String.format("now: %s, close_time: %s", now, crTask.getCloseTime()));
-            if (now.getTime() > crTask.getCloseTime().getTime()) {
+            // 结束时间
+            long closeTime = crTask.getCloseTime().getTime();
+
+            // 任务即将结束
+            if (closeTime + timeRate > remainingTime30s && remainingTime30s > closeTime) {
+                log.info(String.format("Task %s about to expire: %s", crTask.getResourceId(), crTask.getCloseTime()));
+            }
+
+            // 任务结束
+            if (now.getTime() > closeTime) {
+                log.info(String.format("Task %s expired: %s", crTask.getResourceId(), crTask.getCloseTime()));
                 crTaskService.pushMissionWSByTaskUser(crTask.getRoomId(), crTask.getUserId(), MissionWsCode.TEAM_MISSION_CODE);
                 return true;
             }

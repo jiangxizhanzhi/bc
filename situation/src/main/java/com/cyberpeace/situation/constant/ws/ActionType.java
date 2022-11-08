@@ -26,7 +26,11 @@ public enum ActionType {
 	NONE(10, "无攻击", "element",true,true),
 	HIGHLIGHT_AREA(11,"区域高亮","area",false,true),
 	HIGHLIGHT_ELEMENT(12,"节点聚焦","element",false,true),
-	LINK_POWER_OFF(13,"链路断线","element",true,true);
+	LINK_POWER_OFF(13,"链路断线","element",true,true),
+	SPRINGBOARD_ATTACK(14,"跳板攻击","element",true,true),
+	LEVERAGING_REMOTE_SERVICES(15,"利用远程服务","element",true,true),
+	LATERAL_MOVEMENT(16,"横向移动","element",true,true),
+	PASSWORD_CRACKING(17,"密码破解","element",true,true);
 
 	@Getter
 	private Integer code;

@@ -26,10 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.rmi.NotBoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,27 +48,10 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
 
     @Override
     public String testDBConnection(DataSourceRecordReq dataSourceRecordReq) {
-        String type = dataSourceRecordReq.getType();
-        if (StringUtils.isEmpty(type)) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-        }
-        DataSourceTemplate dataSourceTemplate = dataSourceTemplateMapper.selectByType(type);
-        if (dataSourceTemplate == null) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-        }
-        Connection conn = null;
-        try {
-            Class.forName(dataSourceTemplate.getDataSource());
-            String url = String.format(dataSourceTemplate.getConnectUrl(), dataSourceRecordReq.getConnectAddress(), dataSourceRecordReq.getPort());
-            conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), dataSourceRecordReq.getPassword());
-            conn.setAutoCommit(false);
-            return conn.toString();
-        } catch (ClassNotFoundException | SQLException e) {
-            log.error(e.getMessage());
-            throw new BusinessException(ErrorCode.CONNECT_DATABASE_FAILED);
-        } finally {
-            closeDB(conn, null, null);
-        }
+        Connection connection = getConnection(dataSourceRecordReq, null);
+        String conn = connection.toString();
+        closeDB(connection, null, null);
+        return conn;
     }
 
     @Override
@@ -137,6 +118,86 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return resourceId;
     }
 
+    @Override
+    public List<String> getDBTables(String resourceId, String dbName) {
+        if (StringUtils.isEmpty(resourceId)) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
+        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
+        Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), dbName);
+        ResultSet resultSet = null;
+        List<String>  tableList = new ArrayList<>();
+        if (connection != null) {
+            try {
+                DatabaseMetaData metaData = connection.getMetaData();
+                resultSet = metaData.getTables(null, null, null, new String[]{"TABLE"});
+                while (resultSet.next()){
+                    tableList.add(resultSet.getString("TABLE_NAME"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                closeDB(connection, null, resultSet);
+            }
+        }
+        return tableList;
+    }
+
+    @Override
+    public List<String> getDBName(String resourceId) {
+        if (StringUtils.isEmpty(resourceId)) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
+        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
+        Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), null);
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<String> list = new ArrayList<>();
+        try {
+            String sql = "SHOW DATABASES";
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String database = resultSet.getString("Database");
+                if (StringUtils.isNotEmpty(database)) {
+                    list.add(database);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeDB(connection, preparedStatement, resultSet);
+        }
+        return list;
+    }
+
+    private Connection getConnection(DataSourceRecordReq dataSourceRecordReq, String dbName){
+        String type = dataSourceRecordReq.getType();
+        if (StringUtils.isEmpty(type)) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
+        DataSourceTemplate dataSourceTemplate = dataSourceTemplateMapper.selectByType(type);
+        if (dataSourceTemplate == null) {
+            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+        }
+        Connection conn = null;
+        try {
+            Class.forName(dataSourceTemplate.getDataSource());
+            String url;
+            if (StringUtils.isNotBlank(dbName)) {
+                url = String.format(dataSourceTemplate.getConnectDBUrl(), dataSourceRecordReq.getConnectAddress(), dataSourceRecordReq.getPort(), dbName);
+            } else {
+                url = String.format(dataSourceTemplate.getConnectUrl(), dataSourceRecordReq.getConnectAddress(), dataSourceRecordReq.getPort());
+            }
+            conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), dataSourceRecordReq.getPassword());
+            return conn;
+        } catch (ClassNotFoundException | SQLException e) {
+            closeDB(conn, null, null);
+            log.error(e.getMessage());
+            throw new BusinessException(ErrorCode.CONNECT_DATABASE_FAILED);
+        }
+    }
+
     private void closeDB(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         try {
             if (rs != null) {
@@ -157,7 +218,12 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             log.error("数据源关闭失败", ee);
         }
     }
+
     private DataSourceRecord dataSourceRecordReqToDataSourceRecord(DataSourceRecordReq dataSourceRecordReq){
         return BeanUtils.copy(dataSourceRecordReq, DataSourceRecord.class);
+    }
+
+    private DataSourceRecordReq dataSourceRecordToDataSourceRecordReq(DataSourceRecord dataSourceRecord){
+        return BeanUtils.copy(dataSourceRecord, DataSourceRecordReq.class);
     }
 }

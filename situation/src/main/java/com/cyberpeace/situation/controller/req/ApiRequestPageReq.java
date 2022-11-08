@@ -21,7 +21,7 @@ public class ApiRequestPageReq extends PageReqBase implements Serializable {
     private String name;
 
     @ApiModelProperty("api描述")
-    private String desc;
+    private String description;
 
     @ApiModelProperty("url")
     private String requestUrl;

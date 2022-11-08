@@ -27,4 +27,6 @@ public class DataSourceTemplate implements Serializable {
      */
     private String connectUrl;
 
+    private String connectDBUrl;
+
 }

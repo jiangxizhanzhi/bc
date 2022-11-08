@@ -1,11 +1,9 @@
 package com.cyberpeace.situation.service;
 
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.ApiRequestPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
-import com.cyberpeace.situation.controller.res.ApiRequestRes;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
 
@@ -71,4 +69,13 @@ public interface DataSourceService {
      * @return
      */
     String updateDataSourceRecord(DataSourceRecordReq dataSourceRecordReq);
+
+    /**
+     * 获取数据库表信息
+     * @param resourceId
+     * @return
+     */
+    List<String> getDBTables(String resourceId, String dbName);
+
+    List<String> getDBName(String resourceId);
 }

@@ -82,4 +82,20 @@ public class DataSourceController {
     public BaseRsp<String> updateDataSourceRecord(@RequestBody @Validated(Update.class) DataSourceRecordReq dataSourceRecordReq){
         return new BaseRsp<>(dataSourceService.updateDataSourceRecord(dataSourceRecordReq));
     }
+
+    @ApiOperation("获取表信息")
+    @GetMapping("tables")
+    public BaseRsp<List<String>> getDBTables(@RequestParam("resource_id")
+                                                      @ApiParam(required = true, name = "resource_id") String resourceId,
+                                                      @RequestParam("name")
+                                                      @ApiParam(required = true, name = "name") String name){
+        return new BaseRsp<>(dataSourceService.getDBTables(resourceId, name));
+    }
+
+    @ApiOperation("获取库信息")
+    @GetMapping("database")
+    public BaseRsp<List<String>> getDBName(@RequestParam("resource_id")
+                                                      @ApiParam(required = true, name = "resource_id") String resourceId){
+        return new BaseRsp<>(dataSourceService.getDBName(resourceId));
+    }
 }

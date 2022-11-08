@@ -125,7 +125,17 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (dynamicStageBo.getAttackMessageIds().size() > 0) {
 				List<AttackMessage> attackMessageList = attackMessageMapper
 						.selectBatchIds(dynamicStageBo.getAttackMessageIds());
-				for (AttackMessage attackMessage : attackMessageList) {
+				if(attackMessageList.size() < dynamicStageBo.getAttackMessageIds().size()){
+					throw new BusinessException(SituationErrorCode.CANNOT_FIND_DYNAMIC);
+				}
+				for (String attackMessageId : dynamicStageBo.getAttackMessageIds()){
+					AttackMessage attackMessage = new AttackMessage();
+					for (AttackMessage message : attackMessageList){
+						if(message.getResourceId().equals(attackMessageId)){
+							attackMessage = message;
+							break;
+						}
+					}
 					AttackMessageReq attackMessageBo = BeanUtils.copy(attackMessage,
 							AttackMessageReq.class);
 					if (attackMessage.getMediaAnimation() == null) {

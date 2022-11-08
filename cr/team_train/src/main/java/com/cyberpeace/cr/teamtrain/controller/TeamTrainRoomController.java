@@ -352,7 +352,7 @@ public class TeamTrainRoomController {
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 		if (StringUtils.isNotEmpty(teamRoomData.getAttachmentId())) {
-			teamRoomRsp.setAttachment(attachmentService.getById(teamRoomData.getAttachmentId()));
+			teamRoomRsp.setAttachment(attachmentService.selectById(teamRoomData.getAttachmentId()));
 		}
 
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);

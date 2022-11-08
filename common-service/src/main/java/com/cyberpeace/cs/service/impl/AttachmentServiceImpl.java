@@ -55,6 +55,18 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 	}
 
 	@Override
+	public AttachmentBo selectById(String attachmentId) {
+		Attachment attachment = getById(attachmentId);
+		if (attachment != null) {
+			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
+			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));
+
+			return attachmentBo;
+		}
+		return null;
+	}
+
+	@Override
 	public List<Attachment> batchGetByIds(List<String> attachmentIds) {
 		if (attachmentIds == null || attachmentIds.size() == 0) {
 			return Lists.newArrayList();

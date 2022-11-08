@@ -19,6 +19,8 @@ public interface AttachmentService extends IService<Attachment> {
 	 */
 	List<AttachmentBo> selectByIds(String attachmentIds, Boolean isWeb);
 
+	AttachmentBo selectById(String attachmentId);
+
 	/**
 	 * 批量查询
 	 * @param attachmentIds

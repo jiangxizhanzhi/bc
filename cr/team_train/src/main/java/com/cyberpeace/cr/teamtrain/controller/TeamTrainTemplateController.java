@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -204,7 +205,7 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setAttachmentId(template.getAttachmentId());
 		if (template.getAttachmentId() != null) {
-			teamTrainTemplateRsp.setAttachment(attachmentService.getById(template.getAttachmentId()));
+			teamTrainTemplateRsp.setAttachment(attachmentService.selectById(template.getAttachmentId()));
 		}
 
 		return new BaseRsp(teamTrainTemplateRsp);

@@ -137,7 +137,7 @@ public class SituationControlController {
 		dynamicSchemeService.validStage(dynamicSchemeReq);
 		dynamicSchemeService.validMedia(dynamicSchemeReq);
 		dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
-		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq);
+		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq, null ,null);
 		return new BaseRsp<>();
 	}
 

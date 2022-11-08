@@ -31,7 +31,13 @@ public interface DynamicSchemeService {
 
 	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds);
 
-	void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq);
+	/**
+	 * 推送动效方案数据
+	 * @param dynamicSchemeReq 动效方案数据
+	 * @param stageName 阶段名称（继续运行动效方案时传该值）
+	 * @param attackMessageDescription 动效描述（继续运行动效方案时传该值）
+	 */
+	void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq, String stageName, String attackMessageDescription);
 
 	void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq);
 

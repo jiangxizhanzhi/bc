@@ -1,8 +1,11 @@
 package com.cyberpeace.gateway.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.situation.model.DynamicSchemeProcess;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
+import com.cyberpeace.situation.service.DynamicSchemeService;
+import com.cyberpeace.situation.service.SceneConfigService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
@@ -24,6 +27,12 @@ public class ExternalSituationController {
 	@Autowired
 	private TopoHandlerService topoHandlerService;
 
+	@Autowired
+	private SceneConfigService sceneConfigService;
+
+	@Autowired
+	private DynamicSchemeService dynamicSchemeService;
+
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
@@ -40,6 +49,26 @@ public class ExternalSituationController {
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 
 		return new BaseRsp<>(situationTopo);
+	}
+
+	@ApiOperation("结束/暂停动效方案")
+	@GetMapping("/stopDynamicScheme")
+	public BaseRsp<Boolean> stopDynamicScheme(@ApiParam(name = "topo_id", value = "拓扑编号")
+												  @RequestParam(value = "topo_id") String topoId){
+		sceneConfigService.clearSceneCode(topoId);
+		log.info("topoId:[" + topoId + "] has paused");
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("继续动效方案")
+	@GetMapping("/continueDynamicScheme")
+	public BaseRsp<Boolean> continueDynamicScheme(@ApiParam(name = "topo_id", value = "拓扑编号")
+												  @RequestParam(value = "topo_id") String topoId){
+		log.info("topoId:[" + topoId + "] continue");
+		DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(topoId);
+		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
+				dynamicSchemeProcess.getStageName(),dynamicSchemeProcess.getAttackMessageDescription());
+		return new BaseRsp<>(true);
 	}
 
 }

@@ -377,7 +377,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq) {
+	public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq, String stageName, String attackMessageDescription) {
 
 		String sceneId = dynamicSchemeReq.getSceneId();
 		String code = sceneConfigService.updateSceneCode(sceneId);
@@ -392,27 +392,58 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				List<WsAttackSchedule> wsAttackScheduleList = new ArrayList<>();
 				// 当前动效方案是否正常运行
 				boolean state = true;
+				// 当前动效是否已运行过
+				boolean attackMessageStatue = true;
 				for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
 					if (!state) {
 						break;
 					}
 
+					//进程消息中新增当前阶段信息
 					WsAttackSchedule wsAttackScheduleStage = new WsAttackSchedule(
 							dynamicStage.getName(), STAGE_IS_RUNNING);
 					wsAttackScheduleList.add(wsAttackScheduleStage);
 					WsAttackSchedule wsAttackMessageSchedule = new WsAttackSchedule("",
 							DYNAMIC_IS_RUNNING);
 					wsAttackScheduleList.add(wsAttackMessageSchedule);
+
+					//判断当前阶段是否已运行
+					if(attackMessageStatue && stageName != null && !dynamicStage.getName().equals(stageName)){
+						//当前阶段已运行，设置当前阶段为已运行状态
+						wsAttackScheduleStage.setStatus(STAGE_HAS_BEEN_RUN);
+						wsAttackMessageSchedule.setStatus(DYNAMIC_HAS_BEEN_RUN);
+						wsAttackMessageSchedule.setName("");
+						//当前阶段已运行，直接进行下一次循环
+						continue;
+					}
+
 					// 动效序号
 					int number = 1;
 
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {
+						//判断当前动效是否已运行
+						if(attackMessageStatue && attackMessageDescription != null && !attackMessageReq.getDescription().equals(attackMessageDescription)){
+							//当前动效已运行，直接进行下一次循环
+							continue;
+						}
+						//当前动效未运行，表示找到继续的位置，之后运行无需再次判断
+						attackMessageStatue = false;
+
 						attackMessageReq.setSceneId(sceneId);
 						// 查看当前是否有其他动效方案正在运行
 						if (!sceneConfigService.isCurrentScheme(sceneId, code)) {
-							// 有其他方案正在运行，当前方案停止
+							// 有其他方案正在运行或当前场景动效方案被暂停，当前方案停止
 							state = false;
+							// 如果当前场景动效方案被暂停，保存当前动效方案数据和运行进度
+							if(sceneConfigService.getCurrentScheme(sceneId) == null){
+								DynamicSchemeProcess dynamicSchemeProcess = new DynamicSchemeProcess();
+								dynamicSchemeProcess.setDynamicSchemeReq(dynamicSchemeReq);
+								dynamicSchemeProcess.setStageName(dynamicStage.getName());
+								dynamicSchemeProcess.setAttackMessageDescription(attackMessageReq.getDescription());
+								dynamicSchemeProcess.setWsAttackScheduleList(wsAttackScheduleList);
+								sceneConfigService.setDynamicSchemeCache(sceneId, dynamicSchemeProcess);
+							}
 							break;
 						}
 
@@ -440,11 +471,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 						sceneConfigService.updateScheduleById(sceneId,
 								JSONObject.toJSONString(wsAttackScheduleList));
+						sceneConfigService.setDynamicSchemeCache(sceneId, null);
 					}
 				}
 
-				sceneConfigService.updateScheduleById(sceneId,
-						JSONObject.toJSONString(Lists.newArrayList()));
+				if(state && sceneConfigService.isCurrentScheme(sceneId, code)){
+					sceneConfigService.updateScheduleById(sceneId,
+							JSONObject.toJSONString(Lists.newArrayList()));
+				}
 
 			}
 		});

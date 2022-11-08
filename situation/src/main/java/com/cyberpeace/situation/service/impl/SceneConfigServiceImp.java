@@ -1,24 +1,21 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.situation.dao.entity.SceneConfig;
-import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
+import com.cyberpeace.situation.model.DynamicSchemeProcess;
 import com.cyberpeace.situation.service.SceneConfigService;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SceneConfigServiceImp implements SceneConfigService {
 
-    Cache<String, String> schemeCodeCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.DAYS).build();
+    Map<String, String> schemeCodeCache = new HashMap<>();
 
-    Cache<String, String> schemeStageCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(1, TimeUnit.DAYS).build();
+    Map<String, String> schemeStageCache = new HashMap<>();
+
+    Map<String, DynamicSchemeProcess> dynamicSchemeCache = new HashMap<>();
 
     @Override
     public String updateSceneCode(String sceneId){
@@ -28,8 +25,13 @@ public class SceneConfigServiceImp implements SceneConfigService {
     }
 
     @Override
+    public void clearSceneCode(String sceneId){
+        schemeCodeCache.remove(sceneId);
+    }
+
+    @Override
     public Boolean isCurrentScheme(String sceneId, String code){
-        String currentCode = schemeCodeCache.getIfPresent(sceneId);
+        String currentCode = schemeCodeCache.getOrDefault(sceneId, null);
         return code.equals(currentCode);
     }
 
@@ -40,6 +42,22 @@ public class SceneConfigServiceImp implements SceneConfigService {
 
     @Override
     public String getScheduleBySceneId(String sceneId){
-        return schemeStageCache.getIfPresent(sceneId);
+        return schemeStageCache.getOrDefault(sceneId, null);
     }
+
+    @Override
+    public String getCurrentScheme(String sceneId){
+        return schemeCodeCache.getOrDefault(sceneId, null);
+    }
+
+    @Override
+    public void setDynamicSchemeCache(String sceneId, DynamicSchemeProcess dynamicSchemeProcess){
+        dynamicSchemeCache.put(sceneId, dynamicSchemeProcess);
+    }
+
+    @Override
+    public DynamicSchemeProcess getDynamicSchemeCache(String sceneId){
+        return dynamicSchemeCache.getOrDefault(sceneId, null);
+    }
+
 }

@@ -162,21 +162,22 @@ public class TeamTrainScoreController {
 
 		for (UserReport user : trainingReport.getUsers()) {
 			String userId = user.getUserId();
+			if (!"-".equals(userId)) {
+				JSONObject userObject = new JSONObject();
+				userObject.put("userId", userId);
+				userObject.put("userName", user.getUserName());
+				userObject.put("userRole", user.getRoleName());
 
-			JSONObject userObject = new JSONObject();
-			userObject.put("userId", userId);
-			userObject.put("userName", user.getUserName());
-			userObject.put("userRole", user.getRoleName());
+				userObject.put("score", getStudentScore(roomId, userId).getData());
+				userObject.put("mission", getUserMissionDynamic(roomId, userId).getData());
+				userObject.put("radar", crRoleService.getRadar(roomId, userId));
+				List<StageExport> stageExports = getStageRsps(
+						getTrainingRecord(roomId, userId).getData());
 
-			userObject.put("score", getStudentScore(roomId, userId).getData());
-			userObject.put("mission", getUserMissionDynamic(roomId, userId).getData());
-			userObject.put("radar", crRoleService.getRadar(roomId, userId));
-			List<StageExport> stageExports = getStageRsps(
-					getTrainingRecord(roomId, userId).getData());
+				userObject.put("stages", stageExports);
 
-			userObject.put("stages", stageExports);
-
-			userList.add(userObject);
+				userList.add(userObject);
+			}
 
 		}
 

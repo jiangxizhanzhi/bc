@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.service.context.UserReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 
 /**
@@ -13,7 +15,9 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
  */
 public interface CrScoreService extends IService<CrScore> {
 
-	/** 获取学员的成绩
+     void addImportUser(List<UserReport> userReportList, String roomId) ;
+
+    /** 获取学员的成绩
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
 	 * @return 学员成绩
@@ -42,4 +46,6 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @return 任务类别统计
 	 */
 	Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList);
+
+	void importTrainReport(String realPath, UserInfo userContext, String roomId);
 }

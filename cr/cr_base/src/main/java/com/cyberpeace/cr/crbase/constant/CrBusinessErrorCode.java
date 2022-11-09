@@ -406,4 +406,12 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
+	/** 分数必须是数字 */
+	String SCORE_NOT_NUMBER = "101131";
+
+	/** 已完成任务必须是数字 */
+	String COMPLETED_NOT_NUMBER = "101132";
+
+	/** 任务总数分数必须是数字 */
+	String MISSION_COUNT_NOT_NUMBER = "101133";
 }

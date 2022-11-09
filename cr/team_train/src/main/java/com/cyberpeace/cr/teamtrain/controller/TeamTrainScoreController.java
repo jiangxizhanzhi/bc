@@ -12,8 +12,11 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -35,6 +38,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
@@ -46,6 +50,9 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
 
 import io.swagger.annotations.Api;
@@ -67,6 +74,15 @@ public class TeamTrainScoreController {
 
 	@Autowired
 	private CrScoreController crScoreController;
+
+	@Autowired
+	private CrScoreService crScoreService;
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@Autowired
 	private MissionService missionService;
@@ -104,7 +120,7 @@ public class TeamTrainScoreController {
 			e.printStackTrace();
 			throw e;
 		} finally {
-			if(!new File(destHtmlPath).delete()){
+			if (!new File(destHtmlPath).delete()) {
 				log.error("failed to delete file:{}", destHtmlPath);
 			}
 		}
@@ -342,6 +358,36 @@ public class TeamTrainScoreController {
 		return new BaseRsp(missionSchemeList);
 	}
 
+	@ApiOperation("训练报告导入")
+	@PostMapping("/train_report/import")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> importTrainPlan(@RequestParam("file") MultipartFile excelFile,
+			@RequestParam("roomId") String roomId) {
+
+		FileUtil.validateSuffix(excelFile, FileSunffixConstant.XLSX.getDesc(),
+				FileSunffixConstant.XLS.getDesc());
+
+		// 文件存储
+		AttachmentBo uploadFile = attachmentService.uploadFile(AttachmentPath.OTHER.getCode(),
+				false, excelFile, true);
+		String realPath = utilService.getRealPath(uploadFile.getFilePath());
+
+		try {
+			log.error("Import  train report start! file_url=[{}], roomId=[{}]", realPath, roomId);
+			crScoreService.importTrainReport(realPath, UserInfoContext.getUserContext(), roomId);
+		} finally {
+			try {
+				FileUtil.deleteDir(realPath, CommonConstant.TRUE);
+			} catch (Exception e) {
+				// 不影响导入逻辑就行
+				log.error("Import  train report delete file failed! file_url=[{}], catch error:",
+						realPath, e);
+			}
+		}
+
+		return new BaseRsp(Boolean.TRUE);
+	}
+
 	/**
 	 * 获取训练报告 - 任务信息统计
 	 *
@@ -364,6 +410,8 @@ public class TeamTrainScoreController {
 
 		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,
 				crRoleList);
+
+		crScoreService.addImportUser(userReportList, resource_id);
 
 		Date endTime = teamRoomdata.getSceneEndTime() == null ? new Date()
 				: teamRoomdata.getSceneEndTime();

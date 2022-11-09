@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrUserReportMapper">
+
+
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrUserReport">
+        insert into cr_user_report
+        (user_id, room_id, user_name,
+        role_name, completed_count, mission_count, comment, score, create_time, update_time)
+        values
+        <foreach collection="crUserReportList" item="user_report" separator=",">
+            (#{user_report.userId}, #{user_report.roomId}, #{user_report.userName}, #{user_report.roleName},
+            #{user_report.completedCount}, #{user_report.missionCount},#{user_report.comment}, #{user_report.score},
+            now(),
+            now())
+        </foreach>
+    </insert>
+
+
+    <select id="selectUserReportByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrUserReport">
+        select *
+        from cr_user_report
+        where room_id = #{roomId}
+    </select>
+
+
+</mapper>

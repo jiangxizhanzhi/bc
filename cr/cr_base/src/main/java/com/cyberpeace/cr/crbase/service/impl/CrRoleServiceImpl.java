@@ -241,7 +241,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		Map<String, Integer> taskStatusMap = tasks.stream().collect(Collectors.toMap(
 				TaskContext::getMissionId,
 				taskContext -> {
-					if (CrTask.TaskStatus.L1_RELEASED_STATUS.contains(taskContext.getStatus())
+					if (CrTask.TaskStatus.L1_ONGOING_STATUS.contains(taskContext.getStatus())
 							&& now.getTime() > taskContext.getCloseTime().getTime()) {
 						return CrTask.TaskStatus.CLOSED.getCode();
 					}

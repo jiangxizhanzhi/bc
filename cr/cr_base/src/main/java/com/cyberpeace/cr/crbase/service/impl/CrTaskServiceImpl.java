@@ -617,7 +617,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoomId, mission.getRoomId())
 				.eq(CrTask::getRoleId, role.getResourceId())
 				.eq(CrTask::getMissionId, mission.getResourceId())
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
 				.list();
 
 		if (crTaskList.isEmpty()) {
@@ -659,7 +659,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoomId, mission.getRoomId())
 				.eq(CrTask::getRoleId, role.getResourceId())
 				.eq(CrTask::getMissionId, mission.getResourceId())
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
 				.list();
 
 		// 任务未下发、已暂停
@@ -687,7 +687,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		return lambdaQuery()
 				.in(CrTask::getRoomId, roomIds)
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
 				.ge(CrTask::getCloseTime, new Date())
 				.list();
 	}

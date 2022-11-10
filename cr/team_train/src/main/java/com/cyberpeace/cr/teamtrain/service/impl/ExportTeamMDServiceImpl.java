@@ -53,7 +53,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	@Override
-	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path) {
+	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber) {
 
 		if(businessTemplateList.size() == 0){
 			return;
@@ -98,7 +98,7 @@ public class ExportTeamMDServiceImpl extends ExportTrainMDServiceImpl {
 			//场景信息导出
 			log.info(businessTemplate.getName() + "开始导出场景信息");
 			Map<String, String> nodeIdMap = dumpScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
-					file.getPath() + File.separator + ENV + File.separator + IMAGES);
+					file.getPath() + File.separator + ENV + File.separator + IMAGES, sceneNumber);
 			log.info(businessTemplate.getName() + "场景信息导出结束");
 
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);

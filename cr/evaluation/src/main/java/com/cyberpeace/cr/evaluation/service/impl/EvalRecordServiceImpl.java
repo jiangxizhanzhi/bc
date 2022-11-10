@@ -1143,15 +1143,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
             }
         }
-        //测试步骤 todo 白方导出报告区分角色
+        //测试步骤
         if (template.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId())) {
             data.put("isCreator", true);
-            data.put("steps", evalTaskStepService.getTaskSteps(taskId, null));
-        } else {
-            data.put("isCreator", false);
-            List<EvalTaskStepContext> evalTaskStepContextList = evalTaskStepService.getTaskSteps(
-                    taskId, UserInfoContext.getUserContext().getUserId()
-            );
+            List<EvalTaskStepContext> evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId, null);
 
             JSONObject stepData = new JSONObject();
             List<JSONObject> stepConfigList = JsonUtil.toJsonObjectArray(evalTask.getStepConfig(), JSONObject.class);
@@ -1163,6 +1158,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             ));
 
             data.put("stepsObj", stepData);
+        } else {
+            data.put("isCreator", false);
+            data.put("steps", evalTaskStepService.getTaskSteps(taskId, UserInfoContext.getUserContext().getUserId()));
         }
         //指标体系结构和评估结果数据
         EvalRecordResultRsp result = result(resourceId);

@@ -1040,7 +1040,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecordResultRsp result(String recordId) {
-        // todo 红蓝方各自预览个人评估
         EvalRecordResultRsp result = new EvalRecordResultRsp();
         BeanUtils.copyProperties(getById(recordId), result);
 

@@ -65,13 +65,15 @@
         <#if isCreator??>
         <#list stepsObj?keys as key>
         <div class="no-wrap">${key}:</div>
-        <div class="desc">
-          <div class="no-wrap">${locale.step}${stepsObj[key].stage}:</div>
-          <div class="ml8 width600">
-            <div>${stepsObj[key].title}</div>
-            <div>${stepsObj[key].process}</div>
+        <#list stepsObj[key] as step>
+          <div class="desc">
+            <div class="no-wrap">${locale.step}${step.stage}:</div>
+            <div class="ml8 width600">
+              <div>${step.title}</div>
+              <div>${step.process}</div>
+            </div>
           </div>
-        </div>
+        </#list>
       </#list>
         <#else>
         <#list steps as step>

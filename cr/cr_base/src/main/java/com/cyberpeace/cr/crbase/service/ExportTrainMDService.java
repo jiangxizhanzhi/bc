@@ -15,12 +15,12 @@ public interface ExportTrainMDService {
 	 * @param type 类型
 	 * @throws IOException
 	 */
-	void chooseTypeAndExportTrain (List<String> resourceIds, String path, Integer type) throws IOException;
+	void chooseTypeAndExportTrain (List<String> resourceIds, String path, Integer type, String sceneNumber) throws IOException;
 
 	/**
 	 * 实际导出资管
 	 * @param businessTemplateList 业务模板列表
 	 * @param path 路径
 	 */
-	void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path);
+	void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber);
 }

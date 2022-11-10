@@ -2,30 +2,26 @@ package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.mdparser.convert.MdConvert;
 import com.cyberpeace.common.model.BaseRsp;
 
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.controller.req.ExportTrainMDReq;
-import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.ExportTrainMDService;
 import com.cyberpeace.cr.crbase.service.context.convert.BusinessTypeConvert;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Api(tags = "训练资管导出")
@@ -37,18 +33,17 @@ public class ExportTrainMDController {
 	@Autowired
 	private ExportTrainMDService exportTrainMDService;
 
-	@Autowired
-	private BusinessTemplateMapper businessTemplateMapper;
-
 	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	@ApiOperation("训练资管导出")
-	@PostMapping("/train")
-	public BaseRsp<String> exportTrainMD(@RequestBody @Validated ExportTrainMDReq exportTrainMDReq) {
-
+	@GetMapping("/train")
+	public BaseRsp<String> exportTrainMD(
+			@ApiParam(name = "resource_id", value = "场景id", required = true) @RequestParam(name = "resource_id") String resourceId,
+			@ApiParam(name = "type", value = "场景类型", required = true) @RequestParam(name = "type") Integer type,
+			@ApiParam(name = "scene_number", value = "场景编号", required = true) @RequestParam(name = "scene_number") String sceneNumber) {
 		//判断type是否正确
 		List<Integer> sceneTypeList = EnumUtils.getListCode(BusinessTypeConvert.class);
-		if (!sceneTypeList.contains(exportTrainMDReq.getType())) {
+		if (!sceneTypeList.contains(type)) {
 			String typeString = StringUtils.join(sceneTypeList, ",");
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE,typeString);
 		}
@@ -61,15 +56,7 @@ public class ExportTrainMDController {
 		};
 		//获取导出资源id
 		List<String> resourceIds = new ArrayList<>();
-		if (exportTrainMDReq.getResourceIds() != null && exportTrainMDReq.getResourceIds().size() > 0) {
-			resourceIds = exportTrainMDReq.getResourceIds();
-		}
-		if (exportTrainMDReq.getNames() != null && exportTrainMDReq.getNames().size() > 0) {
-			List<String> idsByName = businessTemplateMapper.getBatchIdsByNames(exportTrainMDReq.getNames(),
-					exportTrainMDReq.getType());
-			resourceIds.addAll(idsByName);
-			resourceIds = new ArrayList<>(new HashSet<>(resourceIds));
-		}
+		resourceIds.add(resourceId);
 
 		if(resourceIds.size() == 0){
 			File file = new File(path);
@@ -78,7 +65,7 @@ public class ExportTrainMDController {
 		}
 
 		try{
-			exportTrainMDService.chooseTypeAndExportTrain(resourceIds, path, exportTrainMDReq.getType());
+			exportTrainMDService.chooseTypeAndExportTrain(resourceIds, path, type, sceneNumber);
 		}catch (IOException e){
 			log.error("export [{}] failed",StringUtils.join(resourceIds, ","));
 			log.error("export error:", e);

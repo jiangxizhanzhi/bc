@@ -70,7 +70,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	@Override
-	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type) throws IOException {
+	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type, String sceneNumber) throws IOException {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
 		if(businessTemplateList.size() == 0){
@@ -81,7 +81,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		}
 		ExportTrainMDService exportTrainMDService = register.get(type);
 		exportTrainMDService.exportTrainMD(businessTemplateList,
-				path + File.separator + "cr" + File.separator + "场景库");
+				path + File.separator + "cr" + File.separator + "场景库", sceneNumber);
 
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path + File.separator + VERSION),
 				StandardCharsets.UTF_8);
@@ -91,8 +91,8 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	@Override
-	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path) {
-
+	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
 	public void writeStringWriteUp(String writeUp, File writeUpFile, String title){
@@ -120,9 +120,10 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		}
 	}
 
-	public Map<String, String> dumpScene(String topoId, String envPath, String imagePath){
+	public Map<String, String> dumpScene(String topoId, String envPath, String imagePath, String sceneNumber){
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
 		sceneDumpContext.setId(topoId);
+		sceneDumpContext.setScene_number(sceneNumber);
 		FileUtil.mkdirs(envPath);
 		sceneDumpContext.setEnv_path(envPath);
 		FileUtil.mkdirs(imagePath);

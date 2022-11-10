@@ -33,9 +33,6 @@ public class EvalTaskStepContext {
 	@ApiModelProperty("前序步骤状态")
 	private Integer preStepStatus = Status.INIT.getCode();
 
-	@ApiModelProperty("步骤用户")
-	private String userIds;
-
 	public void setResourceId(String resourceId) {
 		this.stepId = resourceId;
 	}

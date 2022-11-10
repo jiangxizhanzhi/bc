@@ -1143,24 +1143,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         }
         //测试步骤
-        if (template.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId())) {
-            data.put("isCreator", true);
-            List<EvalTaskStepContext> evalTaskStepContextList = evalTaskStepService.getTaskSteps(taskId, null);
-
-            JSONObject stepData = new JSONObject();
-            List<JSONObject> stepConfigList = JsonUtil.toJsonObjectArray(evalTask.getStepConfig(), JSONObject.class);
-            stepConfigList.forEach(stepConfig -> stepData.put(
-                    stepConfig.getString("name"),
-                    evalTaskStepContextList.stream().filter(evalTaskStepContext -> {
-                        return evalTaskStepContext.getUserIds().equals(stepConfig.getString("users"));
-                    }).collect(Collectors.toList())
-            ));
-
-            data.put("stepsObj", stepData);
-        } else {
-            data.put("isCreator", false);
-            data.put("steps", evalTaskStepService.getTaskSteps(taskId, UserInfoContext.getUserContext().getUserId()));
-        }
+        data.put("steps", evalTaskStepService.getTaskSteps(taskId, evalRecord.getCreateUserId()));
         //指标体系结构和评估结果数据
         EvalRecordResultRsp result = result(resourceId);
         List<EvalSystemIndexesContext> indexes = result.getIndexes();

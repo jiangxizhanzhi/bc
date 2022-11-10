@@ -62,20 +62,6 @@
       </div>
       <div class="info">
         <!-- list遍历 步骤 -->
-        <#if isCreator??>
-        <#list stepsObj?keys as key>
-        <div class="no-wrap">${key}:</div>
-        <#list stepsObj[key] as step>
-          <div class="desc">
-            <div class="no-wrap">${locale.step}${step.stage}:</div>
-            <div class="ml8 width600">
-              <div>${step.title}</div>
-              <div>${step.process}</div>
-            </div>
-          </div>
-        </#list>
-      </#list>
-        <#else>
         <#list steps as step>
         <div class="desc">
           <div class="no-wrap">${locale.step}${step.stage}:</div>
@@ -85,7 +71,6 @@
           </div>
         </div>
         </#list>
-        </#if>
         <!-- list遍历 -->
       </div>
     </div>

@@ -1144,7 +1144,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         }
         //测试步骤
-        data.put("steps", evalTaskStepService.getTaskSteps(taskId, UserInfoContext.getUserContext().getUserId()));
+        if (template.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId())) {
+            data.put("steps", evalTaskStepService.getTaskSteps(taskId, null));
+        } else {
+            data.put("steps", evalTaskStepService.getTaskSteps(taskId, UserInfoContext.getUserContext().getUserId()));
+        }
         //指标体系结构和评估结果数据
         EvalRecordResultRsp result = result(resourceId);
         List<EvalSystemIndexesContext> indexes = result.getIndexes();

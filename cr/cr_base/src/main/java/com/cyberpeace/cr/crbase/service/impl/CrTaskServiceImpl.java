@@ -621,10 +621,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.list();
 
 		if (crTaskList.isEmpty()) {
-			throw new BusinessException(CrBusinessErrorCode.NO_TASK_IN_PROGRESS);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
 		crTaskList.forEach(crTask -> {
+			// 任务被强制结束
+			if (crTask.getStatus().intValue() == CrTask.TaskStatus.CLOSED.getCode()) {
+				throw new BusinessException(CrBusinessErrorCode.TASK_FORCIBLY_END);
+			}
+
+			// 任务暂停中
 			if (crTask.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
 				crTask.setStatus(CrTask.TaskStatus.RELEASED.getCode());
 
@@ -635,6 +641,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 				crTask.setCloseTime(calendar.getTime());
 				crTask.setPauseTime(null);
+			// 任务恢复
 			} else {
 				if (new Date().getTime() >= crTask.getCloseTime().getTime()) {
 					throw new BusinessException(CrBusinessErrorCode.TASK_IS_TIMEOUT);

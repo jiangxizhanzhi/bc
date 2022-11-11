@@ -435,4 +435,9 @@ public interface CrBusinessErrorCode {
 	 * 任务已超出时限
 	 */
 	String TASK_IS_TIMEOUT = "101128";
+
+	/**
+	 * 任务被强制结束
+	 */
+	String TASK_FORCIBLY_END = "101129";
 }

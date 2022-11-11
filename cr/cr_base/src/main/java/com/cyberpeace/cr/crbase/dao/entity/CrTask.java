@@ -118,7 +118,8 @@ public class CrTask extends BaseTable {
 				STARTED.getCode(),
 				WAIT.getCode(),
 				REJECT.getCode(),
-				PAUSE.getCode()
+				PAUSE.getCode(),
+				CLOSED.getCode()
 		);
 
 		public static List<Integer> L1_ONGOING_STATUS = Arrays.asList(

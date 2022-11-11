@@ -67,4 +67,8 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	
 	List<String> selectByAuthAndPublic(@Param("authContext") AuthContext authContext,
 			@Param("isPublic") Boolean isPublic);
+
+	List<PracticeSet> selectPracticeSetByUserId(String userId);
+
+	List<PracticeSet> selectPracticeSetByOrgId(String orgId);
 }

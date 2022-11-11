@@ -242,6 +242,19 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
+	public void clearUserAuth(String userId) {
+		List<BusinessTemplate> businessTemplateList = businessTemplateMapper
+				.selectBusinessTemplatesByUserId(userId);
+
+		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			businessTemplate.setOperationAuthIds(LocalStringUtil
+					.strRemoveSubStr(businessTemplate.getOperationAuthIds(), userId));
+		}
+
+		updateBatchById(businessTemplateList);
+	}
+
+	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}

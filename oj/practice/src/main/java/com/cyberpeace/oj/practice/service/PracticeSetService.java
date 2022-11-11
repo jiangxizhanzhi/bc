@@ -1,15 +1,15 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 public interface PracticeSetService extends IService<PracticeSet> {
 
@@ -113,4 +113,8 @@ public interface PracticeSetService extends IService<PracticeSet> {
 	 * @return 导出的文件路径
 	 */
     String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath);
+
+	void clearUserAuth(String user);
+
+	void clearOrgAuth(String org);
 }

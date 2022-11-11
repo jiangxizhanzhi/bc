@@ -94,19 +94,19 @@
             </if>
             <if test="specialContext.systemCourse">
                 or (resource_id in
-                    <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
-                        #{courseId}
-                    </foreach>
-                    and `builtin` = #{specialContext.systemCourse})
+                <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                    #{courseId}
+                </foreach>
+                and `builtin` = #{specialContext.systemCourse})
             </if>
             <if test="specialContext.shareCourse">
                 <bind name="likeUser" value="'%' + specialContext.userId + '%'"/>
                 or (resource_id in
-                        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
-                            #{courseId}
-                        </foreach>
-                    and  (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
-                    #{likeUser})))
+                <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+                    #{courseId}
+                </foreach>
+                and (`operation_auth_type` = 1 or (`operation_auth_type` = 2 and `operation_auth_ids` like
+                #{likeUser})))
             </if>
         </where>
     </select>
@@ -133,12 +133,14 @@
     </select>
 
     <select id="selectByName" resultType="java.lang.String">
-        select resource_id from oj_course
+        select resource_id
+        from oj_course
         where `name` = #{name}
     </select>
 
     <select id="selectByCourseNum" resultMap="baseResultMap">
-        select * from oj_course
+        select *
+        from oj_course
         where `course_num` = #{courseNum}
     </select>
 
@@ -149,5 +151,21 @@
         <foreach collection="courseNames" item="courseName" open="(" close=")" separator=",">
             #{courseName}
         </foreach>
+    </select>
+
+    <select id="selectCourseByUserId" resultType="com.cyberpeace.oj.course.dao.entity.Course">
+        select * from oj_course
+        <where>
+            <bind name="likeUser" value="'%' + userId + '%'"/>
+            operation_auth_ids like #{likeUser}
+        </where>
+    </select>
+
+    <select id="selectCourseByOrgId" resultType="com.cyberpeace.oj.course.dao.entity.Course">
+        select * from oj_course
+        <where>
+            <bind name="likeOrganization" value="'%' + orgId + '%'"/>
+            read_auth_ids like #{likeOrganization}
+        </where>
     </select>
 </mapper>

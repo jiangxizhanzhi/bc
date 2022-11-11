@@ -597,6 +597,29 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	}
 
+	@Override
+	public void clearUserAuth(String userId) {
+		List<Course> courseList = courseMapper.selectCourseByUserId(userId);
+
+		for (Course course : courseList) {
+			course.setOperationAuthIds(
+					LocalStringUtil.strRemoveSubStr(course.getOperationAuthIds(), userId));
+		}
+
+		updateBatchById(courseList);
+	}
+
+	@Override
+	public void clearOrgAuth(String orgId) {
+		List<Course> courseList = courseMapper.selectCourseByOrgId(orgId);
+
+		for (Course course : courseList) {
+			course.setReadAuthIds(LocalStringUtil.strRemoveSubStr(course.getReadAuthIds(), orgId));
+		}
+
+		updateBatchById(courseList);
+	}
+
 	/** 实操习题绑定试卷*/
 	private void operationBindPaper(String paperId, List<PracticeOperation> operations,
 			List<PracticeOperationRef> refList) {

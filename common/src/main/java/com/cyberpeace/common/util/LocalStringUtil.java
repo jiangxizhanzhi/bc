@@ -1,15 +1,16 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
 
 public class LocalStringUtil {
 
@@ -78,6 +79,15 @@ public class LocalStringUtil {
 
 	public static List<String> strToListStr(String data) {
 		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
+	}
+
+	public static String strRemoveSubStr(String ids, String data) {
+		List<String> strings = JsonUtil.toJsonObjectArray(ids, String.class);
+
+		strings.remove(data);
+
+		return JsonUtil.toJsonString(strings);
+
 	}
 
 	/**

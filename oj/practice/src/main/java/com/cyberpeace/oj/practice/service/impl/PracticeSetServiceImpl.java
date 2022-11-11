@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -459,7 +459,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		Map<String, List<PracticeOperation>> operationMap;
 		List<PracticeOperation> operationList;
 		List<PracticeSet> setList;
-		
+
 		EXPORT_LOG.info(System.lineSeparator() + System.lineSeparator()
 				+ "----------start export practice-----------" + System.lineSeparator());
 
@@ -478,15 +478,14 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			EXPORT_LOG.error("Practice operation export data query failed! catch error:", e);
 			throw new BusinessException(OjBusinessErrorCode.OPERATION_EXPORT_QUERY_FAILED);
 		}
-		
-		
+
 		String destPath = newPath ? CommonConstant.SHARE_DIR + IDGeneratorUtil.getID()
 				: CommonConstant.EXPORT_CTF_PATH;
 		EXPORT_LOG.info("Practice operation export path create successfully, path=[{}]", destPath);
 
 		for (PracticeSet practiceSet : setList) {
 			EXPORT_LOG.info("Start export {} practice set....", practiceSet.getName());
-			
+
 			String setPath;
 			try {
 				setPath = doExportSet(destPath, practiceSet);
@@ -504,30 +503,55 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 			EXPORT_LOG.info("export {} practice set successfully", practiceSet.getName());
 		}
-		
-		EXPORT_LOG.info(System.lineSeparator() + "----------end export practice-----------" + System.lineSeparator()
-				+ System.lineSeparator());
+
+		EXPORT_LOG.info(System.lineSeparator() + "----------end export practice-----------"
+				+ System.lineSeparator() + System.lineSeparator());
 		return destPath;
 	}
-	
+
+	@Override
+	public void clearUserAuth(String userId) {
+		List<PracticeSet> courseList = practiceSetMapper.selectPracticeSetByUserId(userId);
+
+		for (PracticeSet course : courseList) {
+			course.setOperationAuthIds(
+					LocalStringUtil.strRemoveSubStr(course.getOperationAuthIds(), userId));
+		}
+
+		updateBatchById(courseList);
+	}
+
+	@Override
+	public void clearOrgAuth(String orgId) {
+		List<PracticeSet> courseList = practiceSetMapper.selectPracticeSetByOrgId(orgId);
+
+		for (PracticeSet course : courseList) {
+			course.setReadAuthIds(LocalStringUtil.strRemoveSubStr(course.getReadAuthIds(), orgId));
+		}
+
+		updateBatchById(courseList);
+	}
+
 	private String doExportSet(String destPath, PracticeSet practiceSet) {
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {
 			if (new File(ResourceDumpConstant.DEFAULT_LOGO_PATH).exists()) {
 				log.warn("use default logo [{}]", ResourceDumpConstant.DEFAULT_LOGO_PATH);
 				practiceSet.setLogo(ResourceDumpConstant.DEFAULT_LOGO_PATH);
-			}else {
-				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO, practiceSet.getName());
+			} else {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO,
+						practiceSet.getName());
 			}
 
 		}
 		String path = createPath(destPath, practiceSet.getName());
 		EXPORT_LOG.info("Practice set path create successfully! set_path=[{}]", path);
-		
+
 		File README = new File(path, ResourceImportConstant.README_NAME);
 
 		if (!README.exists()) {
-			EXPORT_LOG.info("Start export practice set README.md, readme_path=[{}]", README.getAbsolutePath());
+			EXPORT_LOG.info("Start export practice set README.md, readme_path=[{}]",
+					README.getAbsolutePath());
 			MdPracticeSet mdPracticeSet = entityToMd(practiceSet);
 
 			if (StringUtils.isNotBlank(practiceSet.getLogo())) {
@@ -564,7 +588,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	private MdPracticeSet entityToMd(PracticeSet practiceSet) {
 		return BeanUtils.copy(practiceSet, MdPracticeSet.class);
 	}
-	
+
 	private List<PracticeSet> setListByIds(String setId, String practiceId) {
 
 		if (StringUtils.isNotBlank(practiceId)) {
@@ -585,7 +609,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		return practiceSetMapper.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), false);
 	}
-	
+
 	private List<PracticeOperation> practiceListByIds(String practiceId) {
 		if (StringUtils.isBlank(practiceId)) {
 			return Lists.newArrayList();

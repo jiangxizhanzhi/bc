@@ -1,5 +1,11 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,11 +13,6 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.context.CourseContext;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
 import com.cyberpeace.oj.course.dao.entity.Course;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Mapper
 @Repository
@@ -45,4 +46,8 @@ public interface CourseMapper extends BaseMapper<Course> {
 	Course selectByCourseNum(@Param("courseNum") String courseNum);
 
 	List<Course> selectIdsByCourseName(@Param("courseNames") List<String> courseNames);
+
+	List<Course> selectCourseByUserId(String userId);
+
+	List<Course> selectCourseByOrgId(String orgId);
 }

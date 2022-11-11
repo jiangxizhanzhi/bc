@@ -101,4 +101,8 @@ public interface CourseService extends IService<Course> {
 	 * @return
 	 */
 	List<String> duplicateCourseInspect(List<String> courseNames);
+
+	void clearUserAuth(String user);
+
+	void clearOrgAuth(String org);
 }

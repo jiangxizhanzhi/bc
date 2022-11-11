@@ -167,5 +167,19 @@
         and business_type = #{type}
     </select>
 
+    <select id="selectBusinessTemplatesByUserId"
+            resultType="com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate">
+        <if test="userId != null and userId != ''">
+            <bind name="likeUserId" value="'%' + userId + '%'"/>
+        </if>
+
+        select
+        *
+        from
+        cr_business_template where
+        `operation_auth_ids` like
+        #{likeUserId}
+    </select>
+
 
 </mapper>

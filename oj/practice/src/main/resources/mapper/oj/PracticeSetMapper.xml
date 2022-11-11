@@ -26,9 +26,9 @@
                     <otherwise>
                         <bind name="likeUser" value="'%' + authContext.userId + '%'"/>
                         (create_user_id = #{authContext.userId}
-                                or (operation_auth_ids like #{likeUser}
-                               and operation_auth_type = 2)
-                                or operation_auth_type = 1)
+                        or (operation_auth_ids like #{likeUser}
+                        and operation_auth_type = 2)
+                        or operation_auth_type = 1)
                     </otherwise>
                 </choose>
             </if>
@@ -72,7 +72,8 @@
     </select>
 
     <select id="selectByName" resultType="java.lang.String">
-        select resource_id from oj_practice_set
+        select resource_id
+        from oj_practice_set
         WHERE `name` = #{name}
     </select>
 
@@ -88,19 +89,19 @@
     <select id="pageByNameAndType" resultMap="set">
         select * from
         (
-            SELECT ops.`id`, ops.`resource_id`, ops.`builtin`, ops.`practice_type`, ops.`name`, ops.`logo`, ops.`public`,
-                    ops.`create_user_id`, ops.`operation_auth_type`, ops.`operation_auth_ids`, ops.`read_auth_type`,
-                    ops.`read_auth_ids`, ops.`create_time`, ops.`update_time`,  opt.practice_count as practice_count
-            FROM oj_practice_set as ops LEFT JOIN
-            (SELECT practice_set_id, count(id) practice_count FROM oj_practice_theory GROUP BY practice_set_id) AS opt
-            ON ops.resource_id = opt.practice_set_id where ops.practice_type = 0
-            UNION ALL
-            SELECT ops.`id`, ops.`resource_id`, ops.`builtin`, ops.`practice_type`, ops.`name`, ops.`logo`, ops.`public`,
-                    ops.`create_user_id`, ops.`operation_auth_type`, ops.`operation_auth_ids`, ops.`read_auth_type`,
-                    ops.`read_auth_ids`, ops.`create_time`, ops.`update_time`, opo.practice_count
-            FROM oj_practice_set as ops LEFT JOIN
-            (SELECT practice_set_id, count(id) practice_count FROM oj_practice_operation GROUP BY practice_set_id) AS opo
-            ON ops.resource_id = opo.practice_set_id where ops.practice_type = 2
+        SELECT ops.`id`, ops.`resource_id`, ops.`builtin`, ops.`practice_type`, ops.`name`, ops.`logo`, ops.`public`,
+        ops.`create_user_id`, ops.`operation_auth_type`, ops.`operation_auth_ids`, ops.`read_auth_type`,
+        ops.`read_auth_ids`, ops.`create_time`, ops.`update_time`, opt.practice_count as practice_count
+        FROM oj_practice_set as ops LEFT JOIN
+        (SELECT practice_set_id, count(id) practice_count FROM oj_practice_theory GROUP BY practice_set_id) AS opt
+        ON ops.resource_id = opt.practice_set_id where ops.practice_type = 0
+        UNION ALL
+        SELECT ops.`id`, ops.`resource_id`, ops.`builtin`, ops.`practice_type`, ops.`name`, ops.`logo`, ops.`public`,
+        ops.`create_user_id`, ops.`operation_auth_type`, ops.`operation_auth_ids`, ops.`read_auth_type`,
+        ops.`read_auth_ids`, ops.`create_time`, ops.`update_time`, opo.practice_count
+        FROM oj_practice_set as ops LEFT JOIN
+        (SELECT practice_set_id, count(id) practice_count FROM oj_practice_operation GROUP BY practice_set_id) AS opo
+        ON ops.resource_id = opo.practice_set_id where ops.practice_type = 2
         ) as practice_set
         <where>
             <if test="listQuery != null">
@@ -152,6 +153,22 @@
             <if test="null != isPublic and isPublic">
                 and `public` = #{isPublic}
             </if>
+        </where>
+    </select>
+
+    <select id="selectPracticeSetByUserId" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        select * from oj_practice_set
+        <where>
+            <bind name="likeUser" value="'%' + userId + '%'"/>
+            operation_auth_ids like #{likeUser}
+        </where>
+    </select>
+
+    <select id="selectPracticeSetByOrgId" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        select * from oj_practice_set
+        <where>
+            <bind name="likeOrganization" value="'%' + orgId + '%'"/>
+            read_auth_ids like #{likeOrganization}
         </where>
     </select>
 </mapper>

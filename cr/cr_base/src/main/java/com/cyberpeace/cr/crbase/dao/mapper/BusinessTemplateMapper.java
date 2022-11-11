@@ -23,6 +23,8 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	List<String> selectIdsByUserId(@Param("userId") String userId);
 
+	List<BusinessTemplate> selectBusinessTemplatesByUserId(@Param("userId") String userId);
+
 	BusinessTemplate selectByNameAndType(String name, Integer type, String id);
 
 	BusinessTemplate selectByLocalSceneId(String localSceneId);
@@ -48,7 +50,10 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 	IPage<BusinessTemplateSimple> listSimple(@Param("page") Page page, @Param("type") Integer type,
 			@Param("difficulty") Integer difficulty, @Param("pattern") String pattern);
 
-	List<String> getBatchIdsByNames(@Param("business_template_names")List<String> businessTemplateNames, @Param("type")Integer type);
+	List<String> getBatchIdsByNames(
+			@Param("business_template_names") List<String> businessTemplateNames,
+			@Param("type") Integer type);
 
-	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds, @Param("type")Integer type);
+	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds,
+			@Param("type") Integer type);
 }

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.cs.service.impl.AuthMessageListener;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.google.common.collect.Lists;
 
@@ -22,6 +23,16 @@ public class RabbitMQConf {
 	 * 对于mp而言，这个值是不变的
 	 */
 	private final String EXCHANGE = "cn.cyberpeace.mp.cscene";
+
+	/**
+	 * mp用户组织删除的交换机
+	 */
+	private final String AUTH_EXCHANGE = "cn.cyberpeace.mp.auth";
+
+	/**
+	 * 用户路由
+	 */
+	private final String AUTH_USER_ROUTING_KEY = "cn.cyberpeace.mp.auth.*.delete";
 
 	/**
 	 * 场景状态数据路由
@@ -41,13 +52,24 @@ public class RabbitMQConf {
 
 	private List<String> queues = Lists.newArrayList();
 
+	private List<String> authQueues = Lists.newArrayList();
+
 	@Autowired
 	@Qualifier("messageListener")
 	private MessageListener messageListner;
 
+	@Autowired
+	@Qualifier("authMessageListener")
+	private AuthMessageListener authMessageListner;
+
 	@Bean
 	public Exchange topicExchange() {
 		return ExchangeBuilder.topicExchange(EXCHANGE).durable(true).build();
+	}
+
+	@Bean
+	public Exchange topicAuthExchange() {
+		return ExchangeBuilder.topicExchange(AUTH_EXCHANGE).durable(true).build();
 	}
 
 	/**
@@ -80,6 +102,20 @@ public class RabbitMQConf {
 		return QueueBuilder.nonDurable(sceneMessageQueue).build();
 	}
 
+	/**
+	 * 中台删除用户、组织、角色的动态消息。
+	 *
+	 * @return
+	 */
+	@Bean
+	public Queue AuthDeleteMessageQueue() {
+		String sceneMessageQueue = queuePrefix + getProjectName() + ".auth.message";
+
+		authQueues.add(sceneMessageQueue);
+
+		return QueueBuilder.nonDurable(sceneMessageQueue).build();
+	}
+
 	@Bean
 	Binding bindingSceneStatus() {
 		return BindingBuilder.bind(sceneStatusQueue()).to(topicExchange())
@@ -93,16 +129,37 @@ public class RabbitMQConf {
 	}
 
 	@Bean
+	Binding bindingUserMessage() {
+		return BindingBuilder.bind(AuthDeleteMessageQueue()).to(topicAuthExchange())
+				.with(AUTH_USER_ROUTING_KEY).noargs();
+	}
+
+	@Bean
 	public SimpleMessageListenerContainer
 			simpleMessageListenerContainer(ConnectionFactory connectionFactory) {
 		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(
 				connectionFactory);
 		container.setConcurrentConsumers(2);
 		container.setMaxConcurrentConsumers(2);
-		container.setQueueNames(getQueues());
+		container.setQueueNames(getQueues(queues));
 		container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
 		container.setExposeListenerChannel(true);
 		container.setMessageListener(messageListner);
+
+		return container;
+	}
+
+	@Bean
+	public SimpleMessageListenerContainer
+			simpleAuthMessageListenerContainer(ConnectionFactory connectionFactory) {
+		SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(
+				connectionFactory);
+		container.setConcurrentConsumers(1);
+		container.setMaxConcurrentConsumers(1);
+		container.setQueueNames(getQueues(authQueues));
+		container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+		container.setExposeListenerChannel(true);
+		container.setMessageListener(authMessageListner);
 
 		return container;
 	}
@@ -121,7 +178,7 @@ public class RabbitMQConf {
 		return projectName;
 	}
 
-	private String[] getQueues() {
+	private String[] getQueues(List<String> queues) {
 		String[] result = new String[queues.size()];
 		for (int i = 0; i < queues.size();) {
 			result[i] = queues.get(i++);

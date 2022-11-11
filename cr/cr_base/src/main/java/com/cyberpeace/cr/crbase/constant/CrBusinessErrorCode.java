@@ -422,12 +422,12 @@ public interface CrBusinessErrorCode {
 	String TASK_NOT_CLOSEABLE = "101125";
 
 	/**
-	 * 任务暂停中
+	 * 任务暂停中无法提交
 	 */
 	String TASK_IS_PAUSING = "101126";
 
 	/**
-	 * 任务已结束
+	 * 任务已结束无法提交
 	 */
 	String TASK_IS_CLOSED = "101127";
 
@@ -440,4 +440,9 @@ public interface CrBusinessErrorCode {
 	 * 任务被强制结束
 	 */
 	String TASK_FORCIBLY_END = "101129";
+
+	/**
+	 * 任务暂停中
+	 */
+	String TASK_PAUSING = "101130";
 }

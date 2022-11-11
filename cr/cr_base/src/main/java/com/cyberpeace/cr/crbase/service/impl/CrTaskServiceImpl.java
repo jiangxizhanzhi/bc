@@ -617,7 +617,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoomId, mission.getRoomId())
 				.eq(CrTask::getRoleId, role.getResourceId())
 				.eq(CrTask::getMissionId, mission.getResourceId())
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_VALID_STATUS)
 				.list();
 
 		if (crTaskList.isEmpty()) {
@@ -666,16 +666,20 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoomId, mission.getRoomId())
 				.eq(CrTask::getRoleId, role.getResourceId())
 				.eq(CrTask::getMissionId, mission.getResourceId())
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_RELEASED_STATUS)
 				.list();
 
-		// 任务未下发、已暂停
+		// 任务未下发
 		if (crTaskList.isEmpty()) {
-			throw new BusinessException(CrBusinessErrorCode.TASK_NOT_CLOSEABLE);
+			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
 		Date now = new Date();
 		crTaskList.forEach(crTask -> {
+			// 已暂停
+			if (crTask.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
+				throw new BusinessException(CrBusinessErrorCode.TASK_PAUSING);
+			}
 			// 任务已超出时限，无法强制结束
 			if (now.getTime() > crTask.getCloseTime().getTime()) {
 				throw new BusinessException(CrBusinessErrorCode.TASK_IS_TIMEOUT);

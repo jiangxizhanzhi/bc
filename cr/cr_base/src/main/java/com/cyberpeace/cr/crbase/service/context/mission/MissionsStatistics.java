@@ -23,6 +23,9 @@ public class MissionsStatistics {
 	@ApiModelProperty(value = "未下发")
 	private Integer unpublishedProportion;
 
+	@ApiModelProperty(value = "已结束")
+	private Integer endedProportion;
+
 	@JsonIgnore
 	private Integer missionCount;
 }

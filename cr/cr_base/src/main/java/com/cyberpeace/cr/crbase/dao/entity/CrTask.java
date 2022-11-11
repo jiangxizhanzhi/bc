@@ -108,7 +108,7 @@ public class CrTask extends BaseTable {
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
 
 		public static List<Integer> UNSUBMITTED_STATUS_LIST = new ArrayList<>(
-				Arrays.asList(RELEASED.getCode(), STARTED.getCode()));
+				Arrays.asList(RELEASED.getCode(), STARTED.getCode(), PAUSE.getCode()));
 
 		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(WAIT.getCode(), REJECT.getCode()));

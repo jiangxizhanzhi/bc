@@ -316,6 +316,13 @@ public interface CrTaskService {
 	Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
 	/**
+	 * 统计已结束任务个数
+	 * @param roomId 训练实例id
+	 * @param crRoleIds 角色id列表
+	 * @return 已结束任务个数
+	 */
+	Integer countEndedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+	/**
 	 * 统计任务个数
 	 * @param roomId 训练实例id
 	 * @param crRoleIds 角色id列表

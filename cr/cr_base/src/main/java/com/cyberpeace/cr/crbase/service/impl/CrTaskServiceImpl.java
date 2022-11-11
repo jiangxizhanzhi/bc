@@ -602,6 +602,18 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
+	public Integer countEndedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		return lambdaQuery()
+				.eq(CrTask::getRoomId, roomId)
+				.in(CrTask::getRoleId, crRoleIds)
+				.eq(CrTask::getStatus, CrTask.TaskStatus.CLOSED.getCode())
+				.or()
+				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+				.ge(CrTask::getCloseTime, new Date())
+				.count();
+	}
+
+	@Override
 	public Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);
 	}

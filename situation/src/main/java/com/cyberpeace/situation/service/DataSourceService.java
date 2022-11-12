@@ -77,5 +77,17 @@ public interface DataSourceService {
      */
     List<String> getDBTables(String resourceId, String dbName);
 
+    /**
+     * 获取数据库信息
+     * @param resourceId
+     * @return
+     */
     List<String> getDBName(String resourceId);
+
+    /**
+     *
+     * @param sql
+     * @return
+     */
+    String getDataSourceData(String sql, String resourceId, String dbName);
 }

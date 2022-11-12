@@ -155,4 +155,7 @@ public interface ErrorCode {
 
 	/** 不支持数据库类型 */
 	String UNSUPPORTED_DB_TYPE = "100050";
+
+	/** 非法sql */
+	String ILLEGAL_SQL = "100051";
 }

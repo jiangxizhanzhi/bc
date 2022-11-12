@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -17,13 +18,13 @@ import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
+import com.cyberpeace.situation.dao.entity.ApiRequestParams;
 import com.cyberpeace.situation.dao.entity.DataSourceRecord;
 import com.cyberpeace.situation.dao.entity.DataSourceTemplate;
 import com.cyberpeace.situation.dao.mapper.DataSourceRecordMapper;
 import com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper;
 import com.cyberpeace.situation.service.DataSourceService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,7 +75,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         Page page = dataSourceRecordPageReq.toPageParam();
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.FALSE);
-        return PageUtil.getListResult(this.getBaseMapper().selectPage(page,authContext,dataSourceRecordPageReq));
+        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, authContext, dataSourceRecordPageReq));
     }
 
     @Override
@@ -126,12 +127,12 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
         Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), dbName);
         ResultSet resultSet = null;
-        List<String>  tableList = new ArrayList<>();
+        List<String> tableList = new ArrayList<>();
         if (connection != null) {
             try {
                 DatabaseMetaData metaData = connection.getMetaData();
                 resultSet = metaData.getTables(null, null, null, new String[]{"TABLE"});
-                while (resultSet.next()){
+                while (resultSet.next()) {
                     tableList.add(resultSet.getString("TABLE_NAME"));
                 }
             } catch (SQLException e) {
@@ -171,14 +172,55 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return list;
     }
 
-    private Connection getConnection(DataSourceRecordReq dataSourceRecordReq, String dbName){
+    @Override
+    public String getDataSourceData(String sql, String resourceId, String dbName) {
+        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
+        if (dataSourceRecord == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        if (sql.toLowerCase().contains("delete")) {
+            System.out.println(sql);
+            throw new BusinessException(ErrorCode.ILLEGAL_SQL);
+        }
+        List<JSONObject> dataList = new ArrayList<>();
+        List<String> columnList = new ArrayList<>();
+        DataSourceRecordReq dataSourceRecordReq = dataSourceRecordToDataSourceRecordReq(dataSourceRecord);
+        Connection connection = getConnection(dataSourceRecordReq, dbName);
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                columnList.add(columnName);
+            }
+            while (resultSet.next()) {
+                JSONObject jsonObject = new JSONObject();
+                for (String name : columnList) {
+                    Object object = resultSet.getObject(name);
+                    jsonObject.put(name, object);
+                }
+                dataList.add(jsonObject);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeDB(connection, preparedStatement, resultSet);
+        }
+        return dataList.toString();
+    }
+
+    private Connection getConnection(DataSourceRecordReq dataSourceRecordReq, String dbName) {
         String type = dataSourceRecordReq.getType();
         if (StringUtils.isEmpty(type)) {
             throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
         }
         DataSourceTemplate dataSourceTemplate = dataSourceTemplateMapper.selectByType(type);
         if (dataSourceTemplate == null) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
+            throw new BusinessException(ErrorCode.UNSUPPORTED_DB_TYPE);
         }
         Connection conn = null;
         try {
@@ -219,11 +261,11 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         }
     }
 
-    private DataSourceRecord dataSourceRecordReqToDataSourceRecord(DataSourceRecordReq dataSourceRecordReq){
+    private DataSourceRecord dataSourceRecordReqToDataSourceRecord(DataSourceRecordReq dataSourceRecordReq) {
         return BeanUtils.copy(dataSourceRecordReq, DataSourceRecord.class);
     }
 
-    private DataSourceRecordReq dataSourceRecordToDataSourceRecordReq(DataSourceRecord dataSourceRecord){
+    private DataSourceRecordReq dataSourceRecordToDataSourceRecordReq(DataSourceRecord dataSourceRecord) {
         return BeanUtils.copy(dataSourceRecord, DataSourceRecordReq.class);
     }
 }

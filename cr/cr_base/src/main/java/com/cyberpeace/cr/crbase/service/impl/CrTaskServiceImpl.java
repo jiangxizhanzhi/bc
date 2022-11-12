@@ -607,9 +607,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.eq(CrTask::getRoomId, roomId)
 				.in(CrTask::getRoleId, crRoleIds)
 				.eq(CrTask::getStatus, CrTask.TaskStatus.CLOSED.getCode())
-				.or()
-				.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
-				.ge(CrTask::getCloseTime, new Date())
+				.or(item -> item
+						.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+						.ge(CrTask::getCloseTime, new Date())
+				)
 				.count();
 	}
 
@@ -642,7 +643,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				throw new BusinessException(CrBusinessErrorCode.TASK_FORCIBLY_END);
 			}
 
-			// 任务暂停中
+			// 任务恢复
 			if (crTask.getStatus().intValue() == CrTask.TaskStatus.PAUSE.getCode()) {
 				crTask.setStatus(CrTask.TaskStatus.RELEASED.getCode());
 
@@ -653,7 +654,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 				crTask.setCloseTime(calendar.getTime());
 				crTask.setPauseTime(null);
-			// 任务恢复
+			// 任务暂停
 			} else {
 				if (new Date().getTime() >= crTask.getCloseTime().getTime()) {
 					throw new BusinessException(CrBusinessErrorCode.TASK_IS_TIMEOUT);

@@ -603,13 +603,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public Integer countEndedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
+		// 查询状态为5、或进行中状态并已经超过时限任务
 		return lambdaQuery()
 				.eq(CrTask::getRoomId, roomId)
 				.in(CrTask::getRoleId, crRoleIds)
-				.eq(CrTask::getStatus, CrTask.TaskStatus.CLOSED.getCode())
-				.or(item -> item
-						.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
-						.ge(CrTask::getCloseTime, new Date())
+				.and(condition1 -> condition1
+						.eq(CrTask::getStatus, CrTask.TaskStatus.CLOSED.getCode())
+						.or(condition2 -> condition2
+								.in(CrTask::getStatus, CrTask.TaskStatus.L1_ONGOING_STATUS)
+								.le(CrTask::getCloseTime, new Date())
+						)
 				)
 				.count();
 	}

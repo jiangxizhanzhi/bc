@@ -269,4 +269,7 @@ public interface OjBusinessErrorCode {
 
 	/** 判断题答案格式错误*/
 	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
+
+	/** 关键字不能设置为空*/
+	String 	KEYWORD_EMPTY_ERROR = "102089";
 }

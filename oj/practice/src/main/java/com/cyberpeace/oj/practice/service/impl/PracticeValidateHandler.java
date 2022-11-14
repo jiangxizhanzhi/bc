@@ -2,6 +2,8 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
@@ -327,6 +329,18 @@ public class PracticeValidateHandler {
 				&& attachments.size() > CommonConstant.ONE) {
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
 					practiceName);
+		}
+	}
+
+	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
+		if(theoryType == PracticeTheory.TheoryType.SHORT_ANSWER
+				.getCode().intValue()){
+			JSONArray objects = JSON.parseArray(keyword);
+			for (Object obj : objects) {
+				if (StringUtils.isBlank(obj.toString())){
+					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
+				}
+			}
 		}
 	}
 }

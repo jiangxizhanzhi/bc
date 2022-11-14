@@ -312,7 +312,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				PracticeCategory.PracticeType.THEORY.getCode());
 		PracticeSet practiceSet = practiceValidateHandler.validateSetType(
 				practiceTheory.getPracticeSetId(), PracticeSet.PracticeType.THEORY.getCode());
-
+		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
 		// 基本数据设置
 		practiceTheory.setBuiltin(CommonConstant.FALSE);
 		practiceTheory.setScore(CommonConstant.ZERO.doubleValue());
@@ -336,7 +336,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				PracticeCategory.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
 				PracticeSet.PracticeType.THEORY.getCode());
-
+		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
 		// 数据更新
 		return practiceTheoryMapper.updateById(practiceTheory);
 	}

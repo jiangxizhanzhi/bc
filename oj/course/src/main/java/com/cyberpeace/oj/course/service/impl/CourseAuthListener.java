@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.service.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class CourseAuthListener extends AuthMessageListener {
 
 	@Autowired
 	private CourseService courseService;
+
+	@Autowired
+	private ClassroomService classroomService;
 
 	@Override
 	public Integer declareMessageType() {
@@ -43,7 +47,7 @@ public class CourseAuthListener extends AuthMessageListener {
 			courseService.clearOrgAuth(org);
 
 		}
-
+		classroomService.removeClassrooms(orgs);
 		return true;
 	}
 

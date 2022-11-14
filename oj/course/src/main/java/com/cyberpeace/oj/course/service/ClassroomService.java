@@ -123,4 +123,10 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @return
 	 */
 	List<DashboardUser> getChatGroupUsers(String roomId, String groupId);
+
+	/**
+	 * 获取中台组织删除消息时 同步删除课堂表中关联记录
+	 * @param orgs 删除组织ids
+	 */
+	void removeClassrooms(List<String> orgs);
 }

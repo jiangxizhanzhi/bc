@@ -508,6 +508,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
 
+		// 过滤已删除组织关联数据
+		List<String> orgs = remoteOrganizationService.childrenList("", true);
+		classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
+
 		return StreamApiUtils.map(classrooms, classroom -> entityToBo(classroom));
 	}
 
@@ -1022,6 +1026,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			}
 			return dashboardUser;
 		});
+	}
+
+	@Override
+	public void removeClassrooms(List<String> orgIds) {
+		if (!orgIds.isEmpty()) {
+			classroomMapper.deleteByOrgIds(orgIds);
+		}
 	}
 
 	@Override

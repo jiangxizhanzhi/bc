@@ -94,4 +94,12 @@
         select * from oj_classroom
         where train_plan_id = #{planId}
     </select>
+
+    <select id="deleteByOrgIds">
+        delete from oj_classroom
+        where organization_id in
+        <foreach collection="orgIds" item="orgId" open="(" close=")" separator=",">
+            #{orgId}
+        </foreach>
+    </select>
 </mapper>

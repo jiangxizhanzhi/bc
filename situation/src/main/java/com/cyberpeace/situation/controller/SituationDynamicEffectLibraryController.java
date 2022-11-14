@@ -8,14 +8,21 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.situation.constant.Color;
+import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
 import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.*;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +98,7 @@ public class SituationDynamicEffectLibraryController {
 		if (null != type){
 			queryWrapper.eq(DynamicEffectsLibrary::getCategory, type);
 		}
+		queryWrapper.orderByDesc(DynamicEffectsLibrary::getCreateTime);
 		List<DynamicEffectsLibrary> res = dynamicEffectsLibraryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}
@@ -174,6 +182,7 @@ public class SituationDynamicEffectLibraryController {
 			queryWrapper.like(DynamicEffectsLibraryCategory::getName, name);
 
 		}
+		queryWrapper.orderByDesc(DynamicEffectsLibraryCategory::getCreateTime);
 		List<DynamicEffectsLibraryCategory> res = dynamicEffectsLibraryCategoryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}
@@ -226,11 +235,23 @@ public class SituationDynamicEffectLibraryController {
 		LambdaQueryWrapper<DynamicEffectsLibraryCategory> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(DynamicEffectsLibraryCategory::getName, name);
 		DynamicEffectsLibraryCategory one = dynamicEffectsLibraryCategoryService.getOne(queryWrapper);
-		if (!Objects.equals(one.getResourceId(), resourceId)) {
+		if (null != one && !Objects.equals(one.getResourceId(), resourceId)) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		dynamicEffectsLibraryCategoryMapper.updateById(patchObj);
 		return new BaseRsp<>();
 	}
+
+	@ApiOperation("返回所有选择项")
+	@GetMapping("/option")
+	public BaseRsp<OptionsRes> getAllOption() {
+		OptionsRes optionsRes = new OptionsRes();
+		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
+				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
+		optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
+				color -> new LocalType(color.getCode(), color.getMsg())));
+		return new BaseRsp<>(optionsRes);
+	}
+
 
 }

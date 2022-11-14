@@ -12,6 +12,7 @@ import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponents;
 import com.cyberpeace.situation.dao.entity.ThreeDimensionalComponentsCategory;
+import com.cyberpeace.situation.dao.entity.TwoDimensionalComponents;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
@@ -73,6 +74,7 @@ public class SituationThreeDimensionalComponentController {
 			queryWrapper.like(ThreeDimensionalComponentsCategory::getName, name);
 
 		}
+		queryWrapper.orderByDesc(ThreeDimensionalComponentsCategory::getCreateTime);
 		List<ThreeDimensionalComponentsCategory> res = threeDimensionalComponentsCategoryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}
@@ -177,6 +179,7 @@ public class SituationThreeDimensionalComponentController {
 		if (null != type){
 			queryWrapper.eq(ThreeDimensionalComponents::getThreeDimensionalComponentsCategory, type);
 		}
+		queryWrapper.orderByDesc(ThreeDimensionalComponents::getCreateTime);
 		List<ThreeDimensionalComponents> res = threeDimensionalComponentsMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}

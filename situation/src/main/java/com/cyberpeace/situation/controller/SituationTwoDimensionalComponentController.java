@@ -14,6 +14,7 @@ import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Example;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,12 +85,13 @@ public class SituationTwoDimensionalComponentController {
 		if (null != twoDimensionalComponentsFilterReq.getType()){
 			queryWrapper.eq(TwoDimensionalComponents::getType, twoDimensionalComponentsFilterReq.getType());
 		}
+		queryWrapper.orderByDesc(TwoDimensionalComponents::getCreateTime);
 		List<TwoDimensionalComponents> res = twoDimensionalComponentsMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("查询二维组件类型详情")
-	@GetMapping("/category")
+	@GetMapping("")
 	public BaseRsp<TwoDimensionalComponents>
 	getThreeDimensionalComponentsCategoryDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
 
@@ -114,7 +116,7 @@ public class SituationTwoDimensionalComponentController {
 
 	@ApiOperation("修改二维组件")
 	@PatchMapping("")
-	public BaseRsp patchTwoDimensionalComponents(@Validated(Update.class) TwoDimensionalComponentsUpdateReq twoDimensionalComponentsUpdateReq) {
+	public BaseRsp patchTwoDimensionalComponents(@RequestBody @Validated(Update.class) TwoDimensionalComponentsUpdateReq twoDimensionalComponentsUpdateReq) {
 		TwoDimensionalComponents patchObj = BeanUtils.copy(twoDimensionalComponentsUpdateReq, TwoDimensionalComponents.class);
 		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(twoDimensionalComponentsUpdateReq.getResourceId());
 		if(null == twoDimensionalComponents){

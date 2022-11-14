@@ -28,6 +28,9 @@ public class TwoDimensionalComponentsAddReq implements Serializable {
 	@ApiModelProperty(value = "描述")
 	private String description;
 
+	@ApiModelProperty(value = "配置")
+	private String config;
+
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.THUMBNAIL_EMPTY_ERROR)
 	@ApiModelProperty(value = "缩略图", required = true)

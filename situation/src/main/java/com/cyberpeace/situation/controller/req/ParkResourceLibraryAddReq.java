@@ -30,7 +30,7 @@ public class ParkResourceLibraryAddReq implements Serializable {
 
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.RESOURCE_FILE_EMPTY_ERROR)
-	@ApiModelProperty(value = "资源文件", required = true)
-	private String resourceFile;
+	@ApiModelProperty(value = "资源url", required = true)
+	private String resourceUrl;
 
 }

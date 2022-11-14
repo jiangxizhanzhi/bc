@@ -94,6 +94,7 @@ public class SituationParkResourceLibraryController {
 		if (null != type){
 			queryWrapper.eq(ParkResourceLibrary::getParkResourceLibraryCategory, type);
 		}
+		queryWrapper.orderByDesc(ParkResourceLibrary::getCreateTime);
 		List<ParkResourceLibrary> res = parkResourceLibraryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}
@@ -176,6 +177,7 @@ public class SituationParkResourceLibraryController {
 			queryWrapper.like(ParkResourceLibraryCategory::getName, name);
 
 		}
+		queryWrapper.orderByDesc(ParkResourceLibraryCategory::getCreateTime);
 		List<ParkResourceLibraryCategory> res = parkResourceLibraryCategoryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
 	}

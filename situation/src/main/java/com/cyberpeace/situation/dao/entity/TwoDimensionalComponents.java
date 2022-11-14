@@ -23,6 +23,8 @@ public class TwoDimensionalComponents extends BaseTable {
 
 	private String description;
 
+	private String config;
+
 	@ApiModelProperty("缩略图")
 	private String thumbnail;
 

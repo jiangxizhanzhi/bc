@@ -20,8 +20,8 @@ public enum UploadAttachmentPermission implements GenericEnum {
     CMS_TOOL_ATTACHMENT(6, "后台工具库附件上传", FileTypeContant.TOOL_ATTACHMENT, new String[]{ MenuConstant.CMS_TOOL }),
     WEB_COURSE_MD_ATTACHMENT(7, "前台课程MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.WEB_OJ_COURSE }),
     // TODO后期同步前端修改
-    CMS_SITUATION_THREE_DIMENSIONAL_COMPONENT_ATTACHMENT(8, "后台态势三维组件文件上传", FileTypeContant.CHART_STANDARD_ATTACHMENT, new String[]{ MenuConstant.WEB_PERSON_CENTER }),
-    CMS_SITUATION_PARK_RESOURCE_LIBRARY_ATTACHMENT(9, "后台态势园区资源库文件上传", FileTypeContant.U3D_ATTACHMENT, new String[]{ MenuConstant.WEB_PERSON_CENTER });
+    CMS_SITUATION_THREE_DIMENSIONAL_COMPONENT_ATTACHMENT(8, "后台态势三维组件文件上传", FileTypeContant.CHART_STANDARD_ATTACHMENT, new String[]{ MenuConstant.CMS_SITUATION_THREE_DIMENSIONAL_COMPONENT }),
+    CMS_SITUATION_PARK_RESOURCE_LIBRARY_ATTACHMENT(9, "后台态势园区资源库文件上传", FileTypeContant.OPERATION_PRACTICE_ATTACHMENT, new String[]{ MenuConstant.CMS_SITUATION_DYNAMIC_EFFICIENCY,MenuConstant.CMS_SITUATION_PARK_RESOURCE_LIBRARY });
 
     @Getter
     public Integer code;

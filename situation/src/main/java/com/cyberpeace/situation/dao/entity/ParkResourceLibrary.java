@@ -22,8 +22,8 @@ public class ParkResourceLibrary extends BaseTable {
 	@ApiModelProperty("缩略图")
 	private String thumbnail;
 
-	@ApiModelProperty("资源文件 u3d格式")
-	private String resourceFile;
+	@ApiModelProperty("资源url")
+	private String resourceUrl;
 
 	private String createUserId;
 

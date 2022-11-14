@@ -94,4 +94,34 @@ public interface SituationErrorCode {
 
 	/** 该类型下包含组件不能删除 */
 	String TYPE_WITH_COMPONENTS_ERROR = "104031";
+
+	/** 想定方案不能为空 */
+	String PLAN_ID_EMPTY_ERROR = "104032";
+
+	/** 任务不能为空 */
+	String TASK_EMPTY_ERROR = "104033";
+
+	/** 科目不能为空 */
+	String SUBJECT_EMPTY_ERROR = "104034";
+
+	/** 模板不能为空 */
+	String TEMPLATE_EMPTY_ERROR = "104035";
+
+	/** 态势类型不能为空 */
+	String SITUATION_TYPE_EMPTY_ERROR = "104036";
+
+	/** 态势类型id错误 */
+	String SITUATION_TYPE_INVALID_ERROR = "104037";
+
+	/** 当前已有发布大屏 */
+	String RELEASE_REPEAT_ERROR = "104038";
+
+	/** 包含发布大屏不可删除 */
+	String RELEASE_SITUATION_INSTANCE_CANNOT_DELETE_ERROR = "104039";
+
+	/** status无效 */
+	String STATUS_INVALID_ERROR = "104040";
+
+	/** 模板id无效 */
+	String TEMPLATE_INVALID_ERROR = "104041";
 }

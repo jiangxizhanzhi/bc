@@ -9,6 +9,7 @@ import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
 import com.cyberpeace.situation.controller.res.ApiRequestRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.Api;
@@ -17,6 +18,9 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author xuxz
@@ -62,4 +66,9 @@ public class DashboardTemplateController {
         return new BaseRsp<>(dashboardTemplateService.getDashboardTemplatePage(dashboardTemplatePageReq));
     }
 
+    @ApiOperation("获取组件类型")
+    @GetMapping("type/list")
+    public BaseRsp<Map<Integer, String>> getComponentType(){
+        return new BaseRsp<>(DashboardComponents.getComponentType());
+    }
 }

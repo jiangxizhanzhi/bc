@@ -26,9 +26,11 @@ import com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper;
 import com.cyberpeace.situation.service.DataSourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.buf.CharsetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -231,10 +233,10 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             } else {
                 url = String.format(dataSourceTemplate.getConnectUrl(), dataSourceRecordReq.getConnectAddress(), dataSourceRecordReq.getPort());
             }
-            conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), dataSourceRecordReq.getPassword());
+            String password = decryptedPwd(dataSourceRecordReq.getPassword());
+            conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), password);
             return conn;
         } catch (ClassNotFoundException | SQLException e) {
-            closeDB(conn, null, null);
             log.error(e.getMessage());
             throw new BusinessException(ErrorCode.CONNECT_DATABASE_FAILED);
         }
@@ -267,5 +269,10 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
 
     private DataSourceRecordReq dataSourceRecordToDataSourceRecordReq(DataSourceRecord dataSourceRecord) {
         return BeanUtils.copy(dataSourceRecord, DataSourceRecordReq.class);
+    }
+
+    private String decryptedPwd(String password){
+        cn.hutool.crypto.symmetric.DES des = cn.hutool.crypto.SecureUtil.des("B13H089Y".getBytes(StandardCharsets.UTF_8));
+        return des.decryptStr(password);
     }
 }

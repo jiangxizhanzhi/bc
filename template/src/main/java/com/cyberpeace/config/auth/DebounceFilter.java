@@ -62,15 +62,19 @@ public class DebounceFilter implements Filter {
 				// 用token+path+body识别请求是否重复
 				// 多个用户启动同一个场景的情况由数据库唯一索引来避免
 				String key = getSha256(body) + "_" + requestUri + "_" + token;
-				if (cache.getIfPresent(key) != null) {
-					throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
-				}
-				cache.put(key, "whatever");
+				localCache(key);
 			}
 			filterChain.doFilter(requestWrapper, servletResponse);
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);
 		}
+	}
+
+	public synchronized void localCache(String key) {
+		if (cache.getIfPresent(key) != null) {
+			throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
+		}
+		cache.put(key, "whatever");
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import lombok.Synchronized;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -55,16 +54,15 @@ public class DebounceFilter implements Filter {
 					(HttpServletRequest) servletRequest);
 			byte[] body = requestWrapper.getBody();
 
-			// 保持原有顺序解析
-			// String bodyStr = new String(body);
-			// JSONObject obj = JSONObject.parseObject(s, Feature.OrderedField);
-			// String c = JSONObject.toJSONString(obj);
+			// 防抖不限制不需要认证的接口
+			String token = httpServletRequest.getHeader("Authorization");
+			if (token != null) {
+				String requestUri = requestWrapper.getRequestURI();
 
-			String requestUri = requestWrapper.getRequestURI();
-
-			// 用 ip 做用户识别不能避免两个用户启动同一个场景 CommonContext.getIp()
-			String key = getSha256(body) + "_" + requestUri;
-			localCache(key);
+				// 用token+path+body识别请求是否重复，多个用户启动同一个场景的情况由数据库唯一索引来避免
+				String key = getSha256(body) + "_" + requestUri + "_" + token;
+				localCache(key);
+			}
 			filterChain.doFilter(requestWrapper, servletResponse);
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);

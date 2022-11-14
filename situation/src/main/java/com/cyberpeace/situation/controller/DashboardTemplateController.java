@@ -10,6 +10,7 @@ import com.cyberpeace.situation.controller.res.ApiRequestRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.Api;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.cyberpeace.situation.dao.entity.DashboardTemplate.getDashboardTemplateLevel;
 
 /**
  * @Author xuxz
@@ -70,5 +73,11 @@ public class DashboardTemplateController {
     @GetMapping("type/list")
     public BaseRsp<Map<Integer, String>> getComponentType(){
         return new BaseRsp<>(DashboardComponents.getComponentType());
+    }
+
+    @ApiOperation("获取模板等级列表")
+    @GetMapping("level/list")
+    public BaseRsp<Map<Integer, String>> getDashboardTemplateLevel(){
+        return new BaseRsp<>(DashboardTemplate.getDashboardTemplateLevel());
     }
 }

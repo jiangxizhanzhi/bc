@@ -28,6 +28,18 @@ public class DashboardTemplateRes implements Serializable {
     @ApiModelProperty("缩略图")
     private String thumbnail;
 
+    @ApiModelProperty("画布高度")
+    private String height;
+
+    @ApiModelProperty("画布宽度")
+    private String width;
+
+    @ApiModelProperty("填充色")
+    private String bgColor;
+
+    @ApiModelProperty("刷新频率")
+    private Integer refresh;
+
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponents> componentsSetting;
 }

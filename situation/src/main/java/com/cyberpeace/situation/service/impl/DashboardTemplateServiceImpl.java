@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,9 +20,7 @@ import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.service.DashboardTemplateService;
-import nonapi.io.github.classgraph.json.JSONUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -95,16 +92,17 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         DashboardTemplate toDashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
         toDashboardTemplate.setComponentsSetting(newComponentsList.toString());
         List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(componentsSetting);
-        if (CollectionUtils.isNotEmpty(componentsSetting)) {
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    dashboardTemplateMapper.updateById(toDashboardTemplate);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                dashboardTemplateMapper.updateById(toDashboardTemplate);
+                if (CollectionUtils.isNotEmpty(componentsSetting)) {
                     dashboardComponentsMapper.deleteBatchIds(oldComponentsList);
                     dashboardComponentsMapper.batchInsert(dashboardComponentsList);
                 }
-            });
-        }
+            }
+        });
+
         return resourceId;
     }
 
@@ -126,17 +124,21 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     @Override
     public Integer deleteDashboardTemplate(List<String> idList) {
-        List<DashboardTemplate> dashboardTemplates = dashboardTemplateMapper.selectBatchIds(idList);
-        List<String> dashboardComponentsIdList = new ArrayList<>();
-        dashboardTemplates.forEach(dashboardTemplate -> dashboardComponentsIdList.addAll(
-                JsonUtil.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class)));
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                dashboardTemplateMapper.deleteBatchIds(idList);
-                dashboardComponentsMapper.deleteBatchIds(dashboardComponentsIdList);
-            }
-        });
+        if (CollectionUtils.isNotEmpty(idList)) {
+            List<DashboardTemplate> dashboardTemplates = dashboardTemplateMapper.selectBatchIds(idList);
+            List<String> dashboardComponentsIdList = new ArrayList<>();
+            dashboardTemplates.forEach(dashboardTemplate -> dashboardComponentsIdList.addAll(
+                    JsonUtil.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class)));
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    dashboardTemplateMapper.deleteBatchIds(idList);
+                    if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
+                        dashboardComponentsMapper.deleteBatchIds(dashboardComponentsIdList);
+                    }
+                }
+            });
+        }
         return idList.size();
     }
 
@@ -151,12 +153,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         DashboardTemplate dashboardTemplate = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplate.class);
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
-        jsonArray.addAll(componentsSetting);
+        if (CollectionUtils.isNotEmpty(componentsSetting)) {
+            jsonArray.addAll(componentsSetting);
+        }
         dashboardTemplate.setComponentsSetting(jsonArray.toString());
         return dashboardTemplate;
     }
 
-    private List<DashboardComponents> changeToDashboardComponents(List<DashboardComponentsReq>  dashboardComponentsReqList) {
+    private List<DashboardComponents> changeToDashboardComponents(List<DashboardComponentsReq> dashboardComponentsReqList) {
         List<DashboardComponents> dashboardComponentsList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(dashboardComponentsReqList)) {
             for (DashboardComponentsReq dashboardComponentsReq : dashboardComponentsReqList) {

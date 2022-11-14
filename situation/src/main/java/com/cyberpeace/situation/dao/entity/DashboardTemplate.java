@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+
+import java.util.HashMap;
 
 /**
  * @Author xuxz
@@ -30,7 +33,46 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("缩略图")
     private String thumbnail;
 
+    @ApiModelProperty("画布高度")
+    private String height;
+
+    @ApiModelProperty("画布宽度")
+    private String width;
+
+    @ApiModelProperty("填充色")
+    private String bgColor;
+
+    @ApiModelProperty("刷新频率")
+    private Integer refresh;
+
     @ApiModelProperty("组件配置")
     private String componentsSetting;
+
+    public enum DashboardTemplateLevel{
+
+        TOPOLOGY(1,"拓扑级"),
+        PARK (2,"园区级"),
+        GIS(0,"GIS级");
+
+
+        @Getter
+        private Integer code;
+
+        @Getter
+        private String desc;
+
+        DashboardTemplateLevel(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
+    public static HashMap<Integer, String> getDashboardTemplateLevel(){
+        HashMap<Integer, String> map = new HashMap();
+        map.put(DashboardTemplateLevel.GIS.code, DashboardTemplateLevel.GIS.desc);
+        map.put(DashboardTemplateLevel.PARK.code, DashboardTemplateLevel.PARK.desc);
+        map.put(DashboardTemplateLevel.TOPOLOGY.code, DashboardTemplateLevel.TOPOLOGY.desc);
+        return map;
+    }
 
 }

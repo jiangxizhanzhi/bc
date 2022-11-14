@@ -196,7 +196,7 @@ public class EvalRecordController {
     }
 
     @ApiOperation("评估详情导出为PDF")
-    @RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/train2pdf")
     public void dumpEvalRecord2PDF(HttpServletResponse httpServletResponse,
                                    @ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId,

@@ -1,9 +1,15 @@
 package com.cyberpeace.bs.utils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.bs.service.bo.model.Behavior;
 import com.cyberpeace.bs.service.bo.model.ChartResult;
+import com.cyberpeace.bs.service.bo.model.NameValue;
+import com.google.common.collect.Maps;
 
 /**
  * 生成图形
@@ -42,7 +48,27 @@ public class ChartUtil {
 		}
 	}
 
+	/**
+	 * 生成 tag 饼状图
+	 * @param chart
+	 */
 	public static void createPie(ChartResult chart) {
+		Map<String, Integer> map = Maps.newHashMap();
 
+		chart.getBehaviorList().forEach(behavior -> {
+			List<String> tags = behavior.getTag();
+			tags.forEach(tag -> {
+				if (map.containsKey(tag)) {
+					map.put(tag, map.get(tag) + 1);
+				} else {
+					map.put(tag, 1);
+				}
+			});
+		});
+
+		List<NameValue> pieChart = Lists.newArrayList();
+		map.forEach((key, value) -> pieChart.add(new NameValue(key, value)));
+		pieChart.sort(Comparator.comparing(NameValue::getValue));
+		chart.setPieChart(pieChart);
 	}
 }

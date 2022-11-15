@@ -6,12 +6,11 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
-import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
@@ -25,16 +24,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Api(tags = "组件库-态势发布大屏")
@@ -69,8 +67,12 @@ public class SituationPublishController {
 
 	@ApiOperation("查询态势发布状态列表")
 	@GetMapping("/status/list")
-	public BaseRsp<List<String>> getSituationPublishInstanceStatus() {
-		List<String> res = Arrays.stream(SituationInstanceStatus.values()).map(SituationInstanceStatus::getCode).collect(Collectors.toList());
+	public BaseRsp<List<SituationInstanceStatusRes>> getSituationPublishInstanceStatus() {
+		List<SituationInstanceStatusRes> res = new ArrayList<>();
+		for(SituationInstanceStatus status:SituationInstanceStatus.values()){
+			SituationInstanceStatusRes copy = BeanUtils.copy(status, SituationInstanceStatusRes.class);
+			res.add(copy);
+		}
 		return new BaseRsp<>(res);
 	}
 
@@ -159,11 +161,11 @@ public class SituationPublishController {
 
 	@ApiOperation("修改态势发布实例")
 	@PatchMapping("")
-	public BaseRsp patchSituationPublishInstance(@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
+	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService.updateOne(situationPublishInstanceUpdateReq);
 
-		return new BaseRsp<>();
+		return new BaseRsp<>(situationPublishInstance);
 	}
 
 	@ApiOperation("态势实例发布")
@@ -200,6 +202,20 @@ public class SituationPublishController {
 		situationPublishInstanceMapper.updateById(situationPublishInstances);
 		return new BaseRsp<>();
 
+	}
+
+	@ApiOperation("态势实例预览")
+	@PostMapping("preview")
+	public void previewSituationPublishInstance(HttpServletResponse res, @RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) throws IOException {
+		String resourceId = situationInstanceReleaseReq.getResourceId();
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String templateId = situationPublishInstances.getTemplateId();
+		dashboardTemplateService.getDashboardTemplateInfo(templateId);
+		// TODO 大屏地址
+		res.sendRedirect(""+ templateId);
 	}
 
 }

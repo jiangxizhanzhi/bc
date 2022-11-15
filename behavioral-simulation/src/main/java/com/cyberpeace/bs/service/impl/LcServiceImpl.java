@@ -257,10 +257,18 @@ public class LcServiceImpl implements LcService {
 
 	@Override
 	public List<Behavior> getLcBehaviorListByIds(Collection<String> behaviorIds) {
-		// todo
-		String targetUrl = "";
-
-		return Lists.newArrayList();
+		BehaviorPageReq pageReq = new BehaviorPageReq();
+		pageReq.setPerPage(100);
+		ListRsp<LcBehavior> listRsp = getLcBehaviorList(pageReq);
+		List<LcBehavior> lcBehaviors = listRsp.getList();
+		List<Behavior> res = Lists.newArrayList();
+		lcBehaviors.forEach(lcBehavior -> {
+			if (behaviorIds.contains(lcBehavior.getId())) {
+				Behavior behavior = BeanUtils.copy(lcBehavior, Behavior.class);
+				res.add(behavior);
+			}
+		});
+		return res;
 	}
 
 	@Override

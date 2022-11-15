@@ -2,6 +2,7 @@ package com.cyberpeace.bs.service.bo.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,16 +11,22 @@ import lombok.Data;
  * 访问行为
  */
 @Data
-public class Behavior extends BehaviorInput implements Serializable {
+public class Behavior extends BehaviorSimple implements Serializable {
 
 	@ApiModelProperty(value = "行为名称")
 	private String name;
+
+	@ApiModelProperty(value = "标签")
+	private List<String> tag;
 
 	@ApiModelProperty(value = "设备类型")
 	private Integer accessOs;
 
 	@ApiModelProperty(value = "网络模型")
-	private Integer network;
+	private Integer networkType;
+
+	@ApiModelProperty(value = "行为步骤")
+	private Integer stepCount;
 
 	@ApiModelProperty(value = "行为耗时（min）")
 	private Integer timeCost;
@@ -32,5 +39,4 @@ public class Behavior extends BehaviorInput implements Serializable {
 
 	@ApiModelProperty(value = "创建者名称")
 	private String creatorName;
-
 }

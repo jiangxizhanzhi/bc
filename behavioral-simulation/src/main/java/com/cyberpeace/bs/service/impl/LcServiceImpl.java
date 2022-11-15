@@ -225,7 +225,7 @@ public class LcServiceImpl implements LcService {
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior lcBehavior = BeanUtils.copy(rspBo, LcBehavior.class);
 		lcBehavior.setAccessOs(1);
-		lcBehavior.setNetwork(1);
+		lcBehavior.setNetworkType(1);
 		lcBehavior.setTimeCost(1);
 		List<String> tags = Lists.newArrayList();
 		tags.add("上网");

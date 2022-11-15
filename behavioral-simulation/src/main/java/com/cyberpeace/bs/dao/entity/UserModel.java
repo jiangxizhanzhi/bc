@@ -111,7 +111,7 @@ public class UserModel extends BaseTable {
 
 	public enum AccessConfig implements GenericEnum {
 
-		CODER(1, "程序员"), TEACHER(2, "教师"), STUDENT(3, "学生");
+		COSTUMER(1, "自定义"), RANDOM(2, "随机"), NORMAL(3, "正态分布");
 
 		@Getter
 		private Integer code;

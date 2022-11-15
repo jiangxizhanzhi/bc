@@ -11,7 +11,7 @@ import lombok.Data;
 public class ChartInput implements Serializable {
 
 	@ApiModelProperty(value = "行为数据列表")
-	private List<BehaviorInput> behaviors;
+	private List<Behavior> behaviors;
 
 	@ApiModelProperty(value = "访问时间配置类型")
 	private Integer accessConfig;

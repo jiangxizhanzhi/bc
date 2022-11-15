@@ -3,10 +3,7 @@ package com.cyberpeace.bs.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.bs.service.bo.model.UserModelAddBo;
-import com.cyberpeace.bs.service.bo.model.UserModelBo;
-import com.cyberpeace.bs.service.bo.model.UserModelDetail;
-import com.cyberpeace.bs.service.bo.model.UserModelModifyBo;
+import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.common.model.ListRsp;
 
 public interface UserModelService {
@@ -44,4 +41,11 @@ public interface UserModelService {
 	 * @param resourceIds 要删除的id
 	 */
 	void delete(List<String> resourceIds);
+
+	/**
+	 * 生成行为的时间、以及图形
+	 * @param chartInput 输入的行为和配置
+	 * @return 时间和图形
+	 */
+	ChartResult createChart(ChartInput chartInput);
 }

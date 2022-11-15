@@ -13,13 +13,16 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
-import com.cyberpeace.bs.service.BsUtil;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.model.*;
+import com.cyberpeace.bs.utils.BsUtil;
+import com.cyberpeace.bs.utils.ChartUtil;
+import com.cyberpeace.bs.utils.RandomUtil;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -104,6 +107,28 @@ public class UserModelServiceImpl implements UserModelService {
 			return;
 		}
 		userModelMapper.deleteBatchIds(resourceIds);
+	}
+
+	@Override
+	public ChartResult createChart(ChartInput chartInput) {
+		Integer accessConfig = chartInput.getAccessConfig();
+		ChartResult res = new ChartResult();
+
+		if (accessConfig.equals(UserModel.AccessConfig.COSTUMER.getCode())) {
+
+			BsUtil.sortBehaviorList(chartInput.getBehaviors());
+
+		} else if (accessConfig.equals(UserModel.AccessConfig.RANDOM.getCode())) {
+			RandomUtil.randomDistribution(chartInput);
+		} else if (accessConfig.equals(UserModel.AccessConfig.NORMAL.getCode())) {
+
+		} else {
+			throw new BusinessException(BsErrorCode.INVALID_ACCESS_CONF);
+		}
+		res.setBehaviorList(chartInput.getBehaviors());
+		ChartUtil.createXy(res);
+		ChartUtil.createPie(res);
+		return res;
 	}
 
 	private <T extends UserModelAddBo> UserModel req2Entity(T reqBo) {

@@ -7,4 +7,6 @@ package com.cyberpeace.bs.constant;
 public interface BsErrorCode {
 
 	String ALREADY_STARTED = "105001";
+
+	String INVALID_ACCESS_CONF = "105002";
 }

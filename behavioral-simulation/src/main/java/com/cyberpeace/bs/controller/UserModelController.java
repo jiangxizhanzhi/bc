@@ -1,8 +1,5 @@
 package com.cyberpeace.bs.controller;
 
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "行为模拟-网络用户行为模拟")
+@Api(tags = "行为模拟-网络用户行为模型")
 @RestController
 @RequestMapping("/bs/user_model")
 // @RequiresAuthentication
@@ -30,7 +27,7 @@ public class UserModelController {
 
 	@ApiOperation("获取用户行为分页")
 	@GetMapping("/list")
-	public BaseRsp<ListRsp<UserModelBo>> getUserBehaviorPage(PageReqWithType pageReq) {
+	public BaseRsp<ListRsp<UserModelBo>> getUserModelPage(PageReqWithType pageReq) {
 		Page page = pageReq.toPageParam();
 		ListRsp<UserModelBo> res = userModelService.listUserModel(page, pageReq.getType(),
 				pageReq.getPattern());
@@ -68,15 +65,10 @@ public class UserModelController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("获取龙测访问行为列表")
-	@GetMapping("/list/behavior")
-	public BaseRsp<List<Object>> getLcBehaviorList() {
-		return new BaseRsp<>(Lists.newArrayList());
-	}
-
 	@ApiOperation("获取活跃度曲线图和访问习惯饼图数据")
 	@PostMapping("/chart")
 	public BaseRsp<ChartResult> getChartData(@Validated @RequestBody ChartInput chartInput) {
-		return new BaseRsp<>();
+		ChartResult res = userModelService.createChart(chartInput);
+		return new BaseRsp<>(res);
 	}
 }

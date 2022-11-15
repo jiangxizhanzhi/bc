@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.service;
+package com.cyberpeace.bs.utils;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;

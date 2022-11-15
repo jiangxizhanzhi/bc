@@ -7,16 +7,19 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
-import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
-import com.cyberpeace.bs.service.bo.behavior.UserBehaviorBo;
+import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.model.UserModelBase;
+import com.cyberpeace.bs.service.bo.model.UserModelBo;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.google.common.collect.Maps;
 
 /**
  * @author SN
@@ -71,11 +74,26 @@ public class BsUtil {
 	 * @param json 行为列表json
 	 * @param <T> 设置的实例
 	 */
-	public static <T extends UserBehaviorBo> void setBehaviorStatistic(T bo, String json) {
+	public static <T extends UserModelBo> void setBehaviorStatistic(T bo, String json) {
 		BehaviorStatistic statistic = getBehaviorStatistic(json);
 		bo.setBehaviorCount(statistic.getBehaviorCount());
 		bo.setStartTime(statistic.getStartTime());
 		bo.setEndTime(statistic.getEndTime());
+	}
+
+	/**
+	 * 解析访问习惯列表
+	 * @param bo 设置的实例
+	 * @param json 访问习惯列表json
+	 */
+	public static <T extends UserModelBase> void setHabits(T bo, String json) {
+		if (StringUtils.isBlank(json)) {
+			bo.setAccessHabit(Lists.newArrayList());
+		}
+		if (!json.startsWith(JSON_LIST_INITIAL)) {
+			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+		}
+		bo.setAccessHabit(JsonUtil.toJsonObjectArray(json, String.class));
 	}
 
 	/**
@@ -86,5 +104,29 @@ public class BsUtil {
 		LocalDate localDate = LocalDate.now();
 		Timestamp timestamp = Timestamp.valueOf(LocalDateTime.of(localDate, localTime));
 		return new Date(timestamp.getTime());
+	}
+
+	/**
+	 * 获取 LocalTime 的下一个 Date
+	 * @param localTime 不带日期的时间
+	 * @return 下一次该时间的日期+时间
+	 */
+	public static Date getNextDate(LocalTime localTime) {
+		LocalTime now = LocalTime.now();
+		LocalDate localDate = LocalDate.now();
+		if (localTime.isBefore(now)) {
+			localDate = localDate.plusDays(1L);
+		}
+		Timestamp timestamp = Timestamp.valueOf(localDate.atTime(localTime));
+		return new Date(timestamp.getTime());
+	}
+
+	/**
+	 * 解析出每个行为的行为变量
+	 * @param json 行为变量集合json
+	 * @return 行为id-行为变量的map
+	 */
+	public static Map<String, String> getVariableMap(String json) {
+		return Maps.newHashMap();
 	}
 }

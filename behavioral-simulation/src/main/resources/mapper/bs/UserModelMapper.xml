@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.bs.dao.mapper.UserModelMapper">
+    <select id="pageUserBehaviors" resultType="com.cyberpeace.bs.dao.entity.UserModel">
+        <if test="pattern != null and pattern != ''">
+            <bind name="search" value="'%' + pattern + '%'"/>
+        </if>
+        select
+        resource_id,
+        user_name,
+        user_type_id,
+        access_habit,
+        access_config,
+        access_os,
+        behavior_list
+        from bs_user_model
+        <where>
+            <if test="userType != null">
+                and user_type = #{userType}
+            </if>
+
+            <if test="pattern != null and pattern != ''">
+                and user_name like #{search}
+            </if>
+        </where>
+        order by id desc
+    </select>
+</mapper>

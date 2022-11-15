@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.cyberpeace</groupId>
     <artifactId>behavioral-simulation</artifactId>
     <version>${behavioral.simulation.version}</version>
     <packaging>jar</packaging>
@@ -35,12 +34,6 @@
             <groupId>com.cyberpeace</groupId>
             <artifactId>common</artifactId>
             <version>${common.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>course</artifactId>
-            <version>${oj.course.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -115,6 +108,10 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
 

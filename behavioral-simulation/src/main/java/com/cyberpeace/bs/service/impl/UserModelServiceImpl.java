@@ -1,0 +1,120 @@
+package com.cyberpeace.bs.service.impl;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.dao.entity.UserModel;
+import com.cyberpeace.bs.dao.mapper.UserModelMapper;
+import com.cyberpeace.bs.service.BsUtil;
+import com.cyberpeace.bs.service.LcService;
+import com.cyberpeace.bs.service.UserModelService;
+import com.cyberpeace.bs.service.UserTypeService;
+import com.cyberpeace.bs.service.bo.model.*;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+public class UserModelServiceImpl implements UserModelService {
+
+	@Autowired
+	private UserModelMapper userModelMapper;
+
+	@Autowired
+	private LcService lcService;
+
+	@Autowired
+	private UserTypeService userTypeService;
+
+	@Override
+	public ListRsp<UserModelBo> listUserModel(Page page, Integer userType, String pattern) {
+		// get user_behaviors
+		IPage<UserModel> userBehaviorIPage = userModelMapper.pageUserBehaviors(page, userType,
+				pattern);
+		// get user types
+		Set<String> userTypeIds = userBehaviorIPage.getRecords().stream()
+				.map(UserModel::getUserTypeId).collect(Collectors.toSet());
+		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
+		userBehaviorIPage.convert((userModel -> {
+			UserModelBo userBehaviorBo = BeanUtils.copy(userModel, UserModelBo.class);
+			BsUtil.setBehaviorStatistic(userBehaviorBo, userModel.getBehaviorList());
+			BsUtil.setHabits(userBehaviorBo, userModel.getAccessHabit());
+			userBehaviorBo.setUserType(userTypeMap.get(userModel.getUserTypeId()));
+			return userBehaviorBo;
+		}));
+		return PageUtil.getListResult(userBehaviorIPage);
+	}
+
+	@Override
+	public UserModelDetail getDetail(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			return null;
+		}
+		UserModel userModel = userModelMapper.selectById(resourceId);
+		if (userModel == null) {
+			return null;
+		}
+		UserModelDetail detail = BeanUtils.copy(userModel, UserModelDetail.class);
+		detail.setUserType(userTypeService.getNameById(detail.getUserTypeId()));
+		// get behaviors
+		List<BehaviorSimple> behaviorSimpleList = JsonUtil
+				.toJsonObjectArray(userModel.getBehaviorList(), BehaviorSimple.class);
+		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
+				.collect(Collectors.toList());
+		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(behaviorIds);
+		detail.setBehaviors(behaviors);
+		BsUtil.setHabits(detail, userModel.getAccessHabit());
+		return detail;
+	}
+
+	@Override
+	public void create(UserModelAddBo addBo) {
+		UserModel userModel = req2Entity(addBo);
+		userModelMapper.insert(userModel);
+	}
+
+	@Override
+	public void update(UserModelModifyBo modifyBo) {
+		if (StringUtils.isBlank(modifyBo.getResourceId())) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		UserModel userModel = req2Entity(modifyBo);
+		userModelMapper.updateById(userModel);
+	}
+
+	@Override
+	public void delete(List<String> resourceIds) {
+		if (CollectionUtils.isEmpty(resourceIds)) {
+			return;
+		}
+		userModelMapper.deleteBatchIds(resourceIds);
+	}
+
+	private <T extends UserModelAddBo> UserModel req2Entity(T reqBo) {
+		UserModel userModel = BeanUtils.copy(reqBo, UserModel.class);
+		List<BehaviorSimple> behaviorSimpleList = BeanUtils.deepCopyList(reqBo.getBehaviors(),
+				BehaviorSimple.class);
+		// 保证顺序
+		BsUtil.sortBehaviorList(behaviorSimpleList);
+		userModel.setBehaviorList(
+				JsonUtil.arrayToString(behaviorSimpleList, PropertyNamingStrategy.SnakeCase));
+		userModel.setAccessHabit(JsonUtil.arrayToString(reqBo.getAccessHabit()));
+		return userModel;
+	}
+}

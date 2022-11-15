@@ -1,10 +1,9 @@
 package com.cyberpeace.bs.service.bo;
 
-import java.util.Timer;
 import java.util.TimerTask;
 
 import com.cyberpeace.bs.service.LcService;
-import com.cyberpeace.bs.service.UserTrafficService;
+import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.common.util.SpringContextUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,44 +11,55 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TrafficTimerTask extends TimerTask {
 
-	private String ip;
+	private final String ip;
 
-	private String behaviorId;
+	private final String behaviorId;
 
-	private Integer index;
+	private final Integer index;
 
-	private String trafficId;
+	private final String simulatorId;
 
-	private LcService lcService;
+	private final BsTimer timer;
 
-	public TrafficTimerTask(String ip, String behaviorId, Integer index, String trafficId) {
+	private final String variable;
+
+	private final LcService lcService;
+
+	public TrafficTimerTask(String ip, String behaviorId, Integer index, String simulatorId,
+			String variable, BsTimer timer) {
 		this.ip = ip;
 		this.behaviorId = behaviorId;
 		this.index = index;
-		this.trafficId = trafficId;
+		this.simulatorId = simulatorId;
+		this.variable = variable;
 		this.lcService = SpringContextUtil.getBeanByClass(LcService.class);
+		this.timer = timer;
 	}
 
 	@Override
 	public void run() {
 		try {
-			log.info("timer task [{}] (index:{}) of user traffic [{}] starts", behaviorId, index,
-					trafficId);
-			// todo start a behavior
-			lcService.startTraffic(ip, behaviorId);
-			UserTrafficService userTrafficService = SpringContextUtil
-					.getBeanByClass(UserTrafficService.class);
-			userTrafficService.updateProcess(trafficId, index);
-			if (index == 0) {
-				Timer timer = userTrafficService.getTimerMap().get(trafficId);
-				if (timer != null) {
-					timer.cancel();
-					userTrafficService.getTimerMap().remove(trafficId);
-					log.info("user traffic {} is finished", trafficId);
-				}
+			log.info("timer task [{}] (index:{}) of user simulator [{}] starts with variable:[{}]",
+					behaviorId, index, simulatorId, variable);
+			if (!timer.ifActive()) {
+				log.info("Timer is inactive, pass this task");
+				return;
 			}
+			// todo start a behavior
+			lcService.startBehavior(ip, behaviorId, variable);
+			// UserSimulatorService userSimulatorService = SpringContextUtil
+			// .getBeanByClass(UserSimulatorService.class);
+			// userSimulatorService.updateProcess(simulatorId, index);
+			// if (index == 0) {
+			// Timer timer = userTrafficService.getTimerMap().get(trafficId);
+			// if (timer != null) {
+			// timer.cancel();
+			// userTrafficService.getTimerMap().remove(trafficId);
+			// log.info("user traffic {} is finished", trafficId);
+			// }
+			// }
 		} catch (Exception e) {
-			log.error("Traffic timer task failed: ", e);
+			log.error("User simulator timer task failed: ", e);
 		}
 	}
 }

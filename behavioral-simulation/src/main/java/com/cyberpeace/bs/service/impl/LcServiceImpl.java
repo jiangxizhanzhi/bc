@@ -25,6 +25,8 @@ import com.cyberpeace.bs.dao.mapper.DemoMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.*;
+import com.cyberpeace.bs.service.bo.demo.GetDeviceReq;
+import com.cyberpeace.bs.service.bo.demo.LcDevicePageRes;
 import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.Behavior;
@@ -65,6 +67,8 @@ public class LcServiceImpl implements LcService {
 	private String VARIABLE_UPDATE_URL = "api/v1/data/update";
 
 	private String RELEASE_TASK = "api/v1/save";
+
+	private String DEVICE_URL = "api/v1/devices/find-by-page";
 
 	private static <T> T post(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
@@ -319,6 +323,14 @@ public class LcServiceImpl implements LcService {
 	public void startDemoBehavior(ReleaseTaskReq req) {
 		String targetUrl = LC_HOST_PORT + RELEASE_TASK;
 		post(targetUrl, req, String.class);
+	}
+
+	@Override
+	public String getDeviceId() {
+		String targetUrl = LC_HOST_PORT + DEVICE_URL;
+		GetDeviceReq body = new GetDeviceReq();
+		LcDevicePageRes res = post(targetUrl, body, LcDevicePageRes.class);
+		return res.getRecords().get(0).getId();
 	}
 
 }

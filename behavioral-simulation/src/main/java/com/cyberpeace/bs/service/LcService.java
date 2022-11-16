@@ -58,4 +58,7 @@ public interface LcService {
 	void updateVariable(VariableModifyReq req);
 
 	void startDemoBehavior(ReleaseTaskReq req);
+
+	String getDeviceId();
+
 }

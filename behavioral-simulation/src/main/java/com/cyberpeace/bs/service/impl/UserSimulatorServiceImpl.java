@@ -146,7 +146,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		Map<String, String> behaviorVariableMap = BsUtil
 				.getVariableMap("");
 		// get params
+		String deviceId = lcService.getDeviceId();
 		TaskParam param = demoMapper.selectLatest();
+		if (deviceId != null) {
+			param.setDeviceId(deviceId);
+			demoMapper.saveParam(deviceId, param.getEnvironmentId(), param.getProjectId());
+		}
+
 		for (BehaviorSimple behavior : behaviorList) {
 			// 最后一个task index为0
 			index--;

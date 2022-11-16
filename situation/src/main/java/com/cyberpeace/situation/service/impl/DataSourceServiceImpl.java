@@ -1,5 +1,8 @@
 package com.cyberpeace.situation.service.impl;
 
+
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.DES;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,7 +21,6 @@ import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
-import com.cyberpeace.situation.dao.entity.ApiRequestParams;
 import com.cyberpeace.situation.dao.entity.DataSourceRecord;
 import com.cyberpeace.situation.dao.entity.DataSourceTemplate;
 import com.cyberpeace.situation.dao.mapper.DataSourceRecordMapper;
@@ -26,7 +28,6 @@ import com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper;
 import com.cyberpeace.situation.service.DataSourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.buf.CharsetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -271,8 +272,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return BeanUtils.copy(dataSourceRecord, DataSourceRecordReq.class);
     }
 
-    private String decryptedPwd(String password){
-        cn.hutool.crypto.symmetric.DES des = cn.hutool.crypto.SecureUtil.des("B13H089Y".getBytes(StandardCharsets.UTF_8));
+    private String decryptedPwd(String password) {
+        DES des = SecureUtil.des("B13H089Y".getBytes(StandardCharsets.UTF_8));
         return des.decryptStr(password);
     }
 }

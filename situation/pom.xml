@@ -123,9 +123,9 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.19</version>
-            <scope>provided</scope>
+            <version>4.0.12</version>
         </dependency>
+
     </dependencies>
 
     <build>

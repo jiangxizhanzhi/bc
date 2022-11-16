@@ -96,8 +96,10 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 dashboardTemplateMapper.updateById(toDashboardTemplate);
-                if (CollectionUtils.isNotEmpty(componentsSetting)) {
+                if (CollectionUtils.isNotEmpty(oldComponentsList)) {
                     dashboardComponentsMapper.deleteBatchIds(oldComponentsList);
+                }
+                if (CollectionUtils.isNotEmpty(dashboardComponentsList)) {
                     dashboardComponentsMapper.batchInsert(dashboardComponentsList);
                 }
             }
@@ -165,6 +167,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         if (CollectionUtils.isNotEmpty(dashboardComponentsReqList)) {
             for (DashboardComponentsReq dashboardComponentsReq : dashboardComponentsReqList) {
                 DashboardComponents dashboardComponents = BeanUtils.deepCopy(dashboardComponentsReq, DashboardComponents.class);
+                Object componentSetting = dashboardComponentsReq.getComponentSetting();
+                Object datasourceSetting = dashboardComponentsReq.getDatasourceSetting();
+                if (componentSetting != null) {
+                    dashboardComponents.setComponentSetting(JsonUtil.toJsonString(componentSetting));
+                }
+                if (datasourceSetting != null) {
+                    dashboardComponents.setDatasourceSetting(JsonUtil.toJsonString(dashboardComponents));
+                }
                 dashboardComponentsList.add(dashboardComponents);
             }
         }

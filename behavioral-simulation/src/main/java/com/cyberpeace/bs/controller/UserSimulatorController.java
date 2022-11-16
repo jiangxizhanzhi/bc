@@ -2,6 +2,7 @@ package com.cyberpeace.bs.controller;
 
 import java.util.List;
 
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,13 @@ public class UserSimulatorController {
 	public BaseRsp<List<UserSimulatorBo>> listTraffic() {
 		List<UserSimulatorBo> ret = userSimulatorService.listSimulator();
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("配管创建仪表")
+	@PostMapping("/create")
+	public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
+		userSimulatorService.batchCreate(addBo);
+		return new BaseRsp();
 	}
 
 	@ApiOperation("创建用户流量发生")

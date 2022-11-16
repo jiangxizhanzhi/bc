@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
 
@@ -57,4 +58,9 @@ public interface UserSimulatorService {
 
 	TaskParam getParam();
 
+	/**
+	 * 配管批量创建仪表
+	 * @param addBo 配管发来的请求体
+	 */
+	void batchCreate(SimulatorAddBo addBo);
 }

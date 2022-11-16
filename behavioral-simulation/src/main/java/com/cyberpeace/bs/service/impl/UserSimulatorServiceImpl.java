@@ -25,6 +25,7 @@ import com.cyberpeace.bs.service.bo.demo.TaskDemo;
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
 import com.cyberpeace.bs.utils.BsUtil;
@@ -97,6 +98,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		}
 		UserSimulator simulator = createUserSimulator(userModel, addReq);
 		userSimulatorMapper.insert(simulator);
+	}
+
+	@Override
+	public void batchCreate(SimulatorAddBo addBo) {
+
 	}
 
 	@Override
@@ -190,6 +196,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public TaskParam getParam() {
 		return demoMapper.selectLatest();
 	}
+
 
 	private UserSimulator createUserSimulator(UserModel userModel, UserSimulatorAddReq addReq) {
 		UserSimulator simulator = new UserSimulator();

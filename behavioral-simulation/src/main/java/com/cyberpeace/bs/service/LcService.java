@@ -8,6 +8,7 @@ import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.behavior.VariableListBo;
 import com.cyberpeace.bs.service.bo.behavior.VariableModifyReq;
+import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.model.Behavior;
 import com.cyberpeace.common.model.ListRsp;
 
@@ -55,4 +56,6 @@ public interface LcService {
 	VariableListBo getVariableList(String behaviorId);
 
 	void updateVariable(VariableModifyReq req);
+
+	void startDemoBehavior(ReleaseTaskReq req);
 }

@@ -14,9 +14,9 @@ public class UserSimulatorBo extends UserModelBo implements Serializable {
 	private Integer status;
 
 	@ApiModelProperty(value = "执行设备id")
-	private String targetId;
+	private String deviceId;
 
 	@ApiModelProperty(value = "执行设备名称")
-	private String targetName;
+	private String deviceName;
 
 }

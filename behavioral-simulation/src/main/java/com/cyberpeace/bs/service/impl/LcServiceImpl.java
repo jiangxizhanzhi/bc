@@ -23,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.*;
+import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.model.Behavior;
 import com.cyberpeace.bs.utils.LcVariableModifyReq;
 import com.cyberpeace.bs.utils.LcVariablePageReq;
@@ -56,6 +57,8 @@ public class LcServiceImpl implements LcService {
 	private static String LOGIN_URL;
 	private String VARIABLE_URL = "api/v1/data/find-by-page";
 	private String VARIABLE_UPDATE_URL = "api/v1/data/update";
+
+	private String RELEASE_TASK = "";
 
 	private static <T> T post(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
@@ -297,6 +300,12 @@ public class LcServiceImpl implements LcService {
 			body.setValue(variable.getValue());
 			post(targetUrl, body, String.class);
 		}
+	}
+
+	@Override
+	public void startDemoBehavior(ReleaseTaskReq req) {
+		String targetUrl = LC_HOST_PORT + RELEASE_TASK;
+		post(targetUrl, req, String.class);
 	}
 
 }

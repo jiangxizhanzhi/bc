@@ -20,7 +20,7 @@ import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
-import com.cyberpeace.bs.service.bo.TrafficTimerTask;
+import com.cyberpeace.bs.service.bo.demo.TaskDemo;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
@@ -90,8 +90,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (userModel == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		UserSimulator traffic = createUserTraffic(userModel, addReq);
-		userSimulatorMapper.insert(traffic);
+		UserSimulator simulator = createUserSimulator(userModel, addReq);
+		userSimulatorMapper.insert(simulator);
 	}
 
 	@Override
@@ -112,11 +112,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(traffic.getBehaviorList());
 		int index = behaviorList.size();
 		Map<String, String> behaviorVariableMap = BsUtil
-				.getVariableMap(traffic.getBehaviorVariable());
+				.getVariableMap("");
 		for (BehaviorSimple behavior : behaviorList) {
 			// 最后一个task index为0
 			index--;
-			TrafficTimerTask task = new TrafficTimerTask(traffic.getDeviceIp(), behavior.getId(),
+			TaskDemo task = new TaskDemo(traffic.getDeviceIp(), behavior.getId(),
 					index, resourceId, behaviorVariableMap.getOrDefault(behavior.getId(), ""),
 					timer);
 			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
@@ -171,29 +171,30 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		userSimulatorMapper.updateById(traffic);
 	}
 
-	private UserSimulator createUserTraffic(UserModel userModel, UserSimulatorAddReq addReq) {
-		UserSimulator traffic = new UserSimulator();
+	private UserSimulator createUserSimulator(UserModel userModel, UserSimulatorAddReq addReq) {
+		UserSimulator simulator = new UserSimulator();
 		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
-		traffic.setUserModelId(userModel.getResourceId());
-		traffic.setUserName(userModel.getUserName());
-		traffic.setUserTypeId(userModel.getUserTypeId());
-		traffic.setUserType(userTypeService.getNameById(userModel.getUserTypeId()));
-		traffic.setStartTime(statistic.getStartTime());
-		traffic.setEndTime(statistic.getEndTime());
-		traffic.setAccessConfig(userModel.getAccessConfig());
-		traffic.setAccessOs(userModel.getAccessOs());
-		traffic.setBehaviorList(userModel.getBehaviorList());
-		traffic.setBehaviorVariable(addReq.getBehaviorVariables());
-		traffic.setBehaviorCount(statistic.getBehaviorCount());
-		traffic.setAccessHabit(userModel.getAccessHabit());
-		traffic.setBandwidthLimited(userModel.getBandwidthLimited());
-		traffic.setBandwidth(userModel.getBandwidth());
-		traffic.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
+		simulator.setUserModelId(userModel.getResourceId());
+		simulator.setUserName(userModel.getUserName());
+		simulator.setUserTypeId(userModel.getUserTypeId());
+		simulator.setUserType(userTypeService.getNameById(userModel.getUserTypeId()));
+		simulator.setStartTime(statistic.getStartTime());
+		simulator.setEndTime(statistic.getEndTime());
+		simulator.setAccessConfig(userModel.getAccessConfig());
+		simulator.setAccessOs(userModel.getAccessOs());
+		simulator.setBehaviorList(userModel.getBehaviorList());
+		simulator.setBehaviorVariable(addReq.getBehaviorVariables());
+		simulator.setBehaviorCount(statistic.getBehaviorCount());
+		simulator.setAccessHabit(userModel.getAccessHabit());
+		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
+		simulator.setBandwidth(userModel.getBandwidth());
+		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
 		// todo index
-		traffic.setExecutedIndex(statistic.getBehaviorCount());
-		traffic.setDeviceId(addReq.getDeviceId());
-		traffic.setDeviceIp(addReq.getDeviceIp());
-		traffic.setDeviceName(addReq.getDeviceName());
-		return traffic;
+		simulator.setExecutedIndex(statistic.getBehaviorCount());
+		simulator.setDeviceId(addReq.getDeviceId());
+		simulator.setDeviceIp(addReq.getDeviceIp());
+		simulator.setDeviceName(addReq.getDeviceName());
+		simulator.setSceneId(addReq.getSceneId());
+		return simulator;
 	}
 }

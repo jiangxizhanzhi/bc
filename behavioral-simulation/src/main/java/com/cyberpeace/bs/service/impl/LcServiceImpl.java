@@ -58,7 +58,7 @@ public class LcServiceImpl implements LcService {
 	private String VARIABLE_URL = "api/v1/data/find-by-page";
 	private String VARIABLE_UPDATE_URL = "api/v1/data/update";
 
-	private String RELEASE_TASK = "";
+	private String RELEASE_TASK = "api/v1/save";
 
 	private static <T> T post(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据

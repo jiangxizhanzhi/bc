@@ -22,8 +22,27 @@ public class ChartResult implements Serializable {
 	private List<String> xTime = Lists.newArrayList();
 
 	@ApiModelProperty(value = "纵轴-行为数")
-	private List<Integer> yNum = Lists.newArrayList();
+	private List<YObject> yNum = Lists.newArrayList();
 
 	@ApiModelProperty(value = "饼状图")
 	private List<NameValue> pieChart= Lists.newArrayList();
+
+	public void addY(Integer num, List<String> labels) {
+		yNum.add(new YObject(num, labels));
+	}
+}
+
+@Data
+class YObject implements Serializable {
+
+	@ApiModelProperty(value = "纵轴-行为数")
+	private Integer num;
+
+	@ApiModelProperty(value = "纵轴-名称")
+	private List<String> labels;
+
+	YObject(Integer num, List<String> labels) {
+		this.num = num;
+		this.labels = labels;
+	}
 }

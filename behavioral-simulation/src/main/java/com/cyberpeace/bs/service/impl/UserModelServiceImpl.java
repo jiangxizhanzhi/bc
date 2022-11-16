@@ -121,7 +121,7 @@ public class UserModelServiceImpl implements UserModelService {
 		} else if (accessConfig.equals(UserModel.AccessConfig.RANDOM.getCode())) {
 			RandomUtil.randomDistribution(chartInput);
 		} else if (accessConfig.equals(UserModel.AccessConfig.NORMAL.getCode())) {
-
+			RandomUtil.normalDistribution(chartInput);
 		} else {
 			throw new BusinessException(BsErrorCode.INVALID_ACCESS_CONF);
 		}

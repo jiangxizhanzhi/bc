@@ -31,19 +31,21 @@ public class ChartUtil {
 		int size = behaviorList.size();
 		for (int time = 0; time < 24; time++) {
 			count = 0;
+			List<String> labels = Lists.newArrayList();
 			chart.getXTime().add(String.format(HOUR, time));
 			while (index < size) {
 				if (behaviorList.get(index).getStartTime().getHour() > time) {
-					chart.getYNum().add(count);
+					chart.addY(count, labels);
 					break;
 				} else {
+					labels.add(behaviorList.get(index).getName());
 					count++;
 					index++;
 				}
 			}
 			// 行为循环完毕
 			if (index == size) {
-				chart.getYNum().add(count);
+				chart.addY(count, labels);
 			}
 		}
 	}

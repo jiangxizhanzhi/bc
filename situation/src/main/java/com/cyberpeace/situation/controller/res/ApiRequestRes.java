@@ -26,12 +26,19 @@ public class ApiRequestRes extends PageReqBase implements Serializable {
     private String name;
 
     @ApiModelProperty("api描述")
-    private String desc;
+    private String description;
 
     @ApiModelProperty("url")
     private String requestUrl;
 
     @ApiModelProperty("请求方法")
     private String requestMethod;
+
+    @ApiModelProperty("请求参数")
+    private String requestParams;
+
+    @ApiModelProperty("请求头")
+    private String requestHeaders;
+
 
 }

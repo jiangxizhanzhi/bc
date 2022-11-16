@@ -14,6 +14,7 @@ import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.dao.mapper.DemoMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
 import com.cyberpeace.bs.service.LcService;
@@ -21,6 +22,7 @@ import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.demo.TaskDemo;
+import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
@@ -58,6 +60,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Autowired
 	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	DemoMapper demoMapper;
 
 	@Override
 	public List<UserSimulatorBo> listSimulator() {
@@ -99,34 +104,36 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		UserSimulator traffic = userSimulatorMapper.selectById(resourceId);
-		if (traffic == null) {
+		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
+		if (simulator == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		// 不能重复开始
-		if (!traffic.getStatus().equals(UserSimulator.Status.NOT_STARTED.getCode())) {
+		if (!simulator.getStatus().equals(UserSimulator.Status.NOT_STARTED.getCode())) {
 			throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 		}
 		// create timer
 		BsTimer timer = new BsTimer();
-		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(traffic.getBehaviorList());
+		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(simulator.getBehaviorList());
 		int index = behaviorList.size();
 		Map<String, String> behaviorVariableMap = BsUtil
 				.getVariableMap("");
+		// get params
+		TaskParam param = demoMapper.selectLatest();
 		for (BehaviorSimple behavior : behaviorList) {
 			// 最后一个task index为0
 			index--;
-			TaskDemo task = new TaskDemo(traffic.getDeviceIp(), behavior.getId(),
+			TaskDemo task = new TaskDemo(simulator.getDeviceIp(), behavior.getId(),
 					index, resourceId, behaviorVariableMap.getOrDefault(behavior.getId(), ""),
-					timer);
+					timer, param);
 			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
 			timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
 					BsConstants.MILLI_IN_A_DAY);
 		}
 		timerMap.putIfAbsent(resourceId, timer);
 
-		traffic.setStatus(UserSimulator.Status.RUNNING.getCode());
-		userSimulatorMapper.updateById(traffic);
+		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
+		userSimulatorMapper.updateById(simulator);
 	}
 
 	@Override
@@ -134,26 +141,28 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		UserSimulator traffic = userSimulatorMapper.selectById(resourceId);
-		if (traffic == null) {
+		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
+		if (simulator == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		// cancel timer
 		BsTimer timer = timerMap.get(resourceId);
-		timer.cancel();
-		timerMap.remove(resourceId);
+		if (timer != null) {
+			timer.cancel();
+			timerMap.remove(resourceId);
+		}
 		// todo stop running behavior
 		// get latest behavior id
 		List<BehaviorSimple> behaviorSimpleList = BsUtil
-				.parseBehaviorList(traffic.getBehaviorList());
-		if (!traffic.getExecutedIndex().equals(behaviorSimpleList.size())) {
+				.parseBehaviorList(simulator.getBehaviorList());
+		if (!simulator.getExecutedIndex().equals(behaviorSimpleList.size())) {
 			// stop latest executed behavior
 			String latestBehaviorId = behaviorSimpleList
-					.get(behaviorSimpleList.size() - traffic.getExecutedIndex() - 1).getId();
-			lcService.stopBehavior(traffic.getDeviceIp(), latestBehaviorId);
+					.get(behaviorSimpleList.size() - simulator.getExecutedIndex() - 1).getId();
+			lcService.stopBehavior(simulator.getDeviceIp(), latestBehaviorId);
 		}
 		// update status
-		traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
+		simulator.setStatus(UserSimulator.Status.STOPPED.getCode());
 	}
 
 	@Override
@@ -169,6 +178,17 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
 		}
 		userSimulatorMapper.updateById(traffic);
+	}
+
+	@Override
+	public void saveParams(TaskParam taskParam) {
+		demoMapper.saveParam(taskParam.getDeviceId(), taskParam.getEnvironmentId(),
+				taskParam.getProjectId());
+	}
+
+	@Override
+	public TaskParam getParam() {
+		return demoMapper.selectLatest();
 	}
 
 	private UserSimulator createUserSimulator(UserModel userModel, UserSimulatorAddReq addReq) {

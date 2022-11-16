@@ -144,12 +144,12 @@ public class SituationPublishController {
 
 		res.forEach(s-> {
 			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
-			String planName = planMaps.get(s.getPlanId()).getName();
-			copy.setPlanName(StringUtils.isBlank(planName) ? "" : planName);
-			String taskName = taskMaps.get(s.getTaskId()).getName();
-			copy.setTaskName(StringUtils.isBlank(taskName) ? "" : taskName);
-			String subjectName = subjetcMaps.get(s.getSubjectId()).getName();
-			copy.setSubjectName(StringUtils.isBlank(subjectName) ? "" : subjectName);
+//			String planName = planMaps.get(s.getPlanId()).getName();
+//			copy.setPlanName(StringUtils.isBlank(planName) ? "" : planName);
+//			String taskName = taskMaps.get(s.getTaskId()).getName();
+//			copy.setTaskName(StringUtils.isBlank(taskName) ? "" : taskName);
+//			String subjectName = subjetcMaps.get(s.getSubjectId()).getName();
+//			copy.setSubjectName(StringUtils.isBlank(subjectName) ? "" : subjectName);
 			copy.setStatus(SituationInstanceStatus.valueOf(s.getStatus()).getDesc());
 			copy.setCategory(collect.get(copy.getCategory()).getName());
 			copy.setTemplateName(dashboardTemplateMap.get(s.getTemplateId()).getName());

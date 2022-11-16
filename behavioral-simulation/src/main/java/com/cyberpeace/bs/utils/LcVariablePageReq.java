@@ -11,7 +11,11 @@ public class LcVariablePageReq implements Serializable {
 
 	private Integer page = 1;
 
-	private String projectId = "1580451559792103425";
+	private String projectId;
 
 	private Integer size = 50;
+
+	public LcVariablePageReq(String projectId) {
+		this.projectId = projectId;
+	}
 }

@@ -16,14 +16,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.bs.dao.mapper.DemoMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.*;
 import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReq;
+import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.Behavior;
 import com.cyberpeace.bs.utils.LcVariableModifyReq;
 import com.cyberpeace.bs.utils.LcVariablePageReq;
@@ -44,6 +47,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class LcServiceImpl implements LcService {
+
+	@Autowired
+	DemoMapper demoMapper;
 
 	private static final String TokenPrefix = "Bearer ";
 
@@ -208,7 +214,9 @@ public class LcServiceImpl implements LcService {
 	@Override
 	public ListRsp<LcBehavior> getLcBehaviorList(BehaviorPageReq pageReq) {
 		String targetUrl = LC_HOST_PORT + BEHAVIOR_LIST_URL;
+		TaskParam taskParam = demoMapper.selectLatest();
 		LcBehaviorListReqBody body = new LcBehaviorListReqBody();
+		body.setProjectId(taskParam.getProjectId());
 		body.setPage(pageReq.getPage());
 		body.setSize(pageReq.getPerPage());
 		LcBehaviorPageRes lcBehaviorPageRes = post(targetUrl, body, LcBehaviorPageRes.class);
@@ -276,8 +284,10 @@ public class LcServiceImpl implements LcService {
 
 	@Override
 	public VariableListBo getVariableList(String behaviorId) {
+		TaskParam taskParam = demoMapper.selectLatest();
 		String targetUrl = LC_HOST_PORT + VARIABLE_URL;
-		LcVariablePageRes res = post(targetUrl, new LcVariablePageReq(), LcVariablePageRes.class);
+		LcVariablePageRes res = post(targetUrl, new LcVariablePageReq(taskParam.getProjectId()),
+				LcVariablePageRes.class);
 		VariableListBo listBo = new VariableListBo();
 		listBo.setBehaviorId(behaviorId);
 		List<VariableBo> variableBos = Lists.newArrayList();
@@ -293,11 +303,14 @@ public class LcServiceImpl implements LcService {
 	@Override
 	public void updateVariable(VariableModifyReq req) {
 		String targetUrl = LC_HOST_PORT + VARIABLE_UPDATE_URL;
+		TaskParam taskParam = demoMapper.selectLatest();
 		for (VariableSimple variable : req.getVariables()) {
 			LcVariableModifyReq body = new LcVariableModifyReq();
 			body.setId(variable.getId());
 			body.setName(variable.getName());
 			body.setValue(variable.getValue());
+			body.setEnvironmentId(taskParam.getEnvironmentId());
+			body.setProjectId(taskParam.getProjectId());
 			post(targetUrl, body, String.class);
 		}
 	}

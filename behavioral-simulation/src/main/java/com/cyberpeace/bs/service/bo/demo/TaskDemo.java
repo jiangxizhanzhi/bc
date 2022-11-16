@@ -25,12 +25,6 @@ public class TaskDemo extends TimerTask {
 
     private final LcService lcService;
 
-	private final String deviceId = "1";
-
-	private final String projectId = "1580451559792103425";
-
-	private final String environmentId = "1580451559829852161";
-
 	private TaskParam taskParam;
 
     public TaskDemo(String ip, String behaviorId, Integer index, String simulatorId,

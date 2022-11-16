@@ -11,7 +11,7 @@ public class LcBehaviorListReqBody implements Serializable {
 
 	private String name;
 
-	private String projectId = "1580451559792103425";
+	private String projectId;
 
 	private Integer page;
 

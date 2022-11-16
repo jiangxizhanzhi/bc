@@ -37,10 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "组件库-态势发布大屏")
@@ -141,6 +138,11 @@ public class SituationPublishController {
 		LambdaQueryWrapper<SituationCategory> categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		List<SituationCategory> situationCategories = situationCategoryMapper.selectList(categoryLambdaQueryWrapper);
 		Map<String, SituationCategory> collect = situationCategories.stream().collect(Collectors.toMap(SituationCategory::getResourceId, situation -> situation));
+		HashMap<String, String> map = new HashMap<>();
+		for(SituationInstanceStatus tmp:SituationInstanceStatus.values()){
+			map.put(tmp.getCode(), tmp.getDesc());
+		}
+
 
 		res.forEach(s-> {
 			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
@@ -150,9 +152,9 @@ public class SituationPublishController {
 //			copy.setTaskName(StringUtils.isBlank(taskName) ? "" : taskName);
 //			String subjectName = subjetcMaps.get(s.getSubjectId()).getName();
 //			copy.setSubjectName(StringUtils.isBlank(subjectName) ? "" : subjectName);
-			copy.setStatus(SituationInstanceStatus.valueOf(s.getStatus()).getDesc());
-			copy.setCategory(collect.get(copy.getCategory()).getName());
-			copy.setTemplateName(dashboardTemplateMap.get(s.getTemplateId()).getName());
+			copy.setStatus(map.get(s.getStatus()));
+			copy.setCategory(null == s.getCategory() || null == collect.get(s.getCategory()) ? "" : collect.get(s.getCategory()).getName());
+			copy.setTemplateName(null == s.getTemplateId() ||null == dashboardTemplateMap.get(s.getTemplateId()) ? "" :dashboardTemplateMap.get(s.getTemplateId()).getName());
 			result.add(copy);
 
 		});

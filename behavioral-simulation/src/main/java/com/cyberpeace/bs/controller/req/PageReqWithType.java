@@ -13,5 +13,5 @@ public class PageReqWithType extends PageReqBase {
 	@ApiModelProperty(value = "用户类型")
 	@Getter
 	@Setter
-	private Integer type;
+	private String type;
 }

@@ -14,5 +14,5 @@ import com.cyberpeace.bs.dao.entity.UserModel;
 public interface UserModelMapper extends BaseMapper<UserModel> {
 
 	IPage<UserModel> pageUserBehaviors(@Param("pageUserBehaviors") Page page,
-			@Param("userType") Integer userType, @Param("pattern") String pattern);
+			@Param("userTypeId") String userTypeId, @Param("pattern") String pattern);
 }

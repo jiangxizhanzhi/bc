@@ -15,8 +15,8 @@
         behavior_list
         from bs_user_model
         <where>
-            <if test="userType != null">
-                and user_type = #{userType}
+            <if test="userTypeId != null and userTypeId != ''">
+                and user_type_id = #{userTypeId}
             </if>
 
             <if test="pattern != null and pattern != ''">

@@ -11,11 +11,11 @@ public interface UserModelService {
 	/**
 	 * 获取用户行为列表
 	 * @param page 分页
-	 * @param userType 用户类型
+	 * @param userTypeId 用户类型
 	 * @param pattern 用户名模糊匹配
 	 * @return 用户行为分页列表
 	 */
-	ListRsp<UserModelBo> listUserModel(Page page, Integer userType, String pattern);
+	ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern);
 
 	/**
 	 * 获取用户行为模拟详情

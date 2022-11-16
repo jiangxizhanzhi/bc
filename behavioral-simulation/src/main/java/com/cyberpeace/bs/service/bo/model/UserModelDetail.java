@@ -29,4 +29,7 @@ public class UserModelDetail extends UserModelBase implements Serializable {
 
 	@ApiModelProperty(value = "访问行为")
 	private List<Behavior> behaviors;
+
+	@ApiModelProperty(value = "折线图、饼图")
+	private ChartResult chart;
 }

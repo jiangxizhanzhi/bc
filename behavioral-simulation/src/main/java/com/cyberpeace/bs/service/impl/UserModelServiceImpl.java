@@ -28,6 +28,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
@@ -78,11 +79,23 @@ public class UserModelServiceImpl implements UserModelService {
 		// get behaviors
 		List<BehaviorSimple> behaviorSimpleList = JsonUtil
 				.toJsonObjectArray(userModel.getBehaviorList(), BehaviorSimple.class);
-		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
-				.collect(Collectors.toList());
-		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(behaviorIds);
+		Map<String, BehaviorSimple> map = StreamApiUtils.toMap(behaviorSimpleList,
+				BehaviorSimple::getId, behavior -> behavior);
+		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(map.keySet());
+		// 补上时间
+		for (Behavior behavior : behaviors) {
+			behavior.setStartTime(map.get(behavior.getId()).getStartTime());
+		}
+		// sort
+		BsUtil.sortBehaviorList(behaviors);
 		detail.setBehaviors(behaviors);
 		BsUtil.setHabits(detail, userModel.getAccessHabit());
+		// create chart
+		detail.getChart().setBehaviorList(behaviors);
+		ChartUtil.createXy(detail.getChart());
+		ChartUtil.createPie(detail.getChart());
+		// 重复数据置空
+		detail.getChart().setBehaviorList(null);
 		return detail;
 	}
 

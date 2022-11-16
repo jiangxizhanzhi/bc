@@ -30,6 +30,6 @@ public class UserModelBo extends UserModelBase implements Serializable {
 	@ApiModelProperty(value = "是否限制带宽")
 	private Boolean bandwidthLimited;
 
-	@ApiModelProperty(value = "带宽")
+	@ApiModelProperty(value = "带宽(Mbps)")
 	private Integer bandwidth;
 }

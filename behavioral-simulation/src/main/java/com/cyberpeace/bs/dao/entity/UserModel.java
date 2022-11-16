@@ -57,7 +57,7 @@ public class UserModel extends BaseTable {
 	private Boolean bandwidthLimited;
 
 	/**
-	 * 访问带宽数值，单位 MB/s
+	 * 访问带宽数值，单位 Mbps
 	 */
 	private Integer bandwidth;
 

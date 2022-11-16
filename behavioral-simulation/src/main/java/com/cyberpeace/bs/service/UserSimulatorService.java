@@ -3,6 +3,7 @@ package com.cyberpeace.bs.service;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
@@ -51,4 +52,9 @@ public interface UserSimulatorService {
 	 * @param index 最近一次的行为编号
 	 */
 	void updateProcess(String trafficId, Integer index);
+
+	void saveParams(TaskParam taskParam);
+
+	TaskParam getParam();
+
 }

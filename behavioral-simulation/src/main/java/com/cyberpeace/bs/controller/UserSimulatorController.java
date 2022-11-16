@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
+import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
 import com.cyberpeace.common.model.BaseRsp;
@@ -58,5 +59,19 @@ public class UserSimulatorController {
 	public BaseRsp stop(@RequestBody @Validated IdReq idReq) {
 		userSimulatorService.stopSimulator(idReq.getResourceId());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("设置任务参数-demo用，非正式")
+	@PostMapping("/parameter")
+	public BaseRsp setParam(@RequestBody @Validated TaskParam taskParam) {
+		userSimulatorService.saveParams(taskParam);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("查看参数-demo用，非正式")
+	@GetMapping("/parameter")
+	public BaseRsp<TaskParam> getParams() {
+		TaskParam res = userSimulatorService.getParam();
+		return new BaseRsp<>(res);
 	}
 }

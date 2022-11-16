@@ -31,8 +31,10 @@ public class TaskDemo extends TimerTask {
 
 	private final String environmentId = "1580451559829852161";
 
+	private TaskParam taskParam;
+
     public TaskDemo(String ip, String behaviorId, Integer index, String simulatorId,
-                            String variable, BsTimer timer) {
+			String variable, BsTimer timer, TaskParam taskParam) {
         this.ip = ip;
         this.behaviorId = behaviorId;
         this.index = index;
@@ -40,6 +42,7 @@ public class TaskDemo extends TimerTask {
         this.variable = variable;
         this.lcService = SpringContextUtil.getBeanByClass(LcService.class);
         this.timer = timer;
+		this.taskParam = taskParam;
     }
 
     @Override
@@ -52,9 +55,9 @@ public class TaskDemo extends TimerTask {
                 return;
             }
             ReleaseTaskReq req = new ReleaseTaskReq();
-            req.setDeviceId(deviceId);
-            req.setEnvironmentId(environmentId);
-            req.setProjectId(projectId);
+			req.setDeviceId(taskParam.getDeviceId());
+			req.setEnvironmentId(taskParam.getEnvironmentId());
+			req.setProjectId(taskParam.getProjectId());
             req.setFlowChart(behaviorId);
             // todo start a behavior
             lcService.startDemoBehavior(req);

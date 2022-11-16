@@ -190,6 +190,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		}
 		// update status
 		simulator.setStatus(UserSimulator.Status.STOPPED.getCode());
+		userSimulatorMapper.updateById(simulator);
 	}
 
 	@Override

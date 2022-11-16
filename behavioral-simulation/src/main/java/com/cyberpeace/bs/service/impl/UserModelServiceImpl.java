@@ -91,6 +91,7 @@ public class UserModelServiceImpl implements UserModelService {
 		detail.setBehaviors(behaviors);
 		BsUtil.setHabits(detail, userModel.getAccessHabit());
 		// create chart
+		detail.setChart(new ChartResult());
 		detail.getChart().setBehaviorList(behaviors);
 		ChartUtil.createXy(detail.getChart());
 		ChartUtil.createPie(detail.getChart());

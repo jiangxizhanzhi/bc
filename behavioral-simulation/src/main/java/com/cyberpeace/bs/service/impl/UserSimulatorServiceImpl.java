@@ -8,6 +8,8 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.bs.constant.BsConstants;
@@ -24,10 +26,7 @@ import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.demo.TaskDemo;
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
-import com.cyberpeace.bs.service.bo.simulator.BsTimer;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
+import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -102,7 +101,29 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
+		String sceneId = addBo.getSceneId();
+		List<UserSimulator> simulatorList = Lists.newArrayList();
+		for (NodeBo node : addBo.getNodeList()) {
+			String userModelId = node.getUserModelId();
+			if (StringUtils.isBlank(userModelId)) {
+				throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			}
+			UserModel userModel = userModelMapper.selectById(userModelId);
+			if (userModel == null) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+			UserSimulator simulator = createUserSimulator(userModel, node, sceneId);
+			simulatorList.add(simulator);
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				for (UserSimulator simulator : simulatorList) {
+					userSimulatorMapper.insert(simulator);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -222,6 +243,33 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setDeviceIp(addReq.getDeviceIp());
 		simulator.setDeviceName(addReq.getDeviceName());
 		simulator.setSceneId(addReq.getSceneId());
+		return simulator;
+	}
+
+	private UserSimulator createUserSimulator(UserModel userModel, NodeBo nodeBo, String sceneId) {
+		UserSimulator simulator = new UserSimulator();
+		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
+		simulator.setUserModelId(userModel.getResourceId());
+		simulator.setUserName(userModel.getUserName());
+		simulator.setUserTypeId(userModel.getUserTypeId());
+		simulator.setUserType(userTypeService.getNameById(userModel.getUserTypeId()));
+		simulator.setStartTime(statistic.getStartTime());
+		simulator.setEndTime(statistic.getEndTime());
+		simulator.setAccessConfig(userModel.getAccessConfig());
+		simulator.setAccessOs(userModel.getAccessOs());
+		simulator.setBehaviorList(userModel.getBehaviorList());
+		simulator.setBehaviorVariable("{}");
+		simulator.setBehaviorCount(statistic.getBehaviorCount());
+		simulator.setAccessHabit(userModel.getAccessHabit());
+		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
+		simulator.setBandwidth(userModel.getBandwidth());
+		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
+		// todo index
+		simulator.setExecutedIndex(statistic.getBehaviorCount());
+		simulator.setDeviceId(nodeBo.getNodeId());
+		simulator.setDeviceIp("");
+		simulator.setDeviceName(nodeBo.getNodeName());
+		simulator.setSceneId(sceneId);
 		return simulator;
 	}
 }

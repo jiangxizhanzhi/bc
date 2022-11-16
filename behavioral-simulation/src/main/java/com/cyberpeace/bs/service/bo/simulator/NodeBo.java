@@ -15,6 +15,9 @@ public class NodeBo implements Serializable {
 	@ApiModelProperty(value = "节点id")
 	private String nodeId;
 
+	@ApiModelProperty(value = "节点名称")
+	private String nodeName;
+
 	@ApiModelProperty(value = "IP配置")
 	private List<IpBo> ipConfig;
 

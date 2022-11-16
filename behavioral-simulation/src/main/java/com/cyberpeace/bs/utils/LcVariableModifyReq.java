@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class LcVariableModifyReq implements Serializable {
 
-	private String environmentId = "1579380252501528578";
+	private String environmentId = "1580451559829852161";
 
 	private String id;
 
 	private String name;
 
-	private String projectId = "1579380252455391234";
+	private String projectId = "1580451559792103425";
 
 	private Date updateTime;
 

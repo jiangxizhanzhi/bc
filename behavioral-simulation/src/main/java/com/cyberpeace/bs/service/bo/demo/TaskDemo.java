@@ -1,11 +1,12 @@
 package com.cyberpeace.bs.service.bo.demo;
 
+import java.util.TimerTask;
+
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.common.util.SpringContextUtil;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.TimerTask;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TaskDemo extends TimerTask {
@@ -24,9 +25,11 @@ public class TaskDemo extends TimerTask {
 
     private final LcService lcService;
 
-    private final String deviceId = "";
-    private final String projectId = "";
-    private final String environmentId = "";
+	private final String deviceId = "1";
+
+	private final String projectId = "1580451559792103425";
+
+	private final String environmentId = "1580451559829852161";
 
     public TaskDemo(String ip, String behaviorId, Integer index, String simulatorId,
                             String variable, BsTimer timer) {

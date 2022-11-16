@@ -1,5 +1,7 @@
 package com.cyberpeace.bs.service.bo.model;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,7 +9,7 @@ import lombok.Data;
  * 饼状图键值对
  */
 @Data
-public class NameValue {
+public class NameValue implements Serializable {
 
 	@ApiModelProperty(value = "标签")
 	private String name;

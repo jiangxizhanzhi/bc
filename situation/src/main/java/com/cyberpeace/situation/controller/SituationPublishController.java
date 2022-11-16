@@ -7,10 +7,16 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.situation.SituationPlan;
+import com.cyberpeace.integratation.model.situation.SituationSubject;
+import com.cyberpeace.integratation.model.situation.SituationTask;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
+import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
@@ -22,6 +28,7 @@ import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(tags = "组件库-态势发布大屏")
@@ -56,6 +64,9 @@ public class SituationPublishController {
 
 	@Autowired
 	private DashboardTemplateMapper dashboardTemplateMapper;
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
 
 	@ApiOperation("查询态势发布类型列表")
 	@GetMapping("/category/list")
@@ -114,12 +125,34 @@ public class SituationPublishController {
 
 		queryWrapper.orderByDesc(SituationPublishInstance::getCreateTime);
 		List<SituationPublishInstance> res = situationPublishInstanceMapper.selectList(queryWrapper);
+
+
+		LambdaQueryWrapper<DashboardTemplate> dashboardTemplateLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		List<DashboardTemplate> dashboardTemplates = dashboardTemplateMapper.selectList(dashboardTemplateLambdaQueryWrapper);
+		Map<String, DashboardTemplate> dashboardTemplateMap = dashboardTemplates.stream().collect(Collectors.toMap(DashboardTemplate::getResourceId, dashboardTemplate -> dashboardTemplate));
+
 		List<SituationPublishInstanceListRes> result = new ArrayList<>();
+		List<SituationPlan> plans = remoteSituationService.getPlans();
+		Map<String, SituationPlan> planMaps = plans.stream().collect(Collectors.toMap(SituationPlan::getResourceId, plan -> plan));
+		List<SituationTask> tasks = remoteSituationService.getTasks(null, null);
+		Map<String, SituationTask> taskMaps = tasks.stream().collect(Collectors.toMap(SituationTask::getResourceId, task -> task));
+		List<SituationSubject> subjects = remoteSituationService.getSubjectByTask(null);
+		Map<String, SituationSubject> subjetcMaps = subjects.stream().collect(Collectors.toMap(SituationSubject::getResourceId, subject -> subject));
+		LambdaQueryWrapper<SituationCategory> categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		List<SituationCategory> situationCategories = situationCategoryMapper.selectList(categoryLambdaQueryWrapper);
+		Map<String, SituationCategory> collect = situationCategories.stream().collect(Collectors.toMap(SituationCategory::getResourceId, situation -> situation));
+
 		res.forEach(s-> {
-			// TODO 设置 任务名称及 科目名称
-			String taskId = s.getTaskId();
-			String subjectId = s.getSubjectId();
 			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
+			String planName = planMaps.get(s.getPlanId()).getName();
+			copy.setPlanName(StringUtils.isBlank(planName) ? "" : planName);
+			String taskName = taskMaps.get(s.getTaskId()).getName();
+			copy.setTaskName(StringUtils.isBlank(taskName) ? "" : taskName);
+			String subjectName = subjetcMaps.get(s.getSubjectId()).getName();
+			copy.setSubjectName(StringUtils.isBlank(subjectName) ? "" : subjectName);
+			copy.setStatus(SituationInstanceStatus.valueOf(s.getStatus()).getDesc());
+			copy.setCategory(collect.get(copy.getCategory()).getName());
+			copy.setTemplateName(dashboardTemplateMap.get(s.getTemplateId()).getName());
 			result.add(copy);
 
 		});
@@ -149,7 +182,7 @@ public class SituationPublishController {
 		// 关联发布大屏不可删除
 		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-		queryWrapper.eq(SituationPublishInstance::getResourceId, resourceIds);
+		queryWrapper.in(SituationPublishInstance::getResourceId, resourceIds);
 		List<SituationPublishInstance> releaseInstances = situationPublishInstanceMapper.selectList(queryWrapper);
 		if (!releaseInstances.isEmpty()) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
@@ -216,6 +249,33 @@ public class SituationPublishController {
 		dashboardTemplateService.getDashboardTemplateInfo(templateId);
 		// TODO 大屏地址
 		res.sendRedirect(""+ templateId);
+	}
+
+	@ApiOperation("想定方案list")
+	@GetMapping("plan")
+	public List<SituationPlan> getPlans() {
+		return remoteSituationService.getPlans();
+	}
+
+	@ApiOperation("任务list")
+	@GetMapping("task")
+	public List<SituationTask> getTasks(SituationTaskFilterReq situationTaskFilterReq) {
+		// TODO 待修改
+
+		return remoteSituationService.getTasks(situationTaskFilterReq.getType(), null);
+	}
+
+	@ApiOperation("科目list")
+	@PostMapping("plan")
+	public List<SituationSubject> getSubjects(SituationSubjectFilterReq situationSubjectFilterReq) {
+		String taskId = situationSubjectFilterReq.getResourceId();
+		if (!StringUtils.isBlank(taskId)){
+			List<SituationTask> tasks = remoteSituationService.getTasks(null, taskId);
+			if(tasks.isEmpty()){
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+		}
+		return remoteSituationService.getSubjectByTask(taskId);
 	}
 
 }

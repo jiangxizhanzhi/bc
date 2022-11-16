@@ -21,9 +21,15 @@ public class SituationPublishInstanceListRes implements Serializable {
     @ApiModelProperty(value = "大屏状态")
     private String status;
 
+    @ApiModelProperty(value = "想定方案名称")
+    private String planName;
+
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
     @ApiModelProperty(value = "科目名称")
     private String subjectName;
+
+    @ApiModelProperty(value = "模板名称")
+    private String templateName;
 }

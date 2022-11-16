@@ -12,7 +12,9 @@
         access_habit,
         access_config,
         access_os,
-        behavior_list
+        behavior_list,
+        bandwidth_limited,
+        bandwidth
         from bs_user_model
         <where>
             <if test="userTypeId != null and userTypeId != ''">

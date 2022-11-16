@@ -26,4 +26,10 @@ public class UserModelBo extends UserModelBase implements Serializable {
 
 	@ApiModelProperty(value = "访问结束时间")
 	private LocalTime endTime;
+
+	@ApiModelProperty(value = "是否限制带宽")
+	private Boolean bandwidthLimited;
+
+	@ApiModelProperty(value = "带宽")
+	private Integer bandwidth;
 }

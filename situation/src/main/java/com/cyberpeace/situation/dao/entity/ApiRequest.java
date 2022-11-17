@@ -17,7 +17,7 @@ import java.util.List;
  * @Date 31/10/2022 上午9:50
  */
 @Data
-@TableName("api_request")
+@TableName("situation_api_request")
 public class ApiRequest extends BaseTable {
 
     @TableId(type = IdType.UUID, value = "resource_id")

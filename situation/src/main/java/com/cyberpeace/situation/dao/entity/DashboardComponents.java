@@ -16,7 +16,7 @@ import java.util.List;
  * @Date 11/11/2022 上午11:41
  */
 @Data
-@TableName("dashboard_components_setting")
+@TableName("situation_dashboard_components_setting")
 public class DashboardComponents {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;

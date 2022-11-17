@@ -4,15 +4,15 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
-import com.cyberpeace.situation.controller.res.ApiRequestRes;
+import com.cyberpeace.situation.controller.req.ComponentsDataReq;
+import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
+import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
+import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.service.DashboardTemplateService;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
-
-import static com.cyberpeace.situation.dao.entity.DashboardTemplate.getDashboardTemplateLevel;
 
 /**
  * @Author xuxz
@@ -40,7 +37,7 @@ public class DashboardTemplateController {
 
     @ApiOperation("新增态势模板")
     @PostMapping()
-    public BaseRsp<String> createDashboardTemplate(@RequestBody @Validated(Create.class) DashBoardTemplateReq dashBoardTemplateReq){
+    public BaseRsp<String> createDashboardTemplate(@RequestBody @Validated(Create.class) DashBoardTemplateReq dashBoardTemplateReq) {
         return new BaseRsp<>(dashboardTemplateService.createDashboardTemplate(dashBoardTemplateReq));
     }
 
@@ -53,7 +50,7 @@ public class DashboardTemplateController {
     @ApiOperation("获取改态势模板详情")
     @GetMapping("")
     public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
-                                                                String resourceId) {
+                                                                          String resourceId) {
         return new BaseRsp<>(dashboardTemplateService.getDashboardTemplateInfo(resourceId));
     }
 
@@ -71,13 +68,19 @@ public class DashboardTemplateController {
 
     @ApiOperation("获取组件类型")
     @GetMapping("type/list")
-    public BaseRsp<Map<Integer, String>> getComponentType(){
+    public BaseRsp<Map<Integer, String>> getComponentType() {
         return new BaseRsp<>(DashboardComponents.getComponentType());
     }
 
     @ApiOperation("获取模板等级列表")
     @GetMapping("level/list")
-    public BaseRsp<Map<Integer, String>> getDashboardTemplateLevel(){
+    public BaseRsp<Map<Integer, String>> getDashboardTemplateLevel() {
         return new BaseRsp<>(DashboardTemplate.getDashboardTemplateLevel());
+    }
+
+    @ApiOperation("获取echarts数据")
+    @GetMapping("option/data")
+    private BaseRsp<String> getEchartsOption(ComponentsDataReq componentsDataReq){
+        return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));
     }
 }

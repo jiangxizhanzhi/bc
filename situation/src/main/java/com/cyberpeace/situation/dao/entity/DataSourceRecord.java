@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @Date 3/11/2022 上午10:01
  */
 @Data
-@TableName("datasource_record")
+@TableName("situation_datasource_record")
 public class DataSourceRecord extends BaseTable implements Serializable {
 
     @TableId(type = IdType.UUID, value = "resource_id")

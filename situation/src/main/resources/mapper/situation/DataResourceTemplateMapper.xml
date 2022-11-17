@@ -5,9 +5,9 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper">
 
     <select id="getDataSourceType" resultType="java.lang.String">
-        select type from datasource_template
+        select type from situation_datasource_template
     </select>
     <select id="selectByType" resultType="com.cyberpeace.situation.dao.entity.DataSourceTemplate">
-        select * from datasource_template where type = #{type}
+        select * from situation_datasource_template where type = #{type}
     </select>
 </mapper>

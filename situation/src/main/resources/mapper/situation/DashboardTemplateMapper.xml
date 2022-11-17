@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper">
 
     <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.DashboardTemplatePageRes">
-        select * from dashboard_template where 1 = 1
+        select * from situation_dashboard_template where 1 = 1
         <if test="dashboardTemplatePageReq.name != null and dashboardTemplatePageReq.name != ''">
             and name like concat('%', #{dashboardTemplatePageReq.name} ,'%')
         </if>

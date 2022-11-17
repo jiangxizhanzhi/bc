@@ -257,7 +257,7 @@ INSERT INTO `situation_category`
 VALUES (3, '2eec84346538e972a962b165e499f52d', '专项比武', NULL, NULL, NULL);
 
 
-CREATE TABLE  `datasource_template` (
+CREATE TABLE  `situation_datasource_template` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `type` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
     `datasource` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -272,14 +272,14 @@ CREATE TABLE  `datasource_template` (
     ROW_FORMAT = Dynamic;
 
 
-insert into `datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('1','MYSQL','com.mysql.cj.jdbc.Driver','jdbc:mysql://%s:%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8','jdbc:mysql://%s:%s/%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8');
-insert into `datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('2','ORACLE','oracle.jdbc.driver.OracleDriver','jdbc:oracle:thin:@%s:%s','jdbc:oracle:thin:@%s:%s');
-insert into `datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('3','DB2','com.ibm.db2.jcc.DB2Driver','jdbc:db2://%s:%s','jdbc:db2://%s:%s');
-insert into `datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('4','SQLSERVER','com.microsoft.sqlserver.jdbc.SQLServerDriver','jdbc:sqlserver://%s:%s','jdbc:sqlserver://%s:%s');
-insert into `datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('5','HIVE','org.apache.hadoop.hive.jdbc.HiveDriver','jdbc:hive2://%s:%s','jdbc:hive2://%s:%s/%s');
+insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('1','MYSQL','com.mysql.cj.jdbc.Driver','jdbc:mysql://%s:%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8','jdbc:mysql://%s:%s/%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8');
+insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('2','ORACLE','oracle.jdbc.driver.OracleDriver','jdbc:oracle:thin:@%s:%s','jdbc:oracle:thin:@%s:%s');
+insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('3','DB2','com.ibm.db2.jcc.DB2Driver','jdbc:db2://%s:%s','jdbc:db2://%s:%s');
+insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('4','SQLSERVER','com.microsoft.sqlserver.jdbc.SQLServerDriver','jdbc:sqlserver://%s:%s','jdbc:sqlserver://%s:%s');
+insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`) values('5','HIVE','org.apache.hadoop.hive.jdbc.HiveDriver','jdbc:hive2://%s:%s','jdbc:hive2://%s:%s/%s');
 
 
-CREATE TABLE  `datasource_record` (
+CREATE TABLE  `situation_datasource_record` (
                                      `id` int(11) NOT NULL AUTO_INCREMENT,
                                      `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '数据库连接名',
@@ -299,7 +299,7 @@ CREATE TABLE  `datasource_record` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = Dynamic;
 
-CREATE TABLE  `api_request` (
+CREATE TABLE  `situation_api_request` (
                                `id` int(10) NOT NULL AUTO_INCREMENT,
                                `resource_id` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT '资源id',
                                `name` varchar(256) COLLATE utf8_unicode_ci NOT NULL COMMENT 'api名称',
@@ -320,7 +320,7 @@ CREATE TABLE  `api_request` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = Dynamic;
 
-CREATE TABLE `dashboard_template` (
+CREATE TABLE `situation_dashboard_template` (
                                       `id` int(11) NOT NULL AUTO_INCREMENT,
                                       `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '模板名称',
@@ -343,7 +343,7 @@ CREATE TABLE `dashboard_template` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = Dynamic;
 
-CREATE TABLE `dashboard_components_setting` (
+CREATE TABLE `situation_dashboard_components_setting` (
                                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                                 `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                                 `type` int(10) NOT NULL,
@@ -360,3 +360,16 @@ CREATE TABLE `dashboard_components_setting` (
     CHARACTER SET = utf8
     COLLATE = utf8_general_ci
     ROW_FORMAT = Dynamic;
+
+CREATE TABLE `situation_gis` (
+                                 `id` int(10) NOT NULL AUTO_INCREMENT,
+                                 `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                 `type` int(10) NOT NULL COMMENT 'gis类型',
+                                 `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'gis名称',
+                                 `img` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '背景图url',
+                                 `url` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'url',
+                                 `create_time` datetime DEFAULT NULL,
+                                 `update_time` datetime DEFAULT NULL,
+                                 PRIMARY KEY (`id`) USING BTREE,
+                                 UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

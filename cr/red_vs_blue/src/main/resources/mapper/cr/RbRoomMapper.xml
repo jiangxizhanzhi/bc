@@ -3,6 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper">
+
+    <sql id="share_constant">
+        <bind name="PAUSE_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@PAUSE.code"/>
+        <bind name="RUNNING_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@RUNNING.code"/>
+        <bind name="RECOVERY_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@RECOVERY.code"/>
+    </sql>
+
     <select id="selectAll" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbRoom">
         select *
         from cr_rb_room
@@ -137,6 +144,12 @@
         select count(id)
         from cr_rb_room
         where `name` = #{name}
+    </select>
+    <select id="selectAllRunning" resultType="com.cyberpeace.cr.redvsblue.service.context.RbSituation">
+        <include refid="share_constant"/>
+        select name ,resource_id as hash
+        from cr_rb_room
+        where (training_status = ${PAUSE_STATUS_CODE} or training_status = ${RUNNING_STATUS_CODE} or training_status = ${RECOVERY_STATUS_CODE})
     </select>
 
 </mapper>

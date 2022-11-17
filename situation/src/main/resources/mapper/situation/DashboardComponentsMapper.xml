@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper">
     <insert id="batchInsert">
-        insert into dashboard_components_setting (resource_id, type, datasource_id, datasource_setting
+        insert into situation_dashboard_components_setting (resource_id, type, datasource_id, datasource_setting
         ,components_id, component_setting, create_time, update_time) values
         <foreach collection="dashboardComponentsList" separator="," item="dashboardComponents">
             (#{dashboardComponents.resourceId}, #{dashboardComponents.type}, #{dashboardComponents.datasourceId},

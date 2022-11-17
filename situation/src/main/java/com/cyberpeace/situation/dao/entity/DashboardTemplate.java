@@ -15,7 +15,7 @@ import java.util.HashMap;
  * @Date 11/11/2022 上午10:47
  */
 @Data
-@TableName("dashboard_template")
+@TableName("situation_dashboard_template")
 public class DashboardTemplate extends BaseTable {
 
     @TableId(type = IdType.UUID, value = "resource_id")
@@ -50,10 +50,10 @@ public class DashboardTemplate extends BaseTable {
 
     public enum DashboardTemplateLevel{
 
-        TOPOLOGY(1,"拓扑级"),
-        PARK (2,"园区级"),
-        GIS(0,"GIS级");
-
+        TOPOLOGY(2,"拓扑级"),
+        PARK (3,"园区级"),
+        GIS(1,"GIS级"),
+        BASICGIS(0,"基础模板");
 
         @Getter
         private Integer code;
@@ -72,6 +72,7 @@ public class DashboardTemplate extends BaseTable {
         map.put(DashboardTemplateLevel.GIS.code, DashboardTemplateLevel.GIS.desc);
         map.put(DashboardTemplateLevel.PARK.code, DashboardTemplateLevel.PARK.desc);
         map.put(DashboardTemplateLevel.TOPOLOGY.code, DashboardTemplateLevel.TOPOLOGY.desc);
+        map.put(DashboardTemplateLevel.BASICGIS.code, DashboardTemplateLevel.BASICGIS.desc);
         return map;
     }
 

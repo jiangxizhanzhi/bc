@@ -1,10 +1,7 @@
 package com.cyberpeace.situation.service;
 
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.ApiConnectReq;
-import com.cyberpeace.situation.controller.req.ApiRequestPageReq;
-import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
 import com.cyberpeace.situation.controller.res.ApiRequestRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
@@ -53,4 +50,19 @@ public interface DashboardTemplateService {
      * @return
      */
     ListRsp<DashboardTemplatePageRes> getDashboardTemplatePage(DashboardTemplatePageReq dashboardTemplatePageReq);
+
+    /**
+     * 获取所有组件配置id
+     * @param resourceId
+     * @return
+     */
+    List<String> getComponentsList(String resourceId);
+
+    /**
+     * 获取echarts数据结构
+     * @param componentsDataReq
+     * @return
+     */
+    String getComponentsEchartsData(ComponentsDataReq componentsDataReq);
+
 }

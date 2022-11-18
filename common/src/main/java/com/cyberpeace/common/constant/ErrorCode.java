@@ -158,4 +158,7 @@ public interface ErrorCode {
 
 	/** 非法sql */
 	String ILLEGAL_SQL = "100051";
+
+	/** 不支持json格式 */
+	String UNSUPPORTED_JSON_TYPE = "100052";
 }

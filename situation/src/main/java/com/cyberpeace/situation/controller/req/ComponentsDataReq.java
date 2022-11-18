@@ -15,12 +15,6 @@ public class ComponentsDataReq implements Serializable {
     @ApiModelProperty("配置资源id")
     private String resourceId;
 
-    @ApiModelProperty("任务id")
-    private String missionId;
-
-    @ApiModelProperty("科目id")
-    private String courseId;
-
     @ApiModelProperty("数据源配置")
     private String dataSourceComponent;
 
@@ -29,4 +23,10 @@ public class ComponentsDataReq implements Serializable {
 
     @ApiModelProperty("度量")
     private String measure;
+
+    @ApiModelProperty("分组")
+    private String groups;
+
+    @ApiModelProperty("自定义参数列表")
+    private String customParams;
 }

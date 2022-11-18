@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
@@ -75,5 +76,11 @@ public class ApiRequestController {
     @GetMapping("type/list")
     public BaseRsp<List<String>> getRequestType(){
         return new BaseRsp<>(ApiRequestType.getRequestType());
+    }
+
+    @ApiOperation("获取api连接原始数据")
+    @PostMapping("source/data")
+    public BaseRsp<JSONObject> getConnectSourceData(@RequestBody @Validated ApiConnectReq apiConnectReq){
+        return new BaseRsp<>(JSONObject.parseObject(apiRequestService.apiConnectTest(apiConnectReq)));
     }
 }

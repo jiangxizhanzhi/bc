@@ -52,6 +52,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_RECREATE_URL;
 
+	private String NODE_POWER_ON_URL;
+
+	private String NODE_POWER_OFF_URL;
+
 	private String FLOW_START_URL;
 
 	private String FLOW_STOP_URL;
@@ -116,6 +120,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 
 		NODE_RECREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.recreate");
+
+		NODE_POWER_ON_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.power.on");
+
+		NODE_POWER_OFF_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.power.off");
 
 		FLOW_START_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.start");
 
@@ -207,6 +215,16 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean recreateNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_RECREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean powerOn(NodeOpsContext nodeOpsContext) {
+		return HttpClientUtil.post(NODE_POWER_ON_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public Boolean powerOff(NodeOpsContext nodeOpsContext) {
+		return HttpClientUtil.post(NODE_POWER_OFF_URL, nodeOpsContext, Boolean.class);
 	}
 
 	@Override

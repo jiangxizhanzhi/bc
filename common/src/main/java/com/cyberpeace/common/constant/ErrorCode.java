@@ -149,4 +149,10 @@ public interface ErrorCode {
 
 	/** 文件删除失败*/
 	String FILE_DELETE_FAILED = "100048";
+
+	/** 节点开机失败*/
+	String FAILED_TO_POWER_ON_NODE = "100049";
+
+	/** 节点关机失败*/
+	String FAILED_TO_POWER_OFF_NODE = "100050";
 }

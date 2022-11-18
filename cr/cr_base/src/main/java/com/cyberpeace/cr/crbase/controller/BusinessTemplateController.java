@@ -327,6 +327,34 @@ public class BusinessTemplateController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("后台测试场景开机节点")
+	@PostMapping("/testScene/node/powerOn")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> powerOn(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
+		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.powerOn(template.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("后台测试场景关机节点")
+	@PostMapping("/testScene/node/powerOff")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> powerOff(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
+		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.powerOff(template.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,

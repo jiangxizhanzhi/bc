@@ -82,6 +82,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean recreateNode(String localSceneId, String nodeId);
 
+	Boolean powerOn(String localSceneId, String nodeId);
+
+	Boolean powerOff(String localSceneId, String nodeId);
+
 	Boolean startFlow(LocalScene localScene, String nodeId, String flowId);
 
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);

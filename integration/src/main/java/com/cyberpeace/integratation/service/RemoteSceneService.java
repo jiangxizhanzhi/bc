@@ -35,6 +35,10 @@ public interface RemoteSceneService {
 
 	Boolean recreateNode(NodeOpsContext nodeOpsContext);
 
+	Boolean powerOn(NodeOpsContext nodeOpsContext);
+
+	Boolean powerOff(NodeOpsContext nodeOpsContext);
+
 	JSONObject sceneDump(SceneDumpContext sceneDumpContext);
 
 	/**

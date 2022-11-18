@@ -182,6 +182,40 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
+	public Boolean powerOn(String localSceneId, String nodeId) {
+		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene {}", localSceneId);
+			throw new BusinessException(ErrorCode.FAILED_TO_POWER_ON_NODE);
+		}
+		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+		Boolean result = remoteSceneService.powerOn(nodeOpsContext);
+		if (!result) {
+			log.error("failed to power on node [{}] in scene [{}]", nodeId,
+					localScene.getMpSceneId());
+			throw new BusinessException(ErrorCode.FAILED_TO_POWER_ON_NODE);
+		}
+		return true;
+	}
+
+	@Override
+	public Boolean powerOff(String localSceneId, String nodeId) {
+		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene {}", localSceneId);
+			throw new BusinessException(ErrorCode.FAILED_TO_POWER_OFF_NODE);
+		}
+		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+		Boolean result = remoteSceneService.powerOff(nodeOpsContext);
+		if (!result) {
+			log.error("failed to power off node [{}] in scene [{}]", nodeId,
+					localScene.getMpSceneId());
+			throw new BusinessException(ErrorCode.FAILED_TO_POWER_OFF_NODE);
+		}
+		return true;
+	}
+
+	@Override
 	public Boolean startFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
 		Boolean result = remoteSceneService.startFlow(context);

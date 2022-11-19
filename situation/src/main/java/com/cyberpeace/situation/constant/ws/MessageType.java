@@ -17,7 +17,8 @@ public enum MessageType {
 	NodeStatus(7, "link_status"),
 	AttackSchedule(8,"attack_schedule"),
 	SceneConfig(9,"scene_config"),
-	ChangePara(10, "change_para");
+	ChangePara(10, "change_para"),
+	TaskEvent(11,"task_event");
 
 	@Getter
 	private Integer code;

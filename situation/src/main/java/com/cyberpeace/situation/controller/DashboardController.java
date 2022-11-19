@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.context.TaskEventContext;
 
 import cn.hutool.json.JSONObject;
 import io.swagger.annotations.Api;
@@ -46,6 +48,25 @@ public class DashboardController {
 				+ dashboardChangeReq.getFeatureId();
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("获取最新的任务事件")
+	@GetMapping("/event/task/")
+	public BaseRsp<Boolean> getTaskEvent(
+			@ApiParam(name = "feature_id", value = "特征ID",
+					required = true) @RequestParam(value = "feature_id") String featureId,
+			@ApiParam(name = "dashboard_id", value = "大屏ID",
+					required = true) @RequestParam(value = "dashboard_id") String dashboardId,
+			@ApiParam(name = "sub_range_id", value = "分靶场ID",
+					required = false) @RequestParam(value = "sub_range_id") String subRangeId) {
+
+		TaskEventContext taskEventContext = new TaskEventContext();
+		WsMessage<TaskEventContext> wsMessage = new WsMessage<>(MessageType.TaskEvent.getDesc(),
+				taskEventContext);
+		String sceneId = dashboardId + "_" + featureId;
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(true);
+
 	}
 
 }

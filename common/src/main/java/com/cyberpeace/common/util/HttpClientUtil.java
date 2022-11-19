@@ -269,7 +269,9 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static boolean isSuccess(BaseRsp baseRsp) {
-		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX);
+		return StringUtils.endsWith(baseRsp.getCode(), SUCCESS_POSTFIX)
+				// 兼容外部平台
+				|| baseRsp.getCode().equals("0");
 	}
 
 	/**

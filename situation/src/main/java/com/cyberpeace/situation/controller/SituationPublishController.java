@@ -14,8 +14,10 @@ import com.cyberpeace.integratation.model.situation.SituationTask;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
+import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
@@ -88,7 +90,7 @@ public class SituationPublishController {
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance>
 			setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
-
+		// TODO Gis等数据是否需要大屏 存入模板实例
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq);
 
 
@@ -132,9 +134,10 @@ public class SituationPublishController {
 		List<SituationPlan> plans = remoteSituationService.getPlans();
 		Map<String, SituationPlan> planMaps = plans.stream().collect(Collectors.toMap(SituationPlan::getResourceId, plan -> plan));
 		List<SituationTask> tasks = remoteSituationService.getTasks(null, null);
-		Map<String, SituationTask> taskMaps = tasks.stream().collect(Collectors.toMap(SituationTask::getResourceId, task -> task));
-		List<SituationSubject> subjects = remoteSituationService.getSubjectByTask(null);
-		Map<String, SituationSubject> subjetcMaps = subjects.stream().collect(Collectors.toMap(SituationSubject::getResourceId, subject -> subject));
+		Map<String, SituationTask> taskMaps = tasks.stream().collect(Collectors.toMap(SituationTask::getTask_id, task -> task));
+		List<String> taskIds = StreamApiUtils.getColumn(res, SituationPublishInstance::getTaskId);
+		List<SituationSubject> subjects = remoteSituationService.getSubjectByTasks(taskIds);
+		Map<String, SituationSubject> subjectMaps = subjects.stream().collect(Collectors.toMap(SituationSubject::getSubject_id, subject -> subject));
 		LambdaQueryWrapper<SituationCategory> categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		List<SituationCategory> situationCategories = situationCategoryMapper.selectList(categoryLambdaQueryWrapper);
 		Map<String, SituationCategory> collect = situationCategories.stream().collect(Collectors.toMap(SituationCategory::getResourceId, situation -> situation));
@@ -146,12 +149,12 @@ public class SituationPublishController {
 
 		res.forEach(s-> {
 			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
-//			String planName = planMaps.get(s.getPlanId()).getName();
-//			copy.setPlanName(StringUtils.isBlank(planName) ? "" : planName);
-//			String taskName = taskMaps.get(s.getTaskId()).getName();
-//			copy.setTaskName(StringUtils.isBlank(taskName) ? "" : taskName);
-//			String subjectName = subjetcMaps.get(s.getSubjectId()).getName();
-//			copy.setSubjectName(StringUtils.isBlank(subjectName) ? "" : subjectName);
+			String planName = null == planMaps.get(s.getPlanId()) ? "":planMaps.get(s.getPlanId()).getName();
+			copy.setPlanName(planName);
+			String taskName = null != taskMaps.get(s.getTaskId()) ? "" : taskMaps.get(s.getTaskId()).getTask_name();
+			copy.setTaskName(taskName);
+			String subjectName = null != subjectMaps.get(s.getSubjectId()) ? "" : subjectMaps.get(s.getSubjectId()).getSubject_name();
+			copy.setSubjectName(subjectName);
 			copy.setStatus(map.get(s.getStatus()));
 			copy.setCategory(null == s.getCategory() || null == collect.get(s.getCategory()) ? "" : collect.get(s.getCategory()).getName());
 			copy.setTemplateName(null == s.getTemplateId() ||null == dashboardTemplateMap.get(s.getTemplateId()) ? "" :dashboardTemplateMap.get(s.getTemplateId()).getName());
@@ -241,17 +244,21 @@ public class SituationPublishController {
 
 	@ApiOperation("态势实例预览")
 	@PostMapping("preview")
-	public void previewSituationPublishInstance(HttpServletResponse res, @RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) throws IOException {
+	public SituationPublishInstanceReviewRes previewSituationPublishInstance(HttpServletResponse res, @RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) throws IOException {
 		String resourceId = situationInstanceReleaseReq.getResourceId();
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		String templateId = situationPublishInstances.getTemplateId();
-		dashboardTemplateService.getDashboardTemplateInfo(templateId);
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(templateId);
+		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
 		// TODO 大屏地址
-		res.sendRedirect(""+ templateId);
+//		res.sendRedirect("page/cr/admin/situation-release/preview/"+ templateId);
+		copy.setTemplateInfo(dashboardTemplateInfo);
+		return copy;
 	}
+
 
 	@ApiOperation("想定方案list")
 	@GetMapping("plan")
@@ -271,12 +278,6 @@ public class SituationPublishController {
 	@PostMapping("plan")
 	public List<SituationSubject> getSubjects(SituationSubjectFilterReq situationSubjectFilterReq) {
 		String taskId = situationSubjectFilterReq.getResourceId();
-		if (!StringUtils.isBlank(taskId)){
-			List<SituationTask> tasks = remoteSituationService.getTasks(null, taskId);
-			if(tasks.isEmpty()){
-				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-			}
-		}
 		return remoteSituationService.getSubjectByTask(taskId);
 	}
 

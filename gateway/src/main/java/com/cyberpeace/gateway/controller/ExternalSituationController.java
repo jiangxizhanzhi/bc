@@ -1,9 +1,14 @@
 package com.cyberpeace.gateway.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.gateway.controller.req.PlanBindSituationReq;
+import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +29,9 @@ public class ExternalSituationController {
 	@Autowired
 	private TopoHandlerService topoHandlerService;
 
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
@@ -40,6 +48,21 @@ public class ExternalSituationController {
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 
 		return new BaseRsp<>(situationTopo);
+	}
+
+	@CrossOrigin("*")
+	@ApiOperation("想定方案绑定态势大屏")
+	@PostMapping("plan_bind_situation")
+	public BaseRsp<SituationPublishInstance> planBindSituationPublishInstance(@RequestBody PlanBindSituationReq planBindSituationReq) {
+
+		SituationPublishInstance copy = BeanUtils.copy(planBindSituationReq, SituationPublishInstance.class);
+		SituationPublishInstanceAddReq copy1 = BeanUtils.copy(copy, SituationPublishInstanceAddReq.class);
+		// TODO 校验输入 任务方案 科目等id字段
+		situationPublishInstanceService.checkPlan(copy1);
+		// 处理态势数据
+		// TODO 获取当前存入实例的id 提前生成一个 再存入
+		situationPublishInstanceService.save(copy);
+		return new BaseRsp<>(copy);
 	}
 
 }

@@ -97,6 +97,21 @@ public class ClassroomValidateHandler {
 	}
 
 	/**
+	 * 校验课时和组织相同的课时存在 并过滤自己本身
+	 * @param lessonId
+	 * @param orgId
+	 * @param itself
+	 */
+	public Classroom validateClassroomLessonExistExcludeItself(String lessonId, String orgId, Classroom itself) {
+		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
+		if (null != classroom && !classroom.equals(itself)) {
+			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
+		}
+
+		return classroom;
+	}
+
+	/**
 	 * 校验课程表开始和结束时间
 	 * @param startTime
 	 * @param endTime

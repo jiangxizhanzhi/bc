@@ -49,4 +49,7 @@ public interface SituationErrorCode {
 
 	/** 当前场景节点无坐标 */
 	String NODE_HAS_NO_COORDINATES = "104016";
+
+	/** 找不到对应动效 */
+	String CANNOT_FIND_DYNAMIC = "104017";
 }

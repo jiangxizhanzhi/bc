@@ -65,13 +65,14 @@ public class AdminCourseImportController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("课程导出")
-	@GetMapping("/rm/course/export")
-	public BaseRsp<String> export(@RequestParam(value = "resource_id") String resourceId,
-			@RequestParam(value = "is_dump_topo", required = false,
-					defaultValue = "0") Integer isDumpTopo) {
-		boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
-		String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal);
+    @ApiOperation("课程导出")
+    @GetMapping("/rm/course/export")
+    public BaseRsp<String> export(
+            @RequestParam(value = "resource_id") String resourceId,
+            @RequestParam(value = "is_dump_topo", required = false, defaultValue = "0") Integer isDumpTopo,
+            @RequestParam(value = "scene_number") String sceneNumber) {
+        boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
+        String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal, sceneNumber);
 
 		return new BaseRsp<>(filePath);
 	}

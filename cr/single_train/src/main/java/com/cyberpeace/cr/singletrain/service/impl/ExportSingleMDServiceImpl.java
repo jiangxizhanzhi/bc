@@ -48,7 +48,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	@Override
-	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path) {
+	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber) {
 
 		if(businessTemplateList.size() == 0){
 			return;
@@ -87,7 +87,7 @@ public class ExportSingleMDServiceImpl extends ExportTrainMDServiceImpl {
 			//场景信息导出
 			log.info("start export single training [{}] scene", businessTemplate.getName());
 			exportScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
-					file.getPath() + File.separator + ENV + File.separator + IMAGES);
+					file.getPath() + File.separator + ENV + File.separator + IMAGES, sceneNumber);
 			log.info("export single training [{}] scene successfully", businessTemplate.getName());
 
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);

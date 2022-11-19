@@ -127,6 +127,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
@@ -290,14 +300,33 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
-                    <warName>ojj</warName>
-                    <packagingExcludes>
-                        WEB-INF/classes/env/**
-                    </packagingExcludes>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+            <plugin>
+                <!-- https://gitee.com/roseboy/classfinal -->
+                <groupId>net.roseboy</groupId>
+                <artifactId>classfinal-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <!--                    无密码模式-->
+                    <password>bc-3b0fa6d402e34949997272131ad23dfb</password><!--加密打包之后pom.xml会被删除，不用担心在jar包里找到此密码-->
+                    <packages>com.cyberpeace</packages>
+                    <excludes>org.spring,org,com.rabbitmq,javax</excludes>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>classFinal</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
     </build>

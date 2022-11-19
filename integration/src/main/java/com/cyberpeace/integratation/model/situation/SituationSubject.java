@@ -7,9 +7,11 @@ import java.io.Serializable;
 @Data
 public class SituationSubject implements Serializable {
 
-	private String name;
+	private String subject_name;
 
-	private String resourceId;
+	private String subject_id;
 
-	private String taskId;
+	private String subject_status;
+
+	private String time;
 }

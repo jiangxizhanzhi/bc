@@ -11,6 +11,13 @@ public interface RemoteSituationService {
 
 	/**
 	 * 根据任务获取科目list
+	 * @param taskIds 任务id
+	 * @return
+	 */
+	List<SituationSubject> getSubjectByTasks(List<String> taskIds);
+
+	/**
+	 * 根据任务获取科目list
 	 * @param taskId 任务id
 	 * @return
 	 */

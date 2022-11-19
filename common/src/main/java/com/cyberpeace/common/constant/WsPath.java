@@ -36,7 +36,7 @@ public class WsPath {
 
 	public static final String ROOM_SCENE_FIFTEEN_MIN_TIPS = "/ws/oj/classroom/scene/tips";
 
-	public static final String SITUATION = "/ws/situation/scene";
+	public static final String SITUATION = "/ws/dashboard";
 
 	private static Set<String> cache = Sets.newHashSet();
 

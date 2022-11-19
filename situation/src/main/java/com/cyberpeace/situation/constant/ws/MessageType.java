@@ -16,7 +16,8 @@ public enum MessageType {
 	AttackEffect(6, "attack_effect"),
 	NodeStatus(7, "link_status"),
 	AttackSchedule(8,"attack_schedule"),
-	SceneConfig(9,"scene_config");
+	SceneConfig(9,"scene_config"),
+	ChangePara(10, "change_para");
 
 	@Getter
 	private Integer code;

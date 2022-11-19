@@ -1,46 +1,44 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.practice.service.PracticeCategoryService;
-import com.cyberpeace.oj.practice.service.bo.*;
-import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
-import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
@@ -52,13 +50,18 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
+import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
+import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
+import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 
 @Service
 @Slf4j
@@ -376,8 +379,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				rowData -> excelDataToEntity(rowData, practiceSet, null));
 
 		// 数据去重
-		return StreamApiUtils.distinctByColumn(theoryList, practiceTheory -> practiceTheory.getContent()
-				.toUpperCase(Locale.ROOT));
+		return StreamApiUtils.distinctByColumn(theoryList,
+				practiceTheory -> practiceTheory.getContent().toUpperCase(Locale.ROOT));
 	}
 
 	@Override
@@ -522,7 +525,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中题型=当前代码枚举值+1
 		Integer theoryType = handleTheoryType(excelRowData.get(1));
 		practiceTheory.setTheoryType(theoryType);
-		
+
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(Difficulty.PRIMARY.getCode());
 
@@ -626,10 +629,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			String[] answerArray = answer.split("");
 			answer = String.join("|", answerArray);
 		}
-		
+
 		return answer;
 	}
-	
+
 	/**
 	 * 处理习题类型
 	 * @param theoryType 习题类型
@@ -651,15 +654,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return realType;
 	}
 
-
-
 	/**
 	 * excel数据转化为实体类
 	 *
 	 * @param excelRowData
 	 * @return
 	 */
-	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet, String userId) {
+	private PracticeTheory excelDataToEntity(List<String> excelRowData, PracticeSet practiceSet,
+			String userId) {
 
 		// 数据长度为零 返回空过滤掉
 		if (StringUtils.isBlank(String.join("", excelRowData))) {
@@ -679,7 +681,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
 		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleTheoryType(String.valueOf(Integer.parseInt(excelRowData.get(3)) - 1));
+		Integer theoryType = handleTheoryType(
+				String.valueOf(Integer.parseInt(excelRowData.get(3)) - 1));
 		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
@@ -697,7 +700,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			category.setResourceId(IDGeneratorUtil.getID());
 			category.setCode(category.getResourceId());
 			// 跟页面导入区分人员
-			category.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+			category.setCreateUserId(
+					null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
 			category.setName(excelRowData.get(1));
 			practiceCategoryMapper.insert(category);
@@ -736,7 +740,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
 				.getCode().intValue()) {
 			String shortAnswer = excelRowData.get(4);
-			if(StringUtils.isBlank(shortAnswer)){
+			if (StringUtils.isBlank(shortAnswer)) {
 				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
 			}
 			practiceTheory.setAnswer(shortAnswer);
@@ -746,7 +750,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
 		practiceTheory.setBuiltin(CommonConstant.TRUE);
 		// 跟页面导入区分人员
-		practiceTheory.setCreateUserId(null==userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+		practiceTheory
+				.setCreateUserId(null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
 		practiceTheory.setIsPublic(CommonConstant.TRUE);
 		practiceTheory.setPracticeSetId(practiceSet.getResourceId());
 		practiceTheory.setResourceId(IDGeneratorUtil.getID());
@@ -763,8 +768,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext) {
-
+	public ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo,
+			AuthContext authContext) {
 
 		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(setIds)) {
@@ -820,4 +825,434 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return JsonUtil.toJsonString(options);
 	}
 
+	@Override
+	public List<PracticeTheory> parseLessonPracticeTheory(String path) {
+		// 获取excel数据
+		ExcelDataHandler dataHandler = new ExcelDataHandler(path, CommonConstant.ZERO);
+
+		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+
+		dataHandler.closeIO();
+		// 数 据类型转换
+		List<PracticeTheory> theoryList = StreamApiUtils.map(sheetData,
+				rowData -> excelDataToLessonTheory(rowData, null, null));
+
+		transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+			@Override
+			public Boolean doInTransaction(TransactionStatus status) {
+				// saveOrUpdate(practiceSet);
+				return saveBatch(theoryList);
+			}
+		});
+
+		return theoryList;
+	}
+
+	@Override
+	public List<PracticeTheory> importMdTheoryPractice(String filepath,
+			MdTheoryPractice mdTheoryPractice) {
+
+		List<PracticeTheory> theories = mdDataToEntity(filepath, mdTheoryPractice.getSingleList(),
+				PracticeTheory.TheoryType.SINGLE.getCode());
+		theories.addAll(mdDataToEntity(filepath, mdTheoryPractice.getMultipleList(),
+				PracticeTheory.TheoryType.MULTIPLE.getCode()));
+		theories.addAll(mdDataToEntity(filepath, mdTheoryPractice.getBlankList(),
+				PracticeTheory.TheoryType.FILL_BLANK.getCode()));
+		theories.addAll(mdDataToEntity(filepath, mdTheoryPractice.getJudgeList(),
+				PracticeTheory.TheoryType.JUDGMENT.getCode()));
+		theories.addAll(mdDataToEntity(filepath, mdTheoryPractice.getAnwserList(),
+				PracticeTheory.TheoryType.SHORT_ANSWER.getCode()));
+
+		saveOrUpdateBatch(theories);
+
+		return theories;
+
+	}
+
+	@Override
+	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
+
+		MdTheoryPractice mdTheoryPractice = new MdTheoryPractice();
+
+		List<TheoryBaseMd> singleList = Lists.newArrayList();
+
+		List<TheoryBaseMd> multipleList = Lists.newArrayList();
+
+		List<TheoryBaseMd> blankList = Lists.newArrayList();
+
+		List<TheoryBaseMd> anwserList = Lists.newArrayList();
+
+		List<TheoryBaseMd> judgeList = Lists.newArrayList();
+
+		for (PracticeTheory theory : theories) {
+			Integer code = theory.getTheoryType();
+			TheoryBaseMd theoryBaseMd = BeanUtils.copy(theory, TheoryBaseMd.class);
+
+			String difficulty = EnumUtils.getEnumDescByCode(theory.getDifficulty(),
+					Difficulty.class);
+			theoryBaseMd.setDifficulty(difficulty);
+			// 答案增加之前两个空格和换行
+			theoryBaseMd.setAnswer("  " + theory.getAnswer() + System.lineSeparator());
+
+			// 分类数据,有可能为空
+			String category = "";
+			try {
+				CategoryListBo categoryListBo = practiceCategoryService
+						.selectById(theory.getCategoryId(), false);
+				category = categoryListBo.getName();
+
+			} catch (Exception e) {
+				log.error("theory category is null . theoryId=[{}]", theory.getResourceId());
+
+			}
+
+			theoryBaseMd.setCategory(category);
+
+			// 单选需要获取选项内容
+
+			if (PracticeTheory.TheoryType.SINGLE.getCode().equals(code)) {
+				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+				singleList.add(theoryBaseMd);
+			}
+
+			// 多选需要获取选项内容,修改答案
+			if (PracticeTheory.TheoryType.MULTIPLE.getCode().equals(code)) {
+				changeTitleToTheoryBaseMd(theory, theoryBaseMd);
+
+				String anwser = theory.getAnswer().replace("|", "");
+
+				theoryBaseMd.setAnswer(anwser);
+				multipleList.add(theoryBaseMd);
+
+			}
+
+			// 填空需要修改答案
+			if (PracticeTheory.TheoryType.FILL_BLANK.getCode().equals(code)) {
+
+				List<BlankAnswer> blankAnswers = JsonUtil.toJsonObjectArray(theory.getAnswer(),
+						BlankAnswer.class);
+
+				String answer = "";
+
+				for (int i = 0; i < blankAnswers.size(); i++) {
+					String answerValue = blankAnswers.get(i).getValue();
+					answer += "  " + (i + 1) + ". " + answerValue + System.lineSeparator();
+
+				}
+
+				theoryBaseMd.setAnswer(answer.trim());
+				blankList.add(theoryBaseMd);
+
+			}
+			// 判断需要修改答案
+			if (PracticeTheory.TheoryType.JUDGMENT.getCode().equals(code)) {
+
+				String answer = theory.getAnswer().equals("A") ? "T" : "F";
+
+				theoryBaseMd.setAnswer(answer);
+
+				judgeList.add(theoryBaseMd);
+
+			}
+
+			// 简答
+			if (PracticeTheory.TheoryType.SHORT_ANSWER.getCode().equals(code)) {
+
+				anwserList.add(theoryBaseMd);
+
+			}
+			theoryBaseMd
+					.setTitle(MdTheoryParser.setRelativeFilePath(path, theoryBaseMd.getTitle()));
+
+		}
+		mdTheoryPractice.setSingleList(singleList);
+		mdTheoryPractice.setMultipleList(multipleList);
+		mdTheoryPractice.setBlankList(blankList);
+		mdTheoryPractice.setJudgeList(judgeList);
+		mdTheoryPractice.setAnwserList(anwserList);
+
+		return mdTheoryPractice;
+	}
+
+	public List<PracticeTheory> mdDataToEntity(String filepath, List<TheoryBaseMd> theoryBaseMdList,
+			Integer code) {
+
+		List<PracticeTheory> practiceTheories = StreamApiUtils.map(theoryBaseMdList,
+				theoryBaseMd -> {
+					PracticeTheory practiceTheory = BeanUtils.copy(theoryBaseMd,
+							PracticeTheory.class);
+
+					practiceTheory.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+					practiceTheory.setTheoryType(code);
+					practiceTheory.setBuiltin(CommonConstant.TRUE);
+					practiceTheory.setScore(1.0);
+					practiceTheory.setAnswer(theoryBaseMd.getAnswer().trim());
+					practiceTheory.setIsPublic(true);
+					practiceTheory.setScore(0.0);
+					theoryBaseMd.setTitle(
+							MdTheoryParser.setNewFIlePath(filepath, theoryBaseMd.getTitle()));
+					practiceTheory.setTitle(theoryBaseMd.getTitle());
+					practiceTheory.setContent(theoryBaseMd.getTitle());
+
+					Integer difficulty = EnumUtils.getEnumCodeByDesc(theoryBaseMd.getDifficulty(),
+							Difficulty.class);
+					practiceTheory.setDifficulty(difficulty);
+
+					// 分类数据
+					String categoryId = practiceCategoryService.selectCategoryOrCreate(
+							theoryBaseMd.getCategory(),
+							PracticeCategory.PracticeType.THEORY.getCode(),
+							UserInfoContext.getUserContext().getUserId());
+
+					practiceTheory.setCategoryId(categoryId);
+
+					// 单选需要获取选项内容
+					if (PracticeTheory.TheoryType.SINGLE.getCode().equals(code)) {
+						changeTitleToTheory(practiceTheory, theoryBaseMd);
+					}
+
+					// 多选需要获取选项内容,修改答案
+					if (PracticeTheory.TheoryType.MULTIPLE.getCode().equals(code)) {
+						changeTitleToTheory(practiceTheory, theoryBaseMd);
+
+						String[] split = practiceTheory.getAnswer().split("");
+
+						for (int i = 1; i < split.length; i++) {
+							split[0] += "|" + split[i];
+						}
+						practiceTheory.setAnswer(split[0]);
+					}
+
+					// 填空需要修改答案
+					if (PracticeTheory.TheoryType.FILL_BLANK.getCode().equals(code)) {
+
+						String[] split = practiceTheory.getAnswer().split("\n");
+						List<BlankAnswer> blankAnswers = Lists.newArrayList();
+						int[] weights = getWeight(split);
+						for (int i = 0; i < split.length; i++) {
+							String contentIndex = split[i];
+							Pattern r = Pattern.compile(PatternConstant.BLANK_ANWSER_STR);
+							Matcher m = r.matcher(contentIndex);
+
+							BlankAnswer blankAnswer = new BlankAnswer();
+
+							blankAnswer.setWeight(weights[i]);
+
+							blankAnswers.add(blankAnswer);
+							if (m.matches()) {
+								blankAnswer.setValue(m.group(1));
+							}
+						}
+
+						practiceTheory.setAnswer(JsonUtil.toJsonString(blankAnswers));
+						practiceTheory.setBlank(JsonUtil.toJsonString(blankAnswers));
+
+					}
+					// 判断需要修改答案
+					if (PracticeTheory.TheoryType.JUDGMENT.getCode().equals(code)) {
+
+						String answer = practiceTheory.getAnswer().equals("T") ? "A" : "B";
+
+						practiceTheory.setAnswer(answer);
+
+					}
+					String practiceId = practiceTheoryMapper.selectByContent("",
+							practiceTheory.getContent());
+					if (StringUtils.isNotBlank(practiceId)) {
+						log.error("Practice theory exist! practice_id=[{}], practice_name=[{}]",
+								practiceId, practiceTheory.getContent());
+						return null;
+					}
+
+					return practiceTheory;
+				});
+		return practiceTheories;
+
+	}
+
+	private static int[] getWeight(String[] split) {
+		int[] weights = new int[split.length];
+		int m = 100 / split.length, i = 0, sum = 0;
+		for (; i < split.length - 1; i++) {
+			weights[i] = m;
+			sum += m;
+		}
+		weights[i] = 100 - sum;
+
+		return weights;
+	}
+
+	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
+		String[] split = theoryBaseMd.getTitle().split("\n");
+		List<String> content = Arrays.asList(split);
+		Map<String, String> optionMap = JsonUtil.toJsonObject(theory.getOption(), TreeMap.class);
+		String title = "";
+
+		title += "    " + theory.getTitle() + System.lineSeparator() + System.lineSeparator();
+
+		Iterator iterator = optionMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
+			String value = optionMap.get(key).trim();
+
+			title += "    " + key + ". " + value + System.lineSeparator() + System.lineSeparator();
+		}
+
+		theoryBaseMd.setTitle(title);
+
+	}
+
+	private static void changeTitleToTheory(PracticeTheory practiceTheory,
+			TheoryBaseMd theoryBaseMd) {
+
+		String[] split = theoryBaseMd.getTitle().split("\n");
+		List<String> content = Arrays.asList(split);
+		Map<String, String> titleMap = Maps.newTreeMap();
+		String title = "";
+
+		// 遍历content数据
+		String key = CommonConstant.BLANK_STR;
+		Integer startIndex = CommonConstant.NEGATIVE_ONE;
+
+		for (int index = 0; index < content.size(); index++) {
+
+			String contentIndex = content.get(index);
+			Pattern r = Pattern.compile(PatternConstant.THEORY_CHOICE_ANSWER);
+			Matcher m = r.matcher(contentIndex);
+
+			if (m.matches()) {
+				// 标题数据获取
+				if (CommonConstant.BLANK_STR.equals(key)) {
+					startIndex = 0;
+					title = ListUtil.joinLineSeparatorList(content, startIndex, index).trim();
+
+				} else if (startIndex != CommonConstant.NEGATIVE_ONE) {
+					String value = ListUtil.joinLineSeparatorList(content, startIndex, index);
+
+					titleMap.put(key, value.trim().substring(3));
+				}
+
+				// 数据校验
+				key = m.group(1);
+				startIndex = index;
+			}
+
+			if (index + 1 == content.size()) {
+				if (startIndex == -1) {
+					log.error("Pattern not match", content.toString());
+					startIndex = 0;
+				}
+				String value = ListUtil.joinLineSeparatorList(content, startIndex, content.size());
+				titleMap.put(key, value.trim().substring(3));
+			}
+		}
+
+		practiceTheory.setTitle(title);
+		practiceTheory.setContent(title);
+
+		practiceTheory.setOption(JsonUtil.toJsonString(titleMap));
+
+	}
+
+	private PracticeTheory excelDataToLessonTheory(List<String> excelRowData,
+			PracticeSet practiceSet, String userId) {
+
+		// 数据长度为零 返回空过滤掉
+		if (StringUtils.isBlank(String.join("", excelRowData))) {
+			return null;
+		}
+
+		PracticeTheory practiceTheory = new PracticeTheory();
+		practiceTheory.setContent(excelRowData.get(0));
+		practiceTheory.setTitle(excelRowData.get(0));
+
+		// String practiceId =
+		// practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
+		// practiceTheory.getContent());
+		// if (StringUtils.isNotBlank(practiceId)) {
+		// return null;
+		// }
+
+		// excel数据中难度=比当前代码枚举值+1
+		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
+		// excel数据中题型=当前代码枚举值+1
+		Integer theoryType = handleTheoryType(
+				String.valueOf(Integer.parseInt(excelRowData.get(3))));
+		practiceTheory.setTheoryType(theoryType);
+
+		// 分类编号设置 不存在创建
+		String categoryName = excelRowData.get(1).trim();
+		if (StringUtils.isBlank(categoryName)) {
+			log.error("Practice category is empty! operation_data=[{}]",
+					JsonUtil.toJsonString(excelRowData));
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+		}
+
+		String categoryId = practiceCategoryMapper
+				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);
+		if (StringUtils.isBlank(categoryId)) {
+			PracticeCategory category = new PracticeCategory();
+			category.setResourceId(IDGeneratorUtil.getID());
+			category.setCode(category.getResourceId());
+			// 跟页面导入区分人员
+			category.setCreateUserId(
+					null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+			category.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			category.setName(excelRowData.get(1));
+			practiceCategoryMapper.insert(category);
+
+			practiceTheory.setCategoryId(category.getResourceId());
+		} else {
+			practiceTheory.setCategoryId(categoryId);
+		}
+
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SINGLE.getCode()
+				|| practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.MULTIPLE
+						.getCode().intValue()) {
+			String answer = handleChoiceAnswer(excelRowData.get(4));
+			String option = formatOption(excelRowData, 5);
+			practiceTheory.setOption(option);
+			practiceTheory.setAnswer(answer);
+		}
+
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.JUDGMENT
+				.getCode().intValue()) {
+			practiceValidateHandler.validateJudgementAnswer(excelRowData.get(4));
+			practiceTheory.setAnswer(excelRowData.get(4));
+			practiceTheory.setOption(JsonUtil.toJsonString(null));
+		}
+
+		// 参照页面导入解析填空题
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+				.getCode().intValue()) {
+			String blankAnswers = handleFillBlank(excelRowData, 3);
+			practiceTheory.setBlank(blankAnswers);
+			practiceTheory.setAnswer(blankAnswers);
+
+		}
+
+		// 参考页面导入解析简答题
+		if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+				.getCode().intValue()) {
+			String shortAnswer = excelRowData.get(4);
+			if (StringUtils.isBlank(shortAnswer)) {
+				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
+			}
+			practiceTheory.setAnswer(shortAnswer);
+
+		}
+
+		practiceTheory.setScore(CommonConstant.ONE.doubleValue());
+		practiceTheory.setBuiltin(CommonConstant.TRUE);
+		// 跟页面导入区分人员
+		practiceTheory
+				.setCreateUserId(null == userId ? ResourceImportConstant.SUPER_ADMIN_HASH : userId);
+		practiceTheory.setIsPublic(CommonConstant.TRUE);
+		// practiceTheory.setPracticeSetId("testKHT");
+		practiceTheory.setResourceId(IDGeneratorUtil.getID());
+
+		return practiceTheory;
+	}
 }

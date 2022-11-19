@@ -1,10 +1,11 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
-import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +33,23 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonConfig;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.*;
+import com.cyberpeace.oj.course.service.bo.CombinedCourseImportContext;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.bo.PaperContext;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -77,6 +87,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 	private CourseService courseService;
 
 	@Autowired
+	private PracticeSetService practiceSetService;
+
+	@Autowired
 	private UtilService utilService;
 
 	@Value("${import.resource.cover}")
@@ -105,8 +118,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		Course course = jsonParseCourse(convertValue);
 
 		// 课程存在性校验
-//		courseValidateHandler.validateCourseNameExist(course.getName());
-//		courseValidateHandler.validateCourseNumExist(course.getCourseNum());
+		// courseValidateHandler.validateCourseNameExist(course.getName());
+		// courseValidateHandler.validateCourseNumExist(course.getCourseNum());
 		courseValidateHandler.validateCourseName2NumExist(course);
 
 		// 用户修改
@@ -202,20 +215,19 @@ public class CourseImportServiceImpl implements CourseImportService {
 				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
 				if (null != courseLesson) {
 					// 如果存在该课时，则替换resource_id
-					CourseLesson existLesson = courseLessonMapper.selectCourseByCourseAndName(course.getResourceId(), courseLesson.getName());
-					if (null != existLesson){
+					CourseLesson existLesson = courseLessonMapper.selectCourseByCourseAndName(
+							course.getResourceId(), courseLesson.getName());
+					if (null != existLesson) {
 						courseLesson.setResourceId(existLesson.getResourceId());
 						courseLesson.setPaperId(existLesson.getPaperId());
 
-
-						if (courseLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
-								&& null == courseLesson.getTopoId()){
+						if (courseLesson.getType() == CourseLesson.LessonType.EXPERIMENT.getCode()
+								.intValue() && null == courseLesson.getTopoId()) {
 							courseLesson.setSceneShareMode(existLesson.getSceneShareMode());
 							courseLesson.setDestroyDelay(existLesson.getDestroyDelay());
 							courseLesson.setTopoId(existLesson.getTopoId());
 						}
 					}
-
 
 					if (null != nameMap.putIfAbsent(courseLesson.getName(),
 							courseLesson.getResourceId())) {
@@ -301,6 +313,69 @@ public class CourseImportServiceImpl implements CourseImportService {
 			courseLesson.setVideoUrl(videoUrl);
 		}
 
+		// 初始化课后练习列表
+		List<PaperPracticeContext> paperPracticeContexts = Lists.newArrayList();
+
+		// 解析理论题
+		List<String> practiceList = FileUtil.listDirs(new File(path, ResourceImportConstant.PRACTICES).getAbsolutePath(), true);
+
+		if (CollectionUtils.isNotEmpty(practiceList)) {
+
+			for (String practicePath : practiceList) {
+				if (practicePath.contains(".xls")) {
+					log.info("excel Theory import start , practiceFilePath =[{}] ", practicePath);
+					List<PracticeTheory> theoryList = practiceSetService
+							.importExcelTheoryPractice(practicePath);
+
+					if (theoryList != null) {
+						for (PracticeTheory practiceTheory : theoryList) {
+							PaperPracticeContext paperPracticeContext = new PaperPracticeContext();
+							paperPracticeContext
+									.setPracticeType(PracticeSet.PracticeType.THEORY.getCode());
+							paperPracticeContext.setResourceId(practiceTheory.getResourceId());
+							paperPracticeContext.setScore(1.0);
+							paperPracticeContexts.add(paperPracticeContext);
+						}
+					}
+
+				}
+				if (practicePath.contains(".md")) {
+					log.info("MD Theory import start , practicePath =[{}] ", practicePath);
+					MdTheoryParser mdTheoryParser = new MdTheoryParser(practicePath);
+					MdTheoryPractice mdTheoryPractice = mdTheoryParser.read(MdTheoryPractice.class);
+					List<PracticeTheory> theoryList = practiceSetService.importMdTheoryPractice(
+							new File(path, ResourceImportConstant.PRACTICES).getAbsolutePath(),
+							mdTheoryPractice);
+
+					for (PracticeTheory practiceTheory : theoryList) {
+						PaperPracticeContext paperPracticeContext = new PaperPracticeContext();
+						paperPracticeContext
+								.setPracticeType(PracticeSet.PracticeType.THEORY.getCode());
+						paperPracticeContext.setResourceId(practiceTheory.getResourceId());
+						paperPracticeContext.setScore(1.0);
+						paperPracticeContexts.add(paperPracticeContext);
+					}
+
+				}
+			}
+		}
+
+		// 解析理论题
+		List<PracticeOperation> operationList = practiceSetService.importMdOperationPractice(
+				new File(path, ResourceImportConstant.OPERATION).getAbsolutePath());
+
+		if (operationList != null) {
+			for (PracticeOperation practiceOperation : operationList) {
+				PaperPracticeContext paperPracticeContext = new PaperPracticeContext();
+				paperPracticeContext.setPracticeType(PracticeSet.PracticeType.OPERATION.getCode());
+				paperPracticeContext.setResourceId(practiceOperation.getResourceId());
+				paperPracticeContext.setScore(100.0);
+				paperPracticeContexts.add(paperPracticeContext);
+			}
+		}
+
+		// 设置导入课后练习列表
+		courseLesson.setPaperPracticeContexts(paperPracticeContexts);
 		// 解析讲义
 		parseLessonHandout(path, courseLesson, course.getResourceId());
 
@@ -461,7 +536,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 过滤掉镜像文件夹并排序
 		List<String> notImagePathList = StreamApiUtils.filter(chapterPaths,
-				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME));
+				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME) && !new File(pathStr).getName().equals(ResourceImportConstant.COURSE_PRATICES));
 		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
 				pathStr -> Integer
 						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
@@ -548,9 +623,15 @@ public class CourseImportServiceImpl implements CourseImportService {
 				// 课时和课时目录数据存储
 				courseLessonService.saveOrUpdateBatch(lessons);
 
-                //先删除旧的编排
-                lessonConfigMapper.deleteByCourse(course.getResourceId());
+				// 先删除旧的编排
+				lessonConfigMapper.deleteByCourse(course.getResourceId());
 				lessonConfigService.saveBatch(lessonConfigs);
+				for (CourseLesson courseLesson : lessons) {
+					log.info("courseId:" + courseLesson.getResourceId() + "import practice"
+							+ courseLesson.getPaperPracticeContexts().toString());
+					Boolean result = courseLessonService.addLessonPractice(
+							courseLesson.getResourceId(), courseLesson.getPaperPracticeContexts());
+				}
 
 			}
 		});
@@ -566,7 +647,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 */
 	private Paper initPaper(CourseLesson courseLesson) {
 
-		if (courseLesson.getPaperId() != null){
+		if (courseLesson.getPaperId() != null) {
 			return null;
 		}
 		PaperContext paperContext = PaperContext.builder().resourceId(courseLesson.getResourceId())
@@ -578,8 +659,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		return paper;
 	}
 
-
-	public Course generateCombineCourse(CombinedCourseImportContext courseInfo, List<String> existConfig) {
+	public Course generateCombineCourse(CombinedCourseImportContext courseInfo,
+			List<String> existConfig) {
 
 		// 增量更新
 		Course courseExist = courseMapper.selectByCourseNum(courseInfo.getCourseNum());
@@ -587,12 +668,14 @@ public class CourseImportServiceImpl implements CourseImportService {
 			if (!StringUtils.equals(courseExist.getName(), courseInfo.getCourseName())) {
 				log.error(
 						"The courseNum=[{}] already exists! import course name=[{}], exists course name=[{}]",
-						courseInfo.getCourseNum(), courseInfo.getCourseName(), courseExist.getName());
+						courseInfo.getCourseNum(), courseInfo.getCourseName(),
+						courseExist.getName());
 				throw new BusinessException(OjBusinessErrorCode.COURSE_NUM_IS_EXIST);
 			}
 
-			List<LessonConfig> configs = lessonConfigMapper.selectByCourse(courseInfo.getCourseNum());
-			for (LessonConfig config: configs) {
+			List<LessonConfig> configs = lessonConfigMapper
+					.selectByCourse(courseInfo.getCourseNum());
+			for (LessonConfig config : configs) {
 				existConfig.add(config.getResourceId());
 			}
 			return courseExist;
@@ -603,7 +686,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 		course.setResourceId(courseInfo.getCourseNum());
 		course.setName(courseInfo.getCourseName());
 		course.setCategoryId(courseInfo.getCategoryName());
-
 
 		// 用户修改
 		course.setCreateUserId(ResourceImportConstant.SUPER_ADMIN_HASH);
@@ -626,11 +708,11 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		course.setDifficulty(Course.Difficulty.PRIMARY.getCode());
 
-
 		return course;
 	}
 
-	public List<LessonConfig> generateLessonConfig(Course course, List<CombinedCourseImportContext> courseInfos, Map<String, String> lessonNameMap) {
+	public List<LessonConfig> generateLessonConfig(Course course,
+			List<CombinedCourseImportContext> courseInfos, Map<String, String> lessonNameMap) {
 
 		List<LessonConfig> lessonConfigs = Lists.newArrayList();
 		HashMap<String, LessonConfig> chapterMap = Maps.newHashMap();
@@ -643,7 +725,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		int index = CommonConstant.ONE;
 
-		for (CombinedCourseImportContext courseInfo: courseInfos) {
+		for (CombinedCourseImportContext courseInfo : courseInfos) {
 
 			// 处理章节
 			String chapterName = courseInfo.getChapterName();
@@ -656,16 +738,16 @@ public class CourseImportServiceImpl implements CourseImportService {
 						.index(index).build();
 				lessonConfigs.add(chapterConfig);
 
-				index ++;
+				index++;
 
 				chapterMap.put(chapterName, chapterConfig);
 			}
 
 			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
 			String lessonName;
-			if (lessonNameList.length == 2){
+			if (lessonNameList.length == 2) {
 				lessonName = lessonNameList[1];
-			}else{
+			} else {
 				lessonName = lessonNameList[0];
 			}
 
@@ -681,17 +763,17 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		}
 
-
 		return lessonConfigs;
 	}
 
 	@Override
 
-	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext) {
+	public Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos,
+			AuthContext authContext) {
 
 		log.info("Combined-Lesson-Import's request is: [{}]", JsonUtil.toJsonString(courseInfos));
 
-		if (null == courseInfos || courseInfos.size() == 0){
+		if (null == courseInfos || courseInfos.size() == 0) {
 			log.info("The request body is empty!");
 			return true;
 		}
@@ -707,23 +789,24 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		Map<String, String> lessonNameMap = Maps.newHashMap();
 
-		for (CombinedCourseImportContext courseInfo: courseInfos) {
-			if (null == courseInfo.getPath()){
+		for (CombinedCourseImportContext courseInfo : courseInfos) {
+			if (null == courseInfo.getPath()) {
 				continue;
 			}
 
 			String[] lessonNameList = courseInfo.getLessonName().split("_", 2);
 			String lessonName;
-			if (lessonNameList.length == 2){
+			if (lessonNameList.length == 2) {
 				lessonName = lessonNameList[1];
-			}else{
+			} else {
 				lessonName = lessonNameList[0];
 			}
 
 			// 该课时已存在，不再处理
-			String lessonId =  courseLessonMapper.selectByCourseAndName(course.getResourceId(), lessonName);
+			String lessonId = courseLessonMapper.selectByCourseAndName(course.getResourceId(),
+					lessonName);
 			if (null != lessonId) {
-				lessonNameMap.putIfAbsent(lessonName,lessonId);
+				lessonNameMap.putIfAbsent(lessonName, lessonId);
 				continue;
 			}
 
@@ -732,10 +815,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 			CourseLesson courseLesson = parseLesson(courseInfo.getPath(), course, envReqs);
 
 			if (null != courseLesson) {
-				if (null != lessonNameMap.putIfAbsent(lessonName,
-						courseLesson.getResourceId())) {
-					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]", courseInfo.getCourseName(),
-							courseInfo.getPath());
+				if (null != lessonNameMap.putIfAbsent(lessonName, courseLesson.getResourceId())) {
+					log.error("Lesson name exist! course_name=[{}], lesson_path=[{}]",
+							courseInfo.getCourseName(), courseInfo.getPath());
 					throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 				}
 				lessons.add(courseLesson);
@@ -743,9 +825,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		}
 
-
 		List<LessonConfig> lessonConfigs = generateLessonConfig(course, courseInfos, lessonNameMap);
-
 
 		// 数据入库
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -753,7 +833,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 
-				if (lessons.size() == 0){
+				if (lessons.size() == 0) {
 					log.info("All lessons have already imported");
 
 				} else {
@@ -761,7 +841,6 @@ public class CourseImportServiceImpl implements CourseImportService {
 						// 课程相关数据存储
 						courseMapper.insert(course);
 					}
-
 
 					// 试卷数据初始化存储
 					StreamApiUtils.map(lessons, courseLesson -> initPaper(courseLesson));

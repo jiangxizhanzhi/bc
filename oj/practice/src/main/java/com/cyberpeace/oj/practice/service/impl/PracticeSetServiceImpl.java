@@ -47,6 +47,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -530,6 +531,87 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		updateBatchById(courseList);
+	}
+
+	@Override
+	public List<PracticeTheory> importMdTheoryPractice(String path,
+			MdTheoryPractice mdTheoryPractice) {
+
+		return practiceTheoryService.importMdTheoryPractice(path, mdTheoryPractice);
+	}
+
+	@Override
+	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
+		return practiceTheoryService.exportMdTheoryPractice(path, theories);
+	}
+
+	@Override
+	public List<PracticeTheory> importExcelTheoryPractice(String path) {
+		return practiceTheoryService.parseLessonPracticeTheory(path);
+	}
+
+	@Override
+	public List<PracticeOperation> importMdOperationPractice(String path) {
+
+		// 遍历习题数据处理
+		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
+
+		if (ctfPracticeDirs.size() == 0) {
+			return Lists.newArrayList();
+		}
+
+		// 构建数据存储
+		Map<String, String> envReqs = Maps.newHashMap();
+		//todo envReqs
+		for (String ctfPracticeDir : ctfPracticeDirs) {
+			envReqs.put("ctfPracticeDir", "");
+		}
+		PracticeSet practiceSet = new PracticeSet();
+		List<String> existOperations = Lists.newArrayList();
+		List<PracticeOperation> operationList = Lists.newArrayList();
+
+		// 执行数据导入
+
+		for (String ctfPracticeDir : ctfPracticeDirs) {
+			try {
+				log.info("MD Operation import start , practicePath =[{}] ", ctfPracticeDir);
+
+				PracticeOperation operation = practiceOperationService.parseRmCtf(ctfPracticeDir,
+						envReqs, practiceSet);
+				operationList.add(operation);
+			} catch (BusinessException e) {
+
+				if (OjBusinessErrorCode.NAME_IS_EXIST.equals(e.getMessage())) {
+					log.error("Parse ctf practice exist! ctf_practice_path=[{}], catch error:",
+							ctfPracticeDir, e);
+					existOperations.add(ctfPracticeDir);
+					continue;
+				} else {
+					log.error("Parse ctf practice fail! ctf_practice_path=[{}], catch error:",
+							ctfPracticeDir, e);
+					throw e;
+				}
+			}
+		}
+
+		// 数据去重
+		List<PracticeOperation> operations = StreamApiUtils.distinctByColumn(operationList,
+				PracticeOperation::getTitle);
+		// 再查一次防止数据解析过长
+		selectAndSetCount(practiceSet, operations.size());
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				if (CollectionUtils.isNotEmpty(operations)) {
+					practiceOperationService.saveBatch(operationList);
+				}
+			}
+		});
+
+		return operationList;
 	}
 
 	private String doExportSet(String destPath, PracticeSet practiceSet) {

@@ -177,7 +177,20 @@ public class LocalStringUtil {
 		}
 		return matchStr.get(CommonConstant.ZERO).trim();
 	}
+	/**
+	 * 根据正则表达是获取内容中的匹配数据 匹配全部
+	 * @param content
+	 * @param regex
+	 * @param index 子匹配序号
+	 * @return
+	 */
+	public static List<String> getAllMatchStr(String content, String regex, Integer index) {
 
+		List<String> matchStr = getMatchStr(content, regex, index);
+
+
+		return matchStr;
+	}
 	/**
 	 * 数据替换
 	 * @param content

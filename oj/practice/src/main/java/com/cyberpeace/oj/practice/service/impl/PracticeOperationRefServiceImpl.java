@@ -2,30 +2,31 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.cs.dao.entity.Attachment;
-import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
+import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeRandomFlagMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +51,9 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 
 	@Autowired
 	private PracticeRandomFlagMapper practiceRandomFlagMapper;
+
+	@Autowired
+	private PracticeOperationService practiceOperationService;
 
 	@Override
 	public List<OperationLessonBo> selectByPaperId(String lessonId, String paperId,
@@ -151,5 +155,20 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 		PracticeOperationRef operationRef = practiceOperationRefMapper.selectByPracticeId(paperId,
 				practiceId);
 		return JsonUtil.toJsonObject(operationRef.getSnapshot(), PracticeOperation.class);
+	}
+
+	@Override
+	public void exportLessonPractice(String pathname, String paperId) {
+
+		List<PracticeOperationRef> operationRefList = practiceOperationRefMapper
+				.selectByPaperId(paperId);
+		List<PracticeOperation> practiceOperationList = StreamApiUtils.map(operationRefList,
+				practiceTheoryRef -> {
+					PracticeOperation practiceOperation = JsonUtil
+							.toJsonObject(practiceTheoryRef.getSnapshot(), PracticeOperation.class);
+					return practiceOperation;
+				});
+
+		practiceOperationService.exportPractice(pathname, practiceOperationList);
 	}
 }

@@ -1,5 +1,19 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,17 +31,8 @@ import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.bo.CategoryListBo;
 import com.cyberpeace.oj.practice.service.bo.CategoryListQuery;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -51,7 +56,8 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		IPage<PracticeCategory> categoryIPage = practiceCategoryMapper.pageByTypeAndName(page,
 				query.getPattern(), query.getPracticeType());
 
-		return categoryIPage.convert(practiceCategory -> entityToListBo(practiceCategory, children));
+		return categoryIPage
+				.convert(practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
 	@Override
@@ -68,7 +74,8 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 			PracticeCategory data = practiceCategoryMapper.selectById(category);
 			String categoryId = practiceCategoryMapper.selectByName(data.getPracticeType(),
 					category.getName());
-			if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(category.getResourceId())) {
+			if (StringUtils.isNotBlank(categoryId)
+					&& !categoryId.equals(category.getResourceId())) {
 				throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 			}
 		}
@@ -132,7 +139,8 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(listQuery.getPracticeType(), listQuery.getPattern());
 
-		return StreamApiUtils.map(categoryList, practiceCategory -> entityToListBo(practiceCategory, children));
+		return StreamApiUtils.map(categoryList,
+				practiceCategory -> entityToListBo(practiceCategory, children));
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
-
-import java.util.List;
 
 public interface PracticeOperationRefService extends IService<PracticeOperationRef> {
 
@@ -30,4 +30,5 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 */
 	PracticeOperation selectByPracticeId(String paperId, String practiceId);
 
+	void exportLessonPractice(String pathname, String paperId);
 }

@@ -8,113 +8,129 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 public interface PracticeSetService extends IService<PracticeSet> {
 
-	/**
-	 * 根据编号查询习题集信息
-	 *
-	 * @param resourceId
-	 * @param authContext
-	 * @return
-	 */
-	AdminPracticeSetBo selectById(String resourceId, AuthContext authContext);
+    /**
+     * 根据编号查询习题集信息
+     *
+     * @param resourceId
+     * @param authContext
+     * @return
+     */
+    AdminPracticeSetBo selectById(String resourceId, AuthContext authContext);
 
-	/**
-	 * 习题集是否可访问
-	 *
-	 * @param resourceId
-	 * @param authContext
-	 * @return
-	 */
-	void enableAccess(String resourceId, AuthContext authContext);
+    /**
+     * 习题集是否可访问
+     *
+     * @param resourceId
+     * @param authContext
+     * @return
+     */
+    void enableAccess(String resourceId, AuthContext authContext);
 
-	/**
-	 * 获取可访问习题集
-	 * @param authContext
-	 * @param setId
-	 * @return
-	 */
-	List<String> getSetIds(AuthContext authContext, String setId);
+    /**
+     * 获取可访问习题集
+     *
+     * @param authContext
+     * @param setId
+     * @return
+     */
+    List<String> getSetIds(AuthContext authContext, String setId);
 
-	/**
-	 * 分页查询习题集列表
-	 *
-	 * @param page
-	 * @param practiceType
-	 * @param pattern
-	 * @return
-	 */
-	IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType, String pattern,
-			AuthContext authContext);
+    /**
+     * 分页查询习题集列表
+     *
+     * @param page
+     * @param practiceType
+     * @param pattern
+     * @return
+     */
+    IPage<AdminPracticeSetBo> selectByTypeAndName(Page page, Integer practiceType, String pattern,
+                                                  AuthContext authContext);
 
-	/**
-	 * 习题集更新
-	 *
-	 * @param practiceSet
-	 * @param authContext
-	 * @return
-	 */
-	Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
+    /**
+     * 习题集更新
+     *
+     * @param practiceSet
+     * @param authContext
+     * @return
+     */
+    Boolean updateByAuth(PracticeSet practiceSet, AuthContext authContext);
 
-	/**
-	 * 删除前判断是否可删除
-	 *
-	 * @param resourceIds
-	 * @param authContext
-	 */
-	void enableDelete(List<String> resourceIds, AuthContext authContext);
+    /**
+     * 删除前判断是否可删除
+     *
+     * @param resourceIds
+     * @param authContext
+     */
+    void enableDelete(List<String> resourceIds, AuthContext authContext);
 
-	/**
-	 * 资管理论习题集数据导入
-	 *
-	 * @param path
-	 * @return
-	 */
-	boolean importRmTheorySet(String path);
+    /**
+     * 资管理论习题集数据导入
+     *
+     * @param path
+     * @return
+     */
+    boolean importRmTheorySet(String path);
 
-	/**
-	 * 资管实操习题集导入
-	 *
-	 * @param path
-	 * @param envReqs
-	 * @return
-	 */
-	List<String> importRmCtfSet(String path, Map<String, String> envReqs);
+    /**
+     * 资管实操习题集导入
+     *
+     * @param path
+     * @param envReqs
+     * @return
+     */
+    List<String> importRmCtfSet(String path, Map<String, String> envReqs);
 
-	/**
-	 * 导出习题集生成压缩文件
-	 * @param practiceSetIds 习题集编号
-	 * @param authContext
-	 * @return
-	 */
-	File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
+    /**
+     * 导出习题集生成压缩文件
+     *
+     * @param practiceSetIds 习题集编号
+     * @param authContext
+     * @return
+     */
+    File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
 
-	/**
-	 * 习题集数据加载
-	 * @param realPath
-	 * @param userId
-	 * @return
-	 */
-	Boolean loadPracticeSet(String realPath, String userId);
+    /**
+     * 习题集数据加载
+     *
+     * @param realPath
+     * @param userId
+     * @return
+     */
+    Boolean loadPracticeSet(String realPath, String userId);
 
-	/**
-	 * 检查习题集是否重复
-	 * @return
-	 */
-	List<String> duplicatePracticeSetInspect(List<String> practiceSets);
+    /**
+     * 检查习题集是否重复
+     *
+     * @return
+     */
+    List<String> duplicatePracticeSetInspect(List<String> practiceSets);
 
-	/**
-	 * 实操习题数据导出
-	 * @param practiceSetId
-	 * @param practiceId
-	 * @return 导出的文件路径
-	 */
+    /**
+     * 实操习题数据导出
+     *
+     * @param practiceSetId
+     * @param practiceId
+     * @return 导出的文件路径
+     */
     String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath);
 
-	void clearUserAuth(String user);
+    void clearUserAuth(String user);
 
-	void clearOrgAuth(String org);
+    void clearOrgAuth(String org);
+
+    List<PracticeTheory> importMdTheoryPractice(String path, MdTheoryPractice mdTheoryPractice);
+
+    MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
+
+    List<PracticeTheory> importExcelTheoryPractice(String s);
+
+    List<PracticeOperation> importMdOperationPractice(String absolutePath);
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -9,8 +11,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
-
-import java.util.List;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
@@ -39,7 +40,8 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param userAnswer
 	 * @return
 	 */
-	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer, Boolean isCollected);
+	EvaluateResult submitAnswer(String userId, String theoryId, String userAnswer,
+			Boolean isCollected);
 
 	/**
 	 * 理论基础习题新增
@@ -116,4 +118,14 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
+
+	/**
+	 * 理论习题数据导入
+	 * @param path
+	 */
+	List<PracticeTheory> parseLessonPracticeTheory(String path);
+
+	List<PracticeTheory> importMdTheoryPractice(String filepath, MdTheoryPractice mdTheoryPractice);
+
+	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 }

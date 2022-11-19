@@ -22,8 +22,22 @@ public interface PatternConstant {
 
 	String PARSER_MD_TITLE = "#{1,6}[^#]+";
 
+	String PARSER_THEORY_MD_TITLE = "#{1,2}[^#]+";
+
 	/** 解析markdown文件匹配标签*/
 	String MARKDOWN_TAG = "#{3}[^#]+";
+
+	/** 题目属性使用*/
+	String ATTRIBUTE_SPLIT_STR = " {2}-{1}[^-]+";
+
+	/** 选择题选项匹配*/
+	String THEORY_CHOICE_ANSWER = "[ ]{4}([A-Z])\\.[ ](.+)";
+
+	/** 题目答案使用*/
+	String ANWSER_SPLIT_STR = "-{1}[^-]+";
+
+	/** 填空答案匹配*/
+	String BLANK_ANWSER_STR = "[ ]{0,}\\d\\.[ ](.+)";
 
 	String MARKDOWN_TITLE_MATCH = "#{1-6}[^#]+";
 
@@ -72,7 +86,7 @@ public interface PatternConstant {
 	String MULTIPLE_CODING_BLOCK = "```([\\s\\S]*?)```[\\s]?";
 
 	/** 一级列表*/
-    String MD_LIST = "- ";
+	String MD_LIST = "- ";
 
 	/** 二级列表*/
 	String SECOND_MD_LIST = "  - ";

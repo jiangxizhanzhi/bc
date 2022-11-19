@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -86,15 +87,14 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
+	@TableField(exist = false)
+	List<PaperPracticeContext> paperPracticeContexts=Lists.newArrayList();
+
 	public enum HandoutType implements GenericEnum {
 
 		/** 讲义类型*/
-		NEITHER(0, "都不是"),
-		MD(1, "markdown"),
-		PPT(2, "ppt文件"),
-		PDF(4, "pdf"),
-		DOC(3, "word文档"),
-		XLS(5, "xls文件");
+		NEITHER(0, "都不是"), MD(1, "markdown"), PPT(2, "ppt文件"), PDF(4, "pdf"), DOC(3,
+				"word文档"), XLS(5, "xls文件");
 
 		@Getter
 		private Integer code;

@@ -1,22 +1,29 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.io.File;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.service.PracticeSetService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
+import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -27,6 +34,9 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
+	private PracticeSetService practiceSetService;
 
 	@Override
 	public List<TheoryLessonBo> selectByPaper(String paperId, Boolean viewAnswer) {
@@ -75,5 +85,26 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 				practiceId);
 
 		return JsonUtil.toJsonObject(theoryRef.getSnapshot(), PracticeTheory.class);
+	}
+
+	@Override
+	public void exportLessonPractice(String pathname, String paperId) {
+		List<PracticeTheoryRef> theoryRefList = practiceTheoryRefMapper.selectByPracticeIds(paperId,
+				null);
+		List<PracticeTheory> theoryList = StreamApiUtils.map(theoryRefList, practiceTheoryRef -> {
+			PracticeTheory practiceTheory = JsonUtil.toJsonObject(practiceTheoryRef.getSnapshot(),
+					PracticeTheory.class);
+			return practiceTheory;
+		});
+
+		MdTheoryParser mdTheoryParser = new MdTheoryParser();
+
+		MdTheoryPractice mdTheory = practiceSetService.exportMdTheoryPractice(pathname, theoryList);
+
+		if (theoryList.size() > 0) {
+			mdTheoryParser.write(mdTheory, new File(
+					pathname + File.separator + ResourceImportConstant.PRACTICE_FILE_NAME));
+		}
+
 	}
 }

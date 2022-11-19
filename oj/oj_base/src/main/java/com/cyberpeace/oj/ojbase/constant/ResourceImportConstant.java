@@ -21,6 +21,11 @@ public interface ResourceImportConstant {
 	String IMAGE_NAME = "images";
 
 	/**
+	 * 课程考试目录
+	 */
+	String COURSE_PRATICES = "coursePratices";
+
+	/**
 	 * logo.png文件名称
 	 */
 	String PNG_LOGO = "logo.png";
@@ -41,6 +46,16 @@ public interface ResourceImportConstant {
 	String ATTACHMENT = "attachments";
 
 	/**
+	 * 理论题文件夹名称
+	 */
+	String PRACTICES = "practices";
+
+	/**
+	 * 实操题文件夹名称
+	 */
+	String OPERATION = "practices/operation";
+
+	/**
 	 * 讲义文件名称
 	 */
 	String HANDOUT_FILE_NAME = "讲义.md";
@@ -54,6 +69,11 @@ public interface ResourceImportConstant {
 	 * 指导书文件名称
 	 */
 	String DOC_FILE_NAME = "指导书.md";
+
+	/**
+	 * 理论题文件名称
+	 */
+	String PRACTICE_FILE_NAME = "练习.md";
 
 	/**
 	 * 课时视频文件夹名称

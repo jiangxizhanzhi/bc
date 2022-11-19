@@ -70,6 +70,32 @@ public class ListUtil {
 		return builder.toString().trim();
 	}
 
+	/**
+	 * 截取列表拼接成包括换行符的字符串 空字符传略过
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static <T> String joinLineSeparatorList(List<T> objList, int start, int end) {
+
+		List<T> subList = objList.subList(start, end);
+		StringBuilder builder = new StringBuilder();
+
+		for (T obj : subList) {
+			if (obj instanceof String) {
+				String str = (String) obj;
+				if (StringUtils.isBlank(str)) {
+					continue;
+				}
+				builder.append(obj).append("\n");
+			} else {
+				builder.append(JSONObject.toJSONString(obj)).append("\n");
+			}
+		}
+
+		return builder.toString();
+	}
+
 	public static <E> List<E> pageList(List<E> list, int page, int perPage, int listSize) {
 		int startIndex = (page - 1) * perPage;
 		int endIndex = page * perPage;

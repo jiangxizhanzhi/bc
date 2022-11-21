@@ -124,6 +124,11 @@
             <artifactId>gateway</artifactId>
             <version>${gateway.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.assess</groupId>
+            <artifactId>assess</artifactId>
+            <version>${assess.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

@@ -1,28 +1,29 @@
-package com.cyberpeace.situation.dao.entity;
+package com.cyberpeace.situation.controller.res;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.model.PageReqBase;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @Author xuxz
- * @Date 16/11/2022 下午5:00
+ * @Date 16/11/2022 下午5:04
  */
 @Data
-@TableName("situation_gis")
-public class Gis extends BaseTable {
+public class SituationCommonComponentsPageRes extends PageReqBase implements Serializable {
 
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
     private String name;
 
+    private Integer componentType;
+
     private Integer type;
 
     private String img;
 
     private String url;
-
 }

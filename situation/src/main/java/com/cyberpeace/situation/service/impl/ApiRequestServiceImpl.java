@@ -127,16 +127,21 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         List<ApiRequestHeaders> requestHeaders = apiConnectReq.getRequestHeaders();
         List<ApiResponseParams> responseParams = apiConnectReq.getResponseParams();
         List<ApiRequestParams> requestParams = apiConnectReq.getRequestParams();
-        if (CollectionUtils.isNotEmpty(requestHeaders)) {
-            apiRequest.setRequestHeaders(JsonUtil.toJsonString(requestHeaders));
-        }
 
-        if (CollectionUtils.isNotEmpty(requestParams)) {
-            apiRequest.setRequestParams(JsonUtil.toJsonString(requestParams));
-        }
+        try {
+            if (CollectionUtils.isNotEmpty(requestHeaders)) {
+                apiRequest.setRequestHeaders(JsonUtil.toJsonString(requestHeaders));
+            }
 
-        if (CollectionUtils.isNotEmpty(responseParams)) {
-            apiRequest.setResponseParams(JsonUtil.toJsonString(responseParams));
+            if (CollectionUtils.isNotEmpty(requestParams)) {
+                apiRequest.setRequestParams(JsonUtil.toJsonString(requestParams));
+            }
+
+            if (CollectionUtils.isNotEmpty(responseParams)) {
+                apiRequest.setResponseParams(JsonUtil.toJsonString(responseParams));
+            }
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
         return apiRequest;
     }
@@ -146,17 +151,22 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         String requestHeaders = apiRequest.getRequestHeaders();
         String responseParams = apiRequest.getResponseParams();
         String requestParams = apiRequest.getRequestParams();
-        if (StringUtils.isNotBlank(requestHeaders)) {
-            apiConnectReq.setRequestHeaders(JsonUtil.toJsonObjectArray(requestHeaders, ApiRequestHeaders.class));
+        try {
+            if (StringUtils.isNotBlank(requestHeaders)) {
+                apiConnectReq.setRequestHeaders(JsonUtil.toJsonObjectArray(requestHeaders, ApiRequestHeaders.class));
+            }
+
+            if (StringUtils.isNotBlank(requestParams)) {
+                apiConnectReq.setRequestParams(JsonUtil.toJsonObjectArray(requestParams, ApiRequestParams.class));
+            }
+
+            if (StringUtils.isNotBlank(responseParams)) {
+                apiConnectReq.setResponseParams(JsonUtil.toJsonObjectArray(responseParams, ApiResponseParams.class));
+            }
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
 
-        if (StringUtils.isNotBlank(requestParams)) {
-            apiConnectReq.setRequestParams(JsonUtil.toJsonObjectArray(requestParams, ApiRequestParams.class));
-        }
-
-        if (StringUtils.isNotBlank(responseParams)) {
-            apiConnectReq.setResponseParams(JsonUtil.toJsonObjectArray(responseParams, ApiResponseParams.class));
-        }
         return apiConnectReq;
     }
 

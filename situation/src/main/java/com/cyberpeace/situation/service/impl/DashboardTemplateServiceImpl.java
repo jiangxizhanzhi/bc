@@ -227,19 +227,31 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                 ApiConnectReq apiConnectReq = new ApiConnectReq();
                 apiConnectReq.setRequestUrl(url);
                 apiConnectReq.setRequestMethod(method);
-                //设置请求头
-                if (StringUtils.isNotBlank(header)) {
-                    List<ApiRequestHeaders> apiRequestHeaders = JsonUtil.toJsonObjectArray(header, ApiRequestHeaders.class);
-                    apiConnectReq.setRequestHeaders(apiRequestHeaders);
+
+                try {
+                    //设置请求头
+                    if (StringUtils.isNotBlank(header)) {
+                        List<ApiRequestHeaders> apiRequestHeaders = JsonUtil.toJsonObjectArray(header, ApiRequestHeaders.class);
+                        apiConnectReq.setRequestHeaders(apiRequestHeaders);
+                    }
+                    //设置请求参数
+                    if (StringUtils.isNotBlank(params)) {
+                        List<ApiRequestParams> apiRequestParams = JsonUtil.toJsonObjectArray(params, ApiRequestParams.class);
+                        parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams());
+                        apiConnectReq.setRequestParams(apiRequestParams);
+                    }
+                } catch (Exception e) {
+                    throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
                 }
-                //设置请求参数
-                if (StringUtils.isNotBlank(params)) {
-                    List<ApiRequestParams> apiRequestParams = JsonUtil.toJsonObjectArray(params, ApiRequestParams.class);
-                    parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams());
-                    apiConnectReq.setRequestParams(apiRequestParams);
-                }
+
                 String resourceData = apiRequestService.apiConnectTest(apiConnectReq);
-                JSONArray echartsDataSet = getEchartsDataSet(resourceData, response);
+
+                JSONArray echartsDataSet;
+                try {
+                    echartsDataSet = getEchartsDataSet(resourceData, response);
+                } catch (Exception e) {
+                    throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+                }
                 DashboardTemplateEchartsData dashboardTemplateEchartsData = new DashboardTemplateEchartsData();
                 dashboardTemplateEchartsData.setRows(echartsDataSet);
                 return echartsDataSet;

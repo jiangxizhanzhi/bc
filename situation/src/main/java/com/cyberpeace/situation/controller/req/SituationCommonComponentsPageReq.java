@@ -11,12 +11,15 @@ import java.io.Serializable;
  * @Date 16/11/2022 下午5:02
  */
 @Data
-public class GisPageReq extends PageReqBase implements Serializable {
+public class SituationCommonComponentsPageReq extends PageReqBase implements Serializable {
 
-    @ApiModelProperty("gis名称")
+    @ApiModelProperty("组件名称")
     private String name;
 
-    @ApiModelProperty("gis类型")
+    @ApiModelProperty("组件类型")
+    private Integer componentType;
+
+    @ApiModelProperty("组件内部类型")
     private Integer type;
 
 }

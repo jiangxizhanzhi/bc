@@ -12,9 +12,6 @@ import java.io.Serializable;
 @Data
 public class ComponentsDataReq implements Serializable {
 
-    @ApiModelProperty("配置资源id")
-    private String resourceId;
-
     @ApiModelProperty("数据源配置")
     private String dataSourceComponent;
 

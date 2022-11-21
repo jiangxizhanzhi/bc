@@ -18,7 +18,9 @@ public enum MessageType {
 	AttackSchedule(8,"attack_schedule"),
 	SceneConfig(9,"scene_config"),
 	ChangePara(10, "change_para"),
-	TaskEvent(11,"task_event");
+	TaskEvent(11,"task_event"),
+	TaskEventJt(12,"task_event_jt"),
+	TaskEventAd(13,"task_event_ad");
 
 	@Getter
 	private Integer code;

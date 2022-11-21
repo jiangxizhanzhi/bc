@@ -8,10 +8,13 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
+import com.cyberpeace.situation.controller.req.EventQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.context.JtTaskEventContext;
 import com.cyberpeace.situation.service.context.TaskEventContext;
 
 import cn.hutool.json.JSONObject;
@@ -67,6 +70,31 @@ public class DashboardController {
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 		return new BaseRsp<>(true);
 
+	}
+
+	@ApiOperation("获取最新的任务解题事件")
+	@GetMapping("/event/task/jt/")
+	public BaseRsp<Boolean> getJtTaskEvent(EventQueryReq eventQueryReq) {
+
+		JtTaskEventContext jtTaskEventContext = new JtTaskEventContext();
+		WsMessage<JtTaskEventContext> wsMessage = new WsMessage<>(MessageType.TaskEventJt.getDesc(),
+				jtTaskEventContext);
+		String sceneId = eventQueryReq.getDashboardId() + "_" + eventQueryReq.getFeatureId();
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("获取最新的任务攻防事件")
+	@GetMapping("/event/task/ad/")
+	public BaseRsp<Boolean> getAdTaskEvent(EventQueryReq eventQueryReq) {
+
+		WsMultiNodeDynamic wsEvent = situationHandlerService.getRandomWsMultNodeDynamic("demo",
+				null);
+		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(MessageType.TaskEventAd.getDesc(),
+				wsEvent);
+		String sceneId = eventQueryReq.getDashboardId() + "_" + eventQueryReq.getFeatureId();
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		return new BaseRsp<>(true);
 	}
 
 }

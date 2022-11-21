@@ -89,7 +89,7 @@ public class SituationPublishController {
 	@ApiOperation("新增态势发布实例")
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance>
-			setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
+	setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
 		// TODO Gis等数据是否需要大屏 存入模板实例
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq);
 
@@ -100,7 +100,7 @@ public class SituationPublishController {
 	@ApiOperation("查询态势发布实例列表")
 	@GetMapping("list")
 	public BaseRsp<List<SituationPublishInstanceListRes>>
-			getSituationPublishInstance(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
+	getSituationPublishInstance(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
 		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
 		String name = situationPublishInstanceFilterReq.getName();
 		if (null != name){
@@ -149,17 +149,17 @@ public class SituationPublishController {
 
 		res.forEach(s-> {
 			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
-			String planName = null == planMaps.get(s.getPlanId()) ? "":planMaps.get(s.getPlanId()).getName();
-			copy.setPlanName(planName);
-			String taskName = null != taskMaps.get(s.getTaskId()) ? "" : taskMaps.get(s.getTaskId()).getTask_name();
+//			String planName = null == planMaps.get(s.getPlanId()) ? "":planMaps.get(s.getPlanId()).getName();
+//			copy.setPlanName(planName);
+			String taskName = null == taskMaps.get(s.getTaskId()) ? "" : taskMaps.get(s.getTaskId()).getTask_name();
 			copy.setTaskName(taskName);
-			String subjectName = null != subjectMaps.get(s.getSubjectId()) ? "" : subjectMaps.get(s.getSubjectId()).getSubject_name();
+			String subjectName = null == subjectMaps.get(s.getSubjectId()) ? "" : subjectMaps.get(s.getSubjectId()).getSubject_name();
 			copy.setSubjectName(subjectName);
 			copy.setStatus(map.get(s.getStatus()));
 			copy.setCategory(null == s.getCategory() || null == collect.get(s.getCategory()) ? "" : collect.get(s.getCategory()).getName());
 			copy.setTemplateName(null == s.getTemplateId() ||null == dashboardTemplateMap.get(s.getTemplateId()) ? "" :dashboardTemplateMap.get(s.getTemplateId()).getName());
 			result.add(copy);
-
+//
 		});
 		return new BaseRsp<>(result);
 	}

@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -36,22 +33,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
     }
     @Override
     public List<SituationSubject> getSubjectByTasks(List<String> taskIds) {
-        List<SituationTask> tasks = getTasks(null, null);
-        List<SituationSubject> res = new ArrayList<>();
-        if(taskIds.isEmpty()){
-            tasks.forEach(task -> {
-                res.addAll(task.getSubject_list());
-            });
-            return res;
-        }
-        tasks.forEach(task -> {
-            if(taskIds.contains(task.getTask_id())){
-                res.addAll(task.getSubject_list());
-            }
-        });
-        ArrayList<SituationSubject> collect = res.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(
-                () -> new TreeSet<>(Comparator.comparing(SituationSubject::getSubject_id))), ArrayList::new));
-        return collect;
+        JSONArray tasks = HttpClientUtil.rawGet(SUBJECT_URL, JSONArray.class);
+        List<SituationSubject> list = JSONArray.parseArray(tasks.toJSONString(), SituationSubject.class);
+        return list;
     }
 
     private  List<SituationSubject> getSubjectById(String taskId) {

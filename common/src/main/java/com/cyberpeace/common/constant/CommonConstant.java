@@ -104,4 +104,6 @@ public interface CommonConstant {
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 
+	int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
+
 }

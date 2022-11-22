@@ -1,9 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
@@ -252,12 +251,11 @@ public class PracticeValidateHandler {
 	}
 
 	/**
-	 * 校验flag长度
+	 * 校验flag长度 5.3.6系统flag长度仅对动态flag长度做限制 随机与静态flag长度为1-255
 	 * @param flags
 	 */
 	public void validateFlagLength(String flags) {
 
-		Integer flagLength = Integer.parseInt(systemConfigService.getSystemConfig("flag_length"));
 		List<String> answers;
 		if (StringUtils.isBlank(flags) || CollectionUtils
 				.isEmpty(answers = JsonUtil.toJsonObjectArray(flags, String.class))) {
@@ -265,9 +263,9 @@ public class PracticeValidateHandler {
 		}
 
 		for (String answer : answers) {
-			if (answer.length() < CommonConstant.EIGHT || answer.length() > flagLength.intValue()) {
+			if (answer.length() < CommonConstant.ONE || answer.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
 				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
-						CommonConstant.EIGHT, flagLength);
+						CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
 			}
 		}
 
@@ -306,7 +304,7 @@ public class PracticeValidateHandler {
 	 * @param operation
 	 */
 	public void validateOperationUpdateSceneExist(PracticeOperation operation,
-			JSONObject topoData) {
+												  JSONObject topoData) {
 
 		// 场景数据查询
 		List<OjLocalScene> adminScenes = ojLocalSceneMapper
@@ -324,7 +322,7 @@ public class PracticeValidateHandler {
 	}
 
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
-			List<String> attachments) {
+										 List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
 				&& attachments.size() > CommonConstant.ONE) {
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
@@ -338,18 +336,6 @@ public class PracticeValidateHandler {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
 					practiceSetId, practiceId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
-		}
-	}
-
-	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
-		if(theoryType == PracticeTheory.TheoryType.SHORT_ANSWER
-				.getCode().intValue()){
-			JSONArray objects = JSON.parseArray(keyword);
-			for (Object obj : objects) {
-				if (StringUtils.isBlank(obj.toString())){
-					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
-				}
-			}
 		}
 	}
 }

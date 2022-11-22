@@ -1,6 +1,8 @@
 package com.cyberpeace.assess.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
@@ -8,14 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.assess.controller.req.AssessDataAddReq;
 import com.cyberpeace.assess.controller.req.AssessDataUpdateReq;
+import com.cyberpeace.assess.controller.req.AssessListReq;
+import com.cyberpeace.assess.controller.res.AssessDataRsp;
 import com.cyberpeace.assess.dao.entity.AssessData;
 import com.cyberpeace.assess.service.AssessDataService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,13 +36,19 @@ public class AssessDataController {
 	@Autowired
 	private AssessDataService assessDataService;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
+
 	@ApiOperation("查询单条评估数据")
 	@GetMapping("/assess_data")
 	public BaseRsp<AssessData> getAssessData(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessData assessData = assessDataService.getById(resource_id);
+		AssessDataRsp assessDataRsp = com.cyberpeace.common.util.BeanUtils.copy(assessData,
+				AssessDataRsp.class);
+		assessDataRsp.setTag(JsonUtil.toJsonObjectArray(assessData.getTag(), String.class));
 
-		return new BaseRsp(assessData);
+		return new BaseRsp(assessDataRsp);
 	}
 
 	@ApiOperation("新增单条评估数据")
@@ -45,6 +57,7 @@ public class AssessDataController {
 			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) {
 		AssessData toAddAssessData = new AssessData();
 		BeanUtils.copyProperties(assessDataAddReq, toAddAssessData);
+		toAddAssessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
 
 		assessDataService.save(toAddAssessData);
 
@@ -55,10 +68,11 @@ public class AssessDataController {
 	@PutMapping("/assess_data")
 	public BaseRsp<String>
 			modifyAssessData(@RequestBody @Validated AssessDataUpdateReq assessDataUpdateReq) {
-		AssessData toUpdateAssessData = new AssessData();
-		BeanUtils.copyProperties(assessDataUpdateReq, toUpdateAssessData);
+		AssessData assessData = new AssessData();
+		BeanUtils.copyProperties(assessDataUpdateReq, assessData);
+		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 
-		assessDataService.updateById(toUpdateAssessData);
+		assessDataService.updateById(assessData);
 
 		return new BaseRsp<>();
 	}
@@ -74,10 +88,25 @@ public class AssessDataController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/assess_data/list")
-	public BaseRsp<List<AssessData>> list(@Validated PageReqBase pageReqBase) {
-		ListRsp<AssessData> data = assessDataService.page(pageReqBase);
+	public BaseRsp<List<AssessDataRsp>> list(@Validated AssessListReq pageReqBase) {
+		IPage<AssessData> data = assessDataService.page(pageReqBase);
 
-		return new BaseRsp(data);
+		List<String> userIds = data.getRecords().stream().map(AssessData::getCreateUserId)
+				.collect(Collectors.toList());
+
+		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(assessData -> {
+
+			AssessDataRsp assessDataRsp = com.cyberpeace.common.util.BeanUtils.copy(assessData,
+					AssessDataRsp.class);
+			assessDataRsp.setCreateUser(idNameMap.get(assessData.getCreateUserId()));
+			assessDataRsp.setTag(JsonUtil.toJsonObjectArray(assessData.getTag(), String.class));
+
+			return assessDataRsp;
+		});
+
+		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
 }

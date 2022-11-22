@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.assess.dao.entity.AssessData;
-import com.cyberpeace.assess.dao.entity.AssessModel;
 
 /**
  * @Entity com.cyberpeace.assess.src/main/dao.AssessData
@@ -16,5 +15,5 @@ import com.cyberpeace.assess.dao.entity.AssessModel;
 @Repository
 public interface AssessDataMapper extends BaseMapper<AssessData> {
 
-	IPage<AssessModel> listAssessData(Page page, String pattern);
+	IPage<AssessData> listAssessData(Page page, String pattern, Integer type);
 }

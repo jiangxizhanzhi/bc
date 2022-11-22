@@ -1,5 +1,9 @@
 package com.cyberpeace.assess.controller.req;
 
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,12 +20,12 @@ public class AssessModelAddReq {
 	private String visionId;
 
 	@ApiModelProperty("标签")
-	private String tag;
+	private List<String> tag;
 
 	@ApiModelProperty("封面")
 	private String logo;
 
-	@ApiModelProperty("接口类型")
+	@ApiModelProperty("接口类型：1：超链接，2：数据库，3：可执行文件，4：其他类型")
 	private Integer interfaceType;
 
 	@ApiModelProperty("上传文件地址")
@@ -31,5 +35,5 @@ public class AssessModelAddReq {
 	private String urlDomain;
 
 	@ApiModelProperty("参数列表")
-	private String params;
+	private List<JSONObject> params;
 }

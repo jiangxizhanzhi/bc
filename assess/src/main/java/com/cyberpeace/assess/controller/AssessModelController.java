@@ -1,6 +1,8 @@
 package com.cyberpeace.assess.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.BeanUtils;
@@ -8,14 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.assess.controller.req.AssessModelAddReq;
 import com.cyberpeace.assess.controller.req.AssessModelUpdateReq;
+import com.cyberpeace.assess.controller.res.AssessModelRsp;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,11 +37,20 @@ public class AssessModelController {
 	@Autowired
 	private AssessModelService assessModelService;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
+
 	@ApiOperation("查询单条评估模型")
 	@GetMapping("/assess_model")
-	public BaseRsp<AssessModel> getAssessModel(
+	public BaseRsp<AssessModelRsp> getAssessModel(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessModel assessModel = assessModelService.getById(resource_id);
+
+		AssessModelRsp assessModelRsp = com.cyberpeace.common.util.BeanUtils.copy(assessModel,
+				AssessModelRsp.class);
+		assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
+		assessModelRsp
+				.setParams(JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
 
 		return new BaseRsp(assessModel);
 	}
@@ -43,10 +59,12 @@ public class AssessModelController {
 	@PostMapping("/assess_model")
 	public BaseRsp<String>
 			addAssessModel(@RequestBody @Validated AssessModelAddReq assessModelAddReq) {
-		AssessModel toAddAssessModel = new AssessModel();
-		BeanUtils.copyProperties(assessModelAddReq, toAddAssessModel);
+		AssessModel assessModel = new AssessModel();
+		BeanUtils.copyProperties(assessModelAddReq, assessModel);
+		assessModel.setTag(JsonUtil.toJsonString(assessModelAddReq.getTag()));
+		assessModel.setParams(JsonUtil.toJsonString(assessModelAddReq.getParams()));
 
-		assessModelService.save(toAddAssessModel);
+		assessModelService.save(assessModel);
 
 		return new BaseRsp<>();
 	}
@@ -55,10 +73,12 @@ public class AssessModelController {
 	@PutMapping("/assess_model")
 	public BaseRsp<String>
 			modifyAssessModel(@RequestBody @Validated AssessModelUpdateReq assessModelUpdateReq) {
-		AssessModel toUpdateAssessModel = new AssessModel();
-		BeanUtils.copyProperties(assessModelUpdateReq, toUpdateAssessModel);
+		AssessModel assessModel = new AssessModel();
+		BeanUtils.copyProperties(assessModelUpdateReq, assessModel);
+		assessModel.setTag(JsonUtil.toJsonString(assessModelUpdateReq.getTag()));
+		assessModel.setParams(JsonUtil.toJsonString(assessModelUpdateReq.getParams()));
 
-		assessModelService.updateById(toUpdateAssessModel);
+		assessModelService.updateById(assessModel);
 
 		return new BaseRsp<>();
 	}
@@ -74,10 +94,28 @@ public class AssessModelController {
 
 	@ApiOperation("分页查询")
 	@GetMapping("/assess_model/list")
-	public BaseRsp<List<AssessModel>> list(@Validated PageReqBase pageReqBase) {
-		ListRsp<AssessModel> data = assessModelService.page(pageReqBase);
+	public BaseRsp<List<AssessModelRsp>> list(@Validated PageReqBase pageReqBase) {
+		IPage<AssessModel> data = assessModelService.page(pageReqBase);
 
-		return new BaseRsp(data);
+		List<String> userIds = data.getRecords().stream().map(AssessModel::getCreateUserId)
+				.collect(Collectors.toList());
+
+		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+
+		data.convert(assessModel -> {
+
+			AssessModelRsp assessModelRsp = com.cyberpeace.common.util.BeanUtils.copy(assessModel,
+					AssessModelRsp.class);
+			assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
+			assessModelRsp.setCreateUser(idNameMap.get(assessModel.getCreateUserId()));
+			assessModelRsp.setParams(
+					JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
+
+			return assessModelRsp;
+		});
+
+		return new BaseRsp(PageUtil.getListResult(data));
+
 	}
 
 }

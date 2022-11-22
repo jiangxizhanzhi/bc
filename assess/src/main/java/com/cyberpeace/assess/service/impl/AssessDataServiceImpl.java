@@ -6,13 +6,10 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.assess.controller.req.AssessListReq;
 import com.cyberpeace.assess.dao.entity.AssessData;
-import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.dao.mapper.AssessDataMapper;
 import com.cyberpeace.assess.service.AssessDataService;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.PageUtil;
 
 /**
  *
@@ -24,10 +21,11 @@ public class AssessDataServiceImpl extends ServiceImpl<AssessDataMapper, AssessD
 	AssessDataMapper assessDataMapper;
 
 	@Override
-	public ListRsp<AssessData> page(PageReqBase pageReqBase) {
+	public IPage<AssessData> page(AssessListReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
-		IPage<AssessModel> result = assessDataMapper.listAssessData(page, pageReqBase.getPattern());
+		IPage<AssessData> result = assessDataMapper.listAssessData(page, pageReqBase.getPattern(),
+				pageReqBase.getType());
 
-		return PageUtil.getListResult(result);
+		return result;
 	}
 }

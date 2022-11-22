@@ -49,7 +49,7 @@ public class AssessModel extends BaseTable {
 	private String logo;
 
 	/**
-	 * 输入数据集类型。1：超链接，2：数据库，3：可执行文件，4：其他类型
+	 * 接口类型。1：超链接，2：数据库，3：可执行文件，4：其他类型
 	 */
 	private Integer interfaceType;
 

@@ -28,7 +28,7 @@
         input_data,result_data,create_time,
         update_time
     </sql>
-    <select id="listAssessData" resultType="com.cyberpeace.assess.dao.entity.AssessModel">
+    <select id="listAssessData" resultType="com.cyberpeace.assess.dao.entity.AssessData">
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
@@ -39,9 +39,11 @@
         update_time
         from assess_data
         <where>
+            type = #{type}
             <if test="pattern != null and pattern != ''">
-                `name` like #{pattern}
+                and `name` like #{pattern}
             </if>
+
         </where>
     </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.cyberpeace.assess.controller.req;
 
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,7 +17,7 @@ public class AssessDataAddReq {
 	private String description;
 
 	@ApiModelProperty("标签")
-	private String tag;
+	private List<String> tag;
 
 	@ApiModelProperty("封面")
 	private String logo;

@@ -9,9 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.dao.mapper.AssessModelMapper;
 import com.cyberpeace.assess.service.AssessModelService;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.PageUtil;
 
 /**
  *
@@ -23,11 +21,11 @@ public class AssessModelServiceImpl extends ServiceImpl<AssessModelMapper, Asses
 	AssessModelMapper assessModelMapper;
 
 	@Override
-	public ListRsp<AssessModel> page(PageReqBase pageReqBase) {
+	public IPage<AssessModel> page(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<AssessModel> result = assessModelMapper.listAssessModel(page,
 				pageReqBase.getPattern());
 
-		return PageUtil.getListResult(result);
+		return result;
 	}
 }

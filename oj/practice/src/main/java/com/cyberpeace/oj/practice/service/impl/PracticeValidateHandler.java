@@ -3,6 +3,8 @@ package com.cyberpeace.oj.practice.service.impl;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
@@ -336,6 +338,18 @@ public class PracticeValidateHandler {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
 					practiceSetId, practiceId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+		}
+	}
+
+	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
+		if(theoryType == PracticeTheory.TheoryType.SHORT_ANSWER
+				.getCode().intValue()){
+			JSONArray objects = JSON.parseArray(keyword);
+			for (Object obj : objects) {
+				if (StringUtils.isBlank(obj.toString())){
+					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
+				}
+			}
 		}
 	}
 }

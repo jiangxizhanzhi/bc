@@ -3,10 +3,10 @@
 -- ----------------------------
 CREATE TABLE `assess_case`
 (
-    `id`             int(11)                                                 NOT NULL AUTO_INCREMENT,
+    `id`             int(11) NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
     `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '评估材料名称',
-    `overview`       longtext CHARACTER SET utf8 COLLATE utf8_general_ci     NOT NULL comment '评估案例概述',
+    `overview`       longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '评估案例概述',
     `cover`          varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '封面',
     `tag`            longtext                                                NOT NULL comment '标签',
     `update_time`    datetime                                                NOT NULL,
@@ -25,11 +25,11 @@ CREATE TABLE `assess_case`
 -- ----------------------------
 CREATE TABLE `assess_material`
 (
-    `id`             int(11)                                                 NOT NULL AUTO_INCREMENT,
+    `id`             int(11) NOT NULL AUTO_INCREMENT,
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '',
     `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '评估材料名称',
-    `description`    longtext CHARACTER SET utf8 COLLATE utf8_general_ci     NOT NULL comment '描述',
-    `category`       int(1)                                                  NOT NULL comment '类型',
+    `description`    longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '描述',
+    `category`       int(1) NOT NULL comment '类型',
     `attachment`     varchar(256)                                            NOT NULL comment '材料附件',
     `update_time`    datetime                                                NOT NULL,
     `create_time`    datetime                                                NOT NULL,
@@ -47,16 +47,16 @@ CREATE TABLE `assess_material`
 -- ----------------------------
 CREATE TABLE `assess_case_config`
 (
-    `id`          int(11)                                                 NOT NULL AUTO_INCREMENT,
-    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `index`       int(11)                                                 NOT NULL,
-    `parent_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL,
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `index`       int(11) NOT NULL,
+    `parent_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `name`        varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `node_type`   int(1)                                                  NOT NULL,
-    `case_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '案例id',
-    `material_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT NULL comment '材料id',
-    `create_time` datetime                                                NOT NULL,
-    `update_time` datetime                                                NOT NULL,
+    `node_type`   int(1) NOT NULL,
+    `case_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '案例id',
+    `material_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL comment '材料id',
+    `create_time` datetime                                               NOT NULL,
+    `update_time` datetime                                               NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
 ) ENGINE = InnoDB
@@ -64,3 +64,68 @@ CREATE TABLE `assess_case_config`
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci
   ROW_FORMAT = Dynamic;
+
+
+-- ----------------------------
+-- Table structure for assess_data
+-- ----------------------------
+
+CREATE TABLE `assess_data`
+(
+    `id`             int                                                    NOT NULL AUTO_INCREMENT,
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称',
+    `description`    text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '描述',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人uuid',
+    `tag`            varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签',
+    `logo`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '封面',
+    `type`           int NULL DEFAULT NULL COMMENT '评估数据类型。1：输入，2：结果',
+    `input_type`     int NULL DEFAULT NULL COMMENT '输入数据集类型。1：mysql，2：excel',
+    `input_data`     varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据集路径',
+    `result_data`    varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '结果路径',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估数据' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for assess_model
+-- ----------------------------
+
+CREATE TABLE `assess_model`
+(
+    `id`             int                                                    NOT NULL AUTO_INCREMENT,
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称',
+    `description`    text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '描述',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人uuid',
+    `vision_id`      varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '版本号',
+    `tag`            varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签',
+    `logo`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '封面',
+    `interface_type` int NULL DEFAULT NULL COMMENT '输入数据集类型。1：超链接，2：数据库，3：可执行文件，4：其他类型',
+    `input_data`     varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据集路径',
+    `attachment_url` varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '附件地址',
+    `url_domain`     varchar(1024) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '超链接域名',
+    `excel_data`     text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '数据库内容',
+    `params`         varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参数列表',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估数据' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for assess_tag
+-- ----------------------------
+
+CREATE TABLE `assess_tag`
+(
+    `id`          int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增id',
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源id',
+    `content`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标签内容',
+    `create_time` datetime                                                NOT NULL COMMENT '创建时间',
+    `update_time` datetime                                                NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id_UNIQUE`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估标签表' ROW_FORMAT = DYNAMIC;

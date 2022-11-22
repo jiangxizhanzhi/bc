@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.assess.dao.mapper.AssessDataMapper">
+
+    <resultMap id="BaseResultMap" type="com.cyberpeace.assess.dao.entity.AssessData">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createUserId" column="create_user_id" jdbcType="VARCHAR"/>
+        <result property="tag" column="tag" jdbcType="VARCHAR"/>
+        <result property="logo" column="logo" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="inputType" column="input_type" jdbcType="INTEGER"/>
+        <result property="inputData" column="input_data" jdbcType="VARCHAR"/>
+        <result property="resultData" column="result_data" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,resource_id,`name`,
+        description,create_user_id,tag,
+        logo,`type`,input_type,
+        input_data,result_data,create_time,
+        update_time
+    </sql>
+    <select id="listAssessData" resultType="com.cyberpeace.assess.dao.entity.AssessModel">
+        <if test="pattern != null and pattern != ''">
+            <bind name="pattern" value="'%' + pattern + '%'"/>
+        </if>
+        select resource_id,`name`,
+        description,create_user_id,tag,
+        logo,`type`,input_type,
+        input_data,result_data,create_time,
+        update_time
+        from assess_data
+        <where>
+            <if test="pattern != null and pattern != ''">
+                `name` like #{pattern}
+            </if>
+        </where>
+    </select>
+</mapper>

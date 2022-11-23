@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.List;
 
 import com.cyberpeace.bs.service.bo.TargetBo;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
+import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
-import com.cyberpeace.bs.service.bo.model.Behavior;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -52,7 +53,10 @@ public interface LcService {
 	 * @param behaviorIds id集合
 	 * @return 用户行为列表
 	 */
-	List<Behavior> getLcBehaviorListByIds(Collection<String> behaviorIds, Boolean withVariable);
+	List<LcBehaviorRspBo> getLcBehaviorListByIds(Collection<String> behaviorIds,
+			boolean withVariable);
+
+	List<Behavior> getBehaviorListByIds(Collection<String> behaviorIds);
 
 	VariableListBo getVariableList(String behaviorId);
 

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;

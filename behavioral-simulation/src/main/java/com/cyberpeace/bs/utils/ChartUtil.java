@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 
-import com.cyberpeace.bs.service.bo.model.Behavior;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.model.ChartResult;
 import com.cyberpeace.bs.service.bo.model.NameValue;
 import com.google.common.collect.Maps;

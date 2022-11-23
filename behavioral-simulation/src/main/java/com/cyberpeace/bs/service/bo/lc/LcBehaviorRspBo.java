@@ -1,7 +1,8 @@
-package com.cyberpeace.bs.service.bo.behavior;
+package com.cyberpeace.bs.service.bo.lc;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -29,4 +30,8 @@ public class LcBehaviorRspBo implements Serializable {
 	private String application;
 
 	private Date createTime;
+
+	private String tag;
+
+	private List<LcVariableRspBo> variables;
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.bs.service.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -17,18 +18,13 @@ import com.cyberpeace.bs.service.bo.behavior.*;
 import com.cyberpeace.bs.service.bo.demo.GetDeviceReq;
 import com.cyberpeace.bs.service.bo.demo.LcDevicePageRes;
 import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
-import com.cyberpeace.bs.service.bo.lc.LcVariableBase;
-import com.cyberpeace.bs.service.bo.lc.LcVariableModifyReq;
-import com.cyberpeace.bs.service.bo.lc.LcVariableRspBo;
-import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
-import com.cyberpeace.bs.service.bo.model.Behavior;
+import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableBo;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.bs.service.bo.variable.VariableSimple;
 import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 
@@ -45,7 +41,7 @@ public class LcServiceImpl implements LcService {
 
 	private String LC_HOST_PORT;
 
-	private String BEHAVIOR_LIST_URL;
+	private String BEHAVIOR_LIST_URL = "api/v1/findFlowChart";
 
 	private String ACTUAL_DEVICE_URL;
 
@@ -68,13 +64,13 @@ public class LcServiceImpl implements LcService {
 
 	private String BEHAVIOR_VARIABLE_UPDATE = "api/v1/updateFlowData";
 
+
 	@PostConstruct
 	public void init() {
 		// LC_HOST_PORT = SystemPropUtil.getProp("LC_HOST_PORT");
 		LC_HOST_PORT = "http://10.4.1.138/";
 		// BEHAVIOR_LIST_URL = LC_HOST_PORT +
 		// ConfigUtil.getContextProperty("lc.behavior.list");
-		BEHAVIOR_LIST_URL = "api/v1/flowchart/find-by-page";
 		// TARGET_LIST_URL = LC_HOST_PORT +
 		// ConfigUtil.getContextProperty("lc.target.list");
 	}
@@ -143,20 +139,39 @@ public class LcServiceImpl implements LcService {
 	}
 
 	@Override
-	public List<Behavior> getLcBehaviorListByIds(Collection<String> behaviorIds,
-			Boolean withVariable) {
-		BehaviorPageReq pageReq = new BehaviorPageReq();
-		pageReq.setPerPage(100);
-		ListRsp<LcBehavior> listRsp = getLcBehaviorList(pageReq);
-		List<LcBehavior> lcBehaviors = listRsp.getList();
-		List<Behavior> res = Lists.newArrayList();
-		lcBehaviors.forEach(lcBehavior -> {
-			if (behaviorIds.contains(lcBehavior.getId())) {
-				Behavior behavior = BeanUtils.copy(lcBehavior, Behavior.class);
-				res.add(behavior);
-			}
-		});
-		return res;
+	public List<LcBehaviorRspBo> getLcBehaviorListByIds(Collection<String> behaviorIds,
+			boolean withVariable) {
+		String targetUrl = LC_HOST_PORT + BEHAVIOR_LIST_URL;
+		LcBehaviorQuery query = new LcBehaviorQuery();
+		query.addIds(behaviorIds);
+		if (withVariable) {
+			query.setWithVariable(true);
+		}
+		String rsp = LcHttpClient.post(targetUrl, query, String.class);
+		List<LcBehaviorRspBo> behaviorRspBos = JsonUtil.toJsonObjectArray(rsp,
+				LcBehaviorRspBo.class);
+
+		return behaviorRspBos;
+	}
+
+	@Override
+	public List<Behavior> getBehaviorListByIds(Collection<String> behaviorIds) {
+		List<LcBehaviorRspBo> lcBehaviorRspBos = getLcBehaviorListByIds(behaviorIds, false);
+		return lcBehaviorRspBos.stream().map(this::createBehavior).collect(Collectors.toList());
+	}
+
+	private Behavior createBehavior(LcBehaviorRspBo rspBo) {
+		Behavior behavior = new Behavior();
+		behavior.setAccessOs(rspBo.getDeviceType());
+		behavior.setCreateTime(rspBo.getCreateTime());
+		behavior.setCreatorName(rspBo.getCreatorName());
+		behavior.setName(rspBo.getFlowChartName());
+		behavior.setNetworkType(rspBo.getNetModel());
+		behavior.setStepCount(rspBo.getStepNum());
+		behavior.getTag().add(rspBo.getTag());
+		behavior.setId(rspBo.getId());
+		behavior.setTimeCost(rspBo.getConsumeTime());
+		return behavior;
 	}
 
 	@Override

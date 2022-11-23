@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
-import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.model.UserModelBase;
 import com.cyberpeace.bs.service.bo.model.UserModelBo;
 import com.cyberpeace.common.constant.ErrorCode;

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

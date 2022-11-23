@@ -1,8 +1,10 @@
-package com.cyberpeace.bs.service.bo.model;
+package com.cyberpeace.bs.service.bo.behavior;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +19,7 @@ public class Behavior extends BehaviorSimple implements Serializable {
 	private String name;
 
 	@ApiModelProperty(value = "标签")
-	private List<String> tag;
+	private List<String> tag = Lists.newArrayList();
 
 	@ApiModelProperty(value = "设备类型")
 	private Integer accessOs;

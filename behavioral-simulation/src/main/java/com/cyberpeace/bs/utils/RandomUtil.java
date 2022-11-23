@@ -3,7 +3,7 @@ package com.cyberpeace.bs.utils;
 import java.time.LocalTime;
 import java.util.Random;
 
-import com.cyberpeace.bs.service.bo.model.Behavior;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.model.ChartInput;
 
 /**

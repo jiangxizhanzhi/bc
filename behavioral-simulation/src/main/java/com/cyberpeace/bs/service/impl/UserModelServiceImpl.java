@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,13 @@ import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserTypeService;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
+import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
+import com.cyberpeace.bs.service.bo.lc.LcVariableRspBo;
 import com.cyberpeace.bs.service.bo.model.*;
+import com.cyberpeace.bs.service.bo.variable.VariableSimple;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.ChartUtil;
 import com.cyberpeace.bs.utils.RandomUtil;
@@ -78,7 +82,7 @@ public class UserModelServiceImpl implements UserModelService {
 				.toJsonObjectArray(userModel.getBehaviorList(), BehaviorSimple.class);
 		Map<String, BehaviorSimple> map = StreamApiUtils.toMap(behaviorSimpleList,
 				BehaviorSimple::getId, behavior -> behavior);
-		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(map.keySet(), false);
+		List<Behavior> behaviors = lcService.getBehaviorListByIds(map.keySet());
 		// 补上时间
 		for (Behavior behavior : behaviors) {
 			behavior.setStartTime(map.get(behavior.getId()).getStartTime());
@@ -147,10 +151,28 @@ public class UserModelServiceImpl implements UserModelService {
 				.parseBehaviorList(userModel.getBehaviorList());
 		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
 				.collect(Collectors.toList());
-
-		List<BehaviorWithVariable> res = Lists.newArrayList();
-		lcService.getLcBehaviorListByIds(behaviorIds, true);
+		List<LcBehaviorRspBo> rspBos = lcService.getLcBehaviorListByIds(behaviorIds, true);
+		List<BehaviorWithVariable> res = rspBos.stream().map(this::createBehaviorWithVariable)
+				.collect(Collectors.toList());
 		return res;
+	}
+
+	private BehaviorWithVariable createBehaviorWithVariable(LcBehaviorRspBo rspBo) {
+		BehaviorWithVariable behavior = new BehaviorWithVariable();
+		behavior.setId(rspBo.getId());
+		behavior.setName(rspBo.getFlowChartName());
+		behavior.setStepCount(rspBo.getStepNum());
+		behavior.getTag().add(rspBo.getTag());
+		if (CollectionUtils.isNotEmpty(rspBo.getVariables())) {
+			for (LcVariableRspBo lcVariable : rspBo.getVariables()) {
+				VariableSimple variableSimple = new VariableSimple();
+				variableSimple.setId(lcVariable.getDataId());
+				variableSimple.setName(lcVariable.getName());
+				variableSimple.setValue(lcVariable.getVarValue());
+				behavior.getVariables().add(variableSimple);
+			}
+		}
+		return behavior;
 	}
 
 	private <T extends UserModelAddBo> UserModel req2Entity(T reqBo) {

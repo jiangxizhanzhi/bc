@@ -3,6 +3,8 @@ package com.cyberpeace.bs.service.bo.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

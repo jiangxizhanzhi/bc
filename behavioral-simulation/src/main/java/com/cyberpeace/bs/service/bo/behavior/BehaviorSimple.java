@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.service.bo.model;
+package com.cyberpeace.bs.service.bo.behavior;
 
 import java.io.Serializable;
 import java.time.LocalTime;

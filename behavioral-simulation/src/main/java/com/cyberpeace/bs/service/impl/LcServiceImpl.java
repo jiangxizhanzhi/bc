@@ -123,10 +123,8 @@ public class LcServiceImpl implements LcService {
 		lcBehavior.setTimeCost(rspBo.getConsumeTime());
 		lcBehavior.setCreateTime(rspBo.getCreateTime());
 		lcBehavior.setCreatorName(rspBo.getCreatorName());
-		lcBehavior.setApplication(rspBo.getApplication());
-		List<String> tags = Lists.newArrayList();
-		tags.add("上网");
-		lcBehavior.setTag(tags);
+		lcBehavior.getApplication().add(rspBo.getApplication());
+		lcBehavior.getTag().add(rspBo.getTag());
 		return lcBehavior;
 	}
 

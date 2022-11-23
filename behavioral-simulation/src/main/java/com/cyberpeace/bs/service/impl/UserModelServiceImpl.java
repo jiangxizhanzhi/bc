@@ -163,6 +163,7 @@ public class UserModelServiceImpl implements UserModelService {
 		behavior.setName(rspBo.getFlowChartName());
 		behavior.setStepCount(rspBo.getStepNum());
 		behavior.getTag().add(rspBo.getTag());
+		behavior.getApplication().add(rspBo.getApplication());
 		if (CollectionUtils.isNotEmpty(rspBo.getVariables())) {
 			for (LcVariableRspBo lcVariable : rspBo.getVariables()) {
 				VariableSimple variableSimple = new VariableSimple();

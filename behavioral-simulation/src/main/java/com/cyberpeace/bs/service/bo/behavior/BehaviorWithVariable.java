@@ -25,6 +25,9 @@ public class BehaviorWithVariable implements Serializable {
 	@ApiModelProperty(value = "行为步骤")
 	private Integer stepCount;
 
+	@ApiModelProperty(value = "行为依赖")
+	private List<String> application = Lists.newArrayList();
+
 	@ApiModelProperty(value = "行为变量（默认值）")
 	private List<VariableSimple> variables = Lists.newArrayList();
 }

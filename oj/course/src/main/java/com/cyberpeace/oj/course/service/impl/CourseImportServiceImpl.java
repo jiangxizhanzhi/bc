@@ -23,10 +23,13 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
@@ -100,6 +103,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Autowired
 	private LessonConfigMapper lessonConfigMapper;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public Course parseRmCourse(String path) {
@@ -317,7 +323,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 		List<PaperPracticeContext> paperPracticeContexts = Lists.newArrayList();
 
 		// 解析理论题
-		List<String> practiceList = FileUtil.listDirs(new File(path, ResourceImportConstant.PRACTICES).getAbsolutePath(), true);
+		List<String> practiceList = FileUtil
+				.listDirs(new File(path, ResourceImportConstant.PRACTICES).getAbsolutePath(), true);
 
 		if (CollectionUtils.isNotEmpty(practiceList)) {
 
@@ -536,7 +543,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 过滤掉镜像文件夹并排序
 		List<String> notImagePathList = StreamApiUtils.filter(chapterPaths,
-				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME) && !new File(pathStr).getName().equals(ResourceImportConstant.COURSE_PRATICES));
+				pathStr -> !new File(pathStr).getName().equals(ResourceImportConstant.IMAGE_NAME)
+						&& !new File(pathStr).getName()
+								.equals(ResourceImportConstant.COURSE_PRATICES));
 		List<String> sortList = StreamApiUtils.sortByColumn(notImagePathList,
 				pathStr -> Integer
 						.parseInt(new File(pathStr).getName().split(PatternConstant.UNDER_LINE,
@@ -599,7 +608,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 		// 课程信息组装
 		Course course = parseRmCourse(path);
+		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 
+		UserInfoContext.setUserContext(userInfo);
 		// 课时信息组装
 		Map<String, String> lessonNameMap = Maps.newHashMap();
 		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);

@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.controller.admin;
 import java.io.File;
 import java.util.List;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,7 @@ public class AdminCourseImportController {
 
 		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+		UserInfoContext.setUserContext(userInfo);
 
 		// 执行课程数据导入
 		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),

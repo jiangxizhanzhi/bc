@@ -1,7 +1,7 @@
 package com.cyberpeace.assess.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.assess.dao.entity.AssessCaseConfig;
+import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 */
 @Mapper
 @Repository
-public interface AssessCaseConfigMapper extends BaseMapper<AssessCaseConfig> {
+public interface AssessMaterialConfigMapper extends BaseMapper<AssessMaterialConfig> {
 
 
 }

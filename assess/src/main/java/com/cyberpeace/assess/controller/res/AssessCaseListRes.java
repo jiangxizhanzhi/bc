@@ -1,16 +1,12 @@
 package com.cyberpeace.assess.controller.res;
 
-import com.cyberpeace.assess.constant.AssessErrorCode;
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
-
 @Data
-public class AssessCaseListReq implements Serializable {
+public class AssessCaseListRes implements Serializable {
 
 
 	@ApiModelProperty(value = "评估案例名称")

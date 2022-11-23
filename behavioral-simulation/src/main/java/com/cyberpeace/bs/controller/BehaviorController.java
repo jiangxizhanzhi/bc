@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
@@ -29,7 +28,6 @@ public class BehaviorController {
 	@ApiOperation("获取行为列表")
 	@GetMapping("/page")
 	public BaseRsp<ListRsp<LcBehavior>> pageBehavior(BehaviorPageReq pageReq) {
-		Page page = pageReq.toPageParam();
 		ListRsp<LcBehavior> behaviorListRsp = lcService.getLcBehaviorList(pageReq);
 		return new BaseRsp<>(behaviorListRsp);
 	}

@@ -14,7 +14,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.bs.dao.mapper.DemoMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.TargetBo;
-import com.cyberpeace.bs.service.bo.behavior.*;
+import com.cyberpeace.bs.service.bo.behavior.Behavior;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
+import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
+import com.cyberpeace.bs.service.bo.behavior.LcBehaviorPageRes;
 import com.cyberpeace.bs.service.bo.demo.GetDeviceReq;
 import com.cyberpeace.bs.service.bo.demo.LcDevicePageRes;
 import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
@@ -83,6 +86,7 @@ public class LcServiceImpl implements LcService {
 		body.setSize(pageReq.getPerPage());
 		body.setFlowChartName(pageReq.getPattern());
 		body.setNetModel(pageReq.getNetworkType());
+		body.setDeviceType(pageReq.getAccessOs());
 		LcBehaviorPageRes lcBehaviorPageRes = LcHttpClient.post(targetUrl, body,
 				LcBehaviorPageRes.class);
 		ListRsp<LcBehavior> res = new ListRsp<>();

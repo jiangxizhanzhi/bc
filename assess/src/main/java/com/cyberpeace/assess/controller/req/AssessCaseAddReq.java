@@ -20,10 +20,8 @@ public class AssessCaseAddReq implements Serializable {
 	private String overview;
 
 	@ApiModelProperty(value = "封面")
-	@NotNull(message = AssessErrorCode.COVER_MISSING)
 	private String cover;
 
 	@ApiModelProperty(value = "标签")
-	@NotEmpty(message = AssessErrorCode.TAG_MISSING)
-	private String tag;
+	private List<String> tag;
 }

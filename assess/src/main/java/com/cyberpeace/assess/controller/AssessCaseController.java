@@ -1,12 +1,19 @@
 package com.cyberpeace.assess.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.assess.constant.AssessErrorCode;
 import com.cyberpeace.assess.controller.req.AssessCaseAddReq;
 import com.cyberpeace.assess.controller.req.AssessCaseFilterReq;
 import com.cyberpeace.assess.controller.req.AssessCaseUpdateReq;
 import com.cyberpeace.assess.controller.req.BatchDeleteReq;
+import com.cyberpeace.assess.controller.res.AssessCaseDetailRes;
 import com.cyberpeace.assess.dao.entity.AssessCase;
+import com.cyberpeace.assess.dao.entity.AssessTag;
 import com.cyberpeace.assess.dao.mapper.AssessCaseMapper;
+import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
+import com.cyberpeace.assess.service.AssessCaseService;
+import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -15,34 +22,59 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "评估案例")
 @RestController
 @RequestMapping("/assess/case")
+//@RequiresAuthentication
 public class AssessCaseController {
 
 	@Autowired
 	private AssessCaseMapper assessCaseMapper;
 
+	@Autowired
+	private AssessCaseService assessCaseService;
+
+	@Autowired
+	private AssessTagService assessTagService;
+
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<AssessCase>
-			setAssessCase(@RequestBody AssessCaseAddReq assessCaseAddReq) {
+			setAssessCase(@RequestBody @Validated AssessCaseAddReq assessCaseAddReq) {
 
 		AssessCase assessCase = BeanUtils.copy(assessCaseAddReq,
 				AssessCase.class);
+
+		List<String> tags = assessCaseAddReq.getTag();
+		if(!tags.isEmpty()){
+			assessTagService.checkTagIds(tags);
+		}
+
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		assessCase.setCreateUserId(auth.getUserId());
+		assessCase.setTag(JsonUtil.arrayToString(tags));
+
+		assessCaseService.checkNameRepeat(assessCaseAddReq.getName(), null);
 		assessCaseMapper.insert(assessCase);
+
 		return new BaseRsp<>(assessCase);
 	}
 
@@ -52,17 +84,33 @@ public class AssessCaseController {
 			getAssessCases(AssessCaseFilterReq assessCaseFilterReq) {
 		LambdaQueryWrapper<AssessCase> queryWrapper = new LambdaQueryWrapper<>();
 		String name = assessCaseFilterReq.getName();
-		if (null != name){
+		if (StringUtils.isNotBlank(name)){
 			queryWrapper.like(AssessCase::getName, name);
 
 		}
+
+		String tag = assessCaseFilterReq.getTag();
+		if (StringUtils.isNotBlank(tag)){
+			queryWrapper.like(AssessCase::getTag, tag);
+
+		}
 		List<AssessCase> assessCases = assessCaseMapper.selectList(queryWrapper);
+		List<AssessCase> res = new ArrayList<>();
+
+		assessCases.forEach(assessCase -> {
+			AssessCase tmp = new AssessCase();
+			BeanUtils.copyProperties(assessCase, tmp);
+			String tags = assessCase.getTag();
+			String tagStr = assessCaseService.getTagContent(tags);
+			tmp.setTag(tagStr);
+			res.add(tmp);
+		});
 		return new BaseRsp<>(assessCases);
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping("")
-	public BaseRsp deleteAssessCase(BatchDeleteReq batchDeleteReq) {
+	public BaseRsp deleteAssessCase(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		List<String> ids = batchDeleteReq.getIds();
 		List<AssessCase> assessCases = assessCaseMapper.selectBatchIds(ids);
 		if (!assessCases.isEmpty()) {
@@ -73,24 +121,35 @@ public class AssessCaseController {
 
 	@ApiOperation("详情")
 	@GetMapping("")
-	public BaseRsp<AssessCase> getAssessCase(@ApiParam(name = "resource_id",
+	public BaseRsp<AssessCaseDetailRes> getAssessCase(@ApiParam(name = "resource_id",
 			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
 		AssessCase assessCase = assessCaseMapper.selectById(resourceId);
 		if(null == assessCase){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		return new BaseRsp<>(assessCase);
+		AssessCaseDetailRes assessCaseDetailRes = new AssessCaseDetailRes();
+		BeanUtils.copyProperties(assessCase, assessCaseDetailRes);
+		String tags = assessCase.getTag();
+		List<String> tagList = JSONObject.parseArray(tags, String.class);
+		assessCaseDetailRes.setTag(tagList);
+
+		return new BaseRsp<>(assessCaseDetailRes);
 	}
 
 	@ApiOperation("修改")
 	@PatchMapping("")
-	public BaseRsp<AssessCase> updateAssessCase(@RequestBody AssessCaseUpdateReq assessCaseUpdateReq) {
+	public BaseRsp<AssessCase> updateAssessCase(@RequestBody @Validated AssessCaseUpdateReq assessCaseUpdateReq) {
 		String resourceId = assessCaseUpdateReq.getResourceId();
-		AssessCase assessCase = assessCaseMapper.selectById(resourceId);
-		if(null == assessCase){
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+
+		AssessCase assessCase =assessCaseService.checkCaseId(resourceId);
+
+		List<String> tags = assessCaseUpdateReq.getTag();
+		assessTagService.checkTagIds(tags);
+		String name = assessCaseUpdateReq.getName();
+		assessCaseService.checkNameRepeat(name, assessCaseUpdateReq.getResourceId());
+
 		BeanUtils.copyProperties(assessCaseUpdateReq, assessCase);
+		assessCase.setTag(JsonUtil.arrayToString(tags));
 		assessCaseMapper.updateById(assessCase);
 		return new BaseRsp<>(assessCase);
 	}

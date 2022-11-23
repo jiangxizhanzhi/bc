@@ -1,7 +1,12 @@
 package com.cyberpeace.assess.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.assess.controller.req.AssessCaseAddReq;
+import com.cyberpeace.assess.controller.req.AssessMaterialAddReq;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
 * @author dell
@@ -10,4 +15,13 @@ import com.cyberpeace.assess.dao.entity.AssessMaterial;
 */
 public interface AssessMaterialService extends IService<AssessMaterial> {
 
+    /**
+     * 校验材料中附件的格式并上传文件
+     * @param attachment
+     * @param assessMaterial
+     * @return
+     */
+    AssessMaterial checkAssessMaterial(MultipartFile attachment, AssessMaterial assessMaterial);
+
+    void checkMaterialIds(List<String> materialIds);
 }

@@ -23,4 +23,13 @@ public interface FileTypeContant {
 	/** 工具库文件上传*/
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
+	/** 图片类型后缀*/
+	String PIC_TYPE = "JPEG,PNG,JPG,GIFF";
+
+	/** 表格类型后缀*/
+	String 	EXCEL_TYPE = "XLS,XLSX";
+
+	/** 表格类型后缀*/
+	String 	VIDEO_TYPE = "MP4,M4V";
+
 }

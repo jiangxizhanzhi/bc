@@ -2,6 +2,10 @@ package com.cyberpeace.assess.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.assess.dao.entity.AssessCase;
+import com.cyberpeace.assess.dao.entity.AssessTag;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author dell
@@ -10,4 +14,9 @@ import com.cyberpeace.assess.dao.entity.AssessCase;
 */
 public interface AssessCaseService extends IService<AssessCase> {
 
+    String getTagContent(String tags);
+
+    AssessCase checkCaseId(String resourceId);
+
+    void checkNameRepeat(String name, String id);
 }

@@ -1,5 +1,8 @@
 package com.cyberpeace.assess.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.assess.constant.AssessErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.PageUtil;
+
+import java.util.List;
 
 /**
  *
@@ -29,4 +34,16 @@ public class AssessTagServiceImpl extends ServiceImpl<AssessTagMapper, AssessTag
 
 		return PageUtil.getListResult(result);
 	}
+
+    @Override
+    public void checkTagIds(List<String> tags) {
+		LambdaQueryWrapper<AssessTag> queryWrapper = new LambdaQueryWrapper<>();
+		if(!tags.isEmpty()){
+			queryWrapper.in(AssessTag::getResourceId, tags);
+		}
+		List<AssessTag> assessTags = assessTagMapper.selectList(queryWrapper);
+		if(assessTags.isEmpty()){
+			throw new BusinessException(AssessErrorCode.TAG_ID_ERROR);
+		}
+    }
 }

@@ -19,6 +19,7 @@ public class ChartUtil {
 
 	private static final String HOUR = "%d时";
 
+	private static final int HOURS_IN_A_DAY = 24;
 	/**
 	 * 生成活跃度坐标图
 	 * @param chart
@@ -29,7 +30,7 @@ public class ChartUtil {
 		int count;
 		int index = 0;
 		int size = behaviorList.size();
-		for (int time = 0; time < 24; time++) {
+		for (int time = 0; time < HOURS_IN_A_DAY; time++) {
 			count = 0;
 			List<String> labels = Lists.newArrayList();
 			chart.getXTime().add(String.format(HOUR, time));

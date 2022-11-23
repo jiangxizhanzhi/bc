@@ -35,7 +35,7 @@ public class Behavior extends BehaviorSimple implements Serializable {
 	private Date createTime;
 
 	@ApiModelProperty(value = "创建者id")
-	private String createId;
+	private String creatorId;
 
 	@ApiModelProperty(value = "创建者名称")
 	private String creatorName;

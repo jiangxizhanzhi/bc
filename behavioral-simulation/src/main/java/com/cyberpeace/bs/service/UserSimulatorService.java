@@ -8,6 +8,7 @@ import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
+import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 
 public interface UserSimulatorService {
 
@@ -63,4 +64,22 @@ public interface UserSimulatorService {
 	 * @param addBo 配管发来的请求体
 	 */
 	void batchCreate(SimulatorAddBo addBo);
+
+	/**
+	 * 统计当前仪表数量
+	 * @return
+	 */
+	Integer countSimulators();
+
+	/**
+	 * 统计当前活跃行为仪表
+	 * @return
+	 */
+	Integer countActiveSimulators();
+
+	/**
+	 * 列出行为模拟仪表
+	 * @return
+	 */
+	List<BehaviorMeterBo> listBehaviorMeters();
 }

@@ -10,11 +10,23 @@ public class LcBehaviorRspBo implements Serializable {
 
 	private String id;
 
-	private String name;
+	private String flowChartName;
 
-	private Integer tag;
+	private String appName;
+
+	private Integer deviceType;
+
+	private Integer netModel;
+
+	private Integer stepNum;
+
+	private Integer consumeTime;
 
 	private String creatorName;
+
+	private String type;
+
+	private String application;
 
 	private Date createTime;
 }

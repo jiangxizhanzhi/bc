@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserTypeService;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
 import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.ChartUtil;
 import com.cyberpeace.bs.utils.RandomUtil;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -67,13 +70,7 @@ public class UserModelServiceImpl implements UserModelService {
 
 	@Override
 	public UserModelDetail getDetail(String resourceId) {
-		if (StringUtils.isBlank(resourceId)) {
-			return null;
-		}
-		UserModel userModel = userModelMapper.selectById(resourceId);
-		if (userModel == null) {
-			return null;
-		}
+		UserModel userModel = getOrException(resourceId);
 		UserModelDetail detail = BeanUtils.copy(userModel, UserModelDetail.class);
 		detail.setUserType(userTypeService.getNameById(detail.getUserTypeId()));
 		// get behaviors
@@ -81,7 +78,7 @@ public class UserModelServiceImpl implements UserModelService {
 				.toJsonObjectArray(userModel.getBehaviorList(), BehaviorSimple.class);
 		Map<String, BehaviorSimple> map = StreamApiUtils.toMap(behaviorSimpleList,
 				BehaviorSimple::getId, behavior -> behavior);
-		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(map.keySet());
+		List<Behavior> behaviors = lcService.getLcBehaviorListByIds(map.keySet(), false);
 		// 补上时间
 		for (Behavior behavior : behaviors) {
 			behavior.setStartTime(map.get(behavior.getId()).getStartTime());
@@ -129,19 +126,30 @@ public class UserModelServiceImpl implements UserModelService {
 		ChartResult res = new ChartResult();
 
 		if (accessConfig.equals(UserModel.AccessConfig.COSTUMER.getCode())) {
-
 			BsUtil.sortBehaviorList(chartInput.getBehaviors());
-
 		} else if (accessConfig.equals(UserModel.AccessConfig.RANDOM.getCode())) {
-			RandomUtil.randomDistribution(chartInput);
+			RandomUtil.randomDistribute(chartInput);
 		} else if (accessConfig.equals(UserModel.AccessConfig.NORMAL.getCode())) {
-			RandomUtil.normalDistribution(chartInput);
+			RandomUtil.normalDistribute(chartInput);
 		} else {
 			throw new BusinessException(BsErrorCode.INVALID_ACCESS_CONF);
 		}
 		res.setBehaviorList(chartInput.getBehaviors());
 		ChartUtil.createXy(res);
 		ChartUtil.createPie(res);
+		return res;
+	}
+
+	@Override
+	public List<BehaviorWithVariable> getBehaviorsWithVariables(String userModelId) {
+		UserModel userModel = getOrException(userModelId);
+		List<BehaviorSimple> behaviorSimpleList = BsUtil
+				.parseBehaviorList(userModel.getBehaviorList());
+		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
+				.collect(Collectors.toList());
+
+		List<BehaviorWithVariable> res = Lists.newArrayList();
+		lcService.getLcBehaviorListByIds(behaviorIds, true);
 		return res;
 	}
 
@@ -155,5 +163,23 @@ public class UserModelServiceImpl implements UserModelService {
 				JsonUtil.arrayToString(behaviorSimpleList, PropertyNamingStrategy.SnakeCase));
 		userModel.setAccessHabit(JsonUtil.arrayToString(reqBo.getAccessHabit()));
 		return userModel;
+	}
+
+	private UserModel getOrException(String userModelId) {
+		if (StringUtils.isBlank(userModelId)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		UserModel userModel = userModelMapper.selectById(userModelId);
+		if (null == userModel) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return userModel;
+	}
+
+	private UserModel getOrNull(String userModelId) {
+		if (StringUtils.isBlank(userModelId)) {
+			return null;
+		}
+		return userModelMapper.selectById(userModelId);
 	}
 }

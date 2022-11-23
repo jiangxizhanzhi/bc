@@ -2,6 +2,7 @@ package com.cyberpeace.bs.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -23,10 +24,11 @@ import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
-import com.cyberpeace.bs.service.bo.demo.TaskDemo;
+import com.cyberpeace.bs.service.bo.BsTimerTask;
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.simulator.*;
+import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,6 +36,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,6 +86,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			return;
 		}
 		userSimulatorMapper.deleteBatchIds(resourceIds);
+		for (String resourceId : resourceIds) {
+			BsTimer timer = timerMap.get(resourceId);
+			if (timer != null) {
+				timer.cancel();
+				timerMap.remove(resourceId);
+			}
+		}
 	}
 
 	@Override
@@ -127,14 +137,38 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
+	public Integer countSimulators() {
+		return userSimulatorMapper.countAll();
+	}
+
+	@Override
+	public Integer countActiveSimulators() {
+		return userSimulatorMapper.countByStatus(UserSimulator.Status.RUNNING.getCode());
+	}
+
+	@Override
+	public List<BehaviorMeterBo> listBehaviorMeters() {
+		List<UserSimulator> simulators = userSimulatorMapper.selectAll();
+		List<BehaviorMeterBo> res = Lists.newArrayList();
+		Set<String> meterIds = Sets.newHashSet();
+		for (UserSimulator simulator : simulators) {
+			String meterId = simulator.getDeviceId();
+			if (!meterIds.contains(meterId)) {
+				meterIds.add(meterId);
+				BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
+				behaviorMeterBo.setId(meterId);
+				behaviorMeterBo.setIp(simulator.getDeviceIp());
+				behaviorMeterBo.setName(simulator.getDeviceName());
+				behaviorMeterBo.setResourceId(simulator.getResourceId());
+				res.add(behaviorMeterBo);
+			}
+		}
+		return res;
+	}
+
+	@Override
 	public void startSimulator(String resourceId) {
-		if (StringUtils.isBlank(resourceId)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
-		if (simulator == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		UserSimulator simulator = getOrException(resourceId);
 		// 不能重复开始
 		if (!simulator.getStatus().equals(UserSimulator.Status.NOT_STARTED.getCode())) {
 			throw new BusinessException(BsErrorCode.ALREADY_STARTED);
@@ -146,19 +180,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		Map<String, String> behaviorVariableMap = BsUtil
 				.getVariableMap("");
 		// get params
-		String deviceId = lcService.getDeviceId();
-		TaskParam param = demoMapper.selectLatest();
-		if (deviceId != null) {
-			param.setDeviceId(deviceId);
-			demoMapper.saveParam(deviceId, param.getEnvironmentId(), param.getProjectId());
-		}
 
 		for (BehaviorSimple behavior : behaviorList) {
 			// 最后一个task index为0
 			index--;
-			TaskDemo task = new TaskDemo(simulator.getDeviceIp(), behavior.getId(),
-					index, resourceId, behaviorVariableMap.getOrDefault(behavior.getId(), ""),
-					timer, param);
+			BsTimerTask task = new BsTimerTask(simulator.getDeviceId(), simulator.getDeviceIp(),
+					behavior.getId(), index, simulator.getResourceId(),
+					behaviorVariableMap.getOrDefault(behavior.getId(), ""), timer);
 			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
 			timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
 					BsConstants.MILLI_IN_A_DAY);
@@ -171,13 +199,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void stopSimulator(String resourceId) {
-		if (StringUtils.isBlank(resourceId)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
-		if (simulator == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		UserSimulator simulator = getOrException(resourceId);
 		// cancel timer
 		BsTimer timer = timerMap.get(resourceId);
 		if (timer != null) {
@@ -208,9 +230,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public void updateProcess(String trafficId, Integer index) {
 		UserSimulator traffic = userSimulatorMapper.selectById(trafficId);
 		traffic.setExecutedIndex(index);
-		if (index == 0) {
-			traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
-		}
+		// if (index == 0) {
+		// traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
+		// }
 		userSimulatorMapper.updateById(traffic);
 	}
 
@@ -274,9 +296,20 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// todo index
 		simulator.setExecutedIndex(statistic.getBehaviorCount());
 		simulator.setDeviceId(nodeBo.getNodeId());
-		simulator.setDeviceIp("");
+		simulator.setDeviceIp(nodeBo.getIpConfig().get(0).getIp());
 		simulator.setDeviceName(nodeBo.getNodeName());
 		simulator.setSceneId(sceneId);
+		return simulator;
+	}
+
+	private UserSimulator getOrException(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
+		if (simulator == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 		return simulator;
 	}
 }

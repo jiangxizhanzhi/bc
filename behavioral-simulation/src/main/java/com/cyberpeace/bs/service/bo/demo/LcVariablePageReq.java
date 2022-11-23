@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.utils;
+package com.cyberpeace.bs.service.bo.demo;
 
 import java.io.Serializable;
 

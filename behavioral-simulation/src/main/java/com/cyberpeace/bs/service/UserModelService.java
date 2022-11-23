@@ -3,6 +3,7 @@ package com.cyberpeace.bs.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
 import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.common.model.ListRsp;
 
@@ -48,4 +49,11 @@ public interface UserModelService {
 	 * @return 时间和图形
 	 */
 	ChartResult createChart(ChartInput chartInput);
+
+	/**
+	 * 获取用户模型包含的行为列表，并附带行为变量值
+	 * @param userModelId 用户模型id
+	 * @return 带行为变量的行为列表
+	 */
+	List<BehaviorWithVariable> getBehaviorsWithVariables(String userModelId);
 }

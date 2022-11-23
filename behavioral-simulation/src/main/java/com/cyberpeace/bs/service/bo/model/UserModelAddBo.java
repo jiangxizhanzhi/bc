@@ -3,6 +3,10 @@ package com.cyberpeace.bs.service.bo.model;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
@@ -30,5 +34,14 @@ public class UserModelAddBo extends UserModelBase implements Serializable {
 	public void validate() {
 		CrCommonValidator.validateNameLen(this.getUserName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(this.description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		if (behaviors == null) {
+			behaviors = Lists.newArrayList();
+		} else {
+			behaviors.forEach(behavior -> {
+				if (behavior.getStartTime() == null) {
+					throw new BusinessException(BsErrorCode.START_TIME_NOT_CONFIGURED);
+				}
+			});
+		}
 	}
 }

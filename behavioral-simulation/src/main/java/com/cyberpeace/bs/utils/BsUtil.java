@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
+import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.model.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.model.UserModelBase;
@@ -38,7 +39,7 @@ public class BsUtil {
 			return Lists.newArrayList();
 		}
 		if (!json.startsWith(JSON_LIST_INITIAL)) {
-			throw new BusinessException(ErrorCode.INVALID_CONFIGURATION);
+			throw new BusinessException(BsErrorCode.INVALID_BEHAVIOR_CONF);
 		}
 		return JsonUtil.toJsonObjectArray(json, BehaviorSimple.class);
 	}
@@ -128,5 +129,28 @@ public class BsUtil {
 	 */
 	public static Map<String, String> getVariableMap(String json) {
 		return Maps.newHashMap();
+	}
+
+	/**
+	 * double四舍五入成整数
+	 * @param digit 双精度浮点数，可为负
+	 * @return 整型
+	 */
+	public static Integer round(double digit) {
+		boolean negative = false;
+		if (digit < 0) {
+			digit = -digit;
+			negative = true;
+		}
+		int tmp = (int) (digit * 2);
+		int ret = tmp / 2;
+		int mod = tmp % 2;
+		if (mod == 1) {
+			ret++;
+		}
+		if (negative) {
+			ret = -ret;
+		}
+		return ret;
 	}
 }

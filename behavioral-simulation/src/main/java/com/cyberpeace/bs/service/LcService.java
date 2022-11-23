@@ -6,10 +6,11 @@ import java.util.List;
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.behavior.VariableListBo;
-import com.cyberpeace.bs.service.bo.behavior.VariableModifyReq;
-import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReq;
+import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
+import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.model.Behavior;
+import com.cyberpeace.bs.service.bo.variable.VariableListBo;
+import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
 
 /**
@@ -30,7 +31,7 @@ public interface LcService {
 	 * @param behaviorId 行为id
 	 * @param variable 行为变量
 	 */
-	void startBehavior(String ip, String behaviorId, String variable);
+	void startBehavior(ReleaseTaskReq req);
 
     /**
      * 停止单个行为流量
@@ -51,13 +52,13 @@ public interface LcService {
 	 * @param behaviorIds id集合
 	 * @return 用户行为列表
 	 */
-	List<Behavior> getLcBehaviorListByIds(Collection<String> behaviorIds);
+	List<Behavior> getLcBehaviorListByIds(Collection<String> behaviorIds, Boolean withVariable);
 
 	VariableListBo getVariableList(String behaviorId);
 
 	void updateVariable(VariableModifyReq req);
 
-	void startDemoBehavior(ReleaseTaskReq req);
+	void startDemoBehavior(ReleaseTaskReqDemo req);
 
 	String getDeviceId();
 

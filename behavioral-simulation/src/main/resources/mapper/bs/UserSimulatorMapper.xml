@@ -6,4 +6,13 @@
         from bs_user_simulator
         order by id desc
     </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(id)
+        from bs_user_simulator
+    </select>
+    <select id="countByStatus" resultType="java.lang.Integer">
+        select count(id)
+        from bs_user_simulator
+        where status = #{statusCode}
+    </select>
 </mapper>

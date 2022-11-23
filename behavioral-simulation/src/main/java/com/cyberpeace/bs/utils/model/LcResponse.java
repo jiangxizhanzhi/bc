@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.utils;
+package com.cyberpeace.bs.utils.model;
 
 import lombok.Data;
 

@@ -8,13 +8,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.behavior.VariableListBo;
-import com.cyberpeace.bs.service.bo.behavior.VariableModifyReq;
+import com.cyberpeace.bs.service.bo.variable.VariableListBo;
+import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -46,12 +45,6 @@ public class BehaviorController {
 	@PutMapping("/variable")
 	public BaseRsp updateVariables(@Validated @RequestBody VariableModifyReq req) {
 		lcService.updateVariable(req);
-		return new BaseRsp();
-	}
-	// todo
-	@ApiModelProperty("获取带行为变量的行为列表")
-	@GetMapping("/page_with_variables")
-	public BaseRsp pageBehaviorsWithVariables() {
 		return new BaseRsp();
 	}
 }

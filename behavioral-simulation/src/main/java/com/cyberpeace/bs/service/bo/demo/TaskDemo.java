@@ -48,7 +48,7 @@ public class TaskDemo extends TimerTask {
                 log.info("Timer is inactive, pass this task");
                 return;
             }
-            ReleaseTaskReq req = new ReleaseTaskReq();
+			ReleaseTaskReqDemo req = new ReleaseTaskReqDemo();
 			req.setDeviceId(taskParam.getDeviceId());
 			req.setEnvironmentId(taskParam.getEnvironmentId());
 			req.setProjectId(taskParam.getProjectId());

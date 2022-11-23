@@ -3,7 +3,7 @@ package com.cyberpeace.bs.service.bo.demo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.cyberpeace.bs.utils.LcListBase;
+import com.cyberpeace.bs.utils.model.LcListBase;
 
 import lombok.Data;
 

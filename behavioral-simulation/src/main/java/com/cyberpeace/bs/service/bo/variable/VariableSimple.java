@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.service.bo.behavior;
+package com.cyberpeace.bs.service.bo.variable;
 
 import java.io.Serializable;
 

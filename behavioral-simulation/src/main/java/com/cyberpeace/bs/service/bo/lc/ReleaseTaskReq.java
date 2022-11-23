@@ -1,4 +1,4 @@
-package com.cyberpeace.bs.service.bo.demo;
+package com.cyberpeace.bs.service.bo.lc;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,25 +20,21 @@ public class ReleaseTaskReq implements Serializable {
 
 	private String taskStrategy = "";
 
+	public ReleaseTaskReq() {
+		this.setTask(new Task());
+	}
+
 	public void setDeviceId(String id) {
 		this.getTask().setDeviceId(id);
 	}
 
-	public void setProjectId(String id) {
-		this.getTask().setProjectId(id);
+	public void setDeviceIp(String ip) {
+		this.getTask().setDeviceIp(ip);
 	}
 
-	public void setEnvironmentId(String id) {
-		this.getTask().setEnvironmentId(id);
-	}
-	public void setFlowChart(String id){
+	public void setFlowChart(String id) {
 		this.getFlowChartIds().add(new Long(id));
 	}
-
-	public ReleaseTaskReq(){
-		this.setTask(new Task());
-	}
-
 }
 
 @Data
@@ -46,15 +42,14 @@ class Task implements Serializable {
 
 	private String deviceId;
 
+	private String deviceIp;
+
 	private Integer deviceSource = 2;
 
 	private Integer execType = 1;
 
 	private String name = "test";
 
-	private String projectId;
-
 	private String isRecordVideo = "0";
 
-	private String environmentId;
 }

@@ -3,15 +3,17 @@ package com.cyberpeace.bs.service.bo;
 import java.util.TimerTask;
 
 import com.cyberpeace.bs.service.LcService;
+import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.common.util.SpringContextUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TrafficTimerTask extends TimerTask {
+public class BsTimerTask extends TimerTask {
 
-	private final String ip;
+	private final String deviceIp;
+	private String deviceId;
 
 	private final String behaviorId;
 
@@ -23,16 +25,15 @@ public class TrafficTimerTask extends TimerTask {
 
 	private final String variable;
 
-	private final LcService lcService;
 
-	public TrafficTimerTask(String ip, String behaviorId, Integer index, String simulatorId,
-			String variable, BsTimer timer) {
-		this.ip = ip;
+	public BsTimerTask(String deviceId, String ip, String behaviorId, Integer index,
+			String simulatorId, String variable, BsTimer timer) {
+		this.deviceId = deviceId;
+		this.deviceIp = ip;
 		this.behaviorId = behaviorId;
 		this.index = index;
 		this.simulatorId = simulatorId;
 		this.variable = variable;
-		this.lcService = SpringContextUtil.getBeanByClass(LcService.class);
 		this.timer = timer;
 	}
 
@@ -46,7 +47,13 @@ public class TrafficTimerTask extends TimerTask {
 				return;
 			}
 			// todo start a behavior
-			lcService.startBehavior(ip, behaviorId, variable);
+			ReleaseTaskReq req = new ReleaseTaskReq();
+			req.setDeviceId(deviceId);
+			req.setDeviceIp(deviceIp);
+			req.setFlowChart(behaviorId);
+			// todo start a behavior
+			LcService lcService = SpringContextUtil.getBeanByClass(LcService.class);
+			lcService.startBehavior(req);
 			// UserSimulatorService userSimulatorService = SpringContextUtil
 			// .getBeanByClass(UserSimulatorService.class);
 			// userSimulatorService.updateProcess(simulatorId, index);

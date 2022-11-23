@@ -2,7 +2,6 @@ package com.cyberpeace.bs.controller;
 
 import java.util.List;
 
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
-import com.cyberpeace.bs.service.bo.demo.TaskParam;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
+import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
+import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
 
 import io.swagger.annotations.Api;
@@ -69,17 +70,30 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("设置任务参数-demo用，非正式")
-	@PostMapping("/parameter")
-	public BaseRsp setParam(@RequestBody @Validated TaskParam taskParam) {
-		userSimulatorService.saveParams(taskParam);
-		return new BaseRsp();
+	@ApiOperation("行为仪表数量统计")
+	@GetMapping("/statistics")
+	public BaseRsp<StatisticsRsp> getSimulatorCount() {
+		Integer count = userSimulatorService.countSimulators();
+		return new BaseRsp<>(new StatisticsRsp(count));
 	}
 
-	@ApiOperation("查看参数-demo用，非正式")
-	@GetMapping("/parameter")
-	public BaseRsp<TaskParam> getParams() {
-		TaskParam res = userSimulatorService.getParam();
+	@ApiOperation("行为实时仿真数量统计")
+	@GetMapping("/task_count")
+	public BaseRsp<StatisticsRsp> getSimulationTaskCount() {
+		Integer count = userSimulatorService.countActiveSimulators();
+		return new BaseRsp<>(new StatisticsRsp(count));
+	}
+
+	@ApiOperation("行为实时总带宽")
+	@GetMapping("/bandwidth_count")
+	public BaseRsp<Integer> getBandwidthStatistics() {
+		return new BaseRsp<>(0);
+	}
+
+	@ApiOperation("行为仪表列表")
+	@GetMapping("/flow_generators")
+	public BaseRsp<List<BehaviorMeterBo>> getSimulatorList() {
+		List<BehaviorMeterBo> res = userSimulatorService.listBehaviorMeters();
 		return new BaseRsp<>(res);
 	}
 }

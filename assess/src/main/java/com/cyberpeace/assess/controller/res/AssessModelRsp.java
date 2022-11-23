@@ -38,6 +38,9 @@ public class AssessModelRsp implements Serializable {
 	@ApiModelProperty("上传文件地址")
 	private String attachmentUrl;
 
+	@ApiModelProperty("上传文件地址")
+	private JSONObject dataBaseTable;
+
 	@ApiModelProperty("超链接域名")
 	private String urlDomain;
 

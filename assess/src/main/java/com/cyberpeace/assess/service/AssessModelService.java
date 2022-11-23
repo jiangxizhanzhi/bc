@@ -11,4 +11,6 @@ import com.cyberpeace.common.model.PageReqBase;
 public interface AssessModelService extends IService<AssessModel> {
 
 	IPage<AssessModel> page(PageReqBase pageReqBase);
+
+	String getDataBaseTable(AssessModel resourceId);
 }

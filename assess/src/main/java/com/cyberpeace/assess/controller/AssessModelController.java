@@ -51,8 +51,10 @@ public class AssessModelController {
 		assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
 		assessModelRsp
 				.setParams(JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
+		assessModelRsp.setDataBaseTable(JsonUtil
+				.toJsonObject(assessModelService.getDataBaseTable(assessModel), JSONObject.class));
 
-		return new BaseRsp(assessModel);
+		return new BaseRsp(assessModelRsp);
 	}
 
 	@ApiOperation("新增单条评估模型")

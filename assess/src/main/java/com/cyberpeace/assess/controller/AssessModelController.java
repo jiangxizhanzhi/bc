@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +19,8 @@ import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -46,8 +47,7 @@ public class AssessModelController {
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessModel assessModel = assessModelService.getById(resource_id);
 
-		AssessModelRsp assessModelRsp = com.cyberpeace.common.util.BeanUtils.copy(assessModel,
-				AssessModelRsp.class);
+		AssessModelRsp assessModelRsp = BeanUtils.copy(assessModel, AssessModelRsp.class);
 		assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
 		assessModelRsp
 				.setParams(JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
@@ -59,10 +59,10 @@ public class AssessModelController {
 	@PostMapping("/assess_model")
 	public BaseRsp<String>
 			addAssessModel(@RequestBody @Validated AssessModelAddReq assessModelAddReq) {
-		AssessModel assessModel = new AssessModel();
-		BeanUtils.copyProperties(assessModelAddReq, assessModel);
+		AssessModel assessModel = BeanUtils.copy(assessModelAddReq, AssessModel.class);
 		assessModel.setTag(JsonUtil.toJsonString(assessModelAddReq.getTag()));
 		assessModel.setParams(JsonUtil.toJsonString(assessModelAddReq.getParams()));
+		assessModel.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		assessModelService.save(assessModel);
 
@@ -73,8 +73,7 @@ public class AssessModelController {
 	@PutMapping("/assess_model")
 	public BaseRsp<String>
 			modifyAssessModel(@RequestBody @Validated AssessModelUpdateReq assessModelUpdateReq) {
-		AssessModel assessModel = new AssessModel();
-		BeanUtils.copyProperties(assessModelUpdateReq, assessModel);
+		AssessModel assessModel = BeanUtils.copy(assessModelUpdateReq, AssessModel.class);
 		assessModel.setTag(JsonUtil.toJsonString(assessModelUpdateReq.getTag()));
 		assessModel.setParams(JsonUtil.toJsonString(assessModelUpdateReq.getParams()));
 
@@ -104,8 +103,7 @@ public class AssessModelController {
 
 		data.convert(assessModel -> {
 
-			AssessModelRsp assessModelRsp = com.cyberpeace.common.util.BeanUtils.copy(assessModel,
-					AssessModelRsp.class);
+			AssessModelRsp assessModelRsp = BeanUtils.copy(assessModel, AssessModelRsp.class);
 			assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
 			assessModelRsp.setCreateUser(idNameMap.get(assessModel.getCreateUserId()));
 			assessModelRsp.setParams(

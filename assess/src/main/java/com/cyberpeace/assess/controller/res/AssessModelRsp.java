@@ -1,5 +1,6 @@
 package com.cyberpeace.assess.controller.res;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -8,7 +9,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class AssessModelRsp {
+public class AssessModelRsp implements Serializable {
+
+	@ApiModelProperty("资源编号")
+	private String resourceId;
 
 	@ApiModelProperty(value = "名称", required = true)
 	private String name;

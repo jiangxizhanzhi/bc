@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,8 @@ import com.cyberpeace.assess.dao.entity.AssessData;
 import com.cyberpeace.assess.service.AssessDataService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -44,8 +45,7 @@ public class AssessDataController {
 	public BaseRsp<AssessData> getAssessData(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessData assessData = assessDataService.getById(resource_id);
-		AssessDataRsp assessDataRsp = com.cyberpeace.common.util.BeanUtils.copy(assessData,
-				AssessDataRsp.class);
+		AssessDataRsp assessDataRsp = BeanUtils.copy(assessData, AssessDataRsp.class);
 		assessDataRsp.setTag(JsonUtil.toJsonObjectArray(assessData.getTag(), String.class));
 
 		return new BaseRsp(assessDataRsp);
@@ -55,11 +55,11 @@ public class AssessDataController {
 	@PostMapping("/assess_data")
 	public BaseRsp<String>
 			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) {
-		AssessData toAddAssessData = new AssessData();
-		BeanUtils.copyProperties(assessDataAddReq, toAddAssessData);
-		toAddAssessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
+		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
 
-		assessDataService.save(toAddAssessData);
+		assessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
+		assessData.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		assessDataService.save(assessData);
 
 		return new BaseRsp<>();
 	}
@@ -68,8 +68,7 @@ public class AssessDataController {
 	@PutMapping("/assess_data")
 	public BaseRsp<String>
 			modifyAssessData(@RequestBody @Validated AssessDataUpdateReq assessDataUpdateReq) {
-		AssessData assessData = new AssessData();
-		BeanUtils.copyProperties(assessDataUpdateReq, assessData);
+		AssessData assessData = BeanUtils.copy(assessDataUpdateReq, AssessData.class);
 		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 
 		assessDataService.updateById(assessData);
@@ -98,8 +97,7 @@ public class AssessDataController {
 
 		data.convert(assessData -> {
 
-			AssessDataRsp assessDataRsp = com.cyberpeace.common.util.BeanUtils.copy(assessData,
-					AssessDataRsp.class);
+			AssessDataRsp assessDataRsp = BeanUtils.copy(assessData, AssessDataRsp.class);
 			assessDataRsp.setCreateUser(idNameMap.get(assessData.getCreateUserId()));
 			assessDataRsp.setTag(JsonUtil.toJsonObjectArray(assessData.getTag(), String.class));
 

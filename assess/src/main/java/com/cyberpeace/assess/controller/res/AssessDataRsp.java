@@ -1,8 +1,7 @@
 package com.cyberpeace.assess.controller.res;
 
+import java.io.Serializable;
 import java.util.List;
-
-import com.cyberpeace.common.model.BaseTable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +11,10 @@ import lombok.Data;
  * @TableName assess_data
  */
 @Data
-public class AssessDataRsp extends BaseTable {
+public class AssessDataRsp implements Serializable {
+
+	@ApiModelProperty("资源编号")
+	private String resourceId;
 
 	@ApiModelProperty(value = "名称", required = true)
 	private String name;

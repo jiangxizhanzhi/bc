@@ -1,5 +1,6 @@
 package com.cyberpeace.assess.controller.req;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -8,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class AssessModelAddReq {
+public class AssessModelAddReq implements Serializable {
 
 	@ApiModelProperty(value = "名称", required = true)
 	private String name;

@@ -31,10 +31,16 @@ public interface UserSimulatorService {
 	void create(UserSimulatorAddReq addReq);
 
 	/**
-	 * 启动流量发生
-	 * @param resourceId 用户流量id
+	 * 启动用户模拟
+	 * @param resourceId 用户模拟id
 	 */
 	void startSimulator(String resourceId);
+
+	/**
+	 * 批量启动仪表
+	 * @param simulatorIds
+	 */
+	void batchStartSimulator(List<String> simulatorIds);
 
 	/**
 	 * 停止流量发生
@@ -82,4 +88,5 @@ public interface UserSimulatorService {
 	 * @return
 	 */
 	List<BehaviorMeterBo> listBehaviorMeters();
+
 }

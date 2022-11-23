@@ -173,12 +173,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (!simulator.getStatus().equals(UserSimulator.Status.NOT_STARTED.getCode())) {
 			throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 		}
+		start(simulator);
+	}
+
+	@Override
+	public void batchStartSimulator(List<String> simulatorIds) {
+		// 不加事务
+		for (String simulatorId : simulatorIds) {
+			UserSimulator simulator = getOrNull(simulatorId);
+			if (null != simulator
+					&& !simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+				start(simulator);
+			}
+		}
+	}
+
+	private void start(UserSimulator simulator) {
 		// create timer
 		BsTimer timer = new BsTimer();
 		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(simulator.getBehaviorList());
 		int index = behaviorList.size();
-		Map<String, String> behaviorVariableMap = BsUtil
-				.getVariableMap("");
+		Map<String, String> behaviorVariableMap = BsUtil.getVariableMap("");
 		// get params
 
 		for (BehaviorSimple behavior : behaviorList) {
@@ -191,7 +206,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
 					BsConstants.MILLI_IN_A_DAY);
 		}
-		timerMap.putIfAbsent(resourceId, timer);
+		timerMap.putIfAbsent(simulator.getResourceId(), timer);
 
 		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
 		userSimulatorMapper.updateById(simulator);
@@ -311,5 +326,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return simulator;
+	}
+
+	private UserSimulator getOrNull(String resourceId) {
+		if (StringUtils.isBlank(resourceId)) {
+			return null;
+		}
+		return userSimulatorMapper.selectById(resourceId);
 	}
 }

@@ -63,6 +63,13 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("")
+	@PostMapping("/start_batch")
+	public BaseRsp startBatch(@RequestBody @Validated IdListReq req) {
+		userSimulatorService.batchStartSimulator(req.getIds());
+		return new BaseRsp();
+	}
+
 	@ApiOperation("停止用户流量")
 	@PostMapping("/stop")
 	public BaseRsp stop(@RequestBody @Validated IdReq idReq) {

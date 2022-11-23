@@ -8,33 +8,33 @@ import lombok.Data;
 @Data
 public class BehaviorMeterBo implements Serializable {
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "仪表节点id")
 	private String id;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "仪表节点ip")
 	private String ip;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "仪表节点名称")
 	private String name;
 
 	@ApiModelProperty(value = "")
 	private String nics;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "密码")
 	private String password;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "仪表resourceId，用于启动")
 	private String resourceId;
 
 	@ApiModelProperty(value = "")
 	private String server;
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "令牌")
 	private String token;
 
 	@ApiModelProperty(value = "")
 	private String type = "cpcloud_behavior";
 
-	@ApiModelProperty(value = "")
+	@ApiModelProperty(value = "用户名")
 	private String username;
 }

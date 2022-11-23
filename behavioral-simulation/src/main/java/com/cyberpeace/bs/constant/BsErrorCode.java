@@ -16,4 +16,9 @@ public interface BsErrorCode {
 	 * 行为开始时间未配置
 	 */
 	String START_TIME_NOT_CONFIGURED = "105004";
+
+	/**
+	 * id列表为空
+	 */
+	String EMPTY_ID_COLL = "105005";
 }

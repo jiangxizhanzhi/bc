@@ -6,7 +6,9 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.assess.controller.req.*;
+import com.cyberpeace.assess.controller.res.AssessMaterialExcelDatalRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
 import com.cyberpeace.assess.service.AssessMaterialConfigService;
 import com.cyberpeace.assess.service.AssessMaterialService;
@@ -32,6 +34,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "评估材料")
 @RestController
@@ -41,6 +44,9 @@ public class AssessMaterialController {
 
 	@Autowired
 	private AssessMaterialMapper assessMaterialMapper;
+
+	@Autowired
+	private AssessMaterialConfigMapper assessMaterialConfigMapper;
 
 	@Autowired
 	private AssessMaterialService assessMaterialService;
@@ -54,14 +60,19 @@ public class AssessMaterialController {
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<AssessMaterial>
-			setAssessCase(@RequestBody @Validated AssessMaterialAddReq assessMaterialAddReq) {
+			setAssessCase(AssessMaterialAddReq assessMaterialAddReq) {
+
+		String name = assessMaterialAddReq.getName();
+		MultipartFile attachment = assessMaterialAddReq.getAttachment();
+
+		assessMaterialService.checkParams(name, attachment);
 
 		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
 				AssessMaterial.class);
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		assessMaterial.setCreateUserId(auth.getUserId());
-		assessMaterial = assessMaterialService.checkAssessMaterial(assessMaterialAddReq.getAttachment(), assessMaterial);
+		assessMaterial = assessMaterialService.checkAssessMaterial(attachment, assessMaterial);
 
 		String uuid = String.valueOf(UUID.randomUUID());
 		assessMaterial.setResourceId(uuid);
@@ -75,7 +86,7 @@ public class AssessMaterialController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				assessMaterialMapper.insert(finalAssessMaterial);
-				assessMaterialConfigService.save(assessMaterialConfig);
+				assessMaterialConfigMapper.updateById(assessMaterialConfig);
 			}
 		});
 
@@ -120,16 +131,37 @@ public class AssessMaterialController {
 
 	@ApiOperation("修改")
 	@PatchMapping("")
-	public BaseRsp<AssessMaterial> updateAssessCase(@RequestBody @Validated AssessMateriaUpdateReq assessMateriaUpdateReq) {
+	public BaseRsp<AssessMaterial> updateAssessCase(AssessMateriaUpdateReq assessMateriaUpdateReq) {
 		String resourceId = assessMateriaUpdateReq.getResourceId();
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+
+		String name = assessMateriaUpdateReq.getName();
+		MultipartFile attachment = assessMateriaUpdateReq.getAttachment();
+
+		assessMaterialService.checkParams(name, attachment);
+
 		BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
 		assessMaterial = assessMaterialService.checkAssessMaterial(assessMateriaUpdateReq.getAttachment(), assessMaterial);
 
 		assessMaterialMapper.updateById(assessMaterial);
 		return new BaseRsp<>(assessMaterial);
 	}
+
+	@ApiOperation("前台表格详情")
+	@GetMapping("detail")
+	public BaseRsp<AssessMaterial> getAssessCaseDetail(@ApiParam(name = "resource_id",
+			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
+		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
+		if(null == assessMaterial){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String attachment = assessMaterial.getAttachment();
+		List<AssessMaterialExcelDatalRes> res = assessMaterialService.getExcelData(attachment);
+
+		return new BaseRsp<>(assessMaterial);
+	}
+
 }

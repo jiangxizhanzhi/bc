@@ -1,18 +1,17 @@
 package com.cyberpeace.assess.controller.req;
 
+import javax.validation.constraints.NotBlank;
+
 import com.cyberpeace.assess.constant.AssessErrorCode;
+import com.cyberpeace.common.baseinterface.Update;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class AssessCaseUpdateReq extends AssessCaseAddReq {
 
 	@ApiModelProperty(value = "资源id")
-	@NotNull(message = AssessErrorCode.RESOURCE_ID_MISSING)
+	@NotBlank(groups = { Update.class }, message = AssessErrorCode.RESOURCE_ID_MISSING)
 	private String resourceId;
 }

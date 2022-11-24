@@ -1,14 +1,13 @@
 package com.cyberpeace.assess.controller.req;
 
-import javax.validation.constraints.NotNull;
-
-import com.cyberpeace.assess.constant.AssessErrorCode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class AssessMateriaFilterReq extends AssessMaterialAddReq {
+public class AssessMateriaFilterReq implements Serializable {
 
 	@ApiModelProperty("名称")
 	private String name;

@@ -42,7 +42,7 @@ public class AssessTagServiceImpl extends ServiceImpl<AssessTagMapper, AssessTag
 			queryWrapper.in(AssessTag::getResourceId, tags);
 		}
 		List<AssessTag> assessTags = assessTagMapper.selectList(queryWrapper);
-		if(assessTags.isEmpty()){
+		if(assessTags.isEmpty() || tags.size() > assessTags.size()){
 			throw new BusinessException(AssessErrorCode.TAG_ID_ERROR);
 		}
     }

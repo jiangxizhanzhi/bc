@@ -35,18 +35,16 @@ implements AssessCaseService{
     private AssessTagMapper assessTagMapper;
 
     @Override
-	public String getTagContent(String tags) {
-        LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        assessTagLambdaQueryWrapper.in(AssessTag::getResourceId, tags);
-        List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
+	public String getTagContent(String tags, List<AssessTag> assessTags) {
+    	String tagStr = "";
+		List<String> tagList = JSONObject.parseArray(tags, String.class);
+		if(tagList.isEmpty()){
+			return tagStr;
+		}
         Map<String, String> tagMap = assessTags.stream().collect(Collectors.
                 toMap(AssessTag::getResourceId, AssessTag::getContent));
-		List<String> tagList = JSONObject.parseArray(tags, String.class);
-		List<String> tagContents = assessTags.stream()
-				.filter(assessTag -> tagList.contains(assessTag.getResourceId()))
-				.map(AssessTag::getContent).collect(Collectors.toList());
 		StringBuffer tagNames = new StringBuffer();
-		for (String tmpType : tagContents) {
+		for (String tmpType : tagList) {
 			if (null == tagMap.get(tmpType)) {
 				continue;
 			}
@@ -54,7 +52,7 @@ implements AssessCaseService{
 			tagNames.append(",");
 		}
 		String str = tagNames.toString();
-		String tagStr = StringUtils.isBlank(str) ? "" : str.substring(0, str.length() - 1);
+		tagStr = StringUtils.isBlank(str) ? "" : str.substring(0, str.length() - 1);
 		return tagStr;
 	}
 

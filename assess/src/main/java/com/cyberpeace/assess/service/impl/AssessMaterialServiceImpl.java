@@ -1,9 +1,15 @@
 package com.cyberpeace.assess.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.assess.controller.res.AssessMaterialExcelDatalRes;
 import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.dao.mapper.AssessCaseMapper;
 import com.cyberpeace.assess.service.AssessCaseService;
+import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.ConfigUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,6 +74,47 @@ implements AssessMaterialService{
         }
 
     }
+
+    @Override
+    public void checkParams(String name, MultipartFile attachment) {
+        if(StringUtils.isBlank(name)){
+            throw new BusinessException(AssessErrorCode.NAME_MISSING);
+        }
+        if(null == attachment){
+            throw new BusinessException(AssessErrorCode.MATERIAL_ATTACHMENT_MISSING);
+        }
+    }
+
+    @Override
+    public List<AssessMaterialExcelDatalRes> getExcelData(String attachment) {
+        // excel数据读取
+        String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
+
+        ExcelDataHandler dataHandler = new ExcelDataHandler(prefix + "/" +attachment, CommonConstant.ZERO);
+        List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
+        for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
+            // 空数据不管
+            if (!validateEmptyData(sheetData.get(i - CommonConstant.ONE), i)) {
+                continue;
+            }
+
+        }
+        return null;
+    }
+    /**
+     * 校验空数据
+     * @param rowData
+     * @return
+     */
+    private boolean validateEmptyData(List<String> rowData, int rowIndex) {
+        if (CollectionUtils.isEmpty(rowData)
+                || StringUtils.isBlank(String.join(CommonConstant.EMPTY_STRING, rowData))) {
+            throw new BusinessException("rowindex error");
+        }
+
+        return true;
+    }
+
 
 
     private void checkAttachment(Integer materialType, String originalFilename) {

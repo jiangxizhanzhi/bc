@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -22,7 +23,7 @@ import javax.validation.constraints.NotNull;
 public class AssessCaseConfigUpdateRes implements Serializable {
 
 	@ApiModelProperty("案例id")
-	@NotNull(message = AssessErrorCode.CASE_ID_ERROR)
+	@NotBlank(message = AssessErrorCode.CASE_ID_ERROR)
 	private String caseId;
 
 	@ApiModelProperty("材料id")

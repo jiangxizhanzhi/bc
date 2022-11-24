@@ -5,7 +5,6 @@ import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.dao.entity.AssessTag;
 
 import java.util.List;
-import java.util.Map;
 
 /**
 * @author dell
@@ -14,7 +13,7 @@ import java.util.Map;
 */
 public interface AssessCaseService extends IService<AssessCase> {
 
-    String getTagContent(String tags);
+    String getTagContent(String tags, List<AssessTag> assessTags);
 
     AssessCase checkCaseId(String resourceId);
 

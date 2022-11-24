@@ -3,6 +3,7 @@ package com.cyberpeace.assess.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.assess.controller.req.AssessCaseAddReq;
 import com.cyberpeace.assess.controller.req.AssessMaterialAddReq;
+import com.cyberpeace.assess.controller.res.AssessMaterialExcelDatalRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,4 +25,8 @@ public interface AssessMaterialService extends IService<AssessMaterial> {
     AssessMaterial checkAssessMaterial(MultipartFile attachment, AssessMaterial assessMaterial);
 
     void checkMaterialIds(List<String> materialIds);
+
+    void checkParams(String name, MultipartFile attachment);
+
+    List<AssessMaterialExcelDatalRes> getExcelData(String attachment);
 }

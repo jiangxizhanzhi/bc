@@ -1,19 +1,34 @@
 package com.cyberpeace.assess.controller;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.assess.constant.AssessErrorCode;
+import com.cyberpeace.assess.dao.entity.AssessTag;
+import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.assess.constant.AssessErrorCode;
 import com.cyberpeace.assess.controller.req.AssessCaseAddReq;
 import com.cyberpeace.assess.controller.req.AssessCaseFilterReq;
 import com.cyberpeace.assess.controller.req.AssessCaseUpdateReq;
 import com.cyberpeace.assess.controller.req.BatchDeleteReq;
 import com.cyberpeace.assess.controller.res.AssessCaseDetailRes;
 import com.cyberpeace.assess.dao.entity.AssessCase;
-import com.cyberpeace.assess.dao.entity.AssessTag;
 import com.cyberpeace.assess.dao.mapper.AssessCaseMapper;
-import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessTagService;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -23,26 +38,15 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(tags = "评估案例")
 @RestController
 @RequestMapping("/assess/case")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class AssessCaseController {
 
 	@Autowired
@@ -54,15 +58,20 @@ public class AssessCaseController {
 	@Autowired
 	private AssessTagService assessTagService;
 
+	@Autowired
+	private AssessTagMapper assessTagMapper;
+
+
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<AssessCase>
-			setAssessCase(@RequestBody @Validated AssessCaseAddReq assessCaseAddReq) {
+			setAssessCase(@RequestBody @Validated(Create.class) AssessCaseAddReq assessCaseAddReq) {
 
 		AssessCase assessCase = BeanUtils.copy(assessCaseAddReq,
 				AssessCase.class);
 
 		List<String> tags = assessCaseAddReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
 		if(!tags.isEmpty()){
 			assessTagService.checkTagIds(tags);
 		}
@@ -95,27 +104,29 @@ public class AssessCaseController {
 
 		}
 		List<AssessCase> assessCases = assessCaseMapper.selectList(queryWrapper);
-		List<AssessCase> res = new ArrayList<>();
+		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
+		List<AssessCase> res;
 
 		assessCases.forEach(assessCase -> {
-			AssessCase tmp = new AssessCase();
-			BeanUtils.copyProperties(assessCase, tmp);
 			String tags = assessCase.getTag();
-			String tagStr = assessCaseService.getTagContent(tags);
-			tmp.setTag(tagStr);
-			res.add(tmp);
+			String tagStr = assessCaseService.getTagContent(tags, assessTags);
+			assessCase.setTag(tagStr);
 		});
-		return new BaseRsp<>(assessCases);
+		res = assessCases.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("删除")
 	@DeleteMapping("")
 	public BaseRsp deleteAssessCase(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		List<String> ids = batchDeleteReq.getIds();
+		ids = ids.stream().distinct().collect(Collectors.toList());
 		List<AssessCase> assessCases = assessCaseMapper.selectBatchIds(ids);
-		if (!assessCases.isEmpty()) {
-			assessCaseMapper.deleteBatchIds(ids);
+		if (assessCases.isEmpty() || ids.size() > assessCases.size()) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		assessCaseMapper.deleteBatchIds(ids);
 		return new BaseRsp<>();
 	}
 
@@ -138,12 +149,13 @@ public class AssessCaseController {
 
 	@ApiOperation("修改")
 	@PatchMapping("")
-	public BaseRsp<AssessCase> updateAssessCase(@RequestBody @Validated AssessCaseUpdateReq assessCaseUpdateReq) {
+	public BaseRsp<AssessCase> updateAssessCase(@RequestBody @Validated(Update.class) AssessCaseUpdateReq assessCaseUpdateReq) {
 		String resourceId = assessCaseUpdateReq.getResourceId();
 
 		AssessCase assessCase =assessCaseService.checkCaseId(resourceId);
 
 		List<String> tags = assessCaseUpdateReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
 		assessTagService.checkTagIds(tags);
 		String name = assessCaseUpdateReq.getName();
 		assessCaseService.checkNameRepeat(name, assessCaseUpdateReq.getResourceId());

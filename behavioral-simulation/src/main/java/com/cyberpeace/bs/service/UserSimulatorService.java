@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
-import com.cyberpeace.bs.service.bo.simulator.BsTimer;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
+import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 
 public interface UserSimulatorService {
@@ -89,4 +86,10 @@ public interface UserSimulatorService {
 	 */
 	List<BehaviorMeterBo> listBehaviorMeters();
 
+	/**
+	 * 获取仪表详情
+	 * @param simulatorId
+	 * @return
+	 */
+	SimulatorDetail getDetail(String simulatorId);
 }

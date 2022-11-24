@@ -10,6 +10,7 @@ import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
 import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
@@ -18,6 +19,7 @@ import com.cyberpeace.common.model.BaseRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "前台业务-网络流量发生")
 @RestController
@@ -63,7 +65,7 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("")
+	@ApiOperation("批量启动行为仪表")
 	@PostMapping("/start_batch")
 	public BaseRsp startBatch(@RequestBody @Validated IdListReq req) {
 		userSimulatorService.batchStartSimulator(req.getIds());
@@ -102,5 +104,13 @@ public class UserSimulatorController {
 	public BaseRsp<List<BehaviorMeterBo>> getSimulatorList() {
 		List<BehaviorMeterBo> res = userSimulatorService.listBehaviorMeters();
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("行为仪表详情")
+	@GetMapping("/detail")
+	public BaseRsp<SimulatorDetail>
+			getDetail(@ApiParam(value = "仪表resource_id", name = "resource_id") String resource_id) {
+		SimulatorDetail detail = userSimulatorService.getDetail(resource_id);
+		return new BaseRsp<>(detail);
 	}
 }

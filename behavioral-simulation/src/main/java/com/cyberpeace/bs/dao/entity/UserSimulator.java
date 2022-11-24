@@ -112,6 +112,11 @@ public class UserSimulator extends BaseTable {
 	private String sceneId;
 
 	/**
+	 * 关联场景名称
+	 */
+	private String sceneName;
+
+	/**
 	 * 用户行为模型id
 	 */
 	private String userModelId;

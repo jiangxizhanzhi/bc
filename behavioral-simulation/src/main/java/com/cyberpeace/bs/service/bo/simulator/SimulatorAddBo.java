@@ -12,6 +12,9 @@ public class SimulatorAddBo implements Serializable {
 	@ApiModelProperty(value = "场景id")
 	private String sceneId;
 
+	@ApiModelProperty(value = "场景名称")
+	private String sceneName;
+
 	@ApiModelProperty(value = "用户节点列表")
 	private List<NodeBo> nodeList;
 }

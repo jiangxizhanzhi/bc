@@ -40,6 +40,7 @@ CREATE TABLE bs_user_simulator
     `device_name`       varchar(255)  NULL     DEFAULT NULL COMMENT '执行设备名称',
     `device_ip`         varchar(255)  NULL     DEFAULT NULL COMMENT '执行设备ip',
     `scene_id`          varchar(32)   NOT NULL COMMENT '场景id',
+    `scene_name`        varchar(255)  NOT NULL COMMENT '场景名称',
     `user_model_id`     varchar(32)   NOT NULL COMMENT '用户行为模型id',
     `create_time`       datetime      NULL     DEFAULT NULL COMMENT '创建时间',
     `update_time`       datetime      NULL     DEFAULT NULL COMMENT '更新时间',

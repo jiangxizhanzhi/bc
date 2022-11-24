@@ -3,7 +3,9 @@ package com.cyberpeace.bs.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +28,9 @@ import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.BsTimerTask;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.demo.TaskParam;
+import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
@@ -69,15 +73,15 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public List<UserSimulatorBo> listSimulator() {
-		List<UserSimulator> traffics = userSimulatorMapper.selectAll();
-		List<UserSimulatorBo> trafficBos = Lists.newArrayList();
-		traffics.forEach(traffic -> {
-			UserSimulatorBo trafficBo = BeanUtils.copy(traffic, UserSimulatorBo.class);
-			BsUtil.setHabits(trafficBo, traffic.getAccessHabit());
-			trafficBos.add(trafficBo);
+		List<UserSimulator> simulators = userSimulatorMapper.selectAll();
+		List<UserSimulatorBo> userSimulatorBos = Lists.newArrayList();
+		simulators.forEach(simulator -> {
+			UserSimulatorBo simulatorBo = BeanUtils.copy(simulator, UserSimulatorBo.class);
+			BsUtil.setHabits(simulatorBo, simulator.getAccessHabit());
+			userSimulatorBos.add(simulatorBo);
 		});
 
-		return trafficBos;
+		return userSimulatorBos;
 	}
 
 	@Override
@@ -122,7 +126,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			if (userModel == null) {
 				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			}
-			UserSimulator simulator = createUserSimulator(userModel, node, sceneId);
+			UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
+					addBo.getSceneName());
 			simulatorList.add(simulator);
 		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -158,12 +163,42 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
 				behaviorMeterBo.setId(meterId);
 				behaviorMeterBo.setIp(simulator.getDeviceIp());
-				behaviorMeterBo.setName(simulator.getDeviceName());
+				behaviorMeterBo.setName(simulator.getDeviceName() + "_" + simulator.getSceneId());
 				behaviorMeterBo.setResourceId(simulator.getResourceId());
 				res.add(behaviorMeterBo);
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public SimulatorDetail getDetail(String simulatorId) {
+		UserSimulator userSimulator = getOrException(simulatorId);
+		SimulatorDetail detail = BeanUtils.copy(userSimulator, SimulatorDetail.class);
+		detail.setAccessHabit(JsonUtil.toJsonObjectArray(userSimulator.getAccessHabit(), String.class));
+		List<BehaviorSimple> behaviors = BsUtil.parseBehaviorList(userSimulator.getBehaviorList());
+		List<String> behaviorIds = behaviors.stream().map(BehaviorSimple::getId)
+				.collect(Collectors.toList());
+		List<LcBehaviorRspBo> lcBehaviorRspBos = lcService.getLcBehaviorListByIds(behaviorIds,
+				false);
+		List<LcBehavior> lcBehaviors = lcBehaviorRspBos.stream().map(this::createLcBehavior)
+				.collect(Collectors.toList());
+		detail.setBehaviors(lcBehaviors);
+		return detail;
+	}
+
+	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
+		LcBehavior behavior = new LcBehavior();
+		behavior.setId(rspBo.getId());
+		behavior.getApplication().add(rspBo.getApplication());
+		behavior.setCreatorName(rspBo.getCreatorName());
+		behavior.setName(rspBo.getFlowChartName());
+		behavior.setAccessOs(rspBo.getDeviceType());
+		behavior.setNetworkType(rspBo.getNetModel());
+		behavior.setCreateTime(rspBo.getCreateTime());
+		behavior.setStepCount(rspBo.getStepNum());
+		behavior.getTag().add(rspBo.getTag());
+		return behavior;
 	}
 
 	@Override
@@ -290,7 +325,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return simulator;
 	}
 
-	private UserSimulator createUserSimulator(UserModel userModel, NodeBo nodeBo, String sceneId) {
+	private UserSimulator createUserSimulator(UserModel userModel, NodeBo nodeBo, String sceneId,
+			String sceneName) {
 		UserSimulator simulator = new UserSimulator();
 		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
 		simulator.setUserModelId(userModel.getResourceId());
@@ -314,6 +350,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setDeviceIp(nodeBo.getIpConfig().get(0).getIp());
 		simulator.setDeviceName(nodeBo.getNodeName());
 		simulator.setSceneId(sceneId);
+		simulator.setSceneName(sceneName);
 		return simulator;
 	}
 

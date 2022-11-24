@@ -61,38 +61,6 @@ public class UserModel extends BaseTable {
 	 */
 	private Integer bandwidth;
 
-	public enum UserType implements GenericEnum {
-
-		CODER(1, "程序员"), TEACHER(2, "教师"), STUDENT(3, "学生");
-
-		@Getter
-		private Integer code;
-
-		@Getter
-		private String desc;
-
-		private UserType(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
-
-	public enum Activity implements GenericEnum {
-
-		CODER(1, "程序员"), TEACHER(2, "教师"), STUDENT(3, "学生");
-
-		@Getter
-		private Integer code;
-
-		@Getter
-		private String desc;
-
-		private Activity(Integer code, String desc) {
-			this.code = code;
-			this.desc = desc;
-		}
-	}
-
 	public enum AccessOs implements GenericEnum {
 
 		CODER(1, "程序员"), TEACHER(2, "教师"), STUDENT(3, "学生");

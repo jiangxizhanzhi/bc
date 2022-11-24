@@ -14,6 +14,6 @@
         <if test="situationCommonComponentsPageReq.type != null">
             and type = #{situationCommonComponentsPageReq.type}
         </if>
-        ORDER BY create_time DESC
+        ORDER BY type
     </select>
 </mapper>

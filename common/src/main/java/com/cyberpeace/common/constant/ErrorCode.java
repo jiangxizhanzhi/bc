@@ -161,4 +161,7 @@ public interface ErrorCode {
 
 	/** 不支持json格式 */
 	String UNSUPPORTED_JSON_TYPE = "100052";
+
+	/** 远程接口返回json格式错误 */
+	String UNSUPPORTED_RESPONSE_JSON = "100053";
 }

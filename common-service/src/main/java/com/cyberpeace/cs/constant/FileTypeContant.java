@@ -29,5 +29,6 @@ public interface FileTypeContant {
 	/** 三维组件图表标准文件上传*/
 	String CHART_STANDARD_ATTACHMENT = "FBX,OBJ";
 
-
+	/** 公共组件类型上传 */
+	String COMMON_COMPONENT = "MP4,MP3";
 }

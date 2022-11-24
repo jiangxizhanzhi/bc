@@ -44,6 +44,9 @@ public class ApiRequest extends BaseTable {
     @ApiModelProperty("请求头")
     private String requestHeaders;
 
+    @ApiModelProperty("返回值所属key值")
+    private String responseKey;
+
     @ApiModelProperty("返回参数")
     private String responseParams;
 

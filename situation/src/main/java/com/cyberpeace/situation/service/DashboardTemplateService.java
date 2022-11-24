@@ -1,9 +1,10 @@
 package com.cyberpeace.situation.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
-import com.cyberpeace.situation.controller.res.ApiRequestRes;
+import com.cyberpeace.situation.controller.req.ComponentsDataReq;
+import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
+import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public interface DashboardTemplateService {
     /**
      * 新增态势模板
+     *
      * @param dashBoardTemplateReq
      * @return
      */
@@ -32,6 +34,7 @@ public interface DashboardTemplateService {
 
     /**
      * 获取态势模板
+     *
      * @param resourceId
      * @return
      */
@@ -39,6 +42,7 @@ public interface DashboardTemplateService {
 
     /**
      * 批量态势模板
+     *
      * @param idList
      * @return
      */
@@ -46,6 +50,7 @@ public interface DashboardTemplateService {
 
     /**
      * 分页查询态势模板
+     *
      * @param dashboardTemplatePageReq
      * @return
      */
@@ -53,6 +58,7 @@ public interface DashboardTemplateService {
 
     /**
      * 获取所有组件配置id
+     *
      * @param resourceId
      * @return
      */
@@ -60,9 +66,10 @@ public interface DashboardTemplateService {
 
     /**
      * 获取echarts数据结构
+     *
      * @param componentsDataReq
      * @return
      */
-    String getComponentsEchartsData(ComponentsDataReq componentsDataReq);
+    JSONArray getComponentsEchartsData(ComponentsDataReq componentsDataReq);
 
 }

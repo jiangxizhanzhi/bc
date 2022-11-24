@@ -53,7 +53,7 @@ public class DashboardTemplate extends BaseTable {
         TOPOLOGY(2,"拓扑级"),
         PARK (3,"园区级"),
         GIS(1,"GIS级"),
-        BASICGIS(0,"基础模板");
+        BASIC_GIS(0,"基础模板");
 
         @Getter
         private Integer code;
@@ -72,7 +72,7 @@ public class DashboardTemplate extends BaseTable {
         map.put(DashboardTemplateLevel.GIS.code, DashboardTemplateLevel.GIS.desc);
         map.put(DashboardTemplateLevel.PARK.code, DashboardTemplateLevel.PARK.desc);
         map.put(DashboardTemplateLevel.TOPOLOGY.code, DashboardTemplateLevel.TOPOLOGY.desc);
-        map.put(DashboardTemplateLevel.BASICGIS.code, DashboardTemplateLevel.BASICGIS.desc);
+        map.put(DashboardTemplateLevel.BASIC_GIS.code, DashboardTemplateLevel.BASIC_GIS.desc);
         return map;
     }
 

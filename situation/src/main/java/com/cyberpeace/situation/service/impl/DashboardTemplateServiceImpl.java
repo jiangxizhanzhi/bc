@@ -12,7 +12,6 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.DashboardTemplateEchartsData;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.*;
@@ -30,8 +29,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -172,7 +171,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     @Override
-    public String getComponentsEchartsData(ComponentsDataReq componentsDataReq) {
+    public JSONArray getComponentsEchartsData(ComponentsDataReq componentsDataReq) {
         String dataSourceComponent = componentsDataReq.getDataSourceComponent();
         if (StringUtils.isEmpty(dataSourceComponent)) {
             throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
@@ -180,7 +179,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
         String dataSource = jsonObject.getString("dataSource");
         JSONArray echartsData = getEchartsData(dataSource, componentsDataReq);
-        return echartsData.toString();
+        return echartsData;
     }
 
     private DashboardTemplate changeToDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
@@ -224,9 +223,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                 String params = jsonObject.getString("requestParams");
                 String method = jsonObject.getString("requestMethod");
                 String response = jsonObject.getString("requestResponse");
+                String responseKey = jsonObject.getString("responseKey");
+                String requestMapping = jsonObject.getString("requestMapping");
                 ApiConnectReq apiConnectReq = new ApiConnectReq();
                 apiConnectReq.setRequestUrl(url);
                 apiConnectReq.setRequestMethod(method);
+                apiConnectReq.setResponseKey(responseKey);
 
                 try {
                     //设置请求头
@@ -237,23 +239,23 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                     //设置请求参数
                     if (StringUtils.isNotBlank(params)) {
                         List<ApiRequestParams> apiRequestParams = JsonUtil.toJsonObjectArray(params, ApiRequestParams.class);
-                        parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams());
+                        parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams(), requestMapping);
                         apiConnectReq.setRequestParams(apiRequestParams);
                     }
                 } catch (Exception e) {
                     throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
                 }
-
+                //调用api接口
                 String resourceData = apiRequestService.apiConnectTest(apiConnectReq);
 
+                //获取映射结果数据集
+                JSONArray jsonArray = parseResponseParams(resourceData, response, responseKey);
                 JSONArray echartsDataSet;
                 try {
-                    echartsDataSet = getEchartsDataSet(resourceData, response);
+                    echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
                 } catch (Exception e) {
                     throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
                 }
-                DashboardTemplateEchartsData dashboardTemplateEchartsData = new DashboardTemplateEchartsData();
-                dashboardTemplateEchartsData.setRows(echartsDataSet);
                 return echartsDataSet;
             }
             //TODO处理其它数据源类型
@@ -261,51 +263,120 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         return null;
     }
 
-    private JSONArray getEchartsDataSet(String resourceData, String response) {
-        JSONObject jsonObject = JSONObject.parseObject(resourceData);
+    /**
+     * 处理echarts的dataset数据集结构
+     *
+     * @param jsonArray
+     * @param componentsDataReq
+     * @return
+     */
+    private JSONArray getEchartsDataSet(JSONArray jsonArray, ComponentsDataReq componentsDataReq) {
+        JSONArray data = new JSONArray();
+        String dimension = componentsDataReq.getDimension();
+        String measure = componentsDataReq.getMeasure();
+        String groups = componentsDataReq.getGroups();
+        if (StringUtils.isBlank(dimension) && StringUtils.isBlank(measure)) {
+            return jsonArray;
+        }
         try {
-            JSONArray data = jsonObject.getJSONArray("data");
-            List<ApiResponseParams> apiResponseParams = JsonUtil.toJsonObjectArray(response, ApiResponseParams.class);
-            JSONArray finallyDataArray = new JSONArray();
-            JSONArray finallyColumnsArray = new JSONArray();
-            Boolean addStatus = Boolean.TRUE;
-            if (CollectionUtils.isNotEmpty(apiResponseParams)) {
-                for (Object datum : data) {
-                    JSONObject finallyObject = new JSONObject();
-                    for (ApiResponseParams apiResponseParam : apiResponseParams) {
-                        String name = apiResponseParam.getName();
-                        Object description = apiResponseParam.getDescription();
-                        JSONObject datumObject = JsonUtil.java2JsonObject(datum);
-                        Object finallyData = datumObject.get(name);
-                        Field declaredField = datum.getClass().getDeclaredField(name);
-                        finallyObject.put(description.toString(), finallyData);
-                        if (addStatus) {
-                            JSONObject columnsObject = new JSONObject();
-                            columnsObject.put("name",name);
-                            columnsObject.put("friendly_name", description);
-                            columnsObject.put("type", declaredField.getType().toString());
-                            finallyColumnsArray.add(columnsObject);
-                        }
-                    }
-                    addStatus = Boolean.FALSE;
-                    finallyDataArray.add(finallyObject);
+            for (Object datum : jsonArray) {
+                JSONObject finallyObject = new JSONObject(new LinkedHashMap());
+                JSONObject datumObject = JsonUtil.java2JsonObject(datum);
+                if (StringUtils.isNotBlank(dimension)) {
+                    String string = datumObject.getString(dimension);
+                    finallyObject.put(dimension, string);
                 }
+                if (StringUtils.isNotBlank(measure)) {
+                    String string = datumObject.getString(measure);
+                    finallyObject.put(measure, string);
+                }
+                data.add(finallyObject);
             }
-            return finallyDataArray;
+            return data;
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
     }
 
-    private void parseRequestParams(List<ApiRequestParams> apiRequestParams, String customParams) {
-        if (StringUtils.isNotBlank(customParams)) {
-            JSONObject jsonObject = JSONObject.parseObject(customParams);
-            for (ApiRequestParams apiRequestParam : apiRequestParams) {
-                String value = jsonObject.getString(apiRequestParam.getDescription());
-                if (StringUtils.isNotBlank(value)) {
-                    apiRequestParam.setValue(value);
+    /**
+     * 映射请求参数集
+     *
+     * @param apiRequestParams
+     * @param customParams
+     */
+    private void parseRequestParams(List<ApiRequestParams> apiRequestParams, String customParams, String requestMapping) {
+        if (CollectionUtils.isNotEmpty(apiRequestParams)) {
+            apiRequestParams.clear();
+        }
+
+        List<ApiRequestMapping> apiRequestMappings = new ArrayList<>(JsonUtil.toJsonObjectArray(requestMapping, ApiRequestMapping.class));
+        //将自定义参数映射到body中
+        List<CustomParamReq> customParamReqs = JsonUtil.toJsonObjectArray(customParams, CustomParamReq.class);
+        apiRequestMappings.forEach(apiRequestMapping -> {
+            ApiRequestParams requestParams = BeanUtils.copy(apiRequestMapping, ApiRequestParams.class);
+            if (StringUtils.isNotBlank(apiRequestMapping.getType()) && Objects.equals("constant", apiRequestMapping.getType())) {
+                String value = apiRequestMapping.getValue();
+                customParamReqs.forEach(customParamReq -> {
+                    if (customParamReq != null && customParamReq.getName().equals(value)) {
+                        String paramReqValue = customParamReq.getValue();
+                        requestParams.setName(value);
+                        requestParams.setValue(paramReqValue);
+                    }
+                });
+            }
+            apiRequestParams.add(requestParams);
+        });
+    }
+
+    /**
+     * 映射结果参数集
+     *
+     * @param resourceData
+     * @param response
+     * @return
+     */
+    private JSONArray parseResponseParams(String resourceData, String response, String responseKey) {
+        JSONArray data = new JSONArray();
+        if (StringUtils.isBlank(responseKey)) {
+            throw new BusinessException(ErrorCode.TYPE_ERROR);
+        }
+        // 处理接口调用返回结果
+        List<ApiResponseParams> apiResponseParams;
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(resourceData);
+            Object dataObject = jsonObject.get("data");
+            //仅返回类型为对象类型时处理结果
+            if (dataObject instanceof JSONObject) {
+                JSONObject objectData = jsonObject.getJSONObject("data");
+                JSONArray jsonArray = objectData.getJSONArray(responseKey);
+                if (!jsonArray.isEmpty()) {
+                    data.addAll(jsonArray);
                 }
             }
+            // 获取需要的参数列表
+            apiResponseParams = JsonUtil.toJsonObjectArray(response, ApiResponseParams.class);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+        }
+        // 筛选参数列表中包含的数据
+        if (CollectionUtils.isNotEmpty(apiResponseParams)) {
+            JSONArray parseArray = new JSONArray();
+            for (Object datum : data) {
+                JSONObject finallyObject = new JSONObject(new LinkedHashMap());
+                for (ApiResponseParams apiResponseParam : apiResponseParams) {
+                    String name = apiResponseParam.getName();
+                    JSONObject datumObject = JsonUtil.java2JsonObject(datum);
+                    Object finallyData = datumObject.get(name);
+                    if (finallyData != null) {
+                        finallyObject.put(name, finallyData);
+                    }
+                }
+                parseArray.add(finallyObject);
+            }
+            return parseArray;
+        } else {
+            // 若参数列表为空，返回全部数据
+            return data;
         }
     }
 }

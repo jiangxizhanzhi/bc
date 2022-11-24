@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
@@ -80,7 +81,7 @@ public class DashboardTemplateController {
 
     @ApiOperation("获取echarts数据")
     @GetMapping("option/data")
-    private BaseRsp<String> getEchartsOption(ComponentsDataReq componentsDataReq){
+    private BaseRsp<JSONArray> getEchartsOption(ComponentsDataReq componentsDataReq) {
         return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));
     }
 }

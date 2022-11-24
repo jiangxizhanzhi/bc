@@ -1,12 +1,11 @@
 package com.cyberpeace.situation.controller.req;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.situation.model.MediaAnimation;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class RunAttackMessageReq implements Serializable {
@@ -49,6 +48,9 @@ public class RunAttackMessageReq implements Serializable {
 
 	@ApiModelProperty("线的宽度")
 	private Integer lineWidth;
+
+	@ApiModelProperty("防御等级")
+	private Integer defenseLevel;
 
 	@ApiModelProperty("媒体动效")
 	private List<MediaAnimation> mediaAnimationList;

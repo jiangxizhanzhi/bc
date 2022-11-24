@@ -1,20 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,6 +12,7 @@ import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.constant.ws.DefenseType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeReq;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
@@ -46,9 +32,22 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.*;
 import com.google.common.collect.Lists;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -77,6 +76,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private SceneConfigService sceneConfigService;
+
+	@Autowired
+	private AttackMessageHistoryService attackMessageHistoryService;
 
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
@@ -257,6 +259,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
 		optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
 				color -> new LocalType(color.getCode(), color.getMsg())));
+		optionsRes.setDefenseList(StreamApiUtils.map(Lists.newArrayList(DefenseType.values()),
+				defenseType -> new LocalType(defenseType.getMsg(), defenseType.getKeyWord())));
 	}
 
 	@Override
@@ -392,6 +396,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		String sceneId = dynamicSchemeReq.getSceneId();
 		String code = sceneConfigService.updateSceneCode(sceneId);
 		List<String> elementIds = getElementIds(sceneId, dynamicSchemeReq.getIsInstance());
+		Integer defenseLevel = dynamicSchemeReq.getDefenseLevel();
 
 		Thread thread = new Thread(new Runnable() {
 
@@ -441,6 +446,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						attackMessageStatue = false;
 
 						attackMessageReq.setSceneId(sceneId);
+						attackMessageReq.setDefenseLevel(defenseLevel);
 						// 查看当前是否有其他动效方案正在运行
 						if (!sceneConfigService.isCurrentScheme(sceneId, code)) {
 							// 有其他方案正在运行或当前场景动效方案被暂停，当前方案停止

@@ -1,14 +1,12 @@
 package com.cyberpeace.situation.controller.req;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
 import com.cyberpeace.situation.model.DynamicStage;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class DynamicSchemeReq implements Serializable {
@@ -27,6 +25,9 @@ public class DynamicSchemeReq implements Serializable {
 	@ApiModelProperty("动效方案名称")
 	@NotBlank
 	private String name;
+
+	@ApiModelProperty("防御等级")
+	private Integer defenseLevel;
 
 	@ApiModelProperty("动效方案数据")
 	private List<DynamicStage> schemeData;

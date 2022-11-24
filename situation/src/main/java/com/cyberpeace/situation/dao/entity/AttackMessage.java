@@ -17,6 +17,8 @@ public class AttackMessage extends BaseTable {
 
 	private String type;
 
+	private String defenseType;
+
 	private String description;
 
 	private String sourceId;

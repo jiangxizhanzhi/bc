@@ -153,4 +153,20 @@ public class BsUtil {
 		}
 		return ret;
 	}
+
+	/**
+	 * 秒转化为分钟，向上取整
+	 * @param seconds
+	 * @return
+	 */
+	public static Integer s2Min(Integer seconds){
+		if(null == seconds){
+			return 0;
+		}
+		int minutes = seconds /60;
+		if(seconds%60>0){
+			minutes++;
+		}
+		return minutes;
+	}
 }

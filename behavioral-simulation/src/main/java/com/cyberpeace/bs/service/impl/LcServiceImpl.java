@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.bs.utils.BsUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -120,7 +121,7 @@ public class LcServiceImpl implements LcService {
 		lcBehavior.setAccessOs(rspBo.getDeviceType());
 		lcBehavior.setNetworkType(rspBo.getNetModel());
 		lcBehavior.setStepCount(rspBo.getStepNum());
-		lcBehavior.setTimeCost(rspBo.getConsumeTime());
+		lcBehavior.setTimeCost(BsUtil.s2Min(rspBo.getConsumeTime()));
 		lcBehavior.setCreateTime(rspBo.getCreateTime());
 		lcBehavior.setCreatorName(rspBo.getCreatorName());
 		lcBehavior.getApplication().add(rspBo.getApplication());
@@ -172,7 +173,7 @@ public class LcServiceImpl implements LcService {
 		behavior.setStepCount(rspBo.getStepNum());
 		behavior.getTag().add(rspBo.getTag());
 		behavior.setId(rspBo.getId());
-		behavior.setTimeCost(rspBo.getConsumeTime());
+		behavior.setTimeCost(BsUtil.s2Min(rspBo.getConsumeTime()));
 		return behavior;
 	}
 

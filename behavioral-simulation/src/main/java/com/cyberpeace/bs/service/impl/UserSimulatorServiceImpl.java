@@ -196,6 +196,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		behavior.setAccessOs(rspBo.getDeviceType());
 		behavior.setNetworkType(rspBo.getNetModel());
 		behavior.setCreateTime(rspBo.getCreateTime());
+		behavior.setTimeCost(BsUtil.s2Min(rspBo.getConsumeTime()));
 		behavior.setStepCount(rspBo.getStepNum());
 		behavior.getTag().add(rspBo.getTag());
 		return behavior;

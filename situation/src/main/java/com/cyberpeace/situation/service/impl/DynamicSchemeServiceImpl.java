@@ -439,6 +439,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							.getAttackMessageReqList()) {
 						//判断当前动效是否已运行
 						if(attackMessageStatue && attackMessageDescription != null && !attackMessageReq.getDescription().equals(attackMessageDescription)){
+							number++;
 							//当前动效已运行，直接进行下一次循环
 							continue;
 						}
@@ -457,14 +458,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 								dynamicSchemeProcess.setDynamicSchemeReq(dynamicSchemeReq);
 								dynamicSchemeProcess.setStageName(dynamicStage.getName());
 								dynamicSchemeProcess.setAttackMessageDescription(attackMessageReq.getDescription());
-								dynamicSchemeProcess.setWsAttackScheduleList(wsAttackScheduleList);
 								sceneConfigService.setDynamicSchemeCache(sceneId, dynamicSchemeProcess);
 							}
 							break;
 						}
 
 						wsAttackMessageSchedule
-								.setName(number++ + "." + attackMessageReq.getDescription());
+								.setName(number + "." + attackMessageReq.getDescription());
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 						sceneConfigService.updateScheduleById(sceneId,
 								JSONObject.toJSONString(wsAttackScheduleList));

@@ -3,22 +3,29 @@ package com.cyberpeace.assess.service.impl;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.assess.dao.entity.AssessFileData;
+import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.dao.mapper.AssessFileDataMapper;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.bo.TableColumn;
 import com.cyberpeace.common.component.CsvUtil;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.util.FileUtil;
 
 /**
  *
  */
 @Service
 public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper, AssessFileData> implements AssessFileDataService {
+
+	@Autowired
+	AssessFileDataMapper assessFileDataMapper;
 
 	private static List<TableColumn> getTableColumn(List<String> columns) {
 		List<TableColumn> tableColumns = Lists.newArrayList();
@@ -36,14 +43,19 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	@Override
 	public void parseModelFile(String resourceId, Integer interfaceType, String attachmentUrl) {
 		try {
-			if (interfaceType.equals(2)) {
+			if (AssessModel.interfaceType.DATABASE.getCode().equals(interfaceType)) {
 				List<List<String>> sheetData = Lists.newArrayList();
-				if (attachmentUrl.contains(".csv")) {
+
+				String fileSuffix = FileUtil.getFileSuffix(attachmentUrl);
+
+				if (fileSuffix.equals(FileSunffixConstant.CSV.getDesc())) {
 
 					sheetData = CsvUtil.parseDatalistCsv(attachmentUrl);
 
 				}
-				if (attachmentUrl.contains(".xls")) {
+				if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())
+						|| fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
+
 					ExcelDataHandler dataHandler = new ExcelDataHandler(attachmentUrl, 0);
 
 					sheetData = dataHandler.getSheetData(0);
@@ -63,6 +75,11 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public String getDataBaseTableByRelatedId(String relatedId) {
+		return assessFileDataMapper.getDataBaseTableByRelatedId(relatedId);
 	}
 
 	private String getModelFileString(List<List<String>> sheetData) {

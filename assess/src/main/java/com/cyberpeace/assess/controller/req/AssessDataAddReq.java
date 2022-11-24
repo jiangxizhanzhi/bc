@@ -29,6 +29,9 @@ public class AssessDataAddReq implements Serializable {
 	@ApiModelProperty("输入数据集类型。1：mysql，2：excel")
 	private Integer inputType;
 
+	@ApiModelProperty("上传文件名称")
+	private String fileName;
+
 	@ApiModelProperty("数据集路径")
 	private String inputData;
 

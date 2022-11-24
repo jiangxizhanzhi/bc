@@ -54,6 +54,11 @@ public class AssessData extends BaseTable {
 	private Integer inputType;
 
 	/**
+	 * 上传文件名称
+	 */
+	private String fileName;
+
+	/**
 	 * 数据集路径
 	 */
 	private String inputData;

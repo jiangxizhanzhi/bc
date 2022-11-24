@@ -9,4 +9,6 @@ import com.cyberpeace.assess.dao.entity.AssessFileData;
 public interface AssessFileDataService extends IService<AssessFileData> {
 
 	void parseModelFile(String resourceId, Integer interfaceType, String attachmentUrl);
+
+	String getDataBaseTableByRelatedId(String resourceId);
 }

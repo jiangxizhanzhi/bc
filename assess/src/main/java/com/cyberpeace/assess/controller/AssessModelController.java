@@ -55,7 +55,8 @@ public class AssessModelController {
 		assessModelRsp
 				.setParams(JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
 		assessModelRsp.setDataBaseTable(JsonUtil
-				.toJsonObject(assessModelService.getDataBaseTable(assessModel), JSONObject.class));
+				.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
+						assessModel.getResourceId()), JSONObject.class));
 
 		return new BaseRsp(assessModelRsp);
 	}

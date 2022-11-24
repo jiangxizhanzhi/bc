@@ -31,6 +31,9 @@ public class AssessModelAddReq implements Serializable {
 	@ApiModelProperty("接口类型：1：超链接，2：数据库，3：可执行文件，4：其他类型")
 	private Integer interfaceType;
 
+	@ApiModelProperty("上传文件名称")
+	private String fileName;
+
 	@ApiModelProperty("上传文件地址")
 	private String attachmentUrl;
 

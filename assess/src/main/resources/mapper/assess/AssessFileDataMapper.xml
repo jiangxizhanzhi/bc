@@ -4,15 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.assess.dao.mapper.AssessFileDataMapper">
 
-    <resultMap id="BaseResultMap" type="com.cyberpeace.assess.dao.entity.AssessFileData">
-        <id property="id" column="id" jdbcType="INTEGER"/>
-        <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-        <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="path" column="path" jdbcType="VARCHAR"/>
-        <result property="relatedId" column="related_id" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
 
     <sql id="Base_Column_List">
         id
@@ -20,4 +11,9 @@
         path,related_id,create_time,
         update_time
     </sql>
+    <select id="getDataBaseTableByRelatedId" resultType="java.lang.String">
+        SELECT content
+        FROM assess_file_data
+        WHERE related_id = #{relatedId}
+    </select>
 </mapper>

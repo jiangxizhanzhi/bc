@@ -3,9 +3,11 @@ package com.cyberpeace.assess.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * 评估数据
@@ -74,8 +76,29 @@ public class AssessModel extends BaseTable {
 	private String excelData;
 
 	/**
+	 * 上传文件名称
+	 */
+	private String fileName;
+
+	/**
 	 * 参数列表
 	 */
 	private String params;
+
+	public enum interfaceType implements GenericEnum {
+
+		URL(1, "超链接"), DATABASE(2, "数据库"), EXE(3, "可执行文件"), OTHER(4, "其他类型");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		interfaceType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
 
 }

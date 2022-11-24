@@ -8,4 +8,5 @@ import com.cyberpeace.assess.dao.entity.AssessFileData;
  */
 public interface AssessFileDataMapper extends BaseMapper<AssessFileData> {
 
+    String getDataBaseTableByRelatedId(String relatedId);
 }

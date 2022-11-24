@@ -39,4 +39,10 @@ public interface ToolService extends IService<Tool> {
 	 * @param tool 工具对象
 	 */
 	void validateToolNameExist(Tool tool);
+
+	/**
+	 * 验证修改时工具名称是否重复
+	 * @param tool 工具对象
+	 */
+	void validateEditToolNameExist(Tool tool);
 }

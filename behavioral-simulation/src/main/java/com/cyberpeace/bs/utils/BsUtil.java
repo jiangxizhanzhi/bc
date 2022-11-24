@@ -4,11 +4,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.cyberpeace.bs.service.bo.simulator.IpBo;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +19,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.google.common.collect.Maps;
+import org.apache.shiro.util.CollectionUtils;
 
 /**
  * @author SN
@@ -28,6 +27,10 @@ import com.google.common.collect.Maps;
 public class BsUtil {
 
 	private static final String JSON_LIST_INITIAL = "[";
+
+	private static final String EMPTY_STRING = "";
+
+	private static final int SECONDS_PER_MINUTE = 60;
 
 	/**
 	 * 解析存储的行为列表json
@@ -163,10 +166,22 @@ public class BsUtil {
 		if(null == seconds){
 			return 0;
 		}
-		int minutes = seconds /60;
-		if(seconds%60>0){
+		int minutes = seconds /SECONDS_PER_MINUTE;
+		if(seconds%SECONDS_PER_MINUTE>0){
 			minutes++;
 		}
 		return minutes;
+	}
+
+	/**
+	 * 获取ip
+	 * @param ipBoList
+	 * @return
+	 */
+	public static String getIp(List<IpBo> ipBoList){
+		if(CollectionUtils.isEmpty(ipBoList)){
+			return EMPTY_STRING;
+		}
+		return ipBoList.get(0).getIp();
 	}
 }

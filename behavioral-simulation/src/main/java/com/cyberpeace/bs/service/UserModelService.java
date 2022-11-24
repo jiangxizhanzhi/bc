@@ -3,6 +3,7 @@ package com.cyberpeace.bs.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
 import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.common.model.ListRsp;
@@ -56,4 +57,11 @@ public interface UserModelService {
 	 * @return 带行为变量的行为列表
 	 */
 	List<BehaviorWithVariable> getBehaviorsWithVariables(String userModelId);
+
+	/**
+	 * 获取用户模型，获取不到就抛错
+	 * @param resourceId
+	 * @return
+	 */
+	UserModel getOrException(String resourceId);
 }

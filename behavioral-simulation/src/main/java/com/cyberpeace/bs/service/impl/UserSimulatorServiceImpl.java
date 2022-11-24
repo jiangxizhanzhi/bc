@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -55,6 +56,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Autowired
 	UserModelMapper userModelMapper;
+
+	@Autowired
+	UserModelService userModelService;
 
 	@Autowired
 	RemoteSceneService remoteSceneService;
@@ -119,13 +123,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		List<UserSimulator> simulatorList = Lists.newArrayList();
 		for (NodeBo node : addBo.getNodeList()) {
 			String userModelId = node.getUserModelId();
-			if (StringUtils.isBlank(userModelId)) {
-				throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-			}
-			UserModel userModel = userModelMapper.selectById(userModelId);
-			if (userModel == null) {
-				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-			}
+			UserModel userModel = userModelService.getOrException(userModelId);
 			UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
 					addBo.getSceneName());
 			simulatorList.add(simulator);
@@ -339,7 +337,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setAccessConfig(userModel.getAccessConfig());
 		simulator.setAccessOs(userModel.getAccessOs());
 		simulator.setBehaviorList(userModel.getBehaviorList());
-		simulator.setBehaviorVariable("{}");
+		simulator.setBehaviorVariable(JsonUtil.arrayToString(nodeBo.getBehaviorConfig()));
 		simulator.setBehaviorCount(statistic.getBehaviorCount());
 		simulator.setAccessHabit(userModel.getAccessHabit());
 		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
@@ -348,7 +346,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// todo index
 		simulator.setExecutedIndex(statistic.getBehaviorCount());
 		simulator.setDeviceId(nodeBo.getNodeId());
-		simulator.setDeviceIp(nodeBo.getIpConfig().get(0).getIp());
+		simulator.setDeviceIp(BsUtil.getIp(nodeBo.getIpConfig()));
 		simulator.setDeviceName(nodeBo.getNodeName());
 		simulator.setSceneId(sceneId);
 		simulator.setSceneName(sceneName);

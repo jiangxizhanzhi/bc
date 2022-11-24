@@ -188,7 +188,8 @@ public class UserModelServiceImpl implements UserModelService {
 		return userModel;
 	}
 
-	private UserModel getOrException(String userModelId) {
+	@Override
+	public UserModel getOrException(String userModelId) {
 		if (StringUtils.isBlank(userModelId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}

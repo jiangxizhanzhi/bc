@@ -126,3 +126,20 @@ CREATE TABLE `assess_tag`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id_UNIQUE`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估标签表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for assess_file_data
+-- ----------------------------
+
+CREATE TABLE `assess_file_data`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+    `resource_id` varchar(64)  NOT NULL COMMENT '资源id',
+    `related_id`  varchar(64)  NOT NULL COMMENT '关联id',
+    `path`        varchar(512) NOT NULL COMMENT '文件地址',
+    `content`     text DEFAULT NULL COMMENT '文件解析内容',
+    `create_time` datetime     NOT NULL COMMENT '创建时间',
+    `update_time` datetime     NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE KEY `resource_id_UNIQUE` (`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估文件解析内容表' ROW_FORMAT = DYNAMIC;

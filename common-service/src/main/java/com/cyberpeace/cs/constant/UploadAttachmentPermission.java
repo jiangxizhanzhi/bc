@@ -19,7 +19,7 @@ public enum UploadAttachmentPermission implements GenericEnum {
     CMS_OPERATION_MD_ATTACHMENT(5, "后台实操习题MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{ MenuConstant.CMS_PRACTICE_OPERATION }),
     CMS_TOOL_ATTACHMENT(6, "后台工具库附件上传", FileTypeContant.TOOL_ATTACHMENT, new String[]{ MenuConstant.CMS_TOOL }),
 	WEB_COURSE_MD_ATTACHMENT(7, "前台课程MD编辑器上传附件", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_COURSE }),
-    COMMON_IMAGE(999, "通用上传", FileTypeContant.PICTURE_TYPE, new String[] {});
+	COMMON_IMAGE(999, "通用上传", FileTypeContant.JKY_TYPE, new String[] {});
 
     @Getter
     public Integer code;

@@ -15,6 +15,7 @@ import com.cyberpeace.assess.controller.req.AssessModelAddReq;
 import com.cyberpeace.assess.controller.req.AssessModelUpdateReq;
 import com.cyberpeace.assess.controller.res.AssessModelRsp;
 import com.cyberpeace.assess.dao.entity.AssessModel;
+import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -38,6 +39,8 @@ public class AssessModelController {
 	@Autowired
 	private AssessModelService assessModelService;
 
+	@Autowired
+	private AssessFileDataService assessFileDataService;
 	@Autowired
 	private RemoteUserService remoteUserService;
 
@@ -67,6 +70,9 @@ public class AssessModelController {
 		assessModel.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
 		assessModelService.save(assessModel);
+
+		assessFileDataService.parseModelFile(assessModel.getResourceId(),
+				assessModel.getInterfaceType(), assessModel.getAttachmentUrl());
 
 		return new BaseRsp<>();
 	}

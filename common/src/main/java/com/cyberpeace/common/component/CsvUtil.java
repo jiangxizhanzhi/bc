@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.compress.utils.Lists;
 
 import com.alibaba.fastjson.JSON;
 
@@ -34,7 +35,52 @@ public class CsvUtil {
 	/**
 	 * 解析csv
 	 *
-	 * @param file
+	 * @param filePath
+	
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<List<String>> parseDatalistCsv(String filePath) throws Exception {
+
+		List<List<String>> lists = Lists.newArrayList();
+
+		File file = new File(filePath);
+		// 解析xml文件得到一个List集合
+		FileInputStream fileInputStream = new FileInputStream(file);
+		// 读取csv文件
+		// 读取流中前面的字符，看是否有bom，如果有bom，将bom头先读掉丢弃
+		InputStream inputStream = getInputStream(fileInputStream);
+		BufferedInputStream in = new BufferedInputStream(inputStream);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in, getCharSet(in)));
+		String line = "";
+
+		while ((line = br.readLine()) != null) {
+			String[] lines = line.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)");
+			List<String> list = Lists.newArrayList();
+			for (int i = 0; i < lines.length; i++) {
+				// if (firstLines[i].startsWith("#")) {
+				// firstLines[i] = firstLines[i].replaceAll("#", "");
+				// }
+				String s = lines[i];
+				s = s.trim().replaceAll("\"\"", "\"");
+				if (s.startsWith("\"")) {
+					s = s.substring(1, s.length() - 1);
+				}
+				list.add(s);
+			}
+			lists.add(list);
+		}
+		inputStream.close();
+		in.close();
+		br.close();
+		return lists;
+
+	}
+	
+	/**
+	 * 解析csv
+	 *
+	 * @param filePath
 	 * @param clazz
 	 * @param <T>
 	 * @return

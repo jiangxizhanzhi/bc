@@ -32,4 +32,6 @@ public interface FileTypeContant {
 	/** 表格类型后缀*/
 	String 	VIDEO_TYPE = "MP4,M4V";
 
+	/** JKY上传类型后缀*/
+	String JKY_TYPE = "SQL,XLS,XLSX,CSV,ZIP,PDF,JPEG,PNG,JPG";
 }

@@ -3,6 +3,8 @@ package com.cyberpeace.assess.controller.req;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
+
 import com.alibaba.fastjson.JSONObject;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -21,7 +23,7 @@ public class AssessModelAddReq implements Serializable {
 	private String visionId;
 
 	@ApiModelProperty("标签")
-	private List<String> tag;
+	private List<String> tag = Lists.newArrayList();
 
 	@ApiModelProperty("封面")
 	private String logo;

@@ -7,6 +7,7 @@ import com.cyberpeace.assess.dao.mapper.AssessCaseMapper;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.util.ConfigUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,11 +77,11 @@ implements AssessMaterialService{
     }
 
     @Override
-    public void checkParams(String name, MultipartFile attachment) {
+    public void checkParams(String name, String attachment) {
         if(StringUtils.isBlank(name)){
             throw new BusinessException(AssessErrorCode.NAME_MISSING);
         }
-        if(null == attachment){
+        if(StringUtils.isBlank(attachment)){
             throw new BusinessException(AssessErrorCode.MATERIAL_ATTACHMENT_MISSING);
         }
     }
@@ -90,7 +91,7 @@ implements AssessMaterialService{
         // excel数据读取
         String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 
-        ExcelDataHandler dataHandler = new ExcelDataHandler(prefix + "/" +attachment, CommonConstant.ZERO);
+        ExcelDataHandler dataHandler = new ExcelDataHandler(prefix +attachment, CommonConstant.ZERO);
         List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
         for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
             // 空数据不管
@@ -101,6 +102,20 @@ implements AssessMaterialService{
         }
         return null;
     }
+
+    @Override
+    public void checkNameRepeat(String name, String id) {
+        LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AssessMaterial::getName, name);
+        if (StringUtils.isNotBlank(id)){
+            queryWrapper.ne(AssessMaterial::getResourceId, id);
+        }
+        AssessMaterial assessMaterial = assessMaterialMapper.selectOne(queryWrapper);
+        if(null != assessMaterial){
+            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+        }
+    }
+
     /**
      * 校验空数据
      * @param rowData

@@ -2,6 +2,7 @@ package com.cyberpeace.assess.controller;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,6 +13,9 @@ import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
 import com.cyberpeace.assess.service.AssessMaterialConfigService;
 import com.cyberpeace.assess.service.AssessMaterialService;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.PatternConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -35,6 +39,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.cyberpeace.common.util.LocalStringUtil.getMatchStr;
 
 @Api(tags = "评估材料")
 @RestController
@@ -60,19 +66,14 @@ public class AssessMaterialController {
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<AssessMaterial>
-			setAssessCase(AssessMaterialAddReq assessMaterialAddReq) {
+			setAssessCase(@RequestBody @Validated(Create.class) AssessMaterialAddReq assessMaterialAddReq) {
 
-		String name = assessMaterialAddReq.getName();
-		MultipartFile attachment = assessMaterialAddReq.getAttachment();
-
-		assessMaterialService.checkParams(name, attachment);
-
+		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null);
 		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
 				AssessMaterial.class);
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		assessMaterial.setCreateUserId(auth.getUserId());
-		assessMaterial = assessMaterialService.checkAssessMaterial(attachment, assessMaterial);
 
 		String uuid = String.valueOf(UUID.randomUUID());
 		assessMaterial.setResourceId(uuid);
@@ -131,21 +132,17 @@ public class AssessMaterialController {
 
 	@ApiOperation("修改")
 	@PatchMapping("")
-	public BaseRsp<AssessMaterial> updateAssessCase(AssessMateriaUpdateReq assessMateriaUpdateReq) {
+	public BaseRsp<AssessMaterial> updateAssessCase(@RequestBody @Validated(Update.class) AssessMateriaUpdateReq assessMateriaUpdateReq) {
 		String resourceId = assessMateriaUpdateReq.getResourceId();
+
+		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId);
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		String name = assessMateriaUpdateReq.getName();
-		MultipartFile attachment = assessMateriaUpdateReq.getAttachment();
-
-		assessMaterialService.checkParams(name, attachment);
 
 		BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
-		assessMaterial = assessMaterialService.checkAssessMaterial(assessMateriaUpdateReq.getAttachment(), assessMaterial);
-
 		assessMaterialMapper.updateById(assessMaterial);
 		return new BaseRsp<>(assessMaterial);
 	}
@@ -158,6 +155,9 @@ public class AssessMaterialController {
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		String str = "INSERT INTO MY_TABLE(id, first_name, last_name) VALUES (10001, 'Georgi', 'Facello');";
+		List<String> matchStr = getMatchStr(str, PatternConstant.INSERT_SQL);
+
 		String attachment = assessMaterial.getAttachment();
 		List<AssessMaterialExcelDatalRes> res = assessMaterialService.getExcelData(attachment);
 

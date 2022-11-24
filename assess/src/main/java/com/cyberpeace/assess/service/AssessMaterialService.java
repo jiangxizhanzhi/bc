@@ -26,7 +26,10 @@ public interface AssessMaterialService extends IService<AssessMaterial> {
 
     void checkMaterialIds(List<String> materialIds);
 
-    void checkParams(String name, MultipartFile attachment);
+    void checkParams(String name, String attachment);
 
     List<AssessMaterialExcelDatalRes> getExcelData(String attachment);
+
+    void checkNameRepeat(String name, String id);
+
 }

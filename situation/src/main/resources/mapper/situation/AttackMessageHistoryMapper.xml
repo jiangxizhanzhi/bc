@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper">
+    <update id="recovery">
+        update situation_attack_message_history
+        set is_history = 1
+        <where>
+            <if test="sceneId != null and sceneId != ''">
+                scene_id = #{sceneId}
+            </if>
+        </where>
+    </update>
+
+    <select id="getAttackTop" resultType="com.cyberpeace.situation.model.AttackTypeCount">
+        select type as attackType, count (*) as times
+        from situation_attack_message_history
+        <where>
+            scene_id = #{sceneId}
+        </where>
+        group by type
+        order by times desc
+    </select>
+
+    <select id="getDefenseTop" resultType="com.cyberpeace.situation.model.DefenseTypeCount">
+        select defenseType, count (*) as times
+        from situation_attack_message_history
+        <where>
+            scene_id = #{sceneId}
+        </where>
+        group by defenseType
+        order by times desc
+    </select>
+    <select id="getHostTop" resultType="com.cyberpeace.situation.model.HostCount">
+        select target_id as hostName, count(*) as times
+        from situation_attack_message_history
+        <where>
+            defense_type is not null
+            and defense_level = 3
+            and is_history = 0
+            <if test="null != attackTypeList and attackTypeList.size > 0">
+                and type in
+                <foreach collection="attackTypeList" open="(" close=")" item="attackType" separator=",">
+                    #{attackType}
+                </foreach>
+            </if>
+        </where>
+        group by target_id
+        order by times desc
+    </select>
+
+
+</mapper>

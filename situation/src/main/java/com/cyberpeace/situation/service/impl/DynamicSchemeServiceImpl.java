@@ -299,7 +299,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 * 推送多媒体动效消息
 	 */
 	@Override
-	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code) {
+	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code, Boolean playback) {
 		WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
 		wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
 		wsAttackEffectDynamic.setCategory("attack");
@@ -334,6 +334,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
 				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamic);
 		situationHandlerService.pushDataToRoom(wsMessage, attackMessageBo.getSceneId());
+		if(!playback){
+			attackMessageHistoryService.add(attackMessageBo);
+		}
 
 		Thread thread = new Thread(new Runnable() {
 
@@ -356,7 +359,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 * 推送其他消息
 	 */
 	@Override
-	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds) {
+	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback) {
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
 				WsMultiNodeDynamic.class);
 		wsMultiNodeDynamic.setCategory("attack");
@@ -388,6 +391,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					wsMultiNodeDynamic);
 		}
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
+		if(!playback){
+			attackMessageHistoryService.add(attackMessageBo);
+		}
 	}
 
 	@Override
@@ -471,9 +477,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 						if (attackMessageReq.getType()
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-							pushMediaToRoom(attackMessageReq, code);
+							pushMediaToRoom(attackMessageReq, code, false);
 						} else {
-							pushAttackToRoom(attackMessageReq, elementIds);
+							pushAttackToRoom(attackMessageReq, elementIds, false);
 						}
 						if (attackMessageReq.getIntervalTime() != null) {
 							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);

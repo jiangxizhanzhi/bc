@@ -1,16 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -29,12 +18,20 @@ import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SceneConfigService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 @Api(tags = "态势编排")
 @RestController
@@ -124,9 +121,9 @@ public class SituationControlController {
 		List<String> elementIds = dynamicSchemeService
 				.getElementIds(sceneId, runAttackMessageReq.getIsInstance());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
+			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
 		} else {
-			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds);
+			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, false);
 		}
 		return new BaseRsp<>();
 	}
@@ -201,6 +198,13 @@ public class SituationControlController {
 			log.error("failed to delete temp dir");
 		}
 		return new BaseRsp(resourceId);
+	}
+
+	@ApiOperation("恢复")
+	@PostMapping("/recovery")
+	public void recovery(@ApiParam(name = "scene_id", value = "场景编号",
+			required = true) @RequestParam(value = "scene_id") String sceneId){
+
 	}
 
 }

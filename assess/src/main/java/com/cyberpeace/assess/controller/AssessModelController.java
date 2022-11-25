@@ -11,15 +11,16 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.assess.controller.req.AssessListReq;
 import com.cyberpeace.assess.controller.req.AssessModelAddReq;
 import com.cyberpeace.assess.controller.req.AssessModelUpdateReq;
 import com.cyberpeace.assess.controller.res.AssessModelRsp;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.AssessModelService;
+import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -41,8 +42,12 @@ public class AssessModelController {
 
 	@Autowired
 	private AssessFileDataService assessFileDataService;
+
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private AssessTagService assessTagService;
 
 	@ApiOperation("查询单条评估模型")
 	@GetMapping("/assess_model")
@@ -54,9 +59,12 @@ public class AssessModelController {
 		assessModelRsp.setTag(JsonUtil.toJsonObjectArray(assessModel.getTag(), String.class));
 		assessModelRsp
 				.setParams(JsonUtil.toJsonObjectArray(assessModel.getParams(), JSONObject.class));
-		assessModelRsp.setDataBaseTable(JsonUtil
-				.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
-						assessModel.getResourceId()), JSONObject.class));
+		assessModelRsp.setDataBaseTable(JsonUtil.toJsonObject(
+				assessFileDataService.getDataBaseTableByRelatedId(assessModel.getResourceId()),
+				JSONObject.class));
+
+		String tagStr = assessTagService.getTagContent(assessModel.getTag());
+		assessModelRsp.setTags(tagStr);
 
 		return new BaseRsp(assessModelRsp);
 	}
@@ -87,6 +95,8 @@ public class AssessModelController {
 		assessModel.setParams(JsonUtil.toJsonString(assessModelUpdateReq.getParams()));
 
 		assessModelService.updateById(assessModel);
+		assessFileDataService.parseModelFile(assessModel.getResourceId(),
+				assessModel.getInterfaceType(), assessModel.getAttachmentUrl());
 
 		return new BaseRsp<>();
 	}
@@ -95,14 +105,13 @@ public class AssessModelController {
 	@DeleteMapping("/assess_model")
 	public BaseRsp<String> deleteAssessModel(@RequestBody @Validated DeleteReq deleteReq) {
 		assessModelService.removeByIds(deleteReq.getIds());
-		// roleService.updateBatchByDeleteRelatedIds(deleteReq, "AssessModel");
 
 		return new BaseRsp<>();
 	}
 
 	@ApiOperation("分页查询")
 	@GetMapping("/assess_model/list")
-	public BaseRsp<List<AssessModelRsp>> list(@Validated PageReqBase pageReqBase) {
+	public BaseRsp<List<AssessModelRsp>> list(@Validated AssessListReq pageReqBase) {
 		IPage<AssessModel> data = assessModelService.page(pageReqBase);
 
 		List<String> userIds = data.getRecords().stream().map(AssessModel::getCreateUserId)

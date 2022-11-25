@@ -24,7 +24,7 @@ public class AssessDataServiceImpl extends ServiceImpl<AssessDataMapper, AssessD
 	public IPage<AssessData> page(AssessListReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<AssessData> result = assessDataMapper.listAssessData(page, pageReqBase.getPattern(),
-				pageReqBase.getType());
+				pageReqBase.getType(), pageReqBase.getTag());
 
 		return result;
 	}

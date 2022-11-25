@@ -16,6 +16,7 @@ import com.cyberpeace.assess.controller.req.AssessListReq;
 import com.cyberpeace.assess.controller.res.AssessDataRsp;
 import com.cyberpeace.assess.dao.entity.AssessData;
 import com.cyberpeace.assess.service.AssessDataService;
+import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -40,6 +41,9 @@ public class AssessDataController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private AssessTagService assessTagService;
+
 	@ApiOperation("查询单条评估数据")
 	@GetMapping("/assess_data")
 	public BaseRsp<AssessData> getAssessData(
@@ -47,6 +51,9 @@ public class AssessDataController {
 		AssessData assessData = assessDataService.getById(resource_id);
 		AssessDataRsp assessDataRsp = BeanUtils.copy(assessData, AssessDataRsp.class);
 		assessDataRsp.setTag(JsonUtil.toJsonObjectArray(assessData.getTag(), String.class));
+
+		String tagStr = assessTagService.getTagContent(assessData.getTag());
+		assessDataRsp.setTags(tagStr);
 
 		return new BaseRsp(assessDataRsp);
 	}

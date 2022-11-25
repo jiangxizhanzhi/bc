@@ -15,5 +15,5 @@ import com.cyberpeace.assess.dao.entity.AssessData;
 @Repository
 public interface AssessDataMapper extends BaseMapper<AssessData> {
 
-	IPage<AssessData> listAssessData(Page page, String pattern, Integer type);
+	IPage<AssessData> listAssessData(Page page, String pattern, Integer type, String tag);
 }

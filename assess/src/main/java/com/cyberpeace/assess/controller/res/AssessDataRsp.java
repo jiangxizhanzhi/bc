@@ -25,6 +25,9 @@ public class AssessDataRsp implements Serializable {
 	@ApiModelProperty("标签")
 	private List<String> tag;
 
+	@ApiModelProperty("标签内容")
+	private String tags;
+
 	@ApiModelProperty("封面")
 	private String logo;
 

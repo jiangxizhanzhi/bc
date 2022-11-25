@@ -29,6 +29,9 @@ public class AssessModelRsp implements Serializable {
 	@ApiModelProperty("标签")
 	private List<String> tag;
 
+	@ApiModelProperty("标签内容")
+	private String tags;
+
 	@ApiModelProperty("封面")
 	private String logo;
 
@@ -49,4 +52,5 @@ public class AssessModelRsp implements Serializable {
 
 	@ApiModelProperty("参数列表")
 	private List<JSONObject> params;
+
 }

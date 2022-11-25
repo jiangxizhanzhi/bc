@@ -18,6 +18,9 @@
         <if test="pattern != null and pattern != ''">
             <bind name="pattern" value="'%' + pattern + '%'"/>
         </if>
+        <if test="tag != null and tag != ''">
+            <bind name="tag" value="'%' + tag + '%'"/>
+        </if>
         select resource_id,`name`,
         description,create_user_id,vision_id,
         tag,logo,interface_type,file_name,
@@ -28,6 +31,9 @@
         <where>
             <if test="pattern != null and pattern != ''">
                 `name` like #{pattern}
+            </if>
+            <if test="tag != null and tag != ''">
+                and `tag` like #{tag}
             </if>
         </where>
 

@@ -10,12 +10,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.assess.controller.req.AssessListReq;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.dao.mapper.AssessModelMapper;
 import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.assess.service.bo.TableColumn;
 import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.JsonUtil;
 
 /**
@@ -28,10 +28,10 @@ public class AssessModelServiceImpl extends ServiceImpl<AssessModelMapper, Asses
 	AssessModelMapper assessModelMapper;
 
 	@Override
-	public IPage<AssessModel> page(PageReqBase pageReqBase) {
+	public IPage<AssessModel> page(AssessListReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<AssessModel> result = assessModelMapper.listAssessModel(page,
-				pageReqBase.getPattern());
+				pageReqBase.getPattern(), pageReqBase.getTag());
 
 		return result;
 	}

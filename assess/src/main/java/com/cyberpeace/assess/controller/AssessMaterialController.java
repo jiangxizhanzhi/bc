@@ -15,6 +15,7 @@ import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ public class AssessMaterialController {
 
 		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
 
-		if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)){
+		if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
 			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
 		}
 
@@ -133,10 +134,10 @@ public class AssessMaterialController {
 		Integer perPage = assessMateriaFilterReq.getPerPage();
 
 		IPage<AssessMaterial> assessMaterials = assessMaterialMapper.selectPage(new Page<>(page, perPage), queryWrapper);
-		List<AssessMaterial> res;
-		res = assessMaterials.getRecords().stream().sorted(Comparator.comparing(AssessMaterial::getCreateTime).reversed()).collect(Collectors.toList());
+		IPage<AssessMaterial> res = assessMaterials;
+		res.setRecords(assessMaterials.getRecords().stream().sorted(Comparator.comparing(AssessMaterial::getCreateTime).reversed()).collect(Collectors.toList()));
 
-		return new BaseRsp<>(res);
+		return new BaseRsp(PageUtil.getListResult(res));
 	}
 
 	@ApiOperation("删除")

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,15 +109,15 @@ public class AssessCaseController {
 		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
 		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
-		List<AssessCase> res;
+		IPage<AssessCase> res = assessCases;
 
 		assessCases.getRecords().forEach(assessCase -> {
 			String tags = assessCase.getTag();
 			String tagStr = assessCaseService.getTagContent(tags, assessTags);
 			assessCase.setTag(tagStr);
 		});
-		res = assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
-		return new BaseRsp<>(res);
+		res.setRecords(assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList()));
+		return new BaseRsp(PageUtil.getListResult(res));
 	}
 
 	@ApiOperation("删除")

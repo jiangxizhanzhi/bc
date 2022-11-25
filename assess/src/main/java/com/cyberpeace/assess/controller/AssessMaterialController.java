@@ -1,6 +1,5 @@
 package com.cyberpeace.assess.controller;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.common.util.JsonUtil;
@@ -47,7 +45,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -153,7 +150,7 @@ public class AssessMaterialController {
 
 	@ApiOperation("详情")
 	@GetMapping("")
-	public BaseRsp<AssessMaterial> getAssessCase(@ApiParam(name = "resource_id",
+	public BaseRsp<AssessMaterialExcelDatalRes> getAssessCase(@ApiParam(name = "resource_id",
 			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
@@ -161,9 +158,12 @@ public class AssessMaterialController {
 		}
 		AssessMaterialExcelDatalRes assessMaterialExcelDatalRes = new AssessMaterialExcelDatalRes();
 		BeanUtils.copyProperties(assessMaterial, assessMaterialExcelDatalRes);
-		assessMaterialExcelDatalRes.setData(JsonUtil.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
+
+		if(assessMaterial.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
+			assessMaterialExcelDatalRes.setData(JsonUtil.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
 				assessMaterial.getResourceId()), JSONObject.class));
-		return new BaseRsp<>(assessMaterial);
+		}
+		return new BaseRsp<>(assessMaterialExcelDatalRes);
 	}
 
 	@ApiOperation("修改")
@@ -191,19 +191,6 @@ public class AssessMaterialController {
 				assessMaterialConfigMapper.updateById(assessMaterialConfig);
 			}
 		});
-		return new BaseRsp<>(assessMaterial);
-	}
-
-	@ApiOperation("前台表格详情")
-	@GetMapping("detail")
-	public BaseRsp<AssessMaterial> getAssessCaseDetail(@ApiParam(name = "resource_id",
-			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) throws Exception {
-		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
-		if(null == assessMaterial){
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		String attachment = assessMaterial.getAttachment();
-		List<AssessMaterialExcelDatalRes> res = assessMaterialService.getExcelData(attachment);
 		return new BaseRsp<>(assessMaterial);
 	}
 

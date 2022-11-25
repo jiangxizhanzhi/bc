@@ -89,7 +89,6 @@ implements AssessMaterialService{
     @Override
     public List<AssessMaterialExcelDatalRes> getExcelData(String attachment) {
         // excel数据读取
-//        String prefix = ConfigUtil.getContextProperty("cr.local.file.prefix");
 
         ExcelDataHandler dataHandler = new ExcelDataHandler(attachment, CommonConstant.ZERO);
         List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);

@@ -4,29 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel("课程目录配置信息")
-public class AssessMaterialExcelDatalRes implements Serializable {
-
-
-	@ApiModelProperty("类型")
-	private Integer type;
-
-	@ApiModelProperty("名称")
-	private String name;
-
-	@ApiModelProperty("描述")
-	private String description;
-
-	@ApiModelProperty("标签")
-	private List<String> tag;
-
-	@ApiModelProperty("资源编号")
-	private String resourceId;
+public class AssessMaterialExcelDatalRes extends AssessMaterial {
 
 	@ApiModelProperty("数据内容")
 	private JSONObject data;

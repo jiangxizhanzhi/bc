@@ -22,4 +22,6 @@ public interface ToolMapper extends BaseMapper<Tool> {
 
     List<Tool> selectByCategory(@Param("resourceId") String resourceId);
 
+    Tool selectOtherByName(@Param("name") String name,@Param("resourceId") String resourceId);
+
 }

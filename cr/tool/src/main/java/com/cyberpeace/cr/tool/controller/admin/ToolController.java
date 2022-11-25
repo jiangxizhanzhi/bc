@@ -101,7 +101,7 @@ public class ToolController {
 					DateUtil.SHOT_PATTERN);
 			tool.setPublishTime(date);
 		}
-		toolService.validateToolNameExist(tool);
+		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TOOL,

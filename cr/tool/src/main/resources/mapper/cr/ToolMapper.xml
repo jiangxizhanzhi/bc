@@ -45,4 +45,17 @@
             </if>
         </where>
     </select>
+
+    <select id="selectOtherByName" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
+        select * from cr_tool_tool
+        <where>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="resourceId != null and resourceId != ''">
+                and resource_id != #{resourceId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

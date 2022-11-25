@@ -141,4 +141,13 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
 	}
+
+	@Override
+	public void validateEditToolNameExist(Tool tool){
+		// 名称重复性校验
+		Tool toolObject = toolMapper.selectOtherByName(tool.getName(),tool.getResourceId());
+		if (toolObject != null) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
+		}
+	}
 }

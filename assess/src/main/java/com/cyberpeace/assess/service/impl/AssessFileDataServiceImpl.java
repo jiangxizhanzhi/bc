@@ -123,7 +123,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	public void parseDataFile(String resourceId, Integer inputType, String inputData) throws Exception {
 		String content = "";
 		if(inputType.equals(CommonConstant.ONE)){
-			content = saveSqlData("E:" + inputData);
+			content = saveSqlData(inputData);
 		} else if(inputType.equals(CommonConstant.TWO)){
 			saveExcelData(resourceId, inputData);
 		} else {

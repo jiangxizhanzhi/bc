@@ -164,6 +164,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Override
 	public DynamicSchemeReq updateDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
 		DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq, DynamicScheme.class);
+		Integer defenseLevel = dynamicSchemeReq.getDefenseLevel();
 		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -182,6 +183,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					}
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {
+						attackMessageReq.setDefenseLevel(defenseLevel);
 						// 设置多媒体的名称
 						if (attackMessageReq.getType()
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {

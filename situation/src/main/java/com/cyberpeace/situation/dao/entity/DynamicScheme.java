@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-
 import lombok.Data;
 
 @Data
@@ -19,5 +18,7 @@ public class DynamicScheme extends BaseTable {
 	private String name;
 
 	private String schemeData;
+
+	private Integer defenseLevel;
 
 }

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import org.apache.commons.collections.CollectionUtils;
 
 import io.swagger.annotations.ApiModel;
@@ -34,5 +35,8 @@ public class AssessCaseDetailRes implements Serializable {
 
 	@ApiModelProperty("资源编号")
 	private String resourceId;
+
+	@ApiModelProperty("材料附件")
+	private List<AssessMaterial> attachments;
 
 }

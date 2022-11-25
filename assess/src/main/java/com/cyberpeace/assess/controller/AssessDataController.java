@@ -4,7 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.assess.controller.res.AssessCaseDetailRes;
+import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
+import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.service.AssessFileDataService;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +35,8 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import javax.validation.constraints.NotNull;
 
 @Api(tags = "评估数据管理")
 @RestController
@@ -58,7 +66,9 @@ public class AssessDataController {
 
 		String tagStr = assessTagService.getTagContent(assessData.getTag());
 		assessDataRsp.setTags(tagStr);
-
+		String dataBaseTableByRelatedId = assessFileDataService.getDataBaseTableByRelatedId(assessData.getResourceId());
+		AssessDataSqlEcharts assessDataSqlEcharts = JsonUtil.toJsonObject(dataBaseTableByRelatedId, AssessDataSqlEcharts.class);
+		assessDataRsp.setData(assessDataSqlEcharts);
 		return new BaseRsp(assessDataRsp);
 	}
 

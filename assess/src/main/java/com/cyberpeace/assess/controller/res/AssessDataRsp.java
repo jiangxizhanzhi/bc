@@ -46,5 +46,8 @@ public class AssessDataRsp implements Serializable {
 	@ApiModelProperty("数据集路径")
 	private String inputData;
 
+	@ApiModelProperty("数据")
+	private AssessDataSqlEcharts data;
+
 
 }

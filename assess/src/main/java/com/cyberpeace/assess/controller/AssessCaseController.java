@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
 import com.cyberpeace.common.util.PageUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -61,6 +63,9 @@ public class AssessCaseController {
 
 	@Autowired
 	private AssessTagMapper assessTagMapper;
+
+	@Autowired
+	private AssessMaterialMapper assessMaterialMapper;
 
 
 	@ApiOperation("新增")
@@ -146,7 +151,10 @@ public class AssessCaseController {
 		String tags = assessCase.getTag();
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
-
+		LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(AssessMaterial::getCaseId, resourceId);
+		List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(queryWrapper);
+		assessCaseDetailRes.setAttachments(assessMaterials);
 		return new BaseRsp<>(assessCaseDetailRes);
 	}
 

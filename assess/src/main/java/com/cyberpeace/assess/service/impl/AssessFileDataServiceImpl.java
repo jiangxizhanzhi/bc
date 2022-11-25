@@ -123,7 +123,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	public void parseDataFile(String resourceId, Integer inputType, String inputData) throws Exception {
 		String content = "";
 		if(inputType.equals(CommonConstant.ONE)){
-			content = saveSqlData(inputData);
+			content = saveSqlData("E:" + inputData);
 		} else if(inputType.equals(CommonConstant.TWO)){
 			saveExcelData(resourceId, inputData);
 		} else {
@@ -158,21 +158,22 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 		assessDataSqlEcharts.setDimensions(fieldList);
 		assessDataSqlEcharts.setSource(jsonObjects);
-		String content = assessDataSqlEcharts.toString();
+		String content = JSONObject.toJSONString(assessDataSqlEcharts);
 		return content;
 
 
 	}
 
 	private void parseSqlContent(String str,List<JSONObject> jsonObjects, List<String> fieldList) {
-		List<String> valList = new ArrayList();
 		Pattern pattern = Pattern.compile(PatternConstant.INSERT_SQL);
 		Matcher matcher = pattern.matcher(str);
 		while (matcher.find()) {
+			List<String> valList = new ArrayList();
 			String fields = matcher.group(1);
 			String[] split = fields.split(",");
 			String values = matcher.group(2);
 			String[] split1 = values.split(",");
+			valList.addAll(Arrays.asList(split1));
 			if(split.length < 2){
 				throw new BusinessException("The number of fields cannot be less than 2");
 			}

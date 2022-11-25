@@ -46,7 +46,6 @@ public class BsTimerTask extends TimerTask {
 				log.info("Timer is inactive, pass this task");
 				return;
 			}
-			// todo start a behavior
 			ReleaseTaskReq req = new ReleaseTaskReq();
 			req.setDeviceId(deviceId);
 			req.setDeviceIp(deviceIp);

@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import com.cyberpeace.bs.service.bo.simulator.BehaviorConfig;
 import com.cyberpeace.bs.service.bo.simulator.IpBo;
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
@@ -131,7 +133,13 @@ public class BsUtil {
 	 * @return 行为id-行为变量的map
 	 */
 	public static Map<String, String> getVariableMap(String json) {
-		return Maps.newHashMap();
+		if(StringUtils.isBlank(json) || !json.startsWith(JSON_LIST_INITIAL)){
+			return Maps.newHashMap();
+		}
+		List<BehaviorConfig> configList = JsonUtil.toJsonObjectArray(json, BehaviorConfig.class);
+		return StreamApiUtils.toMap(configList, BehaviorConfig::getBehaviorId, config->
+				JsonUtil.arrayToString(config.getVariables())
+		);
 	}
 
 	/**
@@ -163,11 +171,11 @@ public class BsUtil {
 	 * @return
 	 */
 	public static Integer s2Min(Integer seconds){
-		if(null == seconds){
+		if(null == seconds || seconds <= 0){
 			return 0;
 		}
-		int minutes = seconds /SECONDS_PER_MINUTE;
-		if(seconds%SECONDS_PER_MINUTE>0){
+		int minutes = seconds / SECONDS_PER_MINUTE;
+		if(seconds % SECONDS_PER_MINUTE > 0){
 			minutes++;
 		}
 		return minutes;

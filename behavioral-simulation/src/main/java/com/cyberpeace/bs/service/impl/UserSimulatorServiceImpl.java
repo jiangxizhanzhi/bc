@@ -227,7 +227,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		BsTimer timer = new BsTimer();
 		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(simulator.getBehaviorList());
 		int index = behaviorList.size();
-		Map<String, String> behaviorVariableMap = BsUtil.getVariableMap("");
+		Map<String, String> behaviorVariableMap = BsUtil.getVariableMap(simulator.getBehaviorVariable());
 		// get params
 
 		for (BehaviorSimple behavior : behaviorList) {
@@ -235,7 +235,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			index--;
 			BsTimerTask task = new BsTimerTask(simulator.getDeviceId(), simulator.getDeviceIp(),
 					behavior.getId(), index, simulator.getResourceId(),
-					behaviorVariableMap.getOrDefault(behavior.getId(), ""), timer);
+					behaviorVariableMap.getOrDefault(behavior.getId(), "[]"), timer);
 			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
 			timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
 					BsConstants.MILLI_IN_A_DAY);

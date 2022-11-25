@@ -47,6 +47,12 @@ public interface UserSimulatorService {
 	void stopSimulator(String resourceId);
 
 	/**
+	 * 批量停止行为仪表
+	 * @param simulatorIds
+	 */
+	void batchStopSimulator(List<String> simulatorIds);
+
+	/**
 	 * 获取定时器集合
 	 * @return 定时器集合
 	 */
@@ -90,4 +96,5 @@ public interface UserSimulatorService {
 	 * @return
 	 */
 	SimulatorDetail getDetail(String simulatorId);
+
 }

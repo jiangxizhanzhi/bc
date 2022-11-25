@@ -244,11 +244,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Override
 	public void stopSimulator(String resourceId) {
 		UserSimulator simulator = getOrException(resourceId);
+		stop(simulator);
+	}
+
+	@Override
+	public void batchStopSimulator(List<String> simulatorIds) {
+		// 不加事务
+		for (String simulatorId : simulatorIds) {
+			UserSimulator simulator = getOrNull(simulatorId);
+			if (null != simulator
+					&& simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+				stop(simulator);
+			}
+		}
+	}
+
+	private void stop(UserSimulator simulator){
 		// cancel timer
-		BsTimer timer = timerMap.get(resourceId);
+		BsTimer timer = timerMap.get(simulator.getResourceId());
 		if (timer != null) {
 			timer.cancel();
-			timerMap.remove(resourceId);
+			timerMap.remove(simulator.getResourceId());
 		}
 		// todo stop running behavior
 		// get latest behavior id

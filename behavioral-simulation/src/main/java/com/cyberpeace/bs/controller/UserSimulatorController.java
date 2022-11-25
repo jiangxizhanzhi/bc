@@ -79,6 +79,13 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("")
+	@PostMapping("/stop_batch")
+	public BaseRsp stopBatch(@RequestBody @Validated IdListReq req){
+		userSimulatorService.batchStopSimulator(req.getIds());
+		return new BaseRsp();
+	}
+
 	@ApiOperation("行为仪表数量统计")
 	@GetMapping("/statistics")
 	public BaseRsp<StatisticsRsp> getSimulatorCount() {

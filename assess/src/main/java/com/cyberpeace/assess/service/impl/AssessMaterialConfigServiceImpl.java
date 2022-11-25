@@ -142,6 +142,7 @@ implements AssessMaterialConfigService {
             materialList.add(resourceId);
             String materials = JsonUtil.arrayToString(materialList);
             materialConfig.setMaterialId(materials);
+            assessMaterialConfigMapper.insert(materialConfig);
             return materialConfig;
         }
         // 已有记录时 在材料idlist末尾追加材料id
@@ -150,6 +151,7 @@ implements AssessMaterialConfigService {
         materialList.add(resourceId);
         String materials = JsonUtil.arrayToString(materialList);
         assessMaterialConfig.setMaterialId(materials);
+        assessMaterialConfigMapper.updateById(assessMaterialConfig);
         return assessMaterialConfig;
 
     }

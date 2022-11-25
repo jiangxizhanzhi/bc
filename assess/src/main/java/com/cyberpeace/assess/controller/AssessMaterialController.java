@@ -93,22 +93,12 @@ public class AssessMaterialController {
 		String uuid = String.valueOf(UUID.randomUUID());
 		assessMaterial.setResourceId(uuid);
 
-		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
+		assessMaterialConfigService.setConfig(assessMaterial);
 
 		if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
 			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
 		}
-
-		// 执行事务存储
-		AssessMaterial finalAssessMaterial = assessMaterial;
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				assessMaterialMapper.insert(finalAssessMaterial);
-				assessMaterialConfigMapper.updateById(assessMaterialConfig);
-			}
-		});
+		assessMaterialMapper.insert(assessMaterial);
 
 		return new BaseRsp<>(assessMaterial);
 	}
@@ -177,20 +167,11 @@ public class AssessMaterialController {
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
+		assessMaterialConfigService.setConfig(assessMaterial);
 		if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)) {
 			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
 		}
-
-		BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				assessMaterialMapper.updateById(assessMaterial);
-				assessMaterialConfigMapper.updateById(assessMaterialConfig);
-			}
-		});
+		assessMaterialMapper.updateById(assessMaterial);
 		return new BaseRsp<>(assessMaterial);
 	}
 

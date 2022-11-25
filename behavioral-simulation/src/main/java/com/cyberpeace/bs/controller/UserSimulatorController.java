@@ -79,7 +79,7 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("")
+	@ApiOperation("批量停止行为仪表")
 	@PostMapping("/stop_batch")
 	public BaseRsp stopBatch(@RequestBody @Validated IdListReq req){
 		userSimulatorService.batchStopSimulator(req.getIds());

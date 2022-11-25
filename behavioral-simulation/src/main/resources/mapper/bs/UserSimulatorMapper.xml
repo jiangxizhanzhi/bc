@@ -15,4 +15,7 @@
         from bs_user_simulator
         where status = #{statusCode}
     </select>
+    <select id="page" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
+        select * from bs_user_simulator
+    </select>
 </mapper>

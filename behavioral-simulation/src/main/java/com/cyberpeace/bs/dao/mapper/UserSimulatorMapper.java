@@ -2,6 +2,8 @@ package com.cyberpeace.bs.dao.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -18,4 +20,6 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	Integer countAll();
 
 	Integer countByStatus(@Param("statusCode") Integer statusCode);
+
+	IPage<UserSimulator> page(@Param("page") Page page);
 }

@@ -63,11 +63,11 @@ public class UserModelServiceImpl implements UserModelService {
 				.map(UserModel::getUserTypeId).collect(Collectors.toSet());
 		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
 		userBehaviorIPage.convert((userModel -> {
-			UserModelBo userBehaviorBo = BeanUtils.copy(userModel, UserModelBo.class);
-			BsUtil.setBehaviorStatistic(userBehaviorBo, userModel.getBehaviorList());
-			BsUtil.setHabits(userBehaviorBo, userModel.getAccessHabit());
-			userBehaviorBo.setUserType(userTypeMap.get(userModel.getUserTypeId()));
-			return userBehaviorBo;
+			UserModelBo userModelBo = BeanUtils.copy(userModel, UserModelBo.class);
+			BsUtil.setBehaviorStatistic(userModelBo, userModel.getBehaviorList());
+			BsUtil.setHabits(userModelBo, userModel.getAccessHabit());
+			userModelBo.setUserType(userTypeMap.get(userModel.getUserTypeId()));
+			return userModelBo;
 		}));
 		return PageUtil.getListResult(userBehaviorIPage);
 	}

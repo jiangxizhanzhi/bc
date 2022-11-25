@@ -2,6 +2,8 @@ package com.cyberpeace.bs.service;
 
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 
 import java.util.List;
 import java.util.Map;
@@ -76,10 +78,11 @@ public interface UserSimulatorService {
 	Integer countActiveSimulators();
 
 	/**
-	 * 列出行为模拟仪表
+	 * 分页列出行为模拟仪表
 	 * @return
+	 * @param pageReq
 	 */
-	List<BehaviorMeterBo> listBehaviorMeters();
+	ListRsp<BehaviorMeterBo> pageBehaviorMeters(PageReqBase pageReq);
 
 	/**
 	 * 获取仪表详情

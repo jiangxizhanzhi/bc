@@ -1,5 +1,7 @@
 package com.cyberpeace.bs.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
@@ -20,8 +22,12 @@ import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
@@ -144,23 +150,18 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
-	public List<BehaviorMeterBo> listBehaviorMeters() {
-		List<UserSimulator> simulators = userSimulatorMapper.selectAll();
-		List<BehaviorMeterBo> res = Lists.newArrayList();
-		Set<String> meterIds = Sets.newHashSet();
-		for (UserSimulator simulator : simulators) {
-			String meterId = simulator.getDeviceId();
-			if (!meterIds.contains(meterId)) {
-				meterIds.add(meterId);
-				BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
-				behaviorMeterBo.setId(meterId);
-				behaviorMeterBo.setIp(simulator.getDeviceIp());
-				behaviorMeterBo.setName(simulator.getUserName() + "_" + simulator.getSceneId());
-				behaviorMeterBo.setResourceId(simulator.getResourceId());
-				res.add(behaviorMeterBo);
-			}
-		}
-		return res;
+	public ListRsp<BehaviorMeterBo> pageBehaviorMeters(PageReqBase pageReq) {
+		Page page = pageReq.toPageParam();
+		IPage<UserSimulator> simulators = userSimulatorMapper.page(page);
+		simulators.convert(simulator ->{
+			BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
+			behaviorMeterBo.setId(simulator.getDeviceId());
+			behaviorMeterBo.setIp(simulator.getDeviceIp());
+			behaviorMeterBo.setName(simulator.getUserName() + "_" + simulator.getSceneId());
+			behaviorMeterBo.setResourceId(simulator.getResourceId());
+			return behaviorMeterBo;
+		});
+		return PageUtil.getListResult(simulators);
 	}
 
 	@Override

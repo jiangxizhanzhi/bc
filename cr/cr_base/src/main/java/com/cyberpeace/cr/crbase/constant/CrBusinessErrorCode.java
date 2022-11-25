@@ -406,4 +406,7 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
+	/** 选项过长 */
+	String OPTION_TOO_LONG = "101123";
+
 }

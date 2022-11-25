@@ -845,18 +845,23 @@
 }
 
 .outer14 {
-  width : 409px;
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
   height: 19px;
   margin: 24px auto 0;
 }
 
 .pic2 {
+  -webkit-box-flex:1;
   width     : 147px;
   height    : 4px;
   margin-top: 8px;
 }
 
 .txt9 {
+  -webkit-box-flex:2;
   width        : 85px;
   height       : 19px;
   display      : block;
@@ -870,6 +875,7 @@
 }
 
 .pic3 {
+  -webkit-box-flex:3;
   width     : 147px;
   height    : 4px;
   margin-top: 8px;

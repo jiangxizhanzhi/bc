@@ -69,4 +69,9 @@ public interface AssessErrorCode {
 	 * 材料id数组错误
 	 */
 	String MATERIAL_IDS_ERROR = "105013";
+
+	/**
+	 * 材料id数组错误
+	 */
+	String ATTACHMENT_NAME_MISSING = "105014";
 }

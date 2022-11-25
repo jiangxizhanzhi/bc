@@ -32,6 +32,7 @@ CREATE TABLE `assess_material`
     `description`    longtext CHARACTER SET utf8 COLLATE utf8_general_ci     NOT NULL comment '描述',
     `materialType`   int(1)                                                  NOT NULL comment '类型',
     `attachment`     varchar(256)                                            NOT NULL comment '材料附件',
+    `attachment_name`varchar(256)                                            NOT NULL comment '材料附件原文件名',
     `create_time`    datetime                                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`    datetime                                                NULL     DEFAULT NULL,
     `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,

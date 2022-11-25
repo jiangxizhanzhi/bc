@@ -53,6 +53,11 @@ public class AssessMaterial extends BaseTable {
     private String attachment;
 
     /**
+     * 材料附件
+     */
+    private String attachmentName;
+
+    /**
      * 
      */
     private Date updateTime;

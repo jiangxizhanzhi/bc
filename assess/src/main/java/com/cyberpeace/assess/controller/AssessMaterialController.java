@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.assess.dao.entity.AssessCase;
+import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +75,9 @@ public class AssessMaterialController {
 
 	@Autowired
 	private AssessFileDataService assessFileDataService;
+	@Autowired
+	private AssessCaseService assessCaseService;
+
 
 	@ApiOperation("新增")
 	@PostMapping("")
@@ -81,6 +85,7 @@ public class AssessMaterialController {
 			setAssessCase(@RequestBody @Validated(Create.class) AssessMaterialAddReq assessMaterialAddReq) {
 
 		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null);
+		assessCaseService.checkCaseId(assessMaterialAddReq.getCaseId());
 		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
 				AssessMaterial.class);
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -91,7 +96,10 @@ public class AssessMaterialController {
 		assessMaterial.setResourceId(uuid);
 
 		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
-		assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+
+		if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)){
+			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+		}
 
 		// 执行事务存储
 		AssessMaterial finalAssessMaterial = assessMaterial;
@@ -112,6 +120,10 @@ public class AssessMaterialController {
 	public BaseRsp<List<AssessMaterial>>
 			getAssessCases(AssessMateriaFilterReq assessMateriaFilterReq) {
 		LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
+		String caseId = assessMateriaFilterReq.getCaseId();
+		assessCaseService.checkCaseId(caseId);
+
+		queryWrapper.eq(AssessMaterial::getCaseId, caseId);
 		String name = assessMateriaFilterReq.getName();
 		if (StringUtils.isNotBlank(name)){
 			queryWrapper.like(AssessMaterial::getName, name);
@@ -158,14 +170,16 @@ public class AssessMaterialController {
 	public BaseRsp<AssessMaterial> updateAssessCase(@RequestBody @Validated(Update.class) AssessMateriaUpdateReq assessMateriaUpdateReq) {
 		String resourceId = assessMateriaUpdateReq.getResourceId();
 
+		assessCaseService.checkCaseId(assessMateriaUpdateReq.getCaseId());
 		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId);
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
-		assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
-
+		if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)) {
+			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+		}
 
 		BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

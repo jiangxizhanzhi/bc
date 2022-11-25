@@ -3,6 +3,7 @@ package com.cyberpeace.assess.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,5 +27,8 @@ public class AssessMaterialExcelDatalRes implements Serializable {
 
 	@ApiModelProperty("资源编号")
 	private String resourceId;
+
+	@ApiModelProperty("数据内容")
+	private JSONObject data;
 
 }

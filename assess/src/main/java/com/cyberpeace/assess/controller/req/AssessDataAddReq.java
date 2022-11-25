@@ -35,6 +35,4 @@ public class AssessDataAddReq implements Serializable {
 	@ApiModelProperty("数据集路径")
 	private String inputData;
 
-	@ApiModelProperty("结果路径")
-	private String resultData;
 }

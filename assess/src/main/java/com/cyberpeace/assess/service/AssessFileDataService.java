@@ -11,4 +11,7 @@ public interface AssessFileDataService extends IService<AssessFileData> {
 	void parseModelFile(String resourceId, Integer interfaceType, String attachmentUrl);
 
 	String getDataBaseTableByRelatedId(String resourceId);
+
+	void parseDataFile(String resourceId, Integer inputType, String inputData) throws Exception;
+
 }

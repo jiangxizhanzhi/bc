@@ -1,22 +1,21 @@
 package com.cyberpeace.assess.controller;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.assess.controller.req.*;
-import com.cyberpeace.assess.controller.res.AssessMaterialExcelDatalRes;
-import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
-import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
-import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
-import com.cyberpeace.assess.service.AssessMaterialConfigService;
-import com.cyberpeace.assess.service.AssessMaterialService;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.PatternConstant;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.assess.dao.entity.AssessCase;
+import com.cyberpeace.assess.service.AssessFileDataService;
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -25,7 +24,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.assess.controller.req.AssessMateriaFilterReq;
+import com.cyberpeace.assess.controller.req.AssessMateriaUpdateReq;
+import com.cyberpeace.assess.controller.req.AssessMaterialAddReq;
+import com.cyberpeace.assess.controller.req.BatchDeleteReq;
+import com.cyberpeace.assess.controller.res.AssessMaterialExcelDatalRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
+import com.cyberpeace.assess.service.AssessMaterialConfigService;
+import com.cyberpeace.assess.service.AssessMaterialService;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -34,18 +45,16 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import static com.cyberpeace.common.util.LocalStringUtil.getMatchStr;
 
 @Api(tags = "评估材料")
 @RestController
 @RequestMapping("/assess/material")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class AssessMaterialController {
 
 	@Autowired
@@ -63,6 +72,9 @@ public class AssessMaterialController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	@Autowired
+	private AssessFileDataService assessFileDataService;
+
 	@ApiOperation("新增")
 	@PostMapping("")
 	public BaseRsp<AssessMaterial>
@@ -79,6 +91,7 @@ public class AssessMaterialController {
 		assessMaterial.setResourceId(uuid);
 
 		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
+		assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
 
 		// 执行事务存储
 		AssessMaterial finalAssessMaterial = assessMaterial;
@@ -104,8 +117,14 @@ public class AssessMaterialController {
 			queryWrapper.like(AssessMaterial::getName, name);
 
 		}
-		List<AssessMaterial> assessCases = assessMaterialMapper.selectList(queryWrapper);
-		return new BaseRsp<>(assessCases);
+		Integer page = assessMateriaFilterReq.getPage();
+		Integer perPage = assessMateriaFilterReq.getPerPage();
+
+		IPage<AssessMaterial> assessMaterials = assessMaterialMapper.selectPage(new Page<>(page, perPage), queryWrapper);
+		List<AssessMaterial> res;
+		res = assessMaterials.getRecords().stream().sorted(Comparator.comparing(AssessMaterial::getCreateTime).reversed()).collect(Collectors.toList());
+
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("删除")
@@ -127,6 +146,10 @@ public class AssessMaterialController {
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		AssessMaterialExcelDatalRes assessMaterialExcelDatalRes = new AssessMaterialExcelDatalRes();
+		BeanUtils.copyProperties(assessMaterial, assessMaterialExcelDatalRes);
+		assessMaterialExcelDatalRes.setData(JsonUtil.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
+				assessMaterial.getResourceId()), JSONObject.class));
 		return new BaseRsp<>(assessMaterial);
 	}
 
@@ -140,27 +163,32 @@ public class AssessMaterialController {
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		AssessMaterialConfig assessMaterialConfig = assessMaterialConfigService.setConfig(assessMaterial);
+		assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
 
 
 		BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
-		assessMaterialMapper.updateById(assessMaterial);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				assessMaterialMapper.updateById(assessMaterial);
+				assessMaterialConfigMapper.updateById(assessMaterialConfig);
+			}
+		});
 		return new BaseRsp<>(assessMaterial);
 	}
 
 	@ApiOperation("前台表格详情")
 	@GetMapping("detail")
 	public BaseRsp<AssessMaterial> getAssessCaseDetail(@ApiParam(name = "resource_id",
-			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
+			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) throws Exception {
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		String str = "INSERT INTO MY_TABLE(id, first_name, last_name) VALUES (10001, 'Georgi', 'Facello');";
-		List<String> matchStr = getMatchStr(str, PatternConstant.INSERT_SQL);
-
 		String attachment = assessMaterial.getAttachment();
 		List<AssessMaterialExcelDatalRes> res = assessMaterialService.getExcelData(attachment);
-
 		return new BaseRsp<>(assessMaterial);
 	}
 

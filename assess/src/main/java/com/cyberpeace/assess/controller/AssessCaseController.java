@@ -1,15 +1,11 @@
 package com.cyberpeace.assess.controller;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
-import com.cyberpeace.assess.constant.AssessErrorCode;
-import com.cyberpeace.assess.dao.entity.AssessTag;
-import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.assess.controller.req.AssessCaseAddReq;
 import com.cyberpeace.assess.controller.req.AssessCaseFilterReq;
 import com.cyberpeace.assess.controller.req.AssessCaseUpdateReq;
 import com.cyberpeace.assess.controller.req.BatchDeleteReq;
 import com.cyberpeace.assess.controller.res.AssessCaseDetailRes;
 import com.cyberpeace.assess.dao.entity.AssessCase;
+import com.cyberpeace.assess.dao.entity.AssessTag;
 import com.cyberpeace.assess.dao.mapper.AssessCaseMapper;
+import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.baseinterface.Create;
@@ -103,17 +103,19 @@ public class AssessCaseController {
 			queryWrapper.like(AssessCase::getTag, tag);
 
 		}
-		List<AssessCase> assessCases = assessCaseMapper.selectList(queryWrapper);
+		Integer page = assessCaseFilterReq.getPage();
+		Integer perPage = assessCaseFilterReq.getPerPage();
+		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
 		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
 		List<AssessCase> res;
 
-		assessCases.forEach(assessCase -> {
+		assessCases.getRecords().forEach(assessCase -> {
 			String tags = assessCase.getTag();
 			String tagStr = assessCaseService.getTagContent(tags, assessTags);
 			assessCase.setTag(tagStr);
 		});
-		res = assessCases.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
+		res = assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
 		return new BaseRsp<>(res);
 	}
 

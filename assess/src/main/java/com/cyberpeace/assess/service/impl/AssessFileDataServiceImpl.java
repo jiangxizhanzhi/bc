@@ -1,7 +1,19 @@
 package com.cyberpeace.assess.service.impl;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +29,7 @@ import com.cyberpeace.common.component.CsvUtil;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.util.FileUtil;
+import springfox.documentation.spring.web.json.Json;
 
 /**
  *
@@ -25,7 +38,7 @@ import com.cyberpeace.common.util.FileUtil;
 public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper, AssessFileData> implements AssessFileDataService {
 
 	@Autowired
-	AssessFileDataMapper assessFileDataMapper;
+	private AssessFileDataMapper assessFileDataMapper;
 
 	private static List<TableColumn> getTableColumn(List<String> columns) {
 		List<TableColumn> tableColumns = Lists.newArrayList();
@@ -105,4 +118,107 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 		return JSONObject.toJSONString(jsonObject);
 	}
+
+	@Override
+	public void parseDataFile(String resourceId, Integer inputType, String inputData) throws Exception {
+		String content = "";
+		if(inputType.equals(CommonConstant.ONE)){
+			content = saveSqlData(inputData);
+		} else if(inputType.equals(CommonConstant.TWO)){
+			saveExcelData(resourceId, inputData);
+		} else {
+			throw new BusinessException("input type error");
+		}
+		AssessFileData assessFileData = new AssessFileData();
+		assessFileData.setRelatedId(resourceId);
+		assessFileData.setContent(content);
+		assessFileData.setPath(inputData);
+		assessFileDataMapper.insert(assessFileData);
+	}
+
+	private void saveExcelData(String resourceId, String inputData) {
+
+	}
+
+	private String saveSqlData(String inputData) throws Exception {
+
+		String sqlStr = readFileByLines(inputData);
+		String[] split = sqlStr.split(";");
+		if(split.length <= 0){
+			throw new BusinessException("sql file is invalid");
+		}
+
+		List<String> sql = Arrays.asList(split);
+		List<String> fieldList = new ArrayList();
+		List<JSONObject> jsonObjects = new ArrayList<>();
+		sql.forEach( s->{
+			parseSqlContent(s, jsonObjects, fieldList);
+		});
+		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
+
+		assessDataSqlEcharts.setDimensions(fieldList);
+		assessDataSqlEcharts.setSource(jsonObjects);
+		String content = assessDataSqlEcharts.toString();
+		return content;
+
+
+	}
+
+	private void parseSqlContent(String str,List<JSONObject> jsonObjects, List<String> fieldList) {
+		List<String> valList = new ArrayList();
+		Pattern pattern = Pattern.compile(PatternConstant.INSERT_SQL);
+		Matcher matcher = pattern.matcher(str);
+		while (matcher.find()) {
+			String fields = matcher.group(1);
+			String[] split = fields.split(",");
+			String values = matcher.group(2);
+			String[] split1 = values.split(",");
+			if(split.length < 2){
+				throw new BusinessException("The number of fields cannot be less than 2");
+			}
+			if(fieldList.isEmpty()){
+				JSONObject jsonObject = new JSONObject();
+				fieldList.addAll(Arrays.asList(split));
+				fieldList.forEach(val ->{
+					int index = fieldList.indexOf(val);
+					jsonObject.put(val, valList.get(index));
+				});
+				jsonObjects.add(jsonObject);
+			}
+			valList.addAll(Arrays.asList(split1));
+		}
+	}
+
+	private String readFileByLines(String filePath) throws Exception {
+		StringBuffer str = new StringBuffer();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(filePath), "UTF-8"));
+			String tempString = null;
+			int line = 1;
+			// 一次读入一行，直到读入null为文件结束
+			while ((tempString = reader.readLine()) != null) {
+				// 显示行号
+				// System.out.println("line " + line + ": " + tempString);
+
+				str = str.append(" " + tempString);
+				line++;
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+
+		return str.toString();
+	}
+
 }

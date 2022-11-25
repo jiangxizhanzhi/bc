@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * @author dell
@@ -60,41 +62,40 @@ implements AssessMaterialConfigService {
         AssessCaseConfigRes res = new AssessCaseConfigRes();
         res.setCaseId(caseId);
         res.setName(assessCase.getName());
-        res.setResourceId(caseId);
-
 
         LambdaQueryWrapper<AssessMaterialConfig> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AssessMaterialConfig::getCaseId, caseId);
 
         HashMap<String, Object> filterMap = new HashMap<>();
-        filterMap.put("caseId", caseId);
-        List<AssessMaterialConfig> assessMaterialConfigs1 = assessMaterialConfigMapper.selectByMap(filterMap);
+        filterMap.put("case_id", caseId);
         AssessMaterialConfig assessMaterialConfigs = assessMaterialConfigMapper.selectOne(queryWrapper);
         String materialId = assessMaterialConfigs.getMaterialId();
+        res.setResourceId(assessMaterialConfigs.getResourceId());
         JSONArray objects = JsonUtil.stringToArray(materialId);
         List<String> materialIds = JSONArray.parseArray(objects.toJSONString(), String.class);
 
-        LambdaQueryWrapper<AssessMaterial> materialLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        materialLambdaQueryWrapper.eq(AssessMaterial::getCaseId, caseId);
-
         List<AssessCaseConfigRes> children = new ArrayList<>();
 
-        List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(materialLambdaQueryWrapper);
-        assessMaterials.forEach(assessMaterial -> {
-            AssessCaseConfigRes tmp = new AssessCaseConfigRes();
-            String resourceId = assessMaterial.getResourceId();
-            tmp.setMaterialId(resourceId);
-            tmp.setType(assessMaterial.getMaterialType());
-            tmp.setName(assessMaterial.getName());
-            tmp.setIndex(materialIds.indexOf(resourceId));
-            children.add(tmp);
+        List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(null);
+        Map<String, AssessMaterial> collect = assessMaterials.stream().collect(Collectors.toMap(AssessMaterial::getResourceId, s -> s));
+        materialIds.forEach(temp -> {
+            AssessMaterial assessMaterial1 = collect.get(temp);
+            if(null != assessMaterial1){
+                AssessCaseConfigRes tmp = new AssessCaseConfigRes();
+                String resourceId = assessMaterial1.getResourceId();
+                tmp.setMaterialId(resourceId);
+                tmp.setType(assessMaterial1.getMaterialType());
+                tmp.setName(assessMaterial1.getName());
+                tmp.setIndex(materialIds.indexOf(resourceId));
+                children.add(tmp);
+            }
         });
 
         res.setChildren(children);
 
 
 
-        return null;
+        return res;
     }
 
 

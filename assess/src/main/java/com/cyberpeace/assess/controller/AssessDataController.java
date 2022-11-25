@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.assess.service.AssessFileDataService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,9 @@ public class AssessDataController {
 	@Autowired
 	private AssessTagService assessTagService;
 
+	@Autowired
+	private AssessFileDataService assessFileDataService;
+
 	@ApiOperation("查询单条评估数据")
 	@GetMapping("/assess_data")
 	public BaseRsp<AssessData> getAssessData(
@@ -61,13 +65,14 @@ public class AssessDataController {
 	@ApiOperation("新增单条评估数据")
 	@PostMapping("/assess_data")
 	public BaseRsp<String>
-			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) {
+			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) throws Exception {
 		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
 		assessData.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		assessDataService.save(assessData);
-
+		assessFileDataService.parseDataFile(assessData.getResourceId(),
+				assessData.getInputType(), assessData.getInputData());
 		return new BaseRsp<>();
 	}
 

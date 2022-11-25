@@ -84,5 +84,5 @@ public interface PatternConstant {
 	String JUDGEMENT_ANSWER = "^[a-zA-Z]$";
 
 	/** sql insert语句*/
-	String INSERT_SQL = "INSERT +INTO +\\((.*) +,{2}(.*)\\) VALUES\\((.*) +,{2}(.*)\\);$";
+	String INSERT_SQL = "INSERT INTO.*\\((.*)\\) +VALUES +\\((.*)\\)";
 }

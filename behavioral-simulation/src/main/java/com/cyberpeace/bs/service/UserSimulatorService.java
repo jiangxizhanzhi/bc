@@ -1,11 +1,10 @@
 package com.cyberpeace.bs.service;
 
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.bs.service.bo.demo.TaskParam;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
+
+import java.util.List;
+import java.util.Map;
 
 public interface UserSimulatorService {
 
@@ -57,10 +56,6 @@ public interface UserSimulatorService {
 	 * @param index 最近一次的行为编号
 	 */
 	void updateProcess(String trafficId, Integer index);
-
-	void saveParams(TaskParam taskParam);
-
-	TaskParam getParam();
 
 	/**
 	 * 配管批量创建仪表

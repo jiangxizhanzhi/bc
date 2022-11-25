@@ -1,12 +1,32 @@
 package com.cyberpeace.bs.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.cyberpeace.bs.constant.BsConstants;
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.dao.entity.UserModel;
+import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.dao.mapper.UserModelMapper;
+import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
+import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
+import com.cyberpeace.bs.service.UserSimulatorService;
+import com.cyberpeace.bs.service.UserTypeService;
+import com.cyberpeace.bs.service.bo.BehaviorStatistic;
+import com.cyberpeace.bs.service.bo.BsTimerTask;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
+import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
+import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
+import com.cyberpeace.bs.service.bo.simulator.*;
+import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
+import com.cyberpeace.bs.utils.BsUtil;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -16,34 +36,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.cyberpeace.bs.constant.BsConstants;
-import com.cyberpeace.bs.constant.BsErrorCode;
-import com.cyberpeace.bs.dao.entity.UserModel;
-import com.cyberpeace.bs.dao.entity.UserSimulator;
-import com.cyberpeace.bs.dao.mapper.DemoMapper;
-import com.cyberpeace.bs.dao.mapper.UserModelMapper;
-import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
-import com.cyberpeace.bs.service.LcService;
-import com.cyberpeace.bs.service.UserSimulatorService;
-import com.cyberpeace.bs.service.UserTypeService;
-import com.cyberpeace.bs.service.bo.BehaviorStatistic;
-import com.cyberpeace.bs.service.bo.BsTimerTask;
-import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
-import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.demo.TaskParam;
-import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
-import com.cyberpeace.bs.service.bo.simulator.*;
-import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
-import com.cyberpeace.bs.utils.BsUtil;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -72,8 +68,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
-	@Autowired
-	DemoMapper demoMapper;
 
 	@Override
 	public List<UserSimulatorBo> listSimulator() {
@@ -283,17 +277,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
 		// }
 		userSimulatorMapper.updateById(traffic);
-	}
-
-	@Override
-	public void saveParams(TaskParam taskParam) {
-		demoMapper.saveParam(taskParam.getDeviceId(), taskParam.getEnvironmentId(),
-				taskParam.getProjectId());
-	}
-
-	@Override
-	public TaskParam getParam() {
-		return demoMapper.selectLatest();
 	}
 
 

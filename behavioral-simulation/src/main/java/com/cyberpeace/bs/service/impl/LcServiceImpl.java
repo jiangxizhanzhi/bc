@@ -1,18 +1,6 @@
 package com.cyberpeace.bs.service.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import com.cyberpeace.bs.utils.BsUtil;
-import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.bs.dao.mapper.DemoMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
@@ -21,27 +9,28 @@ import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.behavior.LcBehaviorPageRes;
 import com.cyberpeace.bs.service.bo.demo.GetDeviceReq;
 import com.cyberpeace.bs.service.bo.demo.LcDevicePageRes;
-import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
 import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableBo;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.bs.service.bo.variable.VariableSimple;
+import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class LcServiceImpl implements LcService {
-
-	@Autowired
-	DemoMapper demoMapper;
-
-	private String TOKEN;
 
 	private String LC_HOST_PORT;
 
@@ -212,12 +201,6 @@ public class LcServiceImpl implements LcService {
 		}
 
 		LcHttpClient.patch(targetUrl, body, String.class);
-	}
-
-	@Override
-	public void startDemoBehavior(ReleaseTaskReqDemo req) {
-		String targetUrl = LC_HOST_PORT + RELEASE_TASK;
-		LcHttpClient.post(targetUrl, req, String.class);
 	}
 
 	@Override

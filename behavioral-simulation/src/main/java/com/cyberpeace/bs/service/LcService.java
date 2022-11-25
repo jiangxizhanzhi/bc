@@ -1,18 +1,17 @@
 package com.cyberpeace.bs.service;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.demo.ReleaseTaskReqDemo;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 龙测接口
@@ -61,8 +60,6 @@ public interface LcService {
 	VariableListBo getVariableList(String behaviorId);
 
 	void updateVariable(VariableModifyReq req);
-
-	void startDemoBehavior(ReleaseTaskReqDemo req);
 
 	String getDeviceId();
 

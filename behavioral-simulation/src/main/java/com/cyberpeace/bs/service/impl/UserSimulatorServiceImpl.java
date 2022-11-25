@@ -26,12 +26,10 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -44,7 +42,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -207,11 +204,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchStartSimulator(List<String> simulatorIds) {
+		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchIds(simulatorIds);
 		// 不加事务
-		for (String simulatorId : simulatorIds) {
-			UserSimulator simulator = getOrNull(simulatorId);
-			if (null != simulator
-					&& !simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+		for (UserSimulator simulator : simulatorList) {
+			if (!simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 				start(simulator);
 			}
 		}
@@ -249,11 +245,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchStopSimulator(List<String> simulatorIds) {
+		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchIds(simulatorIds);
 		// 不加事务
-		for (String simulatorId : simulatorIds) {
-			UserSimulator simulator = getOrNull(simulatorId);
-			if (null != simulator
-					&& simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+		for (UserSimulator simulator : simulatorList) {
+			if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 				stop(simulator);
 			}
 		}

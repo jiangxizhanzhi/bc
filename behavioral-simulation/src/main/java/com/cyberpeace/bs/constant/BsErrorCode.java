@@ -6,10 +6,19 @@ package com.cyberpeace.bs.constant;
  */
 public interface BsErrorCode {
 
+	/**
+	 * 仪表已开始
+	 */
 	String ALREADY_STARTED = "105001";
 
+	/**
+	 * 无效的访问配置
+	 */
 	String INVALID_ACCESS_CONF = "105002";
 
+	/**
+	 * 无效的行为配置
+	 */
 	String INVALID_BEHAVIOR_CONF = "105003";
 
 	/**

@@ -21,5 +21,7 @@ public interface ToolCategoryMapper extends BaseMapper<ToolCategory> {
 
 	List<ToolCategory> selectByIds(@NotEmpty @Param("ids") List<Integer> ids);
 
-	ToolCategory getByCnName(@NotEmpty @Param("name") String name);
+	ToolCategory getByCnName(@NotEmpty @Param("name") String name, @Param("resourceId") String resourceId);
+
+	ToolCategory getByEnName(@Param("enName") String enName, @Param("resourceId") String resourceId);
 }

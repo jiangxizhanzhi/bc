@@ -409,4 +409,6 @@ public interface CrBusinessErrorCode {
 	/** 选项过长 */
 	String OPTION_TOO_LONG = "101123";
 
+	/** 工具分类英文名称与系统内已有名称重复  */
+	String DUPLICATED_TOOL_CATEGORY_ENNAME = "101124";
 }

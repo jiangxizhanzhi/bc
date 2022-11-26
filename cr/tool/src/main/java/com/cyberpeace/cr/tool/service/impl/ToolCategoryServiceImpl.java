@@ -62,7 +62,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	@Cacheable(key = "#p0")
 	public ToolCategory getByName(String name) {
 
-		return toolCategoryMapper.getByCnName(name);
+		return toolCategoryMapper.getByCnName(name, null);
 	}
 
 	@Override
@@ -93,9 +93,14 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	@Override
 	public void validateToolCategoryNameExist(ToolCategory toolCategory) {
 		// 名称重复性校验
-		ToolCategory toolCategoryObject = toolCategoryMapper.getByCnName(toolCategory.getCnName());
+		ToolCategory toolCategoryObject = toolCategoryMapper.getByCnName(toolCategory.getCnName(), toolCategory.getResourceId());
 		if (toolCategoryObject != null) {
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME);
+		}
+		// 英文名称重复性校验
+		toolCategoryObject = toolCategoryMapper.getByEnName(toolCategory.getEnName(), toolCategory.getResourceId());
+		if (toolCategoryObject != null) {
+			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_ENNAME);
 		}
 	}
 
@@ -108,6 +113,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 	@Override
 	@CacheEvict(allEntries = true)
 	public void updateToolCategoryById(ToolCategory toolCategory){
+		validateToolCategoryNameExist(toolCategory);
 		toolCategoryMapper.updateById(toolCategory);
 	}
 }

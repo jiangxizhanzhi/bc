@@ -85,7 +85,19 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return userSimulatorBos;
 	}
 
-	@Override
+    @Override
+    public ListRsp<UserSimulatorBo> pageSimulators(PageReqBase pageReqBase) {
+        Page page = pageReqBase.toPageParam();
+		IPage<UserSimulator> userSimulatorIPage = userSimulatorMapper.page(page);
+		userSimulatorIPage.convert(simulator -> {
+			UserSimulatorBo simulatorBo = BeanUtils.copy(simulator, UserSimulatorBo.class);
+			BsUtil.setHabits(simulatorBo, simulator.getAccessHabit());
+			return simulatorBo;
+		});
+		return PageUtil.getListResult(userSimulatorIPage);
+    }
+
+    @Override
 	public void batchDelete(List<String> resourceIds) {
 		if (CollectionUtils.isEmpty(resourceIds)) {
 			return;

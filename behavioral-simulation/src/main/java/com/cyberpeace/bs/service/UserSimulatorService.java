@@ -17,6 +17,13 @@ public interface UserSimulatorService {
 	List<UserSimulatorBo> listSimulator();
 
 	/**
+	 * 用户流量发生分页
+	 * @param pageReqBase
+	 * @return
+	 */
+	ListRsp<UserSimulatorBo> pageSimulators(PageReqBase pageReqBase);
+
+	/**
 	 * 批量删除前台用户流量发生
 	 * @param resourceIds 用户流量发生id列表
 	 */
@@ -96,5 +103,6 @@ public interface UserSimulatorService {
 	 * @return
 	 */
 	SimulatorDetail getDetail(String simulatorId);
+
 
 }

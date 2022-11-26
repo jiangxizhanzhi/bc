@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Api(tags = "前台业务-网络流量发生")
 @RestController
 @RequestMapping("/bs/simulator")
@@ -30,11 +28,11 @@ public class UserSimulatorController {
 	@Autowired
 	UserSimulatorService userSimulatorService;
 
-	@ApiOperation("前台-用户流量发生列表")
+	@ApiOperation("前台-用户流量发生分页列表")
 	@GetMapping("/list")
-	public BaseRsp<List<UserSimulatorBo>> listTraffic() {
-		List<UserSimulatorBo> ret = userSimulatorService.listSimulator();
-		return new BaseRsp<>(ret);
+	public BaseRsp<ListRsp<UserSimulatorBo>> listTraffic(PageReqBase pageReqBase) {
+		ListRsp<UserSimulatorBo> res = userSimulatorService.pageSimulators(pageReqBase);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("配管创建仪表")

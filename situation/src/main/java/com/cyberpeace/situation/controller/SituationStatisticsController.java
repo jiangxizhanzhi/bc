@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "态势统计")
 @RestController
@@ -30,6 +31,12 @@ public class SituationStatisticsController {
 	@GetMapping("/scene_trend")
 	public BaseRsp<List<SceneTrend>> getSceneTrend(){
 		return new BaseRsp<>((List)situationStatisticsService.getSceneTrendList());
+	}
+
+	@ApiOperation("攻击流量")
+	@GetMapping("/flow")
+	public BaseRsp<List<SceneTrend>> getFlow(){
+		return new BaseRsp<>((List)situationStatisticsService.getFlowList());
 	}
 
 	@ApiOperation("攻击手法Top5")
@@ -65,6 +72,20 @@ public class SituationStatisticsController {
 	public BaseRsp<List<HostStatusCount>> getHostStatusCount(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
 		return new BaseRsp<>(attackMessageHistoryService.getHostStatusCount(sceneId));
+	}
+
+	@ApiOperation("攻击日志")
+	@GetMapping("/attack_log")
+	public BaseRsp<List<AttackLog>> getAttackLog(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
+		return new BaseRsp<>(attackMessageHistoryService.getAttackLogTop5(sceneId));
+	}
+
+	@ApiOperation("运行时间")
+	@GetMapping("/run_time")
+	public BaseRsp<Map<String, Integer>> getRunTime(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
+		return new BaseRsp<>(attackMessageHistoryService.getIntervalTime(sceneId));
 	}
 
 }

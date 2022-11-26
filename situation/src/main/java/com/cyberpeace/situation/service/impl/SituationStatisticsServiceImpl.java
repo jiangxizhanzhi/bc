@@ -23,11 +23,16 @@ public class SituationStatisticsServiceImpl implements SituationStatisticsServic
 
 	Queue<SceneTrend> sceneTrendList = new LinkedList<>();
 
-	Boolean flag = false;
+	Queue<SceneTrend> flowList = new LinkedList<>();
 
 	@Override
 	public Queue<SceneTrend> getSceneTrendList() {
 		return sceneTrendList;
+	}
+
+	@Override
+	public Queue<SceneTrend> getFlowList(){
+		return flowList;
 	}
 
 	@PostConstruct
@@ -36,6 +41,7 @@ public class SituationStatisticsServiceImpl implements SituationStatisticsServic
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND) - (i * 5) );
 			sceneTrendList.add(new SceneTrend(0, TimeUtil.format1(calendar.getTime())));
+			flowList.add(new SceneTrend(0, TimeUtil.format1(calendar.getTime())));
 		}
 	}
 

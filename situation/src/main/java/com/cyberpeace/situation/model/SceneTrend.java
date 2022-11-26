@@ -11,8 +11,6 @@ public class SceneTrend implements Serializable {
 
 	private String time;
 
-	private String sceneId;
-
 	public SceneTrend() {
 	}
 

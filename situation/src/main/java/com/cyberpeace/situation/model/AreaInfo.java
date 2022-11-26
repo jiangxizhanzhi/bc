@@ -1,14 +1,13 @@
 package com.cyberpeace.situation.model;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.situation.dao.entity.SituationConfig;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.dao.entity.SituationConfig;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 @Data
 public class AreaInfo implements Serializable {
@@ -44,16 +43,16 @@ public class AreaInfo implements Serializable {
 
 	public AreaInfo() {}
 
-	public void setConfig(Map<Integer, String> nodeConfig) {
+	public void setConfig(Map<Integer, String> areaConfig) {
 
 		// 设置区域名称
-		String name = nodeConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
+		String name = areaConfig.getOrDefault(SituationConfig.Attribute.NAME.getCode(), null);
 		if (name != null) {
 			this.name = name;
 		}
 
 		// 设置区域颜色
-		String color = nodeConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
+		String color = areaConfig.getOrDefault(SituationConfig.Attribute.COLOR.getCode(), null);
 		if (color != null) {
 			this.style.setColor(color);
 		}

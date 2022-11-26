@@ -112,6 +112,9 @@ public enum AttackType {
 				.findFirst().orElse(null);
 	}
 
+	/**
+	 * 根据keyWord获取枚举
+	 */
 	public static <T extends AttackType> T getEnumByKeyWord(String keyWord, Class<T> enumClass) {
 		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getKeyWord().equals(keyWord))
 					 .findFirst().orElse(null);

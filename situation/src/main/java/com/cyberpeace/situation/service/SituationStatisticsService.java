@@ -13,6 +13,8 @@ public interface SituationStatisticsService {
 
 	Queue<SceneTrend> getSceneTrendList();
 
+	Queue<SceneTrend> getFlowList();
+
 	void addAttackType(String sceneId, AttackType attackType);
 
 	void clearAttackTypeCountBySceneId(String sceneId);

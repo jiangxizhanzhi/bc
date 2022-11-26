@@ -421,7 +421,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					if (!state) {
 						break;
 					}
-
 					//进程消息中新增当前阶段信息
 					WsAttackSchedule wsAttackScheduleStage = new WsAttackSchedule(
 							dynamicStage.getName(), STAGE_IS_RUNNING);
@@ -760,6 +759,40 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
 		return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
+	}
+
+	@Override
+	public void playbackPushDynamicSchemeToRoom(String sceneId){
+		List<AttackMessageReq> attackMessageHistoryList = attackMessageHistoryService.getAttackHistory(sceneId);
+		String code = sceneConfigService.updateSceneCode(sceneId);
+		List<String> elementIds = getElementIds(sceneId, false);
+
+		Thread thread = new Thread(new Runnable() {
+
+			@SneakyThrows
+			@Override
+			public void run() {
+				for(AttackMessageReq attackMessageReq: attackMessageHistoryList){
+					log.info(attackMessageReq.getSourceId() + "+" + attackMessageReq.getTargetId() + "+" + attackMessageReq.getType());
+					if(!sceneConfigService.isCurrentScheme(sceneId, code)){
+						break;
+					}
+					if (attackMessageReq.getType()
+										.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+						pushMediaToRoom(attackMessageReq, code, true);
+					} else {
+						pushAttackToRoom(attackMessageReq, elementIds, true);
+					}
+					if (attackMessageReq.getIntervalTime() != null) {
+						Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
+					}
+
+				}
+
+			}
+		});
+		thread.start();
+
 	}
 
 	/**

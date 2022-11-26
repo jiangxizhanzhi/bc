@@ -26,5 +26,14 @@ public class SceneTrendJob {
 		if(sceneTrendList.size()>40){
 			sceneTrendList.remove();
 		}
+
+		Queue<SceneTrend> flowList = situationStatisticsService.getFlowList();
+		SceneTrend flow = new SceneTrend();
+		flow.setDataSize((int)(20*Math.random()));
+		flow.setTime(TimeUtil.format1(new Date()));
+		flowList.add(flow);
+		if(flowList.size()>40){
+			flowList.remove();
+		}
 	}
 }

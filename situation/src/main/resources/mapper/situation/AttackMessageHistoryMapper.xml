@@ -24,20 +24,20 @@
     </select>
 
     <select id="getDefenseTop" resultType="com.cyberpeace.situation.model.DefenseTypeCount">
-        select defenseType, count (*) as times
+        select defense_type, count (*) as times
         from situation_attack_message_history
         <where>
             scene_id = #{sceneId}
         </where>
-        group by defenseType
+        group by defense_type
         order by times desc
     </select>
     <select id="getHostTop" resultType="com.cyberpeace.situation.model.HostCount">
         select target_id as hostName, count(*) as times
         from situation_attack_message_history
         <where>
-            defense_type is not null
-            and defense_level = 3
+            (defense_type is null
+            or defense_level != 3)
             and is_history = 0
             <if test="null != attackTypeList and attackTypeList.size > 0">
                 and type in
@@ -48,6 +48,40 @@
         </where>
         group by target_id
         order by times desc
+    </select>
+
+    <select id="getAttackLogTop5" resultType="com.cyberpeace.situation.model.AttackLog">
+        select top 5 create_time as time, source_id ,target_id, type as attack_type
+        from situation_attack_message_history
+        <where>
+            <if test="sceneId != null and sceneId != ''">
+                scene_id = #{sceneId}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getStartTime" resultType="java.lang.String">
+        select top 1 create_time
+        from situation_attack_message_history
+        <where>
+            <if test="sceneId != null and sceneId != ''">
+                scene_id = #{sceneId}
+            </if>
+        </where>
+        order by create_time
+    </select>
+
+    <select id="getAllAttackHistory" resultType="com.cyberpeace.situation.dao.entity.AttackMessageHistory">
+        select *
+        from situation_attack_message_history
+        <where>
+            <if test="sceneId != null and sceneId != ''">
+                scene_id = #{sceneId}
+            </if>
+            and is_history = 0
+        </where>
+        order by create_time
     </select>
 
 

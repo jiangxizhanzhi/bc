@@ -1,12 +1,11 @@
 package com.cyberpeace.cs.dao.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cs.dao.entity.Attachment;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cs.dao.entity.Attachment;
+import java.util.List;
 
 @Mapper
 public interface AttachmentMapper extends BaseMapper<Attachment> {
@@ -17,4 +16,6 @@ public interface AttachmentMapper extends BaseMapper<Attachment> {
 	Attachment selectByPath(@Param("filePath") String filePath);
 
 	void batchInsert(@Param("attachments") List<Attachment> attachments);
+
+	int insertAttachment(@Param("resourceId") String resourceId,@Param("fileName") String fileName,@Param("filePath") String filePath,@Param("isPublic") Boolean isPublic);
 }

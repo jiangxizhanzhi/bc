@@ -1,16 +1,5 @@
 package com.cyberpeace.cs.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -24,8 +13,16 @@ import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -274,7 +271,7 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		String resourceId = StringUtils.split(filename, '.')[0];
 		Attachment attachment = Attachment.builder().resourceId(resourceId).fileName(filename)
 				.filePath(filePath).isPublic(CommonConstant.TRUE).build();
-		int insert = attachmentMapper.insert(attachment);
+		int insert = attachmentMapper.insertAttachment(resourceId, filename, filePath, CommonConstant.TRUE);
 		if (insert > 0) {
 			AttachmentBo attachmentBo = BeanUtils.copy(attachment, AttachmentBo.class);
 			attachmentBo.setFilePath(utilService.handlerFileUrl(attachment.getFilePath()));

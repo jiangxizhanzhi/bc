@@ -2,12 +2,10 @@ package com.cyberpeace.situation.service;
 
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
-import com.cyberpeace.situation.model.AttackTypeCount;
-import com.cyberpeace.situation.model.DefenseTypeCount;
-import com.cyberpeace.situation.model.HostCount;
-import com.cyberpeace.situation.model.HostStatusCount;
+import com.cyberpeace.situation.model.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public interface AttackMessageHistoryService {
@@ -48,4 +46,10 @@ public interface AttackMessageHistoryService {
 	List<HostStatusCount> getHostStatusCount(String sceneId);
 
 	void recovery(String sceneId);
+
+	List<AttackLog> getAttackLogTop5(String sceneId);
+
+	Map<String, Integer> getIntervalTime(String sceneId);
+
+	List<AttackMessageReq> getAttackHistory(String sceneId);
 }

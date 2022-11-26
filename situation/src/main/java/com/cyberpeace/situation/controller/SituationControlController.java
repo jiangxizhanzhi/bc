@@ -15,6 +15,7 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
+import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SceneConfigService;
 import com.cyberpeace.situation.service.impl.DynamicSchemeServiceImpl;
@@ -47,6 +48,9 @@ public class SituationControlController {
 
 	@Autowired
 	private SceneConfigService sceneConfigService;
+
+	@Autowired
+	private AttackMessageHistoryService attackMessageHistoryService;
 
 	@ApiOperation("新增动效方案")
 	@PostMapping("/scheme")
@@ -202,9 +206,16 @@ public class SituationControlController {
 
 	@ApiOperation("恢复")
 	@PostMapping("/recovery")
-	public void recovery(@ApiParam(name = "scene_id", value = "场景编号",
-			required = true) @RequestParam(value = "scene_id") String sceneId){
+	public void recovery(
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId){
+		attackMessageHistoryService.recovery(sceneId);
+	}
 
+	@ApiOperation("情况回放")
+	@PostMapping("/playback")
+	public void playback(
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId){
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId);
 	}
 
 }

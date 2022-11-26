@@ -32,7 +32,12 @@ public class RabbitMQConf {
 	/**
 	 * 用户路由
 	 */
-	private final String AUTH_USER_ROUTING_KEY = "cn.cyberpeace.mp.auth.*.delete";
+	private final String AUTH_USER_ROUTING_KEY = "cn.cyberpeace.mp.auth.*.*";
+
+	/**
+	 * 用户路由
+	 */
+	private final String AUTH_ROLE_ROUTING_KEY = "cn.cyberpeace.mp.auth.#.modify";
 
 	/**
 	 * 场景状态数据路由
@@ -133,7 +138,11 @@ public class RabbitMQConf {
 		return BindingBuilder.bind(AuthDeleteMessageQueue()).to(topicAuthExchange())
 				.with(AUTH_USER_ROUTING_KEY).noargs();
 	}
-
+	@Bean
+	Binding bindingRoleMessage() {
+		return BindingBuilder.bind(AuthDeleteMessageQueue()).to(topicAuthExchange())
+				.with(AUTH_ROLE_ROUTING_KEY).noargs();
+	}
 	@Bean
 	public SimpleMessageListenerContainer
 			simpleMessageListenerContainer(ConnectionFactory connectionFactory) {

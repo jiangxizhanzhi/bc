@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -239,6 +240,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		List<UserInfo> userInfos = ListByOrgId(orgId, true);
 		return StreamApiUtils.map(userInfos, UserInfo::getUserId);
 	}
+
+	/**
+	 * 编辑角色以后清空缓存
+	 *
+
+	 * @return
+	 */
+	@Override
+	@CacheEvict(allEntries = true)
+	public void clearCache() {
+
+ 	}
 
 	/**
 	 * 获取用户可见的菜单

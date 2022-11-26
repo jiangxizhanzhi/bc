@@ -160,11 +160,6 @@ CREATE TABLE `situation_dynamic_effects_library`
     `category`                 varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '动效类型',
     `thumbnail`                varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
     `source_node_dynamic_file` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '源节点动效文件',
-    `target_node_dynamic_file` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '目标节点动效文件',
-    `focus`                    int(1) NOT NULL comment '聚焦',
-    `color`                    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '颜色',
-    `line`                     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '线形',
-    `line_size`                int(11) NOT NULL comment '线形大小',
     `create_user_id`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
     `create_time`              datetime NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`              datetime NULL DEFAULT NULL,
@@ -374,3 +369,24 @@ CREATE TABLE `situation_common_components` (
                                  PRIMARY KEY (`id`) USING BTREE,
                                  UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `situation_dynamic_effects_mapping` (
+                                                     `id` int(10) NOT NULL AUTO_INCREMENT,
+                                                     `resource_id` varchar(64) NOT NULL,
+                                                     `name` varchar(512) NOT NULL COMMENT '动效映射名称',
+                                                     `category` varchar(64) NOT NULL COMMENT '动效类型',
+                                                     `attack_type` varchar(64) NOT NULL COMMENT '攻击类型',
+                                                     `source_node_dynamic` varchar(64) NOT NULL COMMENT '源动效',
+                                                     `target_node_dynamic` varchar(64) NOT NULL COMMENT '目标动效',
+                                                     `focus` int(10) NOT NULL COMMENT '聚焦',
+                                                     `color` varchar(64) NOT NULL COMMENT '颜色',
+                                                     `line` varchar(64) NOT NULL COMMENT '线形',
+                                                     `line_size` int(10) NOT NULL COMMENT '线段大小',
+                                                     `create_user_id` varchar(64) DEFAULT NULL,
+                                                     `create_time` datetime DEFAULT NULL,
+                                                     `update_time` datetime DEFAULT NULL,
+                                                     PRIMARY KEY (`id`), USING BTREE,
+                                                     UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
+                                                     UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+

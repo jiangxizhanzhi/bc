@@ -24,19 +24,4 @@ public class DynamicEffectLibraryFilterReq implements Serializable {
 	@ApiModelProperty(value = "源节点动效文件")
 	private String sourceNodeDynamicFile;
 
-	@ApiModelProperty(value = "目标节点动效文件")
-	private String targetNodeDynamicFile;
-
-	@ApiModelProperty("聚焦")
-	private String focus;
-
-	@ApiModelProperty("颜色")
-	private String color;
-
-	@ApiModelProperty("线形")
-	private String line;
-
-	@ApiModelProperty("线形大小")
-	private String lineSize;
-
 }

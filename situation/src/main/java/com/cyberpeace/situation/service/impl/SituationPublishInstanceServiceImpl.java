@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.service;
+package com.cyberpeace.situation.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +15,8 @@ import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.service.DashboardTemplateService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;

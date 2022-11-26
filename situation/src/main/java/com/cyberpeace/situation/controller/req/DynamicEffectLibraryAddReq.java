@@ -35,28 +35,4 @@ public class DynamicEffectLibraryAddReq implements Serializable {
 	@ApiModelProperty(value = "源节点动效文件", required = true)
 	private String sourceNodeDynamicFile;
 
-	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.TARGET_NODE_DYNAMIC_FILE_EMPTY_ERROR)
-	@ApiModelProperty(value = "目标节点动效文件", required = true)
-	private String targetNodeDynamicFile;
-
-	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.FOCUS_EMPTY_ERROR)
-	@ApiModelProperty(value = "聚焦", required = true)
-	private String focus;
-
-	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.COLOR_EMPTY_ERROR)
-	@ApiModelProperty(value = "颜色", required = true)
-	private String color;
-
-	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.LINE_EMPTY_ERROR)
-	@ApiModelProperty(value = "线形", required = true)
-	private String line;
-
-	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.LINE_SIZE_DOC_EMPTY_ERROR)
-	@ApiModelProperty(value = "线形大小", required = true)
-	private String lineSize;
 }

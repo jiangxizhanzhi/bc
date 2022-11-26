@@ -32,7 +32,7 @@ public class RabbitMQConf {
 	/**
 	 * 用户路由
 	 */
-	private final String AUTH_USER_ROUTING_KEY = "cn.cyberpeace.mp.auth.*.*";
+	private final String AUTH_USER_ROUTING_KEY = "cn.cyberpeace.mp.auth.*.delete";
 
 	/**
 	 * 用户路由

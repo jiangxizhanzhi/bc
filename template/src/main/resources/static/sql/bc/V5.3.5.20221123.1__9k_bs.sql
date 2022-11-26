@@ -66,7 +66,7 @@ CREATE TABLE `bs_device_occupation`
     `device_id`    varchar(255) NOT NULL COMMENT '实体设备id',
     `device_type`  tinyint(1)   NOT NULL COMMENT '实体设备类型',
     `port`         varchar(6)   NOT NULL COMMENT '端口号',
-    `is_occupied`  boolean      NOT NULL DEFAULT 0,
+    `is_occupied`  boolean      NOT NULL DEFAULT 0 COMMENT '是否被占用',
     `scene_id`     varchar(32)  NULL COMMENT '设备所在场景id',
     `simulator_id` varchar(32)  NULL COMMENT '用户行为模拟id',
     `create_time`  datetime     NULL DEFAULT NULL COMMENT '创建时间',

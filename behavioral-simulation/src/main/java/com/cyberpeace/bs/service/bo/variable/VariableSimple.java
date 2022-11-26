@@ -16,4 +16,7 @@ public class VariableSimple implements Serializable {
 
 	@ApiModelProperty(value = "变量值")
 	private String value;
+
+	@ApiModelProperty(value = "变量备注")
+	private String note;
 }

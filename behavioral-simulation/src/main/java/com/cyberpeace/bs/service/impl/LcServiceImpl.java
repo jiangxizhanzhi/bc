@@ -179,6 +179,7 @@ public class LcServiceImpl implements LcService {
 			VariableBo variableBo = new VariableBo();
 			variableBo.setId(lcVariable.getDataId());
 			variableBo.setName(lcVariable.getName());
+			variableBo.setNote("#todo");
 			variableBo.setValue(lcVariable.getVarValue());
 			variableBo.setUpdateTime(lcVariable.getUpdateTime());
 			variableBos.add(variableBo);

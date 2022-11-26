@@ -4,6 +4,7 @@ import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
+import com.cyberpeace.bs.service.bo.lc.LcActualDevice;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
@@ -63,4 +64,10 @@ public interface LcService {
 
 	String getDeviceId();
 
+	/**
+	 * 获取实体设备
+	 * @param types
+	 * @return
+	 */
+	List<LcActualDevice> getActualDevices(List<Integer> types);
 }

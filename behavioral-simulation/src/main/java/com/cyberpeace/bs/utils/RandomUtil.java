@@ -1,10 +1,14 @@
 package com.cyberpeace.bs.utils;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.model.ChartInput;
+import com.google.common.collect.Sets;
+import org.apache.commons.compress.utils.Lists;
 
 /**
  * 随机数相关的辅助函数
@@ -56,5 +60,22 @@ public class RandomUtil {
 		}
 		// sort
 		BsUtil.sortBehaviorList(chartInput.getBehaviors());
+	}
+
+	public static <T> List<T> randomSelect(List<T> elements, Integer num){
+		int size = elements.size();
+		if(size <= num){
+			return elements;
+		}
+		List<T> res = Lists.newArrayList();
+		Set<Integer> selected = Sets.newHashSet();
+		while(res.size() < num) {
+			Integer r = RANDOM.nextInt(size);
+			if(!selected.contains(r)){
+				selected.add(r);
+				res.add(elements.get(r));
+			}
+		}
+		return res;
 	}
 }

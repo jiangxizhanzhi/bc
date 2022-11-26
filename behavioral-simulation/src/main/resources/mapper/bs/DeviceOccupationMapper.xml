@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper">
+    <select id="checkOccupation" resultType="java.lang.String">
+        select device_id
+        from bs_device_occupation
+        where is_occupied = 1
+        and device_id in
+        <foreach collection="deviceIds" item="deviceId" open="(" close=")" separator=",">
+            #{deviceId}
+        </foreach>
+    </select>
+    <select id="getPortByIds" resultType="com.cyberpeace.bs.service.bo.device.DevicePortId">
+        select port, device_id as id
+        from bs_device_occupation
+        where device_id in
+        <foreach collection="deviceIds" item="deviceId" open="(" close=")" separator=",">
+            #{deviceId}
+        </foreach>
+    </select>
+</mapper>

@@ -1,9 +1,7 @@
 package com.cyberpeace.bs.dao.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.TableName;
-
+import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 /**
@@ -12,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @TableName("bs_device_occupation")
-public class DeviceOccupation {
+public class DeviceOccupation extends BaseTable {
 
 	/**
 	 * 实体设备id
@@ -25,6 +23,16 @@ public class DeviceOccupation {
 	private Integer deviceType;
 
 	/**
+	 * 设备连接的虚实结合交换机上的端口
+	 */
+	private String port;
+
+	/**
+	 * 是否被占用
+	 */
+	private Boolean isOccupied;
+
+	/**
 	 * 设备所在场景id
 	 */
 	private String sceneId;
@@ -33,9 +41,4 @@ public class DeviceOccupation {
 	 * 用户行为模拟id（仪表id）
 	 */
 	private String simulatorId;
-
-	/**
-	 * 创建时间
-	 */
-	private Date createTime;
 }

@@ -19,6 +19,7 @@ import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
@@ -210,5 +211,15 @@ public class LcServiceImpl implements LcService {
 		GetDeviceReq body = new GetDeviceReq();
 		LcDevicePageRes res = LcHttpClient.post(targetUrl, body, LcDevicePageRes.class);
 		return res.getRecords().get(0).getId();
+	}
+
+	@Override
+	public List<LcActualDevice> getActualDevices(List<Integer> types) {
+		String targetUrl = LC_HOST_PORT;
+		LcActualDeviceReq body = new LcActualDeviceReq();
+		body.setDeviceType(types);
+		String res = LcHttpClient.post(targetUrl, body, String.class);
+		List<LcActualDevice> devices = JsonUtil.toJsonObjectArray(res, LcActualDevice.class);
+		return devices;
 	}
 }

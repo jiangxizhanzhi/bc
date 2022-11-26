@@ -64,10 +64,13 @@ CREATE TABLE `bs_device_occupation`
 (
     `id`           int(11)      NOT NULL AUTO_INCREMENT,
     `device_id`    varchar(255) NOT NULL COMMENT '实体设备id',
-    `device_type`  tinyint(1)   NULL DEFAULT NULL COMMENT '实体设备类型',
-    `scene_id`     varchar(32)  NOT NULL COMMENT '设备所在场景id',
-    `simulator_id` varchar(32)  NOT NULL COMMENT '用户行为模拟id',
+    `device_type`  tinyint(1)   NOT NULL COMMENT '实体设备类型',
+    `port`         varchar(6)   NOT NULL COMMENT '端口号',
+    `is_occupied`  boolean      NOT NULL DEFAULT 0,
+    `scene_id`     varchar(32)  NULL COMMENT '设备所在场景id',
+    `simulator_id` varchar(32)  NULL COMMENT '用户行为模拟id',
     `create_time`  datetime     NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`  datetime     NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `device_id` (`device_id`) USING BTREE,
     UNIQUE INDEX `simulator_id` (`simulator_id`) USING BTREE

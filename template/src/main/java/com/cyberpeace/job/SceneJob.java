@@ -1,13 +1,5 @@
 package com.cyberpeace.job;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -28,8 +20,13 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.google.common.cache.Cache;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 场景自动关闭定时任务
@@ -62,7 +59,7 @@ public class SceneJob {
 	private Cache<String, String> sceneCache = GuavaCacheUtil.newInstance(CommonConstant.FIFTEEN,
 			TimeUnit.MINUTES, String.class, String.class);
 
-	@Scheduled(fixedRate = 15000)
+//	@Scheduled(fixedRate = 15000)
 	public void closeScene() {
 		log.info("SceneCloseJob start");
 
@@ -71,7 +68,7 @@ public class SceneJob {
 		log.info("SceneCloseJob end");
 	}
 
-	@Scheduled(fixedRate = 5000)
+//	@Scheduled(fixedRate = 5000)
 	public void countDownFifteenMin() {
 		log.info("CountDownFifteenMin job start");
 

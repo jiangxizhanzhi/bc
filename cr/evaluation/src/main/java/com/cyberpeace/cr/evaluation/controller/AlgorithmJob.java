@@ -1,19 +1,16 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.HashSet;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * 定时一周清理一次不再使用的备份算法
@@ -28,7 +25,7 @@ public class AlgorithmJob {
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
-	@Scheduled(fixedRate = 7 * 24 * 60 * 60 * 1000)
+//	@Scheduled(fixedRate = 7 * 24 * 60 * 60 * 1000)
 	public void deleteAllUnUsedBackup() {
 
 		log.info("delete all unused backup algorithms!");

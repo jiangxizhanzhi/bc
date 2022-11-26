@@ -6,7 +6,6 @@ import com.cyberpeace.cs.service.SystemUseStatusService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +29,7 @@ public class SystemUseStatusJob {
 		insertSystemUseStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.insertSystemUseStatus"));
 	}}
 
-	@Scheduled(fixedRate =  5 * 60 * 1000)
+//	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void insertSystemUseStatus() {
 		log.info("system use status start----------");
 		String diskCmd = "df -h /";
@@ -54,7 +53,7 @@ public class SystemUseStatusJob {
 	/**
 	 * 清理无用数据定时任务
 	 */
-	@Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+//	@Scheduled(fixedRate = 24 * 60 * 60 * 1000)
 	public void deleteSystemUseStatus() {
 
 		systemUseStatusService.delete();

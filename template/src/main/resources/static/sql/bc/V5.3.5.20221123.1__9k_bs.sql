@@ -39,6 +39,7 @@ CREATE TABLE bs_user_simulator
     `device_id`         varchar(255)  NULL     DEFAULT NULL COMMENT '执行设备id',
     `device_name`       varchar(255)  NULL     DEFAULT NULL COMMENT '执行设备名称',
     `device_ip`         varchar(255)  NULL     DEFAULT NULL COMMENT '执行设备ip',
+    `is_entity`         boolean       NOT NULL COMMENT '执行设备是否为实体',
     `scene_id`          varchar(32)   NOT NULL COMMENT '场景id',
     `scene_name`        varchar(255)  NOT NULL COMMENT '场景名称',
     `user_model_id`     varchar(32)   NOT NULL COMMENT '用户行为模型id',

@@ -30,4 +30,9 @@ public interface BsErrorCode {
 	 * id列表为空
 	 */
 	String EMPTY_ID_COLL = "105005";
+
+	/**
+	 * 请注明是否实体设备
+	 */
+	String ACTUAL_OR_VIRTUAL = "105006";
 }

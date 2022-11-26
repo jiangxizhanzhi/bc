@@ -107,6 +107,11 @@ public class UserSimulator extends BaseTable {
 	private String deviceIp;
 
 	/**
+	 * 设备是否实体设备
+	 */
+	private Boolean isEntity;
+
+	/**
 	 * 关联场景id
 	 */
 	private String sceneId;

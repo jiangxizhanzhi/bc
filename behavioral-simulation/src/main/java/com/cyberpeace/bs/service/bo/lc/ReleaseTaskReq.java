@@ -1,11 +1,10 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import java.io.Serializable;
-import java.util.List;
-
+import lombok.Data;
 import org.apache.commons.compress.utils.Lists;
 
-import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class ReleaseTaskReq implements Serializable {
@@ -19,6 +18,12 @@ public class ReleaseTaskReq implements Serializable {
 	private List<String> prevSteps = Lists.newArrayList();
 
 	private String taskStrategy = "";
+
+	private String ip;
+
+	private Boolean isUsingIp;
+
+	private List<ReqVariable> variable = Lists.newArrayList();
 
 	public ReleaseTaskReq() {
 		this.setTask(new Task());
@@ -34,6 +39,11 @@ public class ReleaseTaskReq implements Serializable {
 
 	public void setFlowChart(String id) {
 		this.getFlowChartIds().add(new Long(id));
+	}
+
+	public void addVariable(String name,String value){
+		ReqVariable variable = new ReqVariable(name,value);
+		this.variable.add(variable);
 	}
 }
 
@@ -52,4 +62,16 @@ class Task implements Serializable {
 
 	private String isRecordVideo = "0";
 
+}
+
+@Data
+class ReqVariable implements Serializable{
+	private String name;
+	private String value;
+	private String variableType = "Text";
+
+	public ReqVariable(String name, String value){
+		this.name = name;
+		this.value = value;
+	}
 }

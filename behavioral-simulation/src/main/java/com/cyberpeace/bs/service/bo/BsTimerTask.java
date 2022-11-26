@@ -13,7 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 public class BsTimerTask extends TimerTask {
 
 	private final String deviceIp;
-	private String deviceId;
+
+	private final String deviceId;
+
+	private final Boolean isEntity;
 
 	private final String behaviorId;
 
@@ -26,10 +29,11 @@ public class BsTimerTask extends TimerTask {
 	private final String variable;
 
 
-	public BsTimerTask(String deviceId, String ip, String behaviorId, Integer index,
+	public BsTimerTask(String deviceId, String ip, Boolean isEntity, String behaviorId, Integer index,
 			String simulatorId, String variable, BsTimer timer) {
 		this.deviceId = deviceId;
 		this.deviceIp = ip;
+		this.isEntity = isEntity;
 		this.behaviorId = behaviorId;
 		this.index = index;
 		this.simulatorId = simulatorId;
@@ -49,21 +53,11 @@ public class BsTimerTask extends TimerTask {
 			ReleaseTaskReq req = new ReleaseTaskReq();
 			req.setDeviceId(deviceId);
 			req.setDeviceIp(deviceIp);
+			req.setIsUsingIp(!isEntity);
 			req.setFlowChart(behaviorId);
 			// todo start a behavior
 			LcService lcService = SpringContextUtil.getBeanByClass(LcService.class);
 			lcService.startBehavior(req);
-			// UserSimulatorService userSimulatorService = SpringContextUtil
-			// .getBeanByClass(UserSimulatorService.class);
-			// userSimulatorService.updateProcess(simulatorId, index);
-			// if (index == 0) {
-			// Timer timer = userTrafficService.getTimerMap().get(trafficId);
-			// if (timer != null) {
-			// timer.cancel();
-			// userTrafficService.getTimerMap().remove(trafficId);
-			// log.info("user traffic {} is finished", trafficId);
-			// }
-			// }
 		} catch (Exception e) {
 			log.error("User simulator timer task failed: ", e);
 		}

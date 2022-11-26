@@ -15,6 +15,9 @@ public class NodeBo implements Serializable {
 	@ApiModelProperty(value = "节点id")
 	private String nodeId;
 
+	@ApiModelProperty(value = "是否实体设备")
+	private Boolean isEntity;
+
 	@ApiModelProperty(value = "节点名称")
 	private String nodeName;
 

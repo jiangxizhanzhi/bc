@@ -224,7 +224,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		for (BehaviorSimple behavior : behaviorList) {
 			// 最后一个task index为0
 			index--;
-			BsTimerTask task = new BsTimerTask(simulator.getDeviceId(), simulator.getDeviceIp(),
+			BsTimerTask task = new BsTimerTask(simulator.getDeviceId(), simulator.getDeviceIp(),simulator.getIsEntity(),
 					behavior.getId(), index, simulator.getResourceId(),
 					behaviorVariableMap.getOrDefault(behavior.getId(), "[]"), timer);
 			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
@@ -343,6 +343,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setDeviceId(nodeBo.getNodeId());
 		simulator.setDeviceIp(BsUtil.getIp(nodeBo.getIpConfig()));
 		simulator.setDeviceName(nodeBo.getNodeName());
+		if(nodeBo.getIsEntity() == null){
+			throw new BusinessException(BsErrorCode.ACTUAL_OR_VIRTUAL);
+		}
+		simulator.setIsEntity(nodeBo.getIsEntity());
 		simulator.setSceneId(sceneId);
 		simulator.setSceneName(sceneName);
 		return simulator;

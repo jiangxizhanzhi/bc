@@ -684,7 +684,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
 		// excel数据中题型=当前代码枚举值+1
 		Integer theoryType = handleTheoryType(
-				String.valueOf(Integer.parseInt(excelRowData.get(3)) - 1));
+				String.valueOf(Integer.parseInt(excelRowData.get(3))));
 		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建

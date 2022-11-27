@@ -196,13 +196,15 @@ public class LcServiceImpl implements LcService {
 	public void updateVariable(VariableModifyReq req) {
 		String targetUrl = LC_HOST_PORT + BEHAVIOR_VARIABLE_UPDATE;
 		LcVariableModifyReq body = new LcVariableModifyReq();
+		body.setFlowChartId(new Long(req.getBehaviorId()));
 
 		for (VariableSimple variable : req.getVariables()) {
-			LcVariableBase lcVariable = new LcVariableBase();
-			lcVariable.setDataId(variable.getId());
+			LcVariableModifyBo lcVariable = new LcVariableModifyBo();
+			lcVariable.setDataId(new Long(variable.getId()));
 			lcVariable.setName(variable.getName());
 			lcVariable.setVarValue(variable.getValue());
-			body.getEntityList().add(lcVariable);
+			lcVariable.setNote(variable.getNote());
+			body.getVariables().add(lcVariable);
 		}
 
 		LcHttpClient.patch(targetUrl, body, String.class);

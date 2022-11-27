@@ -1,17 +1,15 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import java.io.Serializable;
-import java.util.List;
-
+import lombok.Data;
 import org.apache.commons.compress.utils.Lists;
 
-import lombok.Data;
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class LcVariableModifyReq implements Serializable {
 
-	/**
-	 * 变量列表
-	 */
-	private List<LcVariableBase> entityList = Lists.newArrayList();
+	private Long flowChartId;
+
+	private List<LcVariableModifyBo> variables = Lists.newArrayList();
 }

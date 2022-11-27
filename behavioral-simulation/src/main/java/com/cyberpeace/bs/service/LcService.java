@@ -60,6 +60,10 @@ public interface LcService {
 
 	VariableListBo getVariableList(String behaviorId);
 
+	/**
+	 * 编辑行为变量
+	 * @param req
+	 */
 	void updateVariable(VariableModifyReq req);
 
 	String getDeviceId();

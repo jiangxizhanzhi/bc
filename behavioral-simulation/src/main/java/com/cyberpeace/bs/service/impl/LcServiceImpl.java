@@ -21,6 +21,7 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -169,11 +170,14 @@ public class LcServiceImpl implements LcService {
 	@Override
 	public VariableListBo getVariableList(String behaviorId) {
 		String targetUrl = LC_HOST_PORT + BEHAVIOR_VARIABLE + behaviorId;
-		String res = LcHttpClient.rawGet(targetUrl, String.class);
-		List<LcVariableRspBo> lcVariableRspBos = JsonUtil.toJsonObjectArray(res,
-				LcVariableRspBo.class);
+		LcVariableRsp res = LcHttpClient.rawGet(targetUrl, LcVariableRsp.class);
+		List<LcVariableRspBo> lcVariableRspBos = res.getVariables();
 		VariableListBo listBo = new VariableListBo();
 		listBo.setBehaviorId(behaviorId);
+		if(CollectionUtils.isEmpty(lcVariableRspBos)){
+			listBo.setVariables(Lists.newArrayList());
+			return listBo;
+		}
 		List<VariableBo> variableBos = Lists.newArrayList();
 		lcVariableRspBos.forEach(lcVariable -> {
 			VariableBo variableBo = new VariableBo();

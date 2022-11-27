@@ -39,6 +39,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("任务/科目开始时间")
 	private Date startTime;
 
+	@ApiModelProperty("刷新时间（s）")
+	private Integer refresh;
+
 	public DashboardBasicAttributeRes() {
 		this.level = 1;
 		this.title = "LG中心综合态势";
@@ -49,6 +52,7 @@ public class DashboardBasicAttributeRes implements Serializable {
 		this.subjectId = "subject_001";
 		this.subjectName = "科目001";
 		this.startTime = new Date();
+		this.refresh = 5;
 	}
 
 }

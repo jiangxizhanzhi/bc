@@ -19,7 +19,6 @@ import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;

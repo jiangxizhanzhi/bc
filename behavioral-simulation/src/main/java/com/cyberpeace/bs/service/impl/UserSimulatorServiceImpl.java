@@ -168,6 +168,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			behaviorMeterBo.setIp(simulator.getDeviceIp());
 			behaviorMeterBo.setName(simulator.getUserName() + "_" + simulator.getSceneId());
 			behaviorMeterBo.setResourceId(simulator.getResourceId());
+			behaviorMeterBo.setSceneName(simulator.getSceneName());
+			behaviorMeterBo.setStatus(simulator.getStatus());
 			return behaviorMeterBo;
 		});
 		return PageUtil.getListResult(simulators);

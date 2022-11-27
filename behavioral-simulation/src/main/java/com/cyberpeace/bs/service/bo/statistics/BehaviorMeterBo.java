@@ -37,4 +37,10 @@ public class BehaviorMeterBo implements Serializable {
 
 	@ApiModelProperty(value = "用户名")
 	private String username;
+
+	@ApiModelProperty(value = "试验任务名称")
+	private String sceneName;
+
+	@ApiModelProperty(value = "执行状态（0：未开始，1：运行中，3：已结束）")
+	private Integer status;
 }

@@ -21,4 +21,9 @@ public class LcVariableBase implements Serializable {
 	 * 变量值
 	 */
 	private String varValue;
+
+	/**
+	 * 变量备注
+	 */
+	private String note;
 }

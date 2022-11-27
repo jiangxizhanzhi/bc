@@ -170,7 +170,7 @@ public class UserModelServiceImpl implements UserModelService {
 				variableSimple.setId(lcVariable.getDataId());
 				variableSimple.setName(lcVariable.getName());
 				variableSimple.setValue(lcVariable.getVarValue());
-				variableSimple.setNote("#todo");
+				variableSimple.setNote(lcVariable.getNote());
 				behavior.getVariables().add(variableSimple);
 			}
 		}

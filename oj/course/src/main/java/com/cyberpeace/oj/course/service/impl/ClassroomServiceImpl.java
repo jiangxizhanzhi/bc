@@ -1305,12 +1305,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
 		}
 
-		String courseId = roomData.get(CommonConstant.ONE);
+		String courseId = courseMapper.selectByName(courseName);
 		if (StringUtils.isBlank(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
 		}
 
-		String lessonName = roomData.get(CommonConstant.ONE);
+		String lessonName = roomData.get(CommonConstant.TWO);
 		if (StringUtils.isBlank(lessonName)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
 		}
@@ -1343,7 +1343,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
 		}
 
-		String orgTree = roomData.get(CommonConstant.FOUR);
+		String orgTree = roomData.get(CommonConstant.FIVE);
 		if (StringUtils.isBlank(orgTree)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL, rowIndex);
 		}

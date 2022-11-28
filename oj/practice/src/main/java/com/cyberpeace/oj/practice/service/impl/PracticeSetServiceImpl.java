@@ -553,6 +553,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public List<PracticeOperation> importMdOperationPractice(String path) {
 
+		File rootFile = new File(path);
+		if (!rootFile.exists()) {
+			return Lists.newArrayList();
+
+		}
 		// 遍历习题数据处理
 		List<String> ctfPracticeDirs = FileUtil.listDirs(path, false);
 

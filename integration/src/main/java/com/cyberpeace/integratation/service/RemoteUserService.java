@@ -54,4 +54,5 @@ public interface RemoteUserService {
 
 	Map<String, UserInfo> allUsers();
 
+    void clearCache();
 }

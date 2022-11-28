@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 
@@ -32,7 +34,12 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 
 	private final String ROLE = "role_delete";
 
+	private final String ROLE_UPDATE = "role_modify";
+
 	private final String ORG = "org_delete";
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@PostConstruct
 	public void init() {
@@ -120,6 +127,10 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 						break;
 					case ROLE:
 
+						break;
+					case ROLE_UPDATE:
+						// 更新角色时，消息通知清空缓存
+						remoteUserService.clearCache();
 						break;
 					case ORG:
 						realListener.onOrgDelete(ids);

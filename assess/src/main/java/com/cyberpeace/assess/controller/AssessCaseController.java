@@ -137,7 +137,9 @@ public class AssessCaseController {
 			assessCaseListRes.setTag(tagStr);
 			if(!assessMaterialMap.isEmpty()){
 				List<AssessMaterial> materials = assessMaterialMap.get(assessCase.getResourceId());
-				materialCount = materials.size();
+				if(null != materials){
+					materialCount = materials.size();
+				}
 			}
 			assessCaseListRes.setMaterialCount(materialCount);
 			return assessCaseListRes;

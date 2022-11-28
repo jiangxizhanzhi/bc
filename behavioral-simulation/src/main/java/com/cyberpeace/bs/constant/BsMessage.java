@@ -2,7 +2,7 @@ package com.cyberpeace.bs.constant;
 
 public interface BsMessage {
 
-    String UNKNOWN_DEVICE = "检测到未知实体设备，请联系管理员同步设备信息";
+    String UNKNOWN_DEVICE = "检测到未知实体设备 %s，请联系管理员同步设备端口信息";
 
     String DEVICE_INSUFFICIENT = "%s 设备不足，需要 %d，现有 %d 空闲";
 

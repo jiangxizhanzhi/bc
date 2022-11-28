@@ -13,17 +13,21 @@ public class DeviceDistributionRes implements Serializable {
     private Boolean success = false;
 
     @ApiModelProperty(value = "消息")
-    private String message;
+    private String message = "";
 
     @ApiModelProperty(value = "分配的设备")
     private List<DeviceTypePort> device = Lists.newArrayList();
 
-    public void addSelectedIds(Integer type, List<String> selectedIds){
+    public void addSelectedIds(Integer type, List<String> selectedIds) {
         DeviceTypePort typePort = new DeviceTypePort();
         typePort.setDeviceType(type);
         for (String id : selectedIds) {
             typePort.addDeviceId(id);
         }
         device.add(typePort);
+    }
+
+    public void addMessage(String msg) {
+        this.message = this.message + msg + "\n";
     }
 }

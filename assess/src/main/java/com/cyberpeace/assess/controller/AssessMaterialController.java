@@ -84,8 +84,10 @@ public class AssessMaterialController {
 
 		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null);
 		assessCaseService.checkCaseId(assessMaterialAddReq.getCaseId());
+
 		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
 				AssessMaterial.class);
+		assessMaterialService.uploadHandout(assessMaterial, assessMaterialAddReq.getAttachment());
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.FALSE);
 		assessMaterial.setCreateUserId(auth.getUserId());
@@ -141,7 +143,7 @@ public class AssessMaterialController {
 	@ApiOperation("详情")
 	@GetMapping("")
 	public BaseRsp<AssessMaterialExcelDatalRes> getAssessCase(@ApiParam(name = "resource_id",
-			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
+			value = "评估材料id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);

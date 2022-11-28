@@ -38,4 +38,7 @@ public class AssessMaterialAddReq implements Serializable {
 	@ApiModelProperty(value = "材料附件")
 	@NotBlank(groups = {Update.class, Create.class}, message = AssessErrorCode.ATTACHMENT_NAME_MISSING)
 	private String attachmentName;
+
+	@ApiModelProperty("附件文本类型")
+	private Integer handoutType;
 }

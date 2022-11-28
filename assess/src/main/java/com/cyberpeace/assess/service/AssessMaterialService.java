@@ -32,4 +32,5 @@ public interface AssessMaterialService extends IService<AssessMaterial> {
 
     void checkNameRepeat(String name, String id);
 
+    void uploadHandout(AssessMaterial assessMaterial, String attachment);
 }

@@ -8,7 +8,11 @@ import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.MdUtil;
+import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -46,6 +51,10 @@ implements AssessMaterialService{
 
     @Autowired
     private AssessMaterialMapper assessMaterialMapper;
+
+    @Autowired
+    private UtilService utilService;
+
 
     @Override
     public AssessMaterial checkAssessMaterial(MultipartFile attachment, AssessMaterial assessMaterial) {
@@ -112,6 +121,42 @@ implements AssessMaterialService{
         AssessMaterial assessMaterial = assessMaterialMapper.selectOne(queryWrapper);
         if(null != assessMaterial){
             throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+        }
+    }
+
+    @Override
+    public void uploadHandout(AssessMaterial assessMaterial, String attachment) {
+        String[] split = attachment.split("\\.");
+        if(split.length < 1){
+            throw new BusinessException("Incorrect attachment path format");
+        }
+        String suffix = split[split.length-1];
+        suffix = suffix.toLowerCase();
+
+        // zip可能为md 或者 html
+        if (suffix.equals(FileSunffixConstant.ZIP.getDesc()) && assessMaterial.getMaterialType().equals(AssessMaterial.MaterialType.TEXT.getCode())) {
+            // 文件上传至服务器 原始文件地址存储
+            assessMaterial.setAttachment(attachment);
+
+            // 获取讲义文件存储地址
+            String realPath = utilService.getRealPath(attachment);
+            File file = new File(attachment);
+            String parent = file.getParent();
+
+            // 计算要解压的文件地址
+            String unzipPath = parent + File.separator + FileUtil.getFileName(realPath, false);
+            ZipUtil.unzipToDest(realPath, unzipPath);
+
+            // 获取解压的讲义文件
+            String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
+            if (StringUtils.isBlank(mdFilePath)) {
+                throw new BusinessException("assess material attachment content error");
+            }
+            assessMaterial.setHandoutType(AssessMaterial.HandoutType.MD.getCode());
+
+            // md文件内容作为url
+            String content = MdUtil.parseMarkdown(mdFilePath);
+            assessMaterial.setAttachment(utilService.replaceMarkdownFile(content));
         }
     }
 

@@ -52,7 +52,7 @@ public class SituationDynamicEffectMappingController {
     }
 
     @ApiOperation("查询动效映射详情")
-    @GetMapping("/")
+    @GetMapping("")
     public BaseRsp<DynamicEffectsMapping>
     getDynamicEffectsMappingDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
 

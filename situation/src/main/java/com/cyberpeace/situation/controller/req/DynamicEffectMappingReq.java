@@ -24,7 +24,7 @@ public class DynamicEffectMappingReq implements Serializable {
 
     @NotBlank(groups = { Create.class },
             message = SituationErrorCode.TYPE_EMPTY_ERROR)
-    @ApiModelProperty(value = "动效类型", required = true)
+    @ApiModelProperty(value = "分靶场类型", required = true)
     private String category;
 
     @NotBlank(groups = { Create.class })

@@ -5,10 +5,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.ComponentsDataReq;
-import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,7 +79,13 @@ public class DashboardTemplateController {
 
     @ApiOperation("获取echarts数据")
     @GetMapping("option/data")
-    private BaseRsp<JSONArray> getEchartsOption(ComponentsDataReq componentsDataReq) {
+    public BaseRsp<JSONArray> getEchartsOption(ComponentsDataReq componentsDataReq) {
         return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));
+    }
+
+    @ApiOperation("通过组件id获取echarts数据")
+    @GetMapping("option")
+    public BaseRsp<JSONArray> getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq) {
+        return new BaseRsp<>(dashboardTemplateService.getEchartsOption(dashboardComponentsResourceReq));
     }
 }

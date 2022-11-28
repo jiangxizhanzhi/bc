@@ -182,6 +182,20 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         return echartsData;
     }
 
+    @Override
+    public JSONArray getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq) {
+        String resourceId = dashboardComponentsResourceReq.getResourceId();
+        String customParams = dashboardComponentsResourceReq.getCustomParams();
+        DashboardComponents dashboardComponents = dashboardComponentsMapper.selectById(resourceId);
+        if (dashboardComponents == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        String componentSetting = dashboardComponents.getComponentSetting();
+        ComponentsDataReq componentsDataReq = changeToComponentsDataReq(componentSetting, customParams);
+        return this.getComponentsEchartsData(componentsDataReq);
+    }
+
     private DashboardTemplate changeToDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
         DashboardTemplate dashboardTemplate = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplate.class);
         JSONArray jsonArray = new JSONArray();
@@ -377,6 +391,22 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         } else {
             // 若参数列表为空，返回全部数据
             return data;
+        }
+    }
+
+    private ComponentsDataReq changeToComponentsDataReq(String componentsData, String customParams) {
+        try {
+            ComponentsDataReq componentsDataReq = new ComponentsDataReq();
+            JSONObject componentsDataJson = JSONObject.parseObject(componentsData);
+            String dimension = componentsDataJson.getString("dimension");
+            String measure = componentsDataJson.getString("measure");
+            componentsDataReq.setDataSourceComponent(componentsData);
+            componentsDataReq.setDimension(dimension);
+            componentsDataReq.setMeasure(measure);
+            componentsDataReq.setCustomParams(customParams);
+            return componentsDataReq;
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
     }
 }

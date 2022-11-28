@@ -246,10 +246,8 @@ public class SituationDynamicEffectLibraryController {
 	@GetMapping("/option")
 	public BaseRsp<OptionsRes> getAllOption() {
 		OptionsRes optionsRes = new OptionsRes();
-		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
-				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
-		optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
-				color -> new LocalType(color.getCode(), color.getMsg())));
+		optionsRes.setLineTypeList(LineType.getMsgList());
+		optionsRes.setColorList(Color.getMsgList());
 		return new BaseRsp<>(optionsRes);
 	}
 

@@ -10,6 +10,9 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.situation.constant.Color;
+import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingPageReq;
@@ -19,7 +22,10 @@ import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
+import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.SituationDynamicEffectMappingService;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -65,7 +71,31 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     @Override
     public ListRsp<DynamicEffectsMapping> getDynamicEffectsMapping(DynamicEffectMappingPageReq dynamicEffectMappingFilterReq) {
         Page page = dynamicEffectMappingFilterReq.toPageParam();
-        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
+        ListRsp<DynamicEffectsMapping> dynamicEffectsMappingListRsp =
+                PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
+        List<DynamicEffectsMapping> list = dynamicEffectsMappingListRsp.getList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (DynamicEffectsMapping dynamicEffectsMapping : list) {
+                String colorCode = dynamicEffectsMapping.getColor();
+                String lineCode = dynamicEffectsMapping.getLine();
+                List<LocalType> colorList = Color.getMsgList();
+                List<LocalType> lineList = LineType.getMsgList();
+                //设置颜色翻译
+                colorList.forEach(color -> {
+                    if (color.getCode().equals(colorCode)) {
+                        dynamicEffectsMapping.setColor(color.getMsg());
+                    }
+                });
+                //设置线条翻译
+                lineList.forEach(line -> {
+                    if (line.getCode().equals(lineCode)) {
+                        dynamicEffectsMapping.setLine(line.getMsg());
+                    }
+                });
+            }
+            dynamicEffectsMappingListRsp.setList(list);
+        }
+        return dynamicEffectsMappingListRsp;
     }
 
     @Override

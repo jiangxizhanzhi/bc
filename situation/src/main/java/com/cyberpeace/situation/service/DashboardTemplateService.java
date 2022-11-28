@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.ComponentsDataReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
+import com.cyberpeace.situation.controller.req.DashboardComponentsResourceReq;
 import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
@@ -71,5 +72,12 @@ public interface DashboardTemplateService {
      * @return
      */
     JSONArray getComponentsEchartsData(ComponentsDataReq componentsDataReq);
+
+    /**
+     * 通过组件id获取echarts数据
+     * @param dashboardComponentsResourceReq
+     * @return
+     */
+    JSONArray getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq);
 
 }

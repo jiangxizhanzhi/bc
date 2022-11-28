@@ -243,10 +243,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				attackType -> new WebAttackType(attackType.getKeyWord(), attackType.getMsg(),
 						attackType.getActionType().getType(), attackType.getActionType().isSource(),
 						attackType.getActionType().isDurationTime())));
-		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
-				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
-		optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
-				color -> new LocalType(color.getCode(), color.getMsg())));
+		optionsRes.setLineTypeList(LineType.getMsgList());
+		optionsRes.setColorList(Color.getMsgList());
 	}
 
 	@Override

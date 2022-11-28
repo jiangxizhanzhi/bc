@@ -2,7 +2,12 @@ package com.cyberpeace.situation.constant;
 
 import com.cyberpeace.common.model.CommonContext;
 
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.situation.model.LocalType;
+import com.google.common.collect.Lists;
 import lombok.Getter;
+
+import java.util.List;
 
 public enum LineType {
 
@@ -36,4 +41,8 @@ public enum LineType {
 		return CommonContext.isChinese() ? desc : code;
 	}
 
+	public static List<LocalType> getMsgList(){
+		return StreamApiUtils.map(Lists.newArrayList(LineType.values()),
+				lineType -> new LocalType(lineType.getCode(), lineType.getMsg()));
+	}
 }

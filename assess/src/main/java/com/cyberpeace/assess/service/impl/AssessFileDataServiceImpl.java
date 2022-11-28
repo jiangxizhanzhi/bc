@@ -138,7 +138,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	}
 
 	private String saveExcelData(String inputData) {
-		ExcelDataHandler dataHandler = new ExcelDataHandler("E:" + inputData, 0);
+		ExcelDataHandler dataHandler = new ExcelDataHandler(inputData, 0);
 		List<List<String>> sheetData = Lists.newArrayList();
 		sheetData = dataHandler.getSheetData(0);
 		dataHandler.closeIO();

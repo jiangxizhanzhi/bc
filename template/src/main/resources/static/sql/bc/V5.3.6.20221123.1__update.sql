@@ -25,3 +25,6 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 24, '高级', 'Advan
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 37, '初级', 'Primary');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 37, '中级', 'Intermediate');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 37, '高级', 'Advanced');
+
+ALTER TABLE `oj_practice_operation`
+    MODIFY COLUMN `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;

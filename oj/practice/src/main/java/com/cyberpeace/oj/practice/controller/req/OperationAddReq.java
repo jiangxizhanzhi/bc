@@ -149,5 +149,10 @@ public class OperationAddReq implements Serializable, CustomValidate {
 						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
 			}
 		}
+		if (title.length() < CommonConstant.ONE || title.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
+			throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
+					CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
+		}
+
 	}
 }

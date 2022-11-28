@@ -11,6 +11,12 @@
         path,related_id,create_time,
         update_time
     </sql>
+    <delete id="deleteByRelatedId">
+        delete
+        FROM assess_file_data
+        WHERE related_id = #{relatedId}
+    </delete>
+
     <select id="getDataBaseTableByRelatedId" resultType="java.lang.String">
         SELECT content
         FROM assess_file_data

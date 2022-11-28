@@ -10,16 +10,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
 import com.cyberpeace.assess.dao.entity.AssessFileData;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.dao.mapper.AssessFileDataMapper;
@@ -27,9 +24,11 @@ import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.bo.TableColumn;
 import com.cyberpeace.common.component.CsvUtil;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.FileUtil;
-import springfox.documentation.spring.web.json.Json;
 
 /**
  *
@@ -54,7 +53,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	}
 
 	@Override
-	public void parseModelFile(String resourceId, Integer interfaceType, String attachmentUrl) {
+	public void parseModelFile(String relatedId, Integer interfaceType, String attachmentUrl) {
 		try {
 			if (AssessModel.interfaceType.DATABASE.getCode().equals(interfaceType)) {
 				List<List<String>> sheetData = Lists.newArrayList();
@@ -79,10 +78,11 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 				String data = getModelFileString(sheetData);
 
 				AssessFileData assessFileData = new AssessFileData();
-				assessFileData.setRelatedId(resourceId);
+				assessFileData.setRelatedId(relatedId);
 				assessFileData.setPath(attachmentUrl);
 				assessFileData.setContent(data);
 
+				assessFileDataMapper.deleteByRelatedId(relatedId);
 				save(assessFileData);
 			}
 		} catch (Exception e) {

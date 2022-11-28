@@ -31,7 +31,7 @@ public class AssessModelServiceImpl extends ServiceImpl<AssessModelMapper, Asses
 	public IPage<AssessModel> page(AssessListReq pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<AssessModel> result = assessModelMapper.listAssessModel(page,
-				pageReqBase.getPattern(), pageReqBase.getTag());
+				pageReqBase.getPattern(), pageReqBase.getType(), pageReqBase.getTag());
 
 		return result;
 	}

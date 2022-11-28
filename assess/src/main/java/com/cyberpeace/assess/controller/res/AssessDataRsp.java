@@ -1,6 +1,7 @@
 package com.cyberpeace.assess.controller.res;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -46,6 +47,8 @@ public class AssessDataRsp implements Serializable {
 	@ApiModelProperty("数据集路径")
 	private String inputData;
 
+	@ApiModelProperty("更新时间")
+	private Date updateTime;
 	@ApiModelProperty("数据")
 	private AssessDataSqlEcharts data;
 

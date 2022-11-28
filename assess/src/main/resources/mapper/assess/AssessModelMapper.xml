@@ -29,8 +29,12 @@
         update_time
         from assess_model
         <where>
+            1=1
+            <if test="type != null and type != ''">
+                and `type` = #{type}
+            </if>
             <if test="pattern != null and pattern != ''">
-                `name` like #{pattern}
+                and `name` like #{pattern}
             </if>
             <if test="tag != null and tag != ''">
                 and `tag` like #{tag}

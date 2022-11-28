@@ -1,6 +1,7 @@
 package com.cyberpeace.assess.controller.res;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -53,4 +54,6 @@ public class AssessModelRsp implements Serializable {
 	@ApiModelProperty("参数列表")
 	private List<JSONObject> params;
 
+	@ApiModelProperty("更新时间")
+	private Date updateTime;
 }

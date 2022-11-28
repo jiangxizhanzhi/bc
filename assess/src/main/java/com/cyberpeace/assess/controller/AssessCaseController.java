@@ -115,7 +115,8 @@ public class AssessCaseController {
 		Integer page = assessCaseFilterReq.getPage();
 		Integer perPage = assessCaseFilterReq.getPerPage();
 		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
-		List<String> cases = StreamApiUtils.getColumn(assessCases.getRecords(), AssessCase::getResourceId);
+		List<AssessCase> records = assessCases.getRecords();
+		List<String> cases = StreamApiUtils.getColumn(records, AssessCase::getResourceId);
 
 		LambdaQueryWrapper<AssessMaterial> assessMaterialLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		assessMaterialLambdaQueryWrapper.in(AssessMaterial::getCaseId, cases);
@@ -124,10 +125,10 @@ public class AssessCaseController {
 
 		List<AssessTag> assessTags = assessTagMapper.selectList(null);
 
-		ListRsp<Object> listResult = PageUtil.getListResult(assessCases);
 		List<AssessCaseListRes> res = new ArrayList<>();
-		List<AssessCase> collect = assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
-		collect.forEach(assessCase -> {
+		List<AssessCase> collect = records.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
+		assessCases.setRecords(collect);
+		assessCases.convert(assessCase -> {
 			AssessCaseListRes assessCaseListRes = new AssessCaseListRes();
 			BeanUtils.copyProperties(assessCase, assessCaseListRes);
 			String tags = assessCase.getTag();
@@ -139,11 +140,10 @@ public class AssessCaseController {
 				materialCount = materials.size();
 			}
 			assessCaseListRes.setMaterialCount(materialCount);
-			res.add(assessCaseListRes);
+			return assessCaseListRes;
 
 		});
-		listResult.setList(Collections.singletonList(res));
-		return new BaseRsp(listResult);
+		return new BaseRsp(PageUtil.getListResult(assessCases));
 	}
 
 	@ApiOperation("删除")

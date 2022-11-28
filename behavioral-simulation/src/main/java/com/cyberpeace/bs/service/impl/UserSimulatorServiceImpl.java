@@ -128,6 +128,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
+		log.warn("add simulator request: {}", JsonUtil.toJsonString(addBo));
 		String sceneId = addBo.getSceneId();
 		List<UserSimulator> simulatorList = Lists.newArrayList();
 		for (NodeBo node : addBo.getNodeList()) {

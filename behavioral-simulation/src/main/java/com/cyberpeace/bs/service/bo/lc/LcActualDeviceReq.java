@@ -8,5 +8,5 @@ import java.util.List;
 
 @Data
 public class LcActualDeviceReq implements Serializable {
-    private List<Integer> deviceType = Lists.newArrayList();
+    private List<Integer> deviceTypes = Lists.newArrayList();
 }

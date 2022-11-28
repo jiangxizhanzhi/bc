@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.service.impl;
 
+import com.cyberpeace.bs.constant.BsMessage;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
 import com.cyberpeace.bs.service.DeviceDistributionService;
 import com.cyberpeace.bs.service.LcService;
@@ -39,12 +40,13 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
         List<LcActualDevice> lcActualDeviceList = lcService.getActualDevices(types);
         // 没有查询到设备
         if (CollectionUtils.isEmpty(lcActualDeviceList)) {
-            res.setMessage("No device");
+            res.setMessage(BsMessage.NO_DEVICES);
             return res;
         }
 
-        Map<Integer, List<LcActualDevice>> deviceMap = StreamApiUtils.groupBy(lcActualDeviceList, LcActualDevice::getDeviceType);
-        Set<String> deviceIds = lcActualDeviceList.stream().map(LcActualDevice::getId).collect(Collectors.toSet());
+        Map<Integer, List<LcActualDevice>> deviceMap = StreamApiUtils.groupBy(lcActualDeviceList, LcActualDevice::getSystem);
+        Set<String> deviceIds = lcActualDeviceList.stream().map(LcActualDevice::getDeviceId).collect(Collectors.toSet());
+
         List<String> allTypeSelected = Lists.newArrayList();
         Set<String> occupiedIds = deviceOccupationMapper.checkOccupation(deviceIds);
         for (DeviceTypeNum deviceTypeNum : req.getRequest()) {
@@ -54,10 +56,10 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
             int num = deviceTypeNum.getNum();
             List<String> distributed = Lists.newArrayList();
             for (LcActualDevice lcActualDevice : deviceList) {
-                if (occupiedIds.contains(lcActualDevice.getId())) {
+                if (occupiedIds.contains(lcActualDevice.getDeviceId())) {
                     size--;
                 } else {
-                    distributed.add(lcActualDevice.getId());
+                    distributed.add(lcActualDevice.getDeviceId());
                 }
             }
             // 设备数不足
@@ -66,7 +68,7 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
                 return res;
             } else {
                 List<LcActualDevice> selected = RandomUtil.randomSelect(deviceList, num);
-                List<String> selectedIds = selected.stream().map(LcActualDevice::getId).collect(Collectors.toList());
+                List<String> selectedIds = selected.stream().map(LcActualDevice::getDeviceId).collect(Collectors.toList());
                 // 分配id
                 res.addSelectedIds(type, selectedIds);
                 allTypeSelected.addAll(selectedIds);

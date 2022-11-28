@@ -63,7 +63,8 @@ public class UserModel extends BaseTable {
 
 	public enum AccessOs implements GenericEnum {
 
-		CODER(1, "程序员"), TEACHER(2, "教师"), STUDENT(3, "学生");
+		WINDOWS(1, "Windows"), LINUX(2, "Linux"),
+		MAC(3, "Mac"), IOS(4,"iOS"), ANDROID(5,"Android");
 
 		@Getter
 		private Integer code;

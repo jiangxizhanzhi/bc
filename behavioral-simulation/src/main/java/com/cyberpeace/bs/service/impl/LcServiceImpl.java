@@ -58,6 +58,8 @@ public class LcServiceImpl implements LcService {
 
 	private String BEHAVIOR_VARIABLE_UPDATE = "api/v1/updateFlowData";
 
+	private String ACTUAL_DEVICE_LIST = "devices/findNewList";
+
 
 	@PostConstruct
 	public void init() {
@@ -220,9 +222,9 @@ public class LcServiceImpl implements LcService {
 
 	@Override
 	public List<LcActualDevice> getActualDevices(List<Integer> types) {
-		String targetUrl = LC_HOST_PORT;
+		String targetUrl = LC_HOST_PORT + ACTUAL_DEVICE_LIST;
 		LcActualDeviceReq body = new LcActualDeviceReq();
-		body.setDeviceType(types);
+		body.setDeviceTypes(types);
 		String res = LcHttpClient.post(targetUrl, body, String.class);
 		List<LcActualDevice> devices = JsonUtil.toJsonObjectArray(res, LcActualDevice.class);
 		return devices;

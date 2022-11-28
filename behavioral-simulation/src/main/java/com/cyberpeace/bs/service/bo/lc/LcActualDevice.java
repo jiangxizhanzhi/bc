@@ -7,9 +7,9 @@ import java.io.Serializable;
 @Data
 public class LcActualDevice implements Serializable {
 
-    private String id;
+    private String deviceId;
 
-    private Integer deviceType;
+    private String deviceName;
 
-    private String name;
+    private Integer system;
 }

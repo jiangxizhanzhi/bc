@@ -9,16 +9,16 @@ import lombok.Data;
 @Data
 public class NodeBo implements Serializable {
 
-	@ApiModelProperty(value = "用户模型id")
+	@ApiModelProperty(value = "用户模型id", required = true)
 	private String userModelId;
 
-	@ApiModelProperty(value = "节点id")
+	@ApiModelProperty(value = "节点id", required = true)
 	private String nodeId;
 
-	@ApiModelProperty(value = "是否实体设备")
+	@ApiModelProperty(value = "是否实体设备", required = true)
 	private Boolean isEntity;
 
-	@ApiModelProperty(value = "节点名称")
+	@ApiModelProperty(value = "节点名称", required = true)
 	private String nodeName;
 
 	@ApiModelProperty(value = "IP配置")

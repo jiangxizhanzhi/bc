@@ -122,6 +122,8 @@ public class CommentServiceImpl implements CommentService {
 		if (null != userInfo) {
 			commentBo.setAvatar(userInfo.getAvatarUrl());
 			commentBo.setUserName(userInfo.getName());
+			commentBo.setUserId(userInfo.getUserName());
+
 		}
 
 		// 获取点赞数量

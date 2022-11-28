@@ -22,6 +22,9 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("评论主题名称")
 	private String themeName;
 
+	@ApiModelProperty("用户id")
+	private String userId;
+
 	@ApiModelProperty("用户名称")
 	private String userName;
 

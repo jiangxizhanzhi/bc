@@ -33,8 +33,17 @@ public class AssessCaseDetailRes implements Serializable {
 	@ApiModelProperty("标签")
 	private List<String> tag;
 
+	@ApiModelProperty("标签名")
+	private String tagName;
+
 	@ApiModelProperty("资源编号")
 	private String resourceId;
+
+	@ApiModelProperty(value = "创建人")
+	private String createUser;
+
+	@ApiModelProperty(value = "材料数量")
+	private Integer materialCount;
 
 	@ApiModelProperty("材料附件")
 	private List<AssessMaterial> attachments;

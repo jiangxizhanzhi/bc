@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -125,7 +126,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		if(inputType.equals(CommonConstant.ONE)){
 			content = saveSqlData(inputData);
 		} else if(inputType.equals(CommonConstant.TWO)){
-			saveExcelData(resourceId, inputData);
+			content = saveExcelData(inputData);
 		} else {
 			throw new BusinessException("input type error");
 		}
@@ -136,8 +137,37 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		assessFileDataMapper.insert(assessFileData);
 	}
 
-	private void saveExcelData(String resourceId, String inputData) {
+	private String saveExcelData(String inputData) {
+		ExcelDataHandler dataHandler = new ExcelDataHandler("E:" + inputData, 0);
+		List<List<String>> sheetData = Lists.newArrayList();
+		sheetData = dataHandler.getSheetData(0);
+		dataHandler.closeIO();
+		List<String> tableColumns = sheetData.get(0);
+		List<String> fieldList = new ArrayList<>();
+		fieldList.add("product");
+		List<JSONObject> data = new ArrayList<>();
+		for(int j = 0; j < tableColumns.size(); j++){
+			JSONObject jsonObject = new JSONObject();
+			for (int i = 0; i < sheetData.size(); i++){
+				List<String> values = sheetData.get(i);
+				String field = values.get(0);
+				if(i >= 1 && !fieldList.contains(field)){
+					fieldList.add(field);
+				}
+				if(j !=0){
+					jsonObject.put(StringUtils.isBlank(field) ? "product" : field, values.get(j));
+				}
+			}
+			if(j != 0){
+				data.add(jsonObject);
+			}
 
+		}
+		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
+		assessDataSqlEcharts.setDimensions(fieldList);
+		assessDataSqlEcharts.setSource(data);
+		String content = JSONObject.toJSONString(assessDataSqlEcharts);
+		return content;
 	}
 
 	private String saveSqlData(String inputData) throws Exception {

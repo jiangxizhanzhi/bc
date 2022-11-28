@@ -1,14 +1,17 @@
 package com.cyberpeace.assess.controller;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.assess.controller.res.AssessCaseListRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +41,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -66,6 +66,9 @@ public class AssessCaseController {
 
 	@Autowired
 	private AssessMaterialMapper assessMaterialMapper;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 
 	@ApiOperation("新增")
@@ -95,7 +98,7 @@ public class AssessCaseController {
 
 	@ApiOperation("查询list")
 	@GetMapping("/list")
-	public BaseRsp<List<AssessCase>>
+	public BaseRsp<List<AssessCaseListRes>>
 			getAssessCases(AssessCaseFilterReq assessCaseFilterReq) {
 		LambdaQueryWrapper<AssessCase> queryWrapper = new LambdaQueryWrapper<>();
 		String name = assessCaseFilterReq.getName();
@@ -112,17 +115,35 @@ public class AssessCaseController {
 		Integer page = assessCaseFilterReq.getPage();
 		Integer perPage = assessCaseFilterReq.getPerPage();
 		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
-		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
-		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
-		IPage<AssessCase> res = assessCases;
+		List<String> cases = StreamApiUtils.getColumn(assessCases.getRecords(), AssessCase::getResourceId);
 
-		assessCases.getRecords().forEach(assessCase -> {
+		LambdaQueryWrapper<AssessMaterial> assessMaterialLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		assessMaterialLambdaQueryWrapper.in(AssessMaterial::getCaseId, cases);
+		List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(assessMaterialLambdaQueryWrapper);
+		Map<String, List<AssessMaterial>> assessMaterialMap = assessMaterials.stream().collect(Collectors.groupingBy(AssessMaterial::getCaseId));
+
+		List<AssessTag> assessTags = assessTagMapper.selectList(null);
+
+		ListRsp<Object> listResult = PageUtil.getListResult(assessCases);
+		List<AssessCaseListRes> res = new ArrayList<>();
+		List<AssessCase> collect = assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
+		collect.forEach(assessCase -> {
+			AssessCaseListRes assessCaseListRes = new AssessCaseListRes();
+			BeanUtils.copyProperties(assessCase, assessCaseListRes);
 			String tags = assessCase.getTag();
 			String tagStr = assessCaseService.getTagContent(tags, assessTags);
-			assessCase.setTag(tagStr);
+			int materialCount = 0;
+			assessCaseListRes.setTag(tagStr);
+			if(!assessMaterialMap.isEmpty()){
+				List<AssessMaterial> materials = assessMaterialMap.get(assessCase.getResourceId());
+				materialCount = materials.size();
+			}
+			assessCaseListRes.setMaterialCount(materialCount);
+			res.add(assessCaseListRes);
+
 		});
-		res.setRecords(assessCases.getRecords().stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList()));
-		return new BaseRsp(PageUtil.getListResult(res));
+		listResult.setList(Collections.singletonList(res));
+		return new BaseRsp(listResult);
 	}
 
 	@ApiOperation("删除")
@@ -151,10 +172,26 @@ public class AssessCaseController {
 		String tags = assessCase.getTag();
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
+
+		List<AssessTag> assessTags = assessTagMapper.selectList(null);
+		String tagStr = assessCaseService.getTagContent(tags, assessTags);
+		assessCaseDetailRes.setTagName(tagStr);
+
 		LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(AssessMaterial::getCaseId, resourceId);
 		List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(queryWrapper);
 		assessCaseDetailRes.setAttachments(assessMaterials);
+		List<UserInfo> allUsers = remoteUserService.getAllUsers();
+		Map<String, String> userMap = allUsers.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+		String createUserId = assessCase.getCreateUserId();
+		if(!userMap.isEmpty()){
+			String userName = userMap.get(createUserId);
+			assessCaseDetailRes.setCreateUser(userName);
+		}
+		if(!assessMaterials.isEmpty()){
+			assessCaseDetailRes.setMaterialCount(assessMaterials.size());
+		}
+		assessCaseDetailRes.setMaterialCount(0);
 		return new BaseRsp<>(assessCaseDetailRes);
 	}
 

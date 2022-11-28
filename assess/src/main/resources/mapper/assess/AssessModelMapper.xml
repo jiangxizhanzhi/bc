@@ -31,7 +31,7 @@
         <where>
             1=1
             <if test="type != null and type != ''">
-                and `type` = #{type}
+                and `interface_type` = #{type}
             </if>
             <if test="pattern != null and pattern != ''">
                 and `name` like #{pattern}

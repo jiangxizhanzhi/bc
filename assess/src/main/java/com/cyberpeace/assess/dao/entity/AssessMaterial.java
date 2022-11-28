@@ -78,6 +78,12 @@ public class AssessMaterial extends BaseTable {
     @ApiModelProperty("讲义类型")
     private Integer handoutType;
 
+    /**
+     * 材料内容
+     */
+    private String attachmentContent;
+
+
 
     public enum MaterialType implements GenericEnum {
 

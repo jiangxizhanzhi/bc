@@ -166,6 +166,7 @@ public class AssessMaterialController {
 		assessCaseService.checkCaseId(assessMateriaUpdateReq.getCaseId());
 		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId);
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
+		assessMaterialService.uploadHandout(assessMaterial, assessMateriaUpdateReq.getAttachment());
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}

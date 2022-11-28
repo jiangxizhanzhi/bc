@@ -156,7 +156,7 @@ implements AssessMaterialService{
 
             // md文件内容作为url
             String content = MdUtil.parseMarkdown(mdFilePath);
-            assessMaterial.setAttachment(utilService.replaceMarkdownFile(content));
+            assessMaterial.setAttachmentContent(utilService.replaceMarkdownFile(content));
         }
     }
 

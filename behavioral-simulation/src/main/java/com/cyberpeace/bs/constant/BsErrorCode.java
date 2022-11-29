@@ -35,4 +35,8 @@ public interface BsErrorCode {
 	 * 请注明是否实体设备
 	 */
 	String ACTUAL_OR_VIRTUAL = "105006";
+	/**
+	 * resource_id 不存在
+	 */
+	String RESOURCE_ID_MISSING = "105007";
 }

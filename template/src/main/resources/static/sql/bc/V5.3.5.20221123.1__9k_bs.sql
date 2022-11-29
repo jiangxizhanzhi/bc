@@ -46,7 +46,8 @@ CREATE TABLE bs_user_simulator
     `create_time`       datetime      NULL     DEFAULT NULL COMMENT '创建时间',
     `update_time`       datetime      NULL     DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
+    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    INDEX `scene_id` (`scene_id`) USING BTREE
 );
 
 CREATE TABLE `bs_user_type`
@@ -73,6 +74,7 @@ CREATE TABLE `bs_device_occupation`
     `update_time`  datetime     NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `device_id` (`device_id`) USING BTREE,
+    INDEX `scene_id` (`scene_id`) USING BTREE,
     UNIQUE INDEX `simulator_id` (`simulator_id`) USING BTREE
 );
 

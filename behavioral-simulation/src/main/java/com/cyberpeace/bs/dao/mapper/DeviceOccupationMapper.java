@@ -22,4 +22,6 @@ public interface DeviceOccupationMapper {
 
     void occupy(@Param("selectedIds") Collection<String> selectedIds, @Param("sceneId") String sceneId,
                 @Param("date") Date date);
+
+    void releaseBySceneId(@Param("sceneId") String sceneId, @Param("date") Date date);
 }

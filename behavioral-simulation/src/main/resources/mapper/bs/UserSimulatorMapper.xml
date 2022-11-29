@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cyberpeace.bs.dao.mapper.UserSimulatorMapper">
+    <delete id="deleteBySceneId">
+        delete
+        from bs_user_simulator
+        where scene_id = #{sceneId}
+    </delete>
     <select id="selectAll" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
         select *
         from bs_user_simulator
@@ -19,5 +24,10 @@
         select *
         from bs_user_simulator
         order by id desc
+    </select>
+    <select id="getIdsBySceneId" resultType="java.lang.String">
+        select resource_id
+        from bs_user_simulator
+        where scene_id = #{sceneId}
     </select>
 </mapper>

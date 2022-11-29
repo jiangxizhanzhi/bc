@@ -105,4 +105,9 @@ public interface UserSimulatorService {
 	SimulatorDetail getDetail(String simulatorId);
 
 
+	/**
+	 * 关闭场景时删除关联仪表
+	 * @param sceneId 场景id
+	 */
+    void deleteBySceneId(String sceneId);
 }

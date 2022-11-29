@@ -118,4 +118,11 @@ public class UserSimulatorController {
 		SimulatorDetail detail = userSimulatorService.getDetail(resource_id);
 		return new BaseRsp<>(detail);
 	}
+
+	@ApiOperation("关闭场景时删除相关仪表")
+	@DeleteMapping("/scene")
+	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdReq idReq){
+		userSimulatorService.deleteBySceneId(idReq.getResourceId());
+		return new BaseRsp();
+	}
 }

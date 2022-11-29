@@ -22,4 +22,8 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	Integer countByStatus(@Param("statusCode") Integer statusCode);
 
 	IPage<UserSimulator> page(@Param("page") Page page);
+
+    List<String> getIdsBySceneId(@Param("sceneId") String sceneId);
+
+	void deleteBySceneId(@Param("sceneId") String sceneId);
 }

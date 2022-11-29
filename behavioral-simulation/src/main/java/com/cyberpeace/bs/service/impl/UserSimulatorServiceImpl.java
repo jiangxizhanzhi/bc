@@ -6,6 +6,7 @@ import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
 import com.cyberpeace.bs.service.LcService;
@@ -40,6 +41,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,6 +73,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Autowired
 	TransactionTemplate transactionTemplate;
+
+	@Autowired
+	DeviceOccupationMapper deviceOccupationMapper;
 
 
 	@Override
@@ -103,14 +109,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			return;
 		}
 		userSimulatorMapper.deleteBatchIds(resourceIds);
-		for (String resourceId : resourceIds) {
-			BsTimer timer = timerMap.get(resourceId);
-			if (timer != null) {
-				timer.cancel();
-				timerMap.remove(resourceId);
-			}
-		}
+		batchRemoveTimer(resourceIds);
 	}
+
 
 	@Override
 	public void create(UserSimulatorAddReq addReq) {
@@ -191,6 +192,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		detail.setBehaviors(lcBehaviors);
 		return detail;
 	}
+
+    @Override
+    public void deleteBySceneId(String sceneId) {
+        if (StringUtils.isEmpty(sceneId)) {
+            throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
+        }
+        List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneId(sceneId);
+		if(relatedSimulatorIds.isEmpty()){
+			return;
+		}
+		// 删除仪表，解除实体设备占用
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				userSimulatorMapper.deleteBySceneId(sceneId);
+				deviceOccupationMapper.releaseBySceneId(sceneId, new Date());
+			}
+		});
+		// 删除定时任务
+		batchRemoveTimer(relatedSimulatorIds);
+    }
 
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior behavior = new LcBehavior();
@@ -383,5 +405,16 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			return null;
 		}
 		return userSimulatorMapper.selectById(resourceId);
+	}
+
+
+	private void batchRemoveTimer(Collection<String> simulatorIds){
+		for (String resourceId : simulatorIds) {
+			BsTimer timer = timerMap.get(resourceId);
+			if (timer != null) {
+				timer.cancel();
+				timerMap.remove(resourceId);
+			}
+		}
 	}
 }

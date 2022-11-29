@@ -105,11 +105,11 @@ implements AssessCaseService{
 		AssessCaselDumpContext context = dumpMaterial(resourceId);
 		String assessCaseName = assessCase.getName();
 
-		File folder = new File("/cpms/" + AttachmentPath.ASSESS_DUMP.getDesc());
+		File folder = new File(AttachmentPath.ASSESS_DUMP.getDesc());
 		if(!folder.isDirectory() || !folder.exists()){
 			FileUtil.mkdirs(AttachmentPath.ASSESS_DUMP.getDesc());
 		}
-		String casePath = folder.getPath() + File.separator + assessCaseName;
+		String casePath = folder.getPath() + File.separator + assessCase.getResourceId();
 		File caseFile = new File(casePath);
 		if(!caseFile.isDirectory() || !caseFile.exists()){
 			FileUtil.mkdirs(casePath);

@@ -57,7 +57,7 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = "评估案例")
 @RestController
 @RequestMapping("/assess/case")
-//@RequiresAuthentication
+@RequiresAuthentication
 public class AssessCaseController {
 
 	@Autowired
@@ -227,8 +227,6 @@ public class AssessCaseController {
 
 	@ApiOperation("导出评估案例")
 	@GetMapping("/dump")
-	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public void dump(HttpServletResponse response, @ApiParam(name = "resource_id",
 			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
 		LambdaQueryWrapper<AssessCase> queryWrapper = new LambdaQueryWrapper<>();
@@ -239,9 +237,9 @@ public class AssessCaseController {
 		}
 		String assessCaseName = assessCase.getName();
 
-		String tempDir = "/cpms/" +  AttachmentPath.ASSESS_DUMP.getDesc() + File.separator + assessCaseName;
 
 		// 1. generate dump file
+		String tempDir = AttachmentPath.ASSESS_DUMP.getDesc() + File.separator + assessCase.getResourceId();
 		try {
 			String zipPath = assessCaseService.makeDumpFile(resourceId, assessCase);
 			// 2. generate file response

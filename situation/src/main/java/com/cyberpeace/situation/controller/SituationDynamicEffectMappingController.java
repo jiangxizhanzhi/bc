@@ -68,7 +68,7 @@ public class SituationDynamicEffectMappingController {
 
     @ApiOperation("修改动效映射")
     @PatchMapping("")
-    public BaseRsp<String> patchDynamicEffectsMapping(@Validated(Update.class) DynamicEffectMappingUpdateReq dynamicEffectMappingUpdateReq) {
+    public BaseRsp<String> patchDynamicEffectsMapping(@RequestBody @Validated(Update.class) DynamicEffectMappingUpdateReq dynamicEffectMappingUpdateReq) {
 
         return new BaseRsp<>(situationDynamicEffectMappingService.patchDynamicEffectsMapping(dynamicEffectMappingUpdateReq));
     }

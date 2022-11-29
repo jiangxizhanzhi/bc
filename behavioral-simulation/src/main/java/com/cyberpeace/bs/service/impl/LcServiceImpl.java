@@ -10,7 +10,7 @@ import com.cyberpeace.bs.service.bo.behavior.LcBehaviorPageRes;
 import com.cyberpeace.bs.service.bo.demo.GetDeviceReq;
 import com.cyberpeace.bs.service.bo.demo.LcDevicePageRes;
 import com.cyberpeace.bs.service.bo.lc.*;
-import com.cyberpeace.bs.service.bo.variable.VariableBo;
+import com.cyberpeace.bs.service.bo.variable.Variable;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.bs.service.bo.variable.VariableSimple;
@@ -180,17 +180,17 @@ public class LcServiceImpl implements LcService {
 			listBo.setVariables(Lists.newArrayList());
 			return listBo;
 		}
-		List<VariableBo> variableBos = Lists.newArrayList();
+		List<Variable> variables = Lists.newArrayList();
 		lcVariableRspBos.forEach(lcVariable -> {
-			VariableBo variableBo = new VariableBo();
-			variableBo.setId(lcVariable.getDataId());
-			variableBo.setName(lcVariable.getName());
-			variableBo.setNote(lcVariable.getNote());
-			variableBo.setValue(lcVariable.getVarValue());
-			variableBo.setUpdateTime(lcVariable.getUpdateTime());
-			variableBos.add(variableBo);
+			Variable variable = new Variable();
+			variable.setId(lcVariable.getDataId());
+			variable.setName(lcVariable.getName());
+			variable.setNote(lcVariable.getNote());
+			variable.setValue(lcVariable.getVarValue());
+			variable.setUpdateTime(lcVariable.getUpdateTime());
+			variables.add(variable);
 		});
-		listBo.setVariables(variableBos);
+		listBo.setVariables(variables);
 		return listBo;
 	}
 

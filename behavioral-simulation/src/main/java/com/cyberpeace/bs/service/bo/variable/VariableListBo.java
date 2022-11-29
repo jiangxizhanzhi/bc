@@ -13,5 +13,5 @@ public class VariableListBo implements Serializable {
 	private String behaviorId;
 
 	@ApiModelProperty(value = "变量列表")
-	private List<VariableBo> variables;
+	private List<Variable> variables;
 }

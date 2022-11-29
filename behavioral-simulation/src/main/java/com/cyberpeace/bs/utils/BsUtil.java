@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 import com.cyberpeace.bs.service.bo.simulator.BehaviorConfig;
+import com.cyberpeace.bs.service.bo.simulator.BehaviorConfigRaw;
 import com.cyberpeace.bs.service.bo.simulator.IpBo;
 import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -136,10 +137,8 @@ public class BsUtil {
 		if(StringUtils.isBlank(json) || !json.startsWith(JSON_LIST_INITIAL)){
 			return Maps.newHashMap();
 		}
-		List<BehaviorConfig> configList = JsonUtil.toJsonObjectArray(json, BehaviorConfig.class);
-		return StreamApiUtils.toMap(configList, BehaviorConfig::getBehaviorId, config->
-				JsonUtil.arrayToString(config.getVariables())
-		);
+		List<BehaviorConfigRaw> configList = JsonUtil.toJsonObjectArray(json, BehaviorConfigRaw.class);
+		return StreamApiUtils.toMap(configList, BehaviorConfigRaw::getBehaviorId, BehaviorConfigRaw::getVariables);
 	}
 
 	/**

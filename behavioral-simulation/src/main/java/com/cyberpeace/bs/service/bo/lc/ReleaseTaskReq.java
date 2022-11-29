@@ -67,11 +67,11 @@ class Task implements Serializable {
 @Data
 class ReqVariable implements Serializable{
 	private String name;
-	private String value;
+	private String varValue;
 	private String variableType = "Text";
 
-	public ReqVariable(String name, String value){
+	public ReqVariable(String name, String varValue){
 		this.name = name;
-		this.value = value;
+		this.varValue = varValue;
 	}
 }

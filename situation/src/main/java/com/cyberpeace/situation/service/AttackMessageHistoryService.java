@@ -41,15 +41,34 @@ public interface AttackMessageHistoryService {
 	/**
 	 * 获取不同状态的主机数
 	 * @param sceneId 场景id
-	 * @return
+	 * @return 不同状态的主机数
 	 */
 	List<HostStatusCount> getHostStatusCount(String sceneId);
 
+	/**
+	 * 将损毁的主机恢复
+	 * @param sceneId 场景编号
+	 */
 	void recovery(String sceneId);
 
-	List<AttackLog> getAttackLogTop5(String sceneId);
+	/**
+	 * 获取攻击日志
+	 * @param sceneId 场景编号
+	 * @return 攻击日志
+	 */
+	List<AttackLog> getAttackLog(String sceneId);
 
+	/**
+	 * 获取运行时间
+	 * @param sceneId 场景编号
+	 * @return 返回运行时长
+	 */
 	Map<String, Integer> getIntervalTime(String sceneId);
 
+	/**
+	 * 获取攻击历史
+	 * @param sceneId 场景编号
+	 * @return 攻击历史
+	 */
 	List<AttackMessageReq> getAttackHistory(String sceneId);
 }

@@ -22,7 +22,7 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 
 	void recovery(@Param("sceneId") String sceneId);
 
-	List<AttackLog> getAttackLogTop5(@Param("sceneId") String sceneId);
+	List<AttackLog> getAttackLog(@Param("sceneId") String sceneId);
 
 	String getStartTime(@Param("sceneId") String sceneId);
 

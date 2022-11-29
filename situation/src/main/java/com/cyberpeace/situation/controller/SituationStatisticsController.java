@@ -78,7 +78,7 @@ public class SituationStatisticsController {
 	@GetMapping("/attack_log")
 	public BaseRsp<List<AttackLog>> getAttackLog(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
-		return new BaseRsp<>(attackMessageHistoryService.getAttackLogTop5(sceneId));
+		return new BaseRsp<>(attackMessageHistoryService.getAttackLog(sceneId));
 	}
 
 	@ApiOperation("运行时间")

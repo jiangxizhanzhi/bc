@@ -28,6 +28,7 @@
         from situation_attack_message_history
         <where>
             scene_id = #{sceneId}
+            and defense_type is not null
         </where>
         group by defense_type
         order by times desc
@@ -50,8 +51,8 @@
         order by times desc
     </select>
 
-    <select id="getAttackLogTop5" resultType="com.cyberpeace.situation.model.AttackLog">
-        select top 5 create_time as time, source_id ,target_id, type as attack_type
+    <select id="getAttackLog" resultType="com.cyberpeace.situation.model.AttackLog">
+        select create_time as time, source_id ,target_id, type as attack_type
         from situation_attack_message_history
         <where>
             <if test="sceneId != null and sceneId != ''">

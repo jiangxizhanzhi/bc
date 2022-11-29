@@ -2,10 +2,7 @@ package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
@@ -44,8 +41,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<AttackTypeCount> getAttackTop5(String sceneId) {
 		List<AttackTypeCount> attackTypeCountList = attackMessageHistoryMapper.getAttackTop(sceneId);
-		if (attackTypeCountList.size() > 4) {
-			return attackTypeCountList.subList(0, 4);
+		if (attackTypeCountList.size() > 5) {
+			return attackTypeCountList.subList(0, 5);
 		}
 		return attackTypeCountList;
 	}
@@ -53,8 +50,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<DefenseTypeCount> getDefenseTop5(String sceneId) {
 		List<DefenseTypeCount> defenseTypeCountList = attackMessageHistoryMapper.getDefenseTop(sceneId);
-		if (defenseTypeCountList.size() > 4) {
-			return defenseTypeCountList.subList(0, 4);
+		if (defenseTypeCountList.size() > 5) {
+			return defenseTypeCountList.subList(0, 5);
 		}
 		return defenseTypeCountList;
 	}
@@ -66,8 +63,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		for (HostCount hostCount : HostCountTopList) {
 			hostCount.setHostName(nodeMap.get(hostCount.getHostName()));
 		}
-		if (HostCountTopList.size() > 4) {
-			return HostCountTopList.subList(0, 4);
+		if (HostCountTopList.size() > 5) {
+			return HostCountTopList.subList(0, 5);
 		}
 		return HostCountTopList;
 	}
@@ -86,13 +83,13 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		List<String> exploitHostIdList = StreamApiUtils.map(exploitHostCountList, HostCount::getHostName);
 		List<HostCount> virusHostCountList = getHostTop(AttackType::getIsVirus, sceneId);
 		List<String> virusHostIdList = StreamApiUtils.map(virusHostCountList, HostCount::getHostName);
-		hostStatusCountList.add(new HostStatusCount("毁瘫", paralysisHostIdList.size()));
-		hostStatusCountList.add(new HostStatusCount("病毒植入", virusHostIdList.size()));
-		hostStatusCountList.add(new HostStatusCount("漏洞利用", exploitHostIdList.size()));
 		elementIdList.removeAll(paralysisHostIdList);
 		elementIdList.removeAll(exploitHostIdList);
 		elementIdList.removeAll(virusHostIdList);
 		hostStatusCountList.add(new HostStatusCount("正常", elementIdList.size()));
+		hostStatusCountList.add(new HostStatusCount("病毒植入数", virusHostIdList.size()));
+		hostStatusCountList.add(new HostStatusCount("漏洞利用数", exploitHostIdList.size()));
+		hostStatusCountList.add(new HostStatusCount("毁瘫数", paralysisHostIdList.size()));
 		return hostStatusCountList;
 	}
 
@@ -102,11 +99,12 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	}
 
 	@Override
-	public List<AttackLog> getAttackLogTop5(String sceneId) {
-		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLogTop5(sceneId);
+	public List<AttackLog> getAttackLog(String sceneId) {
+		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
 		Map<String, String> nodeMap = getNodeMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
 			attackLog.setSourceName(nodeMap.get(attackLog.getSourceId()));
+			attackLog.setTargetName(nodeMap.get(attackLog.getTargetId()));
 			attackLog.setAttackType(AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class)
 											  .getMsg());
 		}
@@ -163,6 +161,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	}
 
 	public AttackMessageReq attackMessageHistoryToAttackMessageReq(AttackMessageHistory attackMessageHistory){
-		return BeanUtils.copy(attackMessageHistory, AttackMessageReq.class);
+		AttackMessageReq attackMessageReq = BeanUtils.copy(attackMessageHistory, AttackMessageReq.class);
+		attackMessageReq.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessageHistory.getMediaAnimation(),MediaAnimation.class));
+		return attackMessageReq;
 	}
 }

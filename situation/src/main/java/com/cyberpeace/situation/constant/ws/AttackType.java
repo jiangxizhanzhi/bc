@@ -57,12 +57,17 @@ public enum AttackType {
 	PORT_FORWARDING(ActionType.START_ATTACK,"端口转发","Port Forwarding","port-forwarding", false, true, false),
 	ARP_SPOOFING(ActionType.START_ATTACK,"ARP欺骗","ARP Spoofing","arp-spoofing", false, true, false),
 	DNS_SPOOFING(ActionType.START_ATTACK,"DNS欺骗","DNS Spoofing","dns-spoofing", false, true, false),
-	COMMUNICATION_NETWORK_SEGMENT_DETECTION(ActionType.START_ATTACK,"通信网段探测","Communication Network Segment Detection","communication-network-segment-detection", false, true, false),
-	INTRANET_SERVICE_PORT_DETECTION(ActionType.START_ATTACK,"内网服务端口探测","Intranet Service Port Detection","intranet-service-port-detection", false, false, false),
-	UNAUTHORIZED_ACCESS_TO_HORIZONTAL_MOVEMENT(ActionType.START_ATTACK,"未授权访问横向移动","Unauthorized Access To Horizontal Movement","unauthorized-access-to-horizontal-movement", false, true, false),
-	HORIZONTAL_MOVEMENT_OF_WEAK_PASSWORD(ActionType.START_ATTACK,"弱口令横向移动","Horizontal Movement Of Weak Password","horizontal-movement-of-weak-password", false, true, false),
-	DATABASE_HORIZONTAL_MOVEMENT(ActionType.START_ATTACK,"数据库横向移动","Database Horizontal Movement","database-horizontal-movement", false, true, false),
-	HORIZONTAL_MOVEMENT_OF_KERNEL_VULNERABILITIES(ActionType.START_ATTACK,"内核漏洞横向移动","Horizontal Movement Of Kernel Vulnerabilities","horizontal-movement-of-kernel-vulnerabilities", false, true, false);
+	COMMUNICATION_NETWORK_SEGMENT_DETECTION(ActionType.NETWORK_SCANNING,"通信网段探测","Communication Network Segment Detection","communication-network-segment-detection", false, true, false),
+	INTRANET_SERVICE_PORT_DETECTION(ActionType.NETWORK_SCANNING,"内网服务端口探测","Intranet Service Port Detection","intranet-service-port-detection", false, false, false),
+	UNAUTHORIZED_ACCESS_TO_HORIZONTAL_MOVEMENT(ActionType.LATERAL_MOVEMENT,"未授权访问横向移动","Unauthorized Access To Horizontal Movement","unauthorized-access-to-horizontal-movement", false, true, false),
+	HORIZONTAL_MOVEMENT_OF_WEAK_PASSWORD(ActionType.LATERAL_MOVEMENT,"弱口令横向移动","Horizontal Movement Of Weak Password","horizontal-movement-of-weak-password", false, true, false),
+	DATABASE_HORIZONTAL_MOVEMENT(ActionType.LATERAL_MOVEMENT,"数据库横向移动","Database Horizontal Movement","database-horizontal-movement", false, true, false),
+	HORIZONTAL_MOVEMENT_OF_KERNEL_VULNERABILITIES(ActionType.LATERAL_MOVEMENT,"内核漏洞横向移动","Horizontal Movement Of Kernel Vulnerabilities","horizontal-movement-of-kernel-vulnerabilities", false, true, false),
+	WEB_PENETRATION(ActionType.START_ATTACK, "Web渗透","Web Penetration","web-penetration",false, false, false),
+	INTRANET_PENETRATION(ActionType.START_ATTACK,"内网渗透","Intranet Penetration","intranet-Penetration",false,false,false),
+	DATA_EAVESDROPPING(ActionType.START_ATTACK,"数据窃听","Data Eavesdropping","data-eavesdropping", false, true, false),
+	VIRUS_IMPLANTATION(ActionType.VIRUS_ATTACKS, "病毒植入","Virus Implantation","virus-implantation", false, false, true),
+	EXPLOIT(ActionType.START_ATTACK, "漏洞利用", "Exploit", "exploit", true, false, false);
 
     @Getter
 	private ActionType actionType;

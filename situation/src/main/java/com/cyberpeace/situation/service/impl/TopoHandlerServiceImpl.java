@@ -1,13 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.BeanUtils;
@@ -34,8 +26,15 @@ import com.cyberpeace.situation.service.context.ConnectionStatusContext;
 import com.cyberpeace.situation.service.context.ElementStatusContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -61,6 +60,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 	private static final Integer MP_SCENE_PROGRESS_FINISH_CODE = 4;
 
 	@Override
+	@Cacheable(cacheNames = "getSceneData", key = "#topoId")
 	public SceneData getSceneData(String sceneId, String topoId) {
 
 		// 获取中台场景数据，优先获取场景拓扑

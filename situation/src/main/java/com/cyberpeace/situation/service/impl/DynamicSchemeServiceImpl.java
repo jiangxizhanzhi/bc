@@ -773,7 +773,6 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@Override
 			public void run() {
 				for(AttackMessageReq attackMessageReq: attackMessageHistoryList){
-					log.info(attackMessageReq.getSourceId() + "+" + attackMessageReq.getTargetId() + "+" + attackMessageReq.getType());
 					if(!sceneConfigService.isCurrentScheme(sceneId, code)){
 						break;
 					}

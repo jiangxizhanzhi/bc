@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.assess.dao.entity.AssessCase;
 import com.cyberpeace.assess.dao.entity.AssessTag;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,4 +19,6 @@ public interface AssessCaseService extends IService<AssessCase> {
     AssessCase checkCaseId(String resourceId);
 
     void checkNameRepeat(String name, String id);
+
+    String makeDumpFile(String resourceId, AssessCase tempDir) throws IOException;
 }

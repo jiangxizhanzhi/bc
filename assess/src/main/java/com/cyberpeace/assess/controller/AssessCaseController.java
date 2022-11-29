@@ -1,19 +1,26 @@
 package com.cyberpeace.assess.controller;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.assess.controller.res.AssessCaseListRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +53,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+@Slf4j
 @Api(tags = "评估案例")
 @RestController
 @RequestMapping("/assess/case")
-@RequiresAuthentication
+//@RequiresAuthentication
 public class AssessCaseController {
 
 	@Autowired
@@ -171,6 +179,7 @@ public class AssessCaseController {
 		}
 		AssessCaseDetailRes assessCaseDetailRes = new AssessCaseDetailRes();
 		BeanUtils.copyProperties(assessCase, assessCaseDetailRes);
+		assessCaseDetailRes.setDescription(assessCase.getOverview());
 		String tags = assessCase.getTag();
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
@@ -215,4 +224,38 @@ public class AssessCaseController {
 		assessCaseMapper.updateById(assessCase);
 		return new BaseRsp<>(assessCase);
 	}
+
+	@ApiOperation("导出评估案例")
+	@GetMapping("/dump")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+	public void dump(HttpServletResponse response, @ApiParam(name = "resource_id",
+			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
+		LambdaQueryWrapper<AssessCase> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(AssessCase::getResourceId, resourceId);
+		AssessCase assessCase = assessCaseMapper.selectOne(queryWrapper);
+		if(null == assessCase){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String assessCaseName = assessCase.getName();
+
+		String tempDir = "/cpms/" +  AttachmentPath.ASSESS_DUMP.getDesc() + File.separator + assessCaseName;
+
+		// 1. generate dump file
+		try {
+			String zipPath = assessCaseService.makeDumpFile(resourceId, assessCase);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump business template", e);
+			throw new BusinessException("dump material failed");
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
+	}
+
 }

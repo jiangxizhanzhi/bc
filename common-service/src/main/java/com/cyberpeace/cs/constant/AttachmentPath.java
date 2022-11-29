@@ -36,6 +36,7 @@ public enum AttachmentPath implements GenericEnum {
 	EVAL_HTML_TEMPLATE(13, "html_template/RussiaCopy/Eval/"),
 	UPLOAD_ATTACHMENT(14, "upload/attachment/"),
 	UPLOAD_SITUATION(15,"upload/situation/"),
+	ASSESS_DUMP(16,"dump/assess/"),
 	OTHER(99, "other/");
 	
 

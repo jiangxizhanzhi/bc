@@ -8,8 +8,11 @@ import java.io.Serializable;
 @Data
 public class DashboardUser implements Serializable {
 
-	@ApiModelProperty("用户名")
+	@ApiModelProperty("用户登录名")
 	private String username;
+
+	@ApiModelProperty("用户展示名")
+	private String name;
 
 	@ApiModelProperty("角色")
 	private String role;

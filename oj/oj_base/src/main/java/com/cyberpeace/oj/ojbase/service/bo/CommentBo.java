@@ -22,6 +22,9 @@ public class CommentBo implements Serializable {
 	@ApiModelProperty("评论主题名称")
 	private String themeName;
 
+	@ApiModelProperty("用户id")
+	private String userId;
+
 	@ApiModelProperty("用户名称")
 	private String userName;
 
@@ -42,6 +45,9 @@ public class CommentBo implements Serializable {
 
 	@ApiModelProperty("被回复人编号")
 	private String replyUsername;
+
+	@ApiModelProperty("被回复人用户名")
+	private String replyUserId;
 
 	@ApiModelProperty("是否被点赞")
 	private Boolean isLike;

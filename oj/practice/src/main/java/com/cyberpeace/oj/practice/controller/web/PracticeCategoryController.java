@@ -47,8 +47,8 @@ public class PracticeCategoryController {
 			@RequestParam(value = "children", required = false) Boolean children) {
 
 		CategoryListQuery listQuery = CategoryListQuery.builder().practiceType(practiceType)
-				.pattern(pattern).build();
-
+				.build();
+		listQuery.setPattern(pattern);
 		List<CategoryListBo> boList = categoryService.listByTypeAndName(listQuery,
 				null == children ? CommonConstant.FALSE : children);
 		return new BaseRsp<>(boList);

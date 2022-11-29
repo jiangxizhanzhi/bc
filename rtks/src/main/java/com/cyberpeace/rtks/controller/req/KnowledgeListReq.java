@@ -14,11 +14,6 @@ public class KnowledgeListReq extends PageReqBase {
 	@Getter
 	private String categoryId;
 
-	@ApiModelProperty(value = "检索参数")
-	@Getter
-	@Setter
-	private String pattern;
-
 	public void setCategory_id(String categoryId) {
 		this.categoryId = categoryId;
 	}

@@ -122,6 +122,8 @@ public class CommentServiceImpl implements CommentService {
 		if (null != userInfo) {
 			commentBo.setAvatar(userInfo.getAvatarUrl());
 			commentBo.setUserName(userInfo.getName());
+			commentBo.setUserId(userInfo.getUserName());
+
 		}
 
 		// 获取点赞数量
@@ -132,6 +134,8 @@ public class CommentServiceImpl implements CommentService {
 
 		if (null != replyComment) {
 			commentBo.setReplyUsername(replyComment.getUserName());
+
+			commentBo.setReplyUserId(replyComment.getUserId());
 			commentBo.setReplyId(replyComment.getResourceId());
 		}
 

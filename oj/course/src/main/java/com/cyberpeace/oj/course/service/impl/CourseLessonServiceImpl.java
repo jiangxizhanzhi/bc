@@ -524,7 +524,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb) {
 
-		IPage<CourseLesson> iPage = courseLessonMapper.pageByContext(page, context, isWeb);
+		IPage<CourseLesson> iPage = courseLessonMapper.pageByContext(page, context, isWeb, context.getType());
 		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
 			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,

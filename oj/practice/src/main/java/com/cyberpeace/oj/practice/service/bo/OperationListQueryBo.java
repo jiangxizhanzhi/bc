@@ -1,23 +1,21 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 @Data
 @ApiModel
-public class OperationListQueryBo implements Serializable {
+public class OperationListQueryBo extends PatternBase {
 
-    private String practiceSetId;
+	private String practiceSetId;
 
-    private List<String> categoryIds;
+	private List<String> categoryIds;
 
-    private Integer difficulty;
+	private Integer difficulty;
 
-    private String pattern;
-
-    private Boolean solved;
+	private Boolean solved;
 
 }

@@ -242,4 +242,20 @@ public class LocalStringUtil {
 
 		return content;
 	}
+
+	public static String transfer(String search) {
+		String newPattern = search;
+
+		if (newPattern.contains("_") && !newPattern.contains("\\_")) {
+			newPattern = newPattern.replace("_", "\\_");
+		}
+		if (newPattern.contains("%") && !newPattern.contains("\\%")) {
+			newPattern = newPattern.replace("%", "\\%");
+		}
+		if (newPattern.contains("\'") && !newPattern.contains("\\'")) {
+			newPattern = newPattern.replace("\'", "\\'");
+		}
+
+		return newPattern;
+	}
 }

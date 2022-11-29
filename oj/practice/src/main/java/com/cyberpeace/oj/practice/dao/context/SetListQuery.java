@@ -1,23 +1,22 @@
 package com.cyberpeace.oj.practice.dao.context;
 
+import java.util.List;
+
+import com.cyberpeace.common.model.PatternBase;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SetListQuery implements Serializable {
+public class SetListQuery extends PatternBase {
 
-    private List<String> setIds;
+	private List<String> setIds;
 
-    private Integer practiceType;
-
-    private String pattern;
+	private Integer practiceType;
 
 }

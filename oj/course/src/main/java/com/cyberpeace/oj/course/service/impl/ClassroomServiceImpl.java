@@ -1419,7 +1419,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private DashboardUser userToDashUser(UserInfo userInfo, String roleName) {
 		DashboardUser dashboardUser = new DashboardUser();
 		dashboardUser.setAvatar(userInfo.getAvatarUrl());
-		dashboardUser.setUsername(userInfo.getName());
+		dashboardUser.setName(userInfo.getName());
+		dashboardUser.setUsername(userInfo.getUserName());
 		dashboardUser.setId(userInfo.getUserId());
 		dashboardUser.setRole(roleName);
 		dashboardUser.setStatus(CommonConstant.ONLINE);

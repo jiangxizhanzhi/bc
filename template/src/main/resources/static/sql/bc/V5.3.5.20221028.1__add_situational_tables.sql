@@ -368,7 +368,10 @@ CREATE TABLE `situation_common_components` (
                                  `update_time` datetime DEFAULT NULL,
                                  PRIMARY KEY (`id`) USING BTREE,
                                  UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT = 1
+    CHARACTER SET = utf8
+    COLLATE = utf8_general_ci
+    ROW_FORMAT = Dynamic;
 
 CREATE TABLE `situation_dynamic_effects_mapping` (
                                                      `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -385,8 +388,11 @@ CREATE TABLE `situation_dynamic_effects_mapping` (
                                                      `create_user_id` varchar(64) DEFAULT NULL,
                                                      `create_time` datetime DEFAULT NULL,
                                                      `update_time` datetime DEFAULT NULL,
-                                                     PRIMARY KEY (`id`), USING BTREE,
+                                                     PRIMARY KEY (`id`) USING BTREE,
                                                      UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
                                                      UNIQUE KEY `name` (`name`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT = 1
+    CHARACTER SET = utf8
+    COLLATE = utf8_general_ci
+    ROW_FORMAT = Dynamic;
 

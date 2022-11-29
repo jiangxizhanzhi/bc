@@ -39,8 +39,8 @@
                     #{courseId}
                 </foreach>
             </if>
-            <if test="context.type != null">
-                and `type` = #{context.type}
+            <if test="type != null">
+                and `type` = #{type}
             </if>
             <if test="context.pattern != null and context.pattern != ''">
                 <bind name="context.pattern" value="'%' + context.pattern + '%'"/>

@@ -134,6 +134,8 @@ public class CommentServiceImpl implements CommentService {
 
 		if (null != replyComment) {
 			commentBo.setReplyUsername(replyComment.getUserName());
+
+			commentBo.setReplyUserId(replyComment.getUserId());
 			commentBo.setReplyId(replyComment.getResourceId());
 		}
 

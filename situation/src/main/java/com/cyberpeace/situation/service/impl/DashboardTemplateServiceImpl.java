@@ -21,6 +21,7 @@ import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
+import com.cyberpeace.situation.service.DataSourceService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,18 +41,27 @@ import java.util.Objects;
  */
 @Service
 public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateMapper, DashboardTemplate> implements DashboardTemplateService {
+
     @Autowired
     private DashboardTemplateMapper dashboardTemplateMapper;
+
     @Autowired
     private DashboardComponentsMapper dashboardComponentsMapper;
+
     @Autowired
     private TransactionTemplate transactionTemplate;
+
     @Autowired
     private ApiRequestService apiRequestService;
+
     @Autowired
     private TwoDimensionalComponentsMapper twoDimensionalComponentsMapper;
+
     @Autowired
     private ApiRequestMapper apiRequestMapper;
+
+    @Autowired
+    private DataSourceService dataSourceService;
 
     @Override
     public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
@@ -232,45 +242,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             Integer dataType = jsonObject.getInteger("dataType");
             //处理api接口获取数据
             if (Objects.equals(0, dataType)) {
-                String url = jsonObject.getString("requestUrl");
-                String header = jsonObject.getString("requestHeaders");
-                String params = jsonObject.getString("requestParams");
-                String method = jsonObject.getString("requestMethod");
-                String response = jsonObject.getString("requestResponse");
-                String responseKey = jsonObject.getString("responseKey");
-                String requestMapping = jsonObject.getString("requestMapping");
-                ApiConnectReq apiConnectReq = new ApiConnectReq();
-                apiConnectReq.setRequestUrl(url);
-                apiConnectReq.setRequestMethod(method);
-                apiConnectReq.setResponseKey(responseKey);
-
-                try {
-                    //设置请求头
-                    if (StringUtils.isNotBlank(header)) {
-                        List<ApiRequestHeaders> apiRequestHeaders = JsonUtil.toJsonObjectArray(header, ApiRequestHeaders.class);
-                        apiConnectReq.setRequestHeaders(apiRequestHeaders);
-                    }
-                    //设置请求参数
-                    if (StringUtils.isNotBlank(params)) {
-                        List<ApiRequestParams> apiRequestParams = JsonUtil.toJsonObjectArray(params, ApiRequestParams.class);
-                        parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams(), requestMapping);
-                        apiConnectReq.setRequestParams(apiRequestParams);
-                    }
-                } catch (Exception e) {
-                    throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
-                }
-                //调用api接口
-                String resourceData = apiRequestService.apiConnectTest(apiConnectReq);
-
-                //获取映射结果数据集
-                JSONArray jsonArray = parseResponseParams(resourceData, response, responseKey);
-                JSONArray echartsDataSet;
-                try {
-                    echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
-                } catch (Exception e) {
-                    throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
-                }
-                return echartsDataSet;
+                return parseApiData(jsonObject, componentsDataReq);
+            } else if (Objects.equals(1, dataType)) {
+                return parseDbData(jsonObject, componentsDataReq);
             }
             //TODO处理其它数据源类型
         }
@@ -408,5 +382,60 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
+    }
+
+    private JSONArray parseApiData(JSONObject jsonObject, ComponentsDataReq componentsDataReq) {
+        String url = jsonObject.getString("requestUrl");
+        String header = jsonObject.getString("requestHeaders");
+        String params = jsonObject.getString("requestParams");
+        String method = jsonObject.getString("requestMethod");
+        String response = jsonObject.getString("requestResponse");
+        String responseKey = jsonObject.getString("responseKey");
+        String requestMapping = jsonObject.getString("requestMapping");
+        ApiConnectReq apiConnectReq = new ApiConnectReq();
+        apiConnectReq.setRequestUrl(url);
+        apiConnectReq.setRequestMethod(method);
+        apiConnectReq.setResponseKey(responseKey);
+
+        try {
+            //设置请求头
+            if (StringUtils.isNotBlank(header)) {
+                List<ApiRequestHeaders> apiRequestHeaders = JsonUtil.toJsonObjectArray(header, ApiRequestHeaders.class);
+                apiConnectReq.setRequestHeaders(apiRequestHeaders);
+            }
+            //设置请求参数
+            if (StringUtils.isNotBlank(params)) {
+                List<ApiRequestParams> apiRequestParams = JsonUtil.toJsonObjectArray(params, ApiRequestParams.class);
+                parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams(), requestMapping);
+                apiConnectReq.setRequestParams(apiRequestParams);
+            }
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+        }
+        //调用api接口
+        String resourceData = apiRequestService.apiConnectTest(apiConnectReq);
+
+        //获取映射结果数据集
+        JSONArray jsonArray = parseResponseParams(resourceData, response, responseKey);
+        JSONArray echartsDataSet;
+        try {
+            echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
+            return echartsDataSet;
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+        }
+    }
+
+    private JSONArray parseDbData(JSONObject jsonObject, ComponentsDataReq componentsDataReq) {
+        String sql = jsonObject.getString("sql");
+        String resourceId = jsonObject.getString("chartDatabase");
+        String dbName = jsonObject.getString("dbName");
+        //获取数据库数据
+        List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(sql, resourceId, dbName);
+
+        JSONArray jsonArray = JsonUtil.stringToArray(dataSourceData.toString());
+        JSONArray echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
+
+        return echartsDataSet;
     }
 }

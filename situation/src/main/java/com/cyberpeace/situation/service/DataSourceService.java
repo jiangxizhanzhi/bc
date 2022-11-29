@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
@@ -89,5 +90,5 @@ public interface DataSourceService {
      * @param sql
      * @return
      */
-    String getDataSourceData(String sql, String resourceId, String dbName);
+    List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName);
 }

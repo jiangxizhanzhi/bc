@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
@@ -101,11 +102,11 @@ public class DataSourceController {
 
     @ApiOperation("根据sql获取数据")
     @GetMapping("get/data")
-    public BaseRsp<String> getDataSourceData(@RequestParam("sql")
+    public BaseRsp<List<JSONObject>> getDataSourceData(@RequestParam("sql")
                                              @ApiParam(required = true, name = "sql") String sql,
-                                             @RequestParam("resource_id")
+                                                       @RequestParam("resource_id")
                                              @ApiParam(required = true, name = "resource_id") String resourceId,
-                                             @RequestParam("db_name")
+                                                       @RequestParam("db_name")
                                              @ApiParam(required = true, name = "db_name") String dbName) {
 
         return new BaseRsp<>(dataSourceService.getDataSourceData(sql, resourceId , dbName));

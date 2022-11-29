@@ -176,7 +176,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     }
 
     @Override
-    public String getDataSourceData(String sql, String resourceId, String dbName) {
+    public List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName) {
         DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
         if (dataSourceRecord == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -213,7 +213,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         } finally {
             closeDB(connection, preparedStatement, resultSet);
         }
-        return dataList.toString();
+        return dataList;
     }
 
     private Connection getConnection(DataSourceRecordReq dataSourceRecordReq, String dbName) {

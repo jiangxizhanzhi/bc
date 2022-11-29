@@ -13,6 +13,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 		DashboardBasicAttributeRes data = new DashboardBasicAttributeRes();
 		data.setDashboardId(dashboardId);
+		data.setTaskId(dashboardId);
 
 		return data;
 

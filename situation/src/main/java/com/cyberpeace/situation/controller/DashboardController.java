@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
+import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.DashboardService;
@@ -32,6 +35,32 @@ public class DashboardController {
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
+
+	@ApiOperation("获取任务/科目发布的大屏ID")
+	@GetMapping("/id/")
+	public BaseRsp<DashboardIdRes> getDashboardId(
+			@ApiParam(name = "task_id", value = "任务ID",
+					required = true) @RequestParam(value = "task_id") String taskId,
+			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
+					value = "subject_id", required = false) String subjectId,
+			@ApiParam(name = "sub_range_id", value = "分靶场ID", required = false) @RequestParam(
+					value = "sub_range_id", required = false) String subRangeId,
+			@ApiParam(name = "task_status", value = "任务状态",
+					required = true) @RequestParam(value = "task_status") String taskStatus,
+			@ApiParam(name = "task_type", value = "任务类型",
+					required = true) @RequestParam(value = "task_type") String taskType) {
+
+		if (!"进行中".equals(taskStatus)) {
+			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		if (!"红蓝对抗".equals(taskType)) {
+			throw new BusinessException(ErrorCode.NOT_CONFIGURED, "非红蓝对抗大屏");
+		}
+
+		return new BaseRsp<>(new DashboardIdRes(taskId));
+
+	}
 
 	@ApiOperation("获取大屏基本属性")
 	@GetMapping("/basic_attribute/")

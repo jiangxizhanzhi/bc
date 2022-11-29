@@ -1,17 +1,15 @@
 package com.cyberpeace.oj.course.dao.context;
 
-import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.model.PatternBase;
 import lombok.Data;
 
 @Data
-public class LessonContext implements Serializable {
+public class LessonContext extends PatternBase {
 
-    private Integer type;
+	private Integer type;
 
-    private String pattern;
-
-    private List<String> courseIds;
+	private List<String> courseIds;
 
 }

@@ -2,7 +2,10 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.LocalStringUtil;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,4 +29,14 @@ public class BusinessTemplateQuery extends PageReqBase {
 
 	private List<String> ids;
 
+	public void setSearch(String search) {
+		String newPattern = search;
+		if (!StringUtils.isBlank(search)) {
+
+			newPattern = LocalStringUtil.transfer(search);			
+
+		}
+
+		this.search = newPattern;
+	}
 }

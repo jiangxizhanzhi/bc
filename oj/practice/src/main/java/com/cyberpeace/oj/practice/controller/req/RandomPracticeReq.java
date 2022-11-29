@@ -1,17 +1,18 @@
 package com.cyberpeace.oj.practice.controller.req;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.cyberpeace.common.model.PatternBase;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
-
 @Data
 @ApiModel
-public class RandomPracticeReq implements Serializable {
+public class RandomPracticeReq extends PatternBase {
 
 	@ApiModelProperty("习题集编号")
 	@NotBlank
@@ -22,9 +23,6 @@ public class RandomPracticeReq implements Serializable {
 
 	@ApiModelProperty("题型 0=单选 1-多选.....")
 	private Integer questionType;
-
-	@ApiModelProperty("模糊搜索条件")
-	private String pattern;
 
 	@ApiModelProperty("习题数量")
 	@NotNull

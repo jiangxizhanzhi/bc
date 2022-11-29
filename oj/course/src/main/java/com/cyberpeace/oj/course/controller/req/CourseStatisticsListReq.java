@@ -10,8 +10,6 @@ import lombok.Data;
 @Data
 public class CourseStatisticsListReq extends PageReqBase {
 
-	@ApiModelProperty("名称查询")
-	private String pattern;
 
 	@ApiModelProperty("方向")
 	private String direction;

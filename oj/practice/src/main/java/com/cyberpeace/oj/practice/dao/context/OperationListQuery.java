@@ -1,12 +1,13 @@
 package com.cyberpeace.oj.practice.dao.context;
 
-import java.io.Serializable;
 import java.util.List;
+
+import com.cyberpeace.common.model.PatternBase;
 
 import lombok.Data;
 
 @Data
-public class OperationListQuery implements Serializable {
+public class OperationListQuery extends PatternBase {
 
 	private List<String> resourceIds;
 
@@ -15,7 +16,5 @@ public class OperationListQuery implements Serializable {
 	private List<String> categoryIds;
 
 	private Integer difficulty;
-
-	private String pattern;
 
 }

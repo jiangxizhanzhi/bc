@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.cyberpeace.common.model.PageReqBase;
 
+import com.cyberpeace.common.util.LocalStringUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /*
  * 前台使用的查询类
@@ -29,4 +31,14 @@ public class ListQuery extends PageReqBase {
 
 	private List<String> ids;
 
+	public void setSearch(String search) {
+		String newPattern = search;
+		if (!StringUtils.isBlank(search)) {
+
+			newPattern = LocalStringUtil.transfer(search);
+
+		}
+
+		this.search = newPattern;
+	}
 }

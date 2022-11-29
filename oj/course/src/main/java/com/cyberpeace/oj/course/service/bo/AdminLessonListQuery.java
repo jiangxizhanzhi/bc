@@ -1,11 +1,11 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import com.cyberpeace.common.model.PatternBase;
+
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class AdminLessonListQuery implements Serializable {
+public class AdminLessonListQuery extends PatternBase {
 
     private Integer type;
 
@@ -14,7 +14,5 @@ public class AdminLessonListQuery implements Serializable {
     private String courseId;
 
     private String exceptCourse;
-
-    private String pattern;
 
 }

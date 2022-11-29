@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.io.Serializable;
+import com.cyberpeace.common.model.PatternBase;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryListQuery implements Serializable {
+public class CategoryListQuery extends PatternBase {
 
-    private Integer practiceType;
-
-    private String pattern;
+	private Integer practiceType;
 
 }

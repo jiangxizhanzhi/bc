@@ -1,6 +1,5 @@
 package com.cyberpeace.common.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @ApiModel
-public class PageReqBase implements Serializable {
+public class PageReqBase extends PatternBase {
 
 	@ApiModelProperty(name = "per_page", value = "每页大小")
 	@Getter
@@ -31,11 +30,6 @@ public class PageReqBase implements Serializable {
 	@Getter
 	@Setter
 	private String sort;
-
-	@ApiModelProperty(value = "模糊查询筛选参数")
-	@Getter
-	@Setter
-	private String pattern;
 
 	public Page toPageParam() {
 		Page page = new Page(this.page, this.perPage);

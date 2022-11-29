@@ -1,22 +1,20 @@
 package com.cyberpeace.oj.ojbase.service.context;
 
+import com.cyberpeace.common.model.PatternBase;
+
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class AdminNoteListQuery implements Serializable {
+public class AdminNoteListQuery extends PatternBase {
 
-    private String userId;
+	private String userId;
 
-    private String userName;
+	private String userName;
 
-    private String pattern;
+	private Integer noteType;
 
-    private Integer noteType;
+	private Integer businessType;
 
-    private Integer businessType;
-
-    private String businessId;
+	private String businessId;
 
 }

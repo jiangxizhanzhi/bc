@@ -1,21 +1,19 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import lombok.Data;
-
-import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.model.PatternBase;
+import lombok.Data;
+
 @Data
-public class LibPracticeQueryBo implements Serializable {
+public class LibPracticeQueryBo extends PatternBase {
 
-    private List<String> resourceIds;
+	private List<String> resourceIds;
 
-    private String practiceSetId;
+	private String practiceSetId;
 
-    private List<String> categoryIds;
+	private List<String> categoryIds;
 
-    private Integer questionType;
-
-    private String pattern;
+	private Integer questionType;
 
 }

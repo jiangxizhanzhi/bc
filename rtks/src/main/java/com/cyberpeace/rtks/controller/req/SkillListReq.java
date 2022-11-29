@@ -18,11 +18,6 @@ public class SkillListReq extends PageReqBase {
 	@Getter
 	private String categoryId;
 
-	@ApiModelProperty(value = "检索参数")
-	@Getter
-	@Setter
-	private String pattern;
-
 	public void setSystem_id(String systemId) {
 		this.systemId = systemId;
 	}

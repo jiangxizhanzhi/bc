@@ -47,7 +47,7 @@ public class DashboardBasicAttributeRes implements Serializable {
 		this.title = "LG中心综合态势";
 		this.subRangeId = "zhxfbc";
 		this.subRangeName = "ZH性分靶场";
-		this.taskId = "task_001";
+		this.taskId = "102";
 		this.taskName = "任务001";
 		this.subjectId = "subject_001";
 		this.subjectName = "科目001";

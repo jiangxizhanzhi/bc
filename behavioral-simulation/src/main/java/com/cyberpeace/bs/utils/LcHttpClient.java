@@ -143,9 +143,6 @@ public class LcHttpClient {
 			if (null == baseRsp.getData()) {
 				return null;
 			}
-			// if (baseRsp.getData().getClass() == String.class) {
-			// return null;
-			// }
 			return JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType);
 		} catch (RemoteServiceException e) {
 			throw e;
@@ -181,10 +178,6 @@ public class LcHttpClient {
 	}
 
 	private static void setAuthorization(HttpUriRequest request) {
-		JSONObject body = new JSONObject();
-		body.put("username", "root");
-		body.put("password",
-				"FHTUELtJcujRpaIVilvAPeDGNrX4sbgCVvGOFaTYcH57WCJfP1BUB158FW0xWXvcrdgfTO8xjFgPl8nUToMrJEKulMyrg7qtD1MLHLyYh7ucbukNQvxJUFNeHRm+SG0qb6D7z6oBhFZoB+w9TLOPsCxTnzCFWCEjviCSg6VJ2Kw=");
 		String token = "Bearer " + ROOT_TOKEN;
 		request.setHeader("Authorization", token);
 	}

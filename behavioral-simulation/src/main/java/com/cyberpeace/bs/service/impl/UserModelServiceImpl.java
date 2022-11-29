@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +83,12 @@ public class UserModelServiceImpl implements UserModelService {
 				.toJsonObjectArray(userModel.getBehaviorList(), BehaviorSimple.class);
 		Map<String, BehaviorSimple> map = StreamApiUtils.toMap(behaviorSimpleList,
 				BehaviorSimple::getId, behavior -> behavior);
-		List<Behavior> behaviors = lcService.getBehaviorListByIds(map.keySet());
+		List<Behavior> behaviors;
+		if(behaviorSimpleList.isEmpty()){
+			behaviors = Lists.newArrayList();
+		} else {
+			behaviors = lcService.getBehaviorListByIds(map.keySet());
+		}
 		// 补上时间
 		for (Behavior behavior : behaviors) {
 			behavior.setStartTime(map.get(behavior.getId()).getStartTime());
@@ -149,6 +155,9 @@ public class UserModelServiceImpl implements UserModelService {
 		UserModel userModel = getOrException(userModelId);
 		List<BehaviorSimple> behaviorSimpleList = BsUtil
 				.parseBehaviorList(userModel.getBehaviorList());
+		if(behaviorSimpleList.isEmpty()){
+			return Lists.newArrayList();
+		}
 		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
 				.collect(Collectors.toList());
 		List<LcBehaviorRspBo> rspBos = lcService.getLcBehaviorListByIds(behaviorIds, true);
@@ -192,7 +201,7 @@ public class UserModelServiceImpl implements UserModelService {
 	@Override
 	public UserModel getOrException(String userModelId) {
 		if (StringUtils.isBlank(userModelId)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
 		}
 		UserModel userModel = userModelMapper.selectById(userModelId);
 		if (null == userModel) {

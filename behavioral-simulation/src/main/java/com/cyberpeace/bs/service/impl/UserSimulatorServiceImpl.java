@@ -6,9 +6,11 @@ import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.dao.entity.UserType;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
+import com.cyberpeace.bs.dao.mapper.UserTypeMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserSimulatorService;
@@ -28,6 +30,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
@@ -129,21 +132,29 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
-		log.info("add simulator request: {}", JsonUtil.toJsonString(addBo));
+		log.info("create simulator request: {}", JsonUtil.toJsonString(addBo));
 		String sceneId = addBo.getSceneId();
-		List<UserSimulator> simulatorList = Lists.newArrayList();
-		for (NodeBo node : addBo.getNodeList()) {
-			String userModelId = node.getUserModelId();
-			UserModel userModel = userModelService.getOrException(userModelId);
-			UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
-					addBo.getSceneName());
-			simulatorList.add(simulator);
-		}
+		List<String> userModelIds = addBo.getNodeList().stream()
+				.map(NodeBo::getUserModelId).collect(Collectors.toList());
+		List<UserModel> userModelList = userModelMapper.selectBatchIds(userModelIds);
+		Map<String, UserModel> userModelMap = StreamApiUtils.toMap(userModelList, UserModel::getResourceId,
+				userModel -> userModel);
+		List<String> userTypeIds = userModelList.stream().map(UserModel::getUserTypeId).collect(Collectors.toList());
+		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				for (UserSimulator simulator : simulatorList) {
+				for (NodeBo node : addBo.getNodeList()) {
+					String userModelId = node.getUserModelId();
+					UserModel userModel = userModelMap.get(userModelId);
+					if (userModel == null) {
+						continue;
+					}
+					String userType = userTypeMap.get(userModel.getUserTypeId());
+					UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
+							addBo.getSceneName(), userType);
 					userSimulatorMapper.insert(simulator);
 				}
 			}
@@ -185,11 +196,15 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		List<BehaviorSimple> behaviors = BsUtil.parseBehaviorList(userSimulator.getBehaviorList());
 		List<String> behaviorIds = behaviors.stream().map(BehaviorSimple::getId)
 				.collect(Collectors.toList());
-		List<LcBehaviorRspBo> lcBehaviorRspBos = lcService.getLcBehaviorListByIds(behaviorIds,
-				false);
-		List<LcBehavior> lcBehaviors = lcBehaviorRspBos.stream().map(this::createLcBehavior)
-				.collect(Collectors.toList());
-		detail.setBehaviors(lcBehaviors);
+		if (behaviorIds.isEmpty()) {
+			detail.setBehaviors(Lists.newArrayList());
+		} else {
+			List<LcBehaviorRspBo> lcBehaviorRspBos = lcService.getLcBehaviorListByIds(behaviorIds,
+					false);
+			List<LcBehavior> lcBehaviors = lcBehaviorRspBos.stream().map(this::createLcBehavior)
+					.collect(Collectors.toList());
+			detail.setBehaviors(lcBehaviors);
+		}
 		return detail;
 	}
 
@@ -357,13 +372,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	private UserSimulator createUserSimulator(UserModel userModel, NodeBo nodeBo, String sceneId,
-			String sceneName) {
+			String sceneName, String userType) {
 		UserSimulator simulator = new UserSimulator();
 		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
 		simulator.setUserModelId(userModel.getResourceId());
 		simulator.setUserName(userModel.getUserName());
 		simulator.setUserTypeId(userModel.getUserTypeId());
-		simulator.setUserType(userTypeService.getNameById(userModel.getUserTypeId()));
+		simulator.setUserType(userType);
 		simulator.setStartTime(statistic.getStartTime());
 		simulator.setEndTime(statistic.getEndTime());
 		simulator.setAccessConfig(userModel.getAccessConfig());
@@ -391,7 +406,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	private UserSimulator getOrException(String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
 		}
 		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
 		if (simulator == null) {

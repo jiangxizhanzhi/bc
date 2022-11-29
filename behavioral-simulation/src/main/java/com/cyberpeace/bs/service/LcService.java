@@ -28,9 +28,6 @@ public interface LcService {
 
     /**
 	 * 开启单个行为流量
-	 * @param ip 靶机ip
-	 * @param behaviorId 行为id
-	 * @param variable 行为变量
 	 */
 	void startBehavior(ReleaseTaskReq req);
 

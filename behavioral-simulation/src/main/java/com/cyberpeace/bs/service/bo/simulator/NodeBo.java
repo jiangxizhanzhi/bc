@@ -1,10 +1,10 @@
 package com.cyberpeace.bs.service.bo.simulator;
 
-import java.io.Serializable;
-import java.util.List;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class NodeBo implements Serializable {

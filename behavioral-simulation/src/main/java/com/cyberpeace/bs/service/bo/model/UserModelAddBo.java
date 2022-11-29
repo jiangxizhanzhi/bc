@@ -44,5 +44,8 @@ public class UserModelAddBo extends UserModelBase implements Serializable {
 				}
 			});
 		}
+		if(this.getAccessHabit() == null){
+			this.setAccessHabit(Lists.newArrayList());
+		}
 	}
 }

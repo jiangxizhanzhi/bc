@@ -130,11 +130,8 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 			for (String taskId : evalTaskList) {
 				evalTaskService.deleteTask(evalTaskService.getEvalTaskOpsContext(taskId, true));
 			}
-			evalTemplateMapper.deleteById(templateId);
-		}
 
-		List<EvalTemplate> evalTemplates = evalTemplateMapper.selectBatchIds(templateIds);
-		for (EvalTemplate evalTemplate : evalTemplates) {
+			EvalTemplate evalTemplate = evalTemplateMapper.selectById(templateId);
 			if (StringUtils.isNotBlank(evalTemplate.getTopoId())) {
 				try {
 					remoteTopoService.deleteById(evalTemplate.getTopoId());
@@ -144,7 +141,10 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 							evalTemplate.getResourceId(), evalTemplate.getTopoId(), e);
 				}
 			}
+
+			evalTemplateMapper.deleteById(templateId);
 		}
+
 		return true;
 
 	}

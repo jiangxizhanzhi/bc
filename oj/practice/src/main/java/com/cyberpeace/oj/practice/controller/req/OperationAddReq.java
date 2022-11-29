@@ -22,6 +22,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
+
 @Data
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
@@ -149,10 +151,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
 			}
 		}
-		if (title.length() < CommonConstant.ONE || title.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
-			throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
-					CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
-		}
+		validateLength(title, CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE,OjBusinessErrorCode.ANSWER_TOO_LONG);
 
 	}
 }

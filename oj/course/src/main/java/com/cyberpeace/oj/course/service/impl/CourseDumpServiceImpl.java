@@ -292,8 +292,8 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 					handoutUrl = ConfigUtil.getContextProperty("cr.local.upload.path")
 							+ File.separator + handoutUrl;
 				}
-				String[] split = handoutUrl.split("/");
-				String handoutFileName = split[split.length - 1];
+				String[] split = handoutUrl.split("\\.");
+				String handoutFileName = HANDOUT_OTHER_FILE_NAME + File.separator + split[split.length - 1];
 				FileUtil.copyFile(handoutUrl, handoutFile + File.separator + handoutFileName,
 						false);
 			} else {

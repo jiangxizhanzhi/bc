@@ -56,6 +56,11 @@ public interface ResourceDumpConstant {
 	String HANDOUT_FILE_NAME = "讲义.md";
 
 	/**
+	 * 讲义md以外文件名称
+	 */
+	String HANDOUT_OTHER_FILE_NAME = "讲义";
+
+	/**
 	 * 指导书文件目录
 	 */
 	String DOC = "doc";

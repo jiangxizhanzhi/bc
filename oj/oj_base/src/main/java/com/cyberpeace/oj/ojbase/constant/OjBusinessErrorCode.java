@@ -272,4 +272,7 @@ public interface OjBusinessErrorCode {
 
 	/** 关键字不能设置为空*/
 	String 	KEYWORD_EMPTY_ERROR = "102089";
+
+	/** 习题类型存在错误*/
+	String 	PRACTICE_DIFFICULTY_ERROR = "102090";
 }

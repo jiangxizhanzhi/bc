@@ -184,7 +184,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private RemoteOrganizationService remoteOrganizationService;
 
 	@Override
-	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
+	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, AuthContext authContext) {
 
 		// 课时数据校验
 		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
@@ -258,7 +258,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			OjLocalScene ojLocalScene = null;
 			ClassroomGroupInfo groupInfo = null;
 			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
@@ -895,7 +895,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext) {
+	public TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext) {
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
@@ -916,7 +916,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			ClassroomGroupInfo groupInfo = null;
 
 			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 				}

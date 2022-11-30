@@ -50,13 +50,13 @@ public class WebLessonController {
 	@GetMapping("")
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
-	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
-			@RequestParam("lesson_id") String lessonId) {
+    @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+    public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
+                                              @RequestParam("lesson_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
 
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-		LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, authContext);
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                CommonConstant.TRUE);
+        LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, authContext);
 
 		// 记录远程操作日志
 		courseLessonService.createMpLog(infoBo);
@@ -100,14 +100,14 @@ public class WebLessonController {
 
 	}
 
-	@ApiOperation("前台课时获取拓扑信息")
-	@GetMapping("/scene_topo")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
-	public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
-			value = "课时编号") @RequestParam("resource_id") String lessonId) {
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				true);
-		TopoSceneDataBo topoScene = courseLessonService.getTopoScene(lessonId, authContext);
+    @ApiOperation("前台课时获取拓扑信息")
+    @GetMapping("/scene_topo")
+    @RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
+    public BaseRsp<TopoSceneDataBo> getTopoScene(@ApiParam(name = "resource_id",
+            value = "课时编号") @RequestParam("resource_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+		TopoSceneDataBo topoScene = courseLessonService.getTopoScene(lessonId, roomId, authContext);
 		return new BaseRsp<>(topoScene);
 	}
 

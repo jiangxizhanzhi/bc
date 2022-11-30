@@ -281,7 +281,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		TopoSceneDataBo topoSceneData = courseLessonService.getTopoScene(lessonId, authContext);
+		TopoSceneDataBo topoSceneData = courseLessonService.getTopoScene(lessonId, null, authContext);
 
 		return new BaseRsp(topoSceneData);
 	}

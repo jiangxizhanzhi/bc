@@ -92,15 +92,15 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 
 		// 先查询课程表场景
-		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
-				authContext);
-		if (null != groupInfo) {
-			OjLocalScene groupScene = ojLocalSceneMapper
-					.selectGroupScene(groupInfo.getResourceId());
-			if (null != groupScene) {
-				return ojLocalSceneService.getSceneData(groupScene);
-			}
-		}
+//		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, null,
+//				authContext);
+//		if (null != groupInfo) {
+//			OjLocalScene groupScene = ojLocalSceneMapper
+//					.selectGroupScene(groupInfo.getResourceId());
+//			if (null != groupScene) {
+//				return ojLocalSceneService.getSceneData(groupScene);
+//			}
+//		}
 
 		// 无课程表场景 查询课时场景
 		CourseLesson courseLesson = lessonSceneStartCheck(lessonId);
@@ -254,7 +254,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		}
 
 		// 优先查询组数据场景
-		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
+		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, null,
 				authContext);
 		if (groupInfo != null) {
 			OjLocalScene ojLocalScene = ojLocalSceneMapper

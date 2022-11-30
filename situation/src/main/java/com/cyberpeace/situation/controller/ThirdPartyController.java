@@ -5,16 +5,19 @@ import java.util.stream.IntStream;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.service.context.StationContext;
 import com.cyberpeace.situation.service.context.SubRangeContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "三方数据")
 @RestController
@@ -43,11 +46,19 @@ public class ThirdPartyController {
 	public BaseRsp<List<SubRangeContext>> getSubRanges() {
 
 		List<SubRangeContext> subRangeList = Lists.newArrayList();
-
 		subRangeList.add(new SubRangeContext("zhxfbc", "综合性分靶场"));
-
 		subRangeList.add(new SubRangeContext("wlkjjjfyfbc", "网络空间JJFY分靶场"));
 		return new BaseRsp<>(subRangeList);
+	}
+
+	@ApiOperation("获取场站列表")
+	@GetMapping("/station/list/")
+	public BaseRsp<List<StationContext>>
+			getStations(@ApiParam(name = "sub_range_id", value = "分靶场ID",
+					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
+		List<StationContext> stationList = Lists.newArrayList();
+		stationList.add(new StationContext("zhzcz", "ZH主场站"));
+		return new BaseRsp<>(stationList);
 	}
 
 }

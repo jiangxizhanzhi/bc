@@ -7,6 +7,7 @@ import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcActualDevice;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
+import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -33,10 +34,8 @@ public interface LcService {
 
     /**
      * 停止单个行为流量
-     * @param targetIp 靶标ip
-     * @param behaviorId 行为id
      */
-	void stopBehavior(String targetIp, String behaviorId);
+	void stopBehavior(StopTaskReq req);
 
     /**
      * 获取靶标列表

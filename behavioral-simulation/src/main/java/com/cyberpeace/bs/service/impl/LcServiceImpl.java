@@ -50,6 +50,8 @@ public class LcServiceImpl implements LcService {
 
 	private String RELEASE_TASK = "api/v1/save";
 
+	private String STOP_TASK = "api/v1/stopTask";
+
 	private String DEVICE_URL = "api/v1/devices/find-by-page";
 
 	private String BEHAVIOR_PAGE = "api/v1/newList";
@@ -102,9 +104,11 @@ public class LcServiceImpl implements LcService {
 	}
 
 	@Override
-	public void stopBehavior(String targetIp, String behaviorId) {
-		// todo
+	public void stopBehavior(StopTaskReq req) {
+		String targetUrl = LC_HOST_PORT + STOP_TASK;
+		LcHttpClient.post(targetUrl, req, String.class);
 	}
+
 
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior lcBehavior = new LcBehavior();

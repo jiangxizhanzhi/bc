@@ -6,11 +6,9 @@ import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
-import com.cyberpeace.bs.dao.entity.UserType;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
-import com.cyberpeace.bs.dao.mapper.UserTypeMapper;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserSimulatorService;
@@ -20,6 +18,7 @@ import com.cyberpeace.bs.service.bo.BsTimerTask;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
+import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
@@ -97,7 +96,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
     @Override
     public ListRsp<UserSimulatorBo> pageSimulators(PageReqBase pageReqBase) {
         Page page = pageReqBase.toPageParam();
-		IPage<UserSimulator> userSimulatorIPage = userSimulatorMapper.page(page);
+		IPage<UserSimulator> userSimulatorIPage = userSimulatorMapper.page(page, "");
 		userSimulatorIPage.convert(simulator -> {
 			UserSimulatorBo simulatorBo = BeanUtils.copy(simulator, UserSimulatorBo.class);
 			BsUtil.setHabits(simulatorBo, simulator.getAccessHabit());
@@ -172,9 +171,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
-	public ListRsp<BehaviorMeterBo> pageBehaviorMeters(PageReqBase pageReq) {
+	public ListRsp<BehaviorMeterBo> pageBehaviorMeters(MeterPageReq pageReq) {
 		Page page = pageReq.toPageParam();
-		IPage<UserSimulator> simulators = userSimulatorMapper.page(page);
+		String sceneId = pageReq.getSceneId();
+		IPage<UserSimulator> simulators = userSimulatorMapper.page(page, sceneId);
 		simulators.convert(simulator ->{
 			BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
 			behaviorMeterBo.setId(simulator.getDeviceId());
@@ -228,6 +228,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// 删除定时任务
 		batchRemoveTimer(relatedSimulatorIds);
     }
+
+	@Override
+	public List<SceneIdName> getSceneList() {
+		return userSimulatorMapper.getSceneList();
+	}
 
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior behavior = new LcBehavior();
@@ -321,7 +326,17 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			// stop latest executed behavior
 			String latestBehaviorId = behaviorSimpleList
 					.get(behaviorSimpleList.size() - simulator.getExecutedIndex() - 1).getId();
-			lcService.stopBehavior(simulator.getDeviceIp(), latestBehaviorId);
+			try {
+				StopTaskReq req = new StopTaskReq();
+				req.setChartId(new Long(latestBehaviorId));
+				req.setIsUsingIp(!simulator.getIsEntity());
+				req.setDeviceId(simulator.getDeviceId());
+				req.setDeviceIp(simulator.getDeviceIp());
+				lcService.stopBehavior(req);
+			} catch (Exception e) {
+				log.warn("Failed to stop behavior [{}] of simulator [{}]: {}",
+						latestBehaviorId, simulator.getResourceId(), e);
+			}
 		}
 		// update status
 		simulator.setStatus(UserSimulator.Status.STOPPED.getCode());

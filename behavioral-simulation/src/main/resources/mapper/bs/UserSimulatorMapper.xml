@@ -23,11 +23,18 @@
     <select id="page" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
         select *
         from bs_user_simulator
+        <if test="sceneId != null and sceneId != ''">
+            where scene_id = #{sceneId}
+        </if>
         order by id desc
     </select>
     <select id="getIdsBySceneId" resultType="java.lang.String">
         select resource_id
         from bs_user_simulator
         where scene_id = #{sceneId}
+    </select>
+    <select id="getSceneList" resultType="com.cyberpeace.bs.service.bo.simulator.SceneIdName">
+        select distinct scene_id, scene_name
+        from bs_user_simulator
     </select>
 </mapper>

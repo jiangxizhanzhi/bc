@@ -3,21 +3,21 @@ package com.cyberpeace.bs.controller;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorAddReq;
-import com.cyberpeace.bs.service.bo.simulator.UserSimulatorBo;
+import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "用户行为流量发生")
 @RestController
@@ -106,8 +106,15 @@ public class UserSimulatorController {
 
 	@ApiOperation("行为仪表分页列表")
 	@GetMapping("/flow_generators")
-	public BaseRsp<ListRsp<BehaviorMeterBo>> getSimulatorList(PageReqBase pageReqBase) {
-		ListRsp<BehaviorMeterBo> res = userSimulatorService.pageBehaviorMeters(pageReqBase);
+	public BaseRsp<ListRsp<BehaviorMeterBo>> getSimulatorList(MeterPageReq pageReq) {
+		ListRsp<BehaviorMeterBo> res = userSimulatorService.pageBehaviorMeters(pageReq);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("试验名称下拉单")
+	@GetMapping("/scene_name")
+	public BaseRsp<List<SceneIdName>> getSceneList(){
+		List<SceneIdName> res = userSimulatorService.getSceneList();
 		return new BaseRsp<>(res);
 	}
 

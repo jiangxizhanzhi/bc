@@ -6,7 +6,6 @@ import com.cyberpeace.bs.service.bo.device.DeviceDistributionReq;
 import com.cyberpeace.bs.service.bo.device.DeviceDistributionRes;
 import com.cyberpeace.common.model.BaseRsp;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +31,7 @@ public class DeviceController {
         return new BaseRsp<>(res);
     }
 
-    @ApiModelProperty("添加实体设备")
+    @ApiOperation("添加实体设备")
     @PostMapping("/new")
     public BaseRsp add(){
         return new BaseRsp();

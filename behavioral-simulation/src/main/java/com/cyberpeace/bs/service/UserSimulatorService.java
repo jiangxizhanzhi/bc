@@ -95,7 +95,7 @@ public interface UserSimulatorService {
 	 * @return
 	 * @param pageReq
 	 */
-	ListRsp<BehaviorMeterBo> pageBehaviorMeters(PageReqBase pageReq);
+	ListRsp<BehaviorMeterBo> pageBehaviorMeters(MeterPageReq pageReq);
 
 	/**
 	 * 获取仪表详情
@@ -110,4 +110,11 @@ public interface UserSimulatorService {
 	 * @param sceneId 场景id
 	 */
     void deleteBySceneId(String sceneId);
+
+	/**
+	 * 获取仪表关联的全部场景
+	 * @return
+	 */
+	List<SceneIdName> getSceneList();
+
 }

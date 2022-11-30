@@ -12,5 +12,5 @@ public class MeterPageReq extends PageReqBase implements Serializable {
     @Getter
     @Setter
     @ApiModelProperty(value = "场景id")
-    private String sceneId;
+    private String scene_id;
 }

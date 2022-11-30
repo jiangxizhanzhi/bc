@@ -173,7 +173,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Override
 	public ListRsp<BehaviorMeterBo> pageBehaviorMeters(MeterPageReq pageReq) {
 		Page page = pageReq.toPageParam();
-		String sceneId = pageReq.getSceneId();
+		String sceneId = pageReq.getScene_id();
 		IPage<UserSimulator> simulators = userSimulatorMapper.page(page, sceneId);
 		simulators.convert(simulator ->{
 			BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();

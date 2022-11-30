@@ -396,3 +396,25 @@ CREATE TABLE `situation_dynamic_effects_mapping` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = Dynamic;
 
+CREATE TABLE `situation_dashboard_template_ref` (
+                                                    `id` INT(11) NOT NULL AUTO_INCREMENT,
+                                                    `resource_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                    `name` VARCHAR(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '模板名称',
+                                                    `type` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '看板类型',
+                                                    `level` INT(10)  DEFAULT NULL COMMENT '模板等级',
+                                                    `thumbnail` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图url',
+                                                    `height` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                    `width` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                    `components_setting` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '组件配置',
+                                                    `bg_color` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                    `refresh` INT(10) DEFAULT NULL,
+                                                    `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建者',
+                                                    `create_time` DATETIME DEFAULT NULL,
+                                                    `update_time` DATETIME DEFAULT NULL,
+                                                    PRIMARY KEY (`id`) USING BTREE,
+                                                    UNIQUE KEY `resourceId` (`resource_id`) USING BTREE
+) ENGINE=INNODB
+    AUTO_INCREMENT = 1
+    CHARACTER SET = utf8
+    COLLATE = utf8_general_ci
+    ROW_FORMAT = DYNAMIC;

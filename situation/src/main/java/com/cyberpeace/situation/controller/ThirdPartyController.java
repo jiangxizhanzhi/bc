@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.service.context.PlatformContext;
 import com.cyberpeace.situation.service.context.StationContext;
 import com.cyberpeace.situation.service.context.SubRangeContext;
 import com.google.common.collect.Lists;
@@ -59,6 +60,19 @@ public class ThirdPartyController {
 		List<StationContext> stationList = Lists.newArrayList();
 		stationList.add(new StationContext("zhzcz", "ZH主场站"));
 		return new BaseRsp<>(stationList);
+	}
+
+	@ApiOperation("获取平台列表")
+	@GetMapping("/platform/list/")
+	public BaseRsp<List<PlatformContext>> getPlatforms(
+			@ApiParam(name = "task_id", value = "任务ID",
+					required = true) @RequestParam(value = "task_id") String taskId,
+			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
+					value = "subject_id", required = false) String subjectId) {
+		List<PlatformContext> platformList = Lists.newArrayList();
+		platformList.add(new PlatformContext("zhs1", "指挥所1"));
+		platformList.add(new PlatformContext("zhs2", "指挥所2"));
+		return new BaseRsp<>(platformList);
 	}
 
 }

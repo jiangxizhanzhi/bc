@@ -16,4 +16,7 @@ public class AssessMaterialExcelDatalRes extends AssessMaterial {
 	@ApiModelProperty("数据内容")
 	private JSONObject data;
 
+	@ApiModelProperty("附件三方工具url")
+	private String attachmentUrl;
+
 }

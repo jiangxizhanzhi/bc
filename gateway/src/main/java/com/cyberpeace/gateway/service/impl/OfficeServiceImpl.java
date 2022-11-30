@@ -1,5 +1,7 @@
 package com.cyberpeace.gateway.service.impl;
 
+import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -24,6 +26,9 @@ public class OfficeServiceImpl implements OfficeViewService {
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private AssessMaterialMapper assessMaterialMapper;
 
 	@Autowired
 	private UtilService utilService;
@@ -53,6 +58,37 @@ public class OfficeServiceImpl implements OfficeViewService {
 			log.error(
 					"Failed to obtain office file information！lesson_id=[{}], file_path=[{}], catch error:",
 					lessonId, realPath, e);
+			throw new BusinessException(ErrorCode.FAILED_TO_OBTAIN_OFFICE_FILE_INFO);
+		}
+
+		return officeFileInfoBo;
+	}
+
+	@Override
+	public OfficeFileInfoBo assessMaterialHandoutInfo(String materialId) {
+		// 材料校验
+		AssessMaterial assessMaterial = assessMaterialMapper.selectById(materialId);
+		if(null == assessMaterial){
+			throw new BusinessException("The material ID has no corresponding resource");
+		}
+
+		// 获取真实路径
+		String realPath = utilService.getRealPath(assessMaterial.getAttachment());
+
+		// 数据组装
+		OfficeFileInfoBo officeFileInfoBo = new OfficeFileInfoBo();
+		try {
+			File handout = new File(realPath);
+			String hash256 = FileUtil.getHash256(handout);
+			officeFileInfoBo.setSHA256(hash256);
+			officeFileInfoBo.setOwnerId(assessMaterial.getCreateUserId());
+			officeFileInfoBo.setSize(String.valueOf(handout.length()));
+			officeFileInfoBo.setBaseFileName(FileUtil.getFileName(realPath, true));
+			officeFileInfoBo.setVersion(CommonConstant.ONE.toString());
+		} catch (Exception e) {
+			log.error(
+					"Failed to obtain office file information！material_id=[{}], file_path=[{}], catch error:",
+					materialId, realPath, e);
 			throw new BusinessException(ErrorCode.FAILED_TO_OBTAIN_OFFICE_FILE_INFO);
 		}
 

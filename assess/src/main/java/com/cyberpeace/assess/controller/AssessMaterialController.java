@@ -14,6 +14,7 @@ import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,9 @@ public class AssessMaterialController {
 	private AssessFileDataService assessFileDataService;
 	@Autowired
 	private AssessCaseService assessCaseService;
+
+	@Autowired
+	private UtilService utilService;
 
 
 	@ApiOperation("新增")
@@ -155,6 +159,8 @@ public class AssessMaterialController {
 			assessMaterialExcelDatalRes.setData(JsonUtil.toJsonObject(assessFileDataService.getDataBaseTableByRelatedId(
 				assessMaterial.getResourceId()), JSONObject.class));
 		}
+
+		assessMaterialExcelDatalRes.setAttachmentUrl(utilService.officeMaterialUrl(assessMaterial.getAttachment(), assessMaterial.getResourceId()));
 		return new BaseRsp<>(assessMaterialExcelDatalRes);
 	}
 

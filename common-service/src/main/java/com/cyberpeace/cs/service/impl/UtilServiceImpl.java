@@ -28,6 +28,10 @@ public class UtilServiceImpl implements UtilService {
 
 	private String HANDOUT_CONTENT_URL;
 
+	private String HANDOUT_MATERIAL_INFO_URL;
+
+	private String HANDOUT_MATERIAL_CONTENT_URL;
+
 	@Autowired
 	private RemoteServerEnvService remoteServerEnvService;
 
@@ -39,6 +43,8 @@ public class UtilServiceImpl implements UtilService {
 		LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
 		HANDOUT_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
+		HANDOUT_MATERIAL_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
+		HANDOUT_MATERIAL_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
 	}
 
 	@Override
@@ -73,6 +79,27 @@ public class UtilServiceImpl implements UtilService {
 		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
 				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo=" + HANDOUT_INFO_URL
 				+ "&downloadFile=" + HANDOUT_CONTENT_URL + "&fileId=" + fileId + "&fileName="
+				+ fileName;
+
+		return officeViewUrl;
+	}
+
+	@Override
+	public String officeMaterialUrl(String fileUrl, String fileId) {
+
+		if (StringUtils.isBlank(fileUrl)) {
+			return fileUrl;
+		}
+
+		String fileName = fileUrl;
+		int lastIndexOf = fileUrl.lastIndexOf(File.separator);
+		if (lastIndexOf != CommonConstant.NEGATIVE_ONE) {
+			fileName = fileUrl.substring(lastIndexOf + CommonConstant.ONE);
+		}
+
+		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
+				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo=" + HANDOUT_MATERIAL_INFO_URL
+				+ "&downloadFile=" + HANDOUT_MATERIAL_CONTENT_URL + "&fileId=" + fileId + "&fileName="
 				+ fileName;
 
 		return officeViewUrl;

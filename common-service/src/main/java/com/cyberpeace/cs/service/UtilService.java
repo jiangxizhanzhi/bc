@@ -18,6 +18,14 @@ public interface UtilService {
 	String officeUrl(String fileUrl, String fileId);
 
 	/**
+	 * 获取可查看的office文件url地址 比如ppt word
+	 * @param fileUrl 传名称获取路径均可
+	 * @param fileId
+	 * @return
+	 */
+	String officeMaterialUrl(String fileUrl, String fileId);
+
+	/**
 	 * 前端参数传递文件路径处理 去除文件前缀
 	 * @param fileUrl
 	 * @return

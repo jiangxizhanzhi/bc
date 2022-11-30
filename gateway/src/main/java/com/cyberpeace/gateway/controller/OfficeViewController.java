@@ -6,6 +6,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,10 @@ public class OfficeViewController {
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private AssessMaterialMapper assessMaterialMapper;
+
+
 	@ApiOperation("获取课时文件信息")
 	@GetMapping("/oj/lesson/handout/info")
 	public Map<String, Object> getFileInfo(
@@ -59,6 +66,38 @@ public class OfficeViewController {
 
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
 		String realPath = utilService.getRealPath(courseLesson.getHandoutUrl());
+
+		File file = new File(realPath);
+		if (!file.exists()) {
+			log.error("File not found! real_path=[{}]", realPath);
+			throw new FileNotFoundException(realPath);
+		}
+
+		FileUtil.setResponse(file, false, response);
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("获取评估材料文件信息")
+	@GetMapping("/assess/material/handout/info")
+	public Map<String, Object> getAssessMaterialFileInfo(
+			@ApiParam(name = "fileId", value = "评估材料编号") @RequestParam("fileId") String materialId) {
+
+		OfficeFileInfoBo officeFileInfoBo = officeViewService.assessMaterialHandoutInfo(materialId);
+		Map<String, Object> dataMap = ObjUtil.obj2map(officeFileInfoBo);
+		return dataMap;
+	}
+
+	@ApiOperation("获取评估材料文件流")
+	@GetMapping("/assess/material/handout")
+	public BaseRsp getAssessMaterialFileStream(
+			@ApiParam(name = "fileId", value = "评估材料编号") @RequestParam("fileId") String materialId,
+			HttpServletResponse response) throws FileNotFoundException {
+
+		AssessMaterial assessMaterial = assessMaterialMapper.selectById(materialId);
+		if(null == assessMaterial){
+			throw new BusinessException("The material ID has no corresponding resource");
+		}
+		String realPath = utilService.getRealPath(assessMaterial.getAttachment());
 
 		File file = new File(realPath);
 		if (!file.exists()) {

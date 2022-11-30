@@ -29,9 +29,10 @@ public interface LessonSceneService {
 	 * @param resourceId
 	 * @param nodeId
 	 * @param authContext
+	 * @param roomId
 	 * @return
 	 */
-	Boolean restartNode(String resourceId, String nodeId, AuthContext authContext);
+	Boolean restartNode(String resourceId, String nodeId, String roomId, AuthContext authContext);
 
 	/**
 	 * 课时场景节点重建
@@ -40,16 +41,17 @@ public interface LessonSceneService {
 	 * @param authContext
 	 * @return
 	 */
-	Boolean recreateNode(String resourceId, String nodeId, AuthContext authContext);
+	Boolean recreateNode(String resourceId, String nodeId, String roomId, AuthContext authContext);
 
 	/**
 	 * 课时场景暂停与恢复
+	 * @param roomId
 	 * @param resourceId
 	 * @param status
 	 * @param authContext
 	 * @return
 	 */
-	Boolean updateSceneStatus(String resourceId, Integer status, AuthContext authContext);
+	Boolean updateSceneStatus(String roomId, String resourceId, Integer status, AuthContext authContext);
 
 	/**
 	 * 获取课时监控信息

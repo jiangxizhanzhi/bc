@@ -148,7 +148,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 		// 推送消息给课程的websocket 加载课堂场景
 		toLessonSocketMessage(groupInfo.getGroupUserIds(), courseLesson, OjEvent.SCENE_CREATE_SYNC);
-
+		toGroupSocketMessage(groupInfo.getResourceId(), OjEvent.SCENE_CREATE_SYNC);
 		return ojLocalSceneService.getSceneData(initOjLocalScene);
 	}
 

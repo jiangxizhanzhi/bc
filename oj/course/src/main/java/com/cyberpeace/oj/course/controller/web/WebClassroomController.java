@@ -104,7 +104,7 @@ public class WebClassroomController {
 			logical = Logical.OR)
 	public BaseRsp<Boolean> needHelp(@RequestBody @Validated RemoteHelpReq req) {
 
-		classroomSignService.needHelp(req.getLessonId(), req.getNodeId());
+		classroomSignService.needHelp(req.getLessonId(), req.getNodeId(), req.getRoomId());
 
 		return new BaseRsp(true);
 
@@ -116,7 +116,7 @@ public class WebClassroomController {
 			logical = Logical.OR)
 	public BaseRsp<HelpStatusBo> getHelpStatus(RemoteHelpReq req) {
 		HelpStatusBo helpStatus = classroomSignService.getHelpStatus(req.getLessonId(),
-				req.getNodeId());
+				req.getNodeId(), req.getRoomId());
 		return new BaseRsp(helpStatus);
 	}
 

@@ -24,7 +24,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonId
 	 * @return
 	 */
-	LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext);
+	LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, AuthContext authContext);
 
 	/**
 	 * 查询后台课时详情数据
@@ -142,7 +142,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param authContext
 	 * @return
 	 */
-	TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext);
+	TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext);
 
 	/**
 	 * 上传课时讲义 如果为makdown则解析 数据绑定课时

@@ -20,4 +20,7 @@ public class SceneStatusReq implements Serializable {
 	@NotNull
 	private Integer status;
 
+	@ApiModelProperty("课程表编号")
+	private String roomId;
+
 }

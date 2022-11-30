@@ -19,4 +19,7 @@ public class SceneNodeReq implements Serializable {
     @NotBlank
     private String nodeId;
 
+    @ApiModelProperty("课程表编号")
+    private String roomId;
+
 }

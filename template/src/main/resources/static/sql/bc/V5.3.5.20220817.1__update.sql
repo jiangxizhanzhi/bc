@@ -957,7 +957,7 @@ ALTER TABLE `init_rtks_role`
     MODIFY COLUMN `skill_courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '技能课程列表' AFTER `ability_ids`,
     MODIFY COLUMN `knowledge_courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '知识点课程列表' AFTER `skill_courses`,
     MODIFY COLUMN `knowledge_weight` tinyint NOT NULL DEFAULT 50 COMMENT '知识点比例' AFTER `knowledge_courses`,
-    MODIFY COLUMN `skill_missions` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '[]' COMMENT '技能任务列表' AFTER `knowledge_weight`,
+    MODIFY COLUMN `skill_missions` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '技能任务列表' AFTER `knowledge_weight`,
     COMMENT = 'rtks角色重置表';
 
 
@@ -1137,7 +1137,7 @@ ALTER TABLE `rtks_role`
     MODIFY COLUMN `skill_courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '技能课程列表' AFTER `ability_ids`,
     MODIFY COLUMN `knowledge_courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '知识点课程列表' AFTER `skill_courses`,
     MODIFY COLUMN `knowledge_weight` tinyint NOT NULL DEFAULT 50 COMMENT '知识点比例' AFTER `knowledge_courses`,
-    MODIFY COLUMN `skill_missions` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '[]' COMMENT '技能任务列表' AFTER `knowledge_weight`,
+    MODIFY COLUMN `skill_missions` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '技能任务列表' AFTER `knowledge_weight`,
     COMMENT = 'rtks角色表';
 
 
@@ -1184,7 +1184,7 @@ ALTER TABLE `rtks_skill`
     MODIFY COLUMN `update_time` datetime NOT NULL COMMENT '更新时间' AFTER `create_time`,
     MODIFY COLUMN `system_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '体系id' AFTER `update_time`,
     MODIFY COLUMN `category_id` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '类别id' AFTER `system_id`,
-    MODIFY COLUMN `courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '[]' COMMENT '课程列表' AFTER `category_id`,
+    MODIFY COLUMN `courses` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '课程列表' AFTER `category_id`,
     COMMENT = 'rtks技能点表';
 
 

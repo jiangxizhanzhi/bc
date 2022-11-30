@@ -6,11 +6,12 @@ import java.io.Serializable;
 
 @Data
 public class StopTaskReq implements Serializable {
+
     private Long chartId;
 
-    private String deviceId;
+    private Integer deviceId;
 
-    private String deviceIp;
+    private String ip;
 
     private Boolean isUsingIp;
 }

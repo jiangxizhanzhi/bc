@@ -330,8 +330,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				StopTaskReq req = new StopTaskReq();
 				req.setChartId(new Long(latestBehaviorId));
 				req.setIsUsingIp(!simulator.getIsEntity());
-				req.setDeviceId(simulator.getDeviceId());
-				req.setDeviceIp(simulator.getDeviceIp());
+				req.setDeviceId(new Integer(simulator.getDeviceId()));
+				req.setIp(simulator.getDeviceIp());
 				lcService.stopBehavior(req);
 			} catch (Exception e) {
 				log.warn("Failed to stop behavior [{}] of simulator [{}]: {}",

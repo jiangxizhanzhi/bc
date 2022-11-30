@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service;
 
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface DashboardTemplateRefService {
      * @param resourceId
      * @return
      */
-    String createDashboardTemplate(String resourceId);
+    DashboardTemplateRef createDashboardTemplate(String resourceId);
 
 
     /**

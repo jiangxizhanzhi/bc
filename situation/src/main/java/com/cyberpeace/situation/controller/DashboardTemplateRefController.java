@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +28,7 @@ public class DashboardTemplateRefController {
 
     @ApiOperation("新增态势数据")
     @PostMapping()
-    public BaseRsp<String> createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
+    public BaseRsp<DashboardTemplateRef> createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
                                                            String resourceId) {
         return new BaseRsp<>(dashboardTemplateRefService.createDashboardTemplate(resourceId));
     }

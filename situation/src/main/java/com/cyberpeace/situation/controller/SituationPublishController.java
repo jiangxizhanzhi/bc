@@ -24,6 +24,7 @@ import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
@@ -33,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +60,7 @@ public class SituationPublishController {
 	private SituationPublishInstanceService situationPublishInstanceService;
 
 	@Autowired
-	private DashboardTemplateService dashboardTemplateService;
+	private DashboardTemplateRefService dashboardTemplateRefService;
 
 	@Autowired
 	private SituationCategoryMapper situationCategoryMapper;
@@ -66,6 +70,9 @@ public class SituationPublishController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("查询态势发布类型列表")
 	@GetMapping("/category/list")
@@ -192,8 +199,20 @@ public class SituationPublishController {
 		if (!releaseInstances.isEmpty()) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
-
-		situationPublishInstanceMapper.deleteBatchIds(resourceIds);
+		List<String> dashboardTemplateIdList = new ArrayList<>();
+		for (SituationPublishInstance releaseInstance : releaseInstances) {
+			String templateId = releaseInstance.getTemplateId();
+			if (StringUtils.isNotBlank(templateId)) {
+				dashboardTemplateIdList.add(templateId);
+			}
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				situationPublishInstanceMapper.deleteBatchIds(resourceIds);
+				dashboardTemplateRefService.deleteDashboardTemplate(dashboardTemplateIdList);
+			}
+		});
 		return new BaseRsp<>();
 	}
 
@@ -251,7 +270,7 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		String templateId = situationPublishInstances.getTemplateId();
-		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(templateId);
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId);
 		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
 		// TODO 大屏地址
 //		res.sendRedirect("page/cr/admin/situation-release/preview/"+ templateId);

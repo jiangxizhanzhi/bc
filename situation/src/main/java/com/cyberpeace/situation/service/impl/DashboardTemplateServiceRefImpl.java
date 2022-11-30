@@ -46,7 +46,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     private DashboardTemplateService dashboardTemplateService;
 
     @Override
-    public String createDashboardTemplate(String resourceId) {
+    public DashboardTemplateRef createDashboardTemplate(String resourceId) {
 
         //获取模板数据
         DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId);
@@ -73,7 +73,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 }
             }
         });
-        return dashboardTemplateRef.getResourceId();
+        return dashboardTemplateRef;
     }
 
     @Override

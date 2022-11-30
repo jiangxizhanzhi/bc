@@ -418,3 +418,18 @@ CREATE TABLE `situation_dashboard_template_ref` (
     CHARACTER SET = utf8
     COLLATE = utf8_general_ci
     ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_gis_mark
+-- ----------------------------
+CREATE TABLE `situation_gis_mark`  (
+                                       `id` int NOT NULL AUTO_INCREMENT,
+                                       `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                       `config` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                       `dashboard_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                       `create_time` datetime NULL DEFAULT current_timestamp,
+                                       `update_time` datetime NULL DEFAULT NULL,
+                                       `delete_time` datetime NULL DEFAULT NULL,
+                                       PRIMARY KEY (`id`) USING BTREE,
+                                       UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

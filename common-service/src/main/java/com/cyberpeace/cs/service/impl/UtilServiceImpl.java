@@ -43,8 +43,8 @@ public class UtilServiceImpl implements UtilService {
 		LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
 		HANDOUT_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
-		HANDOUT_MATERIAL_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
-		HANDOUT_MATERIAL_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
+		HANDOUT_MATERIAL_INFO_URL = ConfigUtil.getContextProperty("office.handout.material.info");
+		HANDOUT_MATERIAL_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.material.content");
 	}
 
 	@Override

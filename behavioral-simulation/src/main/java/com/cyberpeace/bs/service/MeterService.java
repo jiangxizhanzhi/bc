@@ -1,8 +1,9 @@
 package com.cyberpeace.bs.service;
 
-import java.util.List;
-
 import com.cyberpeace.bs.service.bo.TargetBo;
+import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
+
+import java.util.List;
 
 public interface MeterService {
     /**
@@ -12,4 +13,8 @@ public interface MeterService {
      * @return 设备列表
      */
 	List<TargetBo> getMeters(Integer type, String search);
+
+    void startSingleBehavior(SingleBehaviorReq req);
+
+    void stopSingleBehavior(SingleBehaviorReq req);
 }

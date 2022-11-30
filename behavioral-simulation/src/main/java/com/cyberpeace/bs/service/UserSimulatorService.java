@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.service;
 
+import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.common.model.ListRsp;
@@ -116,5 +117,12 @@ public interface UserSimulatorService {
 	 * @return
 	 */
 	List<SceneIdName> getSceneList();
+
+	/**
+	 * 获取仪表，
+	 * @param resourceId
+	 * @return
+	 */
+	UserSimulator getOrException(String resourceId);
 
 }

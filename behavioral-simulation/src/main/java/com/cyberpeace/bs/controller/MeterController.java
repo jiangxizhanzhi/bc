@@ -2,10 +2,10 @@ package com.cyberpeace.bs.controller;
 
 import java.util.List;
 
+import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.bs.service.MeterService;
 import com.cyberpeace.bs.service.bo.TargetBo;
@@ -30,6 +30,20 @@ public class MeterController {
 			@ApiParam(value = "搜索", name = "search") String search) {
 		List<TargetBo> res = meterService.getMeters(type, search);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("启动单个任务")
+	@PostMapping("/start_task")
+	public BaseRsp startSingleTask(@RequestBody @Validated SingleBehaviorReq req){
+		meterService.startSingleBehavior(req);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("停止单个行为")
+	@DeleteMapping("/stop_task")
+	public BaseRsp stopSingleTask(@RequestBody @Validated SingleBehaviorReq req){
+		meterService.stopSingleBehavior(req);
+		return new BaseRsp();
 	}
 
 }

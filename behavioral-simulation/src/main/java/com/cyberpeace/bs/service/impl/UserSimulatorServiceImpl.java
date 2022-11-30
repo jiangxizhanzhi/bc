@@ -419,7 +419,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return simulator;
 	}
 
-	private UserSimulator getOrException(String resourceId) {
+	@Override
+	public UserSimulator getOrException(String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
 		}

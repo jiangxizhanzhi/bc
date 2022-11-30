@@ -70,7 +70,7 @@ public class AssessDataController {
 	@ApiOperation("新增单条评估数据")
 	@PostMapping("/assess_data")
 	public BaseRsp<String> addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq)
-			throws Exception {
+	{
 		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
 
 		// 校验tag是否存在
@@ -105,7 +105,8 @@ public class AssessDataController {
 		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 
 		assessDataService.updateById(assessData);
-
+		assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
+				assessData.getInputData());
 		return new BaseRsp<>();
 	}
 

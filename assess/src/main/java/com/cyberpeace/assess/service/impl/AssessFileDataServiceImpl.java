@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -121,8 +122,8 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	}
 
 	@Override
-	public void parseDataFile(String resourceId, Integer inputType, String inputData) throws Exception {
-		String content = "";
+	public void parseDataFile(String resourceId, Integer inputType, String inputData) {
+		String content;
 		if(inputType.equals(CommonConstant.ONE)){
 			content = saveSqlData(inputData);
 		} else if(inputType.equals(CommonConstant.TWO)){
@@ -139,7 +140,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 	private String saveExcelData(String inputData) {
 		ExcelDataHandler dataHandler = new ExcelDataHandler(inputData, 0);
-		List<List<String>> sheetData = Lists.newArrayList();
+		List<List<String>> sheetData;
 		sheetData = dataHandler.getSheetData(0);
 		dataHandler.closeIO();
 		List<String> tableColumns = sheetData.get(0);
@@ -150,13 +151,27 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 			JSONObject jsonObject = new JSONObject();
 			for (int i = 0; i < sheetData.size(); i++){
 				List<String> values = sheetData.get(i);
-				String field = values.get(0);
-				if(i >= 1 && !fieldList.contains(field)){
-					fieldList.add(field);
+				String value = values.get(j);
+				if(i == 0){
+					jsonObject.put("product", value);
+				} else {
+					String field = values.get(0);
+					if(!fieldList.contains(field)){
+						fieldList.add(field);
+					}
+					if(j !=0){
+						if(StringUtils.isBlank(field)){
+							throw new BusinessException("第%s行 第%列为空", i, j);
+						}
+						try {
+							Double aDouble = new Double(value);
+							jsonObject.put(field, aDouble);
+						} catch (Exception e) {
+//							throw new BusinessException("第%s行 第%列非数值", i, j, e);
+						}
+					}
 				}
-				if(j !=0){
-					jsonObject.put(StringUtils.isBlank(field) ? "product" : field, values.get(j));
-				}
+
 			}
 			if(j != 0){
 				data.add(jsonObject);
@@ -166,11 +181,10 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
 		assessDataSqlEcharts.setDimensions(fieldList);
 		assessDataSqlEcharts.setSource(data);
-		String content = JSONObject.toJSONString(assessDataSqlEcharts);
-		return content;
+		return JSONObject.toJSONString(assessDataSqlEcharts);
 	}
 
-	private String saveSqlData(String inputData) throws Exception {
+	private String saveSqlData(String inputData) {
 
 		String sqlStr = readFileByLines(inputData);
 		String[] split = sqlStr.split(";");
@@ -181,15 +195,13 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		List<String> sql = Arrays.asList(split);
 		List<String> fieldList = new ArrayList();
 		List<JSONObject> jsonObjects = new ArrayList<>();
-		sql.forEach( s->{
-			parseSqlContent(s, jsonObjects, fieldList);
-		});
+		sql.forEach( s-> parseSqlContent(s, jsonObjects, fieldList));
 		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
 
-		assessDataSqlEcharts.setDimensions(fieldList);
+		List<String> fields = fieldList.stream().filter(field -> !"id".equals(field)).collect(Collectors.toList());
+		assessDataSqlEcharts.setDimensions(fields);
 		assessDataSqlEcharts.setSource(jsonObjects);
-		String content = JSONObject.toJSONString(assessDataSqlEcharts);
-		return content;
+		return JSONObject.toJSONString(assessDataSqlEcharts);
 
 
 	}
@@ -208,19 +220,26 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 				throw new BusinessException("The number of fields cannot be less than 2");
 			}
 			if(fieldList.isEmpty()){
-				JSONObject jsonObject = new JSONObject();
 				fieldList.addAll(Arrays.asList(split));
-				fieldList.forEach(val ->{
-					int index = fieldList.indexOf(val);
-					jsonObject.put(val, valList.get(index));
-				});
-				jsonObjects.add(jsonObject);
 			}
+			JSONObject jsonObject = new JSONObject();
+			fieldList.forEach(val ->{
+				int index = fieldList.indexOf(val);
+				if(!"id".equals(val)) {
+					String value = valList.get(index);
+					if(StringUtils.isBlank(val)){
+						value = "";
+					}
+					value = value.replace("'", "");
+					jsonObject.put(val, value);
+				}
+			});
+			jsonObjects.add(jsonObject);
 			valList.addAll(Arrays.asList(split1));
 		}
 	}
 
-	private String readFileByLines(String filePath) throws Exception {
+	private String readFileByLines(String filePath) {
 		StringBuffer str = new StringBuffer();
 		BufferedReader reader = null;
 		try {
@@ -239,7 +258,6 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw e;
 		} finally {
 			if (reader != null) {
 				try {

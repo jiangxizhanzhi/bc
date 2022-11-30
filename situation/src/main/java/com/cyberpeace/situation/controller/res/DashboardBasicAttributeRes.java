@@ -15,6 +15,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("大屏标题")
 	private String title;
 
+	@ApiModelProperty("大屏副标题")
+	private String subTitle;
+
 	@ApiModelProperty("大屏层级")
 	private Integer level;
 
@@ -44,7 +47,8 @@ public class DashboardBasicAttributeRes implements Serializable {
 
 	public DashboardBasicAttributeRes() {
 		this.level = 1;
-		this.title = "LG中心综合态势";
+		this.title = "ZH性分靶场任务态势";
+		this.subTitle = "XXX红蓝对抗任务";
 		this.subRangeId = "zhxfbc";
 		this.subRangeName = "ZH性分靶场";
 		this.taskId = "102";

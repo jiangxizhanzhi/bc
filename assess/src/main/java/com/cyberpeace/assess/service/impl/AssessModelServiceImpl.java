@@ -3,10 +3,12 @@ package com.cyberpeace.assess.service.impl;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,6 +18,8 @@ import com.cyberpeace.assess.dao.mapper.AssessModelMapper;
 import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.assess.service.bo.TableColumn;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 
 /**
@@ -87,5 +91,18 @@ public class AssessModelServiceImpl extends ServiceImpl<AssessModelMapper, Asses
 			return "";
 		}
 
+	}
+
+	@Override
+	public void checkNameRepeat(String name, String id) {
+		LambdaQueryWrapper<AssessModel> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(AssessModel::getName, name);
+		if (StringUtils.isNotBlank(id)) {
+			queryWrapper.ne(AssessModel::getResourceId, id);
+		}
+		AssessModel assessModel = assessModelMapper.selectOne(queryWrapper);
+		if (null != assessModel) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
 	}
 }

@@ -4,13 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.assess.controller.res.AssessCaseDetailRes;
-import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
-import com.cyberpeace.assess.dao.entity.AssessCase;
-import com.cyberpeace.assess.service.AssessFileDataService;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +14,10 @@ import com.cyberpeace.assess.controller.req.AssessDataAddReq;
 import com.cyberpeace.assess.controller.req.AssessDataUpdateReq;
 import com.cyberpeace.assess.controller.req.AssessListReq;
 import com.cyberpeace.assess.controller.res.AssessDataRsp;
+import com.cyberpeace.assess.controller.res.AssessDataSqlEcharts;
 import com.cyberpeace.assess.dao.entity.AssessData;
 import com.cyberpeace.assess.service.AssessDataService;
+import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.AssessTagService;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
@@ -35,8 +30,6 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import javax.validation.constraints.NotNull;
 
 @Api(tags = "评估数据管理")
 @RestController
@@ -66,23 +59,32 @@ public class AssessDataController {
 
 		String tagStr = assessTagService.getTagContent(assessData.getTag());
 		assessDataRsp.setTags(tagStr);
-		String dataBaseTableByRelatedId = assessFileDataService.getDataBaseTableByRelatedId(assessData.getResourceId());
-		AssessDataSqlEcharts assessDataSqlEcharts = JsonUtil.toJsonObject(dataBaseTableByRelatedId, AssessDataSqlEcharts.class);
+		String dataBaseTableByRelatedId = assessFileDataService
+				.getDataBaseTableByRelatedId(assessData.getResourceId());
+		AssessDataSqlEcharts assessDataSqlEcharts = JsonUtil.toJsonObject(dataBaseTableByRelatedId,
+				AssessDataSqlEcharts.class);
 		assessDataRsp.setData(assessDataSqlEcharts);
 		return new BaseRsp(assessDataRsp);
 	}
 
 	@ApiOperation("新增单条评估数据")
 	@PostMapping("/assess_data")
-	public BaseRsp<String>
-			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) throws Exception {
+	public BaseRsp<String> addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq)
+			throws Exception {
 		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
+
+		// 校验tag是否存在
+		List<String> tags = assessDataAddReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
+		assessTagService.checkTagIds(tags);
+		// 校验name是否已存在
+		assessDataService.checkNameRepeat(assessDataAddReq.getName(), null);
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
 		assessData.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		assessDataService.save(assessData);
-		assessFileDataService.parseDataFile(assessData.getResourceId(),
-				assessData.getInputType(), assessData.getInputData());
+		assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
+				assessData.getInputData());
 		return new BaseRsp<>();
 	}
 
@@ -91,6 +93,15 @@ public class AssessDataController {
 	public BaseRsp<String>
 			modifyAssessData(@RequestBody @Validated AssessDataUpdateReq assessDataUpdateReq) {
 		AssessData assessData = BeanUtils.copy(assessDataUpdateReq, AssessData.class);
+
+		// 校验tag是否存在
+		List<String> tags = assessDataUpdateReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
+		assessTagService.checkTagIds(tags);
+		// 校验name是否已存在
+		assessDataService.checkNameRepeat(assessDataUpdateReq.getName(),
+				assessDataUpdateReq.getResourceId());
+
 		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 
 		assessDataService.updateById(assessData);

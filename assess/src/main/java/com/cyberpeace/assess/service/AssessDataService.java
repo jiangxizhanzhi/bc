@@ -10,6 +10,7 @@ import com.cyberpeace.assess.dao.entity.AssessData;
  */
 public interface AssessDataService extends IService<AssessData> {
 
-	IPage<AssessData> page(AssessListReq pageReqBase);
+    IPage<AssessData> page(AssessListReq pageReqBase);
 
+    void checkNameRepeat(String name, String resourceId);
 }

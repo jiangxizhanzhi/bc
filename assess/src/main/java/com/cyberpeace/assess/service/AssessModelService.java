@@ -13,4 +13,6 @@ public interface AssessModelService extends IService<AssessModel> {
 	IPage<AssessModel> page(AssessListReq pageReqBase);
 
 	String getDataBaseTable(AssessModel resourceId);
+
+	void checkNameRepeat(String name, String id);
 }

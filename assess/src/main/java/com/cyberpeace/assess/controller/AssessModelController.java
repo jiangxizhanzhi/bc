@@ -74,6 +74,14 @@ public class AssessModelController {
 	public BaseRsp<String>
 			addAssessModel(@RequestBody @Validated AssessModelAddReq assessModelAddReq) {
 		AssessModel assessModel = BeanUtils.copy(assessModelAddReq, AssessModel.class);
+
+		// 校验tag是否存在
+		List<String> tags = assessModelAddReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
+		assessTagService.checkTagIds(tags);
+		// 校验name是否已存在
+		assessModelService.checkNameRepeat(assessModelAddReq.getName(), null);
+
 		assessModel.setTag(JsonUtil.toJsonString(assessModelAddReq.getTag()));
 		assessModel.setParams(JsonUtil.toJsonString(assessModelAddReq.getParams()));
 		assessModel.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -91,6 +99,15 @@ public class AssessModelController {
 	public BaseRsp<String>
 			modifyAssessModel(@RequestBody @Validated AssessModelUpdateReq assessModelUpdateReq) {
 		AssessModel assessModel = BeanUtils.copy(assessModelUpdateReq, AssessModel.class);
+
+		// 校验tag是否存在
+		List<String> tags = assessModelUpdateReq.getTag();
+		tags = tags.stream().distinct().collect(Collectors.toList());
+		assessTagService.checkTagIds(tags);
+		// 校验name是否已存在
+		assessModelService.checkNameRepeat(assessModelUpdateReq.getName(),
+				assessModelUpdateReq.getResourceId());
+
 		assessModel.setTag(JsonUtil.toJsonString(assessModelUpdateReq.getTag()));
 		assessModel.setParams(JsonUtil.toJsonString(assessModelUpdateReq.getParams()));
 

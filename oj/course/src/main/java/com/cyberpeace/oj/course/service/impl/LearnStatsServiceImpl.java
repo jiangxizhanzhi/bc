@@ -263,16 +263,12 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		Map<String, Integer> integralExam = getUserWithCount(examIntegrals);
 		ArrayList<Map.Entry<String, Integer>> entries = getTopCount(integralExam, topFive);
 		entries.forEach(item -> {
-			if (usernameMap.get(item.getKey()) == null) {
+			if (usernameMap.get(item.getKey()) != null) {
 				userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
 				userStatsRankBo.getAttendExamCount().add(item.getValue());
 			} else {
 				log.info("user is not exist. userId = [{}]", item.getKey());
 
-			}
-			if (usernameMap.get(item.getKey()) != null) {
-				userStatsRankBo.getAttendExamUser().add(usernameMap.get(item.getKey()));
-				userStatsRankBo.getAttendExamCount().add(item.getValue());
 			}
 
 		});

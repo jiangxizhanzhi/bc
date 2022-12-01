@@ -50,4 +50,6 @@ public interface CourseMapper extends BaseMapper<Course> {
 	List<Course> selectCourseByUserId(String userId);
 
 	List<Course> selectCourseByOrgId(String orgId);
+
+	void updateCourseHeat(@Param("heat") Integer heat,@Param("resourceId") String resourceId);
 }

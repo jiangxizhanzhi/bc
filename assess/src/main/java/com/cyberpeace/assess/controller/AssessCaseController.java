@@ -9,19 +9,21 @@ import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.assess.controller.res.AssessCaseListRes;
 import com.cyberpeace.assess.dao.entity.AssessMaterial;
+import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
+import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,6 +78,12 @@ public class AssessCaseController {
 	private AssessMaterialMapper assessMaterialMapper;
 
 	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private AssessMaterialConfigMapper assessMaterialConfigMapper;
+
+	@Autowired
 	private RemoteUserService remoteUserService;
 
 
@@ -99,7 +107,21 @@ public class AssessCaseController {
 		assessCase.setTag(JsonUtil.arrayToString(tags));
 
 		assessCaseService.checkNameRepeat(assessCaseAddReq.getName(), null);
-		assessCaseMapper.insert(assessCase);
+
+		AssessMaterialConfig assessMaterialConfig = new AssessMaterialConfig();
+		List<String> objects = new ArrayList<>();
+		String array = JsonUtil.arrayToString(objects);
+		assessMaterialConfig.setMaterialId(array);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				assessCaseMapper.insert(assessCase);
+				assessMaterialConfig.setCaseId(assessCase.getResourceId());
+				assessMaterialConfigMapper.insert(assessMaterialConfig);
+			}
+		});
+
 
 		return new BaseRsp<>(assessCase);
 	}

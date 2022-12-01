@@ -260,25 +260,24 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			if (authContext.getIsWeb()) {
 				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
+					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+					infoBo.setGroupId(groupInfo.getResourceId());
+					infoBo.setRoomId(roomId);
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-					if (null != ojLocalScene) {
-						infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
-						infoBo.setGroupId(groupInfo.getResourceId());
-					}
 
 					// 设置课程表编号
-					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
-					Date now = new Date();
-					if (null != classroom && classroom.getStartTime().before(now)
-							&& classroom.getEndTime().after(now)) {
-						infoBo.setRoomId(classroom.getResourceId());
-					}
+//					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
+//					Date now = new Date();
+//					if (null != classroom && classroom.getStartTime().before(now)
+//							&& classroom.getEndTime().after(now)) {
+//						infoBo.setRoomId(classroom.getResourceId());
+//					}
 				}
 			}
 
 			// 查询课时场景
-			if (null == ojLocalScene) {
+			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 						lesson.getSceneShareMode(), authContext);
 			}
@@ -923,7 +922,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			}
 
 			// 查询课时场景
-			if (null == ojLocalScene) {
+			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
 						courseLesson.getSceneShareMode(), authContext);
 			}

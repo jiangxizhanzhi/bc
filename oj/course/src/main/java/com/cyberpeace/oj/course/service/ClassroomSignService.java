@@ -20,7 +20,7 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	 * @param lessonId
 	 * @param nodeId
 	 */
-	void needHelp(String lessonId, String nodeId);
+	void needHelp(String lessonId, String nodeId, String roomId);
 
 	/**
 	 * 远程协助数据注销
@@ -42,7 +42,7 @@ public interface ClassroomSignService extends IService<ClassroomSign> {
 	 * @param nodeId
 	 * @return
 	 */
-	HelpStatusBo getHelpStatus(String lessonId, String nodeId);
+	HelpStatusBo getHelpStatus(String lessonId, String nodeId, String roomId);
 
 	/**
 	 * 获取远程协助地址

@@ -109,11 +109,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	}
 
 	@Override
-	public void needHelp(String lessonId, String nodeId) {
+	public void needHelp(String lessonId, String nodeId, String roomId) {
 
 		// 课堂数据校验
-		Classroom classroom = classroomMapper.selectByOrgAndLesson(
-				UserInfoContext.getUserContext().getOrganizationId(), lessonId);
+		Classroom classroom = classroomMapper.selectById(roomId);
 		if (classroom == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
@@ -202,11 +201,10 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 	}
 
 	@Override
-	public HelpStatusBo getHelpStatus(String lessonId, String nodeId) {
+	public HelpStatusBo getHelpStatus(String lessonId, String nodeId, String roomId) {
 
 		// 课堂数据校验
-		Classroom classroom = classroomValidateHandler.validateClassroomExist(lessonId,
-				UserInfoContext.getUserContext().getOrganizationId());
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(roomId);
 		ClassroomSign classroomSign = classroomValidateHandler.validateSign(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 

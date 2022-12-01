@@ -2,7 +2,6 @@ package com.cyberpeace.bs.service.impl;
 
 import com.cyberpeace.bs.constant.BsMessage;
 import com.cyberpeace.bs.dao.entity.ActualDevice;
-import com.cyberpeace.bs.dao.entity.DeviceOccupation;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.mapper.ActualDeviceMapper;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
@@ -77,12 +76,12 @@ public class DeviceServiceImpl implements DeviceService {
             List<LcActualDevice> deviceList = deviceMap.getOrDefault(type, Lists.newArrayList());
             int size = deviceList.size();
             int num = deviceTypeNum.getNum();
-            List<String> distributed = Lists.newArrayList();
+            List<String> toDistribute = Lists.newArrayList();
             for (LcActualDevice lcActualDevice : deviceList) {
                 if (occupiedIds.contains(lcActualDevice.getDeviceId())) {
                     size--;
                 } else {
-                    distributed.add(lcActualDevice.getDeviceId());
+                    toDistribute.add(lcActualDevice.getDeviceId());
                 }
             }
             // 设备数不足
@@ -91,8 +90,7 @@ public class DeviceServiceImpl implements DeviceService {
                         EnumUtils.getEnumDescByCode(type, UserModel.AccessOs.class), num, size));
                 flag = false;
             } else {
-                List<LcActualDevice> selected = RandomUtil.randomSelect(deviceList, num);
-                List<String> selectedIds = selected.stream().map(LcActualDevice::getDeviceId).collect(Collectors.toList());
+                List<String> selectedIds = RandomUtil.randomSelect(toDistribute, num);
                 // 分配id
                 res.addSelectedIds(type, selectedIds);
                 allTypeSelected.addAll(selectedIds);

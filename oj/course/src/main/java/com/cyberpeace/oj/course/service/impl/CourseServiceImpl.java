@@ -1,11 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +33,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.entity.LessonConfig;
-import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
-import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
-import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -133,6 +128,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	@Autowired
 	private PracticeOperationRefService practiceOperationRefService;
 
+	@Autowired
+	private CourseStudyHistoryMapper courseStudyHistoryMapper;
+
 	@Override
 	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
 		// 基本数据校验
@@ -155,6 +153,15 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 		heatCourse.setHeat(heat);
 		heatCourse.setResourceId(course.getResourceId());
 		courseMapper.updateCourseHeat(heatCourse.getHeat(),heatCourse.getResourceId());
+
+		//增加学习记录
+		CourseStudyHistory courseStudyHistory = courseStudyHistoryMapper.selectByCourseIdAndUserId(courseId, authContext.getUserId());
+		if(courseStudyHistory == null){
+			courseStudyHistoryMapper.insert(new CourseStudyHistory(IDGeneratorUtil.getID(), courseId,
+					course.getName(), authContext.getUserId()));
+		}else {
+			courseStudyHistoryMapper.updateById(courseStudyHistory);
+		}
 		return courseInfoBo;
 	}
 
@@ -218,8 +225,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	}
 
 	@Override
-	public ListRsp<CourseInfoBo> selectPage(Page page, CourseQueryBo courseContext,
-			AuthContext authContext) {
+	public ListRsp<CourseWebBo> selectPage(Page page, CourseQueryBo courseContext,
+			AuthContext authContext, boolean isWeb) {
 		// 权限过滤
 		List<String> courseIds = null;
 		if (null != authContext) {
@@ -252,6 +259,32 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 		}
 
+		if(isWeb){
+			// 常规条件过滤
+			Page pageTmp = BeanUtils.copy(page, Page.class);
+			pageTmp.setSize(courseIds.size());
+			pageTmp.setCurrent(1);
+			IPage<Course> iPage = courseMapper.listByPage(pageTmp, courseContext, courseIds,
+					authContext.getIsWeb());
+			//该用户可见的课程列表
+			List<Course> allCourseList = iPage.getRecords();
+			//学习历史
+			List<CourseStudyHistory> courseStudyHistoryList = courseStudyHistoryMapper.selectByUserId(authContext.getUserId());
+			//将学习历史中的课程顺序提前
+			List<Course> studyCourseList = new ArrayList<>();
+			for(CourseStudyHistory courseStudyHistory: courseStudyHistoryList){
+				for (Course course: allCourseList){
+					if(courseStudyHistory.getCourseId().equals(course.getCourseNum())){
+						studyCourseList.add(course);
+					}
+				}
+			}
+			allCourseList.removeAll(studyCourseList);
+			studyCourseList.addAll(allCourseList);
+			List<CourseWebBo> courseWebBoList = studyCourseList.stream().map(course -> transferToBo(course, authContext))
+															   .collect(Collectors.toList());
+			return PageUtil.getListResult(courseWebBoList, page, studyCourseList.size());
+		}
 		// 常规条件过滤
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
 				authContext.getIsWeb());

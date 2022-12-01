@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.A;
 
 @Data
 public class EventTypeContext implements Serializable {
@@ -14,11 +15,7 @@ public class EventTypeContext implements Serializable {
 	@ApiModelProperty("名称")
 	private String name;
 
-	public EventTypeContext() {}
-
-	public EventTypeContext(String code, String name) {
-		this.name = name;
-		this.code = code;
-	}
+	@ApiModelProperty("父节点")
+	private String parentNode;
 
 }

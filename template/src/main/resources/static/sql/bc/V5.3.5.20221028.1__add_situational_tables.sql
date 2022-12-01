@@ -419,6 +419,40 @@ CREATE TABLE `situation_dashboard_template_ref` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = DYNAMIC;
 
+
+CREATE TABLE `situation_sub_range_context` (
+                                                  `id` int NOT NULL AUTO_INCREMENT,
+                                                  `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                  `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                  `stationCount` int DEFAULT 0,
+                                                  `create_time` datetime DEFAULT NULL,
+                                                  `update_time` datetime DEFAULT NULL,
+                                                  PRIMARY KEY (`id`) USING BTREE,
+                                                  UNIQUE KEY `sub_range_id` (`sub_range_id`) USING BTREE
+    ) ENGINE=InnoDB AUTO_INCREMENT = 1
+    CHARACTER SET = utf8
+    COLLATE = utf8_general_ci
+    ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `situation_event_type_context` (
+                                                `id` INT NOT NULL AUTO_INCREMENT,
+                                                `code` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                `name` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                `parent_node` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                `create_time` DATETIME DEFAULT NULL,
+                                                `update_time` DATETIME DEFAULT NULL,
+                                                PRIMARY KEY (`id`) USING BTREE,
+                                                UNIQUE KEY `code` (`code`) USING BTREE
+) ENGINE=INNODB AUTO_INCREMENT = 1
+    CHARACTER SET = utf8
+    COLLATE = utf8_general_ci
+    ROW_FORMAT = DYNAMIC;
+
 -- ----------------------------
 -- Table structure for situation_gis_mark
 -- ----------------------------

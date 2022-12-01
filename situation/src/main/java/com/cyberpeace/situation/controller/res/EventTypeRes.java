@@ -8,10 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class EventTypeRes extends EventTypeContext {
+public class EventTypeRes extends EventTypeContextRes {
 
 	@ApiModelProperty("编码")
-	private List<EventTypeContext> subTypes;
+	private List<EventTypeContextRes> subTypes;
 
 	public EventTypeRes() {}
 

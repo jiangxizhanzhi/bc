@@ -2,10 +2,12 @@ package com.cyberpeace.situation.service.context;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@TableName("situation_sub_range_context")
 public class SubRangeContext implements Serializable {
 
 	@ApiModelProperty("分靶场ID")

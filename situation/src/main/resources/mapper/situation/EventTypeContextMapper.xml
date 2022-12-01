@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.EventTypeContextMapper">
+
+    <select id="getEventTypeContextList"
+            resultType="com.cyberpeace.situation.service.context.EventTypeContext">
+        select * from situation_event_type_context
+        <if test="isRootNode == true">
+            where parent_node is null
+        </if>
+        <if test="isRootNode == false">
+            where parent_node is not null
+        </if>
+    </select>
+</mapper>

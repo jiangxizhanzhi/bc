@@ -48,4 +48,12 @@ public interface BsErrorCode {
 	 * 设备ip为空
 	 */
 	String INVALID_DEVICE_IP = "105009";
+	/**
+	 * 无效的设备类型
+	 */
+	String INVALID_DEVICE_TYPE = "105010";
+	/**
+	 * 无效的端口配置
+	 */
+	String INVALID_PORT = "105011";
 }

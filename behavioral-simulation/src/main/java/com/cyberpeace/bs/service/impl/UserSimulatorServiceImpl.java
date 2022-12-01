@@ -222,7 +222,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				userSimulatorMapper.deleteBySceneId(sceneId);
-				deviceOccupationMapper.releaseBySceneId(sceneId, new Date());
+				deviceOccupationMapper.releaseBySceneId(sceneId);
 			}
 		});
 		// 删除定时任务

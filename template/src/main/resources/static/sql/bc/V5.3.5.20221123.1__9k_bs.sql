@@ -65,17 +65,25 @@ CREATE TABLE `bs_device_occupation`
 (
     `id`           int(11)      NOT NULL AUTO_INCREMENT,
     `device_id`    varchar(255) NOT NULL COMMENT '实体设备id',
-    `device_type`  tinyint(1)   NOT NULL COMMENT '实体设备类型',
-    `port`         varchar(6)   NOT NULL COMMENT '端口号',
-    `is_occupied`  boolean      NOT NULL DEFAULT 0 COMMENT '是否被占用',
-    `scene_id`     varchar(32)  NULL COMMENT '设备所在场景id',
+    `scene_id`     varchar(32)  NOT NULL COMMENT '设备所在场景id',
     `simulator_id` varchar(32)  NULL COMMENT '用户行为模拟id',
     `create_time`  datetime     NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`  datetime     NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `device_id` (`device_id`) USING BTREE,
-    INDEX `scene_id` (`scene_id`) USING BTREE,
-    UNIQUE INDEX `simulator_id` (`simulator_id`) USING BTREE
+    INDEX `scene_id` (`scene_id`) USING BTREE
+);
+
+CREATE TABLE `bs_actual_device`
+(
+    `id`          int(11)      NOT NULL AUTO_INCREMENT,
+    `device_id`   varchar(255) NOT NULL COMMENT '实体设备id',
+    `device_type` tinyint(1)   NOT NULL COMMENT '实体设备类型',
+    `device_name` varchar(255) NULL COMMENT '实体设备名称',
+    `port`        varchar(6)   NOT NULL COMMENT '端口号',
+    `create_time` datetime     NULL DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `device_id` (`device_id`) USING BTREE,
+    UNIQUE INDEX `port` (`port`) USING BTREE
 );
 
 -- 用户行为模拟 -设备类型
@@ -99,5 +107,5 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 43, '正态分布', 
 -- 用户行为模拟 -前台流量状态
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 44, '未开始', 'Not Started');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 44, '运行中', 'Running');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 44, '暂停', 'Paused');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 44, '暂停', 'Paused');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 44, '已结束', 'Stopped');

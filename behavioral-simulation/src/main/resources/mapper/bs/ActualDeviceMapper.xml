@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.bs.dao.mapper.ActualDeviceMapper">
+    <select id="selectAll" resultType="com.cyberpeace.bs.dao.entity.ActualDevice">
+        select *
+        from bs_actual_device
+    </select>
+</mapper>

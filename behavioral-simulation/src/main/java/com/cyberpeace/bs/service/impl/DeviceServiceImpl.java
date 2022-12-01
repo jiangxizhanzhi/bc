@@ -1,11 +1,14 @@
 package com.cyberpeace.bs.service.impl;
 
 import com.cyberpeace.bs.constant.BsMessage;
+import com.cyberpeace.bs.dao.entity.ActualDevice;
 import com.cyberpeace.bs.dao.entity.DeviceOccupation;
 import com.cyberpeace.bs.dao.entity.UserModel;
+import com.cyberpeace.bs.dao.mapper.ActualDeviceMapper;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
-import com.cyberpeace.bs.service.DeviceDistributionService;
+import com.cyberpeace.bs.service.DeviceService;
 import com.cyberpeace.bs.service.LcService;
+import com.cyberpeace.bs.service.bo.device.DeviceAddReq;
 import com.cyberpeace.bs.service.bo.device.DeviceDistributionReq;
 import com.cyberpeace.bs.service.bo.device.DeviceDistributionRes;
 import com.cyberpeace.bs.service.bo.device.DeviceTypeNum;
@@ -25,13 +28,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class DeviceDistributionServiceImpl implements DeviceDistributionService {
+public class DeviceServiceImpl implements DeviceService {
 
     @Autowired
     LcService lcService;
 
     @Autowired
     DeviceOccupationMapper deviceOccupationMapper;
+
+    @Autowired
+    ActualDeviceMapper actualDeviceMapper;
 
     @Override
     public DeviceDistributionRes distribute(DeviceDistributionReq req) {
@@ -49,9 +55,9 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
         }
         Set<String> deviceIds = lcActualDeviceList.stream().map(LcActualDevice::getDeviceId).collect(Collectors.toSet());
         // get devices
-        List<DeviceOccupation> deviceOccupationList = deviceOccupationMapper.batchGetByIds(deviceIds);
+        List<ActualDevice> actualDeviceList = actualDeviceMapper.selectAll();
         // 未知设备
-        Set<String> recordedIds = deviceOccupationList.stream().map(DeviceOccupation::getDeviceId).collect(Collectors.toSet());
+        Set<String> recordedIds = actualDeviceList.stream().map(ActualDevice::getDeviceId).collect(Collectors.toSet());
         Set<String> notRecordedIds = getNotRecorded(deviceIds, recordedIds);
         if (notRecordedIds.size() > 0) {
             res.addMessage(String.format(BsMessage.UNKNOWN_DEVICE, notRecordedIds));
@@ -62,8 +68,7 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
         Map<Integer, List<LcActualDevice>> deviceMap = StreamApiUtils.groupBy(lcActualDeviceList, LcActualDevice::getSystem);
 
         // get occupied device ids
-        Set<String> occupiedIds = deviceOccupationList.stream().filter(DeviceOccupation::getIsOccupied)
-                .map(DeviceOccupation::getDeviceId).collect(Collectors.toSet());
+        Set<String> occupiedIds = deviceOccupationMapper.checkOccupation(deviceIds);
 
         List<String> allTypeSelected = Lists.newArrayList();
         boolean flag = true;
@@ -96,8 +101,8 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
 
         if (flag) {
             // 获取port
-            Map<String, String> idPortMap = StreamApiUtils.toMap(deviceOccupationList,
-                    DeviceOccupation::getDeviceId, DeviceOccupation::getPort);
+            Map<String, String> idPortMap = StreamApiUtils.toMap(actualDeviceList,
+                    ActualDevice::getDeviceId, ActualDevice::getPort);
             // 写入port
             res.getDevice().forEach(deviceTypePort -> {
                 deviceTypePort.getDeviceList().forEach(devicePortId -> {
@@ -110,6 +115,17 @@ public class DeviceDistributionServiceImpl implements DeviceDistributionService 
             deviceOccupationMapper.occupy(allTypeSelected, req.getSceneId(), new Date());
         }
         return res;
+    }
+
+    @Override
+    public void addDevice(DeviceAddReq req) {
+        ActualDevice actualDevice = new ActualDevice();
+        actualDevice.setDeviceId(req.getDeviceId());
+        actualDevice.setDeviceType(req.getDeviceType());
+        actualDevice.setDeviceName(req.getDeviceName());
+        actualDevice.setPort(req.getPort());
+        actualDevice.setCreateTime(new Date());
+        actualDeviceMapper.insert(actualDevice);
     }
 
     private Set<String> getNotRecorded(Collection<String> remote, Collection<String> local) {

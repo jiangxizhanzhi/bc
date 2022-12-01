@@ -1,7 +1,8 @@
 package com.cyberpeace.bs.controller;
 
 
-import com.cyberpeace.bs.service.DeviceDistributionService;
+import com.cyberpeace.bs.service.DeviceService;
+import com.cyberpeace.bs.service.bo.device.DeviceAddReq;
 import com.cyberpeace.bs.service.bo.device.DeviceDistributionReq;
 import com.cyberpeace.bs.service.bo.device.DeviceDistributionRes;
 import com.cyberpeace.common.model.BaseRsp;
@@ -21,19 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class DeviceController {
 
     @Autowired
-    DeviceDistributionService deviceDistributionService;
+    DeviceService deviceService;
 
 
     @ApiOperation("分配实体设备")
     @PostMapping("/distribute")
     public BaseRsp<DeviceDistributionRes> distributeActualDevice(@RequestBody @Validated DeviceDistributionReq req){
-        DeviceDistributionRes res = deviceDistributionService.distribute(req);
+        DeviceDistributionRes res = deviceService.distribute(req);
         return new BaseRsp<>(res);
     }
 
     @ApiOperation("添加实体设备")
     @PostMapping("/new")
-    public BaseRsp add(){
+    public BaseRsp add(@RequestBody @Validated DeviceAddReq req){
+        req.validate();
+        deviceService.addDevice(req);
         return new BaseRsp();
     }
 }

@@ -16,12 +16,10 @@ import java.util.Set;
 public interface DeviceOccupationMapper {
     Set<String> checkOccupation(@Param("deviceIds") Collection<String> deviceIds);
 
-    List<DevicePortId> getPortByIds(@Param("deviceIds") Collection<String> deviceIds);
-
     List<DeviceOccupation> batchGetByIds(@Param("deviceIds") Collection<String> deviceIds);
 
     void occupy(@Param("selectedIds") Collection<String> selectedIds, @Param("sceneId") String sceneId,
                 @Param("date") Date date);
 
-    void releaseBySceneId(@Param("sceneId") String sceneId, @Param("date") Date date);
+    void releaseBySceneId(@Param("sceneId") String sceneId);
 }

@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper">
-    <update id="occupy">
-        update bs_device_occupation
-        set
-        is_occupied = 1,
-        scene_id = #{sceneId},
-        update_time = #{date}
-        where device_id in
-        <foreach collection="selectedIds" item="deviceId" open="(" close=")" separator=",">
-            #{deviceId}
+    <insert id="occupy">
+        insert into bs_device_occupation
+        (`device_id`, `scene_id`, `create_time`)
+        values
+        <foreach collection="selectedIds" item="deviceId" separator=",">
+            (#{deviceId}, #{sceneId}, #{date})
         </foreach>
-    </update>
-    <update id="releaseBySceneId">
-        update bs_device_occupation
-        set is_occupied = 0,
-            scene_id    = null,
-            update_time = #{date}
+    </insert>
+    <delete id="releaseBySceneId">
+        delete
+        from bs_device_occupation
         where scene_id = #{sceneId}
-    </update>
+    </delete>
+
     <select id="checkOccupation" resultType="java.lang.String">
         select device_id
-        from bs_device_occupation
-        where is_occupied = 1
-        and device_id in
-        <foreach collection="deviceIds" item="deviceId" open="(" close=")" separator=",">
-            #{deviceId}
-        </foreach>
-    </select>
-    <select id="getPortByIds" resultType="com.cyberpeace.bs.service.bo.device.DevicePortId">
-        select port, device_id as id
         from bs_device_occupation
         where device_id in
         <foreach collection="deviceIds" item="deviceId" open="(" close=")" separator=",">

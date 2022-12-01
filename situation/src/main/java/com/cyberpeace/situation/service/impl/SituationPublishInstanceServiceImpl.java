@@ -11,10 +11,13 @@ import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     @Autowired
     private DashboardTemplateMapper dashboardTemplateMapper;
+
+    @Autowired
+    private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
     @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
@@ -77,8 +83,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     private void checkTemplate(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
 
-        DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(situationPublishInstanceAddReq.getTemplateId());
-        if(null == dashboardTemplate){
+        DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(situationPublishInstanceAddReq.getTemplateId());
+        if(null == dashboardTemplateRef){
             throw new BusinessException(SituationErrorCode.TEMPLATE_INVALID_ERROR);
         }
     }

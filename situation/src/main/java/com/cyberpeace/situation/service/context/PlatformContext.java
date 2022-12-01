@@ -33,6 +33,9 @@ public class PlatformContext implements Serializable {
 	@ApiModelProperty("高程（米）")
 	private Integer altitude;
 
+	@ApiModelProperty("归属角色")
+	private String role;
+
 	public PlatformContext() {}
 
 	public PlatformContext(String platformId, String platformName) {

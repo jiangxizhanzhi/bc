@@ -4,21 +4,14 @@ import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.MeterService;
 import com.cyberpeace.bs.service.UserSimulatorService;
-import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
-import com.cyberpeace.bs.service.bo.simulator.VariableBo;
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SpringContextUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -29,29 +22,6 @@ public class MeterServiceImpl implements MeterService {
 
 	@Autowired
 	UserSimulatorService userSimulatorService;
-
-	@Override
-	public List<TargetBo> getMeters(Integer type, String search) {
-		if (search == null) {
-			search = "";
-		}
-		if (type == null) {
-			type = TargetType.ALL.getCode();
-		}
-
-		List<TargetBo> ret = Lists.newArrayList();
-		if (!type.equals(TargetType.LONGCE.getCode())) {
-			// todo
-			List<TargetBo> mpTargets = Lists.newArrayList();
-			ret.addAll(mpTargets);
-		}
-		if (type.equals(TargetType.LONGCE.getCode()) || type.equals(TargetType.ALL.getCode())) {
-			List<TargetBo> lcTargets = lcService.getDeviceList(search);
-			ret.addAll(lcTargets);
-		}
-
-		return ret;
-	}
 
     @Override
     public void startSingleBehavior(SingleBehaviorReq req) {

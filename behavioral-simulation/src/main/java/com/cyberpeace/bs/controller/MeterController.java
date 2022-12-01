@@ -1,19 +1,13 @@
 package com.cyberpeace.bs.controller;
 
-import java.util.List;
-
+import com.cyberpeace.bs.service.MeterService;
 import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
+import com.cyberpeace.common.model.BaseRsp;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import com.cyberpeace.bs.service.MeterService;
-import com.cyberpeace.bs.service.bo.TargetBo;
-import com.cyberpeace.common.model.BaseRsp;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @Api(tags = "行为模拟-行为设备管理")
 @RestController
@@ -23,14 +17,6 @@ public class MeterController {
 
 	@Autowired
 	MeterService meterService;
-
-	@ApiOperation("行为设备列表")
-	@GetMapping("/list")
-	public BaseRsp<List<TargetBo>> listTarget(@ApiParam(value = "类型", name = "type") Integer type,
-			@ApiParam(value = "搜索", name = "search") String search) {
-		List<TargetBo> res = meterService.getMeters(type, search);
-		return new BaseRsp<>(res);
-	}
 
 	@ApiOperation("启动单个任务")
 	@PostMapping("/start_task")

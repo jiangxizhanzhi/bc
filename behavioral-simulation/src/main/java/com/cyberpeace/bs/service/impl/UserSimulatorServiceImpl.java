@@ -407,8 +407,16 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
 		// todo index
 		simulator.setExecutedIndex(statistic.getBehaviorCount());
-		simulator.setDeviceId(nodeBo.getNodeId());
-		simulator.setDeviceIp(BsUtil.getIp(nodeBo.getIpConfig()));
+		String deviceId = nodeBo.getNodeId();
+		if (StringUtils.isBlank(deviceId)) {
+			throw new BusinessException(BsErrorCode.INVALID_DEVICE_ID);
+		}
+		simulator.setDeviceId(deviceId);
+		String deviceIp = BsUtil.getIp(nodeBo.getIpConfig());
+		if (StringUtils.isBlank(deviceIp)) {
+			throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
+		}
+		simulator.setDeviceIp(deviceIp);
 		simulator.setDeviceName(nodeBo.getNodeName());
 		if(nodeBo.getIsEntity() == null){
 			throw new BusinessException(BsErrorCode.ACTUAL_OR_VIRTUAL);

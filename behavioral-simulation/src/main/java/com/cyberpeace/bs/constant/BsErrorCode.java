@@ -40,4 +40,12 @@ public interface BsErrorCode {
 	 * resource_id 不存在
 	 */
 	String RESOURCE_ID_MISSING = "105007";
+	/**
+	 * 设备id为空
+	 */
+	String INVALID_DEVICE_ID = "105008";
+	/**
+	 * 设备ip为空
+	 */
+	String INVALID_DEVICE_IP = "105009";
 }

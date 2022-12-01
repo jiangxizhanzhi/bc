@@ -1,8 +1,6 @@
 package com.cyberpeace.bs.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.bs.service.LcService;
-import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
@@ -17,10 +15,11 @@ import com.cyberpeace.bs.service.bo.variable.VariableSimple;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,40 +32,56 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LcServiceImpl implements LcService {
 
+	/**
+	 * 龙测API服务主机+端口
+	 */
 	private String LC_HOST_PORT;
 
+	/**
+	 * 根据id查询行为列表
+	 */
 	private String BEHAVIOR_LIST_URL = "api/v1/findFlowChart";
 
-	private String ACTUAL_DEVICE_URL;
-
-	private String START_BEHAVIOR_URL;
-
-	private String TARGET_LIST_URL;
 	/**
-	 * 龙测请求对接地址
+	 * 启动行为
 	 */
-	private String VARIABLE_URL = "api/v1/data/find-by-page";
-	private String VARIABLE_UPDATE_URL = "api/v1/data/update";
-
 	private String RELEASE_TASK = "api/v1/save";
 
+	/**
+	 * 中止行为
+	 */
 	private String STOP_TASK = "api/v1/stopTask";
 
 	private String DEVICE_URL = "api/v1/devices/find-by-page";
 
+	/**
+	 * 行为列表
+	 */
 	private String BEHAVIOR_PAGE = "api/v1/newList";
 
+	/**
+	 * 查询行为的变量
+	 */
 	private String BEHAVIOR_VARIABLE = "api/v1/flowData/";
 
+	/**
+	 * 更新行为的变量
+	 */
 	private String BEHAVIOR_VARIABLE_UPDATE = "api/v1/updateFlowData";
 
-	private String ACTUAL_DEVICE_LIST = "devices/findNewList";
+	/**
+	 * 获取实体设备列表
+	 */
+	private String ACTUAL_DEVICE_LIST = "api/v1/devices/findNewList";
 
 
 	@PostConstruct
 	public void init() {
-		// LC_HOST_PORT = SystemPropUtil.getProp("LC_HOST_PORT");
-		LC_HOST_PORT = "http://10.4.1.138/";
+		LC_HOST_PORT = SystemPropUtil.getProp("LC_HOST_PORT");
+		if (StringUtils.isEmpty(LC_HOST_PORT)) {
+			LC_HOST_PORT = "http://10.4.1.138/";
+		}
+		log.info("LC_HOST_PORT: {}", LC_HOST_PORT);
 		// BEHAVIOR_LIST_URL = LC_HOST_PORT +
 		// ConfigUtil.getContextProperty("lc.behavior.list");
 		// TARGET_LIST_URL = LC_HOST_PORT +
@@ -125,17 +140,6 @@ public class LcServiceImpl implements LcService {
 		return lcBehavior;
 	}
 
-
-
-	@Override
-	public List<TargetBo> getDeviceList(String search) {
-		String targetUrl = TARGET_LIST_URL + "/?search=" + search;
-		JSONArray res = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-		List<TargetBo> ret = Lists.newArrayList();
-		// todo
-
-		return ret;
-	}
 
 	@Override
 	public List<LcBehaviorRspBo> getLcBehaviorListByIds(Collection<String> behaviorIds,

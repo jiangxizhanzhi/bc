@@ -37,13 +37,6 @@ public interface LcService {
      */
 	void stopBehavior(StopTaskReq req);
 
-    /**
-     * 获取靶标列表
-     * @param search 名称模糊搜索
-     * @return 靶标列表
-     */
-	List<TargetBo> getDeviceList(String search);
-
 	/**
 	 * 根据id获取用户行为列表
 	 * @param behaviorIds id集合

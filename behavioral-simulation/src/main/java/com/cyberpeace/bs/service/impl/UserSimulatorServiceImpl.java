@@ -349,13 +349,14 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
-	public void updateProcess(String trafficId, Integer index) {
-		UserSimulator traffic = userSimulatorMapper.selectById(trafficId);
-		traffic.setExecutedIndex(index);
+	public void updateProcess(String simulatorId, Integer index) {
+//		UserSimulator simulator = userSimulatorMapper.selectById(simulatorId);
+//		simulator.setExecutedIndex(index);
 		// if (index == 0) {
 		// traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
 		// }
-		userSimulatorMapper.updateById(traffic);
+//		userSimulatorMapper.updateById(simulator);
+		userSimulatorMapper.updateProcess(simulatorId, index);
 	}
 
 

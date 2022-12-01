@@ -1,6 +1,7 @@
 package com.cyberpeace.bs.service.bo;
 
 import com.cyberpeace.bs.service.LcService;
+import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.VariableBo;
@@ -61,6 +62,10 @@ public class BsTimerTask extends TimerTask {
             variableBos.forEach(variableBo -> req.addVariable(variableBo.getName(), variableBo.getValue()));
             LcService lcService = SpringContextUtil.getBeanByClass(LcService.class);
             lcService.startBehavior(req);
+
+            UserSimulatorService userSimulatorService = SpringContextUtil
+                    .getBeanByClass(UserSimulatorService.class);
+            userSimulatorService.updateProcess(simulatorId, index);
         } catch (Exception e) {
             log.error("User simulator timer task failed: ", e);
         }

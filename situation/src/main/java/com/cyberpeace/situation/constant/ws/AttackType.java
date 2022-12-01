@@ -67,7 +67,7 @@ public enum AttackType {
 	INTRANET_PENETRATION(ActionType.START_ATTACK,"内网渗透","Intranet Penetration","intranet-Penetration",false,false,false),
 	DATA_EAVESDROPPING(ActionType.START_ATTACK,"数据窃听","Data Eavesdropping","data-eavesdropping", false, true, false),
 	VIRUS_IMPLANTATION(ActionType.VIRUS_ATTACKS, "病毒植入","Virus Implantation","virus-implantation", false, false, true),
-	EXPLOIT(ActionType.START_ATTACK, "漏洞利用", "Exploit", "exploit", true, false, false);
+	EXPLOIT(ActionType.HOST_ATTACK, "漏洞利用", "Exploit", "exploit", true, false, false);
 
     @Getter
 	private ActionType actionType;

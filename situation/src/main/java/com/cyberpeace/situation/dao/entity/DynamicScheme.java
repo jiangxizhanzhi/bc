@@ -11,14 +11,19 @@ import lombok.Data;
 public class DynamicScheme extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
+	//资源编号
 	private String resourceId;
 
+	//场景id
 	private String sceneId;
 
+	//方案名称
 	private String name;
 
+	//方案数据
 	private String schemeData;
 
+	//防御等级
 	private Integer defenseLevel;
 
 }

@@ -13,30 +13,43 @@ public class AttackMessage extends BaseTable {
 	@TableId(value = "resource_id")
 	private String resourceId;
 
+	//场景编号
 	private String sceneId;
 
+	//动效攻击类型
 	private String type;
 
+	//防御类型
 	private String defenseType;
 
+	//动效描述
 	private String description;
 
+	//源节点id
 	private String sourceId;
 
+	//目标节点id
 	private String targetId;
 
+	//间隔时间
 	private Integer intervalTime;
 
+	//间隔时间
 	private Integer durationTime;
 
+	//是否聚焦
 	private Boolean lookAtTarget;
 
+	//线型
 	private String lineType;
 
+	//线的颜色
 	private String lineColor;
 
+	//线的宽度
 	private Integer lineWidth;
 
+	//多媒体数据
 	private String mediaAnimation;
 
 }

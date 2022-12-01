@@ -1,15 +1,15 @@
 package com.cyberpeace.situation.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Data
@@ -53,6 +53,10 @@ public class ElementInfo implements Serializable {
 
 	@ApiModelProperty("节点颜色")
 	private String color;
+
+	@ApiModelProperty("模型Url")
+	@JsonProperty("modelUrl")
+	private String modelUrl;
 
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));

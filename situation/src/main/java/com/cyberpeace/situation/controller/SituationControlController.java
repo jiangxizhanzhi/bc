@@ -56,8 +56,11 @@ public class SituationControlController {
 	@PostMapping("/scheme")
 	public BaseRsp<String> addDynamicEffectScheme(
 			@RequestBody @Validated AddDynamicSchemeReq addDynamicSchemeReq) {
+		//校验动效方案名称
 		dynamicSchemeService.validDynamicSchemeName(addDynamicSchemeReq);
+		//添加动效方案
 		String resourceId = dynamicSchemeService.addDynamicScheme(addDynamicSchemeReq);
+		//返回动效方案编号
 		return new BaseRsp<>(resourceId);
 	}
 
@@ -66,7 +69,9 @@ public class SituationControlController {
 	public BaseRsp<DynamicSchemeRes>
 			getDynamicEffectScheme(@ApiParam(name = "resource_id", value = "动效方案编号",
 					required = true) @RequestParam(value = "resource_id") String resourceId) {
+		//根据动效方案编号获取动效方案数据
 		DynamicSchemeRes dynamicSchemeRes = dynamicSchemeService.getDynamicSchemeById(resourceId);
+		//返回动效方案列表
 		return new BaseRsp<>(dynamicSchemeRes);
 	}
 
@@ -74,10 +79,14 @@ public class SituationControlController {
 	@PatchMapping("/scheme")
 	public BaseRsp<DynamicSchemeReq>
 			updateDynamicEffectScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
+		//校验动效方案阶段
 		dynamicSchemeService.validStage(dynamicSchemeReq);
+		//校验动效方案多媒体动效
 		dynamicSchemeService.validMedia(dynamicSchemeReq);
+		//更新并获取更新后的动效方案数据
 		DynamicSchemeReq dynamicSchemeReq1 = dynamicSchemeService
 				.updateDynamicScheme(dynamicSchemeReq);
+		//返回更新后的动效方案数据
 		return new BaseRsp<>(dynamicSchemeReq1);
 	}
 
@@ -85,7 +94,9 @@ public class SituationControlController {
 	@DeleteMapping("/scheme")
 	public BaseRsp<Boolean>
 			deleteDynamicEffectScheme(@RequestBody @Validated SchemeIdListReq schemeIdListReq) {
+		//循环删除
 		for (String dynamicSchemeId : schemeIdListReq.getSchemeIds()) {
+			//根据动效方案编号删除动效方案
 			dynamicSchemeService.deleteDynamicScheme(dynamicSchemeId);
 		}
 		return new BaseRsp<>(true);
@@ -95,7 +106,9 @@ public class SituationControlController {
 	@GetMapping("/scheme_names")
 	public BaseRsp<List<DynamicSchemeNameRes>> getAllDynamicName(@ApiParam(name = "scene_id",
 			value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId) {
+		//获取当前场景下的动效方案名称列表
 		List<DynamicSchemeNameRes> names = dynamicSchemeService.getAllDynamicName(sceneId);
+		//返回名称列表
 		return new BaseRsp<>(names);
 	}
 
@@ -106,9 +119,13 @@ public class SituationControlController {
 					required = true) @RequestParam(value = "scene_id") String sceneId,
 			@ApiParam(name = "is_instance", value = "是否为实例场景") @RequestParam(value = "is_instance",
 					required = false) Boolean isInstance) {
+		//创建空的返回结果
 		OptionsRes optionsRes = new OptionsRes();
+		//获取本地的动效选择项
 		dynamicSchemeService.getLocalOption(optionsRes);
+		//获取区域列表和节点列表
 		dynamicSchemeService.getRemoteOption(optionsRes, sceneId, isInstance);
+		//返回所有选项
 		return new BaseRsp<>(optionsRes);
 	}
 
@@ -116,17 +133,26 @@ public class SituationControlController {
 	@PostMapping("/run_attack_message")
 	public BaseRsp<?>
 			runAttackMessage(@RequestBody @Validated RunAttackMessageReq runAttackMessageReq) {
+		//类型转换
 		AttackMessageReq attackMessageBo = BeanUtils.copy(runAttackMessageReq,
 				AttackMessageReq.class);
+		//获取场景编号
 		String sceneId = runAttackMessageReq.getSceneId();
+		//清除多媒体动效
 		dynamicSchemeService.clearMedia(sceneId);
+		//清除当前场景的进程数据
 		dynamicSchemeService.clearRoomSchedule(sceneId);
+		//更新场景的code
 		String code = sceneConfigService.updateSceneCode(sceneId);
+		//获取节点列表
 		List<String> elementIds = dynamicSchemeService
 				.getElementIds(sceneId, runAttackMessageReq.getIsInstance());
+		//判断是否为多媒体动效
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+			//推送多媒体动效
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
 		} else {
+			//推送普通动效
 			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, false);
 		}
 		return new BaseRsp<>();
@@ -135,9 +161,13 @@ public class SituationControlController {
 	@ApiOperation("运行动效方案")
 	@PostMapping("/run_dynamic_scheme")
 	public BaseRsp<?> runDynamicScheme(@RequestBody @Validated DynamicSchemeReq dynamicSchemeReq) {
+		//校验阶段
 		dynamicSchemeService.validStage(dynamicSchemeReq);
+		//校验多媒体动效
 		dynamicSchemeService.validMedia(dynamicSchemeReq);
+		//清除当前场景多媒体动效
 		dynamicSchemeService.clearMedia(dynamicSchemeReq.getSceneId());
+		//推送多媒体动效至场景
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeReq, null ,null);
 		return new BaseRsp<>();
 	}
@@ -146,11 +176,15 @@ public class SituationControlController {
 	@PostMapping("/upload_media")
 	public BaseRsp<AttachmentBo> uploadMedia(@ApiParam(value = "上传文件",
 			required = true) @RequestPart("file") MultipartFile multipartFile) {
+		//获取名称
 		String fileName = multipartFile.getOriginalFilename();
+		//校验文件后缀
 		FileUtil.validateFileSuffix(fileName,
 				DynamicSchemeServiceImpl.PICTURE_TYPE + "," + DynamicSchemeServiceImpl.VIDEO_TYPE);
+		//上传媒体文件
 		AttachmentBo attachmentBo = attachmentService
 				.uploadFile(AttachmentPath.UPLOAD_SITUATION.getCode(), true, multipartFile, true);
+		//设置文件路径
 		attachmentBo.setFilePath(attachmentBo.getFilePath());
 		return new BaseRsp<>(attachmentBo);
 	}
@@ -159,6 +193,7 @@ public class SituationControlController {
 	@GetMapping("/schedule")
 	public BaseRsp<List<WsAttackSchedule>> getSchedule(@ApiParam(name = "scene_id", value = "场景编号",
 			required = true) @RequestParam(value = "scene_id") String sceneId) {
+		//根据场景编号获取进程信息
 		List<WsAttackSchedule> schedule = dynamicSchemeService.getSchedule(sceneId);
 		return new BaseRsp<>(schedule);
 	}
@@ -170,12 +205,16 @@ public class SituationControlController {
 		// 1. generate dump file
 		String tempDir = ZipUtil.generatePath();
 		try {
+			//动效方案导出
 			String zipPath = dynamicSchemeService.makeExportFile(resourceId, tempDir);
 			// 2. generate file response
 			File zip = new File(zipPath);
+			//生成文件相应
 			FileUtil.setResponse(zip, false, response);
 		} catch (Exception e) {
+			//打印错误日志
 			log.error("failed to dump combat techs", e);
+			//抛出异常导出动效方案失败
 			throw new BusinessException(SituationErrorCode.FAILED_TO_EXPORT_DYNAMIC_SCHEME);
 		} finally {
 			// 3. delete temp dir
@@ -208,6 +247,7 @@ public class SituationControlController {
 	@PostMapping("/recovery")
 	public void recovery(
 			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId){
+		//恢复场景下的节点状态
 		attackMessageHistoryService.recovery(sceneId);
 	}
 
@@ -215,6 +255,7 @@ public class SituationControlController {
 	@PostMapping("/playback")
 	public void playback(
 			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId){
+		//回放当前场景动效
 		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId);
 	}
 

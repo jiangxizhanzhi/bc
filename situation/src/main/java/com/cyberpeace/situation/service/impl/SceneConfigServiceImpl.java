@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class SceneConfigServiceImp implements SceneConfigService {
+public class SceneConfigServiceImpl implements SceneConfigService {
 
     Map<String, String> schemeCodeCache = new HashMap<>();
 

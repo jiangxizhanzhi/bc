@@ -152,5 +152,9 @@ public interface DynamicSchemeService {
 	 */
 	List<String> getElementIds(String sceneId, Boolean isInstance);
 
+	/**
+	 * 回放
+	 * @param sceneId 场景编号
+	 */
 	void playbackPushDynamicSchemeToRoom(String sceneId);
 }

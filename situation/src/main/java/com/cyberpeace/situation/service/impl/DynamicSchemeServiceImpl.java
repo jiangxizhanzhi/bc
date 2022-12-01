@@ -80,90 +80,121 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Autowired
 	private AttackMessageHistoryService attackMessageHistoryService;
 
+	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
 
+	//允许上传的视频格式
 	public static String VIDEO_TYPE = "MP4";
 
+	//导出文件名称
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
+	//字符串最小长度
 	public Integer MIN_STR_LEN = 1;
 
+	//名称最大长度
 	public Integer MAX_NAME_STR_LEN = 255;
 
+	//阶段已运行
 	public Integer STAGE_HAS_BEEN_RUN = 0;
 
+	//阶段正在运行
 	public Integer STAGE_IS_RUNNING = 1;
 
+	//动效已运行
 	public Integer DYNAMIC_HAS_BEEN_RUN = 2;
 
+	//动效正在运行
 	public Integer DYNAMIC_IS_RUNNING = 3;
 
+	//图片code
 	public Integer PICTURE_CODE = 1;
 
+	//视频code
 	public Integer VIDEO_CODE = 2;
 
 	@Override
 	public String addDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
+		//将AddDynamicSchemeReq转成DynamicScheme
 		DynamicScheme dynamicScheme = addDynamicSchemeReqToDynamicScheme(addDynamicSchemeReq);
+		//设置资源id
 		dynamicScheme.setResourceId(IDGeneratorUtil.getID());
+		//插入数据库
 		dynamicSchemeMapper.insert(dynamicScheme);
 		return dynamicScheme.getResourceId();
 	}
 
 	@Override
 	public DynamicSchemeRes getDynamicSchemeById(String resourceId) {
+		//读取动效方案数据
 		DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
 		if (dynamicScheme == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		//DynamicScheme转DynamicSchemeRes
 		DynamicSchemeRes dynamicSchemeRes = BeanUtils.copy(dynamicScheme, DynamicSchemeRes.class);
+		//获取动效阶段数据
 		List<DynamicStageBo> dynamicStageBoList = JsonUtil
 				.toJsonObjectArray(dynamicScheme.getSchemeData(), DynamicStageBo.class);
+		//动效阶段数据
 		List<DynamicStage> dynamicStageResList = new ArrayList<>();
 		for (DynamicStageBo dynamicStageBo : dynamicStageBoList) {
 			DynamicStage dynamicStageRes = new DynamicStage();
+			//设置动效阶段名称
 			dynamicStageRes.setName(dynamicStageBo.getName());
 			List<AttackMessageReq> attackMessageBoList = new ArrayList<>();
 			if (dynamicStageBo.getAttackMessageIds().size() > 0) {
+				//获取当前阶段动效列表
 				List<AttackMessage> attackMessageList = attackMessageMapper
 						.selectBatchIds(dynamicStageBo.getAttackMessageIds());
+				//有动效没有找到
 				if(attackMessageList.size() < dynamicStageBo.getAttackMessageIds().size()){
 					throw new BusinessException(SituationErrorCode.CANNOT_FIND_DYNAMIC);
 				}
 				for (String attackMessageId : dynamicStageBo.getAttackMessageIds()){
 					AttackMessage attackMessage = new AttackMessage();
+					//获取当前动效id对应的动效数据
 					for (AttackMessage message : attackMessageList){
 						if(message.getResourceId().equals(attackMessageId)){
 							attackMessage = message;
 							break;
 						}
 					}
+					//拷贝动效数据
 					AttackMessageReq attackMessageBo = BeanUtils.copy(attackMessage,
 							AttackMessageReq.class);
 					if (attackMessage.getMediaAnimation() == null) {
+						//普通动效设置多媒体数
 						MediaAnimation mediaAnimation = new MediaAnimation();
 						List<MediaAnimation> emptyMediaAnimation = new ArrayList<>();
 						emptyMediaAnimation.add(mediaAnimation);
 						attackMessageBo.setMediaAnimationList(emptyMediaAnimation);
 					} else {
+						//多媒体动效设置动效数据
 						attackMessageBo.setMediaAnimationList(JsonUtil.toJsonObjectArray(
 								attackMessage.getMediaAnimation(), MediaAnimation.class));
 					}
 					attackMessageBoList.add(attackMessageBo);
+					//设置动效数据
 					dynamicStageRes.setAttackMessageReqList(attackMessageBoList);
 				}
 			} else {
+				//设置动效数据
 				dynamicStageRes.setAttackMessageReqList(attackMessageBoList);
 			}
+			//
 			dynamicStageResList.add(dynamicStageRes);
 		}
+		//设置动效方案数据
 		dynamicSchemeRes.setSchemeData(dynamicStageResList);
 		return dynamicSchemeRes;
 	}
 
 	@Override
 	public DynamicSchemeReq updateDynamicScheme(DynamicSchemeReq dynamicSchemeReq) {
+		//拷贝数据
 		DynamicScheme dynamicScheme = BeanUtils.copy(dynamicSchemeReq, DynamicScheme.class);
+		//获取防御等级
 		Integer defenseLevel = dynamicSchemeReq.getDefenseLevel();
 		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -177,12 +208,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					HashSet<String> description = new HashSet<>(dynamicStage
 							.getAttackMessageReqList().stream()
 							.map(AttackMessageReq::getDescription).collect(Collectors.toList()));
+					//如果除重之后的set大小较小则判为有重复的动效描述
 					if (description.size() < dynamicStage.getAttackMessageReqList().size()) {
 						throw new BusinessException(
 								SituationErrorCode.DUPLICATED_DYNAMIC_DESCRIPTION);
 					}
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {
+						//设置动效防御等级
 						attackMessageReq.setDefenseLevel(defenseLevel);
 						// 设置多媒体的名称
 						if (attackMessageReq.getType()
@@ -204,20 +237,24 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						}
 					}
 				}
-
+				//批量进行新增动效操作
 				attackMessageService.bathAddAttackMessage(addAttackMessageReqList);
+				//批量进行修改动效操作
 				attackMessageService.bathUpdateAttackMessage(updateAttackMessageReqList);
 
 				for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
 					DynamicStageBo dynamicStageBo = new DynamicStageBo();
+					//设置名称
 					dynamicStageBo.setName(dynamicStage.getName());
+					//设置动效id
 					dynamicStageBo.setAttackMessageIds(dynamicStage.getAttackMessageReqList()
 							.stream().map(AttackMessageReq::getResourceId)
 							.collect(Collectors.toList()));
 					dynamicStageBoList.add(dynamicStageBo);
 				}
-
+				//设置动效方案数据
 				dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageBoList));
+				//更新动效数据
 				dynamicSchemeMapper.updateById(dynamicScheme);
 			}
 		});
@@ -227,9 +264,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Override
 	public void deleteDynamicScheme(String resourceId) {
 		List<String> attackMessageIds = new ArrayList<>();
+		//根据资源编号获取动效方案数据
 		DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
+		//解析动效方案数据
 		List<DynamicStageBo> dynamicStageBoList = JsonUtil
 				.toJsonObjectArray(dynamicScheme.getSchemeData(), DynamicStageBo.class);
+		//获取动效id列表
 		for (DynamicStageBo dynamicStageBo : dynamicStageBoList) {
 			attackMessageIds.addAll(dynamicStageBo.getAttackMessageIds());
 		}
@@ -239,6 +279,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				if (attackMessageIds.size() > 0) {
+					//批量删除动效
 					attackMessageMapper.deleteBatchIds(attackMessageIds);
 				}
 				dynamicSchemeMapper.deleteById(resourceId);
@@ -248,19 +289,24 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Override
 	public List<DynamicSchemeNameRes> getAllDynamicName(String sceneId) {
+		//获取当前场景下的动效方案名称
 		return dynamicSchemeMapper.getAllNamesBySceneId(sceneId);
 	}
 
 	@Override
 	public void getLocalOption(OptionsRes optionsRes) {
+		//获取动效类型
 		optionsRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
 				attackType -> new WebAttackType(attackType.getKeyWord(), attackType.getMsg(),
 						attackType.getActionType().getType(), attackType.getActionType().isSource(),
 						attackType.getActionType().isDurationTime())));
+		//获取线型
 		optionsRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
 				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
+		//获取颜色
 		optionsRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
 				color -> new LocalType(color.getCode(), color.getMsg())));
+		//获取防御类型
 		optionsRes.setDefenseList(StreamApiUtils.map(Lists.newArrayList(DefenseType.values()),
 				defenseType -> new LocalType(defenseType.getMsg(), defenseType.getKeyWord())));
 	}
@@ -274,17 +320,22 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 		SceneData sceneData;
 		if (isInstance != null && !isInstance) {
+			//不是实例
 			sceneData = topoHandlerService.getSceneData(null, sceneId);
 		} else {
+			//是实例
 			sceneData = topoHandlerService.getSceneData(sceneId, null);
 		}
+		//态势数据
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
 		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
+		//将区域id做处理返回给前端
 		optionsRes.setAreaList(
 				StreamApiUtils.map(areaInfoList, areaInfo -> new ElementType(areaInfo.getAreaId(),
 						"area-" + areaInfo.getAreaId().substring(0, 8))));
+		//返回节点数据
 		optionsRes.setElementList(StreamApiUtils.map(elementInfoList,
 				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName())));
 	}
@@ -293,6 +344,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			addDynamicSchemeReqToDynamicScheme(AddDynamicSchemeReq addDynamicSchemeReq) {
 		DynamicScheme dynamicScheme = BeanUtils.copy(addDynamicSchemeReq, DynamicScheme.class);
 		List<DynamicStageBo> dynamicStageList = new ArrayList<>();
+		//设置动效方案数据
 		dynamicScheme.setSchemeData(JSON.toJSONString(dynamicStageList));
 		return dynamicScheme;
 	}
@@ -303,40 +355,56 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Override
 	public void pushMediaToRoom(AttackMessageReq attackMessageBo, String code, Boolean playback) {
 		WsAttackEffectDynamic wsAttackEffectDynamic = new WsAttackEffectDynamic();
+		//设置场景编号
 		wsAttackEffectDynamic.setSceneId(attackMessageBo.getSceneId());
+		//设置事件类别
 		wsAttackEffectDynamic.setCategory("attack");
+		//设置事件描述
 		wsAttackEffectDynamic.setDescription(attackMessageBo.getDescription());
+		//设置事件名称
 		wsAttackEffectDynamic.setName("攻击效果");
+		//设置事件类型
 		wsAttackEffectDynamic.setType(ActionType.NONE.getCode());
 		List<AttackEffect> attackEffectList = new ArrayList<>();
 		for (MediaAnimation mediaAnimation : attackMessageBo.getMediaAnimationList()) {
+			//拷贝类型
 			AttackEffect attackEffect = BeanUtils.copy(mediaAnimation, AttackEffect.class);
+			//设置节点id
 			attackEffect.setElementId(mediaAnimation.getSourceId());
 
 			// 判断是图片还是视频
 			String fileSuffix = FileUtil.getFileSuffix(mediaAnimation.getUrl()).toLowerCase();
+			//获取图片后缀
 			List<String> pictureTypeList = Arrays
 					.asList(PICTURE_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
+			//获取视频后缀
 			List<String> videoTypeList = Arrays
 					.asList(VIDEO_TYPE.toLowerCase().split(CommonConstant.CODE_COMMA));
 			if (pictureTypeList.contains(fileSuffix)) {
+				//设置多媒体动效类型为图片
 				attackEffect.setMediaType(PICTURE_CODE);
 			} else if (videoTypeList.contains(fileSuffix)) {
+				//设置多媒体类型为视频
 				attackEffect.setMediaType(VIDEO_CODE);
 			} else {
+				//不合法的文件类型
 				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 			}
-
+			//设置多媒体路径
 			attackEffect.setMediaUrl(mediaAnimation.getUrl());
+			//设置线的颜色
 			attackEffect.setLineStyle(new LineStyle("#FFFFFF", 3, "straight"));
 			attackEffectList.add(attackEffect);
 		}
+		//设置动效列表
 		wsAttackEffectDynamic.setEffectList(attackEffectList);
-
+		//构造消息数据
 		WsMessage<WsAttackEffectDynamic> wsMessage = new WsMessage<>(
 				MessageType.AttackEffect.getDesc(), wsAttackEffectDynamic);
+		//推送动效数据
 		situationHandlerService.pushDataToRoom(wsMessage, attackMessageBo.getSceneId());
 		if(!playback){
+			//如果不是回放则会增加一条动效历史
 			attackMessageHistoryService.add(attackMessageBo);
 		}
 
@@ -349,6 +417,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				Thread.sleep(attackMessageBo.getDurationTime() * 1000);
 				// 判断当前是否有其他动效正在运行
 				if (sceneConfigService.isCurrentScheme(attackMessageBo.getSceneId(), code)) {
+					//清除多媒体动效
 					clearMedia(attackMessageBo.getSceneId());
 				}
 			}
@@ -362,8 +431,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 */
 	@Override
 	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback) {
+		//构造消息数据
 		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
 				WsMultiNodeDynamic.class);
+		//设置消息类别
 		wsMultiNodeDynamic.setCategory("attack");
 		for (AttackType attackType : AttackType.values()) {
 			if (attackType.getKeyWord().equals(attackMessageBo.getType())) {
@@ -374,35 +445,45 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			wsMultiNodeDynamic.setType(ActionType.NONE.getCode());
 		}
 		wsMultiNodeDynamic.setName(null);
+		//设置线的格式
 		wsMultiNodeDynamic.setLineStyle(new LineStyle(attackMessageBo.getLineColor(),
 				attackMessageBo.getLineWidth(), attackMessageBo.getLineType()));
+		//设置持续时间
 		wsMultiNodeDynamic.setDuration(attackMessageBo.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
 		String type = attackMessageBo.getType();
+		//判断是否是单节点
 		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
 				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
 
 		if (elementIds.contains(attackMessageBo.getTargetId())) {
+			//设置类型为点对点
 			wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
 		} else {
+			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
 		if (isSingleNode) {
+			//设置类型为单节点动效
 			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
 					wsMultiNodeDynamic);
 		}
+		//将动效消息推送到场景
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
 		if(!playback){
+			//如果不是回放则会增加一条动效历史
 			attackMessageHistoryService.add(attackMessageBo);
 		}
 	}
 
 	@Override
 	public void pushDynamicSchemeToRoom(DynamicSchemeReq dynamicSchemeReq, String stageName, String attackMessageDescription) {
-
+		//获取场景编号
 		String sceneId = dynamicSchemeReq.getSceneId();
+		//更新场景code
 		String code = sceneConfigService.updateSceneCode(sceneId);
+		//获取节点id列表
 		List<String> elementIds = getElementIds(sceneId, dynamicSchemeReq.getIsInstance());
 		Integer defenseLevel = dynamicSchemeReq.getDefenseLevel();
 
@@ -462,43 +543,58 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							// 如果当前场景动效方案被暂停，保存当前动效方案数据和运行进度
 							if(sceneConfigService.getCurrentScheme(sceneId) == null){
 								DynamicSchemeProcess dynamicSchemeProcess = new DynamicSchemeProcess();
+								//设置动效方案数据
 								dynamicSchemeProcess.setDynamicSchemeReq(dynamicSchemeReq);
+								//设置阶段数据
 								dynamicSchemeProcess.setStageName(dynamicStage.getName());
+								//设置动效描述
 								dynamicSchemeProcess.setAttackMessageDescription(attackMessageReq.getDescription());
+								//保存场景数据和进程信息
 								sceneConfigService.setDynamicSchemeCache(sceneId, dynamicSchemeProcess);
 							}
 							break;
 						}
-
+						//设置阶段名称
 						wsAttackMessageSchedule
 								.setName(number + "." + attackMessageReq.getDescription());
+						//推送进程数据
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
 						sceneConfigService.updateScheduleById(sceneId,
 								JSONObject.toJSONString(wsAttackScheduleList));
 
 						if (attackMessageReq.getType()
 								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+							//推送多媒体动效数据
 							pushMediaToRoom(attackMessageReq, code, false);
 						} else {
+							//推送普通动效数据
 							pushAttackToRoom(attackMessageReq, elementIds, false);
 						}
 						if (attackMessageReq.getIntervalTime() != null) {
+							//进行等待
 							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
 						}
 
 					}
 					if (state && sceneConfigService.isCurrentScheme(sceneId, code)) {
+						//设置阶段状态
 						wsAttackScheduleStage.setStatus(STAGE_HAS_BEEN_RUN);
+						//设置动效状态
 						wsAttackMessageSchedule.setStatus(DYNAMIC_HAS_BEEN_RUN);
+						//设置动效名称
 						wsAttackMessageSchedule.setName("");
+						//推送进程数据
 						pushAttackScheduleToRoom(wsAttackScheduleList, sceneId);
+						//设置动效方案进程信息
 						sceneConfigService.updateScheduleById(sceneId,
 								JSONObject.toJSONString(wsAttackScheduleList));
+						//清除当前场景动效进程
 						sceneConfigService.setDynamicSchemeCache(sceneId, null);
 					}
 				}
 
 				if(state && sceneConfigService.isCurrentScheme(sceneId, code)){
+					//清除当前场景进程数据
 					sceneConfigService.updateScheduleById(sceneId,
 							JSONObject.toJSONString(Lists.newArrayList()));
 				}
@@ -514,10 +610,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 */
 	@Override
 	public void validDynamicSchemeName(AddDynamicSchemeReq addDynamicSchemeReq) {
+		//校验名称长度
 		validateNameLen(addDynamicSchemeReq.getName(),
 				SituationErrorCode.INVALID_DYNAMIC_SCHEME_NAME);
+		//根据方案名称获取动效方案
 		DynamicScheme dynamicScheme = dynamicSchemeMapper
 				.selectByName(addDynamicSchemeReq.getName(), addDynamicSchemeReq.getSceneId());
+		//如果获取到动效则说明重名
 		if (dynamicScheme != null) {
 			throw new BusinessException(SituationErrorCode.DUPLICATED_DYNAMIC_SCHEME_NAME);
 
@@ -763,8 +862,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Override
 	public void playbackPushDynamicSchemeToRoom(String sceneId){
+		//获取动效历史
 		List<AttackMessageReq> attackMessageHistoryList = attackMessageHistoryService.getAttackHistory(sceneId);
+		//更新场景编号
 		String code = sceneConfigService.updateSceneCode(sceneId);
+		//获取节点id列表
 		List<String> elementIds = getElementIds(sceneId, false);
 
 		Thread thread = new Thread(new Runnable() {
@@ -773,16 +875,21 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@Override
 			public void run() {
 				for(AttackMessageReq attackMessageReq: attackMessageHistoryList){
+					//如果当前场景有其他动效方案正在运行，回放终止
 					if(!sceneConfigService.isCurrentScheme(sceneId, code)){
 						break;
 					}
+					//判断当前动效是多媒体动效还是普通动效
 					if (attackMessageReq.getType()
 										.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+						//推送多媒体动效至场景
 						pushMediaToRoom(attackMessageReq, code, true);
 					} else {
+						//推送普通动效至场景
 						pushAttackToRoom(attackMessageReq, elementIds, true);
 					}
 					if (attackMessageReq.getIntervalTime() != null) {
+						//进行等待
 						Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
 					}
 

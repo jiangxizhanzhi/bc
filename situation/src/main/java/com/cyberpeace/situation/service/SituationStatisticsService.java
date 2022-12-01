@@ -15,15 +15,4 @@ public interface SituationStatisticsService {
 
 	Queue<SceneTrend> getFlowList();
 
-	void addAttackType(String sceneId, AttackType attackType);
-
-	void clearAttackTypeCountBySceneId(String sceneId);
-
-	List<AttackTypeCount> getAttackTop5(String sceneId);
-
-	void addDefenseType(String sceneId, DefenseType defenseType);
-
-	void clearDefenseTypeCountBySceneId(String sceneId);
-
-	List<DefenseTypeCount> getDefenseTop5(String sceneId);
 }

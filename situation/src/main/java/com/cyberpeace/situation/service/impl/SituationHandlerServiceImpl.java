@@ -29,7 +29,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +49,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
-	@Cacheable(cacheNames = "getSituationTopo", key = "#sceneData.getSceneName()")
+//	@Cacheable(cacheNames = "getSituationTopo", key = "#sceneData.getSceneName()")
 	public SituationTopo getSituationTopo(SceneData sceneData) {
 
 		// 处理态势数据
@@ -220,6 +219,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			elementInfo.setPosition(new PlaneCoordinate(x, y));
 			elementInfo.setPorts(portsInfo);
 			elementInfo.setHierarchy(hierarchy);
+			elementInfo.setModelUrl(element.getString("model_url"));
 
 			// 提取自定义配置
 			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,

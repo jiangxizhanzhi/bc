@@ -21,9 +21,14 @@ import com.cyberpeace.situation.controller.req.DynamicEffectMappingUpdateReq;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryCategoryMapper;
+import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
+import com.cyberpeace.situation.dao.mapper.SubRangeContextMapper;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.SituationDynamicEffectMappingService;
+import com.cyberpeace.situation.service.ThirdPartyService;
+import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.service.context.SubRangeContext;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +49,10 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
 
     @Autowired
-    private DynamicEffectsLibraryCategoryMapper dynamicEffectsLibraryCategoryMapper;
+    private SubRangeContextMapper subRangeContextMapper;
+
+    @Autowired
+    private EventTypeContextMapper eventTypeContextMapper;
 
     @Override
     public String setDynamicEffectsMapping(DynamicEffectMappingReq dynamicEffectMappingReq) {
@@ -54,9 +62,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         dynamicEffectsMapping.setCreateUserId(userId);
         String resourceId = IDGeneratorUtil.getID();
         dynamicEffectsMapping.setResourceId(resourceId);
-        DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectsMapping.getCategory());
+        SubRangeContext subRangeContext = subRangeContextMapper.getById(dynamicEffectsMapping.getCategory());
 
-        if (null == category) {
+        if (null == subRangeContext) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
 
@@ -74,10 +82,14 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         ListRsp<DynamicEffectsMapping> dynamicEffectsMappingListRsp =
                 PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
         List<DynamicEffectsMapping> list = dynamicEffectsMappingListRsp.getList();
+        List<EventTypeContext> eventTypeContextList = eventTypeContextMapper.getEventTypeContextList(null);
+        List<SubRangeContext> subRanges = subRangeContextMapper.getSubRanges();
         if (CollectionUtils.isNotEmpty(list)) {
             for (DynamicEffectsMapping dynamicEffectsMapping : list) {
                 String colorCode = dynamicEffectsMapping.getColor();
                 String lineCode = dynamicEffectsMapping.getLine();
+                String attackType = dynamicEffectsMapping.getAttackType();
+                String category = dynamicEffectsMapping.getCategory();
                 List<LocalType> colorList = Color.getMsgList();
                 List<LocalType> lineList = LineType.getMsgList();
                 //设置颜色翻译
@@ -90,6 +102,18 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
                 lineList.forEach(line -> {
                     if (line.getCode().equals(lineCode)) {
                         dynamicEffectsMapping.setLine(line.getMsg());
+                    }
+                });
+                //设置攻击类型翻译
+                eventTypeContextList.forEach(eventTypeContext -> {
+                    if (eventTypeContext.getCode().equals(attackType)) {
+                        dynamicEffectsMapping.setAttackType(eventTypeContext.getName());
+                    }
+                });
+                //设置靶场翻译
+                subRanges.forEach(subRangeContext -> {
+                    if (subRangeContext.getSubRangeId().equals(category)) {
+                        dynamicEffectsMapping.setCategory(subRangeContext.getSubRangeName());
                     }
                 });
             }
@@ -130,8 +154,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(dynamicEffectMappingUpdateReq.getCategory());
-        if (null == category) {
+        SubRangeContext subRangeContext = subRangeContextMapper.getById(dynamicEffectsMapping.getCategory());
+
+        if (null == subRangeContext) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
 

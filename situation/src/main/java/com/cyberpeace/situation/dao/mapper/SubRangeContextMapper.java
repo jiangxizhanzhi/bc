@@ -2,6 +2,7 @@ package com.cyberpeace.situation.dao.mapper;
 
 import com.cyberpeace.situation.service.context.SubRangeContext;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ import java.util.List;
 public interface SubRangeContextMapper {
 
     List<SubRangeContext> getSubRanges();
+
+    SubRangeContext getById(@Param("subRangeId") String subRangeId);
 }

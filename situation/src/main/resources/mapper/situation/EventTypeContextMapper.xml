@@ -7,10 +7,10 @@
     <select id="getEventTypeContextList"
             resultType="com.cyberpeace.situation.service.context.EventTypeContext">
         select * from situation_event_type_context
-        <if test="isRootNode == true">
+        <if test="isRootNode != null and isRootNode == true">
             where parent_node is null
         </if>
-        <if test="isRootNode == false">
+        <if test="isRootNode != null and isRootNode == false">
             where parent_node is not null
         </if>
     </select>

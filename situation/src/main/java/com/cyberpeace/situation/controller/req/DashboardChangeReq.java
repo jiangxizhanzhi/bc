@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.constant.ws.MessageType;
+
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,5 +27,5 @@ public class DashboardChangeReq implements Serializable {
 
 	@ApiModelProperty("消息内容")
 	@NotEmpty
-	private String data;
+	private JSONObject data;
 }

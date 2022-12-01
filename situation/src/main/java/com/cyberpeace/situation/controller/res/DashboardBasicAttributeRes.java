@@ -3,6 +3,8 @@ package com.cyberpeace.situation.controller.res;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cyberpeace.situation.model.ViewAngle;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,14 +14,14 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("大屏ID")
 	private String dashboardId;
 
+	@ApiModelProperty("大屏层级 1-综合态势 2-分靶场态势 3-任务态势")
+	private Integer level;
+
 	@ApiModelProperty("大屏标题")
 	private String title;
 
 	@ApiModelProperty("大屏副标题")
 	private String subTitle;
-
-	@ApiModelProperty("大屏层级")
-	private Integer level;
 
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;
@@ -43,20 +45,24 @@ public class DashboardBasicAttributeRes implements Serializable {
 	private Date startTime;
 
 	@ApiModelProperty("刷新时间（s）")
-	private Integer refresh;
+	private Integer refresh = 5;
 
-	public DashboardBasicAttributeRes() {
-		this.level = 1;
-		this.title = "ZH性分靶场任务态势";
-		this.subTitle = "XXX红蓝对抗任务";
-		this.subRangeId = "zhxfbc";
-		this.subRangeName = "ZH性分靶场";
-		this.taskId = "102";
-		this.taskName = "任务001";
-		this.subjectId = "subject_001";
-		this.subjectName = "科目001";
-		this.startTime = new Date();
-		this.refresh = 5;
+	@ApiModelProperty("初始视角")
+	private ViewAngle viewAngle;
+
+	public DashboardBasicAttributeRes(String dashboardId, Integer level, String title,
+			String subTitle, String subRangeId, String taskId, Date startTime,
+			ViewAngle viewAngle) {
+		this.dashboardId = dashboardId;
+		this.level = level;
+		this.title = title;
+		this.subTitle = subTitle;
+		this.subRangeId = subRangeId;
+		this.taskId = taskId;
+		this.startTime = startTime;
+		this.viewAngle = viewAngle;
 	}
+
+	public DashboardBasicAttributeRes() {}
 
 }

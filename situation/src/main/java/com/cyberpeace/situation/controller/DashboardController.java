@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
@@ -20,7 +20,6 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
 import com.cyberpeace.situation.service.context.TaskEventContext;
 
-import cn.hutool.json.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -50,7 +49,7 @@ public class DashboardController {
 			@ApiParam(name = "task_type", value = "任务类型",
 					required = true) @RequestParam(value = "task_type") String taskType) {
 
-		if (!"进行中".equals(taskStatus)) {
+		if (!"任务进行".equals(taskStatus)) {
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -75,7 +74,7 @@ public class DashboardController {
 	public BaseRsp<Boolean>
 			pushDashboardChange(@RequestBody @Validated DashboardChangeReq dashboardChangeReq) {
 		WsMessage<JSONObject> wsMessage = new WsMessage<>(dashboardChangeReq.getCode(),
-				JsonUtil.toJsonObject(dashboardChangeReq.getData(), JSONObject.class));
+				dashboardChangeReq.getData());
 		String sceneId = dashboardChangeReq.getDashboardId() + "_"
 				+ dashboardChangeReq.getFeatureId();
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);

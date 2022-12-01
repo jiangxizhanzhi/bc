@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -81,6 +85,12 @@ public class MissionController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private AttachmentService attachmentService;
+
+	@Autowired
+	private UtilService utilService;
 
 	@ApiOperation("获取学员技能点雷达图")
 	@GetMapping("/missions/radar")
@@ -349,6 +359,41 @@ public class MissionController {
 		ListRsp<MissionTemplateRes> missionTemplateRspListRsp = missionService
 				.pageMissionTemplate(pageReq);
 		return new BaseRsp(missionTemplateRspListRsp);
+	}
+
+	@ApiOperation("解析md文件数据")
+	@GetMapping("/parse/md")
+	public String parseMDFile(@RequestParam("missionId") String missionId,
+							  @RequestParam("md") MultipartFile md){
+		String realContent = null;
+		String suffix = FileUtil.getFileSuffix(md.getOriginalFilename());
+		suffix = suffix.toLowerCase();
+		if (suffix.equals(FileSunffixConstant.ZIP.getDesc())) {
+
+			// 文件上传至服务器 原始文件地址存储
+			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
+					missionId);
+			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, md);
+
+			// 获取讲义文件存储地址
+			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), missionId);
+			String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+
+			// 计算要解压的文件地址
+			String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
+			ZipUtil.unzipToDest(realPath, unzipPath);
+
+			// 获取解压的讲义文件
+			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
+			if (StringUtils.isBlank(mdFilePath)) {
+				throw new BusinessException(CrBusinessErrorCode.NOT_MD_PATH);
+			}
+			// md文件内容
+			String content = MdUtil.parseMarkdown(mdFilePath);
+			realContent = utilService.replaceMarkdownFile(content);
+
+		}
+		return realContent;
 	}
 
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {

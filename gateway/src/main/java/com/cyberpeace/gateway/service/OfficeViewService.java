@@ -12,4 +12,6 @@ public interface OfficeViewService {
 	OfficeFileInfoBo lessonHandoutInfo(String lessonId);
 
     OfficeFileInfoBo assessMaterialHandoutInfo(String materialId);
+
+    OfficeFileInfoBo assessModelHandoutInfo(String modelId);
 }

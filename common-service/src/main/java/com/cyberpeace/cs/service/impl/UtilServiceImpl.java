@@ -1,20 +1,26 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.io.File;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.List;
 
 @Service
 public class UtilServiceImpl implements UtilService {
+
+	private String HANDOUT_MODEL_CONTENT_URL;
+
+	private String HANDOUT_MODEL_INFO_URL;
 
 	private String FDFS_PREFIX;
 
@@ -44,7 +50,10 @@ public class UtilServiceImpl implements UtilService {
 		HANDOUT_INFO_URL = ConfigUtil.getContextProperty("office.handout.info");
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
 		HANDOUT_MATERIAL_INFO_URL = ConfigUtil.getContextProperty("office.handout.material.info");
-		HANDOUT_MATERIAL_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.material.content");
+		HANDOUT_MATERIAL_CONTENT_URL = ConfigUtil
+				.getContextProperty("office.handout.material.content");
+		HANDOUT_MODEL_INFO_URL = ConfigUtil.getContextProperty("office.handout.model.info");
+		HANDOUT_MODEL_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.model.content");
 	}
 
 	@Override
@@ -98,9 +107,9 @@ public class UtilServiceImpl implements UtilService {
 		}
 
 		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
-				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo=" + HANDOUT_MATERIAL_INFO_URL
-				+ "&downloadFile=" + HANDOUT_MATERIAL_CONTENT_URL + "&fileId=" + fileId + "&fileName="
-				+ fileName;
+				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo="
+				+ HANDOUT_MATERIAL_INFO_URL + "&downloadFile=" + HANDOUT_MATERIAL_CONTENT_URL
+				+ "&fileId=" + fileId + "&fileName=" + fileName;
 
 		return officeViewUrl;
 	}
@@ -165,8 +174,9 @@ public class UtilServiceImpl implements UtilService {
 
 		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
-//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		// List<String> realPathList = StreamApiUtils.map(matchList, realPath ->
+		// LocalStringUtil
+		// .getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
 		realPathList.addAll(matchSrcList);
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
@@ -187,7 +197,7 @@ public class UtilServiceImpl implements UtilService {
 	@Override
 	public String replaceMarkdownFile(String content) {
 
-		//获取过滤掉代码块的markdown内容
+		// 获取过滤掉代码块的markdown内容
 		String filterCodeContent = MdUtil.filterCodeContent(content);
 
 		// 将文件中的绝对路径替换为nginx可访问路径
@@ -203,7 +213,28 @@ public class UtilServiceImpl implements UtilService {
 			String fileUrl = replaceFileUrl(realPath);
 			return handlerFileUrl(fileUrl);
 		});
-		//比对内容为过滤代码块后的内容，实际替换是未过滤的内容
+		// 比对内容为过滤代码块后的内容，实际替换是未过滤的内容
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
+	}
+
+	@Override
+	public String officeModelUrl(String fileUrl, String fileId) {
+
+		if (StringUtils.isBlank(fileUrl)) {
+			return fileUrl;
+		}
+
+		String fileName = fileUrl;
+		int lastIndexOf = fileUrl.lastIndexOf(File.separator);
+		if (lastIndexOf != CommonConstant.NEGATIVE_ONE) {
+			fileName = fileUrl.substring(lastIndexOf + CommonConstant.ONE);
+		}
+
+		String officeViewUrl = remoteServerEnvService.getOfficeHost() + "/view/?host="
+				+ remoteServerEnvService.getFileServerHost() + "&getFileInfo="
+				+ HANDOUT_MODEL_INFO_URL + "&downloadFile=" + HANDOUT_MODEL_CONTENT_URL + "&fileId="
+				+ fileId + "&fileName=" + fileName;
+
+		return officeViewUrl;
 	}
 }

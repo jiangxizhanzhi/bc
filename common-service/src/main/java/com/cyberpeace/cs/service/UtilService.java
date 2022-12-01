@@ -54,4 +54,11 @@ public interface UtilService {
 	 */
 	String replaceMarkdownFile(String content);
 
+	/**
+	 * 获取可查看的office文件url地址 比如ppt word
+	 * @param fileUrl 传名称获取路径均可
+	 * @param fileId
+	 * @return
+	 */
+	String officeModelUrl(String fileUrl, String fileId);
 }

@@ -25,6 +25,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
@@ -49,6 +50,9 @@ public class AssessModelController {
 	@Autowired
 	private AssessTagService assessTagService;
 
+	@Autowired
+	private UtilService utilService;
+
 	@ApiOperation("查询单条评估模型")
 	@GetMapping("/assess_model")
 	public BaseRsp<AssessModelRsp> getAssessModel(
@@ -66,6 +70,8 @@ public class AssessModelController {
 		String tagStr = assessTagService.getTagContent(assessModel.getTag());
 		assessModelRsp.setTags(tagStr);
 
+		assessModelRsp.setAttachmentUrl(utilService
+				.officeModelUrl(assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
 		return new BaseRsp(assessModelRsp);
 	}
 

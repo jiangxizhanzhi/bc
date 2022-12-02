@@ -430,8 +430,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         String sql = jsonObject.getString("sql");
         String resourceId = jsonObject.getString("chartDatabase");
         String dbName = jsonObject.getString("dbName");
+        String tableName = jsonObject.getString("tableName");
         //获取数据库数据
-        List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(sql, resourceId, dbName);
+        List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(sql, resourceId, dbName, tableName);
 
         JSONArray jsonArray = JsonUtil.stringToArray(dataSourceData.toString());
         JSONArray echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);

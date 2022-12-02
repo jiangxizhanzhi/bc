@@ -90,5 +90,5 @@ public interface DataSourceService {
      * @param sql
      * @return
      */
-    List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName);
+    List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName, String tableName);
 }

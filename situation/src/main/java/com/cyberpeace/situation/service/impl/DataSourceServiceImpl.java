@@ -176,12 +176,17 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     }
 
     @Override
-    public List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName) {
+    public List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName, String tableName) {
         DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
         if (dataSourceRecord == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        if (sql.toLowerCase().contains("delete")) {
+        //选定数据库时，自动获取所有数据表字段
+        if (StringUtils.isNotBlank(tableName) && StringUtils.isEmpty(sql)) {
+            sql = "SELECT * FROM " + dbName + "." + tableName;
+        }
+
+        if (StringUtils.isEmpty(sql) || sql.toLowerCase().contains("delete")) {
             System.out.println(sql);
             throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         }

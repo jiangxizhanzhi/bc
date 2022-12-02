@@ -553,7 +553,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public List<PracticeOperation> importMdOperationPractice(String path) {
+	public List<PracticeOperation> importMdOperationPractice(String path, Map<String, String> envReqs) {
 
 		File rootFile = new File(path);
 		if (!rootFile.exists()) {
@@ -568,11 +568,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		// 构建数据存储
-		Map<String, String> envReqs = Maps.newHashMap();
-		//todo envReqs
-		for (String ctfPracticeDir : ctfPracticeDirs) {
-			envReqs.put("ctfPracticeDir", "");
-		}
+
 		PracticeSet practiceSet = new PracticeSet();
 		List<String> existOperations = Lists.newArrayList();
 		List<PracticeOperation> operationList = Lists.newArrayList();

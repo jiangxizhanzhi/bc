@@ -120,7 +120,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param practiceId
      * @return 导出的文件路径
      */
-    String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath);
+    String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport);
 
     void clearUserAuth(String user);
 

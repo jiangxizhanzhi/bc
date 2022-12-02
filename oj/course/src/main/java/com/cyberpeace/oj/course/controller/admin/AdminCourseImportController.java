@@ -72,9 +72,10 @@ public class AdminCourseImportController {
     public BaseRsp<String> export(
             @RequestParam(value = "resource_id") String resourceId,
             @RequestParam(value = "is_dump_topo", required = false, defaultValue = "0") Integer isDumpTopo,
-            @RequestParam(value = "scene_number") String sceneNumber) {
+            @RequestParam(value = "scene_number", required = false) String sceneNumber,
+			@RequestParam(value = "disable_image_export", required = false) Boolean disableImageExport) {
         boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
-        String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal, sceneNumber);
+        String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal, sceneNumber, disableImageExport);
 
 		return new BaseRsp<>(filePath);
 	}

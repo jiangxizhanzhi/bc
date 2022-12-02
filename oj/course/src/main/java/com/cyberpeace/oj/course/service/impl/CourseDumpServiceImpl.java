@@ -71,7 +71,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	private CourseCategoryMapper courseCategoryMapper;
 
 	@Override
-	public String rMCourseDump(String resourceId, Boolean isDumpTopo, String sceneNumber) {
+	public String rMCourseDump(String resourceId, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		log.info("----------course dump start-----------");
 		String destFilePath = "";
 		// 1.获取所有课程数据 内容及文件
@@ -139,7 +139,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		try {
 			combineCourseContent(destFilePath, course, categories, allUsers);
 			if (null != currentLessons) {
-				combineLessons(destFilePath, currentLessonConfigs, currentLessons, isDumpTopo, sceneNumber);
+				combineLessons(destFilePath, currentLessonConfigs, currentLessons, isDumpTopo, sceneNumber, disableImageExport);
 			}
 			log.info("course [{}] dump finish the path is [{}]", course.getName(), destFilePath);
 		} catch (BusinessException e) {
@@ -152,7 +152,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 	private void combineLessons(String destFilePath, List<LessonConfig> currentLessonConfigs,
-			List<CourseLesson> currentLessons, Boolean isDumpTopo, String sceneNumber) {
+			List<CourseLesson> currentLessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		Map<String, List<CourseLesson>> lessonCols = currentLessons.stream()
 				.collect(Collectors.groupingBy(CourseLesson::getResourceId));
 
@@ -171,21 +171,21 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 					.collect(Collectors.toList());
 			for (LessonConfig chapterSecond : chapterSeconds) {
 				combineChapterSecond(destFilePath, 1, index, chapterSecond,
-						destFilePath + File.separator + "1_chapter", lessonCols, isDumpTopo, sceneNumber);
+						destFilePath + File.separator + "1_chapter", lessonCols, isDumpTopo, sceneNumber, disableImageExport);
 				index += 1;
 			}
 		} else {
 			StreamApiUtils.map(chapterFirsts,
 					chapterFirst -> combineChapterFirst(destFilePath,
 							chapterFirsts.indexOf(chapterFirst) + 1, chapterFirst,
-							currentLessonConfigs, lessonCols, isDumpTopo, sceneNumber));
+							currentLessonConfigs, lessonCols, isDumpTopo, sceneNumber, disableImageExport));
 		}
 
 	}
 
 	private Map<String, String> combineChapterFirst(String destFilePath, Integer chapterIndex,
 			LessonConfig chapterOne, List<LessonConfig> lessonConfigs,
-			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber) {
+			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 
 		Map<String, String> filePathMap = new HashMap<>();
 		Integer currentChapter = chapterOne.getIndex();
@@ -198,7 +198,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				.sorted(Comparator.comparing(LessonConfig::getIndex)).collect(Collectors.toList());
 		for (LessonConfig chapterSecond : chapterSeconds) {
 			combineChapterSecond(destFilePath, currentChapter, index, chapterSecond,
-					chapterFileName, lessons, isDumpTopo, sceneNumber);
+					chapterFileName, lessons, isDumpTopo, sceneNumber, disableImageExport);
 			index += 1;
 		}
 		return filePathMap;
@@ -206,7 +206,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	private void combineChapterSecond(String destFilePath, Integer lastChapter, int index,
 			LessonConfig chapterSecond, String chapterFileName,
-			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber) {
+			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		CourseLesson lesson = lessons.get(chapterSecond.getLessonId()).get(0);
 		String pathname = chapterFileName + File.separator + lastChapter + "-" + index + "_"
 				+ lesson.getName();
@@ -221,7 +221,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		} else {
 			// 实验课文件保存
 			if (Boolean.TRUE.equals(isDumpTopo)) {
-				combineOperationLesson(destFilePath, pathname, lesson, sceneNumber);
+				combineOperationLesson(destFilePath, pathname, lesson, sceneNumber, disableImageExport);
 			}
 
 		}
@@ -251,7 +251,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
-	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber) {
+	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber, Boolean disableImageExport) {
 		// doc 指导文档doc/pdf/md 包含img文件夹 指导书md
 		String docFile = pathname + File.separator + "doc";
 		FileUtil.mkdirs(docFile);
@@ -267,6 +267,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		sceneDumpContext.setEnv_path(envFile);
 		sceneDumpContext.setImage_path(destFilePath +  File.separator + IMAGE_NAME);
 		sceneDumpContext.setScene_number(sceneNumber);
+		sceneDumpContext.setDisable_image_export(disableImageExport);
 		remoteSceneService.sceneDump(sceneDumpContext);
 		log.info("dump lesson [{}] env & images successfully!", lesson.getName());
 	}
@@ -309,7 +310,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		}
 	}
 
-	private void generateLessonBase(String pathname, CourseLesson lesson, boolean disableImageExport) {
+	private void generateLessonBase(String pathname, CourseLesson lesson, Boolean disableImageExport) {
 		// 存储附件
 		log.info("start dump lesson [{}] attachFile!", lesson.getName());
 		String attachFile = pathname + File.separator + "attachments";

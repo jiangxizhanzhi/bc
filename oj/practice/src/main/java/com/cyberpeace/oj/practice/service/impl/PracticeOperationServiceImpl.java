@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -264,9 +265,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		// topo更新
+
+		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
+		if(null == practiceOperation){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
 			updateOperation.setTopoId(
-					localSceneService.saveTopo(ojSceneConfig, updateOperation.getTopoId()));
+					localSceneService.saveTopo(ojSceneConfig, practiceOperation.getTopoId()));
 		}
 
 		final Boolean updateRandom = operation.getDynamicFlag()

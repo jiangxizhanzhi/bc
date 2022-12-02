@@ -66,14 +66,16 @@ public class AdminPracticeImportController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "set_id", value = "习题编号"),
 			@ApiImplicitParam(name = "practice_id", value = "习题编号"),
-			@ApiImplicitParam(name = "new_path", value = "是否生成新路径")
+			@ApiImplicitParam(name = "new_path", value = "是否生成新路径"),
+			@ApiImplicitParam(name = "disable_image_export", value = "是否禁止镜像导出")
 	})
 	public BaseRsp<String> export(
 			@RequestParam(name = "set_id", required = false) String practiceSetId,
 			@RequestParam(name = "practice_id", required = false) String practiceId,
-			@RequestParam(name = "new_path", required = false, defaultValue = "false") Boolean newPath) {
+			@RequestParam(name = "new_path", required = false, defaultValue = "false") Boolean newPath,
+			@RequestParam(name = "disable_image_export", required = false) boolean disableImageExport) {
 
-		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath);
+		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath, disableImageExport);
 
 		return new BaseRsp<>(filePath);
 	}

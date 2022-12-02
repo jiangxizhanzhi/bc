@@ -69,9 +69,11 @@ public class AssessModelController {
 
 		String tagStr = assessTagService.getTagContent(assessModel.getTag());
 		assessModelRsp.setTags(tagStr);
+		if(assessModel.getInterfaceType().equals(AssessModel.interfaceType.OTHER.getCode())){
+			assessModelRsp.setShowAttachmentUrl(utilService
+					.officeModelUrl(assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
+		}
 
-		assessModelRsp.setAttachmentUrl(utilService
-				.officeModelUrl(assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
 		return new BaseRsp(assessModelRsp);
 	}
 

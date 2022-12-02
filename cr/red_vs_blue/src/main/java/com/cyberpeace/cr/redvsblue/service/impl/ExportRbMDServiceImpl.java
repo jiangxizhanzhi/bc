@@ -50,7 +50,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 	}
 
 	@Override
-	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber) {
+	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
 
 		if(businessTemplateList.size() == 0){
 			return;
@@ -113,7 +113,7 @@ public class ExportRbMDServiceImpl extends ExportTrainMDServiceImpl {
 			//场景信息导出
 			log.info("start export red_vs_blue [{}] scene", businessTemplate.getName());
 			Map<String, String> nodeIdMap = exportScene(businessTemplate.getTopoId(), file.getPath() + File.separator + ENV,
-					file.getPath() + File.separator + ENV + File.separator + IMAGES, sceneNumber);
+					file.getPath() + File.separator + ENV + File.separator + IMAGES, sceneNumber, disableImageExport);
 			log.info("export red_vs_blue [{}] scene successfully",businessTemplate.getName());
 
 			TrainMD trainMD = BeanUtils.copy(businessTemplate, TrainMD.class);

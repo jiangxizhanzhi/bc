@@ -457,7 +457,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath) {
+	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport) {
 
 		Map<String, List<PracticeOperation>> operationMap;
 		List<PracticeOperation> operationList;
@@ -502,7 +502,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			}
 
 			List<PracticeOperation> operations = operationMap.get(practiceSet.getResourceId());
-			practiceOperationService.exportPractice(setPath, operations);
+			practiceOperationService.exportPractice(setPath, operations, disableImageExport);
 
 			EXPORT_LOG.info("export {} practice set successfully", practiceSet.getName());
 		}

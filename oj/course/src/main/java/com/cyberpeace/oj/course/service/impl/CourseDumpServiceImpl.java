@@ -213,7 +213,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 		FileUtil.mkdirs(pathname);
 		// 课时内容基础保存
-		generateLessonBase(pathname, lesson);
+		generateLessonBase(pathname, lesson, disableImageExport);
 		// TODO文件是否均
 		if (Objects.equals(lesson.getType(), CourseLesson.LessonType.THEORY.getCode())) {
 			// 理论课文件保存
@@ -309,7 +309,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		}
 	}
 
-	private void generateLessonBase(String pathname, CourseLesson lesson) {
+	private void generateLessonBase(String pathname, CourseLesson lesson, boolean disableImageExport) {
 		// 存储附件
 		log.info("start dump lesson [{}] attachFile!", lesson.getName());
 		String attachFile = pathname + File.separator + "attachments";
@@ -348,7 +348,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				pathname + File.separator + ResourceImportConstant.PRACTICES, lesson.getPaperId());
 
 		practiceOperationRefService.exportLessonPractice(
-				pathname + File.separator + ResourceImportConstant.OPERATION, lesson.getPaperId());
+				pathname + File.separator + ResourceImportConstant.OPERATION, lesson.getPaperId(), disableImageExport);
 
 	}
 

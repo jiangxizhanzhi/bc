@@ -158,7 +158,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 	}
 
 	@Override
-	public void exportLessonPractice(String pathname, String paperId) {
+	public void exportLessonPractice(String pathname, String paperId, boolean disableImageExport) {
 
 		List<PracticeOperationRef> operationRefList = practiceOperationRefMapper
 				.selectByPaperId(paperId);
@@ -169,6 +169,6 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 					return practiceOperation;
 				});
 
-		practiceOperationService.exportPractice(pathname, practiceOperationList);
+		practiceOperationService.exportPractice(pathname, practiceOperationList, disableImageExport);
 	}
 }

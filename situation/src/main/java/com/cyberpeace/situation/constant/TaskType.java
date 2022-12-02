@@ -13,7 +13,7 @@ public enum TaskType {
 	 * 任务类型
 	 */
 
-	QB(null, "全部"),
+	QB("", "全部"),
 	XNJD("SY01", "性能鉴定"),
 	XNRZ("SY02", "性能认证"),
 	HLDK("XL05", "红蓝对抗"),

@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.service.bo;
 
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
@@ -54,9 +55,13 @@ public class BsTimerTask extends TimerTask {
                 return;
             }
             ReleaseTaskReq req = new ReleaseTaskReq();
-            req.setDeviceId(deviceId);
-            req.setIp(deviceIp);
             req.setIsUsingIp(!isEntity);
+            if(isEntity){
+                req.setDeviceId(deviceId);
+            } else {
+                req.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+            }
+            req.setIp(deviceIp);
             req.setFlowChart(behaviorId);
             List<VariableBo> variableBos = JsonUtil.toJsonObjectArray(variable, VariableBo.class);
             variableBos.forEach(variableBo -> req.addVariable(variableBo.getName(), variableBo.getValue()));

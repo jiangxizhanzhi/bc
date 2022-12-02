@@ -10,4 +10,9 @@ public interface BsConstants {
 	 * 一天的毫秒数
 	 */
 	long MILLI_IN_A_DAY = 24 * 60 * 60 * 1000L;
+
+	/**
+	 * 使用虚拟设备时默认的设备id
+	 */
+	String DEFAULT_DEVICE_ID = "0";
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.service.impl;
 
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.MeterService;
@@ -30,9 +31,13 @@ public class MeterServiceImpl implements MeterService {
 		String behaviorId = req.getBehaviorId();
 		UserSimulator simulator = userSimulatorService.getOrException(simulatorId);
 		ReleaseTaskReq taskReq = new ReleaseTaskReq();
-		taskReq.setDeviceId(simulator.getDeviceId());
-		taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setIsUsingIp(!simulator.getIsEntity());
+		if (taskReq.getIsUsingIp()) {
+			taskReq.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+		} else {
+			taskReq.setDeviceId(simulator.getDeviceId());
+		}
+		taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setFlowChart(behaviorId);
 		req.getVariables().forEach(variableBo -> taskReq.addVariable(variableBo.getName(), variableBo.getValue()));
 		lcService.startBehavior(taskReq);

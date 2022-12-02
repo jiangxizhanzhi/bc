@@ -53,19 +53,19 @@ public class ExternalSituationController {
 
 	@ApiOperation("结束/暂停动效方案")
 	@GetMapping("/stopDynamicScheme")
-	public BaseRsp<Boolean> stopDynamicScheme(@ApiParam(name = "topo_id", value = "拓扑编号")
-												  @RequestParam(value = "topo_id") String topoId){
-		sceneConfigService.clearSceneCode(topoId);
-		log.info("topoId:[" + topoId + "] has paused");
+	public BaseRsp<Boolean> stopDynamicScheme(@ApiParam(name = "scene_id", value = "场景编号")
+												  @RequestParam(value = "scene_id") String sceneId){
+		sceneConfigService.clearSceneCode(sceneId);
+		log.info("sceneId:[" + sceneId + "] has paused");
 		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("继续动效方案")
 	@GetMapping("/continueDynamicScheme")
-	public BaseRsp<Boolean> continueDynamicScheme(@ApiParam(name = "topo_id", value = "拓扑编号")
-												  @RequestParam(value = "topo_id") String topoId){
-		log.info("topoId:[" + topoId + "] continue");
-		DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(topoId);
+	public BaseRsp<Boolean> continueDynamicScheme(@ApiParam(name = "scene_id", value = "场景编号")
+												  @RequestParam(value = "scene_id") String sceneId){
+		log.info("topoId:[" + sceneId + "] continue");
+		DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(sceneId);
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
 				dynamicSchemeProcess.getStageName(),dynamicSchemeProcess.getAttackMessageDescription());
 		return new BaseRsp<>(true);

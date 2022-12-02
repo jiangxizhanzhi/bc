@@ -5,9 +5,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
@@ -50,11 +50,11 @@ public class DashboardController {
 					required = true) @RequestParam(value = "task_type") String taskType) {
 
 		if (!"任务进行".equals(taskStatus)) {
-			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
+			throw new BusinessException(SituationErrorCode.TASK_NOT_RUNNING);
 		}
 
 		if (!"红蓝对抗".equals(taskType)) {
-			throw new BusinessException(ErrorCode.NOT_CONFIGURED, "非红蓝对抗大屏");
+			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, taskType);
 		}
 
 		return new BaseRsp<>(new DashboardIdRes(taskId));

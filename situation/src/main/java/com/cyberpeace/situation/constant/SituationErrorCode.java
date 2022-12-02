@@ -124,4 +124,10 @@ public interface SituationErrorCode {
 
 	/** 模板id无效 */
 	String TEMPLATE_INVALID_ERROR = "104041";
+
+	/** 任务未开始 */
+	String TASK_NOT_RUNNING = "106001";
+
+	/** 暂不支持的任务大屏 */
+	String TASK_TYPE_NOT_SUPPORTED = "106002";
 }

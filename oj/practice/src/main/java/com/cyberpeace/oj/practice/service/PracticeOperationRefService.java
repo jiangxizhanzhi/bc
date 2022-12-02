@@ -30,5 +30,5 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 */
 	PracticeOperation selectByPracticeId(String paperId, String practiceId);
 
-	void exportLessonPractice(String pathname, String paperId);
+	void exportLessonPractice(String pathname, String paperId, boolean disableImageExport);
 }

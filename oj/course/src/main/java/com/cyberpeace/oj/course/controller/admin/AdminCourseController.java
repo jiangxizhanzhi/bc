@@ -104,14 +104,14 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false);
 		authContext.setIsSuperAdmin(true);
 		// 数据查询
-		ListRsp<CourseInfoBo> courseInfos = courseService.selectPage(page, context, authContext);
+		ListRsp<CourseWebBo> courseInfos = courseService.selectPage(page, context, authContext, false);
 		return new BaseRsp(courseInfos);
 	}
 
 	@ApiOperation("后台课程列表分页查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public BaseRsp<List<CourseInfoBo>>
+	public BaseRsp<List<CourseWebBo>>
 			getAdminCourse(@ApiParam(name = "listReq", value = "查询条件") CourseAdminListReq listReq) {
 
 		// 查询数据组装
@@ -136,7 +136,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 				false);
 
 		// 数据查询
-		ListRsp<CourseInfoBo> rsp = courseService.selectPage(page, adminQueryBo, authContext);
+		ListRsp<CourseWebBo> rsp = courseService.selectPage(page, adminQueryBo, authContext, false);
 		return new BaseRsp(rsp);
 	}
 

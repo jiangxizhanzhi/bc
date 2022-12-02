@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -50,7 +51,7 @@ public class WebCourseController {
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	public BaseRsp<List<CourseInfoBo>> getWebCourse(
+	public BaseRsp<List<CourseWebBo>> getWebCourse(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated CourseListReq listReq) {
 		// 数据组装
 		CourseQueryBo context = BeanUtils.copy(listReq, CourseQueryBo.class);
@@ -71,7 +72,7 @@ public class WebCourseController {
 				true);
 
 		// 数据查询
-		ListRsp<CourseInfoBo> boListRsp = courseService.selectPage(page, context, authContext);
+		ListRsp<CourseWebBo> boListRsp = courseService.selectPage(page, context, authContext, true);
 		return new BaseRsp(boListRsp);
 	}
 

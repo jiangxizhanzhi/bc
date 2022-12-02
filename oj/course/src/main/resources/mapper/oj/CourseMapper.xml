@@ -7,6 +7,17 @@
         <result property="isPublic" column="public"/>
     </resultMap>
 
+    <update id="updateCourseHeat">
+        update oj_course
+        <set>
+            heat = #{heat},
+            update_time = update_time
+        </set>
+        <where>
+            resource_id = #{resourceId}
+        </where>
+    </update>
+
     <select id="listByPage" resultMap="baseResultMap">
         select L1.*, count(L2.course_id) as lesson_count from oj_course L1
         left join oj_course_lesson L2 on L2.course_id = L1.resource_id

@@ -28,3 +28,19 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 37, '高级', 'Advan
 
 ALTER TABLE `oj_practice_operation`
     MODIFY COLUMN `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+
+-- ----------------------------
+-- Table structure for oj_course_study_history
+-- ----------------------------
+DROP TABLE IF EXISTS `oj_course_study_history`;
+CREATE TABLE `oj_course_study_history`  (
+                                            `id` int(11) NOT NULL AUTO_INCREMENT,
+                                            `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                            `course_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                            `course_name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                            `user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                            `create_time` datetime(0) NULL DEFAULT NULL,
+                                            `update_time` datetime(0) NULL DEFAULT NULL,
+                                            PRIMARY KEY (`id`) USING BTREE,
+                                            UNIQUE INDEX `course_user_uniq`(`course_id`, `user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;

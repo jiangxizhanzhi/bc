@@ -120,8 +120,10 @@ public class SceneJob {
 
 			// 组织推送数据
 			JSONObject tipMessage = new JSONObject();
-			tipMessage.put(JsonKeyConstant.BUSINESS_ID, classroom.getCourseId()
-					+ CommonConstant.LEFT_OBLIQUE_LINE + classroom.getLessonId());
+			tipMessage.put(JsonKeyConstant.BUSINESS_ID,
+					classroom.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
+							+ classroom.getLessonId() + CommonConstant.LEFT_OBLIQUE_LINE
+							+ "?room_id=" + classroom.getResourceId());
 			tipMessage.put(JsonKeyConstant.BUSINESS_TYPE, localScene.getBusinessCode());
 			tipMessage.put(JsonKeyConstant.SCENE_NAME, localScene.getSceneName());
 

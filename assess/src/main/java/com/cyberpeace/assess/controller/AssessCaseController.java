@@ -239,6 +239,7 @@ public class AssessCaseController {
 
 		BeanUtils.copyProperties(assessCaseUpdateReq, assessCase);
 		assessCase.setTag(JsonUtil.arrayToString(tags));
+		assessCase.setUpdateTime(new Date());
 		assessCaseMapper.updateById(assessCase);
 		return new BaseRsp<>(assessCase);
 	}

@@ -1,6 +1,7 @@
 package com.cyberpeace.assess.controller.res;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class AssessCaseListRes implements Serializable {
 	private String tag;
 
 	@ApiModelProperty(value = "最后更新时间")
-	private String updateTime;
+	private Date updateTime;
 
 	@ApiModelProperty(value = "材料数量")
 	private Integer materialCount;

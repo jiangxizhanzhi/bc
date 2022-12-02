@@ -1345,7 +1345,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void exportPractice(String setPath, List<PracticeOperation> operations, boolean disableImageExport) {
+	public void exportPractice(String setPath, List<PracticeOperation> operations, Boolean disableImageExport) {
 
 		for (PracticeOperation operation : operations) {
 			try {
@@ -1360,7 +1360,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	private void doExport(String setPath, PracticeOperation operation, boolean disableImageExport) {
+	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
 		EXPORT_LOG.info("Start export {}....", operation.getTitle());
 
 		String path = createOperationPath(setPath, operation);
@@ -1401,7 +1401,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @param operation
 	 * @return
 	 */
-	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, boolean disableImageExport) {
+	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, Boolean disableImageExport) {
 		SceneDumpContext dumpContext = new SceneDumpContext();
 		dumpContext.setId(operation.getTopoId());
 

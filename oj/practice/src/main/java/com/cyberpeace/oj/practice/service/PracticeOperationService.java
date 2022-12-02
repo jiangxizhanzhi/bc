@@ -191,7 +191,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param setPath
 	 * @param practiceOperations
 	 */
-    void exportPractice(String setPath, List<PracticeOperation> practiceOperations, boolean disableImageExport);
+    void exportPractice(String setPath, List<PracticeOperation> practiceOperations, Boolean disableImageExport);
 
 	/**
 	 * 获取实操习题附件

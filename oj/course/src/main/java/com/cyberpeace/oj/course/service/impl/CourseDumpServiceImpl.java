@@ -70,7 +70,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 
 	@Override
-	public String rMCourseDump(String resource_id, Boolean is_dump_topo, String sceneNumber, boolean disableImageExport) {
+	public String rMCourseDump(String resource_id, Boolean is_dump_topo, String sceneNumber, Boolean disableImageExport) {
 		log.info("----------course dump start-----------");
 		String destFilePath = "";
 		// 1.获取所有课程数据 内容及文件
@@ -147,7 +147,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 	private void combineLessons(String destFilePath, List<LessonConfig> currentLessonConfigs,
-								List<CourseLesson> currentLessons, Boolean is_dump_topo, String sceneNumber, boolean disableImageExport) {
+								List<CourseLesson> currentLessons, Boolean is_dump_topo, String sceneNumber, Boolean disableImageExport) {
 		Map<String, List<CourseLesson>> lessonCols = currentLessons.stream().collect(Collectors.groupingBy(CourseLesson::getResourceId));
 
 		List<LessonConfig> chapterFirsts = currentLessonConfigs.stream().filter(s -> null != s.getNodeType() && s.getNodeType().equals(LessonConfig.NodeType.NODE_CHAPTER.getCode())).
@@ -171,7 +171,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 	}
 
 	private Map<String, String> combineChapterFirst(String destFilePath,Integer chapterIndex,LessonConfig chapterOne, List<LessonConfig> lessonConfigs, Map<String, List<CourseLesson>> lessons,
-													Boolean is_dump_topo, String sceneNumber, boolean disableImageExport) {
+													Boolean is_dump_topo, String sceneNumber, Boolean disableImageExport) {
 
 		Map<String, String> filePathMap = new HashMap<>();
 		Integer currentChapter = chapterOne.getIndex();
@@ -230,7 +230,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 
 	}
 
-	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber, boolean disableImageExport) {
+	private void combineOperationLesson(String destFilePath, String pathname, CourseLesson lesson, String sceneNumber, Boolean disableImageExport) {
 		//doc 指导文档doc/pdf/md 包含img文件夹 指导书md
 		String docFile = pathname + File.separator + "doc";
 		FileUtil.mkdirs(docFile);

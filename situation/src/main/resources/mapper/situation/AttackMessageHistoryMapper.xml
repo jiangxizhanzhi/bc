@@ -40,6 +40,9 @@
             (defense_type is null
             or defense_level != 3)
             and is_history = 0
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
+            </if>
             <if test="null != attackTypeList and attackTypeList.size > 0">
                 and type in
                 <foreach collection="attackTypeList" open="(" close=")" item="attackType" separator=",">

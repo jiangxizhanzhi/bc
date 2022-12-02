@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service;
 import com.cyberpeace.integratation.model.situation.SituationPlan;
 import com.cyberpeace.integratation.model.situation.SituationSubject;
 import com.cyberpeace.integratation.model.situation.SituationTask;
+import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
 
 import java.util.List;
 
@@ -38,6 +39,10 @@ public interface RemoteSituationService {
 	 */
 	List<SituationPlan> getPlans();
 
-
+	/**
+	 * 获取分靶场详情
+	 * @return SubRangeInfoContext
+	 */
+	SubRangeInfoContext getSubRangeInfo(String subRangeId);
 
 }

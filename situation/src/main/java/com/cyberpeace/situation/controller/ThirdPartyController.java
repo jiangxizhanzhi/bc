@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.service.ThirdPartyService;
@@ -30,6 +32,9 @@ public class ThirdPartyController {
 	@Autowired
 	private ThirdPartyService thirdPartyService;
 
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
 	@ApiOperation("获取攻防事件类型列表")
 	@GetMapping("/event_type/list/")
 	public BaseRsp<List<EventTypeRes>> getEventTypes() {
@@ -43,6 +48,16 @@ public class ThirdPartyController {
 	public BaseRsp<List<SubRangeContext>> getSubRanges() {
 
 		return new BaseRsp<>(thirdPartyService.getSubRanges());
+	}
+
+	@ApiOperation("获取分靶场详情")
+	@GetMapping("/range/")
+	public BaseRsp<SubRangeInfoContext>
+			getSubRangeInfo(@ApiParam(name = "sub_range_id", value = "分靶场ID",
+					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
+		SubRangeInfoContext subRangeInfoContext = remoteSituationService
+				.getSubRangeInfo(subRangeId);
+		return new BaseRsp<>(subRangeInfoContext);
 	}
 
 	@ApiOperation("获取场站列表")

@@ -362,7 +362,7 @@ public class MissionController {
 	}
 
 	@ApiOperation("解析md文件数据")
-	@GetMapping("/parse/md")
+	@PostMapping("/parse/md")
 	public BaseRsp<String> parseMDFile(@RequestParam("missionId") String missionId,
 							  @RequestParam("md") MultipartFile md){
 		String realContent = null;

@@ -98,13 +98,19 @@ public class AssessMaterialController {
 
 		String uuid = String.valueOf(UUID.randomUUID());
 		assessMaterial.setResourceId(uuid);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		assessMaterialConfigService.setConfig(assessMaterial);
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				assessMaterialConfigService.setConfig(assessMaterial);
 
-		if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
-			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
-		}
-		assessMaterialMapper.insert(assessMaterial);
+				if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
+					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+				}
+				assessMaterialMapper.insert(assessMaterial);
+			}
+		});
+
 
 		return new BaseRsp<>(assessMaterial);
 	}
@@ -176,11 +182,17 @@ public class AssessMaterialController {
 		if(null == assessMaterial){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		assessMaterialConfigService.setConfig(assessMaterial);
-		if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)) {
-			assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
-		}
-		assessMaterialMapper.updateById(assessMaterial);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)) {
+					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+				}
+				BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
+				assessMaterialMapper.updateById(assessMaterial);
+			}
+		});
 		return new BaseRsp<>(assessMaterial);
 	}
 

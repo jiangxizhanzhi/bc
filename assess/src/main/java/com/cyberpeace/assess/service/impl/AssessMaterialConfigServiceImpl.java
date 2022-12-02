@@ -146,12 +146,13 @@ implements AssessMaterialConfigService {
             return materialConfig;
         }
         // 已有记录时 在材料idlist末尾追加材料id
-        String materialId = assessMaterialConfig.getMaterialId();
-        List<String> materialList = JSONObject.parseArray(materialId, String.class);
-        materialList.add(resourceId);
-        String materials = JsonUtil.arrayToString(materialList);
-        assessMaterialConfig.setMaterialId(materials);
-        assessMaterialConfigMapper.updateById(assessMaterialConfig);
+//        String materialId = assessMaterialConfig.getMaterialId();
+//        List<String> materialList = JSONObject.parseArray(materialId, String.class);
+//        materialList.remove(resourceId);
+//        materialList.add(resourceId);
+//        String materials = JsonUtil.arrayToString(materialList);
+//        assessMaterialConfig.setMaterialId(materials);
+//        assessMaterialConfigMapper.updateById(assessMaterialConfig);
         return assessMaterialConfig;
 
     }

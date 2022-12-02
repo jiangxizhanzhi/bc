@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +52,9 @@ public class AssessDataController {
 	@Autowired
 	private AssessFileDataService assessFileDataService;
 
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
 	@ApiOperation("查询单条评估数据")
 	@GetMapping("/assess_data")
 	public BaseRsp<AssessData> getAssessData(
@@ -82,9 +88,16 @@ public class AssessDataController {
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
 		assessData.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		assessDataService.save(assessData);
-		assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
-				assessData.getInputData());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				assessDataService.save(assessData);
+				assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
+						assessData.getInputData());
+			}
+		});
+
 		return new BaseRsp<>();
 	}
 
@@ -104,9 +117,16 @@ public class AssessDataController {
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 
-		assessDataService.updateById(assessData);
-		assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
-				assessData.getInputData());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			public void doInTransactionWithoutResult(TransactionStatus status) {
+				assessDataService.updateById(assessData);
+				assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
+						assessData.getInputData());
+			}
+		});
+
 		return new BaseRsp<>();
 	}
 

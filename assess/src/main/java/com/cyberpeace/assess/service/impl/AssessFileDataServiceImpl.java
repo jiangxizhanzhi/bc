@@ -129,7 +129,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		if(inputType.equals(CommonConstant.ONE)){
 			content = saveSqlData(inputData);
 		} else if(inputType.equals(CommonConstant.TWO)){
-			content = saveExcelData(inputData);
+			content = saveExcelDataByColumn(inputData);
 		} else {
 			throw new BusinessException("input type error");
 		}
@@ -138,6 +138,53 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		assessFileData.setContent(content);
 		assessFileData.setPath(inputData);
 		assessFileDataMapper.insert(assessFileData);
+	}
+
+	private String saveExcelDataByColumn(String inputData) {
+		ExcelDataHandler dataHandler = new ExcelDataHandler(inputData, 0);
+		List<List<String>> sheetData;
+		sheetData = dataHandler.getSheetData(0);
+		if(sheetData.isEmpty()){
+			throw new BusinessException("The excel is empty");
+		}
+		dataHandler.closeIO();
+		List<JSONObject> data = new ArrayList<>();
+		List<String> tableColumn = sheetData.get(0);
+		List<String> fields = tableColumn.subList(1, tableColumn.size() - 1);
+		List<String> tableColumns = fields.stream().filter(StringUtils::isNoneBlank).collect(Collectors.toList());
+		int emptyCells = 0;
+		for (int i = 1; i < sheetData.size(); i++){
+			List<String> values = sheetData.get(i);
+			JSONObject jsonObject = new JSONObject();
+			for(int j = 1; j < tableColumns.size(); j++){
+				if(j > i || StringUtils.isBlank(tableColumns.get(1))){
+					continue;
+				}
+				String value;
+				if(j > values.size() - 1){
+					value = "0";
+					emptyCells++;
+				} else {
+					value = values.get(j);
+				}
+				double aDouble;
+				try {
+					aDouble = new Double(value);
+				} catch (Exception e) {
+					aDouble = 0.0;
+					emptyCells++;
+				}
+				jsonObject.put(tableColumns.get(j), aDouble);
+			}
+			jsonObject.put("product", values.get(0));
+			data.add(jsonObject);
+		}
+		if(emptyCells == (sheetData.size() - 1) * (tableColumns.size() -1)){
+			throw new BusinessException("The excel does not contain usable data.");
+		}
+		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
+		assessDataSqlEcharts.setSource(data);
+		return JSONObject.toJSONString(assessDataSqlEcharts);
 	}
 
 	private String saveExcelData(String inputData) {

@@ -146,16 +146,12 @@ public class AssessCaseController {
 		Integer perPage = assessCaseFilterReq.getPerPage();
 		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
 		List<AssessCase> records = assessCases.getRecords();
-		List<String> cases = StreamApiUtils.getColumn(records, AssessCase::getResourceId);
-
 		LambdaQueryWrapper<AssessMaterial> assessMaterialLambdaQueryWrapper = new LambdaQueryWrapper<>();
-		assessMaterialLambdaQueryWrapper.in(AssessMaterial::getCaseId, cases);
 		List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(assessMaterialLambdaQueryWrapper);
 		Map<String, List<AssessMaterial>> assessMaterialMap = assessMaterials.stream().collect(Collectors.groupingBy(AssessMaterial::getCaseId));
 
 		List<AssessTag> assessTags = assessTagMapper.selectList(null);
 
-		List<AssessCaseListRes> res = new ArrayList<>();
 		List<AssessCase> collect = records.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
 		assessCases.setRecords(collect);
 		assessCases.convert(assessCase -> {

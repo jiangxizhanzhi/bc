@@ -115,12 +115,14 @@ public class LcServiceImpl implements LcService {
 	@Override
 	public void startBehavior(ReleaseTaskReq req) {
 		String targetUrl = LC_HOST_PORT + RELEASE_TASK;
+		log.info("Start behavior request: {}", JsonUtil.toJsonString(req));
 		LcHttpClient.post(targetUrl, req, String.class);
 	}
 
 	@Override
 	public void stopBehavior(StopTaskReq req) {
 		String targetUrl = LC_HOST_PORT + STOP_TASK;
+		log.info("Stop behavior request: {}", JsonUtil.toJsonString(req));
 		LcHttpClient.post(targetUrl, req, String.class);
 	}
 

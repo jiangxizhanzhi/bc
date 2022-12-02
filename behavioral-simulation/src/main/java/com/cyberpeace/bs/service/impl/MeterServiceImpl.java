@@ -51,24 +51,12 @@ public class MeterServiceImpl implements MeterService {
 		StopTaskReq stopTaskReq = new StopTaskReq();
 		stopTaskReq.setChartId(new Long(behaviorId));
 		stopTaskReq.setIsUsingIp(!simulator.getIsEntity());
-		stopTaskReq.setDeviceId(new Integer(simulator.getDeviceId()));
+		if (simulator.getIsEntity()) {
+			stopTaskReq.setDeviceId(new Integer(simulator.getDeviceId()));
+		} else {
+			stopTaskReq.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
+		}
 		stopTaskReq.setIp(simulator.getDeviceIp());
 		lcService.stopBehavior(stopTaskReq);
-	}
-}
-
-enum TargetType implements GenericEnum {
-
-	ALL(0, "全部类型"), DEFAULT(1, "默认"), IXIA(2, "ixia仪表"), LONGCE(3, "龙测仪表");
-
-	@Getter
-	private Integer code;
-
-	@Getter
-	private String desc;
-
-	TargetType(Integer code, String desc) {
-		this.code = code;
-		this.desc = desc;
 	}
 }

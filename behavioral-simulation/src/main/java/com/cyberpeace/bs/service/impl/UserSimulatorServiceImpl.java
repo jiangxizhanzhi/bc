@@ -44,7 +44,6 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -330,7 +329,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				StopTaskReq req = new StopTaskReq();
 				req.setChartId(new Long(latestBehaviorId));
 				req.setIsUsingIp(!simulator.getIsEntity());
-				req.setDeviceId(new Integer(simulator.getDeviceId()));
+				if (req.getIsUsingIp()) {
+					req.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
+				} else {
+					req.setDeviceId(new Integer(simulator.getDeviceId()));
+				}
 				req.setIp(simulator.getDeviceIp());
 				lcService.stopBehavior(req);
 			} catch (Exception e) {

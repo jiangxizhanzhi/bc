@@ -33,10 +33,6 @@ public class ReleaseTaskReq implements Serializable {
 		this.getTask().setDeviceId(id);
 	}
 
-	public void setDeviceIp(String ip) {
-		this.getTask().setDeviceIp(ip);
-	}
-
 	public void setFlowChart(String id) {
 		this.getFlowChartIds().add(new Long(id));
 	}
@@ -51,8 +47,6 @@ public class ReleaseTaskReq implements Serializable {
 class Task implements Serializable {
 
 	private String deviceId;
-
-	private String deviceIp;
 
 	private Integer deviceSource = 2;
 

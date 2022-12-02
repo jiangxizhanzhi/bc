@@ -31,7 +31,7 @@ public class MeterServiceImpl implements MeterService {
 		UserSimulator simulator = userSimulatorService.getOrException(simulatorId);
 		ReleaseTaskReq taskReq = new ReleaseTaskReq();
 		taskReq.setDeviceId(simulator.getDeviceId());
-		taskReq.setDeviceIp(simulator.getDeviceIp());
+		taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setIsUsingIp(!simulator.getIsEntity());
 		taskReq.setFlowChart(behaviorId);
 		req.getVariables().forEach(variableBo -> taskReq.addVariable(variableBo.getName(), variableBo.getValue()));

@@ -55,7 +55,7 @@ public class BsTimerTask extends TimerTask {
             }
             ReleaseTaskReq req = new ReleaseTaskReq();
             req.setDeviceId(deviceId);
-            req.setDeviceIp(deviceIp);
+            req.setIp(deviceIp);
             req.setIsUsingIp(!isEntity);
             req.setFlowChart(behaviorId);
             List<VariableBo> variableBos = JsonUtil.toJsonObjectArray(variable, VariableBo.class);

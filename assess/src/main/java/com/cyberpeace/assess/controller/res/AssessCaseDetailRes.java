@@ -25,7 +25,7 @@ public class AssessCaseDetailRes implements Serializable {
 	private String name;
 
 	@ApiModelProperty("描述")
-	private String description;
+	private String overview;
 
 	@ApiModelProperty("封面")
 	private String cover;

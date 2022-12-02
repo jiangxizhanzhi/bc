@@ -70,7 +70,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	@Override
-	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type, String sceneNumber) throws IOException {
+	public void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type, String sceneNumber, Boolean disableImageExport) throws IOException {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
 		if(businessTemplateList.size() == 0){
@@ -81,7 +81,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		}
 		ExportTrainMDService exportTrainMDService = register.get(type);
 		exportTrainMDService.exportTrainMD(businessTemplateList,
-				path + File.separator + "cr" + File.separator + "场景库", sceneNumber);
+				path + File.separator + "cr" + File.separator + "场景库", sceneNumber, disableImageExport);
 
 		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path + File.separator + VERSION),
 				StandardCharsets.UTF_8);
@@ -91,7 +91,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 	}
 
 	@Override
-	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber) {
+	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -120,7 +120,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		}
 	}
 
-	public Map<String, String> dumpScene(String topoId, String envPath, String imagePath, String sceneNumber){
+	public Map<String, String> dumpScene(String topoId, String envPath, String imagePath, String sceneNumber, Boolean disableImageExport){
 		SceneDumpContext sceneDumpContext = new SceneDumpContext();
 		sceneDumpContext.setId(topoId);
 		sceneDumpContext.setScene_number(sceneNumber);
@@ -128,6 +128,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 		sceneDumpContext.setEnv_path(envPath);
 		FileUtil.mkdirs(imagePath);
 		sceneDumpContext.setImage_path(imagePath);
+		sceneDumpContext.setDisable_image_export(disableImageExport);
 		JSONObject jsonObject = remoteSceneService.sceneDump(sceneDumpContext);
 		List<JSONObject> convertInfos = jsonObject.getObject("convert_infos", List.class);
 		Map<String, String> convertMap = new HashMap<>();

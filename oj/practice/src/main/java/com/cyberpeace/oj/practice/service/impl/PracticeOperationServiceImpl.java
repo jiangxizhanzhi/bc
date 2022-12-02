@@ -1345,11 +1345,11 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public void exportPractice(String setPath, List<PracticeOperation> operations) {
+	public void exportPractice(String setPath, List<PracticeOperation> operations, boolean disableImageExport) {
 
 		for (PracticeOperation operation : operations) {
 			try {
-				doExport(setPath, operation);
+				doExport(setPath, operation, disableImageExport);
 			} catch (Exception e) {
 				EXPORT_LOG.error(
 						"Practice operation export failed!, set_path=[{}], practice_name=[{}], catch error:",
@@ -1360,7 +1360,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 	}
 
-	private void doExport(String setPath, PracticeOperation operation) {
+	private void doExport(String setPath, PracticeOperation operation, boolean disableImageExport) {
 		EXPORT_LOG.info("Start export {}....", operation.getTitle());
 
 		String path = createOperationPath(setPath, operation);
@@ -1388,7 +1388,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// topo和镜像导出
 		if (StringUtils.isNotBlank(operation.getTopoId())) {
-			SceneDumpContext dumpContext = exportSceneReq(operation, path);
+			SceneDumpContext dumpContext = exportSceneReq(operation, path, disableImageExport);
 			remoteSceneService.sceneDump(dumpContext);
 			EXPORT_LOG.info("{} topo and images export finish....", operation.getTitle());
 		}
@@ -1401,13 +1401,14 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	 * @param operation
 	 * @return
 	 */
-	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath) {
+	private SceneDumpContext exportSceneReq(PracticeOperation operation, String practicePath, boolean disableImageExport) {
 		SceneDumpContext dumpContext = new SceneDumpContext();
 		dumpContext.setId(operation.getTopoId());
 
 		File envPath = new File(practicePath, ResourceImportConstant.ENV);
 		dumpContext.setSingle_image_path(envPath.getAbsolutePath());
 		dumpContext.setEnv_path(envPath.getAbsolutePath());
+		dumpContext.setDisable_image_export(disableImageExport);
 
 		return dumpContext;
 	}

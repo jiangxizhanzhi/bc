@@ -40,7 +40,8 @@ public class ExportTrainMDController {
 	public BaseRsp<String> exportTrainMD(
 			@ApiParam(name = "resource_id", value = "场景id", required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "type", value = "场景类型", required = true) @RequestParam(name = "type") Integer type,
-			@ApiParam(name = "scene_number", value = "场景编号", required = true) @RequestParam(name = "scene_number") String sceneNumber) {
+			@ApiParam(name = "scene_number", value = "镜像编号", required = false) @RequestParam(name = "scene_number", required = false) String sceneNumber,
+			@ApiParam(name = "disable_image_export", value = "是否禁止导出镜像", required = false) @RequestParam(name = "disable_image_export", required = false) Boolean disableImageExport) {
 		//判断type是否正确
 		List<Integer> sceneTypeList = EnumUtils.getListCode(BusinessTypeConvert.class);
 		if (!sceneTypeList.contains(type)) {
@@ -65,7 +66,7 @@ public class ExportTrainMDController {
 		}
 
 		try{
-			exportTrainMDService.chooseTypeAndExportTrain(resourceIds, path, type, sceneNumber);
+			exportTrainMDService.chooseTypeAndExportTrain(resourceIds, path, type, sceneNumber, disableImageExport);
 		}catch (IOException e){
 			log.error("export [{}] failed",StringUtils.join(resourceIds, ","));
 			log.error("export error:", e);

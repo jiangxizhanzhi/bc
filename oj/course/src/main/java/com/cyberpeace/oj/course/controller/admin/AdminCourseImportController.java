@@ -62,7 +62,7 @@ public class AdminCourseImportController {
 
 		// 执行课程数据导入
 		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
-				courseImportReq.getEnvReqs(), authContext);
+				courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), authContext);
 
 		return new BaseRsp<>(result);
 	}

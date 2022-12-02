@@ -1,31 +1,31 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.SystemConfigService;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
@@ -108,6 +108,23 @@ public class PracticeValidateHandler {
 			log.error("The format of the answer:[{}] is wrong", answer);
 			throw new BusinessException(OjBusinessErrorCode.JUDGEMENT_ANSWER_ERROR);
 		}
+	}
+
+	/**
+	 * 校验习题难度
+	 * @param difficulty 习题难度
+	 */
+	public void validateCategoryDifficulty(Integer difficulty) {
+		boolean right = false;
+		for (Difficulty difficulty1 : Difficulty.values()) {
+			right |= difficulty1.getCode().intValue() == difficulty;
+		}
+
+		if (!right) {
+			log.error("Theory difficulty error! difficulty=[{}]", difficulty);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIFFICULTY_ERROR);
+		}
+
 	}
 
 	/**

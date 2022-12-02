@@ -23,10 +23,11 @@ public interface CourseImportService {
 	 * @param course
 	 * @param path
 	 * @param envReqs
+	 * @param operationEnvReqs
 	 * @return
 	 */
-	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
-			Map<String, String> lessonPathMap);
+	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs,
+									 Map<String, String> nameMap);
 
 	/**
 	 * 组装课时路径信息
@@ -41,9 +42,10 @@ public interface CourseImportService {
 	 * 课程数据导入
 	 * @param path 课程资源所在地址
 	 * @param envReqs topo与课时绑定数据 key=课时文件夹名称 value=topo编号
+	 * @param operationEnvReqs
 	 * @return
 	 */
-	Boolean rMCourseImport(String path, Map<String, String> envReqs, AuthContext authContext);
+	Boolean rMCourseImport(String path, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs, AuthContext authContext);
 
 	/**
 	 * 组合课程数据导入

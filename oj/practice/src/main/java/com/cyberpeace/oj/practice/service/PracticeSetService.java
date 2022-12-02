@@ -132,5 +132,5 @@ public interface PracticeSetService extends IService<PracticeSet> {
 
     List<PracticeTheory> importExcelTheoryPractice(String s);
 
-    List<PracticeOperation> importMdOperationPractice(String absolutePath);
+    List<PracticeOperation> importMdOperationPractice(String absolutePath, Map<String, String> stringStringMap);
 }

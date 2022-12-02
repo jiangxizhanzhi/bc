@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -634,6 +637,26 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		return answer;
 	}
+	/**
+	 * 处理习题难度
+	 * @param theoryDifficulty 习题难度
+	 * @return
+	 */
+	private Integer handleTheoryDifficulty(String theoryDifficulty) {
+		Integer realDifficulty;
+
+		try {
+			Double practiceDifficulty = new Double(theoryDifficulty);
+			realDifficulty = practiceDifficulty.intValue() - 1;
+		} catch (Exception e) {
+			log.error("Parse theory type failed! value=[{}] catch error:", theoryDifficulty, e);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIFFICULTY_ERROR);
+		}
+
+		practiceValidateHandler.validateCategoryDifficulty(realDifficulty);
+		return realDifficulty;
+
+	}
 
 	/**
 	 * 处理习题类型
@@ -671,8 +694,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		PracticeTheory practiceTheory = new PracticeTheory();
-		practiceTheory.setContent(excelRowData.get(0));
-		practiceTheory.setTitle(excelRowData.get(0));
+
+		String content = excelRowData.get(0);
+		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
+				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+
+		practiceTheory.setContent(content);
+		practiceTheory.setTitle(content);
 
 		String practiceId = practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
 				practiceTheory.getContent());
@@ -681,10 +709,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		// excel数据中难度=比当前代码枚举值+1
-		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
+		practiceTheory.setDifficulty(handleTheoryDifficulty(excelRowData.get(2)));
 		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleTheoryType(
-				String.valueOf(Integer.parseInt(excelRowData.get(3))));
+		Integer theoryType = handleTheoryType(excelRowData.get(3) );
 		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
@@ -1167,8 +1194,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		}
 
 		PracticeTheory practiceTheory = new PracticeTheory();
-		practiceTheory.setContent(excelRowData.get(0));
-		practiceTheory.setTitle(excelRowData.get(0));
+
+		String content = excelRowData.get(0);
+		CrCommonValidator.validateLength(content, CrCommonConstants.ZERO_STR_LEN,
+				MAX_CONTENT_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
+
+		practiceTheory.setContent(content);
+		practiceTheory.setTitle(content);
 
 		// String practiceId =
 		// practiceTheoryMapper.selectByContent(practiceSet.getResourceId(),
@@ -1178,10 +1210,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// }
 
 		// excel数据中难度=比当前代码枚举值+1
-		practiceTheory.setDifficulty(new Double(excelRowData.get(2)).intValue() - 1);
+		practiceTheory.setDifficulty(handleTheoryDifficulty(excelRowData.get(2)));
 		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleTheoryType(
-				String.valueOf(Integer.parseInt(excelRowData.get(3))));
+		Integer theoryType = handleTheoryType(excelRowData.get(3));
 		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建

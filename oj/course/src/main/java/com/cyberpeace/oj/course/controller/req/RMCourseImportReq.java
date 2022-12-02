@@ -11,4 +11,6 @@ public class RMCourseImportReq extends RMImportReq {
 	/** key=课时或习题名称 value=topoId*/
 	private Map<String, String> envReqs;
 
+	/** key=课时名称 value=<实操题名称，topoId>*/
+	private Map<String, Map<String, String>> operationEnvReqs;
 }

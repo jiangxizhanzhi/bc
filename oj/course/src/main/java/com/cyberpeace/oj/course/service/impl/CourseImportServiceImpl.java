@@ -202,8 +202,8 @@ public class CourseImportServiceImpl implements CourseImportService {
 	}
 
 	@Override
-	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
-			Map<String, String> nameMap) {
+	public List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs,
+											Map<String, String> nameMap) {
 
 		List<CourseLesson> allLessons = Lists.newArrayList();
 
@@ -218,7 +218,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 			// 目录课程数据解析
 			List<String> lessonPaths = FileUtil.listFileByFile(file, 1, true);
 			List<CourseLesson> courseLessons = StreamApiUtils.map(lessonPaths, lessonPath -> {
-				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs);
+				CourseLesson courseLesson = parseLesson(lessonPath, course, envReqs,operationEnvReqs);
 				if (null != courseLesson) {
 					// 如果存在该课时，则替换resource_id
 					CourseLesson existLesson = courseLessonMapper.selectCourseByCourseAndName(
@@ -275,7 +275,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 	 * @param course
 	 * @return
 	 */
-	private CourseLesson parseLesson(String path, Course course, Map<String, String> envReqs) {
+	private CourseLesson parseLesson(String path, Course course, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs) {
 
 		// 解析课时数据
 		File file = new File(path, ResourceImportConstant.README_NAME);
@@ -367,9 +367,9 @@ public class CourseImportServiceImpl implements CourseImportService {
 			}
 		}
 
-		// 解析理论题
+		// 解析实操题
 		List<PracticeOperation> operationList = practiceSetService.importMdOperationPractice(
-				new File(path, ResourceImportConstant.OPERATION).getAbsolutePath());
+				new File(path, ResourceImportConstant.OPERATION).getAbsolutePath(),operationEnvReqs.get(new File(path).getName()));
 
 		if (operationList != null) {
 			for (PracticeOperation practiceOperation : operationList) {
@@ -604,7 +604,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 	@Override
 	public Boolean rMCourseImport(String path, Map<String, String> envReqs,
-			AuthContext authContext) {
+								  Map<String, Map<String, String>> operationEnvReqs, AuthContext authContext) {
 
 		// 课程信息组装
 		Course course = parseRmCourse(path);
@@ -613,7 +613,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 		UserInfoContext.setUserContext(userInfo);
 		// 课时信息组装
 		Map<String, String> lessonNameMap = Maps.newHashMap();
-		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs, lessonNameMap);
+		List<CourseLesson> lessons = parseRmLesson(course, path, envReqs,operationEnvReqs, lessonNameMap);
 
 		List<LessonConfig> lessonConfigs = parseRmLessonConfig(course, path, lessonNameMap);
 
@@ -823,7 +823,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 
 			Map<String, String> envReqs = Maps.newHashMap();
 			envReqs.put(courseInfo.getLessonName(), courseInfo.getTopoId());
-			CourseLesson courseLesson = parseLesson(courseInfo.getPath(), course, envReqs);
+			CourseLesson courseLesson = parseLesson(courseInfo.getPath(), course, envReqs,null);
 
 			if (null != courseLesson) {
 				if (null != lessonNameMap.putIfAbsent(lessonName, courseLesson.getResourceId())) {

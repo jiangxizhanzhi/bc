@@ -363,7 +363,7 @@ public class MissionController {
 
 	@ApiOperation("解析md文件数据")
 	@GetMapping("/parse/md")
-	public String parseMDFile(@RequestParam("missionId") String missionId,
+	public BaseRsp<String> parseMDFile(@RequestParam("missionId") String missionId,
 							  @RequestParam("md") MultipartFile md){
 		String realContent = null;
 		String suffix = FileUtil.getFileSuffix(md.getOriginalFilename());
@@ -375,7 +375,7 @@ public class MissionController {
 					missionId);
 			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, md);
 
-			// 获取讲义文件存储地址
+			// 获取md文件存储地址
 			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(), missionId);
 			String realPath = utilService.getRealPath(attachmentBo.getFilePath());
 
@@ -383,7 +383,7 @@ public class MissionController {
 			String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
 			ZipUtil.unzipToDest(realPath, unzipPath);
 
-			// 获取解压的讲义文件
+			// 获取解压的md文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
 			if (StringUtils.isBlank(mdFilePath)) {
 				throw new BusinessException(CrBusinessErrorCode.NOT_MD_PATH);
@@ -393,7 +393,7 @@ public class MissionController {
 			realContent = utilService.replaceMarkdownFile(content);
 
 		}
-		return realContent;
+		return new BaseRsp<>(realContent);
 	}
 
 	private MissionTemplate requestToMissionTemplate(MissionTemplateReq missionTemplateReq) {

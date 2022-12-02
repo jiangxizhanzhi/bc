@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.integratation.model.situation.SituationPlan;
-import com.cyberpeace.integratation.model.situation.SituationSubject;
-import com.cyberpeace.integratation.model.situation.SituationTask;
-import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
+import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +24,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
     private String RANGE_INFO_URL;
 
+    private String CENTER_INFO_URL;
+
     @PostConstruct
     public void init() {
         String outerHost = "http://" + ConfigUtil.getContextProperty("outer.host");
@@ -34,6 +33,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
         PLAN_URL = outerHost + ConfigUtil.getContextProperty("plan.list");
         SUBJECT_URL = outerHost + ConfigUtil.getContextProperty("subject.list");
         RANGE_INFO_URL = outerHost + ConfigUtil.getContextProperty("range.info");
+        CENTER_INFO_URL = outerHost + ConfigUtil.getContextProperty("center.info");
     }
     @Override
     public List<SituationSubject> getSubjectByTasks(List<String> taskIds) {
@@ -73,6 +73,13 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
         SubRangeInfoContext subRangeInfoContext = HttpClientUtil.rawGet(RANGE_INFO_URL + subRangeId,
                 SubRangeInfoContext.class);
         return subRangeInfoContext;
+    }
+
+    @Override
+    public CenterInfoContext getCenterInfo(String centerId) {
+        CenterInfoContext centerInfoContext = HttpClientUtil.rawGet(CENTER_INFO_URL + centerId,
+                CenterInfoContext.class);
+        return centerInfoContext;
     }
 }
 

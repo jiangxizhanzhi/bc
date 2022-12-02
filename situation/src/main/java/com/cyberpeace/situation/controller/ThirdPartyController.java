@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.model.situation.CenterInfoContext;
 import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
@@ -57,7 +58,16 @@ public class ThirdPartyController {
 					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 		SubRangeInfoContext subRangeInfoContext = remoteSituationService
 				.getSubRangeInfo(subRangeId);
+		subRangeInfoContext.setTitle("XXX分靶场综合态势");
 		return new BaseRsp<>(subRangeInfoContext);
+	}
+
+	@ApiOperation("获取LG中心详情")
+	@GetMapping("/center/")
+	public BaseRsp<CenterInfoContext> getCenterInfo(@ApiParam(name = "center_id", value = "LG中心ID",
+			required = true) @RequestParam(value = "center_id") String centerId) {
+		CenterInfoContext centerInfoContext = remoteSituationService.getCenterInfo(centerId);
+		return new BaseRsp<>(centerInfoContext);
 	}
 
 	@ApiOperation("获取场站列表")

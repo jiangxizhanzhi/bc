@@ -18,6 +18,9 @@ public class SubRangeInfoContext implements Serializable {
 	@ApiModelProperty("分靶场类型")
 	private String subRangeType;
 
+	@ApiModelProperty("大屏标题")
+	private String title;
+
 	@ApiModelProperty("分靶场位置")
 	private String location;
 

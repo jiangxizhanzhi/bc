@@ -1,9 +1,6 @@
 package com.cyberpeace.integratation.service;
 
-import com.cyberpeace.integratation.model.situation.SituationPlan;
-import com.cyberpeace.integratation.model.situation.SituationSubject;
-import com.cyberpeace.integratation.model.situation.SituationTask;
-import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
+import com.cyberpeace.integratation.model.situation.*;
 
 import java.util.List;
 
@@ -44,5 +41,12 @@ public interface RemoteSituationService {
 	 * @return SubRangeInfoContext
 	 */
 	SubRangeInfoContext getSubRangeInfo(String subRangeId);
+
+
+	/**
+	 * 获取LG中心详情
+	 * @return CenterInfoContext
+	 */
+	CenterInfoContext getCenterInfo(String centerId);
 
 }

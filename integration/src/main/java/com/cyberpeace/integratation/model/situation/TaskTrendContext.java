@@ -12,7 +12,7 @@ public class TaskTrendContext implements Serializable {
 	@ApiModelProperty("时间")
 	private Date time;
 
-	@ApiModelProperty("分靶场名称")
+	@ApiModelProperty("任务数")
 	private Integer taskCount;
 
 }

@@ -57,6 +57,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 	@Override
 	public void parseModelFile(String relatedId, Integer interfaceType, String attachmentUrl) {
 		try {
+			assessFileDataMapper.deleteByRelatedId(relatedId);
 			if (AssessModel.interfaceType.DATABASE.getCode().equals(interfaceType)) {
 				List<List<String>> sheetData = Lists.newArrayList();
 
@@ -84,7 +85,6 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 				assessFileData.setPath(attachmentUrl);
 				assessFileData.setContent(data);
 
-				assessFileDataMapper.deleteByRelatedId(relatedId);
 				save(assessFileData);
 			}
 		} catch (Exception e) {
@@ -123,6 +123,8 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 	@Override
 	public void parseDataFile(String resourceId, Integer inputType, String inputData) {
+		assessFileDataMapper.deleteByRelatedId(resourceId);
+
 		String content;
 		if(inputType.equals(CommonConstant.ONE)){
 			content = saveSqlData(inputData);

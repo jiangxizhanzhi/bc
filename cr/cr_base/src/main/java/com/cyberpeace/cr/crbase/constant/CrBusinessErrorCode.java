@@ -406,8 +406,8 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
-	/** 选项过长 */
-	String OPTION_TOO_LONG = "101123";
+	/** 非法的选项长度 */
+	String ILLEGAL_OPTION_LEN = "101123";
 
 	/** 工具分类英文名称与系统内已有名称重复  */
 	String DUPLICATED_TOOL_CATEGORY_ENNAME = "101124";

@@ -44,3 +44,6 @@ CREATE TABLE `oj_course_study_history`  (
                                             PRIMARY KEY (`id`) USING BTREE,
                                             UNIQUE INDEX `course_user_uniq`(`course_id`, `user_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+ALTER TABLE cr_mission_template MODIFY COLUMN option text COMMENT '选择题选项';
+ALTER TABLE cr_mission MODIFY COLUMN option text COMMENT '选择题选项';

@@ -17,6 +17,7 @@ import com.cyberpeace.assess.constant.AssessErrorCode;
 import com.cyberpeace.assess.dao.entity.AssessTag;
 import com.cyberpeace.assess.dao.mapper.AssessTagMapper;
 import com.cyberpeace.assess.service.AssessTagService;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -75,5 +76,18 @@ public class AssessTagServiceImpl extends ServiceImpl<AssessTagMapper, AssessTag
 		String str = tagNames.toString();
 		tagStr = StringUtils.isBlank(str) ? "" : str.substring(0, str.length() - 1);
 		return tagStr;
+	}
+
+	@Override
+	public void checkNameRepeat(String name, String id) {
+		LambdaQueryWrapper<AssessTag> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(AssessTag::getContent, name);
+		if (StringUtils.isNotBlank(id)) {
+			queryWrapper.ne(AssessTag::getResourceId, id);
+		}
+		AssessTag assessTag = assessTagMapper.selectOne(queryWrapper);
+		if (null != assessTag) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
 	}
 }

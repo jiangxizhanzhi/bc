@@ -44,7 +44,8 @@ public class AssessTagController {
 	public BaseRsp<String> addAssessTag(@RequestBody @Validated AssessTagAddReq assessTagAddReq) {
 		AssessTag toAddAssessTag = new AssessTag();
 		BeanUtils.copyProperties(assessTagAddReq, toAddAssessTag);
-
+		// 校验name是否已存在
+		assessTagService.checkNameRepeat(assessTagAddReq.getContent(), null);
 		assessTagService.save(toAddAssessTag);
 
 		return new BaseRsp<>();
@@ -56,7 +57,8 @@ public class AssessTagController {
 			modifyAssessTag(@RequestBody @Validated AssessTagUpdateReq assessTagUpdateReq) {
 		AssessTag toUpdateAssessTag = new AssessTag();
 		BeanUtils.copyProperties(assessTagUpdateReq, toUpdateAssessTag);
-
+		// 校验name是否已存在
+		assessTagService.checkNameRepeat(assessTagUpdateReq.getContent(), assessTagUpdateReq.getResourceId());
 		assessTagService.updateById(toUpdateAssessTag);
 
 		return new BaseRsp<>();

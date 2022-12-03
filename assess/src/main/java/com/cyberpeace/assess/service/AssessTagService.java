@@ -17,4 +17,6 @@ public interface AssessTagService extends IService<AssessTag> {
 	void checkTagIds(List<String> tags);
 
 	String getTagContent(String tags);
+
+	void checkNameRepeat(String name, String id);
 }

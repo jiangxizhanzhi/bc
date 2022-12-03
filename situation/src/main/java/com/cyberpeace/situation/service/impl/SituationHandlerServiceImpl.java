@@ -3,7 +3,6 @@ package com.cyberpeace.situation.service.impl;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -36,6 +35,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -183,8 +183,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 处理坐标数据
 			JSONObject position2 = element.getJSONObject("position2");
-			if(position2 == null){
-				log.error("Failed to get node coordinates！Scene_id is [{}]", sceneData.getSceneId());
+			if (position2 == null) {
+				log.error("Failed to get node coordinates！Scene_id is [{}]",
+						sceneData.getSceneId());
 				throw new BusinessException(SituationErrorCode.NODE_HAS_NO_COORDINATES);
 			}
 			Float x = position2.getFloat("x");
@@ -604,6 +605,20 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	@Override
+	public <T> void pushDataToDashboard(T data, String dashboardId, String featureId) {
+
+		DashboardWsMessageIdentifier identifier = new DashboardWsMessageIdentifier();
+		identifier.setPath(WsPath.SITUATION);
+		identifier.setSceneId(dashboardId, featureId);
+
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+				.data(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase))
+				.messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
 	@SneakyThrows
 	@Async
 	@Override
@@ -611,12 +626,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Integer interval) {
 
 		// 无推送消息时，直接结束
-		if (datas.isEmpty()){
+		if (datas.isEmpty()) {
 			return;
 		}
 
 		// 推送中台动效时打印日志
-		log.info(String.format("Push mp flow event successfully, content is %s", JsonUtil.arrayToString(datas)));
+		log.info(String.format("Push mp flow event successfully, content is %s",
+				JsonUtil.arrayToString(datas)));
 
 		Integer circle = (int) Math.ceil((double) datas.size() / number);
 

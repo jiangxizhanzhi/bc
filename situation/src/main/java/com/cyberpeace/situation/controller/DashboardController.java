@@ -75,9 +75,8 @@ public class DashboardController {
 			pushDashboardChange(@RequestBody @Validated DashboardChangeReq dashboardChangeReq) {
 		WsMessage<JSONObject> wsMessage = new WsMessage<>(dashboardChangeReq.getCode(),
 				dashboardChangeReq.getData());
-		String sceneId = dashboardChangeReq.getDashboardId() + "_"
-				+ dashboardChangeReq.getFeatureId();
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
+				dashboardChangeReq.getFeatureId());
 		return new BaseRsp<>(true);
 	}
 

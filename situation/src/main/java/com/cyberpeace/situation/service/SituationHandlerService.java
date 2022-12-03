@@ -124,6 +124,15 @@ public interface SituationHandlerService {
 	<T> void pushDataToRoom(T data, String sceneId);
 
 	/**
+	 * 推送消息至大屏
+	 * @param data 消息
+	 * @param dashboardId 大屏id
+	 * @param featureId 特征id
+	 * @return 无
+	 */
+	<T> void pushDataToDashboard(T data, String dashboardId, String featureId);
+
+	/**
 	 * 批量推送消息至房间
 	 * @param sceneId 场景id
 	 * @param datas 消息列表

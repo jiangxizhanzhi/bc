@@ -1,12 +1,16 @@
-package com.cyberpeace.situation.service.context;
+package com.cyberpeace.situation.dao.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class StationContext implements Serializable {
+@TableName("situation_station")
+public class Station extends BaseTable implements Serializable {
 
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;
@@ -33,13 +37,6 @@ public class StationContext implements Serializable {
 	private String latitude;
 
 	@ApiModelProperty("场站状态")
-	private Integer status;
-
-	public StationContext() {}
-
-	public StationContext(String stationId, String stationName) {
-		this.stationId = stationId;
-		this.stationName = stationName;
-	}
+	private String status;
 
 }

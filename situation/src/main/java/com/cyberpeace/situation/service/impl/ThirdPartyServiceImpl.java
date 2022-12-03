@@ -3,7 +3,11 @@ package com.cyberpeace.situation.service.impl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
+import com.cyberpeace.situation.dao.entity.Center;
+import com.cyberpeace.situation.dao.entity.Station;
+import com.cyberpeace.situation.dao.mapper.CenterMapper;
 import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
+import com.cyberpeace.situation.dao.mapper.StationMapper;
 import com.cyberpeace.situation.dao.mapper.SubRangeContextMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.EventTypeContext;
@@ -30,9 +34,19 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     private SubRangeContextMapper subRangeContextMapper;
 
     @Autowired
+    private CenterMapper centerMapper;
+
+    @Autowired
+    private StationMapper stationMapper;
+
+    @Autowired
     private EventTypeContextMapper eventTypeContextMapper;
 
+    private volatile Map<String, Center> centerCache = Maps.newHashMap();
+
     private volatile Map<String, SubRangeContext> subRangeCache = Maps.newHashMap();
+
+    private volatile Map<String, Station> stationCache = Maps.newHashMap();
 
     private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
@@ -46,6 +60,25 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         return subRangeContextList;
     }
 
+    @Override
+    public List<Center> getCenters() {
+        if (centerCache.isEmpty()) {
+            centerInit();
+        }
+        List<Center> centerList = new ArrayList<>();
+        centerCache.forEach((key, value) -> centerList.add(value));
+        return centerList;
+    }
+
+    @Override
+    public List<Station> getStations(String subRangeId){
+        if (stationCache.isEmpty()) {
+            stationInit(subRangeId);
+        }
+        List<Station> stationList = new ArrayList<>();
+        stationCache.forEach((key, value) -> stationList.add(value));
+        return stationList;
+    }
 
     @Override
     public List<EventTypeRes> getEventTypes() {
@@ -66,6 +99,34 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     subRangeCache.put(subRangeId, subRange);
                 } else {
                     subRangeCache.replace(subRangeId, subRange);
+                }
+            }
+        }
+    }
+
+    private synchronized void centerInit() {
+        if (centerCache.isEmpty()) {
+            List<Center> centers = centerMapper.getCenters();
+            for (Center center : centers) {
+                String centerId = center.getCenterId();
+                if (!centerCache.containsKey(centerId)) {
+                    centerCache.put(centerId, center);
+                } else {
+                    centerCache.replace(centerId, center);
+                }
+            }
+        }
+    }
+
+    private synchronized void stationInit(String subRangeId) {
+        if (stationCache.isEmpty()) {
+            List<Station> stations = stationMapper.getStations(subRangeId);
+            for (Station station : stations) {
+                String stationId = station.getStationId();
+                if (!stationCache.containsKey(stationId)) {
+                    stationCache.put(stationId, station);
+                } else {
+                    stationCache.replace(stationId, station);
                 }
             }
         }

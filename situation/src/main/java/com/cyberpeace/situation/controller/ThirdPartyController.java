@@ -15,9 +15,10 @@ import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
+import com.cyberpeace.situation.dao.entity.Center;
+import com.cyberpeace.situation.dao.entity.Station;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.PlatformContext;
-import com.cyberpeace.situation.service.context.StationContext;
 import com.cyberpeace.situation.service.context.SubRangeContext;
 import com.google.common.collect.Lists;
 
@@ -41,7 +42,13 @@ public class ThirdPartyController {
 	public BaseRsp<List<EventTypeRes>> getEventTypes() {
 
 		return new BaseRsp<>(thirdPartyService.getEventTypes());
+	}
 
+	@ApiOperation("获取LG中心列表")
+	@GetMapping("/center/list/")
+	public BaseRsp<List<Center>> getCenters() {
+
+		return new BaseRsp<>(thirdPartyService.getCenters());
 	}
 
 	@ApiOperation("获取分靶场列表")
@@ -49,6 +56,14 @@ public class ThirdPartyController {
 	public BaseRsp<List<SubRangeContext>> getSubRanges() {
 
 		return new BaseRsp<>(thirdPartyService.getSubRanges());
+	}
+
+	@ApiOperation("获取场站列表")
+	@GetMapping("/station/list/")
+	public BaseRsp<List<Station>> getStations(@ApiParam(name = "sub_range_id", value = "分靶场ID",
+			required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
+
+		return new BaseRsp<>(thirdPartyService.getStations(subRangeId));
 	}
 
 	@ApiOperation("获取分靶场详情")
@@ -68,16 +83,6 @@ public class ThirdPartyController {
 			required = true) @RequestParam(value = "center_id") String centerId) {
 		CenterInfoContext centerInfoContext = remoteSituationService.getCenterInfo(centerId);
 		return new BaseRsp<>(centerInfoContext);
-	}
-
-	@ApiOperation("获取场站列表")
-	@GetMapping("/station/list/")
-	public BaseRsp<List<StationContext>>
-			getStations(@ApiParam(name = "sub_range_id", value = "分靶场ID",
-					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
-		List<StationContext> stationList = Lists.newArrayList();
-		stationList.add(new StationContext("zhzcz", "ZH主场站"));
-		return new BaseRsp<>(stationList);
 	}
 
 	@ApiOperation("获取平台列表")

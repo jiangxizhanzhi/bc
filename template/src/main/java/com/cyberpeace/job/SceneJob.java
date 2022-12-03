@@ -109,6 +109,7 @@ public class SceneJob {
 				log.error(
 						"CountDownFifteenMin job not found group! oj_local_scene_id=[{}], group_id=[{}]",
 						ojLocalScene.getResourceId(), ojLocalScene.getBusinessId());
+				continue;
 			}
 
 			Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
@@ -116,6 +117,7 @@ public class SceneJob {
 				log.error(
 						"CountDownFifteenMin job not found classroom! oj_local_scene_id=[{}], room_id = [{}]",
 						ojLocalScene.getResourceId(), groupInfo.getClassroomId());
+				continue;
 			}
 
 			// 组织推送数据

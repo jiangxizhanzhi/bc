@@ -80,8 +80,6 @@ public class MissionTemplateReq implements Serializable {
 				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 			}
 			// validate option
-			CrCommonValidator.validateLength(option, CrCommonConstants.MIN_STR_LEN,
-					CrCommonConstants.MAX_OPTION_STR_LEN, CrBusinessErrorCode.OPTION_TOO_LONG);
 			List<JSONObject> options = JsonUtil.toJsonObjectArray(option, JSONObject.class);
 			List<String> realOptions = Lists.newArrayList();
 			for (JSONObject option : options) {
@@ -90,6 +88,7 @@ public class MissionTemplateReq implements Serializable {
 					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 				}
 				String realOption = StringUtils.strip(optionValue);
+				CrCommonValidator.validateDescLen(realOption, CrBusinessErrorCode.ILLEGAL_OPTION_LEN);
 				if (realOption.isEmpty()) {
 					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 				}

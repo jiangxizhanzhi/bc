@@ -405,6 +405,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		situationHandlerService.pushDataToRoom(wsMessage, attackMessageBo.getSceneId());
 		if(!playback){
 			//如果不是回放则会增加一条动效历史
+			attackMessageBo.setTargetId(null);
 			attackMessageHistoryService.add(attackMessageBo);
 		}
 

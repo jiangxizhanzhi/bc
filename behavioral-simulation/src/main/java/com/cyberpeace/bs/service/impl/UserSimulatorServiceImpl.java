@@ -261,6 +261,14 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Override
 	public void batchStartSimulator(List<String> simulatorIds) {
 		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchIds(simulatorIds);
+		if (simulatorIds.size() == 1) {
+			if (simulatorList.isEmpty()) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
+			if (simulatorList.get(0).getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+				throw new BusinessException(BsErrorCode.ALREADY_STARTED);
+			}
+		}
 		// 不加事务
 		for (UserSimulator simulator : simulatorList) {
 			if (!simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {

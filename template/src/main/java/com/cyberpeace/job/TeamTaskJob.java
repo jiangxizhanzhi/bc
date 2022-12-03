@@ -28,8 +28,9 @@ public class TeamTaskJob {
 
     private final int timeRate = 1000 * 5;
 
-    @PostConstruct
-    private void init() {
+    @Scheduled(initialDelay = 1000, fixedRate = Long.MAX_VALUE)
+    private void initTask() {
+        log.info("Team Task init...");
         teamRoomService.initOngoingTasks();
     }
 

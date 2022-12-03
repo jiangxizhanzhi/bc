@@ -1,6 +1,8 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.model.DynamicSchemeProcess;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
@@ -66,6 +68,9 @@ public class ExternalSituationController {
 												  @RequestParam(value = "scene_id") String sceneId){
 		log.info("topoId:[" + sceneId + "] continue");
 		DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(sceneId);
+		if(dynamicSchemeProcess == null){
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_STOP_DYNAMIC);
+		}
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
 				dynamicSchemeProcess.getStageName(),dynamicSchemeProcess.getAttackMessageDescription());
 		return new BaseRsp<>(true);

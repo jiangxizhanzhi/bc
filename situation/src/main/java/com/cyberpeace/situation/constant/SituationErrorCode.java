@@ -52,4 +52,7 @@ public interface SituationErrorCode {
 
 	/** 找不到对应动效 */
 	String CANNOT_FIND_DYNAMIC = "104017";
+
+	/** 当前场景无暂停运行的动效方案 */
+	String CANNOT_FIND_STOP_DYNAMIC = "104018";
 }

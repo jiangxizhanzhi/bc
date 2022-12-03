@@ -73,7 +73,7 @@ public class AdminPracticeImportController {
 			@RequestParam(name = "set_id", required = false) String practiceSetId,
 			@RequestParam(name = "practice_id", required = false) String practiceId,
 			@RequestParam(name = "new_path", required = false, defaultValue = "false") Boolean newPath,
-			@RequestParam(name = "disable_image_export", required = false) boolean disableImageExport) {
+			@RequestParam(name = "disable_image_export", required = false) Boolean disableImageExport) {
 
 		String filePath = practiceSetService.exportPracticeSet(practiceSetId, practiceId, newPath, disableImageExport);
 

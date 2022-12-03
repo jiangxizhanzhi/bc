@@ -456,7 +456,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, boolean disableImageExport) {
+	public String exportPracticeSet(String practiceSetId, String practiceId, Boolean newPath, Boolean disableImageExport) {
 
 		Map<String, List<PracticeOperation>> operationMap;
 		List<PracticeOperation> operationList;

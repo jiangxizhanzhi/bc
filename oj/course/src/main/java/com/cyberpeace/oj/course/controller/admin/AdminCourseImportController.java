@@ -75,7 +75,7 @@ public class AdminCourseImportController {
             @RequestParam(value = "resource_id") String resourceId,
             @RequestParam(value = "is_dump_topo", required = false, defaultValue = "0") Integer isDumpTopo,
             @RequestParam(value = "scene_number", required = false) String sceneNumber,
-            @RequestParam(value = "disable_image_export", required = false) boolean disableImageExport) {
+            @RequestParam(value = "disable_image_export", required = false) Boolean disableImageExport) {
         boolean isDumpTopoVal = null != isDumpTopo && isDumpTopo == 1;
         String filePath = courseDumpService.rMCourseDump(resourceId, isDumpTopoVal, sceneNumber, disableImageExport);
 

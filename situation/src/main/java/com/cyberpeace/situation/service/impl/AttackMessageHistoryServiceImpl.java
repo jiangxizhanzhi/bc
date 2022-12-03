@@ -13,6 +13,7 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -103,8 +104,16 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
 		Map<String, String> nodeMap = getNodeMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
-			attackLog.setSourceName(nodeMap.get(attackLog.getSourceId()));
-			attackLog.setTargetName(nodeMap.get(attackLog.getTargetId()));
+			String sourceName = nodeMap.get(attackLog.getSourceId());
+			if (sourceName == null){
+				sourceName = "area-" + attackLog.getSourceId().substring(0, 8);
+			}
+			attackLog.setSourceName(sourceName);
+			String targetName = nodeMap.get(attackLog.getTargetId());
+			if (targetName == null){
+				targetName = "area-" + attackLog.getTargetId().substring(0, 8);
+			}
+			attackLog.setTargetName(targetName);
 			attackLog.setAttackType(AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class)
 											  .getMsg());
 		}
@@ -148,6 +157,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		return attackMessageHistory;
 	}
 
+	@Cacheable(cacheNames = "getNodeMap", key = "#sceneId")
 	public Map<String, String> getNodeMap(String sceneId) {
 		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);

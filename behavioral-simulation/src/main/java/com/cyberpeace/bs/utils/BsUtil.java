@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.service.bo.simulator.BehaviorConfig;
 import com.cyberpeace.bs.service.bo.simulator.BehaviorConfigRaw;
 import com.cyberpeace.bs.service.bo.simulator.IpBo;
@@ -138,6 +139,11 @@ public class BsUtil {
 			return Maps.newHashMap();
 		}
 		List<BehaviorConfigRaw> configList = JsonUtil.toJsonObjectArray(json, BehaviorConfigRaw.class);
+		for (BehaviorConfigRaw raw : configList) {
+			if (raw.getVariables() == null) {
+				raw.setVariables(BsConstants.EMPTY_LIST_JSON);
+			}
+		}
 		return StreamApiUtils.toMap(configList, BehaviorConfigRaw::getBehaviorId, BehaviorConfigRaw::getVariables);
 	}
 

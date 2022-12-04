@@ -15,4 +15,9 @@ public interface BsConstants {
 	 * 使用虚拟设备时默认的设备id
 	 */
 	String DEFAULT_DEVICE_ID = "0";
+
+	/**
+	 * 空列表的json
+	 */
+	String EMPTY_LIST_JSON = "[]";
 }

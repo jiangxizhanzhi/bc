@@ -1,7 +1,13 @@
 package com.cyberpeace.gateway.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.gateway.controller.req.ControlCommandReq;
 import com.cyberpeace.gateway.controller.req.PlanBindSituationReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
@@ -10,12 +16,11 @@ import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "外部接口-态势相关api")
 @Slf4j
@@ -63,6 +68,16 @@ public class ExternalSituationController {
 		// TODO 获取当前存入实例的id 提前生成一个 再存入
 		situationPublishInstanceService.save(copy);
 		return new BaseRsp<>(copy);
+	}
+
+	@CrossOrigin("*")
+	@ApiOperation("接收任务指挥命令")
+	@PostMapping("control")
+	public BaseRsp<Boolean> controlCmd(@Validated ControlCommandReq controlCommandReq) {
+
+		log.info(String.format("成功接收指令：%s", JsonUtil.toJsonString(controlCommandReq)));
+
+		return new BaseRsp<>(true);
 	}
 
 }

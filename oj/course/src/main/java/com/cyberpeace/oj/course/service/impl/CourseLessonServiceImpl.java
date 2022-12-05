@@ -540,9 +540,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<CourseLesson> records = iPage.getRecords();
 		List<String> paperIds = StreamApiUtils.getColumn(records, CourseLesson::getPaperId);
 		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
-		filterOperation.in(PracticeOperationRef::getPaperId, paperIds);
 		LambdaQueryWrapper<PracticeTheoryRef> filterTheory = new LambdaQueryWrapper<>();
-		filterTheory.in(PracticeTheoryRef::getPaperId, paperIds);
+		if(!paperIds.isEmpty()){
+			filterOperation.in(PracticeOperationRef::getPaperId, paperIds);
+			filterTheory.in(PracticeTheoryRef::getPaperId, paperIds);
+		}
 		List<PracticeOperationRef> practiceOperationRefs = practiceOperationRefMapper.selectList(filterOperation);
 		Map<String, List<PracticeOperationRef>> operationMap = StreamApiUtils.groupBy(practiceOperationRefs, PracticeOperationRef::getPaperId);
 		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);

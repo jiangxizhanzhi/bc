@@ -1,5 +1,6 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.gateway.controller.res.ControlRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -73,11 +74,11 @@ public class ExternalSituationController {
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
 	@PostMapping("control")
-	public BaseRsp<Boolean> controlCmd(@Validated ControlCommandReq controlCommandReq) {
+	public BaseRsp<ControlRes> controlCmd(@Validated ControlCommandReq controlCommandReq) {
 
 		log.info(String.format("成功接收指令：%s", JsonUtil.toJsonString(controlCommandReq)));
 
-		return new BaseRsp<>(true);
+		return new BaseRsp<>(new ControlRes("1","0"));
 	}
 
 }

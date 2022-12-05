@@ -49,7 +49,7 @@ public class DashboardController {
 			@ApiParam(name = "task_type", value = "任务类型",
 					required = true) @RequestParam(value = "task_type") String taskType) {
 
-		if (!"任务进行".equals(taskStatus)) {
+		if (!"任务执行".equals(taskStatus)) {
 			throw new BusinessException(SituationErrorCode.TASK_NOT_RUNNING);
 		}
 

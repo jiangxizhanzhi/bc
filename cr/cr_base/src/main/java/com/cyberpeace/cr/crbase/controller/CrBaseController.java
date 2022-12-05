@@ -81,7 +81,7 @@ public class CrBaseController {
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
 	@RequiresPermissions(
-			value = { MenuConstant.CMS_CLASS_ROOM, MenuConstant.WEB_OJ_COURSE,
+			value = { MenuConstant.CMS_CLASS_ROOM, MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
 					MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
 			logical = Logical.OR)
 	public BaseRsp<CurrentTimeRsp> getCurrentTime() {

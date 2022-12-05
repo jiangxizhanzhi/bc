@@ -275,4 +275,7 @@ public interface OjBusinessErrorCode {
 
 	/** 习题类型存在错误*/
 	String 	PRACTICE_DIFFICULTY_ERROR = "102090";
+
+	/** 理论基础数据无效上传失败*/
+	String IMPORT_THEORY_INVALID = "102091";
 }

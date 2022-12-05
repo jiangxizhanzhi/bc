@@ -419,8 +419,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// 数据读取
 		ExcelDataHandler dataHandler = new ExcelDataHandler(filePath, CommonConstant.ZERO);
 		List<List<String>> sheetData = dataHandler.getSheetData(CommonConstant.ONE);
-		List<PracticeTheory> theories = StreamApiUtils.map(sheetData,
-				data -> excelDataToEntity(data, practiceSet, userId));
+		List<Integer> rowsRead = Lists.newArrayList();
+		List<PracticeTheory> theories = StreamApiUtils.map(sheetData, data -> {
+			try {
+				rowsRead.add(1);
+				return excelDataToEntity(data, practiceSet, userId);
+			} catch (NumberFormatException e) {
+				throw new BusinessException(OjBusinessErrorCode.IMPORT_THEORY_INVALID, rowsRead.size());
+			}
+		});
 
 		if (CollectionUtils.isEmpty(theories)) {
 			return CommonConstant.TRUE;

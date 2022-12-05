@@ -134,7 +134,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         if (connection != null) {
             try {
                 DatabaseMetaData metaData = connection.getMetaData();
-                resultSet = metaData.getTables(null, null, null, new String[]{"TABLE"});
+                resultSet = metaData.getTables(dbName, null, null, new String[]{"TABLE"});
                 while (resultSet.next()) {
                     tableList.add(resultSet.getString("TABLE_NAME"));
                 }

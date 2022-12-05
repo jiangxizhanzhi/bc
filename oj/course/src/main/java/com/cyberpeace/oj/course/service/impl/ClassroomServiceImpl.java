@@ -3,7 +3,6 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.service.CourseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,9 +147,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
-
-	@Autowired
-	private CourseService courseService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1115,7 +1111,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 						AuthContextUtils.constructAuth(userInfo, false)));
 				insertTrainPlan.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
 				saveBatch(classrooms);
-				courseService.updateBatchById(changeCourses);
+				changeCourses.forEach(course -> courseMapper.updateById(course));
 			}
 		});
 

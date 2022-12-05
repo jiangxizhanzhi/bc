@@ -288,6 +288,15 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				infoBo.setSceneData(sceneData);
 			}
+		} else if (lesson.getType().intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()) {
+			ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+			if (groupInfo != null) {
+				Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
+				Date now = new Date();
+				if (null != classroom && classroom.getStartTime().before(now) && classroom.getEndTime().after(now)) {
+					infoBo.setRoomId(classroom.getResourceId());
+				}
+			}
 		}
 
 		// 添加学习记录

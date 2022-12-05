@@ -137,6 +137,7 @@ public class AssessModelController {
 	@ApiOperation("分页查询")
 	@GetMapping("/assess_model/list")
 	public BaseRsp<List<AssessModelRsp>> list(@Validated AssessListReq pageReqBase) {
+		pageReqBase.setSort("-create_time");
 		IPage<AssessModel> data = assessModelService.page(pageReqBase);
 
 		List<String> userIds = data.getRecords().stream().map(AssessModel::getCreateUserId)

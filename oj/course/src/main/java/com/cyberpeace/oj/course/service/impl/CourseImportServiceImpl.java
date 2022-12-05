@@ -396,7 +396,7 @@ public class CourseImportServiceImpl implements CourseImportService {
 									.getAbsolutePath()
 							: new File(dest, ResourceImportConstant.DOC_FILE_NAME)
 									.getAbsolutePath();
-			String markdown = MdUtil.parseMarkdown(handoutFilePath);
+			String markdown = MdUtil.parseMarkdown(handoutFilePath, handoutPath);
 			markdown = utilService.replaceMarkdownFile(markdown);
 			courseLesson.setHandoutUrl(markdown);
 		} else {

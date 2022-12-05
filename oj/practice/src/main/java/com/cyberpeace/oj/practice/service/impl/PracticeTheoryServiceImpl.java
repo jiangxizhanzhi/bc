@@ -726,7 +726,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		if (StringUtils.isBlank(categoryName)) {
 			log.error("Practice category is empty! operation_data=[{}]",
 					JsonUtil.toJsonString(excelRowData));
-			throw new BusinessException(OjBusinessErrorCode.PRACTICE_CATEGORY_TYPE_ERROR);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIRECTION_EMPTY_ERROR);
 		}
 
 		String categoryId = practiceCategoryMapper

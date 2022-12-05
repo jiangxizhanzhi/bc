@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -324,7 +325,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 习题数据查询
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
-		lessonInfoBo.setPracticeCount(paper.getPracticeCount());
+		long practiceCount = getPracticeCount(lesson.getPaperId());
+		lessonInfoBo.setPracticeCount(Integer.parseInt(String.valueOf(practiceCount)));
 
 		// 场景数据查询
 		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
@@ -525,6 +527,17 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public IPage<AdminLessonListBo> pageByContext(Page page, LessonContext context, boolean isWeb) {
 
 		IPage<CourseLesson> iPage = courseLessonMapper.pageByContext(page, context, isWeb, context.getType());
+
+		List<CourseLesson> records = iPage.getRecords();
+		List<String> paperIds = StreamApiUtils.getColumn(records, CourseLesson::getPaperId);
+		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
+		filterOperation.in(PracticeOperationRef::getPaperId, paperIds);
+		LambdaQueryWrapper<PracticeTheoryRef> filterTheory = new LambdaQueryWrapper<>();
+		filterTheory.in(PracticeTheoryRef::getPaperId, paperIds);
+		List<PracticeOperationRef> practiceOperationRefs = practiceOperationRefMapper.selectList(filterOperation);
+		Map<String, List<PracticeOperationRef>> operationMap = StreamApiUtils.groupBy(practiceOperationRefs, PracticeOperationRef::getPaperId);
+		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);
+		Map<String, List<PracticeTheoryRef>> theoryMap = StreamApiUtils.groupBy(practiceTheoryRefs, PracticeTheoryRef::getPaperId);
 		IPage<AdminLessonListBo> boIPage = iPage.convert(courseLesson -> {
 			// 前台没有课程列表查询 不用管是否存在课堂场景 修改sceneShareMode
 			AdminLessonListBo adminLessonListBo = BeanUtils.copy(courseLesson,
@@ -550,6 +563,11 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 试卷相关
 			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+
+			String paperId = courseLesson.getPaperId();
+			List<PracticeOperationRef> operations = operationMap.getOrDefault(paperId, new ArrayList<>());
+			List<PracticeTheoryRef> theories = theoryMap.getOrDefault(paperId, new ArrayList<>());
+			adminLessonListBo.setPracticeCount(operations.size() + theories.size());
 			adminLessonListBo.setPracticeCount(paper.getPracticeCount());
 			adminLessonListBo.setPaperPublic(paper.getIsPublic());
 
@@ -573,6 +591,19 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			return adminLessonListBo;
 		});
 		return boIPage;
+	}
+
+	private long getPracticeCount(String paperId) {
+		LambdaQueryWrapper<PracticeOperationRef> filterOperation = new LambdaQueryWrapper<>();
+		filterOperation.eq(PracticeOperationRef::getPaperId, paperId);
+		LambdaQueryWrapper<PracticeTheoryRef> filterTheory = new LambdaQueryWrapper<>();
+		filterTheory.eq(PracticeTheoryRef::getPaperId, paperId);
+		List<PracticeOperationRef> practiceOperationRefs = practiceOperationRefMapper.selectList(filterOperation);
+		List<PracticeTheoryRef> practiceTheoryRefs = practiceTheoryRefMapper.selectList(filterTheory);
+		long operationCount = practiceOperationRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
+		long theoryCount = practiceTheoryRefs.stream().filter(practiceOperationRef -> practiceOperationRef.getPaperId().equals(paperId)).count();
+		long practiceCount = operationCount + theoryCount;
+		return practiceCount;
 	}
 
 	@Override

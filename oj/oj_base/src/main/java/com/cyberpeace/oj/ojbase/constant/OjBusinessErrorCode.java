@@ -278,4 +278,7 @@ public interface OjBusinessErrorCode {
 
 	/** 理论基础数据无效上传失败*/
 	String IMPORT_THEORY_INVALID = "102091";
+
+	/** 习题方向为空*/
+	String PRACTICE_DIRECTION_EMPTY_ERROR = "102092";
 }

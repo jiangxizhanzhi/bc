@@ -269,4 +269,13 @@ public interface OjBusinessErrorCode {
 
 	/** 判断题答案格式错误*/
 	String SHORT_ANSWER_ANSWER_EMPTY_ERROR = "102088";
+
+	/** 关键字不能设置为空*/
+	String 	KEYWORD_EMPTY_ERROR = "102089";
+
+	/** 习题类型存在错误*/
+	String 	PRACTICE_DIFFICULTY_ERROR = "102090";
+
+	/** 理论基础数据无效上传失败*/
+	String IMPORT_THEORY_INVALID = "102091";
 }

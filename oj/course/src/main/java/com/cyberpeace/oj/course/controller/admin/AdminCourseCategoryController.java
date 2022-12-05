@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类分页查询")
 	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_COURSE_STATISTICS }, logical = Logical.OR)
 	public BaseRsp<ListRsp<CourseCategoryBo>> list(@Validated CourseCategoryListReq listReq) {
 		Page page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {

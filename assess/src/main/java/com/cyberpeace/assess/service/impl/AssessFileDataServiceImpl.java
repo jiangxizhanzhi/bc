@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.assess.constant.AssessErrorCode;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		} else if(inputType.equals(CommonConstant.TWO)){
 			content = saveExcelDataByColumn(inputData);
 		} else {
-			throw new BusinessException("input type error");
+			throw new BusinessException(AssessErrorCode.INPUT_TYPE_ERROR);
 		}
 		AssessFileData assessFileData = new AssessFileData();
 		assessFileData.setRelatedId(resourceId);
@@ -145,25 +146,22 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		List<List<String>> sheetData;
 		sheetData = dataHandler.getSheetData(0);
 		if(sheetData.isEmpty()){
-			throw new BusinessException("The excel is empty");
+			throw new BusinessException(AssessErrorCode.EXCEL_EMPTY_ERROR);
 		}
 		dataHandler.closeIO();
 		List<JSONObject> data = new ArrayList<>();
 		List<String> tableColumn = sheetData.get(0);
-		List<String> fields = tableColumn.subList(1, tableColumn.size() - 1);
-		List<String> tableColumns = fields.stream().filter(StringUtils::isNoneBlank).collect(Collectors.toList());
-		int emptyCells = 0;
 		for (int i = 1; i < sheetData.size(); i++){
 			List<String> values = sheetData.get(i);
 			JSONObject jsonObject = new JSONObject();
-			for(int j = 1; j < tableColumns.size(); j++){
-				if(j > i || StringUtils.isBlank(tableColumns.get(1))){
+			jsonObject.put("product", values.get(0));
+			for(int j = 1; j < tableColumn.size(); j++){
+				if(StringUtils.isBlank(tableColumn.get(i))){
 					continue;
 				}
 				String value;
 				if(j > values.size() - 1){
 					value = "0";
-					emptyCells++;
 				} else {
 					value = values.get(j);
 				}
@@ -172,15 +170,10 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 					aDouble = new Double(value);
 				} catch (Exception e) {
 					aDouble = 0.0;
-					emptyCells++;
 				}
-				jsonObject.put(tableColumns.get(j), aDouble);
+				jsonObject.put(tableColumn.get(j), aDouble);
 			}
-			jsonObject.put("product", values.get(0));
 			data.add(jsonObject);
-		}
-		if(emptyCells == (sheetData.size() - 1) * (tableColumns.size() -1)){
-			throw new BusinessException("The excel does not contain usable data.");
 		}
 		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
 		assessDataSqlEcharts.setSource(data);

@@ -74,4 +74,19 @@ public interface AssessErrorCode {
 	 * 材料id数组错误
 	 */
 	String ATTACHMENT_NAME_MISSING = "105014";
+
+	/**
+	 * 输入类型错误
+	 */
+	String INPUT_TYPE_ERROR = "105015";
+
+	/**
+	 * excel内容为空
+	 */
+	String EXCEL_EMPTY_ERROR = "105016";
+
+	/**
+	 * 文件不包含可展示数据
+	 */
+	String EMPTY_DATA_ERROR = "105017";
 }

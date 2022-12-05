@@ -197,7 +197,6 @@ public class AssessCaseController {
 		}
 		AssessCaseDetailRes assessCaseDetailRes = new AssessCaseDetailRes();
 		BeanUtils.copyProperties(assessCase, assessCaseDetailRes);
-		assessCaseDetailRes.setDescription(assessCase.getOverview());
 		String tags = assessCase.getTag();
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
@@ -217,10 +216,10 @@ public class AssessCaseController {
 			String userName = userMap.get(createUserId);
 			assessCaseDetailRes.setCreateUser(userName);
 		}
+		assessCaseDetailRes.setMaterialCount(0);
 		if(!assessMaterials.isEmpty()){
 			assessCaseDetailRes.setMaterialCount(assessMaterials.size());
 		}
-		assessCaseDetailRes.setMaterialCount(0);
 		return new BaseRsp<>(assessCaseDetailRes);
 	}
 

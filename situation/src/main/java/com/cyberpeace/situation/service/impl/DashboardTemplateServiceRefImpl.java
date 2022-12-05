@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -17,6 +18,7 @@ import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -25,6 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author xuxz
@@ -122,7 +125,18 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRes.class);
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
-            dashboardTemplateRes.setComponentsSetting(dashboardComponents);
+            List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
+            for (DashboardComponents dashboardComponent : dashboardComponents) {
+                String componentSetting = dashboardComponent.getComponentSetting();
+                JSONObject jsonObject = JSONObject.parseObject(componentSetting);
+                String componentType = jsonObject.getString("component_type");
+                if (componentType != null && Objects.equals("0", componentType)) {
+                    sortDashboardComponents.add(dashboardComponent);
+                }
+            }
+            dashboardComponents.removeAll(sortDashboardComponents);
+            sortDashboardComponents.addAll(dashboardComponents);
+            dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
         }
         return dashboardTemplateRes;
     }

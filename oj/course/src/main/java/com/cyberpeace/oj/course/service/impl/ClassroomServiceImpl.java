@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.course.service.CourseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	private CourseService courseService;
 
 	@Override
 	public Classroom create(Classroom classroom, AuthContext authContext) {
@@ -1052,6 +1056,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<Classroom> classrooms = Lists.newArrayList();
 		Map<String, TrainPlan> trainPlanMap = Maps.newHashMap();
 		Map<String, String> orgMap = Maps.newHashMap();
+		List<Course> changeCourses = Lists.newArrayList();
 
 		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
 
@@ -1069,7 +1074,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
 					orgMap);
-
+			Course course = courseMapper.selectById(classroom.getCourseId());
+			if (null == course) {
+				continue;
+			}
+			if (changeCourse(classroom.getOrganizationId(), course)) {
+				changeCourses.add(course);
+			}
+			
 			// 校验是否已存在课程表
 			Classroom existClassRoom = classroomMapper
 					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
@@ -1103,6 +1115,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 						AuthContextUtils.constructAuth(userInfo, false)));
 				insertTrainPlan.forEach(trainPlan -> trainPlanMapper.insert(trainPlan));
 				saveBatch(classrooms);
+				courseService.updateBatchById(changeCourses);
 			}
 		});
 

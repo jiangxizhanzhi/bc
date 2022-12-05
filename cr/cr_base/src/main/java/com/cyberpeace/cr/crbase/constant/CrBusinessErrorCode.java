@@ -445,4 +445,14 @@ public interface CrBusinessErrorCode {
 	 * 任务暂停中
 	 */
 	String TASK_PAUSING = "101130";
+
+	/**
+	 * 任务已完成，无法暂停
+	 */
+	String CANNOT_PAUSE_FINISHED_TASK = "101131";
+
+	/**
+	 * 任务已完成，无法强制结束
+	 */
+	String CANNOT_END_FINISHED_TASK = "101132";
 }

@@ -637,6 +637,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				.list();
 
 		if (crTaskList.isEmpty()) {
+			crTaskList = lambdaQuery()
+					.eq(CrTask::getRoomId, mission.getRoomId())
+					.eq(CrTask::getRoleId, role.getResourceId())
+					.eq(CrTask::getMissionId, mission.getResourceId())
+					.list();
+			crTaskList.forEach(crTask -> {
+				if (crTask.isFinished()) {
+					throw new BusinessException(CrBusinessErrorCode.CANNOT_PAUSE_FINISHED_TASK);
+				}
+			});
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
@@ -687,6 +697,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		// 任务未下发
 		if (crTaskList.isEmpty()) {
+			crTaskList = lambdaQuery()
+					.eq(CrTask::getRoomId, mission.getRoomId())
+					.eq(CrTask::getRoleId, role.getResourceId())
+					.eq(CrTask::getMissionId, mission.getResourceId())
+					.list();
+			crTaskList.forEach(crTask -> {
+				if (crTask.isFinished()) {
+					throw new BusinessException(CrBusinessErrorCode.CANNOT_END_FINISHED_TASK);
+				}
+			});
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 

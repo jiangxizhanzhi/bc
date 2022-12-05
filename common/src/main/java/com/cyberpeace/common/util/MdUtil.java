@@ -159,32 +159,58 @@ public class MdUtil {
 	 * @return
 	 */
 	public static String parseMarkdown(String markdownPath) {
+		Set<String> matchImgPath = getMatchImgPath(markdownPath);
+		return replaceImgContent(markdownPath, matchImgPath, "");
+	}
 
-		// 获取当前文件夹
-		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
-
+	/**
+	 * 匹配md文件中的相对路径地址
+	 * @param markdownPath
+	 * @return
+	 */
+	private static Set<String> getMatchImgPath(String markdownPath) {
 		// 获取markdown文件内容
 		File markdownFile = new File(markdownPath);
-		String content = FileUtil.getContent(markdownFile);
 		String withOutCode = getContentWithOutCode(markdownFile);
 
 		// 匹配文件路径
 		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
-
 		// 匹配文件src地址
 		List<String> matchSrcStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
 				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
 
 		matchStrList.addAll(matchSrcStrList);
+		return Sets.newHashSet(matchStrList);
+	}
 
-		// markdown中引用重复文件, 避免String.replace替换多次, 转为Set（zentao 9894）
-		Set<String> matchStrSet = Sets.newHashSet(matchStrList);
+	/**
+	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
+	 * @param markdownPath
+	 * @return
+	 */
+	public static String parseMarkdown(String markdownPath, String handoutPath) {
+		// 获取md文件中的图片路径
+		Set<String> matchStrSet = getMatchImgPath(markdownPath);
+		return replaceImgContent(markdownPath, matchStrSet, handoutPath);
+	}
+
+	/**
+	 * 将md文件中的相对路径替换为绝对路径
+	 * @param markdownPath
+	 * @param matchStrSet
+	 * @param handoutPath
+	 * @return
+	 */
+	private static String replaceImgContent(String markdownPath, Set<String> matchStrSet, String handoutPath) {
+
+		// 获取当前文件夹
+		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
+		File markdownFile = new File(markdownPath);
+		String content = FileUtil.getContent(markdownFile);
 
 		// 文件路径替换
 		for (String imagePath : matchStrSet) {
-//			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
-//					PatternConstant.MARKDOWN_IMAGE_URL);
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
 			String relativePath = imagePath;
 			if (imagePath.startsWith(CommonConstant.PERIOD)) {
@@ -195,13 +221,17 @@ public class MdUtil {
 			File replaceFile = new File(currentDir, relativePath);
 			if (!replaceFile.exists()) {
 				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, imagePath);
+				String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()
+						: handoutPath + CommonConstant.LEFT_OBLIQUE_LINE + imagePath;
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, path);
 			}
 			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
-
+		
 		return content;
 	}
+
+	
 
 	/**
 	 * markdown内容过滤掉代码块

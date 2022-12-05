@@ -200,7 +200,7 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		List<String> dashboardTemplateIdList = new ArrayList<>();
-		for (SituationPublishInstance releaseInstance : releaseInstances) {
+		for (SituationPublishInstance releaseInstance : situationPublishInstances) {
 			String templateId = releaseInstance.getTemplateId();
 			if (StringUtils.isNotBlank(templateId)) {
 				dashboardTemplateIdList.add(templateId);

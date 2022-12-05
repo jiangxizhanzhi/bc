@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("分页查询练习分类")
 	@GetMapping("/list")
-	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
+	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<ListRsp<CategoryListBo>>
 			list(@Validated PracticeCategoryListReq categoryListReq) {
 
@@ -74,7 +75,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
-	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
+	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
 		updateReq.validate();
@@ -91,7 +92,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
-	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
+	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
 		categoryReq.validate();
@@ -114,7 +115,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("批量删除分类信息")
 	@DeleteMapping("")
-	@RequiresPermissions({ MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION })
+	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 
 		int result = practiceCategoryService.batchDelete(delReq.getResourceIds());

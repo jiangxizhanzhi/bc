@@ -1,6 +1,7 @@
 package com.cyberpeace.assess.controller.res;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -21,5 +22,6 @@ public class AssessDataSqlEcharts implements Serializable {
 	private List<String> dimensions;
 
 	@ApiModelProperty(value = "y轴标签")
-	private List<JSONObject> source;
+	private List<LinkedHashMap> source;
+
 }

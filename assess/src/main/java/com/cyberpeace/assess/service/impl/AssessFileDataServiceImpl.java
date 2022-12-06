@@ -4,9 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -149,14 +147,14 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 			throw new BusinessException(AssessErrorCode.EXCEL_EMPTY_ERROR);
 		}
 		dataHandler.closeIO();
-		List<JSONObject> data = new ArrayList<>();
+		List<LinkedHashMap> data = new ArrayList<>();
 		List<String> tableColumn = sheetData.get(0);
 		for (int i = 1; i < sheetData.size(); i++){
 			List<String> values = sheetData.get(i);
-			JSONObject jsonObject = new JSONObject();
+			LinkedHashMap<Object, Object> jsonObject = new LinkedHashMap<>();
 			jsonObject.put("product", values.get(0));
 			for(int j = 1; j < tableColumn.size(); j++){
-				if(StringUtils.isBlank(tableColumn.get(i))){
+				if(StringUtils.isBlank(tableColumn.get(j))){
 					continue;
 				}
 				String value;
@@ -171,57 +169,13 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 				} catch (Exception e) {
 					aDouble = 0.0;
 				}
-				jsonObject.put(tableColumn.get(j), aDouble);
+				String key = tableColumn.get(j);
+
+				jsonObject.put(key, aDouble);
 			}
 			data.add(jsonObject);
 		}
 		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
-		assessDataSqlEcharts.setSource(data);
-		return JSONObject.toJSONString(assessDataSqlEcharts);
-	}
-
-	private String saveExcelData(String inputData) {
-		ExcelDataHandler dataHandler = new ExcelDataHandler(inputData, 0);
-		List<List<String>> sheetData;
-		sheetData = dataHandler.getSheetData(0);
-		dataHandler.closeIO();
-		List<String> tableColumns = sheetData.get(0);
-		List<String> fieldList = new ArrayList<>();
-		fieldList.add("product");
-		List<JSONObject> data = new ArrayList<>();
-		for(int j = 0; j < tableColumns.size(); j++){
-			JSONObject jsonObject = new JSONObject();
-			for (int i = 0; i < sheetData.size(); i++){
-				List<String> values = sheetData.get(i);
-				String value = values.get(j);
-				if(i == 0){
-					jsonObject.put("product", value);
-				} else {
-					String field = values.get(0);
-					if(!fieldList.contains(field)){
-						fieldList.add(field);
-					}
-					if(j !=0){
-						if(StringUtils.isBlank(field)){
-							throw new BusinessException("第%s行 第%列为空", i, j);
-						}
-						try {
-							Double aDouble = new Double(value);
-							jsonObject.put(field, aDouble);
-						} catch (Exception e) {
-//							throw new BusinessException("第%s行 第%列非数值", i, j, e);
-						}
-					}
-				}
-
-			}
-			if(j != 0){
-				data.add(jsonObject);
-			}
-
-		}
-		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
-		assessDataSqlEcharts.setDimensions(fieldList);
 		assessDataSqlEcharts.setSource(data);
 		return JSONObject.toJSONString(assessDataSqlEcharts);
 	}
@@ -236,7 +190,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 		List<String> sql = Arrays.asList(split);
 		List<String> fieldList = new ArrayList();
-		List<JSONObject> jsonObjects = new ArrayList<>();
+		List<LinkedHashMap> jsonObjects = new ArrayList<>();
 		sql.forEach( s-> parseSqlContent(s, jsonObjects, fieldList));
 		AssessDataSqlEcharts assessDataSqlEcharts = new AssessDataSqlEcharts();
 
@@ -248,7 +202,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 
 	}
 
-	private void parseSqlContent(String str,List<JSONObject> jsonObjects, List<String> fieldList) {
+	private void parseSqlContent(String str,List<LinkedHashMap> jsonObjects, List<String> fieldList) {
 		Pattern pattern = Pattern.compile(PatternConstant.INSERT_SQL);
 		Matcher matcher = pattern.matcher(str);
 		while (matcher.find()) {
@@ -264,7 +218,7 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 			if(fieldList.isEmpty()){
 				fieldList.addAll(Arrays.asList(split));
 			}
-			JSONObject jsonObject = new JSONObject();
+			LinkedHashMap jsonObject = new LinkedHashMap();
 			fieldList.forEach(val ->{
 				int index = fieldList.indexOf(val);
 				if(!"id".equals(val)) {

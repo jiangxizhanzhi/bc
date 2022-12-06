@@ -19,6 +19,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
+import com.cyberpeace.situation.controller.req.DataSourceReq;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
 import com.cyberpeace.situation.dao.entity.DataSourceRecord;
@@ -176,20 +177,26 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     }
 
     @Override
-    public List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName, String tableName) {
+    public List<JSONObject> getDataSourceData(DataSourceReq dataSourceReq) {
+        String sql = dataSourceReq.getSql();
+        String dbName = dataSourceReq.getDbName();
+        String resourceId = dataSourceReq.getResourceId();
+        String customParams = dataSourceReq.getCustomParams();
+        String tableName = dataSourceReq.getTableName();
         DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
         if (dataSourceRecord == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         //选定数据库时，自动获取所有数据表字段
         if (StringUtils.isNotBlank(tableName) && StringUtils.isEmpty(sql)) {
-            sql = "SELECT * FROM " + dbName + "." + tableName;
+            sql = "SELECT * FROM ? ";
         }
 
         if (StringUtils.isEmpty(sql) || sql.toLowerCase().contains("delete")) {
             System.out.println(sql);
             throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         }
+
         List<JSONObject> dataList = new ArrayList<>();
         List<String> columnList = new ArrayList<>();
         DataSourceRecordReq dataSourceRecordReq = dataSourceRecordToDataSourceRecordReq(dataSourceRecord);

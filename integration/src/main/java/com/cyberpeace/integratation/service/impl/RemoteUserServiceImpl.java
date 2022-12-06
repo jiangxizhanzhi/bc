@@ -87,13 +87,18 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Cacheable(key = "#p0")
 	public UserInfo doAuthentication(String token) {
 		// 1、调用mp
-		String targetUrl = TOKEN_AUTHENTICATE_URL + token;
+		// String targetUrl = TOKEN_AUTHENTICATE_URL + token;
 
-		MpAuthenticatedUser mpAuthenticatedUser = HttpClientUtil.rawGet(targetUrl,
-				MpAuthenticatedUser.class);
+		// MpAuthenticatedUser mpAuthenticatedUser = HttpClientUtil.rawGet(targetUrl,
+		//		MpAuthenticatedUser.class);
 
 		// 2、转化mp的用户模型为本地模型
-		UserInfo userInfo = convertToLocal(mpAuthenticatedUser);
+		// UserInfo userInfo = convertToLocal(mpAuthenticatedUser);
+
+		// 构造用户数据
+		UserInfo userInfo = new UserInfo();
+		userInfo.setUserId("3f655d87112f4ae094bbaf70830e20aa");
+		userInfo.setUserName("admin");
 
 		return userInfo;
 	}

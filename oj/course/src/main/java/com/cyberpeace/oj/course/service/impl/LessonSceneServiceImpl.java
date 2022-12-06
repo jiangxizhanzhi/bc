@@ -156,8 +156,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	}
 
 	@Override
-	public Boolean restartNode(String lessonId, String nodeId, AuthContext authContext) {
-		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
+	public Boolean restartNode(String lessonId, String nodeId, String roomId, AuthContext authContext) {
+		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
 		localSceneService.restartNode(ojLocalScene.getLocalSceneId(), nodeId);
 
 		// 清理远程协助信息
@@ -166,8 +166,8 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	}
 
 	@Override
-	public Boolean recreateNode(String lessonId, String nodeId, AuthContext authContext) {
-		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, authContext);
+	public Boolean recreateNode(String lessonId, String nodeId, String roomId,  AuthContext authContext) {
+		OjLocalScene ojLocalScene = nodeOperationCheck(lessonId, roomId, authContext);
 		localSceneService.recreateNode(ojLocalScene.getLocalSceneId(), nodeId);
 
 		// 清理远程协助信息
@@ -176,9 +176,9 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	}
 
 	@Override
-	public Boolean updateSceneStatus(String resourceId, Integer status, AuthContext authContext) {
+	public Boolean updateSceneStatus(String roomId, String resourceId, Integer status, AuthContext authContext) {
 
-		OjLocalScene ojLocalScene = nodeOperationCheck(resourceId, authContext);
+		OjLocalScene ojLocalScene = nodeOperationCheck(resourceId, roomId,  authContext);
 
 		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
 
@@ -245,7 +245,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	 * @param authContext
 	 * @return
 	 */
-	public OjLocalScene nodeOperationCheck(String lessonId, AuthContext authContext) {
+	public OjLocalScene nodeOperationCheck(String lessonId, String roomId, AuthContext authContext) {
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
@@ -254,14 +254,21 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		}
 
 		// 优先查询组数据场景
-		ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, null,
-				authContext);
-		if (groupInfo != null) {
+		if (StringUtils.isNotBlank(roomId)) {
+			ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(roomId,
+					authContext.getUserId());
+			if (null == groupInfo) {
+				throw new BusinessException(OjBusinessErrorCode.USER_CLASS_GROUP_NOT_FOUND);
+			}
+			
 			OjLocalScene ojLocalScene = ojLocalSceneMapper
 					.selectGroupScene(groupInfo.getResourceId());
-			if (null != ojLocalScene) {
-				return ojLocalScene;
+			if (null == ojLocalScene) {
+				log.error("Classroom scene is not running! group_id=[{}]",
+						groupInfo.getResourceId());
+				throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 			}
+			return ojLocalScene;
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,

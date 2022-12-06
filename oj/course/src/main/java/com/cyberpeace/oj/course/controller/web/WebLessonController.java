@@ -143,7 +143,7 @@ public class WebLessonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		Boolean result = lessonSceneService.restartNode(sceneNodeReq.getResourceId(),
-				sceneNodeReq.getNodeId(), authContext);
+				sceneNodeReq.getNodeId(), sceneNodeReq.getRoomId(), authContext);
 		return new BaseRsp<>(result);
 	}
 
@@ -155,7 +155,7 @@ public class WebLessonController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
 		Boolean result = lessonSceneService.recreateNode(sceneNodeReq.getResourceId(),
-				sceneNodeReq.getNodeId(), authContext);
+				sceneNodeReq.getNodeId(), sceneNodeReq.getRoomId(), authContext);
 		return new BaseRsp<>(result);
 	}
 
@@ -167,7 +167,7 @@ public class WebLessonController {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getResourceId(),
+		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getRoomId(), sceneStatusReq.getResourceId(),
 				sceneStatusReq.getStatus(), authContext);
 		return new BaseRsp<>(result);
 	}

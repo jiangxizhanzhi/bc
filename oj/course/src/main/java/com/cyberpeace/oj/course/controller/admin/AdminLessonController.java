@@ -337,8 +337,8 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getResourceId(),
-				sceneStatusReq.getStatus(), authContext);
+		Boolean result = lessonSceneService.updateSceneStatus(sceneStatusReq.getRoomId(),
+				sceneStatusReq.getResourceId(), sceneStatusReq.getStatus(), authContext);
 		return new BaseRsp<>(result);
 	}
 
@@ -362,7 +362,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Boolean result = lessonSceneService.restartNode(sceneNodeReq.getResourceId(),
-				sceneNodeReq.getNodeId(), authContext);
+				sceneNodeReq.getNodeId(), sceneNodeReq.getRoomId(), authContext);
 		return new BaseRsp<>(result);
 	}
 
@@ -373,7 +373,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		Boolean result = lessonSceneService.recreateNode(sceneNodeReq.getResourceId(),
-				sceneNodeReq.getNodeId(), authContext);
+				sceneNodeReq.getNodeId(), sceneNodeReq.getRoomId(), authContext);
 		return new BaseRsp<>(result);
 	}
 

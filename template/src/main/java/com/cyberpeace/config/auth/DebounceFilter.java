@@ -64,7 +64,7 @@ public class DebounceFilter implements Filter {
 
 			// 用 ip 做用户识别不能避免两个用户启动同一个场景 CommonContext.getIp()
 			String key = getSha256(body) + "_" + requestUri;
-			localCache(key);
+			//localCache(key);
 			filterChain.doFilter(requestWrapper, servletResponse);
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);

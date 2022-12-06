@@ -178,6 +178,7 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean>
 			addMissionInfo(@RequestBody @Validated RbRoomMissionReq rbRoomMissionReq) {
+		rbRoomMissionReq.setTime(120);
 		// validate
 		rbRoomService.checkRoomUnclosed(rbRoomMissionReq.getRoomId());
 		rbRoomMissionReq.validate();

@@ -61,6 +61,7 @@
             <if test="sceneId != null and sceneId != ''">
                 scene_id = #{sceneId}
             </if>
+            and type != 'media-animation'
         </where>
         order by create_time desc
     </select>

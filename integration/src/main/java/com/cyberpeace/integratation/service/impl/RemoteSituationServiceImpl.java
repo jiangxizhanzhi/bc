@@ -26,6 +26,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
     private String CENTER_INFO_URL;
 
+    private String PLATFORM_LIST_URL;
+
     @PostConstruct
     public void init() {
         String outerHost = "http://" + ConfigUtil.getContextProperty("outer.host");
@@ -34,6 +36,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
         SUBJECT_URL = outerHost + ConfigUtil.getContextProperty("subject.list");
         RANGE_INFO_URL = outerHost + ConfigUtil.getContextProperty("range.info");
         CENTER_INFO_URL = outerHost + ConfigUtil.getContextProperty("center.info");
+        PLATFORM_LIST_URL = outerHost + ConfigUtil.getContextProperty("platform.list");
     }
     @Override
     public List<SituationSubject> getSubjectByTasks(List<String> taskIds) {
@@ -80,6 +83,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
         CenterInfoContext centerInfoContext = HttpClientUtil.rawGet(CENTER_INFO_URL + centerId,
                 CenterInfoContext.class);
         return centerInfoContext;
+    }
+
+    @Override
+    public List<PlatformContext> getPlatformList(String taskId, String subjectId,
+                                                 String subRangeId){
+        JSONObject result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?task_id=" + taskId
+                        + "&subject_id=" + subjectId + "&sub_range_id=" + subRangeId, JSONObject.class);
+        return JSONArray.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
     }
 }
 

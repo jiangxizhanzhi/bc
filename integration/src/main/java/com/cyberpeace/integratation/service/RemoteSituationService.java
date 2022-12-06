@@ -49,4 +49,10 @@ public interface RemoteSituationService {
 	 */
 	CenterInfoContext getCenterInfo(String centerId);
 
+	/**
+	 * 获取平台列表
+	 * @return List<PlatformContext>
+	 */
+	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId);
+
 }

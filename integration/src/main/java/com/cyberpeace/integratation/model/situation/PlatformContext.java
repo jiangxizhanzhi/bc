@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.service.context;
+package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
 import java.util.List;

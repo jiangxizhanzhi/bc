@@ -104,16 +104,22 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
 		Map<String, String> nodeMap = getNodeMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
-			String sourceName = nodeMap.get(attackLog.getSourceId());
-			if (sourceName == null){
-				sourceName = "area-" + attackLog.getSourceId().substring(0, 8);
+			String sourceId = attackLog.getSourceId();
+			if(sourceId != null){
+				String sourceName = nodeMap.get(sourceId);
+				if (sourceName == null){
+					sourceName = "area-" + attackLog.getSourceId().substring(0, 8);
+				}
+				attackLog.setSourceName(sourceName);
 			}
-			attackLog.setSourceName(sourceName);
-			String targetName = nodeMap.get(attackLog.getTargetId());
-			if (targetName == null){
-				targetName = "area-" + attackLog.getTargetId().substring(0, 8);
+			String targetId = attackLog.getTargetId();
+			if(targetId != null){
+				String targetName = nodeMap.get(targetId);
+				if (targetName == null){
+					targetName = "area-" + attackLog.getTargetId().substring(0, 8);
+				}
+				attackLog.setTargetName(targetName);
 			}
-			attackLog.setTargetName(targetName);
 			attackLog.setAttackType(AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class)
 											  .getMsg());
 		}

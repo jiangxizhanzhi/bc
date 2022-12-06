@@ -68,7 +68,7 @@ public enum AttackType {
 	INTRANET_PENETRATION(ActionType.START_ATTACK,"内网渗透","Intranet Penetration","intranet-Penetration",false,false,false),
 	DATA_EAVESDROPPING(ActionType.START_ATTACK,"数据窃听","Data Eavesdropping","data-eavesdropping", false, true, false),
 	VIRUS_IMPLANTATION(ActionType.VIRUS_ATTACKS, "病毒植入","Virus Implantation","virus-implantation", false, false, true),
-	EXPLOIT(ActionType.HOST_ATTACK, "漏洞利用", "Exploit", "exploit", true, false, false),
+	EXPLOIT(ActionType.HOST_ATTACK, "漏洞利用", "Exploit", "exploit", false, true, false),
 	OPERATION_FAILURE_OF_INDUSTRIAL_CONTROL_EQUIPMENT(ActionType.SUCCESS_ATTACK, "工控设备运转故障", "Operation Failure Of Industrial Control Equipment","operation-failure-of-industrial-control-equipment", false, false, false),
 	POWER_SYSTEM_INTERRUPTION(ActionType.SUCCESS_ATTACK, "电力系统中断", "Power System Interruption", "power-system-interruption", false, false, false),
 	LOGISTICS_AND_TRANSPORTATION_NETWORK_IS_PARALYZED(ActionType.SUCCESS_ATTACK, "物流运输网络瘫痪", "Logistics And Transportation Network Is Paralyzed", "logistics-and-transportation-network-is-paralyzed", false, false, false);

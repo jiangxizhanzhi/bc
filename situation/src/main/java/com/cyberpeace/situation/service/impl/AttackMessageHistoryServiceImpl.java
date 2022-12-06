@@ -105,7 +105,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		Map<String, String> nodeMap = getNodeMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
 			String sourceId = attackLog.getSourceId();
-			if(sourceId != null){
+			if(sourceId != null && !sourceId.equals("")){
 				String sourceName = nodeMap.get(sourceId);
 				if (sourceName == null){
 					sourceName = "area-" + attackLog.getSourceId().substring(0, 8);
@@ -115,7 +115,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 			String targetId = attackLog.getTargetId();
 			if(targetId != null){
 				String targetName = nodeMap.get(targetId);
-				if (targetName == null){
+				if (targetName == null && !targetId.equals("")){
 					targetName = "area-" + attackLog.getTargetId().substring(0, 8);
 				}
 				attackLog.setTargetName(targetName);

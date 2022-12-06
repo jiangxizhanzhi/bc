@@ -1,5 +1,8 @@
 package com.cyberpeace.bs.utils;
 
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.SystemPropUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -32,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LcHttpClient {
 
-	private static final String ROOT_TOKEN = "ce327da70ad66c48c209bc9d00cd287b992a86ed";
+	private static String ROOT_TOKEN = null;
 
 	/**
 	 * 所有参数都放在url中都get方法
@@ -49,7 +52,6 @@ public class LcHttpClient {
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		setAuthorization(httpGet);
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
 	}
@@ -66,7 +68,6 @@ public class LcHttpClient {
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
-		setAuthorization(post);
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(post, resultType);
@@ -82,13 +83,13 @@ public class LcHttpClient {
 		patch.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		patch.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		patch.setEntity(entity);
-		setAuthorization(patch);
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(patch, resultType);
 	}
 
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
+		setAuthorization(httpRequest);
 		HttpResponse response = null;
 		String httpResponse = null;
 		try {
@@ -178,6 +179,13 @@ public class LcHttpClient {
 	}
 
 	private static void setAuthorization(HttpUriRequest request) {
+		if (ROOT_TOKEN == null) {
+			String token = SystemPropUtil.getProp("LC_PERMANENT_TOKEN");
+			if (StringUtils.isBlank(token)) {
+				throw new BusinessException(BsErrorCode.TOKEN_NOT_CONFIGURED);
+			}
+			ROOT_TOKEN = token;
+		}
 		String token = "Bearer " + ROOT_TOKEN;
 		request.setHeader("Authorization", token);
 	}

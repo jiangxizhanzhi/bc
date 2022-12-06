@@ -56,4 +56,6 @@ public interface BsErrorCode {
 	 * 无效的端口配置
 	 */
 	String INVALID_PORT = "105011";
+
+	String TOKEN_NOT_CONFIGURED = "105012";
 }

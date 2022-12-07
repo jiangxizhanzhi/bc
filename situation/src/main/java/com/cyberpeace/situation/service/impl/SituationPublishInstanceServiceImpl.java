@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -47,6 +48,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     @Autowired
     private DashboardTemplateRefMapper dashboardTemplateRefMapper;
+
+    @Autowired
+    private DashboardTemplateRefService dashboardTemplateRefService;
 
     @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
@@ -108,5 +112,10 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
         situationPublishInstanceMapper.updateById(patchObj);
         return null;
+    }
+
+    public void deleteUnusedSituation(){
+        List<String> list = dashboardTemplateRefMapper.selectAllId();
+        dashboardTemplateRefService.deleteDashboardTemplate(list);
     }
 }

@@ -5,6 +5,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
+import com.cyberpeace.situation.controller.req.DataSourceReq;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
 
@@ -87,8 +88,8 @@ public interface DataSourceService {
 
     /**
      *
-     * @param sql
+     * @param dataSourceReq
      * @return
      */
-    List<JSONObject> getDataSourceData(String sql, String resourceId, String dbName, String tableName);
+    List<JSONObject> getDataSourceData(DataSourceReq dataSourceReq);
 }

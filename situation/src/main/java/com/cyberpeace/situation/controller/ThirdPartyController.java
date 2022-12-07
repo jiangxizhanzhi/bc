@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.situation.CenterInfoContext;
+import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
@@ -18,9 +19,7 @@ import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
 import com.cyberpeace.situation.service.ThirdPartyService;
-import com.cyberpeace.situation.service.context.PlatformContext;
 import com.cyberpeace.situation.service.context.SubRangeContext;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -91,10 +90,11 @@ public class ThirdPartyController {
 			@ApiParam(name = "task_id", value = "任务ID",
 					required = true) @RequestParam(value = "task_id") String taskId,
 			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
-					value = "subject_id", required = false) String subjectId) {
-		List<PlatformContext> platformList = Lists.newArrayList();
-		platformList.add(new PlatformContext("zhs1", "指挥所1"));
-		platformList.add(new PlatformContext("zhs2", "指挥所2"));
+					value = "subject_id", required = false) String subjectId,
+			@ApiParam(name = "sub_range_id", value = "分靶场ID", required = false) @RequestParam(
+					value = "sub_range_id", required = false) String subRangeId) {
+		List<PlatformContext> platformList = remoteSituationService.getPlatformList(taskId,
+				subjectId, subRangeId);
 		return new BaseRsp<>(platformList);
 	}
 

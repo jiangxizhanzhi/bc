@@ -23,6 +23,7 @@ import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.DataSourceService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @Author xuxz
@@ -275,8 +273,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                     finallyObject.put(dimension, string);
                 }
                 if (StringUtils.isNotBlank(measure)) {
-                    String string = datumObject.getString(measure);
-                    finallyObject.put(measure, string);
+                    List<String> measureList = Arrays.asList(measure.split(","));
+                    measureList.forEach(measureKey -> {
+                        String string = datumObject.getString(measureKey);
+                        finallyObject.put(measureKey, string);
+                    });
                 }
                 data.add(finallyObject);
             }
@@ -431,8 +432,10 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         String resourceId = jsonObject.getString("chartDatabase");
         String dbName = jsonObject.getString("dbName");
         String tableName = jsonObject.getString("tableName");
+        String customParams = jsonObject.getString("customParams");
+        DataSourceReq dataSourceReq = new DataSourceReq(sql, resourceId ,dbName, tableName, customParams);
         //获取数据库数据
-        List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(sql, resourceId, dbName, tableName);
+        List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(dataSourceReq);
 
         JSONArray jsonArray = JsonUtil.stringToArray(dataSourceData.toString());
         JSONArray echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);

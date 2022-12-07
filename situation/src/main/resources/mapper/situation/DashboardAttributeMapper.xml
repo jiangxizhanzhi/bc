@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper">
+    <select id="getById" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
+        select *
+        from situation_dashboard_attribute
+        where dashboard_id = #{dashboardId}
+    </select>
+</mapper>

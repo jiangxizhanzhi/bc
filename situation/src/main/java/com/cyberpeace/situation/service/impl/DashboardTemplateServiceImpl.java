@@ -428,10 +428,10 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     private JSONArray parseDbData(JSONObject jsonObject, ComponentsDataReq componentsDataReq) {
-        String sql = jsonObject.getString("sql");
-        String resourceId = jsonObject.getString("chartDatabase");
-        String dbName = jsonObject.getString("dbName");
-        String tableName = jsonObject.getString("tableName");
+        String sql = jsonObject.getString("sqlContent");
+        String resourceId = jsonObject.getString("databaseSource");
+        String dbName = jsonObject.getString("database");
+        String tableName = jsonObject.getString("databaseTable");
         String customParams = jsonObject.getString("condition");
         String requestCustomParams = componentsDataReq.getCustomParams();
         String newCustomParams = parseDbCustomParams(customParams, requestCustomParams);

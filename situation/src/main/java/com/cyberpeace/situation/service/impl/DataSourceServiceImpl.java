@@ -36,6 +36,8 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author xuxz
@@ -52,6 +54,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     private DataSourceRecordMapper dataSourceRecordMapper;
 
     private volatile Map<String, Connection> connectionCache = new HashMap<>();
+
+    private static final Pattern PATTERN = Pattern.compile("\b(exec|insert|drop|grant|alter|delete|update|chr|mid|master|truncate|char|declare)|\b(;)");
 
     @Override
     public String testDBConnection(DataSourceRecordReq dataSourceRecordReq) {
@@ -195,9 +199,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         }
         String parseSQL = parseSQL(customParams, sql);
         //过滤非法sql字段
-        String newSql = transactSQLInjection(parseSQL);
 
-        if (StringUtils.isEmpty(newSql) || newSql.toLowerCase().contains("delete")) {
+        if (StringUtils.isEmpty(parseSQL) || transactSQLInjection(parseSQL)) {
             throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         }
 
@@ -208,7 +211,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(newSql);
+            preparedStatement = connection.prepareStatement(parseSQL);
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -225,7 +228,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 dataList.add(jsonObject);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         } finally {
             closeDB(preparedStatement, resultSet);
         }
@@ -301,8 +304,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return des.decryptStr(password);
     }
 
-    private String transactSQLInjection(String str) {
-        return str.replaceAll("\\.*([;]+|(--)+)\\.*", "");
+    private Boolean transactSQLInjection(String str) {
+        Matcher matcher = PATTERN.matcher(str);
+        return matcher.find();
     }
 
     private String parseSQL(String customParams, String sql){
@@ -330,8 +334,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             }
         }
         StringBuilder sqlSB = new StringBuilder();
+        sqlSB.append("select * from (").append(sql).append(") as ").append(id);
        if (!map.isEmpty()) {
-           sqlSB.append("select * from (").append(sql).append(") as ").append(id).append(" where ");
+           sqlSB.append(" where ");
            int index = 0;
            for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
                sqlSB.append(stringStringEntry.getKey()).append(stringStringEntry.getValue());
@@ -340,9 +345,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                }
                index ++;
            }
-           return sqlSB.toString();
-       }else {
-           return sql;
        }
+        return sqlSB.toString();
     }
 }

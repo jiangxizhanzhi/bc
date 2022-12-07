@@ -14,12 +14,12 @@ public enum TaskType {
 	 */
 
 	QB("", "全部"),
-	XNJD("SY01", "性能鉴定"),
-	XNRZ("SY02", "性能认证"),
+	XNJD("XXX1", "性能鉴定"),
+	XNRZ("XXX2", "性能认证"),
 	HLDK("XL05", "红蓝对抗"),
-	ZZSY("XL01", "ZZ试验"),
+	ZZSY("SY01", "ZZ试验"),
 	DQJS("XL03", "夺旗竞赛"),
-	ZZXL("XL04", "自主训练"),
+	ZZXL("XL99", "自主训练"),
 	ZXBW("XL02", "专项比武");
 
 	@Getter

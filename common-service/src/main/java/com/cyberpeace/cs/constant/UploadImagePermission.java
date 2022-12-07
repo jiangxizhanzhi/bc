@@ -26,7 +26,7 @@ public enum UploadImagePermission implements GenericEnum {
 	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE}),
 	CMS_THEORY_IMAGE(13, "后台理论习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_THEORY_PRACTICE}),
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_PRACTICE_OPERATION }),
-	COMMON_IMAGE(999, "通用上传", FileTypeContant.PICTURE_TYPE, new String[] {});
+	COMMON_IMAGE(999, "通用上传", FileTypeContant.PIC_TYPE, new String[] {});
 
 	@Getter
 	public Integer code;

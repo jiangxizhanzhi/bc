@@ -24,7 +24,7 @@ public interface FileTypeContant {
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
 	/** 图片类型后缀*/
-	String PIC_TYPE = "JPEG,PNG,JPG,GIFF";
+	String PIC_TYPE = "PNG,GIF,JPG,JPEG";
 
 	/** 表格类型后缀*/
 	String 	EXCEL_TYPE = "XLS,XLSX";

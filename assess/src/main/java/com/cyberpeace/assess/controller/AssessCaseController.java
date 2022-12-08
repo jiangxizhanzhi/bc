@@ -248,7 +248,7 @@ public class AssessCaseController {
 
 	@ApiOperation("导出评估案例")
 	@GetMapping("/dump")
-	public void dump(HttpServletResponse response, @ApiParam(name = "resource_id",
+	public BaseRsp<String> dump(HttpServletResponse response, @ApiParam(name = "resource_id",
 			value = "评估案例id", required = true) @RequestParam(value = "resource_id") @NotNull String resourceId) {
 		LambdaQueryWrapper<AssessCase> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(AssessCase::getResourceId, resourceId);
@@ -264,16 +264,11 @@ public class AssessCaseController {
 		try {
 			String zipPath = assessCaseService.makeDumpFile(resourceId, assessCase);
 			// 2. generate file response
-			File zip = new File(zipPath);
-			FileUtil.setResponse(zip, false, response);
+//			File zip = new File(zipPath);
+			return new BaseRsp<>(zipPath);
 		} catch (Exception e) {
 			log.error("failed to dump business template", e);
 			throw new BusinessException("dump material failed");
-		} finally {
-			// 3. delete temp dir
-			if (!FileUtil.deleteDir(new File(tempDir))) {
-				log.error("failed to remove temp dir :{}", tempDir);
-			}
 		}
 	}
 

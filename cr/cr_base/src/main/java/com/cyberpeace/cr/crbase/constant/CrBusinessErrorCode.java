@@ -406,4 +406,6 @@ public interface CrBusinessErrorCode {
 	/** 请指定一个学员 */
 	String PLZ_SPECIFY_ONE_STUDENT = "101122";
 
+	/** 题解长度超长 */
+	String ILLEGAL_WRITEUP_LEN = "101125";
 }

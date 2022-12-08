@@ -124,25 +124,25 @@ implements AssessCaseService{
 		String tagStr = assessCaseService.getTagContent(tag);
 		assessCaseMd.setTag(tagStr);
 		mdParser.write(assessCaseMd, new File(readmeMDFileName));
-		Map<String, String> fileMap = context.getFiles();
+//		Map<String, String> fileMap = context.getFiles();
 
 		// 2. copy attachments
-		for (String fileName : fileMap.values()) {
-			String originPath = fileName;
-			String[] split = fileName.split("\\/");
-			if(split.length < 1){
-				throw new BusinessException("Incorrect attachement path format");
-			}
-			String realFileName = split[split.length-1];
-
-			String destPath = casePath + File.separator + realFileName;
-			try {
-				FileUtil.copyFile(originPath, destPath, false);
-			} catch (Exception e) {
-				log.error("error occurred when copying picture");
-				throw new IOException(e);
-			}
-		}
+//		for (String fileName : fileMap.values()) {
+//			String originPath = fileName;
+//			String[] split = fileName.split("\\/");
+//			if(split.length < 1){
+//				throw new BusinessException("Incorrect attachement path format");
+//			}
+//			String realFileName = split[split.length-1];
+//
+//			String destPath = casePath + File.separator + realFileName;
+//			try {
+//				FileUtil.copyFile(originPath, destPath, false);
+//			} catch (Exception e) {
+//				log.error("error occurred when copying picture");
+//				throw new IOException(e);
+//			}
+//		}
 		// 3. generate zip file, return zip file path
 		return ZipUtil.toZip(casePath);
     }

@@ -134,12 +134,10 @@ public class AssessMaterialController {
 		}
 		Integer page = assessMateriaFilterReq.getPage();
 		Integer perPage = assessMateriaFilterReq.getPerPage();
-
+		queryWrapper.orderByDesc(AssessMaterial::getCreateTime);
 		IPage<AssessMaterial> assessMaterials = assessMaterialMapper.selectPage(new Page<>(page, perPage), queryWrapper);
-		IPage<AssessMaterial> res = assessMaterials;
-		res.setRecords(assessMaterials.getRecords().stream().sorted(Comparator.comparing(AssessMaterial::getCreateTime).reversed()).collect(Collectors.toList()));
 
-		return new BaseRsp(PageUtil.getListResult(res));
+		return new BaseRsp(assessMaterials);
 	}
 
 	@ApiOperation("删除")

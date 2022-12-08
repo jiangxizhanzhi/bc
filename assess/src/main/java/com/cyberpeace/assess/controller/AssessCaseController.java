@@ -145,6 +145,7 @@ public class AssessCaseController {
 			queryWrapper.like(AssessCase::getTag, tag);
 
 		}
+		queryWrapper.orderByDesc(AssessCase::getCreateTime);
 		Integer page = assessCaseFilterReq.getPage();
 		Integer perPage = assessCaseFilterReq.getPerPage();
 		IPage<AssessCase> assessCases = assessCaseMapper.selectPage(new Page<>(page, perPage),queryWrapper);
@@ -155,8 +156,8 @@ public class AssessCaseController {
 
 		List<AssessTag> assessTags = assessTagMapper.selectList(null);
 
-		List<AssessCase> collect = records.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
-		assessCases.setRecords(collect);
+//		List<AssessCase> collect = records.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
+//		assessCases.setRecords(collect);
 		assessCases.convert(assessCase -> {
 			AssessCaseListRes assessCaseListRes = new AssessCaseListRes();
 			BeanUtils.copyProperties(assessCase, assessCaseListRes);

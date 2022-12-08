@@ -32,12 +32,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "评估模型管理")
+@Api(tags = "评估模型web")
 @RestController
 @RequestMapping("/web/assess")
 @RequiresAuthentication
 @RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_MODEL_DATA_MANAGE)
-public class AssessModelController {
+public class AssessModelWebController {
 
 	@Autowired
 	private AssessModelService assessModelService;

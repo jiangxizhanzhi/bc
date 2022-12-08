@@ -57,12 +57,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Api(tags = "评估案例")
+@Api(tags = "评估案例web")
 @RestController
 @RequestMapping("/web/assess/case")
 @RequiresAuthentication
 @RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
-public class AssessCaseController {
+public class AssessCaseWebController {
 
 	@Autowired
 	private AssessCaseMapper assessCaseMapper;

@@ -60,7 +60,7 @@ public class AssessOutputDataController {
 	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("查询单条评估数据")
-	@GetMapping("/assess_data")
+	@GetMapping("/assess_output_data")
 	public BaseRsp<AssessData> getAssessData(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessData assessData = assessDataService.getById(resource_id);
@@ -78,7 +78,7 @@ public class AssessOutputDataController {
 	}
 
 	@ApiOperation("新增单条评估数据")
-	@PostMapping("/assess_data")
+	@PostMapping("/assess_output_data")
 	public BaseRsp<String>
 			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) {
 		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
@@ -106,7 +106,7 @@ public class AssessOutputDataController {
 	}
 
 	@ApiOperation("修改单条评估数据")
-	@PutMapping("/assess_data")
+	@PutMapping("/assess_output_data")
 	public BaseRsp<String>
 			modifyAssessData(@RequestBody @Validated AssessDataUpdateReq assessDataUpdateReq) {
 		AssessData assessData = BeanUtils.copy(assessDataUpdateReq, AssessData.class);
@@ -135,7 +135,7 @@ public class AssessOutputDataController {
 	}
 
 	@ApiOperation("删除评估数据")
-	@DeleteMapping("/assess_data")
+	@DeleteMapping("/assess_output_data")
 	public BaseRsp<String> deleteAssessData(@RequestBody @Validated DeleteReq deleteReq) {
 		assessDataService.removeByIds(deleteReq.getIds());
 		// roleService.updateBatchByDeleteRelatedIds(deleteReq, "AssessData");
@@ -144,7 +144,7 @@ public class AssessOutputDataController {
 	}
 
 	@ApiOperation("分页查询")
-	@GetMapping("/assess_data/list")
+	@GetMapping("/assess_output_data/list")
 	public BaseRsp<List<AssessDataRsp>> list(@Validated AssessListReq pageReqBase) {
 		pageReqBase.setSort("-create_time");
 

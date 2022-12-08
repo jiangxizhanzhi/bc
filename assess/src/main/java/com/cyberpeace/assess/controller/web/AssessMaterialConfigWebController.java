@@ -22,10 +22,10 @@ import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/web/assess/material/config")
-@Api(tags = "评估材料编排")
+@Api(tags = "评估材料编排web")
 @RequiresAuthentication
 @RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
-public class AssessMaterialConfigController {
+public class AssessMaterialConfigWebController {
 
 	@Autowired
 	private AssessMaterialConfigService assessMaterialConfigService;

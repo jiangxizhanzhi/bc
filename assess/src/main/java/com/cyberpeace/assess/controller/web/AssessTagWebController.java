@@ -22,7 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "评估标签管理")
+@Api(tags = "评估标签web")
 @RestController
 @RequestMapping("/web/assess")
 @RequiresAuthentication
@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiParam;
 		MenuConstant.WEB_ASSESS_EVALUATE_MODEL_DATA_MANAGE,
 		MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE,
 		MenuConstant.WEB_ASSESS_INPUT_DATA_MANAGE }, logical = Logical.OR)
-public class AssessTagController {
+public class AssessTagWebController {
 
 	@Autowired
 	private AssessTagService assessTagService;

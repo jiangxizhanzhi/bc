@@ -33,12 +33,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "评估输出数据前台")
+@Api(tags = "评估输出数据web")
 @RestController
 @RequestMapping("/web/assess")
 @RequiresAuthentication
 @RequiresPermissions(value = {MenuConstant.WEB_ASSESS_RESULT_DATA_MANAGE,MenuConstant.WEB_ASSESS_EVALUATE_DATA_MANAGE}, logical = Logical.OR)
-public class AssessOutputDataController {
+public class AssessOutputDataWebController {
 
 	@Autowired
 	private AssessDataService assessDataService;
@@ -56,7 +56,7 @@ public class AssessOutputDataController {
 	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("查询单条评估数据")
-	@GetMapping("/assess_data")
+	@GetMapping("/assess_output_data")
 	public BaseRsp<AssessData> getAssessData(
 			@ApiParam(name = "resource_id", value = "查询id", required = true) String resource_id) {
 		AssessData assessData = assessDataService.getById(resource_id);
@@ -74,7 +74,7 @@ public class AssessOutputDataController {
 	}
 
 	@ApiOperation("分页查询")
-	@GetMapping("/assess_data/list")
+	@GetMapping("/assess_output_data/list")
 	public BaseRsp<List<AssessDataRsp>> list(@Validated AssessListReq pageReqBase) {
 		pageReqBase.setSort("-create_time");
 

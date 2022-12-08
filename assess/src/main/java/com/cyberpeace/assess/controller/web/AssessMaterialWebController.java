@@ -52,12 +52,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "评估材料")
+@Api(tags = "评估材料web")
 @RestController
 @RequestMapping("/web/assess/material")
 @RequiresAuthentication
 @RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
-public class AssessMaterialController {
+public class AssessMaterialWebController {
 
 	@Autowired
 	private AssessMaterialMapper assessMaterialMapper;

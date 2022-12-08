@@ -33,12 +33,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "评估输入数据管理")
+@Api(tags = "评估输入数据web")
 @RestController
 @RequestMapping("/web/assess")
 @RequiresAuthentication
 @RequiresPermissions(value = {MenuConstant.WEB_ASSESS_INPUT_DATA_MANAGE,MenuConstant.WEB_ASSESS_EVALUATE_DATA_MANAGE}, logical = Logical.OR)
-public class AssessDataController {
+public class AssessDataWebController {
 
 	@Autowired
 	private AssessDataService assessDataService;

@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/web/assess/material/config")
 @Api(tags = "评估材料编排")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessMaterialConfigController {
 
 	@Autowired
@@ -40,15 +41,6 @@ public class AssessMaterialConfigController {
 
 		AssessCaseConfigRes lessonConfig = assessMaterialConfigService.getAssessMaterialConfig(caseId, authContext);
 		return new BaseRsp(lessonConfig);
-	}
-
-	@ApiOperation("编排课时")
-	@PutMapping("")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
-	public void setLessonConfig(
-			@ApiParam(name = "configBo", value = "课程编排信息") @RequestBody @Validated AssessCaseConfigUpdateRes assessCaseConfigUpdateRes) {
-
-		assessMaterialConfigService.updateAssessMaterialConfig(assessCaseConfigUpdateRes);
 	}
 
 }

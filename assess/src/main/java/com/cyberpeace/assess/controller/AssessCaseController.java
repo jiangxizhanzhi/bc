@@ -12,6 +12,7 @@ import com.cyberpeace.assess.dao.entity.AssessMaterial;
 import com.cyberpeace.assess.dao.entity.AssessMaterialConfig;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialConfigMapper;
 import com.cyberpeace.assess.dao.mapper.AssessMaterialMapper;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -19,6 +20,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -60,6 +62,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess/case")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessCaseController {
 
 	@Autowired

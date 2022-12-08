@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -59,6 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/web/assess/case")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessCaseController {
 
 	@Autowired
@@ -68,62 +71,14 @@ public class AssessCaseController {
 	private AssessCaseService assessCaseService;
 
 	@Autowired
-	private AssessTagService assessTagService;
-
-	@Autowired
 	private AssessTagMapper assessTagMapper;
 
 	@Autowired
 	private AssessMaterialMapper assessMaterialMapper;
 
 	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	private AssessMaterialConfigMapper assessMaterialConfigMapper;
-
-	@Autowired
 	private RemoteUserService remoteUserService;
 
-
-	@ApiOperation("新增")
-	@PostMapping("")
-	public BaseRsp<AssessCase>
-			setAssessCase(@RequestBody @Validated(Create.class) AssessCaseAddReq assessCaseAddReq) {
-
-		AssessCase assessCase = BeanUtils.copy(assessCaseAddReq,
-				AssessCase.class);
-
-		List<String> tags = assessCaseAddReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
-		if(!tags.isEmpty()){
-			assessTagService.checkTagIds(tags);
-		}
-
-		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.FALSE);
-		assessCase.setCreateUserId(auth.getUserId());
-		assessCase.setTag(JsonUtil.arrayToString(tags));
-
-		assessCaseService.checkNameRepeat(assessCaseAddReq.getName(), null);
-
-		AssessMaterialConfig assessMaterialConfig = new AssessMaterialConfig();
-		List<String> objects = new ArrayList<>();
-		String array = JsonUtil.arrayToString(objects);
-		assessMaterialConfig.setMaterialId(array);
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			public void doInTransactionWithoutResult(TransactionStatus status) {
-				assessCaseMapper.insert(assessCase);
-				assessMaterialConfig.setCaseId(assessCase.getResourceId());
-				assessMaterialConfigMapper.insert(assessMaterialConfig);
-			}
-		});
-
-
-		return new BaseRsp<>(assessCase);
-	}
 
 	@ApiOperation("查询list")
 	@GetMapping("/list")
@@ -173,18 +128,6 @@ public class AssessCaseController {
 		return new BaseRsp(PageUtil.getListResult(assessCases));
 	}
 
-	@ApiOperation("删除")
-	@DeleteMapping("")
-	public BaseRsp deleteAssessCase(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
-		List<String> ids = batchDeleteReq.getIds();
-		ids = ids.stream().distinct().collect(Collectors.toList());
-		List<AssessCase> assessCases = assessCaseMapper.selectBatchIds(ids);
-		if (assessCases.isEmpty() || ids.size() > assessCases.size()) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		assessCaseMapper.deleteBatchIds(ids);
-		return new BaseRsp<>();
-	}
 
 	@ApiOperation("详情")
 	@GetMapping("")
@@ -220,26 +163,6 @@ public class AssessCaseController {
 			assessCaseDetailRes.setMaterialCount(assessMaterials.size());
 		}
 		return new BaseRsp<>(assessCaseDetailRes);
-	}
-
-	@ApiOperation("修改")
-	@PatchMapping("")
-	public BaseRsp<AssessCase> updateAssessCase(@RequestBody @Validated(Update.class) AssessCaseUpdateReq assessCaseUpdateReq) {
-		String resourceId = assessCaseUpdateReq.getResourceId();
-
-		AssessCase assessCase =assessCaseService.checkCaseId(resourceId);
-
-		List<String> tags = assessCaseUpdateReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
-		String name = assessCaseUpdateReq.getName();
-		assessCaseService.checkNameRepeat(name, assessCaseUpdateReq.getResourceId());
-
-		BeanUtils.copyProperties(assessCaseUpdateReq, assessCase);
-		assessCase.setTag(JsonUtil.arrayToString(tags));
-		assessCase.setUpdateTime(new Date());
-		assessCaseMapper.updateById(assessCase);
-		return new BaseRsp<>(assessCase);
 	}
 
 	@ApiOperation("导出评估案例")

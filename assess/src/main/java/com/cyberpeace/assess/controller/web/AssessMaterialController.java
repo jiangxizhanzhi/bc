@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -54,22 +56,11 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/web/assess/material")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessMaterialController {
 
 	@Autowired
 	private AssessMaterialMapper assessMaterialMapper;
-
-	@Autowired
-	private AssessMaterialConfigMapper assessMaterialConfigMapper;
-
-	@Autowired
-	private AssessMaterialService assessMaterialService;
-
-	@Autowired
-	private AssessMaterialConfigService assessMaterialConfigService;
-
-	@Autowired
-	private TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private AssessFileDataService assessFileDataService;
@@ -79,40 +70,6 @@ public class AssessMaterialController {
 	@Autowired
 	private UtilService utilService;
 
-
-	@ApiOperation("新增")
-	@PostMapping("")
-	public BaseRsp<AssessMaterial>
-			setAssessCase(@RequestBody @Validated(Create.class) AssessMaterialAddReq assessMaterialAddReq) {
-
-		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null);
-		assessCaseService.checkCaseId(assessMaterialAddReq.getCaseId());
-
-		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
-				AssessMaterial.class);
-		assessMaterialService.uploadHandout(assessMaterial, assessMaterialAddReq.getAttachment());
-		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.FALSE);
-		assessMaterial.setCreateUserId(auth.getUserId());
-
-		String uuid = String.valueOf(UUID.randomUUID());
-		assessMaterial.setResourceId(uuid);
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			public void doInTransactionWithoutResult(TransactionStatus status) {
-				assessMaterialConfigService.setConfig(assessMaterial);
-
-				if(assessMaterialAddReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())){
-					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
-				}
-				assessMaterialMapper.insert(assessMaterial);
-			}
-		});
-
-
-		return new BaseRsp<>(assessMaterial);
-	}
 
 	@ApiOperation("查询list")
 	@GetMapping("/list")
@@ -138,16 +95,6 @@ public class AssessMaterialController {
 		return new BaseRsp(PageUtil.getListResult(res));
 	}
 
-	@ApiOperation("删除")
-	@DeleteMapping("")
-	public BaseRsp deleteAssessCase(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
-		List<String> ids = batchDeleteReq.getIds();
-		List<AssessMaterial> assessCases = assessMaterialMapper.selectBatchIds(ids);
-		if (!assessCases.isEmpty()) {
-			assessMaterialMapper.deleteBatchIds(ids);
-		}
-		return new BaseRsp<>();
-	}
 
 	@ApiOperation("详情")
 	@GetMapping("")
@@ -169,30 +116,5 @@ public class AssessMaterialController {
 		return new BaseRsp<>(assessMaterialExcelDatalRes);
 	}
 
-	@ApiOperation("修改")
-	@PatchMapping("")
-	public BaseRsp<AssessMaterial> updateAssessCase(@RequestBody @Validated(Update.class) AssessMateriaUpdateReq assessMateriaUpdateReq) {
-		String resourceId = assessMateriaUpdateReq.getResourceId();
-
-		assessCaseService.checkCaseId(assessMateriaUpdateReq.getCaseId());
-		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId);
-		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
-		assessMaterialService.uploadHandout(assessMaterial, assessMateriaUpdateReq.getAttachment());
-		if(null == assessMaterial){
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			public void doInTransactionWithoutResult(TransactionStatus status) {
-				if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL)) {
-					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
-				}
-				BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
-				assessMaterialMapper.updateById(assessMaterial);
-			}
-		});
-		return new BaseRsp<>(assessMaterial);
-	}
 
 }

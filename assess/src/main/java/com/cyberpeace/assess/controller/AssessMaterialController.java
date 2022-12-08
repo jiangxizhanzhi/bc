@@ -12,11 +12,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.assess.service.AssessCaseService;
 import com.cyberpeace.assess.service.AssessFileDataService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.service.UtilService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -55,6 +57,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess/material")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessMaterialController {
 
 	@Autowired

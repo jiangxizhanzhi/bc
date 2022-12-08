@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/assess/material/config")
 @Api(tags = "评估材料编排")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_ASSESS_EVALUATE_CASE_DATA_MANAGE)
 public class AssessMaterialConfigController {
 
 	@Autowired

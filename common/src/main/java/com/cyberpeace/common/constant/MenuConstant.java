@@ -179,6 +179,36 @@ public interface MenuConstant {
     //单兵训练统计
     String CMS_CR_SINGLE_TRAIN_STATISTICS = "individual-training-statistics";
 
+    //评估模型
+    String WEB_ASSESS_EVALUATE_MODEL_DATA_MANAGE = "assess-model-web-folder";
+
+    //评估案例
+    String WEB_ASSESS_EVALUATE_CASE_DATA_MANAGE = "evaluate-case-folder";
+
+    //团队训练统计
+    String WEB_ASSESS_EVALUATE_DATA_MANAGE = "evaluate-data-folder";
+
+    //红蓝对抗统计
+    String WEB_ASSESS_INPUT_DATA_MANAGE = "input-data";
+
+    //指标体系管理
+    String WEB_ASSESS_RESULT_DATA_MANAGE = "result-data";
+
+    //评估模型管理
+    String CMS_ASSESS_EVALUATE_MODEL_DATA_MANAGE = "assess-model-cms-folder";
+
+    //评估案例管理
+    String CMS_ASSESS_EVALUATE_CASE_DATA_MANAGE = "evaluate-case-manage-folder";
+
+    //评估案例
+    String CMS_ASSESS_EVALUATE_DATA_MANAGE = "evaluate-data-manage-folder";
+
+    //团队训练统计
+    String CMS_ASSESS_INPUT_DATA_MANAGE = "input-data-manage";
+
+    //结果数据管理
+    String CMS_ASSESS_RESULT_DATA_MANAGE = "result-data-manage";
+
     //团队训练统计
     String CMS_CR_TEAM_TRAIN_STATISTICS = "team-training-statistics";
 

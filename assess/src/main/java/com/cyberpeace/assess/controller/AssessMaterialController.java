@@ -137,7 +137,7 @@ public class AssessMaterialController {
 		queryWrapper.orderByDesc(AssessMaterial::getCreateTime);
 		IPage<AssessMaterial> assessMaterials = assessMaterialMapper.selectPage(new Page<>(page, perPage), queryWrapper);
 
-		return new BaseRsp(assessMaterials);
+		return new BaseRsp(PageUtil.getListResult(assessMaterials));
 	}
 
 	@ApiOperation("删除")

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -22,6 +24,7 @@ import com.cyberpeace.assess.dao.entity.AssessData;
 import com.cyberpeace.assess.service.AssessDataService;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.AssessTagService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -38,6 +41,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess")
 @RequiresAuthentication
+@RequiresPermissions(value = {MenuConstant.CMS_ASSESS_INPUT_DATA_MANAGE,MenuConstant.CMS_ASSESS_EVALUATE_DATA_MANAGE}, logical = Logical.OR)
 public class AssessDataController {
 
 	@Autowired
@@ -75,8 +79,8 @@ public class AssessDataController {
 
 	@ApiOperation("新增单条评估数据")
 	@PostMapping("/assess_data")
-	public BaseRsp<String> addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq)
-	{
+	public BaseRsp<String>
+			addAssessData(@RequestBody @Validated AssessDataAddReq assessDataAddReq) {
 		AssessData assessData = BeanUtils.copy(assessDataAddReq, AssessData.class);
 
 		// 校验tag是否存在
@@ -93,8 +97,8 @@ public class AssessDataController {
 			@Override
 			public void doInTransactionWithoutResult(TransactionStatus status) {
 				assessDataService.save(assessData);
-				assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
-						assessData.getInputData());
+				assessFileDataService.parseDataFile(assessData.getResourceId(),
+						assessData.getInputType(), assessData.getInputData());
 			}
 		});
 
@@ -122,8 +126,8 @@ public class AssessDataController {
 			@Override
 			public void doInTransactionWithoutResult(TransactionStatus status) {
 				assessDataService.updateById(assessData);
-				assessFileDataService.parseDataFile(assessData.getResourceId(), assessData.getInputType(),
-						assessData.getInputData());
+				assessFileDataService.parseDataFile(assessData.getResourceId(),
+						assessData.getInputType(), assessData.getInputData());
 			}
 		});
 

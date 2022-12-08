@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +38,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.CMS_ASSESS_EVALUATE_MODEL_DATA_MANAGE)
 public class AssessModelController {
 
 	@Autowired

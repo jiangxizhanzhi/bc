@@ -5,23 +5,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.assess.controller.req.AssessListReq;
-import com.cyberpeace.assess.controller.req.AssessModelAddReq;
-import com.cyberpeace.assess.controller.req.AssessModelUpdateReq;
 import com.cyberpeace.assess.controller.res.AssessModelRsp;
 import com.cyberpeace.assess.dao.entity.AssessModel;
 import com.cyberpeace.assess.service.AssessFileDataService;
 import com.cyberpeace.assess.service.AssessModelService;
 import com.cyberpeace.assess.service.AssessTagService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.DeleteReq;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -36,6 +36,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/web/assess")
 @RequiresAuthentication
+@RequiresPermissions(MenuConstant.WEB_ASSESS_EVALUATE_MODEL_DATA_MANAGE)
 public class AssessModelController {
 
 	@Autowired
@@ -69,69 +70,12 @@ public class AssessModelController {
 
 		String tagStr = assessTagService.getTagContent(assessModel.getTag());
 		assessModelRsp.setTags(tagStr);
-		if(assessModel.getInterfaceType().equals(AssessModel.interfaceType.OTHER.getCode())){
-			assessModelRsp.setShowAttachmentUrl(utilService
-					.officeModelUrl(assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
+		if (assessModel.getInterfaceType().equals(AssessModel.interfaceType.OTHER.getCode())) {
+			assessModelRsp.setShowAttachmentUrl(utilService.officeModelUrl(
+					assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
 		}
 
 		return new BaseRsp(assessModelRsp);
-	}
-
-	@ApiOperation("新增单条评估模型")
-	@PostMapping("/assess_model")
-	public BaseRsp<String>
-			addAssessModel(@RequestBody @Validated AssessModelAddReq assessModelAddReq) {
-		AssessModel assessModel = BeanUtils.copy(assessModelAddReq, AssessModel.class);
-
-		// 校验tag是否存在
-		List<String> tags = assessModelAddReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
-		// 校验name是否已存在
-		assessModelService.checkNameRepeat(assessModelAddReq.getName(), null);
-
-		assessModel.setTag(JsonUtil.toJsonString(assessModelAddReq.getTag()));
-		assessModel.setParams(JsonUtil.toJsonString(assessModelAddReq.getParams()));
-		assessModel.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		assessModelService.save(assessModel);
-
-		assessFileDataService.parseModelFile(assessModel.getResourceId(),
-				assessModel.getInterfaceType(), assessModel.getAttachmentUrl());
-
-		return new BaseRsp<>();
-	}
-
-	@ApiOperation("修改单条评估模型")
-	@PutMapping("/assess_model")
-	public BaseRsp<String>
-			modifyAssessModel(@RequestBody @Validated AssessModelUpdateReq assessModelUpdateReq) {
-		AssessModel assessModel = BeanUtils.copy(assessModelUpdateReq, AssessModel.class);
-
-		// 校验tag是否存在
-		List<String> tags = assessModelUpdateReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
-		// 校验name是否已存在
-		assessModelService.checkNameRepeat(assessModelUpdateReq.getName(),
-				assessModelUpdateReq.getResourceId());
-
-		assessModel.setTag(JsonUtil.toJsonString(assessModelUpdateReq.getTag()));
-		assessModel.setParams(JsonUtil.toJsonString(assessModelUpdateReq.getParams()));
-
-		assessModelService.updateById(assessModel);
-		assessFileDataService.parseModelFile(assessModel.getResourceId(),
-				assessModel.getInterfaceType(), assessModel.getAttachmentUrl());
-
-		return new BaseRsp<>();
-	}
-
-	@ApiOperation("删除评估模型")
-	@DeleteMapping("/assess_model")
-	public BaseRsp<String> deleteAssessModel(@RequestBody @Validated DeleteReq deleteReq) {
-		assessModelService.removeByIds(deleteReq.getIds());
-
-		return new BaseRsp<>();
 	}
 
 	@ApiOperation("分页查询")

@@ -2,7 +2,9 @@ package com.cyberpeace.assess.controller;
 
 import java.util.List;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +14,7 @@ import com.cyberpeace.assess.controller.req.AssessTagAddReq;
 import com.cyberpeace.assess.controller.req.AssessTagUpdateReq;
 import com.cyberpeace.assess.dao.entity.AssessTag;
 import com.cyberpeace.assess.service.AssessTagService;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -25,6 +28,11 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess")
 @RequiresAuthentication
+@RequiresPermissions(value = { MenuConstant.CMS_ASSESS_RESULT_DATA_MANAGE,
+		MenuConstant.CMS_ASSESS_EVALUATE_DATA_MANAGE,
+		MenuConstant.CMS_ASSESS_EVALUATE_MODEL_DATA_MANAGE,
+		MenuConstant.CMS_ASSESS_EVALUATE_CASE_DATA_MANAGE,
+		MenuConstant.CMS_ASSESS_INPUT_DATA_MANAGE }, logical = Logical.OR)
 public class AssessTagController {
 
 	@Autowired
@@ -58,7 +66,8 @@ public class AssessTagController {
 		AssessTag toUpdateAssessTag = new AssessTag();
 		BeanUtils.copyProperties(assessTagUpdateReq, toUpdateAssessTag);
 		// 校验name是否已存在
-		assessTagService.checkNameRepeat(assessTagUpdateReq.getContent(), assessTagUpdateReq.getResourceId());
+		assessTagService.checkNameRepeat(assessTagUpdateReq.getContent(),
+				assessTagUpdateReq.getResourceId());
 		assessTagService.updateById(toUpdateAssessTag);
 
 		return new BaseRsp<>();

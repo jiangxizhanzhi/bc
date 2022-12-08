@@ -1,5 +1,7 @@
 package com.cyberpeace.situation.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -8,11 +10,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.DashboardService;
@@ -35,6 +40,9 @@ public class DashboardController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	@Autowired
+	private DashboardAttributeMapper dashboardAttributeMapper;
+
 	@ApiOperation("获取任务/科目发布的大屏ID")
 	@GetMapping("/id/")
 	public BaseRsp<DashboardIdRes> getDashboardId(
@@ -53,11 +61,19 @@ public class DashboardController {
 			throw new BusinessException(SituationErrorCode.TASK_NOT_RUNNING);
 		}
 
-		if (!"红蓝对抗".equals(taskType)) {
-			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, taskType);
+		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(taskType)).findFirst().orElse(TaskType.QB);
+
+		if (!type.getSupport()) {
+			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, type.getName());
 		}
 
-		return new BaseRsp<>(new DashboardIdRes(taskId));
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByTaskId(taskId);
+
+		String dashboardId = dashboardAttribute == null ? taskId
+				: dashboardAttribute.getDashboardId();
+
+		return new BaseRsp<>(new DashboardIdRes(dashboardId, taskType));
 
 	}
 

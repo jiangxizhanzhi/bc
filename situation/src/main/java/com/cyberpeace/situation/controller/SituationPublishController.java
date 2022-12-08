@@ -167,6 +167,8 @@ public class SituationPublishController {
 			copy.setTemplateName(null == s.getTemplateId() ||null == dashboardTemplateMap.get(s.getTemplateId()) ? "" :dashboardTemplateMap.get(s.getTemplateId()).getName());
 			result.add(copy);
 //
+			//清除多余数据
+			situationPublishInstanceService.deleteUnusedSituation();
 		});
 		return new BaseRsp<>(result);
 	}

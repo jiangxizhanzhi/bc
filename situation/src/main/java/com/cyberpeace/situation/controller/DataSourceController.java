@@ -103,8 +103,17 @@ public class DataSourceController {
 
     @ApiOperation("根据sql获取数据")
     @GetMapping("get/data")
-    public BaseRsp<List<JSONObject>> getDataSourceData(DataSourceReq dataSourceReq) {
+    public BaseRsp<List<JSONObject>> getDataSourceData(@RequestParam(value = "sql", required = false)
+                                                           @ApiParam(name = "sql") String sql,
+                                                       @RequestParam("resource_id")
+                                                           @ApiParam(required = true, name = "resource_id") String resourceId,
+                                                       @RequestParam(value = "db_name", required = false)
+                                                           @ApiParam(name = "db_name") String dbName,
+                                                       @RequestParam(value = "table_name", required = false)
+                                                           @ApiParam(name = "table_name") String tableName,
+                                                       @RequestParam(value = "custom_params", required = false)
+                                                           @ApiParam(name = "custom_params") String customParams) {
 
-        return new BaseRsp<>(dataSourceService.getDataSourceData(dataSourceReq));
+        return new BaseRsp<>(dataSourceService.getDataSourceData(new DataSourceReq(sql,resourceId,dbName,tableName,customParams)));
     }
 }

@@ -3,6 +3,8 @@ package com.cyberpeace.situation.service.impl;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.DES;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,10 +14,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
@@ -28,14 +27,17 @@ import com.cyberpeace.situation.dao.mapper.DataSourceRecordMapper;
 import com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper;
 import com.cyberpeace.situation.service.DataSourceService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Author xuxz
@@ -51,11 +53,15 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     @Autowired
     private DataSourceRecordMapper dataSourceRecordMapper;
 
+    private volatile Map<String, Connection> connectionCache = new HashMap<>();
+
+    private static final Pattern PATTERN = Pattern.compile("\b(exec|insert|drop|grant|alter|delete|update|chr|mid|master|truncate|char|declare)|\b(;)");
+
     @Override
     public String testDBConnection(DataSourceRecordReq dataSourceRecordReq) {
         Connection connection = getConnection(dataSourceRecordReq, null);
         String conn = connection.toString();
-        closeDB(connection, null, null);
+        closeDB(null, null);
         return conn;
     }
 
@@ -142,7 +148,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
-                closeDB(connection, null, resultSet);
+                closeDB(null, resultSet);
             }
         }
         return tableList;
@@ -171,7 +177,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeDB(connection, preparedStatement, resultSet);
+            closeDB(preparedStatement, resultSet);
         }
         return list;
     }
@@ -189,11 +195,12 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         }
         //选定数据库时，自动获取所有数据表字段
         if (StringUtils.isNotBlank(tableName) && StringUtils.isEmpty(sql)) {
-            sql = "SELECT * FROM ? ";
+            sql = "SELECT * FROM " + dbName + "." + tableName;
         }
+        String parseSQL = parseSQL(customParams, sql);
+        //过滤非法sql字段
 
-        if (StringUtils.isEmpty(sql) || sql.toLowerCase().contains("delete")) {
-            System.out.println(sql);
+        if (StringUtils.isEmpty(parseSQL) || transactSQLInjection(parseSQL)) {
             throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         }
 
@@ -204,7 +211,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement = connection.prepareStatement(parseSQL);
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -221,9 +228,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 dataList.add(jsonObject);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new BusinessException(ErrorCode.ILLEGAL_SQL);
         } finally {
-            closeDB(connection, preparedStatement, resultSet);
+            closeDB(preparedStatement, resultSet);
         }
         return dataList;
     }
@@ -246,8 +253,21 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             } else {
                 url = String.format(dataSourceTemplate.getConnectUrl(), dataSourceRecordReq.getConnectAddress(), dataSourceRecordReq.getPort());
             }
+            if (connectionCache.containsKey(url)) {
+                Connection connection = connectionCache.get(url);
+                if (connection != null) {
+                    return connection;
+                }
+            }
             String password = decryptedPwd(dataSourceRecordReq.getPassword());
             conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), password);
+            if (conn != null) {
+                if (connectionCache.containsKey(url)) {
+                    connectionCache.replace(url, conn);
+                }else {
+                    connectionCache.put(url, conn);
+                }
+            }
             return conn;
         } catch (ClassNotFoundException | SQLException e) {
             log.error(e.getMessage());
@@ -255,7 +275,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         }
     }
 
-    private void closeDB(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+    private void closeDB(PreparedStatement pstmt, ResultSet rs) {
         try {
             if (rs != null) {
                 rs.close();
@@ -266,13 +286,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 pstmt.close();
             }
             pstmt = null;
-
-            if (conn != null) {
-                conn.close();
-            }
-            conn = null;
-        } catch (Exception ee) {
-            log.error("数据源关闭失败", ee);
+        } catch (Exception e) {
+            log.error("数据源关闭失败", e);
         }
     }
 
@@ -287,5 +302,50 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     private String decryptedPwd(String password) {
         DES des = SecureUtil.des("B13H089Y".getBytes(StandardCharsets.UTF_8));
         return des.decryptStr(password);
+    }
+
+    private Boolean transactSQLInjection(String str) {
+        Matcher matcher = PATTERN.matcher(str);
+        return matcher.find();
+    }
+
+    private String parseSQL(String customParams, String sql){
+        String id = IDGeneratorUtil.getID();
+        String keyWord = " and ";
+        HashMap<String, String> map = new HashMap<>();
+        //映射自定义参数列表
+        if (StringUtils.isNotBlank(customParams)) {
+            try {
+                StringBuilder stringBuilder = new StringBuilder();
+                JSONArray jsonArray = JsonUtil.stringToArray(customParams);
+                for (Object o : jsonArray) {
+                    JSONObject datumObject = JsonUtil.java2JsonObject(o);
+                    String type = datumObject.getString("type");
+                        String value = datumObject.getString("value");
+                        String name = datumObject.getString("name");
+                        String key = datumObject.getString("symbol");
+                        if (StringUtils.isNotBlank(value) && Objects.equals(type, "constant")) {
+                            stringBuilder.append(key).append("'").append(value).append("'");
+                            map.put(name, stringBuilder.toString());
+                        }
+                }
+            }catch (Exception e) {
+                throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+            }
+        }
+        StringBuilder sqlSB = new StringBuilder();
+        sqlSB.append("select * from (").append(sql).append(") as ").append(id);
+       if (!map.isEmpty()) {
+           sqlSB.append(" where ");
+           int index = 0;
+           for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
+               sqlSB.append(stringStringEntry.getKey()).append(stringStringEntry.getValue());
+               if (index != map.size() - 1 ) {
+                   sqlSB.append(keyWord);
+               }
+               index ++;
+           }
+       }
+        return sqlSB.toString();
     }
 }

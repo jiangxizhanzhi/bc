@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper">
+
+    <select id="selectAllId" resultType="java.lang.String">
+        SELECT resource_id FROM situation_dashboard_template_ref WHERE resource_id NOT IN (SELECT template_id FROM situation_publish_instance)
+    </select>
+</mapper>

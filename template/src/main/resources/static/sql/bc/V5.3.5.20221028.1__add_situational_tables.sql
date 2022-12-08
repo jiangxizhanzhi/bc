@@ -419,25 +419,25 @@ CREATE TABLE `situation_dashboard_template_ref` (
     COLLATE = utf8_general_ci
     ROW_FORMAT = DYNAMIC;
 
-
-CREATE TABLE `situation_sub_range_context` (
-                                                  `id` int NOT NULL AUTO_INCREMENT,
-                                                  `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                  `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                  `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                  `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                  `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                  `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-                                                  `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-                                                  `stationCount` int DEFAULT 0,
-                                                  `create_time` datetime DEFAULT NULL,
-                                                  `update_time` datetime DEFAULT NULL,
-                                                  PRIMARY KEY (`id`) USING BTREE,
-                                                  UNIQUE KEY `sub_range_id` (`sub_range_id`) USING BTREE
-    ) ENGINE=InnoDB AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = DYNAMIC;
+-- ----------------------------
+-- Table structure for situation_sub_range
+-- ----------------------------
+CREATE TABLE `situation_sub_range`  (
+                                        `id` int NOT NULL AUTO_INCREMENT,
+                                        `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                        `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                        `station_count` int NULL DEFAULT 0,
+                                        `status` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                        `create_time` datetime NULL DEFAULT NULL,
+                                        `update_time` datetime NULL DEFAULT NULL,
+                                        PRIMARY KEY (`id`) USING BTREE,
+                                        UNIQUE INDEX `sub_range_id`(`sub_range_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 CREATE TABLE `situation_event_type_context` (
                                                 `id` INT NOT NULL AUTO_INCREMENT,
@@ -505,3 +505,32 @@ CREATE TABLE `situation_station`  (
                                       PRIMARY KEY (`id`) USING BTREE,
                                       UNIQUE INDEX `station_id`(`station_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_dashboard_attribute
+-- ----------------------------
+CREATE TABLE `situation_dashboard_attribute`  (
+                                                  `id` int NOT NULL AUTO_INCREMENT,
+                                                  `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `dashboard_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `level` int NOT NULL,
+                                                  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                                  `sub_title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `sub_range_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `task_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `task_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `task_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `subject_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `subject_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `start_time` datetime NULL DEFAULT NULL,
+                                                  `topo_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `refresh` int NULL DEFAULT NULL,
+                                                  `longitude` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `latitude` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+                                                  `altitude` int(10) UNSIGNED ZEROFILL NULL DEFAULT NULL,
+                                                  `create_time` datetime NULL DEFAULT NULL,
+                                                  `update_time` datetime NULL DEFAULT NULL,
+                                                  PRIMARY KEY (`id`) USING BTREE,
+                                                  UNIQUE INDEX `dashboard_id`(`dashboard_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

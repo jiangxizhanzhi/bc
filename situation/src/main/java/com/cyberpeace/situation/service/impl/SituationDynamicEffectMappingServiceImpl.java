@@ -10,7 +10,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.constant.Color;
 import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -18,18 +17,14 @@ import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingPageReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingUpdateReq;
-import com.cyberpeace.situation.dao.entity.DynamicEffectsLibraryCategory;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
-import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
-import com.cyberpeace.situation.dao.mapper.SubRangeContextMapper;
+import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.SituationDynamicEffectMappingService;
-import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.EventTypeContext;
-import com.cyberpeace.situation.service.context.SubRangeContext;
-import com.google.common.collect.Lists;
+import com.cyberpeace.situation.dao.entity.SubRange;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -49,7 +44,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
 
     @Autowired
-    private SubRangeContextMapper subRangeContextMapper;
+    private SubRangeMapper subRangeMapper;
 
     @Autowired
     private EventTypeContextMapper eventTypeContextMapper;
@@ -62,9 +57,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         dynamicEffectsMapping.setCreateUserId(userId);
         String resourceId = IDGeneratorUtil.getID();
         dynamicEffectsMapping.setResourceId(resourceId);
-        SubRangeContext subRangeContext = subRangeContextMapper.getById(dynamicEffectsMapping.getCategory());
+        SubRange subRange = subRangeMapper.getById(dynamicEffectsMapping.getCategory());
 
-        if (null == subRangeContext) {
+        if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
 
@@ -83,7 +78,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
                 PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
         List<DynamicEffectsMapping> list = dynamicEffectsMappingListRsp.getList();
         List<EventTypeContext> eventTypeContextList = eventTypeContextMapper.getEventTypeContextList(null);
-        List<SubRangeContext> subRanges = subRangeContextMapper.getSubRanges();
+        List<SubRange> subRanges = subRangeMapper.getSubRanges();
         if (CollectionUtils.isNotEmpty(list)) {
             for (DynamicEffectsMapping dynamicEffectsMapping : list) {
                 String colorCode = dynamicEffectsMapping.getColor();
@@ -154,9 +149,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        SubRangeContext subRangeContext = subRangeContextMapper.getById(dynamicEffectsMapping.getCategory());
+        SubRange subRange = subRangeMapper.getById(dynamicEffectsMapping.getCategory());
 
-        if (null == subRangeContext) {
+        if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
 

@@ -35,6 +35,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("任务名称")
 	private String taskName;
 
+	@ApiModelProperty("任务类型")
+	private String taskType;
+
 	@ApiModelProperty("科目ID")
 	private String subjectId;
 
@@ -43,6 +46,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 
 	@ApiModelProperty("任务/科目开始时间")
 	private Date startTime;
+
+	@ApiModelProperty("拓扑ID")
+	private String topoId = "demo";
 
 	@ApiModelProperty("刷新时间（s）")
 	private Integer refresh = 5;

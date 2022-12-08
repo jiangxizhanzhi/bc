@@ -1,26 +1,28 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
+import com.cyberpeace.situation.dao.entity.SubRange;
 import com.cyberpeace.situation.dao.mapper.CenterMapper;
 import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.StationMapper;
-import com.cyberpeace.situation.dao.mapper.SubRangeContextMapper;
+import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.EventTypeContext;
-import com.cyberpeace.situation.service.context.SubRangeContext;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author xuxz
@@ -31,7 +33,7 @@ import java.util.Map;
 public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     @Autowired
-    private SubRangeContextMapper subRangeContextMapper;
+    private SubRangeMapper subRangeMapper;
 
     @Autowired
     private CenterMapper centerMapper;
@@ -44,20 +46,20 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     private volatile Map<String, Center> centerCache = Maps.newHashMap();
 
-    private volatile Map<String, SubRangeContext> subRangeCache = Maps.newHashMap();
+    private volatile Map<String, SubRange> subRangeCache = Maps.newHashMap();
 
     private volatile Map<String, Station> stationCache = Maps.newHashMap();
 
     private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
     @Override
-    public List<SubRangeContext> getSubRanges() {
+    public List<SubRange> getSubRanges() {
         if (subRangeCache.isEmpty()) {
             subRangeInit();
         }
-        List<SubRangeContext> subRangeContextList = new ArrayList<>();
-        subRangeCache.forEach((key, value) -> subRangeContextList.add(value));
-        return subRangeContextList;
+        List<SubRange> subRangeList = new ArrayList<>();
+        subRangeCache.forEach((key, value) -> subRangeList.add(value));
+        return subRangeList;
     }
 
     @Override
@@ -92,8 +94,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     private synchronized void subRangeInit() {
         if (subRangeCache.isEmpty()) {
-            List<SubRangeContext> subRanges = subRangeContextMapper.getSubRanges();
-            for (SubRangeContext subRange : subRanges) {
+            List<SubRange> subRanges = subRangeMapper.getSubRanges();
+            for (SubRange subRange : subRanges) {
                 String subRangeId = subRange.getSubRangeId();
                 if (!subRangeCache.containsKey(subRangeId)) {
                     subRangeCache.put(subRangeId, subRange);

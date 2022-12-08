@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.service.context;
+package com.cyberpeace.situation.dao.entity;
 
 import java.io.Serializable;
 
@@ -7,8 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_sub_range_context")
-public class SubRangeContext implements Serializable {
+@TableName("situation_sub_range")
+public class SubRange implements Serializable {
 
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;
@@ -34,11 +34,7 @@ public class SubRangeContext implements Serializable {
 	@ApiModelProperty("场站数量")
 	private Integer stationCount;
 
-	public SubRangeContext() {}
-
-	public SubRangeContext(String subRangeId, String subRangeName) {
-		this.subRangeId = subRangeId;
-		this.subRangeName = subRangeName;
-	}
+	@ApiModelProperty("分靶场状态")
+	private String status;
 
 }

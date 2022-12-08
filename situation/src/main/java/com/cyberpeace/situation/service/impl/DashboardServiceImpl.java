@@ -2,17 +2,35 @@ package com.cyberpeace.situation.service.impl;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
 
+	@Autowired
+	private DashboardAttributeMapper dashboardAttributeMapper;
+
 	@Override
 	public DashboardBasicAttributeRes getDashboardBasicAttribute(String dashboardId) {
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById(dashboardId);
+
+		if (dashboardAttribute != null) {
+			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
+					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
+			dashboardBasicAttributeRes
+					.setViewAngle(BeanUtils.deepCopy(dashboardAttribute, ViewAngle.class));
+			return dashboardBasicAttributeRes;
+
+		}
 
 		DashboardBasicAttributeRes data = new DashboardBasicAttributeRes();
 

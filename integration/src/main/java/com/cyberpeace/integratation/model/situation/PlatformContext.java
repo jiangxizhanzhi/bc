@@ -15,6 +15,9 @@ public class PlatformContext implements Serializable {
 	@ApiModelProperty("平台名称")
 	private String platformName;
 
+	@ApiModelProperty("平台地址")
+	private String address;
+
 	@ApiModelProperty("平台模型资源地址")
 	private String platformUrl;
 

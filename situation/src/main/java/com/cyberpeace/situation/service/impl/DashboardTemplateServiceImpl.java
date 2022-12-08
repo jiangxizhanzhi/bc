@@ -428,18 +428,50 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     private JSONArray parseDbData(JSONObject jsonObject, ComponentsDataReq componentsDataReq) {
-        String sql = jsonObject.getString("sql");
-        String resourceId = jsonObject.getString("chartDatabase");
-        String dbName = jsonObject.getString("dbName");
-        String tableName = jsonObject.getString("tableName");
-        String customParams = jsonObject.getString("customParams");
-        DataSourceReq dataSourceReq = new DataSourceReq(sql, resourceId ,dbName, tableName, customParams);
+        String sql = jsonObject.getString("sqlContent");
+        String resourceId = jsonObject.getString("databaseSource");
+        String dbName = jsonObject.getString("database");
+        String tableName = jsonObject.getString("databaseTable");
+        String customParams = jsonObject.getString("condition");
+        String requestCustomParams = componentsDataReq.getCustomParams();
+        String newCustomParams = parseDbCustomParams(customParams, requestCustomParams);
+        DataSourceReq dataSourceReq = new DataSourceReq(sql, resourceId, dbName, tableName, newCustomParams);
         //获取数据库数据
         List<JSONObject> dataSourceData = dataSourceService.getDataSourceData(dataSourceReq);
 
         JSONArray jsonArray = JsonUtil.stringToArray(dataSourceData.toString());
-        JSONArray echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
 
-        return echartsDataSet;
+        return getEchartsDataSet(jsonArray, componentsDataReq);
+    }
+
+    private String parseDbCustomParams(String customParams, String requestCustomParams) {
+        List<CustomParamReq> customParamReqs = JsonUtil.toJsonObjectArray(requestCustomParams, CustomParamReq.class);
+        try {
+            JSONArray customParamsArray = JsonUtil.stringToArray(customParams);
+            JSONArray jsonArray = new JSONArray();
+            for (Object o : customParamsArray) {
+                JSONObject customObject = new JSONObject();
+                JSONObject datumObject = JsonUtil.java2JsonObject(o);
+                String type = datumObject.getString("type");
+                String value = datumObject.getString("value");
+                String key = datumObject.getString("symbol");
+                String name = datumObject.getString("name");
+                if (!Objects.equals(type, "constant")) {
+                    customParamReqs.forEach(customParamReq -> {
+                        if (customParamReq != null && customParamReq.getName().equals(value)) {
+                            String paramReqValue = customParamReq.getValue();
+                            customObject.put("name", name);
+                            customObject.put("value", paramReqValue);
+                            customObject.put("symbol", key);
+                            customObject.put("type", type);
+                        }
+                    });
+                }
+                jsonArray.add(customObject);
+            }
+            return jsonArray.toString();
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
+        }
     }
 }

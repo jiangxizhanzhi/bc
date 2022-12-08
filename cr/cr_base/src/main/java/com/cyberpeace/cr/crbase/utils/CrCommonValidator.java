@@ -94,6 +94,14 @@ public class CrCommonValidator {
 	}
 
 	/**
+	 * 默认描述长度 1~65535
+	 */
+	public static void validateTextLen(String target, String errorCode) {
+		validateLength(target, CrCommonConstants.ZERO_STR_LEN, CrCommonConstants.MAX_TEXT_LEN,
+				errorCode);
+	}
+
+	/**
 	 * id、编号长度 1~32
 	 * @param target
 	 * @param errorCode

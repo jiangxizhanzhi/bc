@@ -53,6 +53,8 @@ public class MissionTemplateReq implements Serializable {
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
 		// validate desc
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		//校验题解长度
+		CrCommonValidator.validateTextLen(writeUp, CrBusinessErrorCode.ILLEGAL_WRITEUP_LEN);
 
 		// validate skill points
 		CrCommonValidator.validateSize(skillPoints, CrCommonConstants.SKILL_POINTS_SIZE,

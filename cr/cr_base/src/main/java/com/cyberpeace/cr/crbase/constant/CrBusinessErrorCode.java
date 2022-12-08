@@ -411,4 +411,7 @@ public interface CrBusinessErrorCode {
 
 	/** 工具分类英文名称与系统内已有名称重复  */
 	String DUPLICATED_TOOL_CATEGORY_ENNAME = "101124";
+
+	/** 题解长度超长 */
+	String ILLEGAL_WRITEUP_LEN = "101125";
 }

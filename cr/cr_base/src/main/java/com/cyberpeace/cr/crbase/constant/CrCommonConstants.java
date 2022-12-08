@@ -53,6 +53,8 @@ public interface CrCommonConstants {
 
 	Integer MAX_NAME_STR_LEN = ConfigReader.readInt("cr.str.len.name.max");
 
+	Integer MAX_TEXT_LEN = ConfigReader.readInt("cr.text.len.max");
+
 	Integer MAX_OPTION_STR_LEN = ConfigReader.readInt("cr.option.len.max");
 
 	Integer MAX_DESC_LEN = ConfigReader.readInt("cr.desc.len.max");

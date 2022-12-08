@@ -1,13 +1,9 @@
 package com.cyberpeace.bs.service;
 
-import com.cyberpeace.bs.service.bo.TargetBo;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.lc.LcActualDevice;
-import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
-import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
-import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
+import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -63,4 +59,10 @@ public interface LcService {
 	 * @return
 	 */
 	List<LcActualDevice> getActualDevices(List<Integer> types);
+
+	/**
+	 * 获取设备监控数据
+	 * @return
+	 */
+	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime);
 }

@@ -18,7 +18,10 @@ import com.cyberpeace.bs.service.bo.BsTimerTask;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
+import com.cyberpeace.bs.service.bo.lc.LcMonitorRsp;
 import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
+import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
+import com.cyberpeace.bs.service.bo.monitor.MonitorSimulatorDetail;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
@@ -209,6 +212,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
     @Override
     public void deleteBySceneId(String sceneId) {
+		log.info("Delete simulators by scene_id: {}", sceneId);
         if (StringUtils.isEmpty(sceneId)) {
             throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
         }
@@ -451,7 +455,44 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return simulator;
 	}
 
-	private UserSimulator getOrNull(String resourceId) {
+	@Override
+	public MonitorDataRes getMonitorData(String resourceId) {
+		// 统计8小时
+		int hours = 8;
+		// get meter
+		UserSimulator simulator = getOrException(resourceId);
+		MonitorDataRes res = new MonitorDataRes();
+		// get detail
+		res.setDetail(new MonitorSimulatorDetail());
+		res.getDetail().load(simulator);
+		// task percentage
+		res.setExecutedPercentage(BsUtil.round(
+				100 - simulator.getExecutedIndex() * 100.0 / simulator.getBehaviorCount()));
+		// get lc monitor data
+		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;
+		LcMonitorRsp lcMonitorRsp = lcService.getDeviceMonitorData(simulator.getDeviceId(),
+				simulator.getDeviceIp(), simulator.getIsEntity(), timestamp);
+		// res init time
+		res.init(timestamp, hours);
+		// bandwidth & packet
+		res.getBandwidthAndPacket().setBandwidth(BsUtil.fill(lcMonitorRsp.getBandwidth(),
+				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getBandwidthAndPacket().setPacket(BsUtil.fill(lcMonitorRsp.getPacket(),
+				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		// connection
+		res.getConnection().setConnection(BsUtil.fill(lcMonitorRsp.getConnection(),
+				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnected(BsUtil.fill(lcMonitorRsp.getConnected(),
+				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		// activity
+		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), hours, 0));
+		// session
+		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), hours * 2, 0));
+
+		return res;
+	}
+
+    private UserSimulator getOrNull(String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			return null;
 		}

@@ -1,0 +1,58 @@
+package com.cyberpeace.bs.service.bo.monitor;
+
+import com.cyberpeace.bs.constant.BsConstants;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.List;
+
+@Data
+public class MonitorDataRes implements Serializable {
+
+    @ApiModelProperty(value = "仪表详情")
+    private MonitorSimulatorDetail detail;
+
+    @ApiModelProperty(value = "任务已执行百分比")
+    private Integer executedPercentage;
+
+    @ApiModelProperty(value = "时间横轴（分钟），用于带宽图和连接数图")
+    private List<String> xTimeMinutes = Lists.newArrayList();
+
+    @ApiModelProperty(value = "连接数统计")
+    private ConnectionBo connection;
+
+    @ApiModelProperty(value = "带宽和报文统计")
+    private BandwidthAndPacket bandwidthAndPacket;
+
+    @ApiModelProperty(value = "活跃度")
+    private ActivityBo activity;
+
+    @ApiModelProperty(value = "仿真任务会话数")
+    private TaskSessionBo session;
+
+    public void init(long timestamp, int hours) {
+        LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+        LocalTime start = LocalTime.of(localDateTime.getHour(), localDateTime.getMinute());
+        for (int i = 0; i < hours * BsConstants.MINUTE_PER_HOUR; i++) {
+            xTimeMinutes.add(start.plusMinutes(i).toString());
+        }
+        for (int i = 0; i < hours; i++) {
+            activity.getXHour().add(start.plusHours(i + 1).getHour() + BsConstants.HOUR);
+        }
+        LocalTime halfHourStart;
+        if (start.getMinute() < 30) {
+            halfHourStart = LocalTime.of(start.getHour(), 30);
+        } else {
+            halfHourStart = LocalTime.of(start.getHour() + 1, 0);
+        }
+        for (int i = 0; i < hours * 2; i++) {
+            session.getXHalfHour().add(halfHourStart.plusMinutes(30L * i).toString());
+        }
+    }
+}

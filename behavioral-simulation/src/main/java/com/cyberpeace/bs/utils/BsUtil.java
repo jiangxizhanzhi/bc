@@ -1,29 +1,31 @@
 package com.cyberpeace.bs.utils;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
-
 import com.cyberpeace.bs.constant.BsConstants;
-import com.cyberpeace.bs.service.bo.simulator.BehaviorConfig;
-import com.cyberpeace.bs.service.bo.simulator.BehaviorConfigRaw;
-import com.cyberpeace.bs.service.bo.simulator.IpBo;
-import com.cyberpeace.common.util.StreamApiUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.model.UserModelBase;
 import com.cyberpeace.bs.service.bo.model.UserModelBo;
+import com.cyberpeace.bs.service.bo.simulator.BehaviorConfigRaw;
+import com.cyberpeace.bs.service.bo.simulator.IpBo;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.google.common.collect.Maps;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @author SN
@@ -33,8 +35,6 @@ public class BsUtil {
 	private static final String JSON_LIST_INITIAL = "[";
 
 	private static final String EMPTY_STRING = "";
-
-	private static final int SECONDS_PER_MINUTE = 60;
 
 	/**
 	 * 解析存储的行为列表json
@@ -179,8 +179,8 @@ public class BsUtil {
 		if(null == seconds || seconds <= 0){
 			return 0;
 		}
-		int minutes = seconds / SECONDS_PER_MINUTE;
-		if(seconds % SECONDS_PER_MINUTE > 0){
+		int minutes = seconds / BsConstants.SECONDS_PER_MINUTE;
+		if (seconds % BsConstants.SECONDS_PER_MINUTE > 0) {
 			minutes++;
 		}
 		return minutes;
@@ -197,4 +197,41 @@ public class BsUtil {
 		}
 		return ipBoList.get(0).getIp();
 	}
+
+	/**
+	 * 将行为设备id转为int
+	 *
+	 * @param deviceId
+	 * @param isUsingIp
+	 * @return
+	 */
+	public static Integer getLcDeviceId(String deviceId, Boolean isUsingIp) {
+		if (isUsingIp) {
+			return new Integer(BsConstants.DEFAULT_DEVICE_ID);
+		} else {
+			return new Integer(deviceId);
+		}
+	}
+
+	/**
+	 * 将列表从前方填充到指定长度
+	 *
+	 * @param raw
+	 * @param length
+	 * @param e
+	 * @param <E>
+	 * @return
+	 */
+	public static <E> List<E> fill(List<E> raw, Integer length, E e) {
+		if (raw.size() < length) {
+			List<E> out = Lists.newArrayList();
+			for (int i = 0; i < length - raw.size(); i++) {
+				out.add(e);
+			}
+			out.addAll(raw);
+			return out;
+		}
+		return raw;
+	}
+
 }

@@ -48,7 +48,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     private volatile Map<String, SubRange> subRangeCache = Maps.newHashMap();
 
-    private volatile Map<String, Station> stationCache = Maps.newHashMap();
+    private volatile Map<String, List<Station>> stationCache = Maps.newHashMap();
 
     private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
@@ -74,11 +74,11 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     @Override
     public List<Station> getStations(String subRangeId){
-        if (stationCache.isEmpty()) {
+        if (stationCache.get(subRangeId) == null) {
             stationInit(subRangeId);
         }
         List<Station> stationList = new ArrayList<>();
-        stationCache.forEach((key, value) -> stationList.add(value));
+        stationCache.get(subRangeId).forEach(station -> stationList.add(station));
         return stationList;
     }
 
@@ -121,16 +121,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     }
 
     private synchronized void stationInit(String subRangeId) {
-        if (stationCache.isEmpty()) {
+        if (stationCache.get(subRangeId) == null) {
             List<Station> stations = stationMapper.getStations(subRangeId);
-            for (Station station : stations) {
-                String stationId = station.getStationId();
-                if (!stationCache.containsKey(stationId)) {
-                    stationCache.put(stationId, station);
-                } else {
-                    stationCache.replace(stationId, station);
-                }
-            }
+            stationCache.put(subRangeId, stations);
         }
     }
 

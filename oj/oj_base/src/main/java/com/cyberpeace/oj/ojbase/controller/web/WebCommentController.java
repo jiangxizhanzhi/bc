@@ -38,7 +38,7 @@ public class WebCommentController {
 
 	@ApiOperation("查询所有留言")
 	@GetMapping("/list")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_ALL_COURSE }, logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE }, logical = Logical.OR)
 	public BaseRsp<ListRsp<CommentBo>>
 			listComment(@ApiParam @Validated PageCommentReq pageCommentReq) {
 
@@ -54,7 +54,7 @@ public class WebCommentController {
 
 	@ApiOperation("留言点赞")
 	@PostMapping("/is_like")
-	@RequiresPermissions(value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE}, logical = Logical.OR)
 	public BaseRsp<Integer>
 			commentIsLike(@ApiParam @RequestBody CommentIsLikeReq commentIsLikeReq) {
 

@@ -152,6 +152,9 @@ public class AssessFileDataServiceImpl extends ServiceImpl<AssessFileDataMapper,
 		for (int i = 1; i < sheetData.size(); i++){
 			List<String> values = sheetData.get(i);
 			LinkedHashMap<Object, Object> jsonObject = new LinkedHashMap<>();
+			if(StringUtils.isBlank(values.get(0))){
+				continue;
+			}
 			jsonObject.put("product", values.get(0));
 			for(int j = 1; j < tableColumn.size(); j++){
 				if(StringUtils.isBlank(tableColumn.get(j))){

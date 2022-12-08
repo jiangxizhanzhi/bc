@@ -14,13 +14,11 @@ public enum TaskType {
 	 */
 
 	QB("", "全部"),
-	XNJD("XXX1", "性能鉴定"),
-	XNRZ("XXX2", "性能认证"),
 	HLDK("XL05", "红蓝对抗"),
-	ZZSY("SY01", "ZZ试验"),
 	DQJS("XL03", "夺旗竞赛"),
 	ZZXL("XL99", "自主训练"),
-	ZXBW("XL02", "专项比武");
+	ZXBW("XL02", "专项比武"),
+	ZZSY("SY01", "ZZ试验");
 
 	@Getter
 	private String code;

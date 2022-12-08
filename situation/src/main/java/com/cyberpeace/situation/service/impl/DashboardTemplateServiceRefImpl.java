@@ -8,9 +8,12 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.controller.req.CustomParamReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
+import com.cyberpeace.situation.controller.req.DashboardComponentsResourceReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
@@ -189,5 +192,36 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             }
         }
         return dashboardComponentsList;
+    }
+
+    public void exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes) {
+        DashboardTemplateRes dashboardTemplateRes = situationPublishInstanceReviewRes.getTemplateInfo();
+        String taskId = situationPublishInstanceReviewRes.getTaskId();
+        String subjectId = situationPublishInstanceReviewRes.getSubjectId();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject taskJson = new JSONObject();
+        JSONObject subjectJson = new JSONObject();
+        taskJson.put("name", "taskId");
+        taskJson.put("value", taskId);
+        subjectJson.put("name", "subjectId");
+        subjectJson.put("value", subjectId);
+        jsonArray.add(taskJson);
+        jsonArray.add(subjectJson);
+        List<DashboardComponents> componentsSettingList = dashboardTemplateRes.getComponentsSetting();
+        if (CollectionUtils.isNotEmpty(componentsSettingList)) {
+            for (DashboardComponents dashboardComponent : componentsSettingList) {
+                String componentSetting = dashboardComponent.getComponentSetting();
+                JSONObject jsonObject = JSONObject.parseObject(componentSetting);
+                String componentType = jsonObject.getString("component_type");
+                if (componentType== null) {
+                    JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
+                    String option = jsonObject.getString("option");
+                    JSONObject optionObject = JSONObject.parseObject(option);
+                    JSONObject dataSetObject = new JSONObject();
+                    dataSetObject.put("source", echartsOption);
+                    optionObject.replace("dataset", dataSetObject);
+                }
+            }
+        }
     }
 }

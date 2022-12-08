@@ -75,9 +75,8 @@ public interface DashboardTemplateService {
 
     /**
      * 通过组件id获取echarts数据
-     * @param dashboardComponentsResourceReq
      * @return
      */
-    JSONArray getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq);
+    JSONArray getEchartsOption(String componentsSetting, String customParams);
 
 }

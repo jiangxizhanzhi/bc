@@ -272,8 +272,9 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				if (!handoutUrl.startsWith("/cpms")) {
 					handoutUrl = "/cpms" + File.separator + handoutUrl;
 				}
-				String[] split = handoutUrl.split("/");
-				String handoutFileName = split[split.length - 1];
+				String[] split = handoutUrl.split("\\.");
+				String fileSuffix = split[split.length - 1];
+				String handoutFileName =  lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode()) ? HANDOUT_OTHER_FILE_NAME + "." + fileSuffix : DOC_OTHER_FILE_NAME  + "." + fileSuffix;
 				FileUtil.copyFile(handoutUrl, handoutFile + File.separator + handoutFileName, false);
 			} else {
 				File file = new File(handoutFile, lesson.getType().equals(CourseLesson.LessonType.THEORY.getCode()) ? HANDOUT_FILE_NAME : DOC_FILE_NAME);

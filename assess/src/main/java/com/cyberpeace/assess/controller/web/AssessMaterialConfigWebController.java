@@ -32,7 +32,6 @@ public class AssessMaterialConfigWebController {
 
 	@ApiOperation("后台课程目录查询")
 	@GetMapping("")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AssessCaseConfigRes> getLessonConfig(@ApiParam(name = "case_id",
 			value = "课程编号") @RequestParam("case_id") String caseId) {
 

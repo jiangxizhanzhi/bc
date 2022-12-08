@@ -32,7 +32,6 @@ public class AssessMaterialConfigController {
 
 	@ApiOperation("后台课程目录查询")
 	@GetMapping("")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<AssessCaseConfigRes> getLessonConfig(@ApiParam(name = "case_id",
 			value = "课程编号") @RequestParam("case_id") String caseId) {
 
@@ -45,7 +44,6 @@ public class AssessMaterialConfigController {
 
 	@ApiOperation("编排课时")
 	@PutMapping("")
-	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public void setLessonConfig(
 			@ApiParam(name = "configBo", value = "课程编排信息") @RequestBody @Validated AssessCaseConfigUpdateRes assessCaseConfigUpdateRes) {
 

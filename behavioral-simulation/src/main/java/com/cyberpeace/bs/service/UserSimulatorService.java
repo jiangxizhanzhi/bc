@@ -109,9 +109,9 @@ public interface UserSimulatorService {
 
 	/**
 	 * 关闭场景时删除关联仪表
-	 * @param sceneId 场景id
+	 * @param sceneIdList 场景id
 	 */
-    void deleteBySceneId(String sceneId);
+    void deleteBySceneId(List<String> sceneIdList);
 
 	/**
 	 * 获取仪表关联的全部场景
@@ -132,4 +132,6 @@ public interface UserSimulatorService {
 	 * @return
 	 */
     MonitorDataRes getMonitorData(String resourceId);
+
+	List<String> getSceneIdList();
 }

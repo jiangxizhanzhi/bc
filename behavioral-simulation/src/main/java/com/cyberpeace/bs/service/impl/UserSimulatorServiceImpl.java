@@ -151,9 +151,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 					String userModelId = node.getUserModelId();
 					UserModel userModel = userModelMap.get(userModelId);
 					if (userModel == null) {
-						continue;
+						throw new BusinessException(BsErrorCode.USER_MODEL_MISSING, userModelId);
 					}
-					String userType = userTypeMap.get(userModel.getUserTypeId());
+					String userType = userTypeMap.getOrDefault(userModel.getUserTypeId(), StringUtils.EMPTY);
 					UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
 							addBo.getSceneName(), userType);
 					userSimulatorMapper.insert(simulator);
@@ -211,12 +211,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
     @Override
-    public void deleteBySceneId(String sceneId) {
-		log.info("Delete simulators by scene_id: {}", sceneId);
-        if (StringUtils.isEmpty(sceneId)) {
-            throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
-        }
-        List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneId(sceneId);
+    public void deleteBySceneId(List<String> sceneIdList) {
+		log.info("Delete simulators by scene_id: {}", sceneIdList);
+        List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneIdList(sceneIdList);
 		if(relatedSimulatorIds.isEmpty()){
 			return;
 		}
@@ -224,8 +221,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				userSimulatorMapper.deleteBySceneId(sceneId);
-				deviceOccupationMapper.releaseBySceneId(sceneId);
+				userSimulatorMapper.deleteBySceneIdList(sceneIdList);
+				deviceOccupationMapper.releaseBySceneIdList(sceneIdList);
 			}
 		});
 		// 删除定时任务
@@ -329,7 +326,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			timer.cancel();
 			timerMap.remove(simulator.getResourceId());
 		}
-		// todo stop running behavior
 		// get latest behavior id
 		List<BehaviorSimple> behaviorSimpleList = BsUtil
 				.parseBehaviorList(simulator.getBehaviorList());
@@ -365,12 +361,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void updateProcess(String simulatorId, Integer index) {
-//		UserSimulator simulator = userSimulatorMapper.selectById(simulatorId);
-//		simulator.setExecutedIndex(index);
-		// if (index == 0) {
-		// traffic.setStatus(UserSimulator.Status.STOPPED.getCode());
-		// }
-//		userSimulatorMapper.updateById(simulator);
 		userSimulatorMapper.updateProcess(simulatorId, index);
 	}
 
@@ -393,7 +383,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
 		simulator.setBandwidth(userModel.getBandwidth());
 		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
-		// todo index
 		simulator.setExecutedIndex(statistic.getBehaviorCount());
 		simulator.setDeviceId(addReq.getDeviceId());
 		simulator.setDeviceIp(addReq.getDeviceIp());
@@ -421,7 +410,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
 		simulator.setBandwidth(userModel.getBandwidth());
 		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
-		// todo index
 		simulator.setExecutedIndex(statistic.getBehaviorCount());
 		String deviceId = nodeBo.getNodeId();
 		if (StringUtils.isBlank(deviceId)) {
@@ -492,7 +480,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return res;
 	}
 
-    private UserSimulator getOrNull(String resourceId) {
+	@Override
+	public List<String> getSceneIdList() {
+		List<SceneIdName> sceneList = userSimulatorMapper.getSceneList();
+		return sceneList.stream().map(SceneIdName::getSceneId).collect(Collectors.toList());
+	}
+
+	private UserSimulator getOrNull(String resourceId) {
 		if (StringUtils.isBlank(resourceId)) {
 			return null;
 		}

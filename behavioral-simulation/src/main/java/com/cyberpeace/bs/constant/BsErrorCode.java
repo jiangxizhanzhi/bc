@@ -57,5 +57,13 @@ public interface BsErrorCode {
 	 */
 	String INVALID_PORT = "105011";
 
+	/**
+	 * 未配置龙测API服务Token
+	 */
 	String TOKEN_NOT_CONFIGURED = "105012";
+
+	/**
+	 * 指定用户模型不存在
+	 */
+	String USER_MODEL_MISSING = "105013";
 }

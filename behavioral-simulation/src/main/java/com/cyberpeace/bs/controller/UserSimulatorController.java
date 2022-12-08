@@ -128,9 +128,16 @@ public class UserSimulatorController {
 
 	@ApiOperation("关闭场景时删除相关仪表")
 	@DeleteMapping("/scene")
-	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdReq idReq){
-		userSimulatorService.deleteBySceneId(idReq.getResourceId());
+	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdListReq idListReq){
+		userSimulatorService.deleteBySceneId(idListReq.getIds());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("获取行为仪表关联场景id列表")
+	@GetMapping("/scene_ids")
+	public BaseRsp<List<String>> getRelatedSceneIds(){
+		List<String> sceneIds = userSimulatorService.getSceneIdList();
+		return new BaseRsp<>(sceneIds);
 	}
 
 	@ApiOperation("获取行为仪表监控数据")

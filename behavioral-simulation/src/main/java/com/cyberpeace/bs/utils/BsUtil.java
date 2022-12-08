@@ -223,6 +223,9 @@ public class BsUtil {
 	 * @return
 	 */
 	public static <E> List<E> fill(List<E> raw, Integer length, E e) {
+		if (raw == null) {
+			raw = Lists.newArrayList();
+		}
 		if (raw.size() < length) {
 			List<E> out = Lists.newArrayList();
 			for (int i = 0; i < length - raw.size(); i++) {

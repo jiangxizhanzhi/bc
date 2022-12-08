@@ -30,4 +30,8 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	List<SceneIdName> getSceneList();
 
     void updateProcess(@Param("simulatorId") String simulatorId, @Param("index") Integer index);
+
+    List<String> getIdsBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
+
+	void deleteBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
 }

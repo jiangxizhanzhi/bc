@@ -12,14 +12,15 @@ import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHistoryMapper, AttackMessageHistory> implements AttackMessageHistoryService {
 
@@ -163,7 +164,6 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		return attackMessageHistory;
 	}
 
-	@Cacheable(cacheNames = "getNodeMap", key = "#sceneId")
 	public Map<String, String> getNodeMap(String sceneId) {
 		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);

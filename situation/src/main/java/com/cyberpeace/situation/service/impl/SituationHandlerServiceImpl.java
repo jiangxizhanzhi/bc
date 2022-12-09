@@ -49,9 +49,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
-//	@Cacheable(cacheNames = "getSituationTopo", key = "#sceneData.getSceneName()")
 	public SituationTopo getSituationTopo(SceneData sceneData) {
-
 		// 处理态势数据
 		Map<String, AreaInfo> areasInfo = getAreas(sceneData);
 		Map<String, ElementInfo> elementsInfo = getElements(sceneData, areasInfo);
@@ -199,7 +197,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				JSONObject port = ports.getJSONObject(j);
 				String portId = port.getString("id");
 				sceneData.getPortElementMap().put(portId, elementId);
-
 				PortInfo portInfo = BeanUtils.deepCopy(port, PortInfo.class);
 				portInfo.setPortId(portId);
 

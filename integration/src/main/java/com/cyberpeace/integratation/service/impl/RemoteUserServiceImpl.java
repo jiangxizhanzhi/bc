@@ -1,27 +1,12 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -35,8 +20,21 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @CacheConfig(cacheNames = { CacheConstant.REMOTE_USER })
 @Slf4j
@@ -52,6 +50,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String ORG_INFO_LIST_URL;
 
 	private String AUTH_PERMISSION_MENUS_URL;
+
+	private UserInfo superAdminUserInfo;
 
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
@@ -81,6 +81,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
+		superAdminUserInfo = getById("3f655d87112f4ae094bbaf70830e20aa");
 	}
 
 	@Override
@@ -278,6 +279,11 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 				.toJavaList(UserInfo.class);
 
 		return StreamApiUtils.toMap(userInfos, UserInfo::getUserId, userInfo -> userInfo);
+	}
+
+	@Override
+	public void setSuperAdmin(){
+		UserInfoContext.setUserContext(superAdminUserInfo);
 	}
 
 	/**

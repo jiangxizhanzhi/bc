@@ -1,15 +1,17 @@
 package com.cyberpeace.common.util;
 
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+
+import java.util.List;
 
 /**
  * 对象拷贝工具类
  * @author yinqingrong
  */
+@Slf4j
 public class BeanUtils {
 
 	private BeanUtils() {}
@@ -43,7 +45,15 @@ public class BeanUtils {
 
 		MapperFacade mapper = mapperFactory.getMapperFacade();
 
-		T result = mapper.map(source, target);
+		T result;
+		try {
+			result = mapper.map(source, target);
+		}
+		catch (Exception e){
+			log.error("source:" + source.toString());
+			log.error("target:" + target);
+			throw e;
+		}
 
 		return result;
 	}

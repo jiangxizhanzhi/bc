@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "行为模拟-行为设备管理")
+@Api(tags = "行为模拟-仪表相关")
 @RestController
 @RequestMapping("/bs/target")
 // @RequiresAuthentication

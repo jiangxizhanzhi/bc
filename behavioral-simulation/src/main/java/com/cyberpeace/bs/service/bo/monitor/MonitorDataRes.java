@@ -1,16 +1,18 @@
 package com.cyberpeace.bs.service.bo.monitor;
 
-import com.cyberpeace.bs.constant.BsConstants;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+
+import com.cyberpeace.bs.constant.BsConstants;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class MonitorDataRes implements Serializable {
@@ -37,11 +39,17 @@ public class MonitorDataRes implements Serializable {
     private TaskSessionBo session;
 
     public void init(long timestamp, int hours) {
+		this.bandwidthAndPacket = new BandwidthAndPacket();
+		this.connection = new ConnectionBo();
+		this.activity = new ActivityBo();
+		this.session = new TaskSessionBo();
+
         LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
         LocalTime start = LocalTime.of(localDateTime.getHour(), localDateTime.getMinute());
         for (int i = 0; i < hours * BsConstants.MINUTE_PER_HOUR; i++) {
             xTimeMinutes.add(start.plusMinutes(i).toString());
         }
+
         for (int i = 0; i < hours; i++) {
             activity.getXHour().add(start.plusHours(i + 1).getHour() + BsConstants.HOUR);
         }
@@ -51,6 +59,7 @@ public class MonitorDataRes implements Serializable {
         } else {
             halfHourStart = LocalTime.of(start.getHour() + 1, 0);
         }
+
         for (int i = 0; i < hours * 2; i++) {
             session.getXHalfHour().add(halfHourStart.plusMinutes(30L * i).toString());
         }

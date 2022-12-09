@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(tags = "用户行为流量发生")
+@Api(tags = "用户行为仪表，行为流量发生")
 @RestController
 @RequestMapping("/bs/simulator")
 // @RequiresAuthentication

@@ -12,4 +12,6 @@ public class SituationInstanceReleaseReq implements Serializable {
 	@ApiModelProperty(value = "态势实例id", required = true)
 	@NotBlank
 	private String resourceId;
+
+	private String type;
 }

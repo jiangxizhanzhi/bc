@@ -55,7 +55,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     public DashboardTemplateRef createDashboardTemplate(String resourceId) {
 
         //获取模板数据
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId);
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId, null);
         DashBoardTemplateReq dashBoardTemplateReq = BeanUtils.copy(dashboardTemplateInfo, DashBoardTemplateReq.class);
         DashboardTemplateRef dashboardTemplateRef = changeToDashboardTemplateRef(dashBoardTemplateReq);
 
@@ -118,7 +118,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     }
 
     @Override
-    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId) {
+    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type) {
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(resourceId);
         if (dashboardTemplateRef == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -126,10 +126,18 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         String componentsSetting = dashboardTemplateRef.getComponentsSetting();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRes.class);
+        //图层排序，默认将GIS图层置为最底层
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
+            List<DashboardComponents> sourceDashboardComponents = new ArrayList<>();
             List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
             for (DashboardComponents dashboardComponent : dashboardComponents) {
+                //视角筛选
+                String sourceType = dashboardComponent.getType();
+                if (type != null && !Objects.equals(sourceType, type)) {
+                    break;
+                }
+                sourceDashboardComponents.add(dashboardComponent);
                 String componentSetting = dashboardComponent.getComponentSetting();
                 JSONObject jsonObject = JSONObject.parseObject(componentSetting);
                 String componentType = jsonObject.getString("component_type");
@@ -137,8 +145,8 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     sortDashboardComponents.add(dashboardComponent);
                 }
             }
-            dashboardComponents.removeAll(sortDashboardComponents);
-            sortDashboardComponents.addAll(dashboardComponents);
+            sourceDashboardComponents.removeAll(sortDashboardComponents);
+            sortDashboardComponents.addAll(sourceDashboardComponents);
             dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
         }
         return dashboardTemplateRes;

@@ -35,7 +35,7 @@ public interface DashboardTemplateRefService {
      * @param resourceId
      * @return
      */
-    DashboardTemplateRes getDashboardTemplateInfo(String resourceId);
+    DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type);
 
     /**
      * 批量删除态势模板数据

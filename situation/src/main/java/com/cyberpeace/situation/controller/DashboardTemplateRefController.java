@@ -29,7 +29,7 @@ public class DashboardTemplateRefController {
     @ApiOperation("新增态势数据")
     @PostMapping()
     public BaseRsp<DashboardTemplateRef> createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
-                                                           String resourceId) {
+                                                                         String resourceId) {
         return new BaseRsp<>(dashboardTemplateRefService.createDashboardTemplate(resourceId));
     }
 
@@ -42,8 +42,10 @@ public class DashboardTemplateRefController {
     @ApiOperation("获取改态势数据详情")
     @GetMapping("")
     public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
-                                                                          String resourceId) {
-        return new BaseRsp<>(dashboardTemplateRefService.getDashboardTemplateInfo(resourceId));
+                                                                          String resourceId,
+                                                                  @RequestParam(value = "type", required = false) @ApiParam(name = "type", value = "视角类型")
+                                                                          String type) {
+        return new BaseRsp<>(dashboardTemplateRefService.getDashboardTemplateInfo(resourceId,type));
     }
 
     @ApiOperation("批量删除改态势数据")

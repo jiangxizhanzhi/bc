@@ -5,7 +5,10 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.req.ComponentsDataReq;
+import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
+import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
+import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
@@ -18,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,9 +50,11 @@ public class DashboardTemplateController {
 
     @ApiOperation("获取改态势模板详情")
     @GetMapping("")
-    public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
-                                                                          String resourceId) {
-        return new BaseRsp<>(dashboardTemplateService.getDashboardTemplateInfo(resourceId));
+    public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "资源id")
+                                                                          String resourceId,
+                                                                  @RequestParam(value = "type", required = false) @ApiParam(name = "type", value = "视角类型")
+                                                                          String type) {
+        return new BaseRsp<>(dashboardTemplateService.getDashboardTemplateInfo(resourceId, type));
     }
 
     @ApiOperation("批量删除改态势模板")

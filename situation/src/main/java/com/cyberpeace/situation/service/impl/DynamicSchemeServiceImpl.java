@@ -532,6 +532,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							//当前动效已运行，直接进行下一次循环
 							continue;
 						}
+						number ++;
 						//当前动效未运行，表示找到继续的位置，之后运行无需再次判断
 						attackMessageStatue = false;
 

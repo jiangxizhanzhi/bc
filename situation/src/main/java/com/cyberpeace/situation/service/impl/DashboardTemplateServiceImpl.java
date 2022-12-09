@@ -191,16 +191,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     @Override
-    public JSONArray getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq) {
-        String resourceId = dashboardComponentsResourceReq.getResourceId();
-        String customParams = dashboardComponentsResourceReq.getCustomParams();
-        DashboardComponents dashboardComponents = dashboardComponentsMapper.selectById(resourceId);
-        if (dashboardComponents == null) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-
-        String componentSetting = dashboardComponents.getComponentSetting();
-        ComponentsDataReq componentsDataReq = changeToComponentsDataReq(componentSetting, customParams);
+    public JSONArray getEchartsOption(String componentsSetting, String customParams) {
+        ComponentsDataReq componentsDataReq = changeToComponentsDataReq(componentsSetting, customParams);
         return this.getComponentsEchartsData(componentsDataReq);
     }
 

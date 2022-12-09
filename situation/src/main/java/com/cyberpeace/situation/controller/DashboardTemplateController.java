@@ -82,10 +82,4 @@ public class DashboardTemplateController {
     public BaseRsp<JSONArray> getEchartsOption(ComponentsDataReq componentsDataReq) {
         return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));
     }
-
-    @ApiOperation("通过组件id获取echarts数据")
-    @GetMapping("option")
-    public BaseRsp<JSONArray> getEchartsOption(DashboardComponentsResourceReq dashboardComponentsResourceReq) {
-        return new BaseRsp<>(dashboardTemplateService.getEchartsOption(dashboardComponentsResourceReq));
-    }
 }

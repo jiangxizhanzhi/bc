@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,11 @@ public class LcServiceImpl implements LcService {
 	 * 获取实体设备列表
 	 */
 	private String ACTUAL_DEVICE_LIST = "api/v1/devices/findNewList";
+
+	/**
+	 * 获取行为仪表监控
+	 */
+	private String MONITOR_URL = "api/v1/monitor/findByDevice";
 
 
 	@PostConstruct
@@ -238,5 +244,18 @@ public class LcServiceImpl implements LcService {
 		String res = LcHttpClient.post(targetUrl, body, String.class);
 		List<LcActualDevice> devices = JsonUtil.toJsonObjectArray(res, LcActualDevice.class);
 		return devices;
+	}
+
+	@Override
+	public LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime) {
+
+		String targetUrl = LC_HOST_PORT + MONITOR_URL;
+		LcMonitorReq req = new LcMonitorReq();
+		req.setDeviceId(BsUtil.getLcDeviceId(deviceId, !isEntity));
+		req.setDeviceIp(deviceIp);
+		req.setIsUsingIp(!isEntity);
+		req.setStartTime(startTime);
+		LcMonitorRsp rsp = LcHttpClient.post(targetUrl, req, LcMonitorRsp.class);
+		return rsp;
 	}
 }

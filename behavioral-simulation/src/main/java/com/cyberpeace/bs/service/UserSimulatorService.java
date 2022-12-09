@@ -1,6 +1,7 @@
 package com.cyberpeace.bs.service;
 
 import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.common.model.ListRsp;
@@ -108,9 +109,9 @@ public interface UserSimulatorService {
 
 	/**
 	 * 关闭场景时删除关联仪表
-	 * @param sceneId 场景id
+	 * @param sceneIdList 场景id
 	 */
-    void deleteBySceneId(String sceneId);
+    void deleteBySceneId(List<String> sceneIdList);
 
 	/**
 	 * 获取仪表关联的全部场景
@@ -125,4 +126,12 @@ public interface UserSimulatorService {
 	 */
 	UserSimulator getOrException(String resourceId);
 
+	/**
+	 * 获取行为仪表监控数据
+	 * @param resourceId
+	 * @return
+	 */
+    MonitorDataRes getMonitorData(String resourceId);
+
+	List<String> getSceneIdList();
 }

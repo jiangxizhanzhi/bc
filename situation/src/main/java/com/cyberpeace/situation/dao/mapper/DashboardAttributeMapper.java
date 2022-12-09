@@ -10,4 +10,6 @@ import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 public interface DashboardAttributeMapper extends BaseMapper<DashboardAttribute> {
 
 	DashboardAttribute getById(@Param("dashboardId") String dashboardId);
+
+	DashboardAttribute getByTaskId(@Param("taskId") String taskId);
 }

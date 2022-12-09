@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DebounceFilter implements Filter {
 
-	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
+	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(100, TimeUnit.MILLISECONDS)
 			.build();
 
 	private final String post = "POST";

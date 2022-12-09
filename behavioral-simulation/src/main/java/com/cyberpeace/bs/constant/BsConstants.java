@@ -6,6 +6,16 @@ package com.cyberpeace.bs.constant;
  */
 public interface BsConstants {
 
+	int SECONDS_IN_A_HOUR = 60 * 60;
+
+	int MINUTE_PER_HOUR = 60;
+	/**
+	 * 一小时的分钟数
+	 */
+	Integer SECONDS_PER_MINUTE = 60;
+
+	long MILLI_IN_A_HOUR = 60 * 60 * 1000L;
+
 	/**
 	 * 一天的毫秒数
 	 */
@@ -20,4 +30,6 @@ public interface BsConstants {
 	 * 空列表的json
 	 */
 	String EMPTY_LIST_JSON = "[]";
+
+	String HOUR = "时";
 }

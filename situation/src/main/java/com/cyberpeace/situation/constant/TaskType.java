@@ -13,12 +13,14 @@ public enum TaskType {
 	 * 任务类型
 	 */
 
-	QB("", "全部"),
-	HLDK("XL05", "红蓝对抗"),
-	DQJS("XL03", "夺旗竞赛"),
-	ZZXL("XL99", "自主训练"),
-	ZXBW("XL02", "专项比武"),
-	ZZSY("SY01", "ZZ试验");
+	QB("", "全部", false),
+	XNJD("SY01", "性能鉴定", false),
+	XNRZ("SY02", "性能认证", false),
+	HLDK("XL05", "红蓝对抗", true),
+	ZZSY("XL01", "ZZ试验", true),
+	DQJS("XL03", "夺旗竞赛", true),
+	ZZXL("XL04", "自主训练", true),
+	ZXBW("XL02", "专项比武", true);
 
 	@Getter
 	private String code;
@@ -26,9 +28,13 @@ public enum TaskType {
 	@Getter
 	private String name;
 
-	TaskType(String code, String name) {
+	@Getter
+	private Boolean support;
+
+	TaskType(String code, String name, Boolean support) {
 		this.code = code;
 		this.name = name;
+		this.support = support;
 	}
 
 	public static List<HashMap<String, String>> getTaskTypeMap() {

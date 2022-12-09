@@ -8,4 +8,10 @@
         from situation_dashboard_attribute
         where dashboard_id = #{dashboardId}
     </select>
+
+    <select id="getByTaskId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
+        select *
+        from situation_dashboard_attribute
+        where task_id = #{taskId}
+    </select>
 </mapper>

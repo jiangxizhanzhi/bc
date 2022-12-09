@@ -3,6 +3,7 @@ package com.cyberpeace.bs.controller;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
+import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
@@ -10,7 +11,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,8 +128,24 @@ public class UserSimulatorController {
 
 	@ApiOperation("关闭场景时删除相关仪表")
 	@DeleteMapping("/scene")
-	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdReq idReq){
-		userSimulatorService.deleteBySceneId(idReq.getResourceId());
+	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdListReq idListReq){
+		userSimulatorService.deleteBySceneId(idListReq.getIds());
 		return new BaseRsp();
 	}
+
+	@ApiOperation("获取行为仪表关联场景id列表")
+	@GetMapping("/scene_ids")
+	public BaseRsp<List<String>> getRelatedSceneIds(){
+		List<String> sceneIds = userSimulatorService.getSceneIdList();
+		return new BaseRsp<>(sceneIds);
+	}
+
+	@ApiOperation("获取行为仪表监控数据")
+	@GetMapping("/monitor_data")
+	public BaseRsp<MonitorDataRes> getSimulatorMonitor(@ApiParam(value = "仪表resource_id", name = "resource_id")
+															   String resource_id) {
+		MonitorDataRes res = userSimulatorService.getMonitorData(resource_id);
+		return new BaseRsp(res);
+	}
+
 }

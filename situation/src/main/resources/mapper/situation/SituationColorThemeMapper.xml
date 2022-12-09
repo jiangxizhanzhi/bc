@@ -1,0 +1,13 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationColorThemeMapper">
+
+    <select id="selectPage" resultType="com.cyberpeace.situation.dao.entity.ColorTheme">
+        select * from situation_color_theme where 1 = 1
+        <if test="colorThemePageReq.name != null and colorThemePageReq.name != ''">
+            and name like concat('%', #{colorThemePageReq.name} ,'%')
+        </if>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

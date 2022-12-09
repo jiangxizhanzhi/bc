@@ -22,4 +22,6 @@ public interface DeviceOccupationMapper {
                 @Param("date") Date date);
 
     void releaseBySceneId(@Param("sceneId") String sceneId);
+
+    void releaseBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
 }

@@ -14,6 +14,14 @@
         from bs_device_occupation
         where scene_id = #{sceneId}
     </delete>
+    <delete id="releaseBySceneIdList">
+        delete
+        from bs_device_occupation
+        where scene_id in
+        <foreach collection="sceneIdList" item="sceneId" open="(" close=")" separator=",">
+            #{sceneId}
+        </foreach>
+    </delete>
 
     <select id="checkOccupation" resultType="java.lang.String">
         select device_id

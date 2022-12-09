@@ -11,6 +11,14 @@
         from bs_user_simulator
         where scene_id = #{sceneId}
     </delete>
+    <delete id="deleteBySceneIdList">
+        delete
+        from bs_user_simulator
+        where scene_id in
+        <foreach collection="sceneIdList" item="sceneId" open="(" close=")" separator=",">
+            #{sceneId}
+        </foreach>
+    </delete>
     <select id="selectAll" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
         select *
         from bs_user_simulator
@@ -42,5 +50,13 @@
         select distinct scene_id, scene_name
         from bs_user_simulator
         order by id desc
+    </select>
+    <select id="getIdsBySceneIdList" resultType="java.lang.String">
+        select resource_id
+        from bs_user_simulator
+        where scene_id in
+        <foreach collection="sceneIdList" item="sceneId" open="(" close=")" separator=",">
+            #{sceneId}
+        </foreach>
     </select>
 </mapper>

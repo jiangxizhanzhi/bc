@@ -277,6 +277,7 @@ public class SituationPublishController {
 		// TODO 大屏地址
 //		res.sendRedirect("page/cr/admin/situation-release/preview/"+ templateId);
 		copy.setTemplateInfo(dashboardTemplateInfo);
+		dashboardTemplateRefService.exchangeOptionDataSet(copy);
 		return copy;
 	}
 

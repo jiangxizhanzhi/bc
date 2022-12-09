@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service;
 
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 
 import java.util.List;
@@ -43,5 +44,11 @@ public interface DashboardTemplateRefService {
      * @return
      */
     Integer deleteDashboardTemplate(List<String> idList);
+
+    /**
+     * 获取实时数据
+     * @param situationPublishInstanceReviewRes
+     */
+    void exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes);
 
 }

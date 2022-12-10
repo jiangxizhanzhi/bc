@@ -43,10 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -331,13 +328,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
-		//将区域id做处理返回给前端
-		optionsRes.setAreaList(
-				StreamApiUtils.map(areaInfoList, areaInfo -> new ElementType(areaInfo.getAreaId(),
-						"area-" + areaInfo.getAreaId().substring(0, 8))));
+		//返回区域数据
+		List<ElementType> areaTypeList = StreamApiUtils.map(areaInfoList, areaInfo ->
+				new ElementType(areaInfo.getAreaId(), areaInfo.getName()));
+		Collections.sort(areaTypeList);
+		optionsRes.setAreaList(areaTypeList);
 		//返回节点数据
-		optionsRes.setElementList(StreamApiUtils.map(elementInfoList,
-				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName())));
+		List<ElementType> elementTypeList = StreamApiUtils.map(elementInfoList,
+				elementInfo -> new ElementType(elementInfo.getElementId(), elementInfo.getName()));
+		Collections.sort(elementTypeList);
+		optionsRes.setElementList(elementTypeList);
 	}
 
 	public DynamicScheme

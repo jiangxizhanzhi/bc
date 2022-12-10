@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -273,6 +274,18 @@ public class CourseValidateHandler {
 	public void categoryNameLengthValidate(String name) {
 		if (name.length() > 64) {
 			throw new BusinessException(OjBusinessErrorCode.FIELD_TOO_LONG);
+		}
+	}
+
+	/**
+	 * 校验课时类型
+	 * @param lessonType
+	 * @param accessType
+	 */
+	public void validateLessonType(Integer lessonType, Integer accessType) {
+		if (lessonType.intValue() != accessType) {
+			throw new BusinessException(OjBusinessErrorCode.ACCESS_LESSON_TYPE,
+					EnumUtils.getEnumDescByCode(lessonType, CourseLesson.LessonType.class));
 		}
 	}
 }

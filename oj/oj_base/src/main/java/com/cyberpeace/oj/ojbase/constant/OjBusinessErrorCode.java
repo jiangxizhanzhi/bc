@@ -281,4 +281,7 @@ public interface OjBusinessErrorCode {
 
 	/** 习题方向为空*/
 	String PRACTICE_DIRECTION_EMPTY_ERROR = "102092";
+
+	/** 课时类型不正确，当前类型为xxx*/
+	String ACCESS_LESSON_TYPE = "102093";
 }

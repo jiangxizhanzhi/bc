@@ -38,6 +38,7 @@
         from situation_attack_message_history
         <where>
             (defense_type is null
+            or defense_level is null
             or defense_level != 3)
             and is_history = 0
             <if test="sceneId != null and sceneId != ''">

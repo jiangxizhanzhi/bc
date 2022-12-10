@@ -89,7 +89,7 @@ public class AssessModelController {
 		// 校验tag是否存在
 		List<String> tags = assessModelAddReq.getTag();
 		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
+		assessTagService.checkTag(tags);
 		// 校验name是否已存在
 		assessModelService.checkNameRepeat(assessModelAddReq.getName(), null);
 
@@ -114,7 +114,7 @@ public class AssessModelController {
 		// 校验tag是否存在
 		List<String> tags = assessModelUpdateReq.getTag();
 		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
+		assessTagService.checkTag(tags);
 		// 校验name是否已存在
 		assessModelService.checkNameRepeat(assessModelUpdateReq.getName(),
 				assessModelUpdateReq.getResourceId());

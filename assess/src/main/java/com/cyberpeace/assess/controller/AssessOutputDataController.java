@@ -86,7 +86,7 @@ public class AssessOutputDataController {
 		// 校验tag是否存在
 		List<String> tags = assessDataAddReq.getTag();
 		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
+		assessTagService.checkTag(tags);
 		// 校验name是否已存在
 		assessDataService.checkNameRepeat(assessDataAddReq.getName(), null);
 
@@ -114,7 +114,7 @@ public class AssessOutputDataController {
 		// 校验tag是否存在
 		List<String> tags = assessDataUpdateReq.getTag();
 		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
+		assessTagService.checkTag(tags);
 		// 校验name是否已存在
 		assessDataService.checkNameRepeat(assessDataUpdateReq.getName(),
 				assessDataUpdateReq.getResourceId());

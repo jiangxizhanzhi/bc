@@ -58,27 +58,29 @@ public class AssessTagServiceImpl extends ServiceImpl<AssessTagMapper, AssessTag
 	@Override
 	public String getTagContent(String tags) {
 
-		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
-		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
 
-		String tagStr = "";
-		List<String> tagList = JSONObject.parseArray(tags, String.class);
-		if (tagList.isEmpty()) {
-			return tagStr;
-		}
-		Map<String, String> tagMap = assessTags.stream()
-				.collect(Collectors.toMap(AssessTag::getResourceId, AssessTag::getContent));
-		StringBuffer tagNames = new StringBuffer();
-		for (String tmpType : tagList) {
-			if (null == tagMap.get(tmpType)) {
-				continue;
-			}
-			tagNames.append(tagMap.get(tmpType));
-			tagNames.append(",");
-		}
-		String str = tagNames.toString();
-		tagStr = StringUtils.isBlank(str) ? "" : str.substring(0, str.length() - 1);
-		return tagStr;
+//		List<String> tagList = JSONObject.parseArray(tags, String.class);
+//		LambdaQueryWrapper<AssessTag> assessTagLambdaQueryWrapper = new LambdaQueryWrapper<>();
+//		List<AssessTag> assessTags = assessTagMapper.selectList(assessTagLambdaQueryWrapper);
+//
+//		String tagStr = "";
+//		List<String> tagList = JSONObject.parseArray(tags, String.class);
+//		if (tagList.isEmpty()) {
+//			return tagStr;
+//		}
+//		Map<String, String> tagMap = assessTags.stream()
+//				.collect(Collectors.toMap(AssessTag::getResourceId, AssessTag::getContent));
+//		StringBuffer tagNames = new StringBuffer();
+//		for (String tmpType : tagList) {
+//			if (null == tagMap.get(tmpType)) {
+//				continue;
+//			}
+//			tagNames.append(tagMap.get(tmpType));
+//			tagNames.append(",");
+//		}
+//		String str = tagNames.toString();
+//		tagStr = StringUtils.isBlank(str) ? "" : str.substring(0, str.length() - 1);
+		return tags;
 	}
 
 	@Override

@@ -116,5 +116,11 @@
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.cyberpeace.cr</groupId>
+            <artifactId>cr_base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

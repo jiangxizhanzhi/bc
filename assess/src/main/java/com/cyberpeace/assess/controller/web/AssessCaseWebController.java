@@ -113,9 +113,8 @@ public class AssessCaseWebController {
 			AssessCaseListRes assessCaseListRes = new AssessCaseListRes();
 			BeanUtils.copyProperties(assessCase, assessCaseListRes);
 			String tags = assessCase.getTag();
-			String tagStr = assessCaseService.getTagContent(tags, assessTags);
 			int materialCount = 0;
-			assessCaseListRes.setTag(tagStr);
+			assessCaseListRes.setTag( JSONObject.parseArray(tags, String.class));
 			if(!assessMaterialMap.isEmpty()){
 				List<AssessMaterial> materials = assessMaterialMap.get(assessCase.getResourceId());
 				if(null != materials){
@@ -144,9 +143,7 @@ public class AssessCaseWebController {
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
 
-		List<AssessTag> assessTags = assessTagMapper.selectList(null);
-		String tagStr = assessCaseService.getTagContent(tags, assessTags);
-		assessCaseDetailRes.setTagName(tagStr);
+		assessCaseDetailRes.setTagName(tags);
 
 		LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(AssessMaterial::getCaseId, resourceId);

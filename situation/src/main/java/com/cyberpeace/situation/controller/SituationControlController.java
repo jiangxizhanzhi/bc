@@ -9,7 +9,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
@@ -148,13 +147,13 @@ public class SituationControlController {
 		List<String> elementIds = dynamicSchemeService
 				.getElementIds(sceneId, runAttackMessageReq.getIsInstance());
 		//判断是否为多媒体动效
-		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			//推送多媒体动效
-			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
-		} else {
+//			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
+//		} else {
 			//推送普通动效
 			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, false);
-		}
+//		}
 		return new BaseRsp<>();
 	}
 

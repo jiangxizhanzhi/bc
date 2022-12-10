@@ -156,10 +156,10 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		AttackMessageHistory attackMessageHistory = BeanUtils.copy(attackMessageReq, AttackMessageHistory.class);
 		attackMessageHistory
 				.setMediaAnimation(JSON.toJSONString(attackMessageReq.getMediaAnimationList()));
-		if (!attackMessageReq.getType()
-							 .equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//		if (!attackMessageReq.getType()
+//							 .equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			attackMessageHistory.setMediaAnimation(null);
-		}
+//		}
 		attackMessageHistory.setIsHistory(0);
 		return attackMessageHistory;
 	}

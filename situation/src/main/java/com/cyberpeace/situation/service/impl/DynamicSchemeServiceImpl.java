@@ -215,14 +215,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						//设置动效防御等级
 						attackMessageReq.setDefenseLevel(defenseLevel);
 						// 设置多媒体的名称
-						if (attackMessageReq.getType()
-								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-							for (MediaAnimation mediaAnimation : attackMessageReq
-									.getMediaAnimationList()) {
-								mediaAnimation.setName(
-										FileUtil.getFileName(mediaAnimation.getUrl(), true));
-							}
-						}
+//						if (attackMessageReq.getType()
+//								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//							for (MediaAnimation mediaAnimation : attackMessageReq
+//									.getMediaAnimationList()) {
+//								mediaAnimation.setName(
+//										FileUtil.getFileName(mediaAnimation.getUrl(), true));
+//							}
+//						}
 						if (attackMessageReq.getResourceId() == null
 								|| attackMessageReq.getResourceId().equals("")) {
 							// 数据库中不存在该动效，进行新增
@@ -455,8 +455,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 		String type = attackMessageBo.getType();
 		//判断是否是单节点
-		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
-				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
+//		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
+//				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
 
 		if (elementIds.contains(attackMessageBo.getTargetId())) {
 			//设置类型为点对点
@@ -465,11 +465,11 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			//设置类型为点对区域
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
-		if (isSingleNode) {
-			//设置类型为单节点动效
-			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
-					wsMultiNodeDynamic);
-		}
+//		if (isSingleNode) {
+//			//设置类型为单节点动效
+//			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
+//					wsMultiNodeDynamic);
+//		}
 		//将动效消息推送到场景
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
 		if(!playback){
@@ -564,14 +564,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						sceneConfigService.updateScheduleById(sceneId,
 								JSONObject.toJSONString(wsAttackScheduleList));
 
-						if (attackMessageReq.getType()
-								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//						if (attackMessageReq.getType()
+//								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 							//推送多媒体动效数据
-							pushMediaToRoom(attackMessageReq, code, false);
-						} else {
+//							pushMediaToRoom(attackMessageReq, code, false);
+//						} else {
 							//推送普通动效数据
 							pushAttackToRoom(attackMessageReq, elementIds, false);
-						}
+//						}
 						if (attackMessageReq.getIntervalTime() != null) {
 							//进行等待
 							Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
@@ -685,12 +685,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 				String type = attackMessageReq.getType();
 
-				Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
-						|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
-
-				if (!(isSingleNode || attackMessageReq.getType()
-						.equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
-						&& attackMessageReq.getSourceId().equals("")) {
+				if (attackMessageReq.getSourceId().equals("")) {
 					throw new BusinessException(SituationErrorCode.EMPTY_SOURCE_NODE,
 							attackMessageReq.getDescription());
 				}
@@ -759,13 +754,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		// 判断动效方案中涉及到的节点该场景中是否都存在
 		for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
-				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-					for (MediaAnimation mediaAnimation : attackMessageReq.getMediaAnimationList()) {
-						if (!areaAndElementIds.contains(mediaAnimation.getSourceId())) {
-							throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
-						}
-					}
-				} else {
+//				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//					for (MediaAnimation mediaAnimation : attackMessageReq.getMediaAnimationList()) {
+//						if (!areaAndElementIds.contains(mediaAnimation.getSourceId())) {
+//							throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
+//						}
+//					}
+//				} else {
 					if (StringUtils.isNotEmpty(attackMessageReq.getTargetId())
 							&& !areaAndElementIds.contains(attackMessageReq.getTargetId())) {
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
@@ -774,7 +769,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							&& !areaAndElementIds.contains(attackMessageReq.getSourceId())) {
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
-				}
+//				}
 			}
 		}
 
@@ -831,20 +826,20 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	 */
 	@Override
 	public void validMedia(DynamicSchemeReq dynamicSchemeReq) {
-		int startTime = 0;
-		int endTime = -1;
-		for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
-			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
-				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-					if (startTime <= endTime) {
-						throw new BusinessException(
-								SituationErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
-					}
-					endTime = startTime + attackMessageReq.getDurationTime();
-				}
-				startTime += attackMessageReq.getIntervalTime();
-			}
-		}
+//		int startTime = 0;
+//		int endTime = -1;
+//		for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
+//			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
+//				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//					if (startTime <= endTime) {
+//						throw new BusinessException(
+//								SituationErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
+//					}
+//					endTime = startTime + attackMessageReq.getDurationTime();
+//				}
+//				startTime += attackMessageReq.getIntervalTime();
+//			}
+//		}
 	}
 
 	@Override
@@ -882,14 +877,14 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 						break;
 					}
 					//判断当前动效是多媒体动效还是普通动效
-					if (attackMessageReq.getType()
-										.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
+//					if (attackMessageReq.getType()
+//										.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 						//推送多媒体动效至场景
-						pushMediaToRoom(attackMessageReq, code, true);
-					} else {
+//						pushMediaToRoom(attackMessageReq, code, true);
+//					} else {
 						//推送普通动效至场景
 						pushAttackToRoom(attackMessageReq, elementIds, true);
-					}
+//					}
 					if (attackMessageReq.getIntervalTime() != null) {
 						//进行等待
 						Thread.sleep(attackMessageReq.getIntervalTime() * 1000);

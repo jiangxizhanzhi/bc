@@ -184,6 +184,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
+	@Autowired
+	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
+
 	@Override
 	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
 

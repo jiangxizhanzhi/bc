@@ -101,6 +101,9 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
+
 	private Map<String, BatchStartSceneHandler> batchSceneMap = Maps.newConcurrentMap();
 
 	@Override
@@ -109,6 +112,8 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		// 数据校验
 		ClassroomGroupInfo groupInfo = validateGroup(groupId);
 		CourseLesson courseLesson = validateLesson(groupInfo.getLessonId());
+		courseValidateHandler.validateLessonType(courseLesson.getType(),
+				CourseLesson.LessonType.EXPERIMENT.getCode());
 		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 
 		// 不为空返回已存在场景
@@ -393,7 +398,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.TEAM.getCode());
 
 		// 设置场景类型
-		JSONObject topoData = remoteTopoService.getTopoById(groupInfo.getTopoId());
+		JSONObject topoData = remoteTopoService.getTopoById(lesson.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.CLASSROOM.getCode());
 
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE

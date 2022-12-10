@@ -62,7 +62,7 @@ public class DashboardController {
 		}
 
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-				.filter(t -> t.getCode().equals(taskType)).findFirst().orElse(TaskType.QB);
+				.filter(t -> t.getName().equals(taskType)).findFirst().orElse(TaskType.QB);
 
 		if (!type.getSupport()) {
 			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, type.getName());
@@ -73,7 +73,7 @@ public class DashboardController {
 		String dashboardId = dashboardAttribute == null ? taskId
 				: dashboardAttribute.getDashboardId();
 
-		return new BaseRsp<>(new DashboardIdRes(dashboardId, taskType));
+		return new BaseRsp<>(new DashboardIdRes(dashboardId, type.getCode()));
 
 	}
 

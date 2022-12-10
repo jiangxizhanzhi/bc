@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -101,6 +102,12 @@ public class DashboardController {
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
+		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(),
+				JsonUtil.java2JsonObject(dashboardAttribute));
+		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
+				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);
 	}
 

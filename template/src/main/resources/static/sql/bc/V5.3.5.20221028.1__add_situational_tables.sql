@@ -428,6 +428,7 @@ CREATE TABLE `situation_sub_range`  (
                                         `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                         `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                         `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                        `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                         `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                         `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
                                         `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
@@ -476,6 +477,7 @@ CREATE TABLE `situation_center`  (
                                      `center_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `center_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                     `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                      `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -496,6 +498,7 @@ CREATE TABLE `situation_station`  (
                                       `station_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `station_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `location` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                      `region` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `address` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `longitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                       `latitude` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -504,7 +507,7 @@ CREATE TABLE `situation_station`  (
                                       `update_time` datetime NULL DEFAULT NULL,
                                       PRIMARY KEY (`id`) USING BTREE,
                                       UNIQUE INDEX `station_id`(`station_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for situation_dashboard_attribute

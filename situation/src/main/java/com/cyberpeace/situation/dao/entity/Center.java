@@ -21,6 +21,9 @@ public class Center extends BaseTable implements Serializable {
 	@ApiModelProperty("LG中心位置")
 	private String location;
 
+	@ApiModelProperty("行政区划")
+	private String region;
+
 	@ApiModelProperty("LG中心地址")
 	private String address;
 

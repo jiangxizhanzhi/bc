@@ -61,9 +61,9 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<HostCount> getHostTop5(Predicate<? super AttackType> filterValue, String sceneId) {
 		List<HostCount> HostCountTopList = getHostTop(filterValue, sceneId);
-		Map<String, String> nodeMap = getNodeMap(sceneId);
+		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
 		for (HostCount hostCount : HostCountTopList) {
-			hostCount.setHostName(nodeMap.get(hostCount.getHostName()));
+			hostCount.setHostName(nodeMap.get(hostCount.getHostId()));
 		}
 		if (HostCountTopList.size() > 5) {
 			return HostCountTopList.subList(0, 5);
@@ -80,11 +80,11 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 																			.values());
 		List<String> elementIdList = StreamApiUtils.map(elementInfoList, ElementInfo::getElementId);
 		List<HostCount> paralysisHostCountList = getHostTop(AttackType::getIsParalysis, sceneId);
-		List<String> paralysisHostIdList = StreamApiUtils.map(paralysisHostCountList, HostCount::getHostName);
+		List<String> paralysisHostIdList = StreamApiUtils.map(paralysisHostCountList, HostCount::getHostId);
 		List<HostCount> exploitHostCountList = getHostTop(AttackType::getIsExploit, sceneId);
-		List<String> exploitHostIdList = StreamApiUtils.map(exploitHostCountList, HostCount::getHostName);
+		List<String> exploitHostIdList = StreamApiUtils.map(exploitHostCountList, HostCount::getHostId);
 		List<HostCount> virusHostCountList = getHostTop(AttackType::getIsVirus, sceneId);
-		List<String> virusHostIdList = StreamApiUtils.map(virusHostCountList, HostCount::getHostName);
+		List<String> virusHostIdList = StreamApiUtils.map(virusHostCountList, HostCount::getHostId);
 		elementIdList.removeAll(paralysisHostIdList);
 		elementIdList.removeAll(exploitHostIdList);
 		elementIdList.removeAll(virusHostIdList);
@@ -103,7 +103,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<AttackLog> getAttackLog(String sceneId) {
 		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
-		Map<String, String> nodeMap = getNodeMap(sceneId);
+		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
 			String sourceId = attackLog.getSourceId();
 			if(sourceId != null && !sourceId.equals("")){
@@ -114,7 +114,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 				attackLog.setSourceName(sourceName);
 			}
 			String targetId = attackLog.getTargetId();
-			if(targetId != null){
+			if(targetId != null && !targetId.equals("")){
 				String targetName = nodeMap.get(targetId);
 				if (targetName == null && !targetId.equals("")){
 					targetName = "area-" + attackLog.getTargetId().substring(0, 8);
@@ -162,18 +162,6 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		}
 		attackMessageHistory.setIsHistory(0);
 		return attackMessageHistory;
-	}
-
-	public Map<String, String> getNodeMap(String sceneId) {
-		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
-		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
-																			.values());
-		Map<String, String> nodeMap = new HashMap<>();
-		for (ElementInfo elementInfo : elementInfoList) {
-			nodeMap.put(elementInfo.getElementId(), elementInfo.getName());
-		}
-		return nodeMap;
 	}
 
 	public AttackMessageReq attackMessageHistoryToAttackMessageReq(AttackMessageHistory attackMessageHistory){

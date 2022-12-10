@@ -29,6 +29,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -656,6 +657,21 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		return wsMultiNodeDynamics;
 
+	}
+
+	@Override
+	@Cacheable(cacheNames = "getNodeMap", key = "#sceneId")
+	public Map<String, String> getNodeMap(String sceneId) {
+		log.info("------------------------------------------------" + sceneId + "-----------------------------------------");
+		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
+		SituationTopo situationTopo = getSituationTopo(sceneData);
+		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
+																			.values());
+		Map<String, String> nodeMap = new HashMap<>();
+		for (ElementInfo elementInfo : elementInfoList) {
+			nodeMap.put(elementInfo.getElementId(), elementInfo.getName());
+		}
+		return nodeMap;
 	}
 
 }

@@ -11,6 +11,9 @@ public class HostCount implements Serializable {
 	@ApiModelProperty("主机名称")
 	private String hostName;
 
+	@ApiModelProperty("主机id")
+	private String hostId;
+
 	@ApiModelProperty("次数")
 	private Integer times;
 

@@ -34,7 +34,7 @@
         order by times desc
     </select>
     <select id="getHostTop" resultType="com.cyberpeace.situation.model.HostCount">
-        select target_id as hostName, count(*) as times
+        select target_id as hostId, count(*) as times
         from situation_attack_message_history
         <where>
             (defense_type is null

@@ -15,13 +15,13 @@ public interface AssessCommonConstants {
 	 */
 	String RESOURCE_IMAGE_DIR = "images";
 
-	Integer GENERATED_UUID_LENGTH = 32;
+	Integer TAG_MAX_LENGTH = 128;
 
-	String MP_SCENE_ID_KEY = "resource_id";
+	Integer TAG_MAX_SIZE = 10;
 
 	String TOPO_DATA_KEY = "scene_config";
 
-	Integer STUDENT_ROLE = 1;
+	Integer TAG_MIN_LENGTH = 0;
 
 	Integer TERMINAL_TYPE_CODE = 4;
 

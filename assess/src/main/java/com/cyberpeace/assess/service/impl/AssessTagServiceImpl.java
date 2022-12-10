@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.assess.constant.AssessCommonConstants;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,6 +91,23 @@ public class AssessTagServiceImpl extends ServiceImpl<AssessTagMapper, AssessTag
 		AssessTag assessTag = assessTagMapper.selectOne(queryWrapper);
 		if (null != assessTag) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
+	}
+
+	@Override
+	public void checkTag(List<String> originalTags) {
+		List<String> tags = originalTags.stream().distinct().collect(Collectors.toList());
+		if(originalTags.size() != tags.size()){
+			throw new BusinessException(AssessErrorCode.TAG_REPEAT_ERROR);
+		}
+		if(tags.size() > AssessCommonConstants.TAG_MAX_SIZE){
+			throw new BusinessException(AssessErrorCode.TAG_SIZE_OVER_MAX_ERROR);
+		}
+		if(!tags.isEmpty()){
+			for(String tag:tags){
+				CrCommonValidator.validateLength(tag, AssessCommonConstants.TAG_MIN_LENGTH, AssessCommonConstants.TAG_MAX_LENGTH,
+						CrBusinessErrorCode.INVALID_STAGE_NAME);
+			}
 		}
 	}
 }

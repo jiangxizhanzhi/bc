@@ -89,4 +89,14 @@ public interface AssessErrorCode {
 	 * 文件不包含可展示数据
 	 */
 	String EMPTY_DATA_ERROR = "105017";
+
+	/**
+	 * 最多10个标签
+	 */
+	String TAG_SIZE_OVER_MAX_ERROR = "105018";
+
+	/**
+	 * 重复标签
+	 */
+	String TAG_REPEAT_ERROR = "105019";
 }

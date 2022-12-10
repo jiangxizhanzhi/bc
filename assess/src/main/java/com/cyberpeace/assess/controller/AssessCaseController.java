@@ -99,9 +99,8 @@ public class AssessCaseController {
 				AssessCase.class);
 
 		List<String> tags = assessCaseAddReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
 		if(!tags.isEmpty()){
-			assessTagService.checkTagIds(tags);
+			assessTagService.checkTag(tags);
 		}
 
 		AuthContext auth = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -156,15 +155,13 @@ public class AssessCaseController {
 
 		List<AssessTag> assessTags = assessTagMapper.selectList(null);
 
-//		List<AssessCase> collect = records.stream().sorted(Comparator.comparing(AssessCase::getCreateTime).reversed()).collect(Collectors.toList());
-//		assessCases.setRecords(collect);
 		assessCases.convert(assessCase -> {
 			AssessCaseListRes assessCaseListRes = new AssessCaseListRes();
 			BeanUtils.copyProperties(assessCase, assessCaseListRes);
 			String tags = assessCase.getTag();
-			String tagStr = assessCaseService.getTagContent(tags, assessTags);
+			List<String> tagList = JSONObject.parseArray(tags, String.class);
+			assessCaseListRes.setTag(tagList);
 			int materialCount = 0;
-			assessCaseListRes.setTag(tagStr);
 			if(!assessMaterialMap.isEmpty()){
 				List<AssessMaterial> materials = assessMaterialMap.get(assessCase.getResourceId());
 				if(null != materials){
@@ -205,10 +202,6 @@ public class AssessCaseController {
 		List<String> tagList = JSONObject.parseArray(tags, String.class);
 		assessCaseDetailRes.setTag(tagList);
 
-		List<AssessTag> assessTags = assessTagMapper.selectList(null);
-		String tagStr = assessCaseService.getTagContent(tags, assessTags);
-		assessCaseDetailRes.setTagName(tagStr);
-
 		LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(AssessMaterial::getCaseId, resourceId);
 		List<AssessMaterial> assessMaterials = assessMaterialMapper.selectList(queryWrapper);
@@ -235,8 +228,7 @@ public class AssessCaseController {
 		AssessCase assessCase =assessCaseService.checkCaseId(resourceId);
 
 		List<String> tags = assessCaseUpdateReq.getTag();
-		tags = tags.stream().distinct().collect(Collectors.toList());
-		assessTagService.checkTagIds(tags);
+		assessTagService.checkTag(tags);
 		String name = assessCaseUpdateReq.getName();
 		assessCaseService.checkNameRepeat(name, assessCaseUpdateReq.getResourceId());
 

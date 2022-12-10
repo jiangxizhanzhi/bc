@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.DashboardBasicReq;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
@@ -93,6 +94,13 @@ public class DashboardController {
 				dashboardChangeReq.getData());
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
 				dashboardChangeReq.getFeatureId());
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("推送返回首页消息")
+	@PostMapping("/back_home/")
+	public BaseRsp<Boolean>
+			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 		return new BaseRsp<>(true);
 	}
 

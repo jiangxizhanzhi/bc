@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
@@ -170,7 +171,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<NodeTrendContext> getNodeTrend(NodeIdApiReq nodeIdApiReq) {
-		return Lists.newArrayList();
+		String rsp = HttpClientUtil.post(NODE_TREND_URL, nodeIdApiReq, String.class);
+		List<NodeTrendContext> res = JsonUtil.toJsonObjectArray(rsp, NodeTrendContext.class);
+		return res;
 	}
 
 	@Override

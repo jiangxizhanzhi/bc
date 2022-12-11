@@ -1,12 +1,10 @@
 package com.cyberpeace.integratation.service.impl;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -16,6 +14,8 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
+import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.google.common.collect.Lists;
 
@@ -144,7 +144,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public ListRsp<TaskContext> getTaskList(TaskListReq taskListReq) {
-		LgTaskContextPageRes rsp = HttpClientUtil.post(TASK_LIST_URL, taskListReq, LgTaskContextPageRes.class);
+		LgTaskContextPageRes rsp = HttpClientUtil.post(TASK_LIST_URL, taskListReq,
+				LgTaskContextPageRes.class);
 		ListRsp<TaskContext> res = rsp.convert();
 		res.setList(rsp.getList());
 		return res;
@@ -152,13 +153,19 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public NodeInfoContext getNodeInfo(NodeIdApiReq nodeIdApiReq) {
-		NodeInfoContext context = HttpClientUtil.post(NODE_INFO_URL, nodeIdApiReq, NodeInfoContext.class);
+		NodeInfoContext context = HttpClientUtil.post(NODE_INFO_URL, nodeIdApiReq,
+				NodeInfoContext.class);
 		return context;
 	}
 
 	@Override
 	public ListRsp<NodeActionContext> getNodeAction(NodeIdPageReq nodeIdPageReq) {
-		return new ListRsp<>();
+		LgNodeActionPageRsp rsp = HttpClientUtil.post(NODE_ACTION_URL, nodeIdPageReq,
+				LgNodeActionPageRsp.class);
+		ListRsp<NodeActionContext> res = rsp.convert();
+		res.setList(rsp.getList());
+
+		return res;
 	}
 
 	@Override

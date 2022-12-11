@@ -11,10 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.model.situation.*;
-import com.cyberpeace.integratation.model.situation.req.NodeIdApiReq;
-import com.cyberpeace.integratation.model.situation.req.NodeIdPageReq;
-import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
-import com.cyberpeace.integratation.model.situation.req.TaskListReq;
+import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.EventMsgReq;
@@ -192,5 +189,12 @@ public class ThirdPartyController {
 			getNodeEventList(@RequestBody @Validated EventMsgReq eventReq) {
 
 		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq));
+	}
+
+	@ApiOperation("获取第三方拓扑数据")
+	@PostMapping("/topo/")
+	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
+
+		return new BaseRsp<>(remoteSituationService.getTopo(topoReq));
 	}
 }

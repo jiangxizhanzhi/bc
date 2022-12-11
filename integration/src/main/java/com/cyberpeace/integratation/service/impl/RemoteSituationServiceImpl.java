@@ -19,7 +19,6 @@ import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
 import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.google.common.collect.Lists;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -188,7 +187,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq) {
-		return Lists.newArrayList();
+		String rsp = HttpClientUtil.post(USER_TREND_URL, nodeIdApiReq, String.class);
+		List<UserTrendContext> res = JsonUtil.toJsonObjectArray(rsp, UserTrendContext.class);
+		return res;
 	}
 
 	@Override

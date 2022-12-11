@@ -17,6 +17,7 @@ import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
 import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
+import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.google.common.collect.Lists;
 
@@ -178,7 +179,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public ListRsp<UserActionContext> getUserAction(NodeIdPageReq nodeIdPageReq) {
-		return new ListRsp<>();
+		LgUserActionRsp rsp = HttpClientUtil.post(USER_ACTION_URL, nodeIdPageReq,
+				LgUserActionRsp.class);
+		ListRsp<UserActionContext> res = rsp.convert();
+		res.setList(rsp.getList());
+		return res;
 	}
 
 	@Override

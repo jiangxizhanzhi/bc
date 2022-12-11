@@ -152,7 +152,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public NodeInfoContext getNodeInfo(NodeIdApiReq nodeIdApiReq) {
-		return new NodeInfoContext();
+		NodeInfoContext context = HttpClientUtil.post(NODE_INFO_URL, nodeIdApiReq, NodeInfoContext.class);
+		return context;
 	}
 
 	@Override

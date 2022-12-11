@@ -113,4 +113,10 @@ public interface RemoteSituationService {
 	 * @return
 	 */
 	List<NodeEventContext> getNodeEventList(EventReq eventReq);
+
+	/**
+	 * 获取拓扑
+	 * @return TopoContext
+	 */
+	TopoContext getTopo(TopoReq topoReq);
 }

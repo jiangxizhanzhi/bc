@@ -200,4 +200,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public List<NodeEventContext> getNodeEventList(EventReq eventReq) {
 		return Lists.newArrayList();
 	}
+
+	@Override
+	public TopoContext getTopo(TopoReq topoReq) {
+		return new TopoContext();
+	}
 }

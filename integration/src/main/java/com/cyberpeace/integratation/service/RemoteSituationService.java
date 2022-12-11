@@ -1,9 +1,9 @@
 package com.cyberpeace.integratation.service;
 
-import com.cyberpeace.integratation.model.situation.*;
-
 import java.util.List;
 
+import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
 
 public interface RemoteSituationService {
 
@@ -29,7 +29,6 @@ public interface RemoteSituationService {
 	 */
 	List<SituationTask> getTasks(String type, String resourceId);
 
-
 	/**
 	 * 获取所有想定方案
 	 * @return
@@ -42,7 +41,6 @@ public interface RemoteSituationService {
 	 */
 	SubRangeInfoContext getSubRangeInfo(String subRangeId);
 
-
 	/**
 	 * 获取LG中心详情
 	 * @return CenterInfoContext
@@ -54,5 +52,11 @@ public interface RemoteSituationService {
 	 * @return List<PlatformContext>
 	 */
 	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId);
+
+	/**
+	 * 获取网络信息
+	 * @return NetworkInfoContext
+	 */
+	NetworkInfoContext getNetworkInfo(NodeListApiReq nodeListApiReq);
 
 }

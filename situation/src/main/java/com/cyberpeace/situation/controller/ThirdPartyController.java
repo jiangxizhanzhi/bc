@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.situation.CenterInfoContext;
+import com.cyberpeace.integratation.model.situation.NetworkInfoContext;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
+import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
@@ -104,4 +104,10 @@ public class ThirdPartyController {
 		return new BaseRsp<>(TaskType.getTaskTypeMap());
 	}
 
+	@ApiOperation("获取网络信息")
+	@PostMapping("/network/")
+	public BaseRsp<NetworkInfoContext>
+			getTaskType(@RequestBody @Validated NodeListApiReq nodeListApiReq) {
+		return new BaseRsp<>(remoteSituationService.getNetworkInfo(nodeListApiReq));
+	}
 }

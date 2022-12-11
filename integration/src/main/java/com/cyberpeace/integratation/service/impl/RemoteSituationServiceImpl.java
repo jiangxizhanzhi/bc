@@ -200,7 +200,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<AdEventContext> getAdEventList(EventReq eventReq) {
-		return Lists.newArrayList();
+		String rsp = HttpClientUtil.post(AD_EVENT_URL, eventReq, String.class);
+		List<AdEventContext> res = JsonUtil.toJsonObjectArray(rsp, AdEventContext.class);
+		return res;
 	}
 
 	@Override

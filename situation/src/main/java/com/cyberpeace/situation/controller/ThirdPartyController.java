@@ -8,13 +8,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.integratation.model.situation.CenterInfoContext;
-import com.cyberpeace.integratation.model.situation.NetworkInfoContext;
-import com.cyberpeace.integratation.model.situation.PlatformContext;
-import com.cyberpeace.integratation.model.situation.SubRangeInfoContext;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.req.NodeIdApiReq;
+import com.cyberpeace.integratation.model.situation.req.NodeIdPageReq;
 import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
+import com.cyberpeace.integratation.model.situation.req.TaskListReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.TaskType;
+import com.cyberpeace.situation.controller.req.EventMsgReq;
+import com.cyberpeace.situation.controller.req.NodePageReq;
+import com.cyberpeace.situation.controller.req.TaskEventMsgReq;
+import com.cyberpeace.situation.controller.req.TaskListPageReq;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
@@ -73,6 +79,7 @@ public class ThirdPartyController {
 		SubRangeInfoContext subRangeInfoContext = remoteSituationService
 				.getSubRangeInfo(subRangeId);
 		subRangeInfoContext.setTitle("XXX分靶场综合态势");
+
 		return new BaseRsp<>(subRangeInfoContext);
 	}
 
@@ -81,6 +88,7 @@ public class ThirdPartyController {
 	public BaseRsp<CenterInfoContext> getCenterInfo(@ApiParam(name = "center_id", value = "LG中心ID",
 			required = true) @RequestParam(value = "center_id") String centerId) {
 		CenterInfoContext centerInfoContext = remoteSituationService.getCenterInfo(centerId);
+
 		return new BaseRsp<>(centerInfoContext);
 	}
 
@@ -95,19 +103,94 @@ public class ThirdPartyController {
 					value = "sub_range_id", required = false) String subRangeId) {
 		List<PlatformContext> platformList = remoteSituationService.getPlatformList(taskId,
 				subjectId, subRangeId);
+
 		return new BaseRsp<>(platformList);
 	}
 
 	@ApiOperation("获取任务类型字典")
 	@GetMapping("/task_type/list/")
 	public BaseRsp<List<HashMap<String, String>>> getTaskType() {
+
 		return new BaseRsp<>(TaskType.getTaskTypeMap());
 	}
 
 	@ApiOperation("获取网络信息")
 	@PostMapping("/network/")
 	public BaseRsp<NetworkInfoContext>
-			getTaskType(@RequestBody @Validated NodeListApiReq nodeListApiReq) {
+			getNetworkInfo(@RequestBody @Validated NodeListApiReq nodeListApiReq) {
+
 		return new BaseRsp<>(remoteSituationService.getNetworkInfo(nodeListApiReq));
+	}
+
+	@ApiOperation("获取任务列表")
+	@PostMapping("/task/list/")
+	public BaseRsp<ListRsp<TaskContext>>
+			getTaskList(@RequestBody @Validated TaskListPageReq taskListPageReq) {
+		return new BaseRsp<>(remoteSituationService
+				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
+	}
+
+	@ApiOperation("获取节点基础信息")
+	@PostMapping("/node/info/")
+	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+		return new BaseRsp<>(remoteSituationService.getNodeInfo(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取节点行为数据")
+	@PostMapping("/node/action/")
+	public BaseRsp<ListRsp<NodeActionContext>>
+			getNodeAction(@RequestBody @Validated NodePageReq nodeListApiReq) {
+
+		return new BaseRsp<>(remoteSituationService
+				.getNodeAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+	}
+
+	@ApiOperation("获取节点行为趋势")
+	@PostMapping("/node/trend/")
+	public BaseRsp<List<NodeTrendContext>>
+			getNodeTrend(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeTrend(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取用户行为数据")
+	@PostMapping("/user/action/")
+	public BaseRsp<ListRsp<UserActionContext>>
+			getUserAction(@RequestBody @Validated NodePageReq nodeListApiReq) {
+
+		return new BaseRsp<>(remoteSituationService
+				.getUserAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+	}
+
+	@ApiOperation("获取用户行为趋势")
+	@PostMapping("/user/trend/")
+	public BaseRsp<List<UserTrendContext>>
+			getUserTrend(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getUserTrend(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取任务事件列表")
+	@PostMapping("/event/task/")
+	public BaseRsp<List<TaskEventContext>>
+			getTaskEventList(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
+
+		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq));
+	}
+
+	@ApiOperation("获取攻防事件列表")
+	@PostMapping("/event/ad/")
+	public BaseRsp<List<AdEventContext>>
+			getAdEventList(@RequestBody @Validated EventMsgReq eventReq) {
+
+		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq));
+	}
+
+	@ApiOperation("获取节点状态列表")
+	@PostMapping("/event/node/")
+	public BaseRsp<List<NodeEventContext>>
+			getNodeEventList(@RequestBody @Validated EventMsgReq eventReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq));
 	}
 }

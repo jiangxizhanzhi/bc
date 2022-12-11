@@ -76,25 +76,25 @@ public interface RemoteSituationService {
 	 * 获取节点行为数据
 	 * @return
 	 */
-	ListRsp<NodeActionContext> getNodeAction(NodeIdApiReq nodeIdApiReq);
+	ListRsp<NodeActionContext> getNodeAction(NodeIdPageReq nodeIdPageReq);
 
 	/**
 	 * 获取节点行为趋势
 	 * @return
 	 */
-	List<NodeTrendContext> getNodeTrend(NodeIdPageReq nodeIdPageReq);
+	List<NodeTrendContext> getNodeTrend(NodeIdApiReq nodeIdApiReq);
 
 	/**
 	 * 获取用户行为数据
 	 * @return
 	 */
-	ListRsp<UserActionContext> getUserAction(NodeIdApiReq nodeIdApiReq);
+	ListRsp<UserActionContext> getUserAction(NodeIdPageReq nodeIdPageReq);
 
 	/**
 	 * 获取用户行为趋势
 	 * @return
 	 */
-	List<UserTrendContext> getUserTrend(NodeIdPageReq nodeIdPageReq);
+	List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq);
 
 	/**
 	 * 获取任务事件列表

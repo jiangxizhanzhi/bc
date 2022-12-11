@@ -32,4 +32,12 @@ public class TaskListReq implements Serializable {
 	@ApiModelProperty("模糊查询")
 	private String searchKey;
 
+	public void setPerPage(Integer perPage) {
+		this.pageSize = perPage;
+	}
+
+	public void setPattern(String pattern) {
+		this.searchKey = pattern;
+	}
+
 }

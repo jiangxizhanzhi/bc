@@ -17,4 +17,8 @@ public class NodeIdPageReq extends TaskBaseReq implements Serializable {
 	@ApiModelProperty("每页条数")
 	private Integer pageSize;
 
+	public void setPerPage(Integer perPage) {
+		this.pageSize = perPage;
+	}
+
 }

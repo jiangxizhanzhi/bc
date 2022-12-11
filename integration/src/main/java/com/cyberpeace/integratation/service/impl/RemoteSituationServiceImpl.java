@@ -151,22 +151,22 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public ListRsp<NodeActionContext> getNodeAction(NodeIdApiReq nodeIdApiReq) {
+	public ListRsp<NodeActionContext> getNodeAction(NodeIdPageReq nodeIdPageReq) {
 		return new ListRsp<>();
 	}
 
 	@Override
-	public List<NodeTrendContext> getNodeTrend(NodeIdPageReq nodeIdPageReq) {
+	public List<NodeTrendContext> getNodeTrend(NodeIdApiReq nodeIdApiReq) {
 		return Lists.newArrayList();
 	}
 
 	@Override
-	public ListRsp<UserActionContext> getUserAction(NodeIdApiReq nodeIdApiReq) {
+	public ListRsp<UserActionContext> getUserAction(NodeIdPageReq nodeIdPageReq) {
 		return new ListRsp<>();
 	}
 
 	@Override
-	public List<UserTrendContext> getUserTrend(NodeIdPageReq nodeIdPageReq) {
+	public List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq) {
 		return Lists.newArrayList();
 	}
 

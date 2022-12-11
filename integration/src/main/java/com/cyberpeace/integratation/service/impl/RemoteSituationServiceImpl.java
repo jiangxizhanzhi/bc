@@ -1,10 +1,12 @@
 package com.cyberpeace.integratation.service.impl;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -142,7 +144,10 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public ListRsp<TaskContext> getTaskList(TaskListReq taskListReq) {
-		return new ListRsp<>();
+		LgTaskContextPageRes rsp = HttpClientUtil.post(TASK_LIST_URL, taskListReq, LgTaskContextPageRes.class);
+		ListRsp<TaskContext> res = rsp.convert();
+		res.setList(rsp.getList());
+		return res;
 	}
 
 	@Override

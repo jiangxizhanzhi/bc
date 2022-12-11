@@ -193,7 +193,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq) {
-		return Lists.newArrayList();
+		String rsp = HttpClientUtil.rawGetByParam(taskEventReq, TASK_EVENT_URL, String.class);
+		List<TaskEventContext> res = JsonUtil.toJsonObjectArray(rsp, TaskEventContext.class);
+		return res;
 	}
 
 	@Override

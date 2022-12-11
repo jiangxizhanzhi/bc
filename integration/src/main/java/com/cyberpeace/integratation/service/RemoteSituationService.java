@@ -2,8 +2,9 @@ package com.cyberpeace.integratation.service;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.*;
-import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
+import com.cyberpeace.integratation.model.situation.req.*;
 
 public interface RemoteSituationService {
 
@@ -59,4 +60,57 @@ public interface RemoteSituationService {
 	 */
 	NetworkInfoContext getNetworkInfo(NodeListApiReq nodeListApiReq);
 
+	/**
+	 * 获取任务列表
+	 * @return
+	 */
+	ListRsp<TaskContext> getTaskList(TaskListReq taskListReq);
+
+	/**
+	 * 获取节点基础信息
+	 * @return
+	 */
+	NodeInfoContext getNodeInfo(NodeIdApiReq nodeIdApiReq);
+
+	/**
+	 * 获取节点行为数据
+	 * @return
+	 */
+	ListRsp<NodeActionContext> getNodeAction(NodeIdApiReq nodeIdApiReq);
+
+	/**
+	 * 获取节点行为趋势
+	 * @return
+	 */
+	List<NodeTrendContext> getNodeTrend(NodeIdPageReq nodeIdPageReq);
+
+	/**
+	 * 获取用户行为数据
+	 * @return
+	 */
+	ListRsp<UserActionContext> getUserAction(NodeIdApiReq nodeIdApiReq);
+
+	/**
+	 * 获取用户行为趋势
+	 * @return
+	 */
+	List<UserTrendContext> getUserTrend(NodeIdPageReq nodeIdPageReq);
+
+	/**
+	 * 获取任务事件列表
+	 * @return
+	 */
+	List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq);
+
+	/**
+	 * 获取攻防事件列表
+	 * @return
+	 */
+	List<AdEventContext> getAdEventList(EventReq eventReq);
+
+	/**
+	 * 获取节点状态列表
+	 * @return
+	 */
+	List<NodeEventContext> getNodeEventList(EventReq eventReq);
 }

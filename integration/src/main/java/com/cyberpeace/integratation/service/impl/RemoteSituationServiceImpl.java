@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.situation.*;
-import com.cyberpeace.integratation.model.situation.req.NodeListApiReq;
+import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.google.common.collect.Lists;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -136,5 +138,50 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 				nodeListApiReq, NetworkInfoContext.class);
 
 		return networkInfoContext;
+	}
+
+	@Override
+	public ListRsp<TaskContext> getTaskList(TaskListReq taskListReq) {
+		return new ListRsp<>();
+	}
+
+	@Override
+	public NodeInfoContext getNodeInfo(NodeIdApiReq nodeIdApiReq) {
+		return new NodeInfoContext();
+	}
+
+	@Override
+	public ListRsp<NodeActionContext> getNodeAction(NodeIdApiReq nodeIdApiReq) {
+		return new ListRsp<>();
+	}
+
+	@Override
+	public List<NodeTrendContext> getNodeTrend(NodeIdPageReq nodeIdPageReq) {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public ListRsp<UserActionContext> getUserAction(NodeIdApiReq nodeIdApiReq) {
+		return new ListRsp<>();
+	}
+
+	@Override
+	public List<UserTrendContext> getUserTrend(NodeIdPageReq nodeIdPageReq) {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq) {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public List<AdEventContext> getAdEventList(EventReq eventReq) {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public List<NodeEventContext> getNodeEventList(EventReq eventReq) {
+		return Lists.newArrayList();
 	}
 }

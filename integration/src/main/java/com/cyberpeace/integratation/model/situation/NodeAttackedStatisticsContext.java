@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class NodeAttackedStatisticsContext extends NodeInfoContext implements Serializable {
+public class NodeAttackedStatisticsContext extends NodeBasicInfoContext implements Serializable {
 
 	@ApiModelProperty("控守阵营")
 	private String nodeGroup;

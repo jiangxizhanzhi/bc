@@ -6,7 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class TaskEventReq extends TaskBaseReq implements Serializable {
+public class TaskEventReq implements Serializable {
+
+	@ApiModelProperty("分靶场ID")
+	private String subRangeId;
 
 	@ApiModelProperty("查询ID")
 	private String queryId;

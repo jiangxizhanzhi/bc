@@ -207,7 +207,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<NodeEventContext> getNodeEventList(EventReq eventReq) {
-		return Lists.newArrayList();
+		String rsp = HttpClientUtil.post(NODE_STATUS_URL, eventReq, String.class);
+		List<NodeEventContext> res = JsonUtil.toJsonObjectArray(rsp, NodeEventContext.class);
+		return res;
 	}
 
 	@Override

@@ -537,3 +537,15 @@ CREATE TABLE `situation_dashboard_attribute`  (
                                                   PRIMARY KEY (`id`) USING BTREE,
                                                   UNIQUE INDEX `dashboard_id`(`dashboard_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `situation_color_theme` (
+                                         `id` int(10) NOT NULL AUTO_INCREMENT,
+                                         `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+                                         `name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+                                         `option` text DEFAULT NULL,
+                                         `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+                                         `create_time` datetime NULL DEFAULT NULL,
+                                         `update_time` datetime NULL DEFAULT NULL,
+                                         PRIMARY KEY (`id`) USING BTREE,
+                                         UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

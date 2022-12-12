@@ -104,7 +104,7 @@ public class ClassroomValidateHandler {
 	 */
 	public Classroom validateClassroomLessonExistExcludeItself(String lessonId, String orgId, Classroom itself) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
-		if (null != classroom && !classroom.equals(itself)) {
+		if (null != classroom && !classroom.getResourceId().equals(itself.getResourceId())) {
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
 

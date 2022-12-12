@@ -46,6 +46,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -454,8 +455,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		res.setDetail(new MonitorSimulatorDetail());
 		res.getDetail().load(simulator);
 		// task percentage
-		res.setExecutedPercentage(BsUtil.round(
-				100 - simulator.getExecutedIndex() * 100.0 / simulator.getBehaviorCount()));
+		if (LocalTime.now().isAfter(simulator.getStartTime())) {
+			res.setExecutedPercentage(BsUtil.round(
+					100 - simulator.getExecutedIndex() * 100.0 / simulator.getBehaviorCount()));
+		} else {
+			res.setExecutedPercentage(0);
+		}
 		// get lc monitor data
 		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;
 		LcMonitorRsp lcMonitorRsp = lcService.getDeviceMonitorData(simulator.getDeviceId(),

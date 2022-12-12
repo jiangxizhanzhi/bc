@@ -273,9 +273,14 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
                 continue;
             }
 
-            if (searchOrg && !StringUtils.equals(tmp.getOrganizationId(), organizationId)) {
-                continue;
+            //过滤本组织及其子组织数据
+            if (searchOrg) {
+                List<String> childrenList = remoteOrganizationService.childrenList(organizationId, Boolean.TRUE);
+                if (!StringUtils.equals(tmp.getOrganizationId(), organizationId) && !childrenList.contains(organizationId)) {
+                    continue;
+                }
             }
+
             newRsp.add(tmp);
         }
 

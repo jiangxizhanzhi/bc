@@ -72,12 +72,17 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	private Integer MAX_CONTENT_LENGTH;
 
+	private Integer MAX_CATEGORY_LENGTH;
+
 	private final Boolean IS_COLLECTED = Boolean.FALSE;
 
 	@PostConstruct
 	private void init() {
 		MAX_CONTENT_LENGTH = Integer
 				.parseInt(ConfigUtil.getContextProperty("oj.practice.content.max.length"));
+
+		MAX_CATEGORY_LENGTH = Integer
+				.parseInt(ConfigUtil.getContextProperty("oj.practice.category.max.length"));
 	}
 
 	@Autowired
@@ -687,6 +692,28 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	/**
+	 * 处理理论习题类型
+	 * @param theoryType 习题类型
+	 * @return
+	 */
+	private Integer handleOnlyTheoryType(String theoryType) {
+
+
+		Integer realType;
+
+		try {
+			Double practiceType = new Double(theoryType);
+			realType = practiceType.intValue() - 1;
+		} catch (Exception e) {
+			log.error("Parse theory type failed! value=[{}] catch error:", theoryType, e);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+
+		practiceValidateHandler.validateOnlyTheoryType(realType);
+		return realType;
+	}
+
+	/**
 	 * excel数据转化为实体类
 	 *
 	 * @param excelRowData
@@ -718,7 +745,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		// excel数据中难度=比当前代码枚举值+1
 		practiceTheory.setDifficulty(handleTheoryDifficulty(excelRowData.get(2)));
 		// excel数据中题型=当前代码枚举值+1
-		Integer theoryType = handleTheoryType(excelRowData.get(3) );
+		Integer theoryType = handleOnlyTheoryType(excelRowData.get(3) );
 		practiceTheory.setTheoryType(theoryType);
 
 		// 分类编号设置 不存在创建
@@ -728,6 +755,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 					JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_DIRECTION_EMPTY_ERROR);
 		}
+		// 校验方向长度
+		CrCommonValidator.validateLength(categoryName, CrCommonConstants.ZERO_STR_LEN,
+				MAX_CATEGORY_LENGTH, CrBusinessErrorCode.ILLEGAL_TITLE_LEN);
 
 		String categoryId = practiceCategoryMapper
 				.selectByName(PracticeCategory.PracticeType.THEORY.getCode(), categoryName);

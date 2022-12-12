@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -135,6 +137,25 @@ public class PracticeValidateHandler {
 
 		boolean right = false;
 		for (PracticeTheory.TheoryType theoryType : PracticeTheory.TheoryType.values()) {
+			right |= theoryType.getCode().intValue() == type;
+		}
+
+		if (!right) {
+			log.error("Theory type error! type=[{}]", type);
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_TYPE_ERROR);
+		}
+	}
+
+	/**
+	 * 校验习题类型
+	 * @param type 习题类型值
+	 */
+	public void validateOnlyTheoryType(int type) {
+
+		boolean right = false;
+		PracticeTheory.TheoryType[] values = PracticeTheory.TheoryType.values();
+		List<PracticeTheory.TheoryType> collect = Arrays.stream(values).filter(item -> !item.getCode().equals(PracticeTheory.TheoryType.OPERATION.getCode())).collect(Collectors.toList());
+		for (PracticeTheory.TheoryType theoryType : collect) {
 			right |= theoryType.getCode().intValue() == type;
 		}
 

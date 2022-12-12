@@ -1,5 +1,18 @@
 package com.cyberpeace.bs.utils;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
@@ -13,19 +26,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.google.common.collect.Maps;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
-
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * @author SN
@@ -135,16 +135,18 @@ public class BsUtil {
 	 * @return 行为id-行为变量的map
 	 */
 	public static Map<String, String> getVariableMap(String json) {
-		if(StringUtils.isBlank(json) || !json.startsWith(JSON_LIST_INITIAL)){
+		if (StringUtils.isBlank(json) || !json.startsWith(JSON_LIST_INITIAL)) {
 			return Maps.newHashMap();
 		}
-		List<BehaviorConfigRaw> configList = JsonUtil.toJsonObjectArray(json, BehaviorConfigRaw.class);
+		List<BehaviorConfigRaw> configList = JsonUtil.toJsonObjectArray(json,
+				BehaviorConfigRaw.class);
 		for (BehaviorConfigRaw raw : configList) {
 			if (raw.getVariables() == null) {
 				raw.setVariables(BsConstants.EMPTY_LIST_JSON);
 			}
 		}
-		return StreamApiUtils.toMap(configList, BehaviorConfigRaw::getBehaviorId, BehaviorConfigRaw::getVariables);
+		return StreamApiUtils.toMap(configList, BehaviorConfigRaw::getBehaviorId,
+				BehaviorConfigRaw::getVariables);
 	}
 
 	/**
@@ -175,8 +177,8 @@ public class BsUtil {
 	 * @param seconds
 	 * @return
 	 */
-	public static Integer s2Min(Integer seconds){
-		if(null == seconds || seconds <= 0){
+	public static Integer s2Min(Integer seconds) {
+		if (null == seconds || seconds <= 0) {
 			return 0;
 		}
 		int minutes = seconds / BsConstants.SECONDS_PER_MINUTE;
@@ -191,8 +193,8 @@ public class BsUtil {
 	 * @param ipBoList
 	 * @return
 	 */
-	public static String getIp(List<IpBo> ipBoList){
-		if(CollectionUtils.isEmpty(ipBoList)){
+	public static String getIp(List<IpBo> ipBoList) {
+		if (CollectionUtils.isEmpty(ipBoList)) {
 			return EMPTY_STRING;
 		}
 		return ipBoList.get(0).getIp();
@@ -233,6 +235,9 @@ public class BsUtil {
 			}
 			out.addAll(raw);
 			return out;
+		}
+		if (raw.size() > length) {
+			return raw.subList(0, length);
 		}
 		return raw;
 	}

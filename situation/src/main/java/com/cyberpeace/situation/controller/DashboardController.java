@@ -64,10 +64,10 @@ public class DashboardController {
 		}
 
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-				.filter(t -> t.getName().equals(taskType)).findFirst().orElse(TaskType.QB);
+				.filter(t -> t.getDesc().equals(taskType)).findFirst().orElse(TaskType.QB);
 
 		if (!type.getSupport()) {
-			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, type.getName());
+			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, taskType);
 		}
 
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByTaskId(taskId);

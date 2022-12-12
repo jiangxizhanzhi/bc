@@ -13,14 +13,14 @@ public enum TaskType {
 	 * 任务类型
 	 */
 
-	QB("", "全部", false),
-	XNJD("SY01", "性能鉴定", false),
-	XNRZ("SY02", "性能认证", false),
-	HLDK("XL05", "红蓝对抗", true),
-	ZZSY("XL01", "ZZ试验", true),
-	DQJS("XL03", "夺旗竞赛", true),
-	ZZXL("XL04", "自主训练", true),
-	ZXBW("XL02", "专项比武", true);
+	QB("", "全部", "",false),
+	XNJD("SY01", "性能鉴定", "性能鉴定",false),
+	XNRZ("SY02", "性能认证", "性能认证",false),
+	HLDK("XL05", "红蓝对抗", "红蓝对抗",true),
+	ZZSY("XL01", "ZZ试验", "ZZ试验",true),
+	DQJS("XL03", "夺旗竞赛", "夺旗竞赛",true),
+	ZZXL("XL04", "自主训练", "自主训练",true),
+	ZXBW("XL02", "专项比武", "专项比武",true);
 
 	@Getter
 	private String code;
@@ -29,11 +29,15 @@ public enum TaskType {
 	private String name;
 
 	@Getter
+	private String desc;
+
+	@Getter
 	private Boolean support;
 
-	TaskType(String code, String name, Boolean support) {
+	TaskType(String code, String name, String desc, Boolean support) {
 		this.code = code;
 		this.name = name;
+		this.desc = desc;
 		this.support = support;
 	}
 

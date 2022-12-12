@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.DashboardBasicReq;
 import com.cyberpeace.situation.controller.req.DashboardChangeReq;
 import com.cyberpeace.situation.controller.req.EventQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
@@ -62,7 +64,7 @@ public class DashboardController {
 		}
 
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-				.filter(t -> t.getCode().equals(taskType)).findFirst().orElse(TaskType.QB);
+				.filter(t -> t.getName().equals(taskType)).findFirst().orElse(TaskType.QB);
 
 		if (!type.getSupport()) {
 			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, type.getName());
@@ -73,7 +75,7 @@ public class DashboardController {
 		String dashboardId = dashboardAttribute == null ? taskId
 				: dashboardAttribute.getDashboardId();
 
-		return new BaseRsp<>(new DashboardIdRes(dashboardId, taskType));
+		return new BaseRsp<>(new DashboardIdRes(dashboardId, type.getCode()));
 
 	}
 
@@ -93,6 +95,19 @@ public class DashboardController {
 				dashboardChangeReq.getData());
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
 				dashboardChangeReq.getFeatureId());
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("推送返回首页消息")
+	@PostMapping("/back_home/")
+	public BaseRsp<Boolean>
+			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
+		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(),
+				JsonUtil.java2JsonObject(dashboardAttribute));
+		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
+				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);
 	}
 

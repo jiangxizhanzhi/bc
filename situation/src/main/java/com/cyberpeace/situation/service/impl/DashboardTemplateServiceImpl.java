@@ -123,7 +123,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     @Override
-    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId) {
+    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type) {
         DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(resourceId);
         if (dashboardTemplate == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -133,7 +133,18 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplate, DashboardTemplateRes.class);
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
-            dashboardTemplateRes.setComponentsSetting(dashboardComponents);
+            if (type == null) {
+                dashboardTemplateRes.setComponentsSetting(dashboardComponents);
+            } else {
+                List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
+                dashboardComponents.forEach(dashboardComponent -> {
+                    String componentType = dashboardComponent.getType();
+                    if (Objects.equals(componentType, type)) {
+                        typeDashboardComponents.add(dashboardComponent);
+                    }
+                });
+                dashboardTemplateRes.setComponentsSetting(typeDashboardComponents);
+            }
         }
         return dashboardTemplateRes;
     }

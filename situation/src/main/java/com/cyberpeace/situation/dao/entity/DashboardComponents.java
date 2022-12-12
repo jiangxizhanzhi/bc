@@ -21,7 +21,7 @@ public class DashboardComponents {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
-    @ApiModelProperty("组件类型")
+    @ApiModelProperty("视角类型")
     private String type;
 
     @ApiModelProperty("数据源id")

@@ -265,17 +265,17 @@ public class SituationPublishController {
 
 	@ApiOperation("态势实例预览")
 	@PostMapping("preview")
-	public SituationPublishInstanceReviewRes previewSituationPublishInstance(HttpServletResponse res, @RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) throws IOException {
+	public SituationPublishInstanceReviewRes previewSituationPublishInstance(@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
 		String resourceId = situationInstanceReleaseReq.getResourceId();
+		String type = situationInstanceReleaseReq.getType();
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		String templateId = situationPublishInstances.getTemplateId();
-		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId);
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, type);
 		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
 		// TODO 大屏地址
-//		res.sendRedirect("page/cr/admin/situation-release/preview/"+ templateId);
 		copy.setTemplateInfo(dashboardTemplateInfo);
 		dashboardTemplateRefService.exchangeOptionDataSet(copy);
 		return copy;

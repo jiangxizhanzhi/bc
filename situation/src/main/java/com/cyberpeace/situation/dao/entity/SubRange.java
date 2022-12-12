@@ -3,6 +3,7 @@ package com.cyberpeace.situation.dao.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -21,6 +22,9 @@ public class SubRange implements Serializable {
 
 	@ApiModelProperty("分靶场位置")
 	private String location;
+
+	@ApiModelProperty("行政区划")
+	private String region;
 
 	@ApiModelProperty("分靶场地址")
 	private String address;

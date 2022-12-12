@@ -17,12 +17,16 @@ public class DashboardIdRes implements Serializable {
 	@ApiModelProperty("任务类型")
 	private String taskType;
 
+	@ApiModelProperty("任务子类型 1-攻击 2-防御")
+	private Integer taskSubType;
+
 	public DashboardIdRes() {};
 
 	public DashboardIdRes(String dashboardId, String taskType) {
 		this.setDashboardId(dashboardId);
 		this.dashboardType = 1;
 		this.taskType = taskType;
+		this.taskSubType = 1;
 	}
 
 }

@@ -27,6 +27,9 @@ public class Station extends BaseTable implements Serializable {
 	@ApiModelProperty("场站位置")
 	private String location;
 
+	@ApiModelProperty("行政区划")
+	private String region;
+
 	@ApiModelProperty("场站地址")
 	private String address;
 

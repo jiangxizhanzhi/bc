@@ -133,6 +133,19 @@ public interface SituationHandlerService {
 	<T> void pushDataToDashboard(T data, String dashboardId, String featureId);
 
 	/**
+	 * 批量推送消息至大屏
+	 * @param code 消息编码
+	 * @param dashboardId 大屏ID
+	 * @param featureId 特征ID
+	 * @param datas 消息列表
+	 * @param number 每批次推送数量
+	 * @param interval 批次间隔时间
+	 * @return 无
+	 */
+	<T> void batchPushDataToDashboard(String code, String dashboardId, String featureId,
+			List<T> datas, Integer number, Integer interval);
+
+	/**
 	 * 批量推送消息至房间
 	 * @param sceneId 场景id
 	 * @param datas 消息列表

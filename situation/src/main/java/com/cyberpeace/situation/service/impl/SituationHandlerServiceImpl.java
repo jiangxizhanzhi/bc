@@ -619,6 +619,23 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
+	@Async
+	@Override
+	public <T> void batchPushDataToDashboard(String code, String dashboardId, String featureId,
+			List<T> datas, Integer number, Integer interval) {
+
+		// 无推送消息时，直接结束
+		if (datas.isEmpty()) {
+			return;
+		}
+
+		for (T data : datas) {
+			WsMessage<T> wsMessage = new WsMessage<>(code, data);
+			pushDataToDashboard(wsMessage, dashboardId, featureId);
+		}
+
+	}
+
 	@SneakyThrows
 	@Async
 	@Override

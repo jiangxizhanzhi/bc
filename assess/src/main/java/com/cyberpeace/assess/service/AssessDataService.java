@@ -12,5 +12,5 @@ public interface AssessDataService extends IService<AssessData> {
 
     IPage<AssessData> page(AssessListReq pageReqBase);
 
-    void checkNameRepeat(String name, String resourceId);
+    void checkNameRepeat(String name, Integer type, String resourceId);
 }

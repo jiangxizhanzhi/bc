@@ -34,9 +34,11 @@ public class AssessDataServiceImpl extends ServiceImpl<AssessDataMapper, AssessD
 	}
 
 	@Override
-	public void checkNameRepeat(String name, String id) {
+	public void checkNameRepeat(String name, Integer type, String id) {
 		LambdaQueryWrapper<AssessData> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(AssessData::getName, name);
+		queryWrapper.eq(AssessData::getType, type);
+
 		if (StringUtils.isNotBlank(id)) {
 			queryWrapper.ne(AssessData::getResourceId, id);
 		}

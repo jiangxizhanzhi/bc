@@ -41,7 +41,8 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/assess")
 @RequiresAuthentication
-@RequiresPermissions(value = {MenuConstant.CMS_ASSESS_INPUT_DATA_MANAGE,MenuConstant.CMS_ASSESS_EVALUATE_DATA_MANAGE}, logical = Logical.OR)
+@RequiresPermissions(value = { MenuConstant.CMS_ASSESS_INPUT_DATA_MANAGE,
+		MenuConstant.CMS_ASSESS_EVALUATE_DATA_MANAGE }, logical = Logical.OR)
 public class AssessDataController {
 
 	@Autowired
@@ -88,7 +89,8 @@ public class AssessDataController {
 		tags = tags.stream().distinct().collect(Collectors.toList());
 		assessTagService.checkTag(tags);
 		// 校验name是否已存在
-		assessDataService.checkNameRepeat(assessDataAddReq.getName(), null);
+		assessDataService.checkNameRepeat(assessDataAddReq.getName(), assessDataAddReq.getType(),
+				null);
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataAddReq.getTag()));
 		assessData.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -117,7 +119,7 @@ public class AssessDataController {
 		assessTagService.checkTag(tags);
 		// 校验name是否已存在
 		assessDataService.checkNameRepeat(assessDataUpdateReq.getName(),
-				assessDataUpdateReq.getResourceId());
+				assessDataUpdateReq.getType(), assessDataUpdateReq.getResourceId());
 
 		assessData.setTag(JsonUtil.toJsonString(assessDataUpdateReq.getTag()));
 

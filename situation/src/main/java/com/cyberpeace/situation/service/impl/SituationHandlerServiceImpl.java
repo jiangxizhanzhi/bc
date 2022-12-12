@@ -47,6 +47,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private SituationWebSocketHandler situationWebSocketHandler;
+
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -617,6 +620,19 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
+	public <T> void pushDataToDashboard(T data, String dashboardId) {
+		DashboardWsMessageIdentifier identifier = new DashboardWsMessageIdentifier();
+		identifier.setPath(WsPath.SITUATION);
+		identifier.setDashboardId(dashboardId);
+
+		WebSocketMessageContext<DashboardWsMessageIdentifier, String> messageContext = new WebSocketMessageContext<>();
+		messageContext.setMessageIdentifier(identifier);
+		messageContext.setData(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase));
+
+		situationWebSocketHandler.pushMessageToDashboard(messageContext);
 	}
 
 	@Async

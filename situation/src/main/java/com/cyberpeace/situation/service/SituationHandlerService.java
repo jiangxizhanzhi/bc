@@ -133,6 +133,14 @@ public interface SituationHandlerService {
 	<T> void pushDataToDashboard(T data, String dashboardId, String featureId);
 
 	/**
+	 * 根据dashboardId推送ws
+	 * @param data
+	 * @param dashboardId
+	 * @param <T>
+	 */
+	<T> void pushDataToDashboard(T data, String dashboardId);
+
+	/**
 	 * 批量推送消息至大屏
 	 * @param code 消息编码
 	 * @param dashboardId 大屏ID

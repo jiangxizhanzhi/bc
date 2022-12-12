@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.util.CollectionUtils;
@@ -253,6 +254,11 @@ public class RoleController {
 	@GetMapping("/list")
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<ListRsp<RoleOutput>> list(RoleListReq<Role> listReq) {
+		if (!StringUtils.isBlank(listReq.getKeyword())) {
+
+			String newPattern = LocalStringUtil.transfer(listReq.getKeyword());
+			listReq.setKeyword(newPattern);
+		}
 		IPage<Role> page = getPage(listReq);
 		// search skills missions
 		List<String> roleIds = page.getRecords().stream().map(Role::getResourceId)

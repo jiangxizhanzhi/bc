@@ -14,4 +14,8 @@ public class SingleTrainStatisticsDetailReq extends PageReqBase {
 
     @ApiModelProperty(name = "endTime", value = "结束日期")
     private String endTime;
+
+    @ApiModelProperty(value = "模糊查询筛选参数")
+    private String pattern;
+
 }

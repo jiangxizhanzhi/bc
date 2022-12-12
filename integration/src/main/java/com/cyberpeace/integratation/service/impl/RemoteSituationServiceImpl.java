@@ -57,23 +57,24 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@PostConstruct
 	public void init() {
-		String outerHost = "http://" + ConfigUtil.getContextProperty("outer.host");
-		TASK_URL = outerHost + ConfigUtil.getContextProperty("task.list");
-		PLAN_URL = outerHost + ConfigUtil.getContextProperty("plan.list");
-		SUBJECT_URL = outerHost + ConfigUtil.getContextProperty("subject.list");
-		RANGE_INFO_URL = outerHost + ConfigUtil.getContextProperty("range.info");
-		CENTER_INFO_URL = outerHost + ConfigUtil.getContextProperty("center.info");
-		PLATFORM_LIST_URL = outerHost + ConfigUtil.getContextProperty("platform.list");
-		TASK_LIST_URL = outerHost + ConfigUtil.getContextProperty("task.list.all");
-		NETWORK_INFO_URL = outerHost + ConfigUtil.getContextProperty("network.info");
-		NODE_INFO_URL = outerHost + ConfigUtil.getContextProperty("node.info");
-		NODE_ACTION_URL = outerHost + ConfigUtil.getContextProperty("node.action");
-		NODE_TREND_URL = outerHost + ConfigUtil.getContextProperty("node.trend");
-		USER_ACTION_URL = outerHost + ConfigUtil.getContextProperty("user.action");
-		USER_TREND_URL = outerHost + ConfigUtil.getContextProperty("user.trend");
-		TASK_EVENT_URL = outerHost + ConfigUtil.getContextProperty("event.task");
-		AD_EVENT_URL = outerHost + ConfigUtil.getContextProperty("event.ad");
-		NODE_STATUS_URL = outerHost + ConfigUtil.getContextProperty("event.node");
+		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
+		String outerHostXd = "http://" + ConfigUtil.getContextProperty("outer.host.xd");
+		TASK_URL = outerHostTs + ConfigUtil.getContextProperty("task.list");
+		PLAN_URL = outerHostXd + ConfigUtil.getContextProperty("plan.list");
+		SUBJECT_URL = outerHostTs + ConfigUtil.getContextProperty("subject.list");
+		RANGE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("range.info");
+		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
+		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");
+		TASK_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("task.list.all");
+		NETWORK_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("network.info");
+		NODE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("node.info");
+		NODE_ACTION_URL = outerHostTs + ConfigUtil.getContextProperty("node.action");
+		NODE_TREND_URL = outerHostTs + ConfigUtil.getContextProperty("node.trend");
+		USER_ACTION_URL = outerHostTs + ConfigUtil.getContextProperty("user.action");
+		USER_TREND_URL = outerHostTs + ConfigUtil.getContextProperty("user.trend");
+		TASK_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.task");
+		AD_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.ad");
+		NODE_STATUS_URL = outerHostTs + ConfigUtil.getContextProperty("event.node");
 	}
 
 	@Override

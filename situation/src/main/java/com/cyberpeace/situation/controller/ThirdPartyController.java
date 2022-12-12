@@ -13,6 +13,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.TaskStatus;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.NodePageReq;
@@ -75,7 +76,7 @@ public class ThirdPartyController {
 					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 		SubRangeInfoContext subRangeInfoContext = remoteSituationService
 				.getSubRangeInfo(subRangeId);
-		subRangeInfoContext.setTitle("XXX分靶场综合态势");
+		subRangeInfoContext.setTitle(subRangeInfoContext.getSubRangeName() + "综合态势");
 
 		return new BaseRsp<>(subRangeInfoContext);
 	}
@@ -109,6 +110,13 @@ public class ThirdPartyController {
 	public BaseRsp<List<HashMap<String, String>>> getTaskType() {
 
 		return new BaseRsp<>(TaskType.getTaskTypeMap());
+	}
+
+	@ApiOperation("获取任务状态字典")
+	@GetMapping("/task_status/list/")
+	public BaseRsp<List<HashMap<String, String>>> getTaskStatus() {
+
+		return new BaseRsp<>(TaskStatus.getTaskStatusMap());
 	}
 
 	@ApiOperation("获取网络信息")

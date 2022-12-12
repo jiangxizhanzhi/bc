@@ -26,6 +26,9 @@ public class DynamicEffectsLibrary extends BaseTable {
 	@ApiModelProperty("源节点动效文件")
 	private String sourceNodeDynamicFile;
 
+	@ApiModelProperty("源文件动效文件目录")
+	private String sourceNodeDynamicDir;
+
 	private String createUserId;
 
 }

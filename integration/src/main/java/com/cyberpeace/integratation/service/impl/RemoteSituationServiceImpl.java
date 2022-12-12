@@ -55,6 +55,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String NODE_STATUS_URL;
 
+	private String XD_TOPO_URL;
+
 	@PostConstruct
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
@@ -75,6 +77,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		TASK_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.task");
 		AD_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.ad");
 		NODE_STATUS_URL = outerHostTs + ConfigUtil.getContextProperty("event.node");
+		XD_TOPO_URL = outerHostXd + ConfigUtil.getContextProperty("xd.topo");
 	}
 
 	@Override
@@ -161,8 +164,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public ListRsp<NodeActionContext> getNodeAction(NodeIdPageReq nodeIdPageReq) {
-		LgNodeActionPageRsp rsp = HttpClientUtil.post(NODE_ACTION_URL, nodeIdPageReq,
+	public ListRsp<NodeActionContext> getNodeAction(NodeActionReq nodeActionReq) {
+		LgNodeActionPageRsp rsp = HttpClientUtil.post(NODE_ACTION_URL, nodeActionReq,
 				LgNodeActionPageRsp.class);
 		ListRsp<NodeActionContext> res = rsp.convert();
 		res.setList(rsp.getList());
@@ -216,6 +219,6 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public TopoContext getTopo(TopoReq topoReq) {
-		return new TopoContext();
+		return HttpClientUtil.rawGet(XD_TOPO_URL + "demo", TopoContext.class);
 	}
 }

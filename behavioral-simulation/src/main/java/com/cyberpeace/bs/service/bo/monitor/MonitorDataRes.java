@@ -20,8 +20,8 @@ public class MonitorDataRes implements Serializable {
     @ApiModelProperty(value = "仪表详情")
     private MonitorSimulatorDetail detail;
 
-    @ApiModelProperty(value = "任务已执行百分比")
-    private Integer executedPercentage;
+    @ApiModelProperty(value = "执行情况")
+    private ExecutedBo executionState;
 
     @ApiModelProperty(value = "时间横轴（分钟），用于带宽图和连接数图")
     private List<String> xTimeMinutes = Lists.newArrayList();
@@ -64,4 +64,20 @@ public class MonitorDataRes implements Serializable {
             session.getXHalfHour().add(halfHourStart.plusMinutes(30L * i).toString());
         }
     }
+
+    public void calculateExecuted(Integer total, Integer executedIndex){
+        ExecutedBo bo = new ExecutedBo();
+        bo.setNotExecuted(executedIndex);
+        bo.setExecuted(total - executedIndex);
+        this.setExecutionState(bo);
+    }
+}
+
+@Data
+class ExecutedBo{
+    @ApiModelProperty(value = "未执行数")
+    private Integer notExecuted;
+
+    @ApiModelProperty(value = "已执行数")
+    private Integer executed;
 }

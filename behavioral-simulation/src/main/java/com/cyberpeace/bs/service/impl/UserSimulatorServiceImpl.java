@@ -456,10 +456,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		res.getDetail().load(simulator);
 		// task percentage
 		if (LocalTime.now().isAfter(simulator.getStartTime())) {
-			res.setExecutedPercentage(BsUtil.round(
-					100 - simulator.getExecutedIndex() * 100.0 / simulator.getBehaviorCount()));
+			res.calculateExecuted(simulator.getBehaviorCount(), simulator.getExecutedIndex());
 		} else {
-			res.setExecutedPercentage(0);
+			res.calculateExecuted(simulator.getBehaviorCount(), simulator.getBehaviorCount());
 		}
 		// get lc monitor data
 		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;

@@ -25,7 +25,7 @@
     <select id="selectLast" resultMap="base">
         select * from oj_lesson_config
         where parent_id = #{rootId}
-        and lesson_id != null
+        and lesson_id is not null and lesson_id != ''
         order by `index` desc
         limit 0, 1
     </select>

@@ -5,6 +5,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
+import com.cyberpeace.situation.controller.req.ColorThemeImportReq;
 import com.cyberpeace.situation.controller.req.ColorThemePageReq;
 import com.cyberpeace.situation.controller.req.ColorThemeReq;
 import com.cyberpeace.situation.dao.entity.ColorTheme;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author xuxz
@@ -56,5 +58,11 @@ public class SituationColorThemeController {
     @GetMapping("list")
     public BaseRsp<ListRsp<ColorTheme>> getColorThemePage(ColorThemePageReq colorThemePageReq) {
         return new BaseRsp<>(situationColorThemeService.getColorThemePage(colorThemePageReq));
+    }
+
+    @ApiOperation("导入颜色主题")
+    @PostMapping("upload")
+    public BaseRsp<String> importColorTheme(ColorThemeImportReq colorThemeImportReq){
+        return new BaseRsp<>(situationColorThemeService.importColorTheme(colorThemeImportReq));
     }
 }

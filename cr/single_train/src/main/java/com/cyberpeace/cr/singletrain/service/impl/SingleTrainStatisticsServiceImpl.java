@@ -264,6 +264,12 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         rsp = rsp.stream().sorted(Comparator.comparing(SingleStatisticsDetailBo::getTotalScore, Comparator.reverseOrder())
                 .thenComparing(SingleStatisticsDetailBo::getName, Comparator.naturalOrder())).collect(Collectors.toList());
 
+        //获取子组织列表
+        List<String> childrenList = new ArrayList<>();
+        if (searchOrg) {
+            childrenList.addAll(remoteOrganizationService.childrenList(organizationId, Boolean.TRUE));
+        }
+
         // 增加综合排名
         for (int i=0;i < rsp.size();i++) {
             SingleStatisticsDetailBo tmp = rsp.get(i);
@@ -276,8 +282,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
             //过滤本组织及其子组织数据
             if (searchOrg) {
-                List<String> childrenList = remoteOrganizationService.childrenList(organizationId, Boolean.TRUE);
-                if (!StringUtils.equals(tmp.getOrganizationId(), organizationId) && !childrenList.contains(organizationId)) {
+                if (!StringUtils.equals(tmp.getOrganizationId(), organizationId) && !childrenList.contains(tmp.getOrganizationId())) {
                     continue;
                 }
             }

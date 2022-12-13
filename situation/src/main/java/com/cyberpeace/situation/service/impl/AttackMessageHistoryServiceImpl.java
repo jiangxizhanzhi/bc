@@ -133,7 +133,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		Date nowTime = new Date();
 		Map<String, Integer> map = new HashMap<>();
 		map.put("minute", (int) (TimeUtil.getIntervalSeconds(startTime, nowTime) / 60 % 60));
-		map.put("hour", (int) (TimeUtil.getIntervalSeconds(startTime, nowTime) / (60 * 24)));
+		map.put("hour", (int) (TimeUtil.getIntervalSeconds(startTime, nowTime) / (60 * 60)));
 		return map;
 	}
 

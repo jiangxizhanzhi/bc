@@ -342,7 +342,7 @@ CREATE TABLE `situation_dashboard_template` (
 CREATE TABLE `situation_dashboard_components_setting` (
                                                 `id` int(11) NOT NULL AUTO_INCREMENT,
                                                 `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                                `type` int(10) NOT NULL,
+                                                `type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                                 `datasource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
                                                 `datasource_setting` longtext CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
                                                 `components_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,

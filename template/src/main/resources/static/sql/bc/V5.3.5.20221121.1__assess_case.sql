@@ -148,5 +148,3 @@ CREATE TABLE `assess_file_data`
     UNIQUE KEY `resource_id_UNIQUE` (`resource_id`) USING BTREE,
     UNIQUE KEY `related_id` (`related_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '评估文件解析内容表' ROW_FORMAT = DYNAMIC;
-
-delete from `cr_constants_config` where type = 12 and code = 2

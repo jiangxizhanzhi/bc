@@ -8,7 +8,11 @@ import lombok.Data;
 @Data
 public class NodeActionPageReq extends NodePageReq implements Serializable {
 
-	@ApiModelProperty("行为类型")
+	@ApiModelProperty(name = "action_type", value = "行为类型")
 	private String actionType;
+
+	public void setAction_type(String actionType) {
+		this.actionType = actionType;
+	}
 
 }

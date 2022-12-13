@@ -47,3 +47,6 @@ CREATE TABLE `oj_course_study_history`  (
 
 ALTER TABLE cr_mission_template MODIFY COLUMN option text COMMENT '选择题选项';
 ALTER TABLE cr_mission MODIFY COLUMN option text COMMENT '选择题选项';
+
+ALTER TABLE cr_mission_template MODIFY COLUMN `write_up` LONGTEXT COMMENT '题解';
+ALTER TABLE cr_mission MODIFY COLUMN `write_up` LONGTEXT COMMENT '题解';

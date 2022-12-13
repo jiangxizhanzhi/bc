@@ -47,6 +47,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private SituationWebSocketHandler situationWebSocketHandler;
+
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -617,6 +620,36 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
+	public <T> void pushDataToDashboard(T data, String dashboardId) {
+		DashboardWsMessageIdentifier identifier = new DashboardWsMessageIdentifier();
+		identifier.setPath(WsPath.SITUATION);
+		identifier.setDashboardId(dashboardId);
+
+		WebSocketMessageContext<DashboardWsMessageIdentifier, String> messageContext = new WebSocketMessageContext<>();
+		messageContext.setMessageIdentifier(identifier);
+		messageContext.setData(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase));
+
+		situationWebSocketHandler.pushMessageToDashboard(messageContext);
+	}
+
+	@Async
+	@Override
+	public <T> void batchPushDataToDashboard(String code, String dashboardId, String featureId,
+			List<T> datas, Integer number, Integer interval) {
+
+		// 无推送消息时，直接结束
+		if (datas.isEmpty()) {
+			return;
+		}
+
+		for (T data : datas) {
+			WsMessage<T> wsMessage = new WsMessage<>(code, data);
+			pushDataToDashboard(wsMessage, dashboardId, featureId);
+		}
+
 	}
 
 	@SneakyThrows

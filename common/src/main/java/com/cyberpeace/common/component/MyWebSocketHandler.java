@@ -32,7 +32,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 2.1、 value的key=该业务场景下的用户id
 	 * 2.2、value的value=该业务场景下指定用户的session
 	 */
-	private Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
+	protected Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
 			.newConcurrentMap();
 
 	@Override
@@ -141,7 +141,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 		}
 	}
 
-	private void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
+	protected void pushToSessions(WebSocketMessageContext message, Set<CpWebSession> sessions,
 			String userId, String businessId) {
 		List<CpWebSession> toBeRemoved = Lists.newArrayList();
 		for (CpWebSession userSession : sessions) {

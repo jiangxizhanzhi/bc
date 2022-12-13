@@ -3,6 +3,7 @@ package com.cyberpeace.config.ws;
 import java.util.Map;
 
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.LocalStringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -141,7 +142,8 @@ public class JwtHandShake implements HandshakeInterceptor {
 		for (String parameter : parameters) {
 			String[] paramPair = StringUtils.split(parameter, "=");
 			if (paramPair.length == 2) {
-				parameterMap.put(paramPair[0], paramPair[1]);
+				// 9k的连接query不一定是snake case
+				parameterMap.put(LocalStringUtil.snakeCaseFormat(paramPair[0]), paramPair[1]);
 			}
 		}
 		return parameterMap;

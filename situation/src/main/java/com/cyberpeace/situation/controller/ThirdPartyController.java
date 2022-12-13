@@ -13,11 +13,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.TaskStatus;
 import com.cyberpeace.situation.constant.TaskType;
-import com.cyberpeace.situation.controller.req.EventMsgReq;
-import com.cyberpeace.situation.controller.req.NodePageReq;
-import com.cyberpeace.situation.controller.req.TaskEventMsgReq;
-import com.cyberpeace.situation.controller.req.TaskListPageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
@@ -75,7 +73,7 @@ public class ThirdPartyController {
 					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 		SubRangeInfoContext subRangeInfoContext = remoteSituationService
 				.getSubRangeInfo(subRangeId);
-		subRangeInfoContext.setTitle("XXX分靶场综合态势");
+		subRangeInfoContext.setTitle(subRangeInfoContext.getSubRangeName() + "综合态势");
 
 		return new BaseRsp<>(subRangeInfoContext);
 	}
@@ -111,6 +109,13 @@ public class ThirdPartyController {
 		return new BaseRsp<>(TaskType.getTaskTypeMap());
 	}
 
+	@ApiOperation("获取任务状态字典")
+	@GetMapping("/task_status/list/")
+	public BaseRsp<List<HashMap<String, String>>> getTaskStatus() {
+
+		return new BaseRsp<>(TaskStatus.getTaskStatusMap());
+	}
+
 	@ApiOperation("获取网络信息")
 	@PostMapping("/network/")
 	public BaseRsp<NetworkInfoContext>
@@ -136,10 +141,10 @@ public class ThirdPartyController {
 	@ApiOperation("获取节点行为数据")
 	@PostMapping("/node/action/")
 	public BaseRsp<ListRsp<NodeActionContext>>
-			getNodeAction(@RequestBody @Validated NodePageReq nodeListApiReq) {
+			getNodeAction(@RequestBody @Validated NodeActionPageReq nodeActionPageReq) {
 
 		return new BaseRsp<>(remoteSituationService
-				.getNodeAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+				.getNodeAction(BeanUtils.copy(nodeActionPageReq, NodeActionReq.class)));
 	}
 
 	@ApiOperation("获取节点行为趋势")

@@ -268,23 +268,81 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             return jsonArray;
         }
         try {
+            //获取分组数据集和维度数据集
+            HashSet<String> groupsSet = new HashSet<>();
+            HashSet<String> dimensionSet = new HashSet<>();
+            List<JSONObject> dataJsonList = new ArrayList<>();
+
             for (Object datum : jsonArray) {
-                JSONObject finallyObject = new JSONObject(new LinkedHashMap());
                 JSONObject datumObject = JsonUtil.java2JsonObject(datum);
+                String dimensionValue = datumObject.getString(dimension);
+                dimensionSet.add(dimensionValue);
+                if (StringUtils.isNotBlank(groups)) {
+                    String groupValue = datumObject.getString(groups);
+                    groupsSet.add(groupValue);
+                }
+                dataJsonList.add(datumObject);
+            }
+
+            //处理维度和度量数据集
+            List<String> measureList = new ArrayList<>();
+            if (StringUtils.isNotBlank(measure)) {
+                measureList.addAll(Arrays.asList(measure.split(",")));
+            }
+            for (JSONObject jsonObject : dataJsonList) {
+                JSONObject finallyObject = new JSONObject(new LinkedHashMap());
                 if (StringUtils.isNotBlank(dimension)) {
-                    String string = datumObject.getString(dimension);
+                    String string = jsonObject.getString(dimension);
                     finallyObject.put(dimension, string);
                 }
-                if (StringUtils.isNotBlank(measure)) {
-                    List<String> measureList = Arrays.asList(measure.split(","));
+                if (CollectionUtils.isNotEmpty(measureList)) {
                     measureList.forEach(measureKey -> {
-                        String string = datumObject.getString(measureKey);
+                        String string = jsonObject.getString(measureKey);
                         finallyObject.put(measureKey, string);
                     });
                 }
+                if (StringUtils.isNotBlank(groups)) {
+                    String string = jsonObject.getString(groups);
+                    finallyObject.put(groups, string);
+                }
                 data.add(finallyObject);
             }
-            return data;
+
+            //分组数据处理
+            if (CollectionUtils.isNotEmpty(groupsSet)) {
+                JSONArray groupJsonArray = new JSONArray();
+                for (String dimensionKey : dimensionSet) {
+                    //根据维度筛选分组数据
+                    List<JSONObject> groupDataList = new ArrayList<>();
+                    dataJsonList.forEach(dataObject -> {
+                        String dimensionValue = dataObject.getString(dimension);
+                        if (Objects.equals(dimensionValue, dimensionKey)) {
+                            groupDataList.add(dataObject);
+                        }
+                    });
+
+                    JSONObject jsonObject = new JSONObject(new LinkedHashMap());
+                    jsonObject.put(dimension, dimensionKey);
+
+                    //处理当前维度的分组数据
+                    for (String groupKey : groupsSet) {
+                        groupDataList.forEach(groupData -> {
+                            String groupValue = groupData.getString(groups);
+                            if (Objects.equals(groupKey, groupValue)) {
+                                // 有分组情况，度量key只能存在一个值
+                                String measureKey = measureList.get(0);
+                                String measureVale = groupData.getString(measureKey);
+                                jsonObject.put(groupKey, measureVale);
+                            }
+                        });
+                    }
+                    groupJsonArray.add(jsonObject);
+                }
+                return groupJsonArray;
+            } else {
+                return data;
+            }
+
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
@@ -329,9 +387,6 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
      */
     private JSONArray parseResponseParams(String resourceData, String response, String responseKey) {
         JSONArray data = new JSONArray();
-        if (StringUtils.isBlank(responseKey)) {
-            throw new BusinessException(ErrorCode.TYPE_ERROR);
-        }
         // 处理接口调用返回结果
         List<ApiResponseParams> apiResponseParams;
         try {
@@ -340,7 +395,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             //仅返回类型为对象类型时处理结果
             if (dataObject instanceof JSONObject) {
                 JSONObject objectData = jsonObject.getJSONObject("data");
-                JSONArray jsonArray = objectData.getJSONArray(responseKey);
+                JSONArray jsonArray = new JSONArray();
+                if (StringUtils.isBlank(responseKey)) {
+                    jsonArray.addAll(JsonUtil.stringToArray(objectData.toString()));
+                } else {
+                    jsonArray.addAll(objectData.getJSONArray(responseKey));
+                }
                 if (!jsonArray.isEmpty()) {
                     data.addAll(jsonArray);
                 }

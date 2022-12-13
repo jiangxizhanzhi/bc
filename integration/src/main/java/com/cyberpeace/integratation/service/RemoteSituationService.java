@@ -76,7 +76,7 @@ public interface RemoteSituationService {
 	 * 获取节点行为数据
 	 * @return
 	 */
-	ListRsp<NodeActionContext> getNodeAction(NodeIdPageReq nodeIdPageReq);
+	ListRsp<NodeActionContext> getNodeAction(NodeActionReq nodeActionReq);
 
 	/**
 	 * 获取节点行为趋势

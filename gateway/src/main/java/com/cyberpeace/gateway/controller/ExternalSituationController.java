@@ -1,6 +1,5 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.gateway.controller.res.ControlRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.gateway.controller.req.ControlCommandReq;
 import com.cyberpeace.gateway.controller.req.PlanBindSituationReq;
+import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.model.SceneData;
@@ -59,10 +59,13 @@ public class ExternalSituationController {
 	@CrossOrigin("*")
 	@ApiOperation("想定方案绑定态势大屏")
 	@PostMapping("plan_bind_situation")
-	public BaseRsp<SituationPublishInstance> planBindSituationPublishInstance(@RequestBody PlanBindSituationReq planBindSituationReq) {
+	public BaseRsp<SituationPublishInstance> planBindSituationPublishInstance(
+			@RequestBody PlanBindSituationReq planBindSituationReq) {
 
-		SituationPublishInstance copy = BeanUtils.copy(planBindSituationReq, SituationPublishInstance.class);
-		SituationPublishInstanceAddReq copy1 = BeanUtils.copy(copy, SituationPublishInstanceAddReq.class);
+		SituationPublishInstance copy = BeanUtils.copy(planBindSituationReq,
+				SituationPublishInstance.class);
+		SituationPublishInstanceAddReq copy1 = BeanUtils.copy(copy,
+				SituationPublishInstanceAddReq.class);
 		// TODO 校验输入 任务方案 科目等id字段
 		situationPublishInstanceService.checkPlan(copy1);
 		// 处理态势数据
@@ -74,11 +77,12 @@ public class ExternalSituationController {
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
 	@PostMapping("control")
-	public BaseRsp<ControlRes> controlCmd(@Validated ControlCommandReq controlCommandReq) {
+	public BaseRsp<ControlRes>
+			controlCmd(@RequestBody @Validated ControlCommandReq controlCommandReq) {
 
 		log.info(String.format("成功接收指令：%s", JsonUtil.toJsonString(controlCommandReq)));
 
-		return new BaseRsp<>(new ControlRes("1","0"));
+		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
 }

@@ -22,7 +22,7 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 24, '初级', 'Prima
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 24, '中级', 'Intermediate');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 24, '高级', 'Advanced');
 
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 37, '初级', 'Primary');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 37, '初级', 'Primary');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 37, '中级', 'Intermediate');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 37, '高级', 'Advanced');
 

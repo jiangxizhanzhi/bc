@@ -17,14 +17,14 @@ public class TaskListReq implements Serializable {
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;
 
+	@ApiModelProperty(value = "责任靶场ID")
+	private String responsibleRangeId;
+
 	@ApiModelProperty("任务ID")
 	private String taskId;
 
 	@ApiModelProperty("任务类型")
 	private String taskType;
-
-	@ApiModelProperty("任务模式")
-	private String taskMode;
 
 	@ApiModelProperty("任务状态")
 	private String taskStatus;

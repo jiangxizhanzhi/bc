@@ -125,9 +125,8 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取任务列表")
-	@PostMapping("/task/list/")
-	public BaseRsp<ListRsp<TaskContext>>
-			getTaskList(@RequestBody @Validated TaskListPageReq taskListPageReq) {
+	@GetMapping("/task/list/")
+	public BaseRsp<ListRsp<TaskContext>> getTaskList(TaskListPageReq taskListPageReq) {
 		return new BaseRsp<>(remoteSituationService
 				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
 	}

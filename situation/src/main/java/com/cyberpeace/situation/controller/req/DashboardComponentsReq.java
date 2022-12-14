@@ -29,5 +29,5 @@ public class DashboardComponentsReq implements Serializable {
     private Object componentSetting;
 
     @ApiModelProperty("图层顺序")
-    private String componentIndex;
+    private Integer componentIndex;
 }

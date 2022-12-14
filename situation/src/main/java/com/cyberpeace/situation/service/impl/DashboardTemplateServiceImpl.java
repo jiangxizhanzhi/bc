@@ -141,7 +141,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             //按图层进行排序
             List<DashboardComponents> dashboardComponentsList =
-                    dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+                    dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
 
             //GIS资源放首位
             List<DashboardComponents> sortDashboardComponentsList = sortDashboardComponents(dashboardComponentsList);

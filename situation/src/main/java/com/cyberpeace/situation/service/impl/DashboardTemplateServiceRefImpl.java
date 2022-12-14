@@ -151,7 +151,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
             //按图层进行排序
             List<DashboardComponents> dashboardComponentsList =
-                    sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+                    sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
 
             sortDashboardComponents.addAll(dashboardComponentsList);
 

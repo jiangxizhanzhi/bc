@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.service.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -81,7 +82,7 @@ public class LessonConfigBo implements Serializable {
 			boolean includeChapter) {
 
 		if (CollectionUtils.isEmpty(lessonConfigBo.getChildren())) {
-			return Arrays.asList(lessonConfigBo);
+			return new ArrayList<>(Arrays.asList(lessonConfigBo));
 		}
 
 		// 递归获取数据

@@ -29,8 +29,10 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @Author xuxz
@@ -147,7 +149,12 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             }
             sourceDashboardComponents.removeAll(sortDashboardComponents);
             sortDashboardComponents.addAll(sourceDashboardComponents);
-            dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
+
+            //按图层进行排序
+            List<DashboardComponents> dashboardComponentsList =
+                    sortDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+
+            dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
         }
         return dashboardTemplateRes;
     }

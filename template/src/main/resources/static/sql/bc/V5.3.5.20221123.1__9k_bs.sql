@@ -109,3 +109,5 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 44, '未开始', 'No
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 44, '运行中', 'Running');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 44, '暂停', 'Paused');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 44, '已结束', 'Stopped');
+
+ALTER TABLE `bc`.`situation_dashboard_components_setting` CHANGE `component_index` `component_index` VARCHAR(64) CHARSET utf8 COLLATE utf8_general_ci DEFAULT '0' NOT NULL AFTER `type`;

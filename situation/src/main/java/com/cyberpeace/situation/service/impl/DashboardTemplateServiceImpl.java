@@ -32,6 +32,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author xuxz
@@ -138,12 +139,15 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
+            //按图层进行排序
+            List<DashboardComponents> dashboardComponentsList =
+                    dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
             if (type == null) {
-                dashboardTemplateRes.setComponentsSetting(dashboardComponents);
+                dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
             } else {
                 //存在视角时，按视角类型筛选数据
                 List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
-                dashboardComponents.forEach(dashboardComponent -> {
+                dashboardComponentsList.forEach(dashboardComponent -> {
                     String componentType = dashboardComponent.getType();
                     if (Objects.equals(componentType, type)) {
                         typeDashboardComponents.add(dashboardComponent);

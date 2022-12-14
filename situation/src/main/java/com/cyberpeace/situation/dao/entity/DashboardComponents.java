@@ -36,6 +36,9 @@ public class DashboardComponents {
     @ApiModelProperty("组件配置")
     private String componentSetting;
 
+    @ApiModelProperty("图层顺序")
+    private String componentIndex;
+
     public enum ComponentType{
         GIS(0,"GIS资源"),
         TWO_DIMENSIONAL_COMPONENT(1,"二维组件"),

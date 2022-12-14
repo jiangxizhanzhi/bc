@@ -142,12 +142,16 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             //按图层进行排序
             List<DashboardComponents> dashboardComponentsList =
                     dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+
+            //GIS资源放首位
+            List<DashboardComponents> sortDashboardComponentsList = sortDashboardComponents(dashboardComponentsList);
+
             if (type == null) {
-                dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
+                dashboardTemplateRes.setComponentsSetting(sortDashboardComponentsList);
             } else {
                 //存在视角时，按视角类型筛选数据
                 List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
-                dashboardComponentsList.forEach(dashboardComponent -> {
+                sortDashboardComponentsList.forEach(dashboardComponent -> {
                     String componentType = dashboardComponent.getType();
                     if (Objects.equals(componentType, type)) {
                         typeDashboardComponents.add(dashboardComponent);
@@ -546,5 +550,22 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
+    }
+
+    public List<DashboardComponents> sortDashboardComponents(List<DashboardComponents> dashboardComponentsList){
+        List<DashboardComponents> gisDashboardComponentList = new ArrayList<>();
+        for (DashboardComponents dashboardComponents : dashboardComponentsList) {
+            String componentSetting = dashboardComponents.getComponentSetting();
+            JSONObject jsonObject = JSONObject.parseObject(componentSetting);
+            String componentType = jsonObject.getString("component_type");
+            if (componentType != null && Objects.equals("0", componentType)) {
+                gisDashboardComponentList.add(dashboardComponents);
+            }
+        }
+        dashboardComponentsList.removeAll(gisDashboardComponentList);
+        List<DashboardComponents> newDashboardComponents = new ArrayList<>();
+        newDashboardComponents.addAll(gisDashboardComponentList);
+        newDashboardComponents.addAll(dashboardComponentsList);
+        return newDashboardComponents;
     }
 }

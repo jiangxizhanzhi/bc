@@ -137,7 +137,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 //视角筛选
                 String sourceType = dashboardComponent.getType();
                 if (type != null && !Objects.equals(sourceType, type)) {
-                    break;
+                    continue;
                 }
                 sourceDashboardComponents.add(dashboardComponent);
                 String componentSetting = dashboardComponent.getComponentSetting();
@@ -148,13 +148,14 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 }
             }
             sourceDashboardComponents.removeAll(sortDashboardComponents);
-            sortDashboardComponents.addAll(sourceDashboardComponents);
 
             //按图层进行排序
             List<DashboardComponents> dashboardComponentsList =
-                    sortDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+                    sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
 
-            dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
+            sortDashboardComponents.addAll(dashboardComponentsList);
+
+            dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
         }
         return dashboardTemplateRes;
     }

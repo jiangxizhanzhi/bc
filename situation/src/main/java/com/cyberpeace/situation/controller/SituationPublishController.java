@@ -172,15 +172,18 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		situationPublishInstances.setStatus(SituationInstanceStatus.RELEASE.getCode());
-		// TODO发布逻辑暂定 获取当前科目下仅 能有一个大屏发布
-		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-		queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
-		SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
-		if (null != one) {
-			throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+		//没有科目id时，默认可以发布
+		String subjectId = situationPublishInstances.getSubjectId();
+		if (StringUtils.isNotBlank(subjectId)) {
+			// TODO发布逻辑暂定 获取当前科目下仅 能有一个大屏发布
+			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
+			queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
+			queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
+			SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
+			if (null != one) {
+				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+			}
 		}
-
 		situationPublishInstanceMapper.updateById(situationPublishInstances);
 		return new BaseRsp<>();
 	}

@@ -137,7 +137,7 @@ public class RbRoomController {
 				.selectById(rbTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.CREATE, rbRoomReq.getName(),
-				LogContent.SCENE_FORMAT.format(rbTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
 
 		return getRbRoom(rbRoom.getResourceId());
 	}
@@ -360,7 +360,7 @@ public class RbRoomController {
 		rbRoom = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.UPDATE, rbRoom.getName(),
-				LogContent.SCENE_FORMAT.format(rbRoom.getTemplateName()));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbTrainRoomModifyReq.getName()));
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
@@ -375,10 +375,10 @@ public class RbRoomController {
 		}
 
 		RbRoom rbRoom = rbRoomService.getById(roomId);
-		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
+//		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.DELETE, rbRoom.getName(),
-				LogContent.SCENE_FORMAT.format(rbTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

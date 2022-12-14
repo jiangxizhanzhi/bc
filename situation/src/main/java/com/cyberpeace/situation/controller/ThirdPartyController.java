@@ -125,9 +125,8 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取任务列表")
-	@PostMapping("/task/list/")
-	public BaseRsp<ListRsp<TaskContext>>
-			getTaskList(@RequestBody @Validated TaskListPageReq taskListPageReq) {
+	@GetMapping("/task/list/")
+	public BaseRsp<ListRsp<TaskContext>> getTaskList(TaskListPageReq taskListPageReq) {
 		return new BaseRsp<>(remoteSituationService
 				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
 	}
@@ -139,9 +138,8 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取节点行为数据")
-	@PostMapping("/node/action/")
-	public BaseRsp<ListRsp<NodeActionContext>>
-			getNodeAction(@RequestBody @Validated NodeActionPageReq nodeActionPageReq) {
+	@GetMapping("/node/action/")
+	public BaseRsp<ListRsp<NodeActionContext>> getNodeAction(NodeActionPageReq nodeActionPageReq) {
 
 		return new BaseRsp<>(remoteSituationService
 				.getNodeAction(BeanUtils.copy(nodeActionPageReq, NodeActionReq.class)));
@@ -156,9 +154,8 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取用户行为数据")
-	@PostMapping("/user/action/")
-	public BaseRsp<ListRsp<UserActionContext>>
-			getUserAction(@RequestBody @Validated NodePageReq nodeListApiReq) {
+	@GetMapping("/user/action/")
+	public BaseRsp<ListRsp<UserActionContext>> getUserAction(NodePageReq nodeListApiReq) {
 
 		return new BaseRsp<>(remoteSituationService
 				.getUserAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));

@@ -14,6 +14,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("大屏ID")
 	private String dashboardId;
 
+	@ApiModelProperty("大屏模式 1-GIS/TOPO 2-单GIS 3-单TOPO")
+	private Integer dashboardMode;
+
 	@ApiModelProperty("大屏层级 1-综合态势 2-分靶场态势 3-任务态势")
 	private Integer level;
 

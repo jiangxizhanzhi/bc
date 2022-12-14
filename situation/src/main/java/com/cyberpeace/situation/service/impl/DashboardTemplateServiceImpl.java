@@ -95,7 +95,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         JSONArray newComponentsList = new JSONArray();
+        //获取旧组件id
         List<String> oldComponentsList = JsonUtil.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class);
+
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
         if (CollectionUtils.isNotEmpty(componentsSetting)) {
             for (DashboardComponentsReq dashboardComponentsReq : componentsSetting) {
@@ -104,9 +106,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                 dashboardComponentsReq.setResourceId(newResourceId);
             }
         }
+
         DashboardTemplate toDashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
         toDashboardTemplate.setComponentsSetting(newComponentsList.toString());
         List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(componentsSetting);
+        //删除旧组件信息，插入新组件
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -131,11 +135,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         String componentsSetting = dashboardTemplate.getComponentsSetting();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplate, DashboardTemplateRes.class);
+
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             if (type == null) {
                 dashboardTemplateRes.setComponentsSetting(dashboardComponents);
             } else {
+                //存在视角时，按视角类型筛选数据
                 List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
                 dashboardComponents.forEach(dashboardComponent -> {
                     String componentType = dashboardComponent.getType();

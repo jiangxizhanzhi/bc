@@ -1,0 +1,53 @@
+package com.cyberpeace.situation.model.ws;
+
+import java.io.Serializable;
+
+import com.cyberpeace.situation.model.EventInfo;
+import com.cyberpeace.situation.model.LineStyle;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class WsEventAd implements Serializable {
+
+	@ApiModelProperty("源节点ID")
+	private String sourceId;
+
+	@ApiModelProperty("源平台ID")
+	private String sourcePlatformId;
+
+	@ApiModelProperty("目的节点ID")
+	private String targetId;
+
+	@ApiModelProperty("目的平台ID")
+	private String targetPlatformId;
+
+	@ApiModelProperty("动效类别 1-内置 2-映射")
+	private Integer dynamicType;
+
+	@ApiModelProperty("源节点动效类型（内置）")
+	private Integer sourceActionType;
+
+	@ApiModelProperty("目的节点动效类型（内置）")
+	private Integer targetActionType;
+
+	@ApiModelProperty("源节点动效路径")
+	private Integer sourceNodeDynamicDir;
+
+	@ApiModelProperty("目的节点动效路径")
+	private Integer targetNodeDynamicDir;
+
+	@ApiModelProperty("线型")
+	private LineStyle lineStyle;
+
+	@ApiModelProperty("是否聚焦到目的节点")
+	private Boolean lookAtTarget;
+
+	@ApiModelProperty("持续时间（秒）")
+	private Integer duration;
+
+	@ApiModelProperty("事件信息")
+	private EventInfo eventInfo;
+
+}

@@ -17,6 +17,9 @@ public class ViewAngle implements Serializable {
 	@ApiModelProperty("高程（米）")
 	private Integer altitude;
 
+	@ApiModelProperty("角度")
+	private Integer angle;
+
 	public ViewAngle() {}
 
 	public ViewAngle(String longitude, String latitude, Integer altitude) {

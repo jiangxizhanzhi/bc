@@ -1,9 +1,11 @@
 package com.cyberpeace.situation.service;
 
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.situation.controller.req.ColorThemeImportReq;
 import com.cyberpeace.situation.controller.req.ColorThemePageReq;
 import com.cyberpeace.situation.controller.req.ColorThemeReq;
 import com.cyberpeace.situation.dao.entity.ColorTheme;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -51,4 +53,11 @@ public interface SituationColorThemeService {
      * @return
      */
     ListRsp<ColorTheme> getColorThemePage(ColorThemePageReq colorThemePageReq);
+
+    /**
+     * 上传主题
+     * @param colorThemeImportReq
+     * @return
+     */
+    String importColorTheme(ColorThemeImportReq colorThemeImportReq);
 }

@@ -13,6 +13,8 @@ public class DashboardAttribute implements Serializable {
 
 	private String dashboardId;
 
+	private Integer dashboardMode;
+
 	private Integer level;
 
 	private String title;
@@ -44,5 +46,7 @@ public class DashboardAttribute implements Serializable {
 	private String latitude;
 
 	private Integer altitude;
+
+	private Integer angle;
 
 }

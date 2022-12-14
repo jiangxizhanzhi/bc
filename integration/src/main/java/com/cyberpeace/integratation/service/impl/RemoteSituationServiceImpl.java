@@ -68,7 +68,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
 		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");
 		TASK_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("task.list.all");
-		NETWORK_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("network.info");
+		NETWORK_INFO_URL = outerHostXd + ConfigUtil.getContextProperty("network.info");
 		NODE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("node.info");
 		NODE_ACTION_URL = outerHostTs + ConfigUtil.getContextProperty("node.action");
 		NODE_TREND_URL = outerHostTs + ConfigUtil.getContextProperty("node.trend");

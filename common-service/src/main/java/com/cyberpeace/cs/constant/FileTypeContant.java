@@ -31,4 +31,7 @@ public interface FileTypeContant {
 
 	/** 公共组件类型上传 */
 	String COMMON_COMPONENT = "MP4,MP3";
+
+	/** 后台图标类型上传 */
+	String ICON_SVG = "SVG";
 }

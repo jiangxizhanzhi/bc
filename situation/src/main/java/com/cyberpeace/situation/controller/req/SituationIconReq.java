@@ -34,4 +34,7 @@ public class SituationIconReq extends BaseTable implements Serializable {
     @NotBlank(groups = Create.class)
     @ApiModelProperty("图标url")
     private String iconUrl;
+
+    @ApiModelProperty("背景色")
+    private String color;
 }

@@ -33,6 +33,9 @@ public class SituationIconRes extends BaseTable implements Serializable {
 
     private String createUserName;
 
-    @ApiModelProperty("")
+    @ApiModelProperty("类型名称")
     private String typeName;
+
+    @ApiModelProperty("背景色")
+    private String color;
 }

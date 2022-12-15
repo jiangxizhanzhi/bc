@@ -41,12 +41,6 @@ public class DashboardAttribute implements Serializable {
 
 	private Integer refresh;
 
-	private String longitude;
-
-	private String latitude;
-
-	private Integer altitude;
-
-	private Integer angle;
+	private String viewAngle;
 
 }

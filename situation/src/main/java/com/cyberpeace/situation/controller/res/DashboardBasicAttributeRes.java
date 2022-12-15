@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller.res;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.model.ViewAngle;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -73,5 +74,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	}
 
 	public DashboardBasicAttributeRes() {}
+
+	public void setViewAngle(String viewAngle) {
+		this.viewAngle = JsonUtil.toJsonObject(viewAngle, ViewAngle.class);
+	}
 
 }

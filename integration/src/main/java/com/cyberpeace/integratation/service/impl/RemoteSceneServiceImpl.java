@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.SessionType;
 import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
@@ -393,7 +393,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
         if (null != mpLogFiles && mpLogFiles.size() > 0) {
             log.info("LogFile exist, sceneId=[{}], file size=[{}]", sceneId, mpLogFiles.size());
 
-            getLogFile(mpLogFiles);
+			getLogFile(mpLogFiles, sceneId);
         }
 
         JSONObject topoDigest = new JSONObject();
@@ -402,26 +402,37 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
         return mpLogFiles;
     }
 
-    public void getLogFile(List<MpLogFile> mpLogFiles) {
+	public void getLogFile(List<MpLogFile> mpLogFiles, String sceneId) {
         if (null != mpLogFiles && mpLogFiles.size() > 0) {
             for (MpLogFile mpLogFile : mpLogFiles) {
-                String targetUrl = SCENE_LOGFILE_DOWNLOAD_URLS + "?agentName="
-                        + mpLogFile.getAgentName() + "&osType=" + mpLogFile.getOsType() + "&paths="
-                        + mpLogFile.getPath();
 
-                JSONObject data = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
-                for (Object fileUrl : (List) data.get("list")) {
-                    String downloadUrl = JsonUtil.toJsonObject(fileUrl.toString(), JSONObject.class)
-                            .getString("download_url");
-                    String fileName = JsonUtil.toJsonObject(fileUrl.toString(), JSONObject.class)
-                            .getString("name");
-                    mpLogFile.setUrl(downloadUrl);
+				try {
+					String targetUrl = SCENE_LOGFILE_DOWNLOAD_URLS + "?agentName="
+							+ mpLogFile.getAgentName() + "&osType=" + mpLogFile.getOsType()
+							+ "&paths=" + mpLogFile.getPath();
+
+					JSONObject data = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+					for (Object fileUrl : (List) data.get("list")) {
+						String downloadUrl = JsonUtil
+								.toJsonObject(fileUrl.toString(), JSONObject.class)
+								.getString("download_url");
+						String fileName = JsonUtil
+								.toJsonObject(fileUrl.toString(), JSONObject.class)
+								.getString("name");
+						mpLogFile.setUrl(downloadUrl);
 //					FileDownloadUtil.downloadFile("http://10.100.1.28" + downloadUrl, fileName,"C://work");
 //
 
-                    FileDownloadUtil.downloadFile("http://" + SystemPropUtil.getProp("MP_HOST") + downloadUrl,
-                            fileName, ConfigUtil.getContextProperty("cr.ftp.file.path"));
+FileDownloadUtil.downloadFile("http://" + SystemPropUtil.getProp("MP_HOST") + downloadUrl, fileName,
+		ConfigUtil.getContextProperty("cr.ftp.file.path"));
+}
+
+} catch (Exception e) {
+log.error("get file from Mp error! sceneId = [{}],filePath =[{}], catch error:", sceneId,
+		mpLogFile.getPath(), e);
+
                 }
+
             }
         }
 

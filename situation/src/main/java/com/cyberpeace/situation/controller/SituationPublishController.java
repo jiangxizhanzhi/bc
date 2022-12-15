@@ -6,6 +6,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.situation.SituationPlan;
@@ -14,10 +15,7 @@ import com.cyberpeace.integratation.model.situation.SituationTask;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
-import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
-import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
-import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
+import com.cyberpeace.situation.controller.res.*;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
@@ -106,71 +104,9 @@ public class SituationPublishController {
 
 	@ApiOperation("查询态势发布实例列表")
 	@GetMapping("list")
-	public BaseRsp<List<SituationPublishInstanceListRes>>
+	public BaseRsp<ListRsp<SituationPublishInstancePageRes>>
 	getSituationPublishInstance(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
-		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-		String name = situationPublishInstanceFilterReq.getName();
-		if (null != name){
-			queryWrapper.like(SituationPublishInstance::getName, name);
-		}
-
-		String category = situationPublishInstanceFilterReq.getCategory();
-		if (null != category){
-			// TODO 获取对应任务类型对应的任务列表
-			queryWrapper.in(SituationPublishInstance::getTaskId, category);
-		}
-
-		String status = situationPublishInstanceFilterReq.getStatus();
-		if(null != status){
-			List<String> statusLs = Arrays.stream(SituationInstanceStatus.values()).map(SituationInstanceStatus::getCode).collect(Collectors.toList());
-			if(!statusLs.contains(status)){
-				throw new BusinessException(SituationErrorCode.STATUS_INVALID_ERROR);
-			}
-			queryWrapper.eq(SituationPublishInstance::getStatus, status);
-		}
-
-		queryWrapper.orderByDesc(SituationPublishInstance::getCreateTime);
-		List<SituationPublishInstance> res = situationPublishInstanceMapper.selectList(queryWrapper);
-
-
-		LambdaQueryWrapper<DashboardTemplate> dashboardTemplateLambdaQueryWrapper = new LambdaQueryWrapper<>();
-		List<DashboardTemplate> dashboardTemplates = dashboardTemplateMapper.selectList(dashboardTemplateLambdaQueryWrapper);
-		Map<String, DashboardTemplate> dashboardTemplateMap = dashboardTemplates.stream().collect(Collectors.toMap(DashboardTemplate::getResourceId, dashboardTemplate -> dashboardTemplate));
-
-		List<SituationPublishInstanceListRes> result = new ArrayList<>();
-		List<SituationPlan> plans = remoteSituationService.getPlans();
-		Map<String, SituationPlan> planMaps = plans.stream().collect(Collectors.toMap(SituationPlan::getResourceId, plan -> plan));
-		List<SituationTask> tasks = remoteSituationService.getTasks(null, null);
-		Map<String, SituationTask> taskMaps = tasks.stream().collect(Collectors.toMap(SituationTask::getTask_id, task -> task));
-		List<String> taskIds = StreamApiUtils.getColumn(res, SituationPublishInstance::getTaskId);
-		List<SituationSubject> subjects = remoteSituationService.getSubjectByTasks(taskIds);
-		Map<String, SituationSubject> subjectMaps = subjects.stream().collect(Collectors.toMap(SituationSubject::getSubject_id, subject -> subject));
-		LambdaQueryWrapper<SituationCategory> categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
-		List<SituationCategory> situationCategories = situationCategoryMapper.selectList(categoryLambdaQueryWrapper);
-		Map<String, SituationCategory> collect = situationCategories.stream().collect(Collectors.toMap(SituationCategory::getResourceId, situation -> situation));
-		HashMap<String, String> map = new HashMap<>();
-		for(SituationInstanceStatus tmp:SituationInstanceStatus.values()){
-			map.put(tmp.getCode(), tmp.getDesc());
-		}
-
-
-		res.forEach(s-> {
-			SituationPublishInstanceListRes copy = BeanUtils.copy(s, SituationPublishInstanceListRes.class);
-//			String planName = null == planMaps.get(s.getPlanId()) ? "":planMaps.get(s.getPlanId()).getName();
-//			copy.setPlanName(planName);
-			String taskName = null == taskMaps.get(s.getTaskId()) ? "" : taskMaps.get(s.getTaskId()).getTask_name();
-			copy.setTaskName(taskName);
-			String subjectName = null == subjectMaps.get(s.getSubjectId()) ? "" : subjectMaps.get(s.getSubjectId()).getSubject_name();
-			copy.setSubjectName(subjectName);
-			copy.setStatus(map.get(s.getStatus()));
-			copy.setCategory(null == s.getCategory() || null == collect.get(s.getCategory()) ? "" : collect.get(s.getCategory()).getName());
-			copy.setTemplateName(null == s.getTemplateId() ||null == dashboardTemplateMap.get(s.getTemplateId()) ? "" :dashboardTemplateMap.get(s.getTemplateId()).getName());
-			result.add(copy);
-//
-			//清除多余数据
-			situationPublishInstanceService.deleteUnusedSituation();
-		});
-		return new BaseRsp<>(result);
+		return new BaseRsp<>(situationPublishInstanceService.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
 	}
 
 	@ApiOperation("查询态势发布实例详情")
@@ -236,15 +172,18 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		situationPublishInstances.setStatus(SituationInstanceStatus.RELEASE.getCode());
-		// TODO发布逻辑暂定 获取当前科目下仅 能有一个大屏发布
-		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-		queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
-		SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
-		if (null != one) {
-			throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+		//没有科目id时，默认可以发布
+		String subjectId = situationPublishInstances.getSubjectId();
+		if (StringUtils.isNotBlank(subjectId)) {
+			// TODO发布逻辑暂定 获取当前科目下仅 能有一个大屏发布
+			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
+			queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
+			queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
+			SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
+			if (null != one) {
+				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+			}
 		}
-
 		situationPublishInstanceMapper.updateById(situationPublishInstances);
 		return new BaseRsp<>();
 	}

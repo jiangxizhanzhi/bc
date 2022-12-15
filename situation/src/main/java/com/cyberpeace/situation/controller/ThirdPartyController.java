@@ -119,9 +119,10 @@ public class ThirdPartyController {
 	@ApiOperation("获取网络信息")
 	@PostMapping("/network/")
 	public BaseRsp<NetworkInfoContext>
-			getNetworkInfo(@RequestBody @Validated NodeListApiReq nodeListApiReq) {
+			getNetworkInfo(@RequestBody @Validated PlatformReq platformReq) {
 
-		return new BaseRsp<>(remoteSituationService.getNetworkInfo(nodeListApiReq));
+		return new BaseRsp<>(remoteSituationService
+				.getNetworkInfo(BeanUtils.copy(platformReq, NodeListApiReq.class)));
 	}
 
 	@ApiOperation("获取任务列表")

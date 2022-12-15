@@ -20,4 +20,7 @@ public class NodeBasicInfoContext implements Serializable {
 	@ApiModelProperty("节点IP")
 	private String nodeIp;
 
+	@ApiModelProperty(value = "物理位置")
+	private String location;
+
 }

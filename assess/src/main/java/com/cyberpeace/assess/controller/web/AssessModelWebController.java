@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.util.FileUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,9 @@ public class AssessModelWebController {
 
 		String tagStr = assessTagService.getTagContent(assessModel.getTag());
 		assessModelRsp.setTags(tagStr);
-		if (assessModel.getInterfaceType().equals(AssessModel.interfaceType.OTHER.getCode())) {
+		String fileSuffix = FileUtil.getFileSuffix(assessModelRsp.getAttachmentUrl());
+		if (assessModel.getInterfaceType().equals(AssessModel.interfaceType.OTHER.getCode()) && (fileSuffix.equals(FileSunffixConstant.DOC.getDesc())
+				|| fileSuffix.equals(FileSunffixConstant.DOCX.getDesc())) ) {
 			assessModelRsp.setShowAttachmentUrl(utilService.officeModelUrl(
 					assessModelRsp.getAttachmentUrl(), assessModel.getResourceId()));
 		}

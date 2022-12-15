@@ -12,11 +12,14 @@ public class NodeInfoContext implements Serializable {
 	@ApiModelProperty(value = "节点Id")
 	private String nodeId;
 
-	@ApiModelProperty(value = "节点ip")
+	@ApiModelProperty(value = "节点IP")
 	private String nodeIp;
 
 	@ApiModelProperty(value = "节点名称")
 	private String nodeName;
+
+	@ApiModelProperty(value = "节点MAC")
+	private String nodeMac;
 
 	@ApiModelProperty(value = "重要程度")
 	private String importance;
@@ -53,4 +56,7 @@ public class NodeInfoContext implements Serializable {
 
 	@ApiModelProperty(value = "受威胁程度")
 	private String threatenedDegree;
+
+	@ApiModelProperty(value = "桥接状态 0-无桥接 1-桥接点")
+	private Integer bridgeStatus;
 }

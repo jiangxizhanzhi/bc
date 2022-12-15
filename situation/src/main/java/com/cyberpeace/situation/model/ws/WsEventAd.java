@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.model.ws;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.cyberpeace.situation.model.EventInfo;
 import com.cyberpeace.situation.model.LineStyle;
@@ -14,11 +15,17 @@ public class WsEventAd implements Serializable {
 	@ApiModelProperty("源节点ID")
 	private String sourceId;
 
+	@ApiModelProperty("源节点父节点ID列表")
+	private List<String> sourceParentIds;
+
 	@ApiModelProperty("源平台ID")
 	private String sourcePlatformId;
 
 	@ApiModelProperty("目的节点ID")
 	private String targetId;
+
+	@ApiModelProperty("目的节点父节点ID列表")
+	private List<String> targetParentIds;
 
 	@ApiModelProperty("目的平台ID")
 	private String targetPlatformId;

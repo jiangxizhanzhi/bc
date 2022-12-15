@@ -111,9 +111,10 @@ public class AssessMaterialWebController {
 		String attachment = assessMaterial.getAttachment();
 		assessMaterialExcelDatalRes.setAttachmentUrl(attachment);
 		String fileSuffix = FileUtil.getFileSuffix(attachment);
-		if (assessMaterial.getMaterialType().equals(AssessMaterial.MaterialType.TEXT.getCode()) && (fileSuffix.equals(FileSunffixConstant.DOC.getDesc())
-				|| fileSuffix.equals(FileSunffixConstant.DOCX.getDesc())) ){
-			assessMaterialExcelDatalRes.setAttachmentUrl(utilService.officeMaterialUrl(attachment, assessMaterial.getResourceId()));
+		if (assessMaterial.getMaterialType().equals(AssessMaterial.MaterialType.TEXT.getCode())){
+			if(!fileSuffix.equals(FileSunffixConstant.PDF.getDesc())){
+				assessMaterialExcelDatalRes.setAttachmentUrl(utilService.officeMaterialUrl(attachment, assessMaterial.getResourceId()));
+			}
 		}
 
 		return new BaseRsp<>(assessMaterialExcelDatalRes);

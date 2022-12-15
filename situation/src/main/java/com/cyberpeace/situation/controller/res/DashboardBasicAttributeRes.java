@@ -79,4 +79,8 @@ public class DashboardBasicAttributeRes implements Serializable {
 		this.viewAngle = JsonUtil.toJsonObject(viewAngle, ViewAngle.class);
 	}
 
+	public void setEnvId(String envId) {
+		this.topoId = envId;
+	}
+
 }

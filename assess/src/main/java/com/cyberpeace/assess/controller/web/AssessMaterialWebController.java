@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -42,10 +44,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cs.service.UtilService;
 
 import io.swagger.annotations.Api;
@@ -110,7 +108,14 @@ public class AssessMaterialWebController {
 				assessMaterial.getResourceId()), JSONObject.class));
 		}
 
-		assessMaterialExcelDatalRes.setAttachmentUrl(utilService.officeMaterialUrl(assessMaterial.getAttachment(), assessMaterial.getResourceId()));
+		String attachment = assessMaterial.getAttachment();
+		assessMaterialExcelDatalRes.setAttachmentUrl(attachment);
+		String fileSuffix = FileUtil.getFileSuffix(attachment);
+		if (assessMaterial.getMaterialType().equals(AssessMaterial.MaterialType.TEXT.getCode()) && (fileSuffix.equals(FileSunffixConstant.DOC.getDesc())
+				|| fileSuffix.equals(FileSunffixConstant.DOCX.getDesc())) ){
+			assessMaterialExcelDatalRes.setAttachmentUrl(utilService.officeMaterialUrl(attachment, assessMaterial.getResourceId()));
+		}
+
 		return new BaseRsp<>(assessMaterialExcelDatalRes);
 	}
 

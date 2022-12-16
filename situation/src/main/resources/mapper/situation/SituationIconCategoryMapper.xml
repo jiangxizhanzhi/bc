@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationIconCategoryMapper">
 
     <select id="selectAll" resultType="com.cyberpeace.situation.dao.entity.SituationIconCategory">
-        SELECT * FROM situation_icon_category
+        SELECT * FROM situation_icon_category ORDER BY create_time DESC
     </select>
     <select id="selectByName" resultType="java.lang.String">
         SELECT resource_id FROM situation_icon_category  WHERE `name` = #{name}

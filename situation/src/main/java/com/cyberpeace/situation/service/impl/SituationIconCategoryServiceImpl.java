@@ -27,31 +27,26 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
     @Autowired
     private SituationIconCategoryMapper situationIconCategoryMapper;
 
-    private volatile Map<String, SituationIconCategory> iconCategoryCache = new HashMap<>();
-
     @Override
     public List<SituationIconCategory> getSituationCategoryList(String name) {
-        if (iconCategoryCache.isEmpty()) {
-            init();
-        }
-        if (StringUtils.isEmpty(name)) {
-            return new ArrayList<>(iconCategoryCache.values());
-        } else {
-            List<SituationIconCategory> list = new ArrayList<>();
-            iconCategoryCache.values().forEach(iconCategoryCache -> {
-                if (iconCategoryCache.getName().contains(name)) {
-                    list.add(iconCategoryCache);
+        List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectAll();
+        List<SituationIconCategory> list  = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(situationIconCategories)) {
+            if (StringUtils.isEmpty(name)) {
+                return situationIconCategories;
+            }
+            situationIconCategories.forEach(situationIconCategory -> {
+                if (situationIconCategory.getName().contains(name)) {
+                    list.add(situationIconCategory);
                 }
             });
-            return list;
         }
+        return list;
     }
 
+    @Override
     public SituationIconCategory getSituationIconCategory(String resourceId) {
-        if (iconCategoryCache.containsKey(resourceId)) {
-            return iconCategoryCache.get(resourceId);
-        }
-        return null;
+        return situationIconCategoryMapper.selectById(resourceId);
     }
 
     @Override
@@ -61,16 +56,12 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
         validateName(name, resourceId);
         SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
         situationIconCategoryMapper.updateById(situationIconCategory);
-        iconCategoryCache.replace(resourceId, situationIconCategory);
         return situationIconCategoryReq.getResourceId();
     }
 
     @Override
     public Integer deleteSituationIconCategory(List<String> idList) {
         Integer delete = situationIconCategoryMapper.deleteBatchIds(idList);
-        idList.forEach(resourceId -> {
-            iconCategoryCache.remove(resourceId);
-        });
         return delete;
     }
 
@@ -81,17 +72,7 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
         SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
         situationIconCategory.setResourceId(IDGeneratorUtil.getID());
         situationIconCategoryMapper.insert(situationIconCategory);
-        iconCategoryCache.put(situationIconCategory.getResourceId(),situationIconCategory);
         return situationIconCategory.getResourceId();
-    }
-
-    private void init() {
-        List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectAll();
-        if (CollectionUtils.isNotEmpty(situationIconCategories)) {
-            for (SituationIconCategory situationIconCategory : situationIconCategories) {
-                iconCategoryCache.put(situationIconCategory.getResourceId(), situationIconCategory);
-            }
-        }
     }
 
     private void validateName(String name, String resourceId) {

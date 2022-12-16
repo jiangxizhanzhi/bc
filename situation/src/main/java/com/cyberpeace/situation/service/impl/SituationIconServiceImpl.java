@@ -75,7 +75,7 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         SituationIconRes situationIconRes = changeIconToIconRes(situationIcon);
 
         //设置类型名称
-        List<SituationIconCategory> situationCategoryList = situationIconCategoryService.getSituationCategoryList();
+        List<SituationIconCategory> situationCategoryList = situationIconCategoryService.getSituationCategoryList(null);
         if (CollectionUtils.isNotEmpty(situationCategoryList)) {
             situationCategoryList.stream().forEach(situationIconCategory -> {
                 if (Objects.equals(situationIconCategory.getResourceId(), situationIconRes.getType())) {

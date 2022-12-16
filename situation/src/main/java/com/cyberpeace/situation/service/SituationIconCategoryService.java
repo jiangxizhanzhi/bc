@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface SituationIconCategoryService {
 
-    List<SituationIconCategory> getSituationCategoryList();
+    List<SituationIconCategory> getSituationCategoryList(String name);
 
     /**
      * 获取图标类型

@@ -13,6 +13,7 @@ import com.cyberpeace.situation.dao.entity.SituationIconCategory;
 import com.cyberpeace.situation.service.SituationIconCategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,23 +34,31 @@ public class SituationIconCategoryController {
 
     @ApiOperation("获取图标类型")
     @GetMapping("")
-    public BaseRsp<List<SituationIconCategory>> getSituationCategoryList(){
-        return new BaseRsp<>(situationIconCategoryService.getSituationCategoryList());
+    public BaseRsp<List<SituationIconCategory>> getSituationIconCategoryList(@RequestParam(value = "name", required = false) @ApiParam(name = "name", value = "名称")
+                                                                                     String name){
+        return new BaseRsp<>(situationIconCategoryService.getSituationCategoryList(name));
     }
     @ApiOperation("修改图标类型")
     @PatchMapping("")
-    public BaseRsp<String> updateSituationIcon(@RequestBody @Validated(Update.class) SituationIconCategoryReq situationIconCategoryReq) {
+    public BaseRsp<String> updateituationIconCategory(@RequestBody @Validated(Update.class) SituationIconCategoryReq situationIconCategoryReq) {
         return new BaseRsp<>(situationIconCategoryService.updateSituationIconCategory(situationIconCategoryReq));
     }
     @ApiOperation("批量删除改图标类型")
     @DeleteMapping("")
-    public BaseRsp<Integer> deleteSituationIcon(@RequestBody @Validated SituationIconDelReq SituationIconDelReq) {
+    public BaseRsp<Integer> deleteituationIconCategory(@RequestBody @Validated SituationIconDelReq SituationIconDelReq) {
         return new BaseRsp<>(situationIconCategoryService.deleteSituationIconCategory(SituationIconDelReq.getIdList()));
     }
 
     @ApiOperation("新增图标类型")
     @PostMapping()
-    public BaseRsp<String> createColorTheme(@RequestBody @Validated(Create.class) SituationIconCategoryReq situationIconCategoryReq) {
+    public BaseRsp<String> createituationIconCategory(@RequestBody @Validated(Create.class) SituationIconCategoryReq situationIconCategoryReq) {
         return new BaseRsp<>(situationIconCategoryService.createSituationIcon(situationIconCategoryReq));
+    }
+
+    @ApiOperation("获取图标类型详情")
+    @GetMapping()
+    public BaseRsp<SituationIconCategory> getSituationIconCategory(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
+                                                                           String resourceId){
+        return new BaseRsp<>(situationIconCategoryService.getSituationIconCategory(resourceId));
     }
 }

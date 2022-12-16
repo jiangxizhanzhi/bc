@@ -30,11 +30,21 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
     private volatile Map<String, SituationIconCategory> iconCategoryCache = new HashMap<>();
 
     @Override
-    public List<SituationIconCategory> getSituationCategoryList() {
+    public List<SituationIconCategory> getSituationCategoryList(String name) {
         if (iconCategoryCache.isEmpty()) {
             init();
         }
-        return new ArrayList<>(iconCategoryCache.values());
+        if (StringUtils.isEmpty(name)) {
+            return new ArrayList<>(iconCategoryCache.values());
+        } else {
+            List<SituationIconCategory> list = new ArrayList<>();
+            iconCategoryCache.values().forEach(iconCategoryCache -> {
+                if (iconCategoryCache.getName().contains(name)) {
+                    list.add(iconCategoryCache);
+                }
+            });
+            return list;
+        }
     }
 
     public SituationIconCategory getSituationIconCategory(String resourceId) {
@@ -71,6 +81,7 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
         SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
         situationIconCategory.setResourceId(IDGeneratorUtil.getID());
         situationIconCategoryMapper.insert(situationIconCategory);
+        iconCategoryCache.put(situationIconCategory.getResourceId(),situationIconCategory);
         return situationIconCategory.getResourceId();
     }
 

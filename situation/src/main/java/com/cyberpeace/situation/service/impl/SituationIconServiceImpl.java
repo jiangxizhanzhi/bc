@@ -138,7 +138,7 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
     private void validateName(String name, String resourceId) {
         String selectResourceId = situationIconMapper.selectByName(name);
         if (StringUtils.isNotBlank(resourceId)) {
-            if (!Objects.equals(resourceId, selectResourceId)) {
+            if (StringUtils.isNotBlank(selectResourceId) && !Objects.equals(resourceId, selectResourceId)) {
                 throw new BusinessException(ErrorCode.NAME_DUPLICATE);
             }
         } else {

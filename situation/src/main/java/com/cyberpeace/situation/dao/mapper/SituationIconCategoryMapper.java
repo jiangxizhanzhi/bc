@@ -17,4 +17,11 @@ public interface SituationIconCategoryMapper extends BaseMapper<SituationIconCat
      * @return
      */
     List<SituationIconCategory> selectAll();
+
+    /**
+     * 名称查询
+     * @param name
+     * @return
+     */
+    String selectByName(String name);
 }

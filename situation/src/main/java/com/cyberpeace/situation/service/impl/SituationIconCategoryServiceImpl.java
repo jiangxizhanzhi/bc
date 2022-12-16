@@ -1,17 +1,21 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.situation.controller.req.SituationIconCategoryReq;
+import com.cyberpeace.situation.controller.req.SituationIconReq;
 import com.cyberpeace.situation.dao.entity.SituationIconCategory;
 import com.cyberpeace.situation.dao.mapper.SituationIconCategoryMapper;
 import com.cyberpeace.situation.service.SituationIconCategoryService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author xuxz
@@ -40,6 +44,36 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
         return null;
     }
 
+    @Override
+    public String updateSituationIconCategory(SituationIconCategoryReq situationIconCategoryReq) {
+        String name = situationIconCategoryReq.getName();
+        String resourceId = situationIconCategoryReq.getResourceId();
+        validateName(name, resourceId);
+        SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
+        situationIconCategoryMapper.updateById(situationIconCategory);
+        iconCategoryCache.replace(resourceId, situationIconCategory);
+        return situationIconCategoryReq.getResourceId();
+    }
+
+    @Override
+    public Integer deleteSituationIconCategory(List<String> idList) {
+        Integer delete = situationIconCategoryMapper.deleteBatchIds(idList);
+        idList.forEach(resourceId -> {
+            iconCategoryCache.remove(resourceId);
+        });
+        return delete;
+    }
+
+    @Override
+    public String createSituationIcon(SituationIconCategoryReq situationIconCategoryReq) {
+        String name = situationIconCategoryReq.getName();
+        validateName(name, null);
+        SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
+        situationIconCategory.setResourceId(IDGeneratorUtil.getID());
+        situationIconCategoryMapper.insert(situationIconCategory);
+        return situationIconCategory.getResourceId();
+    }
+
     private void init() {
         List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectAll();
         if (CollectionUtils.isNotEmpty(situationIconCategories)) {
@@ -47,5 +81,21 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
                 iconCategoryCache.put(situationIconCategory.getResourceId(), situationIconCategory);
             }
         }
+    }
+
+    private void validateName(String name, String resourceId) {
+        String selectResourceId = situationIconCategoryMapper.selectByName(name);
+        if (StringUtils.isNotBlank(resourceId)) {
+            if (StringUtils.isNotBlank(selectResourceId) && !Objects.equals(resourceId, selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
+        } else {
+            if (StringUtils.isNotBlank(selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
+        }
+    }
+    private SituationIconCategory changeReqToSituationIconCategory(SituationIconCategoryReq situationIconCategoryReq){
+        return BeanUtils.copy(situationIconCategoryReq, SituationIconCategory.class);
     }
 }

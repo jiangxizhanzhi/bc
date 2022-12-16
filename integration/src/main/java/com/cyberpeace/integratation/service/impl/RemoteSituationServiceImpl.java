@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.bo.situation.ThirdPartyTopoBo;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -219,6 +220,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public TopoContext getTopo(TopoReq topoReq) {
-		return HttpClientUtil.rawGet(XD_TOPO_URL + "demo", TopoContext.class);
+
+		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo", ThirdPartyTopoBo.class);
+		return topoBo.convert();
 	}
 }

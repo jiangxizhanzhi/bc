@@ -16,6 +16,7 @@ import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.*;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
@@ -183,6 +184,13 @@ public class SituationPublishController {
 			if (null != one) {
 				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
 			}
+		}
+		String taskId = situationPublishInstances.getTaskId();
+		DashboardAttribute dashboardAttribute = new DashboardAttribute();
+		if (StringUtils.isNotBlank(taskId) && StringUtils.isNotBlank(subjectId)) {
+			dashboardAttribute.setDashboardId(resourceId);
+			dashboardAttribute.setSubjectId(subjectId);
+			dashboardAttribute.setTaskId(taskId);
 		}
 		situationPublishInstanceMapper.updateById(situationPublishInstances);
 		return new BaseRsp<>();

@@ -97,7 +97,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
     public String apiConnectTest(ApiConnectReq apiConnectReq) {
         String requestMethod = apiConnectReq.getRequestMethod();
         HttpHeaders headers = getHeaders(apiConnectReq.getRequestHeaders());
-        JSONObject body = getBody(apiConnectReq.getRequestParams());
+        JSONObject body = getBody(apiConnectReq);
         HttpEntity httpEntity = new HttpEntity(body, headers);
         String requestUrl = apiConnectReq.getRequestUrl();
         String message = null;
@@ -178,13 +178,30 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         return httpHeaders;
     }
 
-    private JSONObject getBody(List<ApiRequestParams> requestParams) {
-        JSONObject body = new JSONObject();
+    private JSONObject getBody(ApiConnectReq apiConnectReq) {
+        String requestUrl = apiConnectReq.getRequestUrl();
+        String requestMethod = apiConnectReq.getRequestMethod();
+        List<ApiRequestParams> requestParams = apiConnectReq.getRequestParams();
         if (CollectionUtils.isNotEmpty(requestParams)) {
-            for (ApiRequestParams requestParam : requestParams) {
-                body.put(requestParam.getName(), requestParam.getValue());
+            if (Objects.equals(requestMethod, "GET")) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(requestUrl).append("?");
+                for (ApiRequestParams requestParam : requestParams) {
+                    String value = requestParam.getValue();
+                    if (StringUtils.isNotBlank(value)) {
+                        sb.append(requestParam.getName()).append("=").append(requestParam.getValue()).append("&");
+                    }
+                }
+                sb.delete(sb.lastIndexOf("&"), sb.length());
+                apiConnectReq.setRequestUrl(sb.toString());
+                return null;
+            } else {
+                JSONObject body = new JSONObject();
+                for (ApiRequestParams requestParam : requestParams) {
+                    body.put(requestParam.getName(), requestParam.getValue());
+                }
+                return body;
             }
-            return body;
         }
         return null;
     }

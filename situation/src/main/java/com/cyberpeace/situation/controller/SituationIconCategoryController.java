@@ -56,7 +56,7 @@ public class SituationIconCategoryController {
     }
 
     @ApiOperation("获取图标类型详情")
-    @GetMapping()
+    @GetMapping("/info")
     public BaseRsp<SituationIconCategory> getSituationIconCategory(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
                                                                            String resourceId){
         return new BaseRsp<>(situationIconCategoryService.getSituationIconCategory(resourceId));

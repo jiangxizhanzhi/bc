@@ -17,15 +17,25 @@ public class ViewAngle implements Serializable {
 	@ApiModelProperty("高程（米）")
 	private Integer altitude;
 
-	@ApiModelProperty("角度")
-	private Integer angle;
+	@ApiModelProperty("倾斜值")
+	private Float pitch;
+
+	@ApiModelProperty("偏移值")
+	private Float yaw;
+
+	@ApiModelProperty("旋转值")
+	private Float roll;
 
 	public ViewAngle() {}
 
-	public ViewAngle(String longitude, String latitude, Integer altitude) {
+	public ViewAngle(String longitude, String latitude, Integer altitude, Float pitch, Float yaw,
+			Float roll) {
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.altitude = altitude;
+		this.pitch = pitch;
+		this.yaw = yaw;
+		this.roll = roll;
 	}
 
 }

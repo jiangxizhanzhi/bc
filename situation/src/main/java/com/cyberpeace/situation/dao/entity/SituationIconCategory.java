@@ -1,0 +1,26 @@
+package com.cyberpeace.situation.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.io.Serializable;
+
+/**
+ * @Author xuxz
+ * @Date 15/12/2022 上午11:52
+ */
+@Data
+@TableName("situation_icon_category")
+public class SituationIconCategory implements Serializable {
+
+    @ApiModelProperty("资源id")
+    @TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+    private String resourceId;
+
+    @ApiModelProperty("图标类型名称")
+    private String name;
+
+}

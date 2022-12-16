@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -136,6 +137,24 @@ public class ThirdPartyController {
 	@PostMapping("/node/info/")
 	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
 		return new BaseRsp<>(remoteSituationService.getNodeInfo(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取相似节点")
+	@PostMapping("/node/similar_nodes/")
+	public BaseRsp<List<NodeBasicInfoContext>>
+			getSimilarNodeList(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		NodeBasicInfoContext nodeBasicInfoContext = new NodeBasicInfoContext();
+		nodeBasicInfoContext.setNodeIp("127.0.0.1");
+		nodeBasicInfoContext.setNodeId("001");
+		nodeBasicInfoContext.setLocation("北京市");
+		nodeBasicInfoContext.setNodeType("路由器");
+		nodeBasicInfoContext.setNodeName("节点001");
+
+		List<NodeBasicInfoContext> nodeBasicInfoContexts = Lists.newArrayList();
+		nodeBasicInfoContexts.add(nodeBasicInfoContext);
+
+		return new BaseRsp<>(nodeBasicInfoContexts);
 	}
 
 	@ApiOperation("获取节点行为数据")

@@ -193,4 +193,7 @@ public interface MenuConstant {
 
     //态势动效库
     String CMS_SITUATION_DYNAMIC_EFFICIENCY = "dynamic-efficiency";
+
+    //图标管理
+    String CMS_SITUATION_ICON = "icon";
 }

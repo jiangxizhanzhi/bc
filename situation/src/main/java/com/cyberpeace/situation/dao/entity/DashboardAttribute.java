@@ -4,14 +4,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
 @Data
 @TableName("situation_dashboard_attribute")
-public class DashboardAttribute implements Serializable {
+public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private String dashboardId;
+
+	private Integer dashboardType;
 
 	private Integer dashboardMode;
 
@@ -20,6 +23,14 @@ public class DashboardAttribute implements Serializable {
 	private String title;
 
 	private String subTitle;
+
+	private String schemeId;
+
+	private String schemeName;
+
+	private String schemeDesc;
+
+	private String envId;
 
 	private String subRangeId;
 
@@ -31,22 +42,16 @@ public class DashboardAttribute implements Serializable {
 
 	private String taskType;
 
+	private String taskSubType;
+
 	private String subjectId;
 
 	private String subjectName;
 
 	private Date startTime;
 
-	private String topoId;
-
 	private Integer refresh;
 
-	private String longitude;
-
-	private String latitude;
-
-	private Integer altitude;
-
-	private Integer angle;
+	private String viewAngle;
 
 }

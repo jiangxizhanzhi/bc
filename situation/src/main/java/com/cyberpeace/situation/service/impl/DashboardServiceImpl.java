@@ -26,8 +26,7 @@ public class DashboardServiceImpl implements DashboardService {
 		if (dashboardAttribute != null) {
 			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
-			dashboardBasicAttributeRes
-					.setViewAngle(BeanUtils.deepCopy(dashboardAttribute, ViewAngle.class));
+			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
 			return dashboardBasicAttributeRes;
 
 		}
@@ -36,13 +35,15 @@ public class DashboardServiceImpl implements DashboardService {
 
 		if ("lgzx".equals(dashboardId)) {
 			data = new DashboardBasicAttributeRes(dashboardId, 1, "LG中心综合态势", null, null, null,
-					new Date(), new ViewAngle("108.768", "33.712", 6115168));
+					new Date(),
+					new ViewAngle("117.2591507", "31.7956434", 10000, 1.0f, 1.0f, 1.0f));
 		} else if ("zhxfbc".equals(dashboardId)) {
-			data = new DashboardBasicAttributeRes(dashboardId, 2, "XXX分靶场综合态势", null, "7",
+			data = new DashboardBasicAttributeRes(dashboardId, 2, "XXX分靶场综合态势", null, "zhxfbc",
 					null, new Date(), new ViewAngle());
 		} else {
 			data = new DashboardBasicAttributeRes(dashboardId, 3, "ZH性分靶场任务态势", "XXXX红蓝对抗任务", null,
-					dashboardId, new Date(), new ViewAngle("104.086", "30.649", 1463));
+					dashboardId, new Date(),
+					new ViewAngle("117.2591507", "31.7956434", 10000, 1.0f, 1.0f, 1.0f));
 		}
 
 		return data;

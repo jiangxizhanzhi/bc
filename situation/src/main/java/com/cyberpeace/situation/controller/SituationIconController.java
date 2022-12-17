@@ -31,7 +31,7 @@ public class SituationIconController {
 
     @ApiOperation("新增图标")
     @PostMapping()
-    public BaseRsp<String> createColorTheme(@RequestBody @Validated(Create.class) SituationIconReq situationIconReq) {
+    public BaseRsp<String> createSituationIcon(@RequestBody @Validated(Create.class) SituationIconReq situationIconReq) {
         return new BaseRsp<>(situationIconService.createSituationIcon(situationIconReq));
     }
 

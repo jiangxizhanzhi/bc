@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationPlotPixelMapper">
+
+    <select id="selectPage" resultType="com.cyberpeace.situation.dao.entity.SituationPlotPixel">
+        SELECT * FROM situation_plot_pixel WHERE 1 = 1
+        <if test="situationPlotPixelPageReq.name != null and situationPlotPixelPageReq.name != ''">
+            AND name LIKE concat("%", #{situationPlotPixelPageReq.name} ,"%")
+        </if>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

@@ -23,7 +23,7 @@ public enum UploadImagePermission implements GenericEnum {
 	WEB_SINGLE_IMAGE(9, "前台单兵训练", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_SINGLE_TRAIN }),
 	WEB_EVALUATE_IMAGE(10, "前台靶场测评", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_CR_EVALUATION }),
 	WEB_OPERATION_IMAGE(11, "前台实操习题", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.WEB_OJ_PRACTICE_OPERATION }),
-	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE}),
+	WEB_COURSE_IMAGE(12, "前台课程", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.WEB_OJ_COURSE ,MenuConstant.WEB_OJ_ALL_COURSE}),
 	CMS_THEORY_IMAGE(13, "后台理论习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_THEORY_PRACTICE}),
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] { MenuConstant.CMS_PRACTICE_OPERATION }),
 	COMMON_IMAGE(999, "通用上传", FileTypeContant.PIC_TYPE, new String[] {});

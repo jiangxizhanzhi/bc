@@ -150,7 +150,7 @@ implements AssessMaterialService{
             // 获取解压的讲义文件
             String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
             if (StringUtils.isBlank(mdFilePath)) {
-                throw new BusinessException("assess material attachment content error");
+                throw new BusinessException(AssessErrorCode.MATERIAL_TYPE_ERROR);
             }
             assessMaterial.setHandoutType(AssessMaterial.HandoutType.MD.getCode());
 

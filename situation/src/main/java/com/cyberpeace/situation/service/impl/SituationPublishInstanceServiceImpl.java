@@ -9,35 +9,39 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.situation.SituationSubject;
 import com.cyberpeace.integratation.model.situation.SituationTask;
+import com.cyberpeace.integratation.model.situation.SubjectContext;
+import com.cyberpeace.integratation.model.situation.TaskContext;
+import com.cyberpeace.integratation.model.situation.req.TaskListReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
+import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
-import com.cyberpeace.situation.dao.entity.DashboardTemplate;
-import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
-import com.cyberpeace.situation.dao.entity.SituationCategory;
-import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
-import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
-import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.dao.entity.*;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.ThirdPartyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,6 +74,15 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     @Autowired
     private RemoteSituationService remoteSituationService;
 
+    @Autowired
+    private ThirdPartyService thirdPartyService;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private DashboardAttributeMapper dashboardAttributeMapper;
+
     @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
         SituationPublishInstance situationPublishInstance = BeanUtils.copy(situationPublishInstanceAddReq,
@@ -80,11 +93,48 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setCreateUserId(userId);
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
 
-        try{
-            situationPublishInstanceMapper.insert(situationPublishInstance);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
-        }
+        //插入situation_dashboard_attribute
+        DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstance, DashboardAttribute.class);
+        String templateId = situationPublishInstanceAddReq.getTemplateId();
+        String subjectId = situationPublishInstanceAddReq.getSubjectId();
+        String taskId = situationPublishInstanceAddReq.getTaskId();
+        String planId = situationPublishInstanceAddReq.getPlanId();
+        String name = situationPublishInstanceAddReq.getName();
+        List<SubjectContext> subjectContextList = new ArrayList<>();
+        List<TaskContext> taskList = getTaskList();
+
+        dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
+        dashboardAttribute.setDashboardId(name);
+        dashboardAttribute.setDashboardType(2);
+        //设置任务属性
+        taskList.forEach(taskContext -> {
+            if (Objects.equals(taskContext.getTaskId(), taskId)) {
+                dashboardAttribute.setTaskName(taskContext.getTaskName());
+                dashboardAttribute.setTaskType(taskContext.getTaskType());
+                subjectContextList.addAll(taskContext.getSubjectList());
+            }
+        });
+
+        //设置分靶场属性
+        subjectContextList.forEach(subjectContext -> {
+            if (Objects.equals(subjectContext.getSubjectId(), subjectId)) {
+                dashboardAttribute.setSubjectName(subjectContext.getSubjectName());
+            }
+        });
+
+        //TODO 分靶场类型设置
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    situationPublishInstanceMapper.insert(situationPublishInstance);
+                    dashboardAttributeMapper.insert(dashboardAttribute);
+                } catch (DuplicateKeyException e) {
+                    throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+                }
+            }
+        });
         return null;
     }
 
@@ -106,7 +156,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     private void checkTemplate(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
 
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(situationPublishInstanceAddReq.getTemplateId());
-        if(null == dashboardTemplateRef){
+        if (null == dashboardTemplateRef) {
             throw new BusinessException(SituationErrorCode.TEMPLATE_INVALID_ERROR);
         }
     }
@@ -115,7 +165,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     public SituationPublishInstance updateOne(SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
         SituationPublishInstance patchObj = BeanUtils.copy(situationPublishInstanceUpdateReq, SituationPublishInstance.class);
         SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(situationPublishInstanceUpdateReq.getResourceId());
-        if(null == situationPublishInstance){
+        if (null == situationPublishInstance) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
@@ -132,7 +182,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return null;
     }
 
-    public void deleteUnusedSituation(){
+    public void deleteUnusedSituation() {
         List<String> list = dashboardTemplateRefMapper.selectAllId();
         dashboardTemplateRefService.deleteDashboardTemplate(list);
     }
@@ -147,30 +197,43 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         List<SituationPublishInstancePageRes> situationPublishInstancePageResList = situationPublishInstancePage.getRecords();
 
         //任务id列表
-        List<SituationTask> taskIdList = remoteSituationService.getTasks(null, null);
-        Map<String, SituationTask> taskMaps = taskIdList.stream().collect(Collectors.toMap(SituationTask::getTask_id, task -> task));
-        //科目列表
-        List<String> taskIds = StreamApiUtils.getColumn(situationPublishInstancePageResList,SituationPublishInstancePageRes::getTaskId);
-        List<SituationSubject> subjectList = remoteSituationService.getSubjectByTasks(taskIds);
-        Map<String, SituationSubject> subjectMaps = subjectList.stream().collect(Collectors.toMap(SituationSubject::getSubject_id, subject -> subject));
-        //任务类型id列表
-        LambdaQueryWrapper<SituationCategory> categoryLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        List<SituationCategory> situationCategories = situationCategoryMapper.selectList(categoryLambdaQueryWrapper);
-        Map<String, SituationCategory> categoryMaps = situationCategories.stream().collect(Collectors.toMap(SituationCategory::getResourceId, situation -> situation));
+        List<TaskContext> taskContextList = getTaskList();
+        Map<String, TaskContext> taskMaps = taskContextList.stream().collect(Collectors.toMap(TaskContext::getTaskId, task -> task));
+        List<SubjectContext> subjectList = new ArrayList<>();
 
+        //科目列表
+        List<String> taskIds = StreamApiUtils.getColumn(situationPublishInstancePageResList, SituationPublishInstancePageRes::getTaskId);
+        taskContextList.forEach(taskContext -> {
+            if (taskIds.contains(taskContext.getTaskId())) {
+                List<SubjectContext> list = taskContext.getSubjectList();
+                if (CollectionUtils.isNotEmpty(list)) {
+                    subjectList.addAll(taskContext.getSubjectList());
+                }
+            }
+        });
+        Map<String, SubjectContext> subjectMaps = subjectList.stream().collect(Collectors.toMap(SubjectContext::getSubjectId, subject -> subject));
+
+        //任务类型id列表
+        HashMap<String, String> taskTypeMap = TaskType.getTaskType();
         List<LocalType> statusList = SituationInstanceStatus.getMsgList();
+
         //填充相关名称
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
+
                 if (taskMaps.containsKey(situationPublishInstancePageRes.getTaskId())) {
-                    situationPublishInstancePageRes.setTaskName(taskMaps.get(situationPublishInstancePageRes.getTaskId()).getTask_name());
+                    situationPublishInstancePageRes.setTaskName(taskMaps.get(situationPublishInstancePageRes.getTaskId()).getTaskName());
                 }
+
                 if (subjectMaps.containsKey(situationPublishInstancePageRes.getSubjectId())) {
-                    situationPublishInstancePageRes.setSubjectName(subjectMaps.get(situationPublishInstancePageRes.getSubjectId()).getSubject_name());
+                    situationPublishInstancePageRes.setSubjectName(subjectMaps.get(situationPublishInstancePageRes.getSubjectId()).getSubjectName());
                 }
-                if (categoryMaps.containsKey(situationPublishInstancePageRes.getCategory())) {
-                    situationPublishInstancePageRes.setCategory(categoryMaps.get(situationPublishInstancePageRes.getCategory()).getName());
+
+                String category = situationPublishInstancePageRes.getCategory();
+                if (taskTypeMap.containsKey(category)) {
+                    situationPublishInstancePageRes.setCategory(taskTypeMap.get(category));
                 }
+
                 statusList.forEach(localType -> {
                     if (Objects.equals(localType.getCode(), situationPublishInstancePageRes.getStatus())) {
                         situationPublishInstancePageRes.setStatus(localType.getMsg());
@@ -180,5 +243,18 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         }
         situationPublishInstancePage.setRecords(situationPublishInstancePageResList);
         return PageUtil.getListResult(situationPublishInstancePage);
+    }
+
+    /**
+     * 获取任务列表
+     * @return
+     */
+    private List<TaskContext> getTaskList(){
+        TaskListReq taskListReq = new TaskListReq();
+        taskListReq.setPage(1);
+        taskListReq.setPageSize(999);
+        ListRsp<TaskContext> taskList = remoteSituationService.getTaskList(taskListReq);
+        List<TaskContext> taskContextList = taskList.getList();
+        return taskContextList;
     }
 }

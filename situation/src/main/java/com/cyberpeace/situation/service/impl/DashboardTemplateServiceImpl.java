@@ -406,18 +406,16 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         try {
             JSONObject jsonObject = JSONObject.parseObject(resourceData);
             Object dataObject = jsonObject.get("data");
-            //仅返回类型为对象类型时处理结果
+            JSONArray jsonArray = new JSONArray();
+            //仅返回类型为JSON对象或者JSON数据类型时处理结果
             if (dataObject instanceof JSONObject) {
                 JSONObject objectData = jsonObject.getJSONObject("data");
-                JSONArray jsonArray = new JSONArray();
-                if (StringUtils.isBlank(responseKey)) {
-                    jsonArray.addAll(JsonUtil.stringToArray(objectData.toString()));
-                } else {
-                    jsonArray.addAll(objectData.getJSONArray(responseKey));
-                }
-                if (!jsonArray.isEmpty()) {
-                    data.addAll(jsonArray);
-                }
+                jsonArray.addAll(objectData.getJSONArray(responseKey));
+            }else if (dataObject instanceof JSONArray) {
+                jsonArray.addAll(jsonObject.getJSONArray("data"));
+            }
+            if (!jsonArray.isEmpty()) {
+                data.addAll(jsonArray);
             }
             // 获取需要的参数列表
             apiResponseParams = JsonUtil.toJsonObjectArray(response, ApiResponseParams.class);

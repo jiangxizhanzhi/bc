@@ -3,6 +3,7 @@ package com.cyberpeace.situation.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("situation_icon_category")
-public class SituationIconCategory implements Serializable {
+public class SituationIconCategory extends BaseTable implements Serializable {
 
     @ApiModelProperty("资源id")
     @TableId(type = IdType.ASSIGN_UUID, value = "resource_id")

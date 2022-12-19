@@ -14,4 +14,7 @@ public class SubjectContext implements Serializable {
 	@ApiModelProperty(value = "科目名称")
 	private String subjectName;
 
+	@ApiModelProperty(value = "科目状态")
+	private String subjectStatus;
+
 }

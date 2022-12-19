@@ -51,4 +51,14 @@ public enum TaskType {
 		}
 		return list;
 	}
+
+	public static HashMap<String, String> getTaskType(){
+		HashMap<String, String> hashMap = new HashMap<>();
+		for (TaskType taskType : EnumSet.allOf(TaskType.class)) {
+			HashMap<String, String> map = new HashMap<>();
+			map.put("name", taskType.name);
+			map.put("code", taskType.code);
+		}
+		return hashMap;
+	}
 }

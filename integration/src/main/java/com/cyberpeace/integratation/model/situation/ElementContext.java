@@ -33,7 +33,7 @@ public class ElementContext implements Serializable {
 	private String deviceType;
 
 	@ApiModelProperty("设备模型")
-	private String deviceModel;
+	private String model;
 
 	@ApiModelProperty("元素层级")
 	private Float hierarchy;

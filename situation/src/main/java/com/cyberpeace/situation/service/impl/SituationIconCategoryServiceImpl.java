@@ -1,17 +1,21 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.situation.controller.req.SituationIconCategoryReq;
+import com.cyberpeace.situation.controller.req.SituationIconReq;
 import com.cyberpeace.situation.dao.entity.SituationIconCategory;
 import com.cyberpeace.situation.dao.mapper.SituationIconCategoryMapper;
 import com.cyberpeace.situation.service.SituationIconCategoryService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author xuxz
@@ -23,29 +27,67 @@ public class SituationIconCategoryServiceImpl extends ServiceImpl<SituationIconC
     @Autowired
     private SituationIconCategoryMapper situationIconCategoryMapper;
 
-    private volatile Map<String, SituationIconCategory> iconCategoryCache = new HashMap<>();
+    @Override
+    public List<SituationIconCategory> getSituationCategoryList(String name) {
+        List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectAll();
+        List<SituationIconCategory> list  = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(situationIconCategories)) {
+            if (StringUtils.isEmpty(name)) {
+                return situationIconCategories;
+            }
+            situationIconCategories.forEach(situationIconCategory -> {
+                if (situationIconCategory.getName().contains(name)) {
+                    list.add(situationIconCategory);
+                }
+            });
+        }
+        return list;
+    }
 
     @Override
-    public List<SituationIconCategory> getSituationCategoryList() {
-        if (iconCategoryCache.isEmpty()) {
-            init();
-        }
-        return new ArrayList<>(iconCategoryCache.values());
-    }
-
     public SituationIconCategory getSituationIconCategory(String resourceId) {
-        if (iconCategoryCache.containsKey(resourceId)) {
-            return iconCategoryCache.get(resourceId);
-        }
-        return null;
+        return situationIconCategoryMapper.selectById(resourceId);
     }
 
-    private void init() {
-        List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectAll();
-        if (CollectionUtils.isNotEmpty(situationIconCategories)) {
-            for (SituationIconCategory situationIconCategory : situationIconCategories) {
-                iconCategoryCache.put(situationIconCategory.getResourceId(), situationIconCategory);
+    @Override
+    public String updateSituationIconCategory(SituationIconCategoryReq situationIconCategoryReq) {
+        String name = situationIconCategoryReq.getName();
+        String resourceId = situationIconCategoryReq.getResourceId();
+        validateName(name, resourceId);
+        SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
+        situationIconCategoryMapper.updateById(situationIconCategory);
+        return situationIconCategoryReq.getResourceId();
+    }
+
+    @Override
+    public Integer deleteSituationIconCategory(List<String> idList) {
+        Integer delete = situationIconCategoryMapper.deleteBatchIds(idList);
+        return delete;
+    }
+
+    @Override
+    public String createSituationIcon(SituationIconCategoryReq situationIconCategoryReq) {
+        String name = situationIconCategoryReq.getName();
+        validateName(name, null);
+        SituationIconCategory situationIconCategory = changeReqToSituationIconCategory(situationIconCategoryReq);
+        situationIconCategory.setResourceId(IDGeneratorUtil.getID());
+        situationIconCategoryMapper.insert(situationIconCategory);
+        return situationIconCategory.getResourceId();
+    }
+
+    private void validateName(String name, String resourceId) {
+        String selectResourceId = situationIconCategoryMapper.selectByName(name);
+        if (StringUtils.isNotBlank(resourceId)) {
+            if (StringUtils.isNotBlank(selectResourceId) && !Objects.equals(resourceId, selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
+        } else {
+            if (StringUtils.isNotBlank(selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
             }
         }
+    }
+    private SituationIconCategory changeReqToSituationIconCategory(SituationIconCategoryReq situationIconCategoryReq){
+        return BeanUtils.copy(situationIconCategoryReq, SituationIconCategory.class);
     }
 }

@@ -1,0 +1,28 @@
+package com.cyberpeace.situation.controller.req;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+
+/**
+ * @Author xuxz
+ * @Date 16/12/2022 下午2:32
+ */
+@Data
+public class SituationIconCategoryReq extends BaseTable implements Serializable {
+    @ApiModelProperty("资源id")
+    @TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+    @NotBlank(groups = Update.class)
+    private String resourceId;
+
+    @ApiModelProperty("图标名称")
+    @NotBlank(groups = Create.class)
+    private String name;
+}

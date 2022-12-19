@@ -8,8 +8,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.gateway.controller.req.ControlCommandReq;
+import com.cyberpeace.gateway.controller.req.EmissionReq;
 import com.cyberpeace.gateway.controller.req.PlanBindSituationReq;
+import com.cyberpeace.gateway.controller.req.SituationSchemeBo;
+import com.cyberpeace.gateway.controller.res.BooleanRes;
 import com.cyberpeace.gateway.controller.res.ControlRes;
+import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.model.SceneData;
@@ -85,4 +89,24 @@ public class ExternalSituationController {
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
+	@CrossOrigin("*")
+	@ApiOperation("接收可视化方案的新建、编辑")
+	@PostMapping("/scheme")
+	public BaseRsp<ScreenPathRes>
+			receiveScheme(@RequestBody @Validated SituationSchemeBo schemeBo) {
+		log.info("成功接收可视化方案：{}", JsonUtil.toJsonString(schemeBo));
+		ScreenPathRes res = new ScreenPathRes();
+		res.setPath("/xx/yy");
+		return new BaseRsp<>(res);
+	}
+
+	@CrossOrigin("*")
+	@ApiOperation("可视化-接收想定下发指令")
+	@PostMapping("/emission")
+	public BaseRsp<BooleanRes> receiveEmission(@RequestBody @Validated EmissionReq req) {
+		log.info("成功接收指令：{}", JsonUtil.toJsonString(req));
+		BooleanRes res = new BooleanRes();
+		res.setResult(true);
+		return new BaseRsp<>(res);
+	}
 }

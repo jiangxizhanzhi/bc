@@ -51,7 +51,7 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         SituationIcon situationIcon = changeSituationIconReqToSituationIcon(situationIconReq);
         String name = situationIcon.getName();
         //校验名称
-        validateName(name);
+        validateName(name, null);
         situationIcon.setResourceId(IDGeneratorUtil.getID());
         situationIcon.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         situationIconMapper.insert(situationIcon);
@@ -63,7 +63,7 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         SituationIcon situationIcon = changeSituationIconReqToSituationIcon(situationIconReq);
         String name = situationIcon.getName();
         //校验名称
-        validateName(name);
+        validateName(name, situationIconReq.getResourceId());
         situationIcon.setCreateUserId(UserInfoContext.getUserContext().getUserId());
         situationIconMapper.updateById(situationIcon);
         return situationIcon.getResourceId();
@@ -75,7 +75,7 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         SituationIconRes situationIconRes = changeIconToIconRes(situationIcon);
 
         //设置类型名称
-        List<SituationIconCategory> situationCategoryList = situationIconCategoryService.getSituationCategoryList();
+        List<SituationIconCategory> situationCategoryList = situationIconCategoryService.getSituationCategoryList(null);
         if (CollectionUtils.isNotEmpty(situationCategoryList)) {
             situationCategoryList.stream().forEach(situationIconCategory -> {
                 if (Objects.equals(situationIconCategory.getResourceId(), situationIconRes.getType())) {
@@ -135,10 +135,16 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         return BeanUtils.copy(situationIconReq, SituationIcon.class);
     }
 
-    private void validateName(String name) {
-        String resourceId = situationIconMapper.selectByName(name);
+    private void validateName(String name, String resourceId) {
+        String selectResourceId = situationIconMapper.selectByName(name);
         if (StringUtils.isNotBlank(resourceId)) {
-            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            if (StringUtils.isNotBlank(selectResourceId) && !Objects.equals(resourceId, selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
+        } else {
+            if (StringUtils.isNotBlank(selectResourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
         }
     }
 

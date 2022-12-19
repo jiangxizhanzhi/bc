@@ -1,4 +1,4 @@
-package com.cyberpeace.gateway.controller.res;
+package com.cyberpeace.integratation.service.bo.situation;
 
 import java.io.Serializable;
 

@@ -142,4 +142,11 @@ public interface RemoteSituationService {
 	 * @return
 	 */
 	List<TopoHistoryBo> getTopoHistory(SituationTaskReq req);
+
+	/**
+	 * 想定-发布大屏
+	 * @param schemeId
+	 * @param dashboardId
+	 */
+	Boolean releaseScreen(String schemeId, String dashboardId);
 }

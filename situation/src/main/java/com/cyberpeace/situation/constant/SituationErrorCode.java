@@ -130,4 +130,9 @@ public interface SituationErrorCode {
 
 	/** 暂不支持的任务大屏 */
 	String TASK_TYPE_NOT_SUPPORTED = "106002";
+
+	/**
+	 * 远程发布大屏失败
+	 */
+	String REMOTE_FAILED_TO_RELEASE = "106003";
 }

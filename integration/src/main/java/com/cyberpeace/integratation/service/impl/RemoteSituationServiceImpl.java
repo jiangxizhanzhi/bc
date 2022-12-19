@@ -75,6 +75,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_NODE_LIST;
 
+	private String XD_RELEASE_SCREEN;
+
 	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -103,6 +105,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_SCHEME = outerHostXd + ConfigUtil.getContextProperty("xd.scheme");
 		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
+		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 	}
 
 	@Override
@@ -302,6 +305,16 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		String rsp = HttpClientUtil.rawGet(XD_TOPO_HISTORY + req.toQuery(), String.class);
 		List<TopoHistoryBo> res = JsonUtil.toJsonObjectArray(rsp, TopoHistoryBo.class);
 		return res;
+	}
+
+	@Override
+	public Boolean releaseScreen(String schemeId, String dashboardId) {
+		ReleaseScreenBo releaseScreenBo = new ReleaseScreenBo();
+		releaseScreenBo.setSchemeId(schemeId);
+		releaseScreenBo.setDashboardId(dashboardId);
+
+		BooleanRes rsp = HttpClientUtil.post(XD_RELEASE_SCREEN, releaseScreenBo, BooleanRes.class);
+		return rsp.getResult();
 	}
 
 	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {

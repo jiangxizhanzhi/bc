@@ -34,4 +34,7 @@ public interface FileTypeContant {
 
 	/** 后台图标类型上传 */
 	String ICON_SVG = "SVG";
+
+	/** 后台绘标图元上传 */
+	String PLOT_PNG = "PNG";
 }

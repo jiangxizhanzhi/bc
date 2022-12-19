@@ -196,4 +196,7 @@ public interface MenuConstant {
 
     //图标管理
     String CMS_SITUATION_ICON = "icon-management";
+
+    //绘标图元管理
+    String CMS_SITUATION_PLOT_PIXEL = "plot-element-management";
 }

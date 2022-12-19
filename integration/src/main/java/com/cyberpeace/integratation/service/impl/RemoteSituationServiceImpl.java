@@ -1,7 +1,9 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +27,8 @@ import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -70,6 +74,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	private String XD_TOPO_HISTORY;
 
 	private String XD_NODE_LIST;
+
+	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@PostConstruct
 	public void init() {
@@ -220,22 +227,45 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return res;
 	}
 
+	private Date getQueryTime(String featureId) {
+
+		if (StringUtils.isBlank(featureId)) {
+			return null;
+		}
+
+		Date currentLastTime = queryTimeCache.getIfPresent(featureId);
+		return currentLastTime;
+	}
+
 	@Override
-	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq) {
+	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq, String featureId) {
+		taskEventReq.setQueryTime(getQueryTime(featureId));
 		String rsp = HttpClientUtil.rawGetByParam(taskEventReq, TASK_EVENT_URL, String.class);
 		List<TaskEventContext> res = JsonUtil.toJsonObjectArray(rsp, TaskEventContext.class);
+
+		// 更新查询时间缓存
+		if (res != null && !res.isEmpty()) {
+			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+		}
+
 		return res;
 	}
 
 	@Override
-	public List<AdEventContext> getAdEventList(EventReq eventReq) {
+	public List<AdEventContext> getAdEventList(EventReq eventReq, String featureId) {
+		eventReq.setQueryTime(getQueryTime(featureId));
 		String rsp = HttpClientUtil.post(AD_EVENT_URL, eventReq, String.class);
 		List<AdEventContext> res = JsonUtil.toJsonObjectArray(rsp, AdEventContext.class);
+
+		// 更新查询时间缓存
+		if (res != null && !res.isEmpty()) {
+			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+		}
 		return res;
 	}
 
 	@Override
-	public List<NodeEventContext> getNodeEventList(EventReq eventReq) {
+	public List<NodeEventContext> getNodeEventList(EventReq eventReq, String featureId) {
 		String rsp = HttpClientUtil.post(NODE_STATUS_URL, eventReq, String.class);
 		List<NodeEventContext> res = JsonUtil.toJsonObjectArray(rsp, NodeEventContext.class);
 		return res;

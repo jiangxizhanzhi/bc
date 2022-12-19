@@ -102,19 +102,19 @@ public interface RemoteSituationService {
 	 * 获取任务事件列表
 	 * @return
 	 */
-	List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq);
+	List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq, String featureId);
 
 	/**
 	 * 获取攻防事件列表
 	 * @return
 	 */
-	List<AdEventContext> getAdEventList(EventReq eventReq);
+	List<AdEventContext> getAdEventList(EventReq eventReq, String featureId);
 
 	/**
 	 * 获取节点状态列表
 	 * @return
 	 */
-	List<NodeEventContext> getNodeEventList(EventReq eventReq);
+	List<NodeEventContext> getNodeEventList(EventReq eventReq, String featureId);
 
 	/**
 	 * 获取拓扑

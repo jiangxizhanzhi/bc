@@ -194,7 +194,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<TaskEventContext>>
 			getTaskEventList(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq));
+		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq, null));
 	}
 
 	@ApiOperation("获取攻防事件列表")
@@ -202,7 +202,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<AdEventContext>>
 			getAdEventList(@RequestBody @Validated EventMsgReq eventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq));
+		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq, null));
 	}
 
 	@ApiOperation("获取节点状态列表")
@@ -210,7 +210,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<NodeEventContext>>
 			getNodeEventList(@RequestBody @Validated EventMsgReq eventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq));
+		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq, null));
 	}
 
 	@ApiOperation("获取第三方拓扑数据")

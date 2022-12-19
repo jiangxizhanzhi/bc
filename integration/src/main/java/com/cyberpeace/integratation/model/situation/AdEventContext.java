@@ -1,6 +1,9 @@
 package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +15,8 @@ public class AdEventContext implements Serializable {
 	private String eventId;
 
 	@ApiModelProperty("事件时间")
-	private String eventTime;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date eventTime;
 
 	@ApiModelProperty("事件名称")
 	private String eventName;

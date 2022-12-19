@@ -24,8 +24,8 @@ public class ExternalJumpController {
 	@Autowired
 	private BusinessTemplateService businessTemplateService;
 
-	@ApiOperation("靶标管理")
-	@GetMapping("/image-manage")
+	@ApiOperation("镜像管理")
+	@GetMapping("/image_manage")
 	public void jumpIM(HttpServletResponse response) {
 		setResponse(response, "/page/mg/admin/std/image-manage");
 	}

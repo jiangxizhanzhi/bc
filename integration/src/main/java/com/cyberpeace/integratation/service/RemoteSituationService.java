@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.service.bo.situation.*;
 
 public interface RemoteSituationService {
 
@@ -57,8 +58,9 @@ public interface RemoteSituationService {
 	/**
 	 * 获取网络信息
 	 * @return NetworkInfoContext
+	 * @param platformReq
 	 */
-	NetworkInfoContext getNetworkInfo(NodeListApiReq nodeListApiReq);
+	NetworkInfoContext getNetworkInfo(PlatformReq platformReq);
 
 	/**
 	 * 获取任务列表
@@ -119,4 +121,25 @@ public interface RemoteSituationService {
 	 * @return TopoContext
 	 */
 	TopoContext getTopo(TopoReq topoReq);
+
+	/**
+	 * 想定-获取任务下可视化方案列表
+	 * @param req
+	 * @return
+	 */
+	List<SchemeRspBo> getSchemeList(SituationTaskReq req);
+
+	/**
+	 * 想定-获取任务/科目可视化方案
+	 * @param schemeId
+	 * @return
+	 */
+	SchemeVisualizationBo getScheme(String schemeId);
+
+	/**
+	 * 配管-获取科目拓扑变更记录
+	 * @param req
+	 * @return
+	 */
+	List<TopoHistoryBo> getTopoHistory(SituationTaskReq req);
 }

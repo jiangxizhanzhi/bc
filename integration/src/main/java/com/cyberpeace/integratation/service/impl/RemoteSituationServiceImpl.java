@@ -2,15 +2,19 @@ package com.cyberpeace.integratation.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.service.bo.situation.ThirdPartyTopoBo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -20,6 +24,7 @@ import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
 import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.bo.situation.*;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -58,6 +63,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_TOPO_URL;
 
+	private String XD_SCHEME_LIST;
+
+	private String XD_SCHEME;
+
+	private String XD_TOPO_HISTORY;
+
+	private String XD_NODE_LIST;
+
 	@PostConstruct
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
@@ -79,6 +92,10 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		AD_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.ad");
 		NODE_STATUS_URL = outerHostTs + ConfigUtil.getContextProperty("event.node");
 		XD_TOPO_URL = outerHostXd + ConfigUtil.getContextProperty("xd.topo");
+		XD_SCHEME_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.scheme.list");
+		XD_SCHEME = outerHostXd + ConfigUtil.getContextProperty("xd.scheme");
+		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
+		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 	}
 
 	@Override
@@ -140,8 +157,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public NetworkInfoContext getNetworkInfo(NodeListApiReq nodeListApiReq) {
+	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
+		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
+		List<NodeIdBo> nodeIdBoList = getNodeIdList(nodeListReq);
+		List<String> nodeIdList = nodeIdBoList.stream().map(NodeIdBo::getNodeId)
+				.collect(Collectors.toList());
 
+		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
+		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
 				nodeListApiReq, NetworkInfoContext.class);
 
@@ -221,7 +244,39 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public TopoContext getTopo(TopoReq topoReq) {
 
-		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo", ThirdPartyTopoBo.class);
+		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo",
+				ThirdPartyTopoBo.class);
 		return topoBo.convert();
+	}
+
+	@Override
+	public List<SchemeRspBo> getSchemeList(SituationTaskReq req) {
+
+		String rsp = HttpClientUtil.rawGet(XD_SCHEME_LIST + req.toQuery(), String.class);
+		List<SchemeRspBo> res = JsonUtil.toJsonObjectArray(rsp, SchemeRspBo.class);
+		return res;
+	}
+
+	@Override
+	public SchemeVisualizationBo getScheme(String schemeId) {
+		if (StringUtils.isBlank(schemeId)) {
+			throw new BusinessException(ErrorCode.EMPTY_SCHEME_ID);
+		}
+		String targetUrl = XD_SCHEME + "?schemeId=" + schemeId;
+		SchemeVisualizationBo rsp = HttpClientUtil.rawGet(targetUrl, SchemeVisualizationBo.class);
+		return rsp;
+	}
+
+	@Override
+	public List<TopoHistoryBo> getTopoHistory(SituationTaskReq req) {
+		String rsp = HttpClientUtil.rawGet(XD_TOPO_HISTORY + req.toQuery(), String.class);
+		List<TopoHistoryBo> res = JsonUtil.toJsonObjectArray(rsp, TopoHistoryBo.class);
+		return res;
+	}
+
+	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {
+		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
+		List<NodeIdBo> res = JsonUtil.toJsonObjectArray(rsp, NodeIdBo.class);
+		return res;
 	}
 }

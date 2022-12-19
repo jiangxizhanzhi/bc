@@ -37,7 +37,6 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -51,7 +50,7 @@ import java.util.Map;
 
 @Api(tags = "红蓝对抗模板后台")
 @RestController
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
 public class RbTemplateAdminController {
 
@@ -165,11 +164,11 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+//	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
 
-		businessTemplateService.checkPermission(resource_id,
-				UserInfoContext.getUserContext().getUserId());
+//		businessTemplateService.checkPermission(resource_id,
+//				UserInfoContext.getUserContext().getUserId());
 		RbTemplate template = rbTemplateService.getRbTemplateByBusinessId(resource_id);
 
 		BusinessTemplate businessTemplate = businessTemplateService

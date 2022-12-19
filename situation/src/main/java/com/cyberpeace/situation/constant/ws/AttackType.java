@@ -12,8 +12,8 @@ public enum AttackType {
 	 */
 
     NETWORK_SCANNING(ActionType.NETWORK_SCANNING, "网络扫描", "Network Scanning","network-scanning", false, false, false),
-    VIRUS_ATTACKS(ActionType.VIRUS_ATTACKS, "病毒攻击", "Virus Attacks","virus-attacks", false, false, false),
-    TROJAN(ActionType.TROJAN, "木马攻击", "Trojan","trojan", false, false, false),
+    VIRUS_ATTACKS(ActionType.VIRUS_ATTACKS, "病毒攻击", "Virus Attacks","virus-attacks", false, false, true),
+    TROJAN(ActionType.TROJAN, "木马攻击", "Trojan","trojan", false, true, true),
     DDOS(ActionType.DDOS, "DDOS攻击", "DDOS","ddos", false, false, false),
     HOST_ATTACK(ActionType.HOST_ATTACK, "主机攻占", "Host Attack","host-attack", false, false, false),
 //    TRY_ATTACK(ActionType.TRY_ATTACK, "尝试攻击", "Try Attack","try-attack", false, false, false),

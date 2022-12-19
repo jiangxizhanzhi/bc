@@ -1,12 +1,12 @@
 package com.cyberpeace.common.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class TimeUtil {
 
@@ -518,6 +518,28 @@ public class TimeUtil {
         SimpleDateFormat sd = new SimpleDateFormat("dd");
         String day = sd.format(new Date()).toString();
         return day;
+    }
+
+    public static Calendar stringToCalendar(String time){
+        SimpleDateFormat simp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            Date date = simp.parse(time);
+            calendar.setTime(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return calendar;
+    }
+
+    public static String getHalfTime(String time){
+        Calendar calendar = TimeUtil.stringToCalendar(time);
+        Calendar calendar1 = TimeUtil.stringToCalendar(time);
+        calendar.set(Calendar.SECOND, 30);
+        if(calendar.before(calendar1)){
+            calendar.set(Calendar.SECOND, 0);
+        }
+        return TimeUtil.format1(calendar.getTime());
     }
 
 }

@@ -88,4 +88,25 @@ public class SituationStatisticsController {
 		return new BaseRsp<>(attackMessageHistoryService.getIntervalTime(sceneId));
 	}
 
+	@ApiOperation("防御日志")
+	@GetMapping("/defense_log")
+	public BaseRsp<List<DefenseLog>> getDefenseType(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
+		return new BaseRsp<>(attackMessageHistoryService.getDefenseLog(sceneId));
+	}
+
+	@ApiOperation("防御趋势")
+	@GetMapping("/defense_trend")
+	public BaseRsp<List<SceneTrend>> getDefenseTrend(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
+		return new BaseRsp<>(attackMessageHistoryService.getDefenseTrend(sceneId));
+	}
+
+	@ApiOperation("刷新节点状态")
+	@GetMapping("/refresh_node_status")
+	public void refreshNodeStatus(
+			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
+		attackMessageHistoryService.pushParalysisNodeStatus(sceneId);
+	}
+
 }

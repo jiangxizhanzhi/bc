@@ -49,6 +49,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
+	Cache<String, SituationTopo> situationTopoCache = CacheBuilder.newBuilder()
+																		  .expireAfterAccess(4, TimeUnit.HOURS).build();
+
 	@Override
 	public SituationTopo getSituationTopo(SceneData sceneData) {
 		// 处理态势数据
@@ -64,7 +67,19 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		situationTopo.setConnections(connectionsInfo);
 		situationTopo.setScene(sceneInfo);
 		situationTopo.setPieces(getPieces(sceneData));
+		situationTopoCache.put(sceneData.getSceneId(), situationTopo);
 
+		return situationTopo;
+	}
+
+	@Override
+	public SituationTopo getSituationTopoBySceneId(String sceneId){
+		SituationTopo situationTopo = situationTopoCache.getIfPresent(sceneId);
+		if(situationTopo == null){
+			SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
+			sceneData.setSceneId(sceneId);
+			situationTopo = getSituationTopo(sceneData);
+		}
 		return situationTopo;
 	}
 
@@ -75,9 +90,18 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		Map<String, PieceInfo> piecesInfo = Maps.newHashMap();
 
-		for (PieceInfo pieceInfo : pieces) {
-			piecesInfo.put(pieceInfo.getPieceId(), pieceInfo);
-		}
+		PieceInfo pieceInfo = new PieceInfo();
+		pieceInfo.setName("1321312");
+		pieceInfo.setPieceId("234234123");
+		pieceInfo.setAreas(new ArrayList<>(Collections.singleton("52ab9ddf-2300-4aa9-8d6c-a20cc90e2fa6")));
+		PlaneCoordinate planeCoordinate = new PlaneCoordinate(300f,800f);
+
+		pieceInfo.setPosition(planeCoordinate);
+		piecesInfo.put("11111111111111111111",pieceInfo);
+
+//		for (PieceInfo pieceInfo : pieces) {
+//			piecesInfo.put(pieceInfo.getPieceId(), pieceInfo);
+//		}
 
 		return piecesInfo;
 	}
@@ -662,9 +686,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Override
 	@Cacheable(cacheNames = "getNodeMap", key = "#sceneId")
 	public Map<String, String> getNodeMap(String sceneId) {
-		log.info("------------------------------------------------" + sceneId + "-----------------------------------------");
-		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
-		SituationTopo situationTopo = getSituationTopo(sceneData);
+		SituationTopo situationTopo = getSituationTopoBySceneId(sceneId);
 		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
 																			.values());
 		Map<String, String> nodeMap = new HashMap<>();
@@ -672,6 +694,19 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			nodeMap.put(elementInfo.getElementId(), elementInfo.getName());
 		}
 		return nodeMap;
+	}
+
+	@Override
+	@Cacheable(cacheNames = "getAreaMap", key = "#sceneId")
+	public Map<String, String> getAreaMap(String sceneId){
+		SituationTopo situationTopo = getSituationTopoBySceneId(sceneId);
+		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas()
+																			.values());
+		Map<String, String> areaMap = new HashMap<>();
+		for (AreaInfo areaInfo : areaInfoList) {
+			areaMap.put(areaInfo.getAreaId(), areaInfo.getName());
+		}
+		return areaMap;
 	}
 
 }

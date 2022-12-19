@@ -1,18 +1,5 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -56,8 +43,19 @@ import com.cyberpeace.cr.redvsblue.service.context.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -161,23 +159,23 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				List<RoomRole> users = rbRoomContext.getRoleConfig();
 				int index = 0;
 
-				for (CrRole crRole : crRoles) {
-					if (index >= users.size()) {
-						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
-						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
-					}
-
-					if (users.get(index).getUsers().size() == 0) {
-						index += 2;
-					}
-
-					crRole.setUserIdList(users.get(index++).getUsers());
-					crRole.setRoomId(rbRoom.getResourceId());
-					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-
-					crRoleService.save(crRole);
-
-				}
+//				for (CrRole crRole : crRoles) {
+//					if (index >= users.size()) {
+//						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
+//						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
+//					}
+//
+//					if (users.get(index).getUsers().size() == 0) {
+//						index += 2;
+//					}
+//
+//					crRole.setUserIdList(users.get(index++).getUsers());
+//					crRole.setRoomId(rbRoom.getResourceId());
+//					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+//
+//					crRoleService.save(crRole);
+//
+//				}
 
 			}
 

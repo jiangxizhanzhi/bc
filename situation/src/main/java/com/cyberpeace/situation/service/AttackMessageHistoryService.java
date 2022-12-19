@@ -71,4 +71,24 @@ public interface AttackMessageHistoryService {
 	 * @return 攻击历史
 	 */
 	List<AttackMessageReq> getAttackHistory(String sceneId);
+
+	/**
+	 * 获取防御历史
+	 * @param sceneId 场景编号
+	 * @return 防御历史
+	 */
+	List<DefenseLog> getDefenseLog(String sceneId);
+
+	/**
+	 * 推送瘫痪节点列表
+	 * @param sceneId 场景编号
+	 */
+	void pushParalysisNodeStatus(String sceneId);
+
+	/**
+	 * 获取防御趋势
+	 * @param sceneId 场景编号
+	 * @return 防御趋势
+	 */
+	List<SceneTrend> getDefenseTrend(String sceneId);
 }

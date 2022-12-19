@@ -315,16 +315,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			throw new BusinessException(SituationErrorCode.UNAVAILABLE_FOR_NON_SCENE_SITUATION);
 		}
 
-		SceneData sceneData;
-		if (isInstance != null && !isInstance) {
-			//不是实例
-			sceneData = topoHandlerService.getSceneData(null, sceneId);
-		} else {
-			//是实例
-			sceneData = topoHandlerService.getSceneData(sceneId, null);
-		}
-		//态势数据
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId);
 		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas().values());
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
@@ -845,13 +836,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	@Override
 	public List<String> getElementIds(String sceneId, Boolean isInstance) {
 
-		SceneData sceneData;
-		if (isInstance != null && !isInstance){
-			sceneData = topoHandlerService.getSceneData(null, sceneId);
-		} else {
-			sceneData = topoHandlerService.getSceneData(sceneId, null);
-		}
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId);
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
 		return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());

@@ -4,18 +4,22 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.constant.ws.DefenseType;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
 import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsRbElementStatus;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.SituationHandlerService;
-import com.cyberpeace.situation.service.TopoHandlerService;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,9 +30,6 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 
 	@Autowired
 	private AttackMessageHistoryMapper attackMessageHistoryMapper;
-
-	@Autowired
-	private TopoHandlerService topoHandlerService;
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
@@ -73,8 +74,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 
 	@Override
 	public List<HostStatusCount> getHostStatusCount(String sceneId) {
-		SceneData sceneData = topoHandlerService.getSceneData(null, sceneId);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId);
 		List<HostStatusCount> hostStatusCountList = new ArrayList<>();
 		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
 																			.values());
@@ -104,20 +104,21 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	public List<AttackLog> getAttackLog(String sceneId) {
 		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
 		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
+		Map<String, String> areaMap = situationHandlerService.getAreaMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
 			String sourceId = attackLog.getSourceId();
-			if(sourceId != null && !sourceId.equals("")){
+			if (sourceId != null && !sourceId.equals("")) {
 				String sourceName = nodeMap.get(sourceId);
-				if (sourceName == null){
-					sourceName = "area-" + attackLog.getSourceId().substring(0, 8);
+				if (sourceName == null) {
+					sourceName = areaMap.get(sourceId);
 				}
 				attackLog.setSourceName(sourceName);
 			}
 			String targetId = attackLog.getTargetId();
-			if(targetId != null && !targetId.equals("")){
+			if (targetId != null && !targetId.equals("")) {
 				String targetName = nodeMap.get(targetId);
-				if (targetName == null && !targetId.equals("")){
-					targetName = "area-" + attackLog.getTargetId().substring(0, 8);
+				if (targetName == null) {
+					targetName = areaMap.get(sourceId);
 				}
 				attackLog.setTargetName(targetName);
 			}
@@ -138,9 +139,71 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	}
 
 	@Override
-	public List<AttackMessageReq> getAttackHistory(String sceneId){
+	public List<AttackMessageReq> getAttackHistory(String sceneId) {
 		List<AttackMessageHistory> attackMessageHistoryList = attackMessageHistoryMapper.getAllAttackHistory(sceneId);
-		return attackMessageHistoryList.stream().map(this::attackMessageHistoryToAttackMessageReq).collect(Collectors.toList());
+		return attackMessageHistoryList.stream()
+									   .map(this::attackMessageHistoryToAttackMessageReq)
+									   .collect(Collectors.toList());
+	}
+
+	@Override
+	public List<DefenseLog> getDefenseLog(String sceneId) {
+		List<DefenseLog> defenseLogList = attackMessageHistoryMapper.getDefenseLog(sceneId);
+		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
+		Map<String, String> areaMap = situationHandlerService.getAreaMap(sceneId);
+		defenseLogList.forEach(defenseLog -> {
+			String name = nodeMap.get(defenseLog.getHostId());
+			if(name == null){
+				name = areaMap.get(defenseLog.getHostId());
+			}
+			defenseLog.setHostName(name);
+		});
+		defenseLogList.forEach(defenseLog -> defenseLog.setDefenseType(DefenseType.getEnumByKeyWord(defenseLog.getDefenseType(), DefenseType.class)
+																				  .getMsg()));
+		return defenseLogList;
+	}
+
+	@Override
+	public void pushParalysisNodeStatus(String sceneId) {
+		List<HostCount> paralysisHostCountList = getHostTop(AttackType::getIsParalysis, sceneId);
+		List<String> paralysisHostIdList = StreamApiUtils.map(paralysisHostCountList, HostCount::getHostId);
+		List<WsRbElementStatus> wsRbElementStatusList = paralysisHostIdList.stream()
+																		   .map(paralysisHostId -> new WsRbElementStatus(paralysisHostId, 1))
+																		   .collect(Collectors.toList());
+		WsMessage<List<WsRbElementStatus>> wsMessage = new WsMessage<>(MessageType.RbNodeStatus.getDesc(),
+				wsRbElementStatusList);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+	}
+
+	@Override
+	public List<SceneTrend> getDefenseTrend(String sceneId) {
+		List<DefenseLog> defenseLogList = attackMessageHistoryMapper.getDefenseLog(sceneId);
+		defenseLogList.forEach(defenseLog -> defenseLog.setTime(TimeUtil.getHalfTime(defenseLog.getTime())));
+		SimpleDateFormat simp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		Calendar calendar1 = Calendar.getInstance();
+		calendar.set(Calendar.SECOND, 30);
+		if (calendar1.before(calendar)) {
+			calendar.set(Calendar.SECOND, 0);
+		}
+		Map<String, Integer> map = new HashMap<>();
+		for (int i = 0; i < 30; i++){
+			map.put(simp.format(calendar.getTime()) , 0);
+			calendar.add(Calendar.SECOND, -30);
+		}
+		for(DefenseLog defenseLog:defenseLogList){
+			Integer count = map.get(defenseLog.getTime());
+			if(count != null){
+				map.put(defenseLog.getTime(), count+1);
+			}
+		}
+		List<SceneTrend> sceneTrendList = new ArrayList<>();
+		for (String time: map.keySet()){
+			sceneTrendList.add(new SceneTrend(map.get(time),time));
+		}
+		sceneTrendList.sort(Comparator.comparing(SceneTrend::getTime));
+		Collections.reverse(sceneTrendList);
+		return sceneTrendList;
 	}
 
 	public <E, T> List<HostCount> getHostTop(Predicate<? super AttackType> filterValue, String sceneId) {
@@ -158,15 +221,16 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 				.setMediaAnimation(JSON.toJSONString(attackMessageReq.getMediaAnimationList()));
 //		if (!attackMessageReq.getType()
 //							 .equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-			attackMessageHistory.setMediaAnimation(null);
+		attackMessageHistory.setMediaAnimation(null);
 //		}
 		attackMessageHistory.setIsHistory(0);
 		return attackMessageHistory;
 	}
 
-	public AttackMessageReq attackMessageHistoryToAttackMessageReq(AttackMessageHistory attackMessageHistory){
+	public AttackMessageReq attackMessageHistoryToAttackMessageReq(AttackMessageHistory attackMessageHistory) {
 		AttackMessageReq attackMessageReq = BeanUtils.copy(attackMessageHistory, AttackMessageReq.class);
-		attackMessageReq.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessageHistory.getMediaAnimation(),MediaAnimation.class));
+		attackMessageReq.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessageHistory.getMediaAnimation(),
+				MediaAnimation.class));
 		return attackMessageReq;
 	}
 }

@@ -23,6 +23,8 @@ public interface SituationHandlerService {
 	 */
 	SituationTopo getSituationTopo(SceneData sceneData);
 
+	SituationTopo getSituationTopoBySceneId(String sceneId);
+
 	/**
 	 * 获取连线颜色
 	 * @return String
@@ -154,5 +156,12 @@ public interface SituationHandlerService {
 	 * @return
 	 */
 	Map<String, String> getNodeMap(String sceneId);
+
+	/**
+	 * 获取拓扑区域id和区域名称map
+	 * @param sceneId 场景编号
+	 * @return
+	 */
+	Map<String, String> getAreaMap(String sceneId);
 
 }

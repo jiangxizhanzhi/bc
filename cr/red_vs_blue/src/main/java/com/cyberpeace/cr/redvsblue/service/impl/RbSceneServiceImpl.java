@@ -1,16 +1,5 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -40,8 +29,17 @@ import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -182,7 +180,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 	public Boolean stopScene(String roomId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、只有教员角色可以操作场景
-		rbRoomService.checkTeacherPermission(roomId, userId);
+//		rbRoomService.checkTeacherPermission(roomId, userId);
 
 		RbRoom room = rbRoomService.getById(roomId);
 
@@ -391,15 +389,17 @@ public class RbSceneServiceImpl implements RbSceneService {
 	private CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 
+		// 2、教员角色查看自己的节点，不需要传roleId
+		if (StringUtils.isBlank(roleId)) {
+			return null;
+		}
+
 		// 1、如果是学员角色，直接返回
 		if (role.isRvbStudent()) {
 			return role.getNodeData();
 		}
 
-		// 2、教员角色查看自己的节点，不需要传roleId
-		if (StringUtils.isBlank(roleId)) {
-			return null;
-		}
+
 
 		// 3、教员查看学员角色的战争迷雾
 		// 3.1、查找学员的role

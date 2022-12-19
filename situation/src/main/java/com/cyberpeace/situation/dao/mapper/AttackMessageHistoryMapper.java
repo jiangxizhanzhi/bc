@@ -2,10 +2,7 @@ package com.cyberpeace.situation.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
-import com.cyberpeace.situation.model.AttackLog;
-import com.cyberpeace.situation.model.AttackTypeCount;
-import com.cyberpeace.situation.model.DefenseTypeCount;
-import com.cyberpeace.situation.model.HostCount;
+import com.cyberpeace.situation.model.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -62,5 +59,12 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	 * @return 动效历史列表
 	 */
 	List<AttackMessageHistory> getAllAttackHistory(@Param("sceneId") String sceneId);
+
+	/**
+	 * 获取防御历史
+	 * @param sceneId 场景编号
+	 * @return 防御日志
+	 */
+	List<DefenseLog> getDefenseLog(@Param("sceneId") String sceneId);
 
 }

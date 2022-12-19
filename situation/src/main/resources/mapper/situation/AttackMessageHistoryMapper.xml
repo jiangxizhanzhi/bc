@@ -90,5 +90,16 @@
         order by create_time
     </select>
 
+    <select id="getDefenseLog" resultType="com.cyberpeace.situation.model.DefenseLog">
+        select create_time as time, target_id as hostId, defense_type
+        from situation_attack_message_history
+        <where>
+            defense_type is not null
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

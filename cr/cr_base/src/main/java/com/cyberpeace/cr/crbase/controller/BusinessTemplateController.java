@@ -1,26 +1,6 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -34,6 +14,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.NameValidReq;
 import com.cyberpeace.cr.crbase.controller.req.ShareReq;
 import com.cyberpeace.cr.crbase.controller.req.TemplateReq;
+import com.cyberpeace.cr.crbase.controller.req.TopoDataReq;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchDumpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.TestSceneReq;
@@ -57,12 +38,30 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Api(tags = "基础模板")
 @RestController
@@ -382,6 +381,56 @@ public class BusinessTemplateController {
 		ListRsp<BusinessTemplateSimple> res = businessTemplateService.pageSimple(btPageReq);
 
 		return new BaseRsp(res);
+	}
+
+	@ApiOperation("查看Topo")
+	@GetMapping("/topo")
+	public BaseRsp<TopoDataReq> getTopo(@RequestParam(value = "resource_id") String resourceId){
+		TopoDataReq topoDataReq = new TopoDataReq();
+		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if (businessTemplate == null){
+			return new BaseRsp<>(topoDataReq);
+		}
+		String topoId = businessTemplate.getTopoId();
+		topoDataReq.setSceneConfig(localSceneService.getTopoData(topoId).getJSONObject("scene_config"));
+		topoDataReq.setName(businessTemplate.getName());
+		topoDataReq.setResourceId(resourceId);
+		return new BaseRsp<>(topoDataReq);
+	}
+
+	@ApiOperation("新增/修改Topo")
+	@PostMapping("/save_topo")
+	public BaseRsp<Boolean> saveTopo(@RequestBody @Validated TopoDataReq topoDataReq) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(topoDataReq.getResourceId());
+		JSONObject topoJson = new JSONObject();
+		topoJson.put("scene_config", topoDataReq.getSceneConfig());
+		topoJson.put("logo", null);
+		if (businessTemplate == null) {
+			//新增
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					LocalScene.BusinessCode businessCode = businessTemplateService.convertTypeToCode(4);
+					String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
+					BusinessTemplate businessTemplate = new BusinessTemplate();
+					businessTemplate.setResourceId(topoDataReq.getResourceId());
+					businessTemplate.setTopoId(topoId);
+					businessTemplate.setName(topoDataReq.getName());
+					businessTemplateService.save(businessTemplate);
+				}
+			});
+		}else {
+			//修改
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					localSceneService.saveTopo(topoJson, businessTemplate.getTopoId());
+					businessTemplate.setName(topoDataReq.getName());
+					businessTemplateService.updateById(businessTemplate);
+				}
+			});
+		}
+		return new BaseRsp<>(true);
 	}
 
 	private void checkBeforeTestingScene(String templateId) {

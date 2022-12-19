@@ -1,13 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -31,10 +23,16 @@ import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "态势拓扑")
 @RestController
@@ -65,6 +63,7 @@ public class SituationController {
 
 		// 获取场景/拓扑数据
 		SceneData sceneData = topoHandlerService.getSceneData(sceneId, topoId);
+		sceneData.setSceneId(topoId);
 
 		// 处理态势数据
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);

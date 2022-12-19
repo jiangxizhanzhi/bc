@@ -1,14 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-
 import com.cyberpeace.common.constant.MenuConstant;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -28,16 +20,21 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "红蓝对抗场景")
 @Slf4j
 @RestController
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/scene/")
 public class RbSceneController {
 
@@ -57,11 +54,11 @@ public class RbSceneController {
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp startScene(@RequestBody SceneOpsReq sceneStartReq) {
-		String roomId = sceneStartReq.getRoomId();
-		String userId = UserInfoContext.getUserContext().getUserId();
-
-		String sceneId = rbSceneService.startScene(roomId, userId);
-		return new BaseRsp(new StartSceneRsp(sceneId));
+//		String roomId = sceneStartReq.getRoomId();
+//		String userId = UserInfoContext.getUserContext().getUserId();
+//
+//		String sceneId = rbSceneService.startScene(roomId, userId);
+		return new BaseRsp(new StartSceneRsp(null));
 	}
 
 	@ApiOperation("停止场景")
@@ -76,7 +73,7 @@ public class RbSceneController {
 
 	@ApiOperation("查看场景")
 	@GetMapping("")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+//	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String room_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {

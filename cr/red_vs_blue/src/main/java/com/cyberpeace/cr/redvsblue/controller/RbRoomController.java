@@ -57,6 +57,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -73,7 +74,7 @@ import java.util.stream.Collectors;
 @Api(tags = "红蓝对抗实例")
 @Slf4j
 @RestController
-//@RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/cr/red_vs_blue/red_vs_blue/")
 public class RbRoomController {
 
@@ -145,13 +146,13 @@ public class RbRoomController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-//	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RbRoomRsp> getRbRoom(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-		remoteUserService.setSuperAdmin();
+//		remoteUserService.setSuperAdmin();
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+//		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 
@@ -162,7 +163,7 @@ public class RbRoomController {
 
 		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
 		rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
-		rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
+//		rbRoomRsp.setRolesData(getRbRoomRoleRes(crRoles));
 		rbRoomRsp.setPreSkill(JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));
 		rbRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
@@ -377,6 +378,9 @@ public class RbRoomController {
 		}
 
 		RbRoom rbRoom = rbRoomService.getById(roomId);
+		if(rbRoom == null){
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
 		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.DELETE, rbRoom.getName(),

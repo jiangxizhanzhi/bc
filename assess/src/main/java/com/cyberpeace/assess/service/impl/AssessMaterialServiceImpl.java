@@ -112,9 +112,11 @@ implements AssessMaterialService{
     }
 
     @Override
-    public void checkNameRepeat(String name, String id) {
+    public void checkNameRepeat(String name, String id, String caseId) {
         LambdaQueryWrapper<AssessMaterial> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AssessMaterial::getName, name);
+        queryWrapper.eq(AssessMaterial::getCaseId, caseId);
+
         if (StringUtils.isNotBlank(id)){
             queryWrapper.ne(AssessMaterial::getResourceId, id);
         }

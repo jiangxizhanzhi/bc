@@ -89,7 +89,7 @@ public class AssessMaterialController {
 	public BaseRsp<AssessMaterial>
 			setAssessCase(@RequestBody @Validated(Create.class) AssessMaterialAddReq assessMaterialAddReq) {
 
-		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null);
+		assessMaterialService.checkNameRepeat(assessMaterialAddReq.getName(), null, assessMaterialAddReq.getCaseId());
 		assessCaseService.checkCaseId(assessMaterialAddReq.getCaseId());
 
 		AssessMaterial assessMaterial = BeanUtils.copy(assessMaterialAddReq,
@@ -177,7 +177,7 @@ public class AssessMaterialController {
 		String resourceId = assessMateriaUpdateReq.getResourceId();
 
 		assessCaseService.checkCaseId(assessMateriaUpdateReq.getCaseId());
-		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId);
+		assessMaterialService.checkNameRepeat(assessMateriaUpdateReq.getName(), resourceId, assessMateriaUpdateReq.getCaseId());
 		AssessMaterial assessMaterial = assessMaterialMapper.selectById(resourceId);
 		assessMaterialService.uploadHandout(assessMaterial, assessMateriaUpdateReq.getAttachment());
 		if(null == assessMaterial){

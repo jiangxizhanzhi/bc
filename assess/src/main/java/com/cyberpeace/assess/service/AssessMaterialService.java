@@ -30,7 +30,7 @@ public interface AssessMaterialService extends IService<AssessMaterial> {
 
     List<AssessMaterialExcelDatalRes> getExcelData(String attachment);
 
-    void checkNameRepeat(String name, String id);
+    void checkNameRepeat(String name, String id, String caseId);
 
     void uploadHandout(AssessMaterial assessMaterial, String attachment);
 }

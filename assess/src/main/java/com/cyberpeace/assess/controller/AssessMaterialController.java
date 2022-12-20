@@ -188,7 +188,7 @@ public class AssessMaterialController {
 			@Override
 			public void doInTransactionWithoutResult(TransactionStatus status) {
 				if(assessMateriaUpdateReq.getMaterialType().equals(AssessMaterial.MaterialType.EXCEL.getCode())) {
-					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMaterial.getAttachment());
+					assessFileDataService.parseModelFile(assessMaterial.getResourceId(), 2, assessMateriaUpdateReq.getAttachment());
 				}
 				BeanUtils.copyProperties(assessMateriaUpdateReq, assessMaterial);
 				assessMaterialMapper.updateById(assessMaterial);

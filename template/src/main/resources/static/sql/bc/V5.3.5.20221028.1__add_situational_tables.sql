@@ -602,4 +602,6 @@ CREATE TABLE `situation_plot_pixel` (
                                            UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
+ALTER TABLE `bc`.`situation_api_request` ADD COLUMN `response_key` VARCHAR(64) DEFAULT NULL COMMENT '返回参数key值' AFTER `request_headers`;
+
 

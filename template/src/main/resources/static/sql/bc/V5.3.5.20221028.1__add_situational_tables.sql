@@ -376,7 +376,7 @@ CREATE TABLE `situation_dynamic_effects_mapping` (
                                                      `attack_type` varchar(64) NOT NULL COMMENT '攻击类型',
                                                      `source_node_dynamic` varchar(64) NOT NULL COMMENT '源动效',
                                                      `target_node_dynamic` varchar(64) NOT NULL COMMENT '目标动效',
-                                                     `focus` int(10) NOT NULL COMMENT '聚焦',
+                                                     `focus` boolean NOT NULL COMMENT '聚焦',
                                                      `color` varchar(64) NOT NULL COMMENT '颜色',
                                                      `line` varchar(64) NOT NULL COMMENT '线形',
                                                      `line_size` int(10) NOT NULL COMMENT '线段大小',
@@ -385,7 +385,8 @@ CREATE TABLE `situation_dynamic_effects_mapping` (
                                                      `update_time` datetime DEFAULT NULL,
                                                      PRIMARY KEY (`id`) USING BTREE,
                                                      UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
-                                                     UNIQUE KEY `name` (`name`) USING BTREE
+                                                     UNIQUE KEY `name` (`name`) USING BTREE,
+                                                     INDEX `attack_type` (`attack_type`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT = 1
     CHARACTER SET = utf8
     COLLATE = utf8_general_ci
@@ -440,6 +441,8 @@ CREATE TABLE `situation_event_type_context` (
                                                 `code` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                                 `name` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
                                                 `parent_node` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                                                `source_action_type` TINYINT(1) NULL COMMENT '源动作类型',
+                                                `target_action_type` TINYINT(1) NULL COMMENT '目标动作类型',
                                                 `create_time` DATETIME DEFAULT NULL,
                                                 `update_time` DATETIME DEFAULT NULL,
                                                 PRIMARY KEY (`id`) USING BTREE,

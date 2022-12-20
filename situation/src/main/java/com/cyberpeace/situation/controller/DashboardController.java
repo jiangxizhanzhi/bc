@@ -23,6 +23,7 @@ import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -108,8 +109,13 @@ public class DashboardController {
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
-		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(),
-				JsonUtil.java2JsonObject(dashboardAttribute));
+		JSONObject data = JsonUtil.java2JsonObject(dashboardAttribute);
+		ViewAngle viewAngle = JsonUtil.toJsonObject(data.getString("viewAngle"), ViewAngle.class);
+		data.put("longitude", viewAngle.getLongitude());
+		data.put("latitude", viewAngle.getLatitude());
+		data.put("altitude", viewAngle.getAltitude());
+
+		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(), data);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
 				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);

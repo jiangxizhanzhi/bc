@@ -191,6 +191,7 @@ public class SituationPublishController {
 			}
 		}
 		String taskId = situationPublishInstances.getTaskId();
+		String attributeId = situationPublishInstances.getAttributeId();
 		DashboardAttribute dashboardAttribute = new DashboardAttribute();
 		if (StringUtils.isNotBlank(taskId) && StringUtils.isNotBlank(subjectId)) {
 			dashboardAttribute.setDashboardId(resourceId);
@@ -202,12 +203,12 @@ public class SituationPublishController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				situationPublishInstanceMapper.updateById(situationPublishInstances);
-//				DashboardAttribute attribute = dashboardAttributeMapper.getById(resourceId);
-//				Boolean result = remoteSituationService.releaseScreen(attribute.getSchemeId(),
-//						attribute.getDashboardId());
-//				if (!result) {
-//					throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
-//				}
+				DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(attributeId);
+				Boolean result = remoteSituationService.releaseScreen(attribute.getSchemeId(),
+						attribute.getDashboardId());
+				if (!result) {
+					throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
+				}
 			}
 		});
 		return new BaseRsp<>();

@@ -11,5 +11,7 @@ public interface DashboardAttributeMapper extends BaseMapper<DashboardAttribute>
 
 	DashboardAttribute getById(@Param("dashboardId") String dashboardId);
 
+	DashboardAttribute getByResourceId(@Param("resourceId") String resourceId);
+
 	DashboardAttribute getByTaskId(@Param("taskId") String taskId);
 }

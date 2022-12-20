@@ -1,7 +1,10 @@
 package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -43,6 +46,7 @@ public class TaskEventContext implements Serializable {
 	private String eventDesc;
 
 	@ApiModelProperty("事件时间")
-	private String eventTime;
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date eventTime;
 
 }

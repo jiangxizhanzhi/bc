@@ -164,4 +164,14 @@ public interface ErrorCode {
 
 	/** 远程接口返回json格式错误 */
 	String UNSUPPORTED_RESPONSE_JSON = "100053";
+
+	/**
+	 * 可视化方案id不可为空
+	 */
+	String EMPTY_SCHEME_ID = "100054";
+
+	/**
+	 * 任务id不可为空
+	 */
+	String EMPTY_TASK_ID = "100055";
 }

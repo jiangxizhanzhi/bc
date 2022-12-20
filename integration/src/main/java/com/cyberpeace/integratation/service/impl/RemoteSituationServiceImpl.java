@@ -1,16 +1,22 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.service.bo.situation.ThirdPartyTopoBo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -20,6 +26,9 @@ import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
 import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.bo.situation.*;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -58,6 +67,19 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_TOPO_URL;
 
+	private String XD_SCHEME_LIST;
+
+	private String XD_SCHEME;
+
+	private String XD_TOPO_HISTORY;
+
+	private String XD_NODE_LIST;
+
+	private String XD_RELEASE_SCREEN;
+
+	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
+
 	@PostConstruct
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
@@ -79,6 +101,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		AD_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.ad");
 		NODE_STATUS_URL = outerHostTs + ConfigUtil.getContextProperty("event.node");
 		XD_TOPO_URL = outerHostXd + ConfigUtil.getContextProperty("xd.topo");
+		XD_SCHEME_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.scheme.list");
+		XD_SCHEME = outerHostXd + ConfigUtil.getContextProperty("xd.scheme");
+		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
+		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
+		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 	}
 
 	@Override
@@ -140,8 +167,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public NetworkInfoContext getNetworkInfo(NodeListApiReq nodeListApiReq) {
+	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
+		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
+		List<NodeIdBo> nodeIdBoList = getNodeIdList(nodeListReq);
+		List<String> nodeIdList = nodeIdBoList.stream().map(NodeIdBo::getNodeId)
+				.collect(Collectors.toList());
 
+		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
+		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
 				nodeListApiReq, NetworkInfoContext.class);
 
@@ -197,22 +230,45 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return res;
 	}
 
+	private Date getQueryTime(String featureId) {
+
+		if (StringUtils.isBlank(featureId)) {
+			return null;
+		}
+
+		Date currentLastTime = queryTimeCache.getIfPresent(featureId);
+		return currentLastTime;
+	}
+
 	@Override
-	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq) {
+	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq, String featureId) {
+		taskEventReq.setQueryTime(getQueryTime(featureId));
 		String rsp = HttpClientUtil.rawGetByParam(taskEventReq, TASK_EVENT_URL, String.class);
 		List<TaskEventContext> res = JsonUtil.toJsonObjectArray(rsp, TaskEventContext.class);
+
+		// 更新查询时间缓存
+		if (res != null && !res.isEmpty()) {
+			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+		}
+
 		return res;
 	}
 
 	@Override
-	public List<AdEventContext> getAdEventList(EventReq eventReq) {
+	public List<AdEventContext> getAdEventList(EventReq eventReq, String featureId) {
+		eventReq.setQueryTime(getQueryTime(featureId));
 		String rsp = HttpClientUtil.post(AD_EVENT_URL, eventReq, String.class);
 		List<AdEventContext> res = JsonUtil.toJsonObjectArray(rsp, AdEventContext.class);
+
+		// 更新查询时间缓存
+		if (res != null && !res.isEmpty()) {
+			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+		}
 		return res;
 	}
 
 	@Override
-	public List<NodeEventContext> getNodeEventList(EventReq eventReq) {
+	public List<NodeEventContext> getNodeEventList(EventReq eventReq, String featureId) {
 		String rsp = HttpClientUtil.post(NODE_STATUS_URL, eventReq, String.class);
 		List<NodeEventContext> res = JsonUtil.toJsonObjectArray(rsp, NodeEventContext.class);
 		return res;
@@ -221,7 +277,49 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public TopoContext getTopo(TopoReq topoReq) {
 
-		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo", ThirdPartyTopoBo.class);
+		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo",
+				ThirdPartyTopoBo.class);
 		return topoBo.convert();
+	}
+
+	@Override
+	public List<SchemeRspBo> getSchemeList(SituationTaskReq req) {
+
+		String rsp = HttpClientUtil.rawGet(XD_SCHEME_LIST + req.toQuery(), String.class);
+		List<SchemeRspBo> res = JsonUtil.toJsonObjectArray(rsp, SchemeRspBo.class);
+		return res;
+	}
+
+	@Override
+	public SchemeVisualizationBo getScheme(String schemeId) {
+		if (StringUtils.isBlank(schemeId)) {
+			throw new BusinessException(ErrorCode.EMPTY_SCHEME_ID);
+		}
+		String targetUrl = XD_SCHEME + "?schemeId=" + schemeId;
+		SchemeVisualizationBo rsp = HttpClientUtil.rawGet(targetUrl, SchemeVisualizationBo.class);
+		return rsp;
+	}
+
+	@Override
+	public List<TopoHistoryBo> getTopoHistory(SituationTaskReq req) {
+		String rsp = HttpClientUtil.rawGet(XD_TOPO_HISTORY + req.toQuery(), String.class);
+		List<TopoHistoryBo> res = JsonUtil.toJsonObjectArray(rsp, TopoHistoryBo.class);
+		return res;
+	}
+
+	@Override
+	public Boolean releaseScreen(String schemeId, String dashboardId) {
+		ReleaseScreenBo releaseScreenBo = new ReleaseScreenBo();
+		releaseScreenBo.setSchemeId(schemeId);
+		releaseScreenBo.setDashboardId(dashboardId);
+
+		BooleanRes rsp = HttpClientUtil.post(XD_RELEASE_SCREEN, releaseScreenBo, BooleanRes.class);
+		return rsp.getResult();
+	}
+
+	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {
+		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
+		List<NodeIdBo> res = JsonUtil.toJsonObjectArray(rsp, NodeIdBo.class);
+		return res;
 	}
 }

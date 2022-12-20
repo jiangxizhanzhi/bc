@@ -14,6 +14,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.bo.situation.*;
 import com.cyberpeace.situation.constant.TaskStatus;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.*;
@@ -122,8 +123,7 @@ public class ThirdPartyController {
 	public BaseRsp<NetworkInfoContext>
 			getNetworkInfo(@RequestBody @Validated PlatformReq platformReq) {
 
-		return new BaseRsp<>(remoteSituationService
-				.getNetworkInfo(BeanUtils.copy(platformReq, NodeListApiReq.class)));
+		return new BaseRsp<>(remoteSituationService.getNetworkInfo(platformReq));
 	}
 
 	@ApiOperation("获取任务列表")
@@ -194,7 +194,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<TaskEventContext>>
 			getTaskEventList(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq));
+		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq, null));
 	}
 
 	@ApiOperation("获取攻防事件列表")
@@ -202,7 +202,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<AdEventContext>>
 			getAdEventList(@RequestBody @Validated EventMsgReq eventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq));
+		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq, null));
 	}
 
 	@ApiOperation("获取节点状态列表")
@@ -210,7 +210,7 @@ public class ThirdPartyController {
 	public BaseRsp<List<NodeEventContext>>
 			getNodeEventList(@RequestBody @Validated EventMsgReq eventReq) {
 
-		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq));
+		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq, null));
 	}
 
 	@ApiOperation("获取第三方拓扑数据")
@@ -218,5 +218,27 @@ public class ThirdPartyController {
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
 		return new BaseRsp<>(remoteSituationService.getTopo(topoReq));
+	}
+
+	@ApiOperation("想定-获取任务下可视化方案列表")
+	@GetMapping("/scheme/list")
+	public BaseRsp<List<SchemeRspBo>> getSchemeList(SituationTaskReq req) {
+		List<SchemeRspBo> res = remoteSituationService.getSchemeList(req);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("想定-获取任务/科目可视化方案")
+	@GetMapping("/scheme/visualization")
+	public BaseRsp<SchemeVisualizationBo> getSchemeVisualization(
+			@ApiParam(value = "可视化方案id", name = "scheme_id") String scheme_id) {
+		SchemeVisualizationBo scheme = remoteSituationService.getScheme(scheme_id);
+		return new BaseRsp<>(scheme);
+	}
+
+	@ApiOperation("配管-获取科目拓扑变更记录")
+	@GetMapping("/task/topo/history")
+	public BaseRsp<List<TopoHistoryBo>> getTopoHistory(SituationTaskReq req) {
+		List<TopoHistoryBo> res = remoteSituationService.getTopoHistory(req);
+		return new BaseRsp<>(res);
 	}
 }

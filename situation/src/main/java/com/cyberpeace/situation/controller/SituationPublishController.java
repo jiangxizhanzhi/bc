@@ -1,35 +1,10 @@
 package com.cyberpeace.situation.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.model.situation.SituationPlan;
-import com.cyberpeace.integratation.model.situation.SituationSubject;
-import com.cyberpeace.integratation.model.situation.SituationTask;
-import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.*;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
-import com.cyberpeace.situation.dao.entity.DashboardTemplate;
-import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.dao.entity.SituationCategory;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
-import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
-import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
-import com.cyberpeace.situation.service.DashboardTemplateRefService;
-import com.cyberpeace.situation.service.DashboardTemplateService;
-import com.cyberpeace.situation.service.SituationPublishInstanceService;
-import com.cyberpeace.situation.constant.SituationInstanceStatus;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +14,38 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.model.situation.SituationPlan;
+import com.cyberpeace.integratation.model.situation.SituationSubject;
+import com.cyberpeace.integratation.model.situation.SituationTask;
+import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.SituationInstanceStatus;
+import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
+import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
+import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.SituationCategory;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
+import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
+import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "组件库-态势发布大屏")
 @RestController
@@ -60,6 +62,9 @@ public class SituationPublishController {
 
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;
+
+	@Autowired
+	private DashboardAttributeMapper dashboardAttributeMapper;
 
 	@Autowired
 	private SituationCategoryMapper situationCategoryMapper;
@@ -192,7 +197,19 @@ public class SituationPublishController {
 			dashboardAttribute.setSubjectId(subjectId);
 			dashboardAttribute.setTaskId(taskId);
 		}
-		situationPublishInstanceMapper.updateById(situationPublishInstances);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				situationPublishInstanceMapper.updateById(situationPublishInstances);
+				DashboardAttribute attribute = dashboardAttributeMapper.getById(resourceId);
+				Boolean result = remoteSituationService.releaseScreen(attribute.getSchemeId(),
+						attribute.getDashboardId());
+				if (!result) {
+					throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
+				}
+			}
+		});
 		return new BaseRsp<>();
 	}
 

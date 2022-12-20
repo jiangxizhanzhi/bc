@@ -24,6 +24,7 @@ import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
+import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.*;
@@ -102,13 +103,20 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         String name = situationPublishInstanceAddReq.getName();
         List<SubjectContext> subjectContextList = new ArrayList<>();
         List<TaskContext> taskList = getTaskList();
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null);
+        Integer level = dashboardTemplateInfo.getLevel();
+        Integer refresh = dashboardTemplateInfo.getRefresh();
 
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
         dashboardAttribute.setDashboardId(name);
         dashboardAttribute.setDashboardType(2);
+        dashboardAttribute.setTitle(name);
+        dashboardAttribute.setLevel(level == null ? 0 : level);
+        dashboardAttribute.setRefresh(refresh == null ? 0 : refresh);
         //设置任务属性
         taskList.forEach(taskContext -> {
             if (Objects.equals(taskContext.getTaskId(), taskId)) {
+                dashboardAttribute.setDashboardMode(1);
                 dashboardAttribute.setTaskName(taskContext.getTaskName());
                 dashboardAttribute.setTaskType(taskContext.getTaskType());
                 subjectContextList.addAll(taskContext.getSubjectList());

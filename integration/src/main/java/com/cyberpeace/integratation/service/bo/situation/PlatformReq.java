@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.controller.req;
+package com.cyberpeace.integratation.service.bo.situation;
 
 import java.io.Serializable;
 
@@ -9,6 +9,9 @@ import lombok.Data;
 
 @Data
 public class PlatformReq extends TaskBaseReq implements Serializable {
+
+	@ApiModelProperty(value = "可视化方案id")
+	private String schemeId;
 
 	@ApiModelProperty("平台ID")
 	private String platformId;

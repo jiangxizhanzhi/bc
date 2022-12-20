@@ -120,7 +120,7 @@ public class DashboardController {
 	public BaseRsp<Boolean> getTaskEvent(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
 
 		List<TaskEventContext> taskEventContexts = remoteSituationService
-				.getTaskEventList(taskEventReq);
+				.getTaskEventList(taskEventReq, taskEventReq.getFeatureId());
 		situationHandlerService.batchPushDataToDashboard("", taskEventReq.getDashboardId(),
 				taskEventReq.getFeatureId(), taskEventContexts, null, null);
 
@@ -145,7 +145,8 @@ public class DashboardController {
 	@PostMapping("/event/task/ad/")
 	public BaseRsp<Boolean> getTaskAdEvent(@RequestBody @Validated EventMsgReq eventReq) {
 
-		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq);
+		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
+				eventReq.getFeatureId());
 		situationHandlerService.batchPushDataToDashboard("", eventReq.getDashboardId(),
 				eventReq.getFeatureId(), adEventContexts, null, null);
 
@@ -156,8 +157,8 @@ public class DashboardController {
 	@PostMapping("/event/task/node/")
 	public BaseRsp<Boolean> getTaskNodeEvent(@RequestBody @Validated EventMsgReq eventReq) {
 
-		List<NodeEventContext> nodeEventContexts = remoteSituationService
-				.getNodeEventList(eventReq);
+		List<NodeEventContext> nodeEventContexts = remoteSituationService.getNodeEventList(eventReq,
+				eventReq.getFeatureId());
 		situationHandlerService.batchPushDataToDashboard("", eventReq.getDashboardId(),
 				eventReq.getFeatureId(), nodeEventContexts, null, null);
 

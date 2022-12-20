@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @Date 13/12/2022 下午8:55
  */
 @Data
-public class SituationPublishInstancePageRes extends PageReqBase implements Serializable {
+public class SituationPublishInstancePageRes implements Serializable {
 
     @ApiModelProperty(value = "资源id")
     private String resourceId;
@@ -39,4 +39,8 @@ public class SituationPublishInstancePageRes extends PageReqBase implements Seri
 
     @ApiModelProperty("模板id")
     private String templateId;
+
+    @ApiModelProperty("大屏属性ID")
+    private String attributeId;
+
 }

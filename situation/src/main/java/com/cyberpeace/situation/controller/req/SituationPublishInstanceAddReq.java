@@ -20,30 +20,26 @@ public class SituationPublishInstanceAddReq {
     private String description;
 
     @ApiModelProperty(value = "想定方案id")
-//    @NotBlank(groups = { Create.class, Update.class },
-//            message = SituationErrorCode.PLAN_ID_EMPTY_ERROR)
     private String planId;
 
     @ApiModelProperty(value = "任务id")
-//    @NotBlank(groups = { Create.class, Update.class },
-//            message = SituationErrorCode.TASK_EMPTY_ERROR)
     private String taskId;
 
+    @ApiModelProperty(value = "任务名称")
+    private String taskName;
+
     @ApiModelProperty(value = "科目id")
-//    @NotBlank(groups = { Create.class, Update.class },
-//            message = SituationErrorCode.SUBJECT_EMPTY_ERROR)
     private String subjectId;
 
+    @ApiModelProperty(value = "科目名称")
+    private String subjectName;
+
     @ApiModelProperty(value = "模板id")
-//    @NotBlank(groups = { Create.class, Update.class },
-//            message = SituationErrorCode.TEMPLATE_EMPTY_ERROR)
     private String templateId;
 
     @ApiModelProperty(value = "任务类型", required = true)
     private String category;
 
-//    @NotBlank(groups = { Create.class, Update.class },
-//            message = SituationErrorCode.THUMBNAIL_EMPTY_ERROR)
     @ApiModelProperty(value = "缩略图", required = true)
     private String thumbnail;
 }

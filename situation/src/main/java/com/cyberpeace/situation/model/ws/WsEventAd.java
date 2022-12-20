@@ -3,6 +3,7 @@ package com.cyberpeace.situation.model.ws;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.situation.model.EventInfo;
 import com.cyberpeace.situation.model.LineStyle;
 
@@ -56,5 +57,13 @@ public class WsEventAd implements Serializable {
 
 	@ApiModelProperty("事件信息")
 	private EventInfo eventInfo;
+
+	public void load(AdEventContext context){
+		this.sourceId = context.getSourceId();
+		this.targetId = context.getTargetId();
+		EventInfo info = new EventInfo();
+		info.load(context);
+		this.eventInfo = info;
+	}
 
 }

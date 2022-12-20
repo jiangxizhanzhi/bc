@@ -35,7 +35,7 @@ public class DynamicEffectsMapping extends BaseTable {
     private String createUserId;
 
     @ApiModelProperty("聚焦")
-    private String focus;
+    private Boolean focus;
 
     @ApiModelProperty("颜色")
     private String color;
@@ -44,5 +44,5 @@ public class DynamicEffectsMapping extends BaseTable {
     private String line;
 
     @ApiModelProperty("线形大小")
-    private String lineSize;
+    private Integer lineSize;
 }

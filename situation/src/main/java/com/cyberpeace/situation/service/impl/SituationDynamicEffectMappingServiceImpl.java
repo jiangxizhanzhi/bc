@@ -23,7 +23,7 @@ import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
 import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.SituationDynamicEffectMappingService;
-import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.cyberpeace.situation.dao.entity.SubRange;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

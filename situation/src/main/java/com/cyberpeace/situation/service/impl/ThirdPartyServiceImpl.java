@@ -19,7 +19,7 @@ import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.StationMapper;
 import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
-import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;

@@ -2,8 +2,6 @@ package com.cyberpeace.situation.controller.res;
 
 import java.util.List;
 
-import com.cyberpeace.situation.service.context.EventTypeContext;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

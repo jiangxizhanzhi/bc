@@ -3,6 +3,8 @@ package com.cyberpeace.situation.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cyberpeace.integratation.model.situation.AdEventContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -41,5 +43,18 @@ public class EventInfo implements Serializable {
 
 	@ApiModelProperty("目的节点阵营")
 	private String targetGroup;
+
+	public void load(AdEventContext context) {
+		this.eventId = context.getEventId();
+		this.eventName = context.getEventName();
+		this.eventSeverity = context.getEventSeverity();
+		this.eventTime = context.getEventTime();
+		this.eventType = context.getEventType();
+		this.eventSubType = context.getEventSubType();
+		this.description = context.getDescription();
+		this.sourceIp = context.getSourceIp();
+		// sourcegroup
+		this.targetIp = context.getTargetIp();
+	}
 
 }

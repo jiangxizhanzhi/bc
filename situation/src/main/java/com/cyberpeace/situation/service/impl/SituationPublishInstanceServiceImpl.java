@@ -108,6 +108,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         Integer refresh = dashboardTemplateInfo.getRefresh();
 
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
+        situationPublishInstance.setAttributeId(dashboardAttribute.getDashboardId());
         dashboardAttribute.setDashboardId(name);
         dashboardAttribute.setDashboardType(2);
         dashboardAttribute.setTitle(name);

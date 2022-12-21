@@ -1,8 +1,10 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,9 @@ public class ExternalJumpController {
 	public void jumpSituation(HttpServletResponse response,
 							  @RequestParam(value = "resource_id") String resourceId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if(businessTemplate == null){
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
+		}
 		setResponse(response,
 				"/page/mg/admin/screen-3/visual-screen?name=" + getURLEncoderString(businessTemplate.getName()) + "&topo_id=" + businessTemplate.getTopoId());
 	}
@@ -44,6 +49,9 @@ public class ExternalJumpController {
 	public void jumpSituationControl(HttpServletResponse response,
 									 @RequestParam(value = "resource_id") String resourceId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if(businessTemplate == null){
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
+		}
 		setResponse(response,
 				"/page/mg/admin/screen-3/visual-screen-control?name=" + getURLEncoderString(businessTemplate.getName()) + "&topo_id=" + businessTemplate.getTopoId());
 	}

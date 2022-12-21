@@ -55,4 +55,7 @@ public interface SituationErrorCode {
 
 	/** 当前场景无暂停运行的动效方案 */
 	String CANNOT_FIND_STOP_DYNAMIC = "104018";
+
+	/** 找不到对应的拓扑数据 */
+	String CANNOT_FIND_TOPO = "104019";
 }

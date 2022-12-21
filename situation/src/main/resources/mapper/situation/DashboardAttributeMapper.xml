@@ -9,6 +9,12 @@
         where dashboard_id = #{dashboardId}
     </select>
 
+    <select id="getByResourceId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
+        select *
+        from situation_dashboard_attribute
+        where resource_id = #{resourceId}
+    </select>
+
     <select id="getByTaskId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
         select *
         from situation_dashboard_attribute

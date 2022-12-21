@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.EventTypeContextMapper">
 
     <select id="getEventTypeContextList"
-            resultType="com.cyberpeace.situation.service.context.EventTypeContext">
+            resultType="com.cyberpeace.situation.dao.entity.EventTypeContext">
         select * from situation_event_type_context
         <if test="isRootNode != null and isRootNode == true">
             where parent_node is null
@@ -13,5 +13,12 @@
         <if test="isRootNode != null and isRootNode == false">
             where parent_node is not null
         </if>
+    </select>
+    <select id="selectBatchByName" resultType="com.cyberpeace.situation.dao.entity.EventTypeContext">
+        select * from situation_event_type_context
+        where name in
+        <foreach collection="types" open="(" close=")" separator="," item="type">
+            #{type}
+        </foreach>
     </select>
 </mapper>

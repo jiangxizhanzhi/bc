@@ -1,10 +1,10 @@
 package com.cyberpeace.situation.dao.mapper;
 
-import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.context.annotation.Bean;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -16,4 +16,5 @@ public interface EventTypeContextMapper {
 
     List<EventTypeContext> getEventTypeContextList(@Param("isRootNode") Boolean isRootNode);
 
+    List<EventTypeContext> selectBatchByName(@Param("types") Collection<String> types);
 }

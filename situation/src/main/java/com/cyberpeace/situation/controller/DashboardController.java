@@ -2,7 +2,12 @@ package com.cyberpeace.situation.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
@@ -22,7 +28,14 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
+import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
+import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
+import com.cyberpeace.situation.model.LineStyle;
+import com.cyberpeace.situation.model.ViewAngle;
+import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -48,6 +61,12 @@ public class DashboardController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
+
+	@Autowired
+	private EventTypeContextMapper eventTypeContextMapper;
 
 	@ApiOperation("获取任务/科目发布的大屏ID")
 	@GetMapping("/id/")
@@ -108,8 +127,13 @@ public class DashboardController {
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
-		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(),
-				JsonUtil.java2JsonObject(dashboardAttribute));
+		JSONObject data = JsonUtil.java2JsonObject(dashboardAttribute);
+		ViewAngle viewAngle = JsonUtil.toJsonObject(data.getString("viewAngle"), ViewAngle.class);
+		data.put("longitude", viewAngle.getLongitude());
+		data.put("latitude", viewAngle.getLatitude());
+		data.put("altitude", viewAngle.getAltitude());
+
+		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(), data);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
 				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);
@@ -147,8 +171,9 @@ public class DashboardController {
 
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());
+		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts);
 		situationHandlerService.batchPushDataToDashboard("", eventReq.getDashboardId(),
-				eventReq.getFeatureId(), adEventContexts, null, null);
+				eventReq.getFeatureId(), eventAds, null, null);
 
 		return new BaseRsp<>(true);
 	}
@@ -163,6 +188,58 @@ public class DashboardController {
 				eventReq.getFeatureId(), nodeEventContexts, null, null);
 
 		return new BaseRsp<>(true);
+	}
+
+	private List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList) {
+		List<WsEventAd> adList = Lists.newArrayList();
+		if (CollectionUtils.isEmpty(contextList)) {
+			return adList;
+		}
+		// collect types
+		Set<String> subTypes = contextList.stream().map(AdEventContext::getEventSubType)
+				.collect(Collectors.toSet());
+		// get code
+		List<EventTypeContext> typeContextList = eventTypeContextMapper.selectBatchByName(subTypes);
+		if (typeContextList.size() != subTypes.size()) {
+			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
+		}
+		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList,
+				EventTypeContext::getName, EventTypeContext::getCode);
+		Map<String, EventTypeContext> codeTypeMap = StreamApiUtils.toMap(typeContextList,
+				EventTypeContext::getCode, context -> context);
+		// 查找映射动效
+		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
+				.selectBatchByType(codeTypeMap.keySet());
+		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
+				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
+		// 转化
+		contextList.forEach(context -> {
+			WsEventAd ad = new WsEventAd();
+			ad.load(context);
+
+			String code = nameCodeMap.get(context.getEventSubType());
+			if (mappingEffectMap.containsKey(code)) {
+				// 映射类型
+				ad.setDynamicType(2);
+				DynamicEffectsMapping effect = mappingEffectMap.get(code);
+				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
+						effect.getLine());
+				ad.setLineStyle(lineStyle);
+				ad.setLookAtTarget(effect.getFocus());
+			} else {
+				// 内置类型
+				ad.setDynamicType(1);
+				EventTypeContext typeContext = codeTypeMap.get(code);
+				ad.setSourceActionType(typeContext.getSourceActionType());
+				ad.setTargetActionType(typeContext.getTargetActionType());
+				// todo
+				LineStyle lineStyle = new LineStyle("#FF0000", 5, "dashed");
+				ad.setLineStyle(lineStyle);
+				ad.setLookAtTarget(false);
+			}
+			adList.add(ad);
+		});
+		return adList;
 	}
 
 }

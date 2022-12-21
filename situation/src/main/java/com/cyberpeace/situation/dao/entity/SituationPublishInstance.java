@@ -2,11 +2,10 @@ package com.cyberpeace.situation.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 @TableName("situation_publish_instance")
@@ -14,6 +13,9 @@ public class SituationPublishInstance extends BaseTable {
 
 	@TableId(value = "resource_id")
 	private String resourceId;
+
+	@ApiModelProperty("大屏属性ID")
+	private String attributeId;
 
 	@ApiModelProperty("可视化大屏名称")
 	private String name;

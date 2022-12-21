@@ -135,4 +135,9 @@ public interface SituationErrorCode {
 	 * 远程发布大屏失败
 	 */
 	String REMOTE_FAILED_TO_RELEASE = "106003";
+
+	/**
+	 * 未知的事件类型
+	 */
+	String UNKNOWN_EVENT_TYPE = "106004";
 }

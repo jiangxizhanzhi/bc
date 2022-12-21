@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.situation.controller.res.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,6 @@ import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
-import com.cyberpeace.situation.controller.res.SituationInstanceStatusRes;
-import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
-import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
@@ -117,14 +114,21 @@ public class SituationPublishController {
 
 	@ApiOperation("查询态势发布实例详情")
 	@GetMapping("")
-	public BaseRsp<SituationPublishInstance>
+	public BaseRsp<SituationPublishInstanceRes>
 	getSituationPublishInstanceDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(resourceId);
 		if(null == situationPublishInstance){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		return new BaseRsp<>(situationPublishInstance);
+
+		// 补充任务名称、科目名称
+		SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
+		DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+		situationPublishInstanceRes.setTaskName(attribute.getTaskName());
+		situationPublishInstanceRes.setSubjectName(attribute.getSubjectName());
+
+		return new BaseRsp<>(situationPublishInstanceRes);
 	}
 
 	@ApiOperation("删除态势发布实例")
@@ -191,6 +195,7 @@ public class SituationPublishController {
 			}
 		}
 		String taskId = situationPublishInstances.getTaskId();
+		String attributeId = situationPublishInstances.getAttributeId();
 		DashboardAttribute dashboardAttribute = new DashboardAttribute();
 		if (StringUtils.isNotBlank(taskId) && StringUtils.isNotBlank(subjectId)) {
 			dashboardAttribute.setDashboardId(resourceId);
@@ -202,7 +207,7 @@ public class SituationPublishController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				situationPublishInstanceMapper.updateById(situationPublishInstances);
-				DashboardAttribute attribute = dashboardAttributeMapper.getById(resourceId);
+				DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(attributeId);
 				Boolean result = remoteSituationService.releaseScreen(attribute.getSchemeId(),
 						attribute.getDashboardId());
 				if (!result) {

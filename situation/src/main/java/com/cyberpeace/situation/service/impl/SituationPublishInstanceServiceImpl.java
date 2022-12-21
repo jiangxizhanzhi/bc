@@ -97,38 +97,22 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         //插入situation_dashboard_attribute
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstance, DashboardAttribute.class);
         String templateId = situationPublishInstanceAddReq.getTemplateId();
-        String subjectId = situationPublishInstanceAddReq.getSubjectId();
-        String taskId = situationPublishInstanceAddReq.getTaskId();
-        String planId = situationPublishInstanceAddReq.getPlanId();
+
         String name = situationPublishInstanceAddReq.getName();
-        List<SubjectContext> subjectContextList = new ArrayList<>();
-        List<TaskContext> taskList = getTaskList();
         DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null);
         Integer level = dashboardTemplateInfo.getLevel();
         Integer refresh = dashboardTemplateInfo.getRefresh();
 
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
-        dashboardAttribute.setDashboardId(name);
+        situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
+        dashboardAttribute.setDashboardId(dashboardAttribute.getResourceId());
         dashboardAttribute.setDashboardType(2);
         dashboardAttribute.setTitle(name);
-        dashboardAttribute.setLevel(level == null ? 0 : level);
-        dashboardAttribute.setRefresh(refresh == null ? 0 : refresh);
-        //设置任务属性
-        taskList.forEach(taskContext -> {
-            if (Objects.equals(taskContext.getTaskId(), taskId)) {
-                dashboardAttribute.setDashboardMode(1);
-                dashboardAttribute.setTaskName(taskContext.getTaskName());
-                dashboardAttribute.setTaskType(taskContext.getTaskType());
-                subjectContextList.addAll(taskContext.getSubjectList());
-            }
-        });
-
-        //设置分靶场属性
-        subjectContextList.forEach(subjectContext -> {
-            if (Objects.equals(subjectContext.getSubjectId(), subjectId)) {
-                dashboardAttribute.setSubjectName(subjectContext.getSubjectName());
-            }
-        });
+        dashboardAttribute.setLevel(level == null ? 3 : level);
+        dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
+        dashboardAttribute.setDashboardMode(1);
+        dashboardAttribute.setTaskName(situationPublishInstanceAddReq.getTaskName());
+        dashboardAttribute.setSubjectName(situationPublishInstanceAddReq.getSubjectName());
 
         //TODO 分靶场类型设置
 
@@ -204,23 +188,6 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
         List<SituationPublishInstancePageRes> situationPublishInstancePageResList = situationPublishInstancePage.getRecords();
 
-        //任务id列表
-        List<TaskContext> taskContextList = getTaskList();
-        Map<String, TaskContext> taskMaps = taskContextList.stream().collect(Collectors.toMap(TaskContext::getTaskId, task -> task));
-        List<SubjectContext> subjectList = new ArrayList<>();
-
-        //科目列表
-        List<String> taskIds = StreamApiUtils.getColumn(situationPublishInstancePageResList, SituationPublishInstancePageRes::getTaskId);
-        taskContextList.forEach(taskContext -> {
-            if (taskIds.contains(taskContext.getTaskId())) {
-                List<SubjectContext> list = taskContext.getSubjectList();
-                if (CollectionUtils.isNotEmpty(list)) {
-                    subjectList.addAll(taskContext.getSubjectList());
-                }
-            }
-        });
-        Map<String, SubjectContext> subjectMaps = subjectList.stream().collect(Collectors.toMap(SubjectContext::getSubjectId, subject -> subject));
-
         //任务类型id列表
         HashMap<String, String> taskTypeMap = TaskType.getTaskType();
         List<LocalType> statusList = SituationInstanceStatus.getMsgList();
@@ -229,13 +196,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
 
-                if (taskMaps.containsKey(situationPublishInstancePageRes.getTaskId())) {
-                    situationPublishInstancePageRes.setTaskName(taskMaps.get(situationPublishInstancePageRes.getTaskId()).getTaskName());
-                }
-
-                if (subjectMaps.containsKey(situationPublishInstancePageRes.getSubjectId())) {
-                    situationPublishInstancePageRes.setSubjectName(subjectMaps.get(situationPublishInstancePageRes.getSubjectId()).getSubjectName());
-                }
+                DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(situationPublishInstancePageRes.getAttributeId());
+                situationPublishInstancePageRes.setTaskName(attribute.getTaskName());
+                situationPublishInstancePageRes.setSubjectName(attribute.getSubjectName());
 
                 String category = situationPublishInstancePageRes.getCategory();
                 if (taskTypeMap.containsKey(category)) {
@@ -253,16 +216,4 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return PageUtil.getListResult(situationPublishInstancePage);
     }
 
-    /**
-     * 获取任务列表
-     * @return
-     */
-    private List<TaskContext> getTaskList(){
-        TaskListReq taskListReq = new TaskListReq();
-        taskListReq.setPage(1);
-        taskListReq.setPageSize(999);
-        ListRsp<TaskContext> taskList = remoteSituationService.getTaskList(taskListReq);
-        List<TaskContext> taskContextList = taskList.getList();
-        return taskContextList;
-    }
 }

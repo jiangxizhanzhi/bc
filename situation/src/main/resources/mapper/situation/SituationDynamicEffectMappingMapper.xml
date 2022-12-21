@@ -14,4 +14,11 @@
         </if>
         ORDER BY create_time DESC
     </select>
+    <select id="selectBatchByType" resultType="com.cyberpeace.situation.dao.entity.DynamicEffectsMapping">
+        select * from situation_dynamic_effects_mapping
+        where attack_type in
+        <foreach collection="types" open="(" close=")" separator="," item="type">
+            #{type}
+        </foreach>
+    </select>
 </mapper>

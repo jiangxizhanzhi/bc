@@ -5,10 +5,15 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
+import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
 
@@ -18,15 +23,33 @@ public class DashboardServiceImpl implements DashboardService {
 	@Autowired
 	private DashboardAttributeMapper dashboardAttributeMapper;
 
+	@Autowired
+	private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
 	@Override
 	public DashboardBasicAttributeRes getDashboardBasicAttribute(String dashboardId) {
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById(dashboardId);
+		// 获取属性对象
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(dashboardId);
+
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstances.getAttributeId());
 
 		if (dashboardAttribute != null) {
 			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
 			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
+
+			dashboardBasicAttributeRes.setDashboardId(situationPublishInstances.getResourceId());
+			dashboardBasicAttributeRes.setSubRangeId(situationPublishInstances.getSubRangeId());
+			dashboardBasicAttributeRes.setTaskId(situationPublishInstances.getTaskId());
+			dashboardBasicAttributeRes.setSubjectId(situationPublishInstances.getSubjectId());
+
 			return dashboardBasicAttributeRes;
 
 		}
@@ -47,6 +70,26 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 
 		return data;
+
+	}
+
+	@Override
+	public DashboardIdRes getAttributeByTaskId(String taskId, String subjectId) {
+
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectPublicedByTaskId(taskId, subjectId);
+
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstances.getAttributeId());
+
+		DashboardIdRes dashboardIdRes = BeanUtils.copy(dashboardAttribute, DashboardIdRes.class);
+		dashboardIdRes.setDashboardId(situationPublishInstances.getResourceId());
+
+		return dashboardIdRes;
 
 	}
 

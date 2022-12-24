@@ -16,8 +16,6 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 	@TableId(value = "resource_id")
 	private String resourceId;
 
-	private String dashboardId;
-
 	private Integer dashboardType;
 
 	private Integer dashboardMode;
@@ -36,21 +34,9 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private String envId;
 
-	private String subRangeId;
-
-	private String subRangeName;
-
-	private String taskId;
-
-	private String taskName;
-
 	private String taskType;
 
 	private String taskSubType;
-
-	private String subjectId;
-
-	private String subjectName;
 
 	private Date startTime;
 

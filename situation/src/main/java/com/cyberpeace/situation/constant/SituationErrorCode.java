@@ -140,4 +140,9 @@ public interface SituationErrorCode {
 	 * 未知的事件类型
 	 */
 	String UNKNOWN_EVENT_TYPE = "106004";
+
+	/**
+	 * 不允许修改任务方案
+	 */
+	String CAN_NOT_MODIFY_TASK = "106005";
 }

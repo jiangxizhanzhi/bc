@@ -17,8 +17,6 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 
     SituationPublishInstance updateOne(SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq);
 
-    void checkPlan(SituationPublishInstanceAddReq situationPublishInstanceAddReq);
-
     /**
      * 清除未使用的态势
      */

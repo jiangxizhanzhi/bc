@@ -14,25 +14,37 @@ public class SituationPublishInstance extends BaseTable {
 	@TableId(value = "resource_id")
 	private String resourceId;
 
-	@ApiModelProperty("大屏属性ID")
-	private String attributeId;
-
 	@ApiModelProperty("可视化大屏名称")
 	private String name;
 
 	@ApiModelProperty("大屏描述")
 	private String description;
 
-	@ApiModelProperty("想定方案id")
-	private String planId;
+	@ApiModelProperty("大屏属性ID")
+	private String attributeId;
 
-	@ApiModelProperty("任务id")
+	@ApiModelProperty("可视化方案ID")
+	private String schemeId;
+
+	@ApiModelProperty("分靶场ID")
+	private String subRangeId;
+
+	@ApiModelProperty("分靶场名称")
+	private String subRangeName;
+
+	@ApiModelProperty("任务ID")
 	private String taskId;
 
-	@ApiModelProperty("科目id")
+	@ApiModelProperty("任务名称")
+	private String taskName;
+
+	@ApiModelProperty("科目ID")
 	private String subjectId;
 
-	@ApiModelProperty("模板id")
+	@ApiModelProperty("科目名称")
+	private String subjectName;
+
+	@ApiModelProperty("模板ID")
 	private String templateId;
 
 	@ApiModelProperty("缩略图")
@@ -41,8 +53,14 @@ public class SituationPublishInstance extends BaseTable {
 	@ApiModelProperty("类型")
 	private String category;
 
-	@ApiModelProperty("状态")
+	@ApiModelProperty("发布状态（草稿/发布）")
 	private String status;
+
+	@ApiModelProperty("下发状态（下发/未下发）")
+	private Integer publicStatus;
+
+	@ApiModelProperty("是否可编辑")
+	private Boolean edit;
 
 	private String createUserId;
 }

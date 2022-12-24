@@ -19,25 +19,31 @@ public class SituationPublishInstanceAddReq {
     @ApiModelProperty(value = "大屏描述")
     private String description;
 
-    @ApiModelProperty(value = "想定方案id")
-    private String planId;
+    @ApiModelProperty(value = "可视化方案ID")
+    private String schemeId;
 
-    @ApiModelProperty(value = "任务id")
+    @ApiModelProperty(value = "可视化方案名称")
+    private String schemeName;
+
+    @ApiModelProperty(value = "任务ID")
     private String taskId;
 
     @ApiModelProperty(value = "任务名称")
     private String taskName;
 
-    @ApiModelProperty(value = "科目id")
+    @ApiModelProperty(value = "任务类型")
+    private String taskType;
+
+    @ApiModelProperty(value = "科目ID")
     private String subjectId;
 
     @ApiModelProperty(value = "科目名称")
     private String subjectName;
 
-    @ApiModelProperty(value = "模板id")
+    @ApiModelProperty(value = "模板ID")
     private String templateId;
 
-    @ApiModelProperty(value = "任务类型", required = true)
+    @ApiModelProperty(value = "任务类型")
     private String category;
 
     @ApiModelProperty(value = "缩略图", required = true)

@@ -243,26 +243,4 @@ public class SituationPublishController {
 		return copy;
 	}
 
-
-	@ApiOperation("想定方案list")
-	@GetMapping("plan")
-	public List<SituationPlan> getPlans() {
-		return remoteSituationService.getPlans();
-	}
-
-	@ApiOperation("任务list")
-	@GetMapping("task")
-	public List<SituationTask> getTasks(SituationTaskFilterReq situationTaskFilterReq) {
-		// TODO 待修改
-
-		return remoteSituationService.getTasks(situationTaskFilterReq.getType(), null);
-	}
-
-	@ApiOperation("科目list")
-	@PostMapping("plan")
-	public List<SituationSubject> getSubjects(SituationSubjectFilterReq situationSubjectFilterReq) {
-		String taskId = situationSubjectFilterReq.getResourceId();
-		return remoteSituationService.getSubjectByTask(taskId);
-	}
-
 }

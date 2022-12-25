@@ -277,7 +277,13 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public TopoContext getTopo(TopoReq topoReq) {
 
-		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + "demo",
+		String xdTopoId = topoReq.getTopoId();
+
+		if (xdTopoId == null){
+			xdTopoId = "demo";
+		}
+
+		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + xdTopoId,
 				ThirdPartyTopoBo.class);
 		return topoBo.convert();
 	}

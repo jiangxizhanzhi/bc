@@ -43,4 +43,7 @@ public class SituationPublishInstancePageRes implements Serializable {
     @ApiModelProperty("大屏属性ID")
     private String attributeId;
 
+    @ApiModelProperty("是否可编辑")
+    private Boolean edit;
+
 }

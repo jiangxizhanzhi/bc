@@ -18,4 +18,16 @@
         </where>
 
     </select>
+
+    <select id="getMarkIdsByDashboardIds" resultType="java.lang.String">
+        SELECT resource_id FROM situation_gis_mark
+        <where>
+            <if test="dashboardIds != null and dashboardIds.size() != 0">
+                resource_id in
+                <foreach collection="dashboardIds" item="dashboardId" open="(" close=")" separator=",">
+                    #{dashboardId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

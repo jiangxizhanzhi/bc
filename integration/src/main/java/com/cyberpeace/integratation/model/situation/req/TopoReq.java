@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class TopoReq extends TaskBaseReq implements Serializable {
 
+	@ApiModelProperty("环境配置方案ID")
+	private String envId;
+
 	@ApiModelProperty("拓扑ID")
 	private String topoId;
 
@@ -16,5 +19,8 @@ public class TopoReq extends TaskBaseReq implements Serializable {
 
 	@ApiModelProperty("层级")
 	private Integer level;
+
+	@ApiModelProperty("变更ID")
+	private String updateId;
 
 }

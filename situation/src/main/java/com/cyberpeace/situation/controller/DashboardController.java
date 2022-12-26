@@ -82,10 +82,12 @@ public class DashboardController {
 			@ApiParam(name = "task_type", value = "任务类型",
 					required = true) @RequestParam(value = "task_type") String taskType) {
 
+		// 校验状态
 		if (!"任务执行".equals(taskStatus)) {
 			throw new BusinessException(SituationErrorCode.TASK_NOT_RUNNING);
 		}
 
+		// 校验类型
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
 				.filter(t -> t.getDesc().equals(taskType)).findFirst().orElse(TaskType.QB);
 
@@ -93,12 +95,9 @@ public class DashboardController {
 			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, taskType);
 		}
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByTaskId(taskId);
+		DashboardIdRes dashboardId = dashboardService.getAttributeByTaskId(taskId, subjectId);
 
-		String dashboardId = dashboardAttribute == null ? taskId
-				: dashboardAttribute.getDashboardId();
-
-		return new BaseRsp<>(new DashboardIdRes(dashboardId, type.getCode()));
+		return new BaseRsp<>(dashboardId);
 
 	}
 

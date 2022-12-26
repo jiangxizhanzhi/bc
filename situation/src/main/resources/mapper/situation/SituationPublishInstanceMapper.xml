@@ -18,4 +18,31 @@
         </if>
         ORDER BY create_time DESC
     </select>
+
+    <select id="getAttributeIds" resultType="java.lang.String">
+        SELECT attribute_id FROM situation_publish_instance
+        <where>
+            <if test="resourceIds != null and resourceIds.size() != 0">
+                resource_id in
+                <foreach collection="resourceIds" item="resourceId" open="(" close=")" separator=",">
+                    #{resourceId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPublicedByTaskId"
+            resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
+
+        SELECT * FROM situation_publish_instance
+        <where>
+            public_status = 2
+            <if test="taskId != null and taskId != ''">
+                and task_id = #{taskId}
+            </if>
+            <if test="subjectId != null and subjectId != ''">
+                and subject_id = #{subjectId}
+            </if>
+        </where>
+    </select>
 </mapper>

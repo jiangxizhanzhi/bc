@@ -98,9 +98,7 @@ public class SituationPublishController {
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance>
 	setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
-		// TODO Gis等数据是否需要大屏 存入模板实例
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq);
-
 
 		return new BaseRsp<>(situationPublishInstance);
 	}
@@ -109,6 +107,7 @@ public class SituationPublishController {
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationPublishInstancePageRes>>
 	getSituationPublishInstance(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
+
 		return new BaseRsp<>(situationPublishInstanceService.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
 	}
 
@@ -121,12 +120,7 @@ public class SituationPublishController {
 		if(null == situationPublishInstance){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-
-		// 补充任务名称、科目名称
 		SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
-		DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
-		situationPublishInstanceRes.setTaskName(attribute.getTaskName());
-		situationPublishInstanceRes.setSubjectName(attribute.getSubjectName());
 
 		return new BaseRsp<>(situationPublishInstanceRes);
 	}
@@ -145,8 +139,10 @@ public class SituationPublishController {
 		queryWrapper.in(SituationPublishInstance::getResourceId, resourceIds);
 		List<SituationPublishInstance> releaseInstances = situationPublishInstanceMapper.selectList(queryWrapper);
 		if (!releaseInstances.isEmpty()) {
-			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+			throw new BusinessException(SituationErrorCode.RELEASE_SITUATION_INSTANCE_CANNOT_DELETE_ERROR);
 		}
+
+		// 获取关联模板
 		List<String> dashboardTemplateIdList = new ArrayList<>();
 		for (SituationPublishInstance releaseInstance : situationPublishInstances) {
 			String templateId = releaseInstance.getTemplateId();
@@ -154,11 +150,16 @@ public class SituationPublishController {
 				dashboardTemplateIdList.add(templateId);
 			}
 		}
+
+		// 获取关联属性
+		List<String> attributeIds = situationPublishInstanceMapper.getAttributeIds(resourceIds);
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				situationPublishInstanceMapper.deleteBatchIds(resourceIds);
 				dashboardTemplateRefService.deleteDashboardTemplate(dashboardTemplateIdList);
+				dashboardAttributeMapper.deleteBatchIds(attributeIds);
 			}
 		});
 		return new BaseRsp<>();
@@ -194,22 +195,14 @@ public class SituationPublishController {
 				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
 			}
 		}
-		String taskId = situationPublishInstances.getTaskId();
-		String attributeId = situationPublishInstances.getAttributeId();
-		DashboardAttribute dashboardAttribute = new DashboardAttribute();
-		if (StringUtils.isNotBlank(taskId) && StringUtils.isNotBlank(subjectId)) {
-			dashboardAttribute.setDashboardId(resourceId);
-			dashboardAttribute.setSubjectId(subjectId);
-			dashboardAttribute.setTaskId(taskId);
-		}
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				situationPublishInstanceMapper.updateById(situationPublishInstances);
-				DashboardAttribute attribute = dashboardAttributeMapper.getByResourceId(attributeId);
-				Boolean result = remoteSituationService.releaseScreen(attribute.getSchemeId(),
-						attribute.getDashboardId());
+				Boolean result = remoteSituationService.releaseScreen(situationPublishInstances.getSchemeId(),
+						situationPublishInstances.getResourceId());
 				if (!result) {
 					throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
 				}
@@ -248,28 +241,6 @@ public class SituationPublishController {
 		copy.setTemplateInfo(dashboardTemplateInfo);
 		dashboardTemplateRefService.exchangeOptionDataSet(copy);
 		return copy;
-	}
-
-
-	@ApiOperation("想定方案list")
-	@GetMapping("plan")
-	public List<SituationPlan> getPlans() {
-		return remoteSituationService.getPlans();
-	}
-
-	@ApiOperation("任务list")
-	@GetMapping("task")
-	public List<SituationTask> getTasks(SituationTaskFilterReq situationTaskFilterReq) {
-		// TODO 待修改
-
-		return remoteSituationService.getTasks(situationTaskFilterReq.getType(), null);
-	}
-
-	@ApiOperation("科目list")
-	@PostMapping("plan")
-	public List<SituationSubject> getSubjects(SituationSubjectFilterReq situationSubjectFilterReq) {
-		String taskId = situationSubjectFilterReq.getResourceId();
-		return remoteSituationService.getSubjectByTask(taskId);
 	}
 
 }

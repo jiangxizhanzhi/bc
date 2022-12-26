@@ -127,6 +127,9 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		for (int i = 0; i < elements.size(); i++) {
 			JSONObject element = elements.getJSONObject(i);
 			JSONArray ports = element.getJSONArray("ports");
+			if (ports == null) {
+				continue;
+			}
 			for (int j = 0; j < ports.size(); j++) {
 				String portId = ports.getJSONObject(j).getString("id");
 				existingPorts.add(portId);

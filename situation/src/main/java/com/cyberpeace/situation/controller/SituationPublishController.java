@@ -1,10 +1,12 @@
 package com.cyberpeace.situation.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.controller.res.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -121,6 +123,13 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+
+		situationPublishInstanceRes.setSchemeName(dashboardAttribute.getSchemeName());
+		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(dashboardAttribute.getTaskType())).findFirst().orElse(TaskType.QB);
+		situationPublishInstanceRes.setTaskType(type.getDesc());
 
 		return new BaseRsp<>(situationPublishInstanceRes);
 	}

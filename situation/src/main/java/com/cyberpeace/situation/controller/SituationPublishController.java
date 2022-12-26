@@ -127,6 +127,7 @@ public class SituationPublishController {
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
 
 		situationPublishInstanceRes.setSchemeName(dashboardAttribute.getSchemeName());
+		situationPublishInstanceRes.setSchemeDesc(dashboardAttribute.getSchemeDesc());
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
 				.filter(t -> t.getCode().equals(dashboardAttribute.getTaskType())).findFirst().orElse(TaskType.QB);
 		situationPublishInstanceRes.setTaskType(type.getDesc());

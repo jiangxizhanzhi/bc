@@ -26,6 +26,9 @@ public class ElementContext implements Serializable {
 	@ApiModelProperty("元素描述")
 	private String desc;
 
+	@ApiModelProperty("三方靶标链接")
+	private String thirdUrl;
+
 	@ApiModelProperty("虚实类型")
 	private String vrType;
 

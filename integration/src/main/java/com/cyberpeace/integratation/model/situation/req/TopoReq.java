@@ -11,8 +11,8 @@ public class TopoReq extends TaskBaseReq implements Serializable {
 	@ApiModelProperty("环境配置方案ID")
 	private String envId;
 
-	@ApiModelProperty("拓扑ID")
-	private String topoId;
+	@ApiModelProperty("子网ID")
+	private String networkId;
 
 	@ApiModelProperty("平台ID")
 	private String platformId;

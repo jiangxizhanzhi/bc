@@ -148,4 +148,18 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return
 	 */
 	Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId);
+
+	/**
+	 * 场景暂停
+	 * @param localScene
+	 * @return
+	 */
+	Boolean pauseScene(LocalScene localScene);
+
+	/**
+	 * 场景从暂停状态恢复为运行状态
+	 * @param localScene
+	 * @return
+	 */
+	Boolean unpauseScene(LocalScene localScene);
 }

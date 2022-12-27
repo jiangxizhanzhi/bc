@@ -70,4 +70,11 @@ public interface ClassroomSceneService {
 	void clearBatchStartScene(String classroomId);
 
 	void toClassroomMessage(StartSceneBo sceneBo, OjEvent ojEvent, String message);
+
+	/**
+	 * 小组场景暂停与恢复
+	 * @param groupId
+	 * @return
+	 */
+    Boolean updateSceneStatus(String groupId);
 }

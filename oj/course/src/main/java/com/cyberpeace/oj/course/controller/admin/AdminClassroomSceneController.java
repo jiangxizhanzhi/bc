@@ -35,7 +35,7 @@ public class AdminClassroomSceneController {
 
 	@Autowired
 	private ClassroomSceneService classroomSceneService;
-	
+
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
@@ -101,6 +101,14 @@ public class AdminClassroomSceneController {
 
 		List<SceneMonitorBo> sceneMonitorBos = classroomSceneService.selectMonitorList(classroomId);
 		return new BaseRsp<>(sceneMonitorBos);
+	}
+
+	@ApiOperation("课堂场景暂停与恢复")
+	@PatchMapping("/pause")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<Boolean> pause(@RequestBody @Validated GroupSceneReq groupSceneReq) {
+		Boolean result = classroomSceneService.updateSceneStatus(groupSceneReq.getGroupId());
+		return new BaseRsp<>(result);
 	}
 
 }

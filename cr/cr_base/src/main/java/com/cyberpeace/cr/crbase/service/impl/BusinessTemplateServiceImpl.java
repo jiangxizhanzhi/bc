@@ -137,7 +137,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public void checkPermission(String businessId, String userId) {
 		List<String> businessIds = selectAuthIdsByUserId(userId);
 
-		if (!businessIds.contains(businessId)) {
+		if (!businessIds.contains(businessId)&&!UserInfoContext.getUserContext()
+															   .isSuperuser()) {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
@@ -273,7 +274,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Page page = businessTemplateQuery.toPageParam();
-		businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if(userInfo.isSuperuser()){
+			businessTemplateQuery.setIds(businessTemplateMapper.getAllIds());
+		}else {
+			businessTemplateQuery.setIds(businessTemplateMapper.selectIdsByUserId(userId));
+		}
 
 		IPage<BusinessTemplateData> result = businessTemplateMapper.listTeamTemplate(page,
 				businessTemplateQuery);

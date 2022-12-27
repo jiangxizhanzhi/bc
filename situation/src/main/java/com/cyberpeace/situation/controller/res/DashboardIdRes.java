@@ -14,6 +14,9 @@ public class DashboardIdRes implements Serializable {
 	@ApiModelProperty("大屏类型 1-定制 2-模板")
 	private Integer dashboardType;
 
+	@ApiModelProperty("大屏层级")
+	private Integer level;
+
 	@ApiModelProperty("任务类型")
 	private String taskType;
 

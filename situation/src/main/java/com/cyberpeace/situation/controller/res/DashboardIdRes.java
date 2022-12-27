@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
+import java.net.PortUnreachableException;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,4 +42,7 @@ public class DashboardIdRes implements Serializable {
 
 	}
 
+	public void setTaskSubType(String taskSubType) {
+		this.taskSubType = Integer.valueOf(taskSubType);
+	}
 }

@@ -50,6 +50,9 @@ public class SituationPublishInstance extends BaseTable {
 	@ApiModelProperty("缩略图")
 	private String thumbnail;
 
+	@ApiModelProperty("三方靶标URL")
+	private String thirdUrl;
+
 	@ApiModelProperty("类型")
 	private String category;
 

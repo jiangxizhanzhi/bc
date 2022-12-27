@@ -1,7 +1,6 @@
 package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
-import java.net.PortUnreachableException;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +11,7 @@ public class DashboardIdRes implements Serializable {
 	@ApiModelProperty("大屏ID")
 	private String dashboardId;
 
-	@ApiModelProperty("大屏类型 1-定制 2-模板")
+	@ApiModelProperty("大屏类型 1-定制 2-模板 3-三方靶标")
 	private Integer dashboardType;
 
 	@ApiModelProperty("大屏层级")
@@ -21,25 +20,20 @@ public class DashboardIdRes implements Serializable {
 	@ApiModelProperty("任务类型")
 	private String taskType;
 
-	@ApiModelProperty("任务子类型 1-攻击 2-防御")
+	@ApiModelProperty("任务子类型 0-无 1-攻击 2-防御")
 	private Integer taskSubType;
 
-	@ApiModelProperty("大屏标题")
-	private String title;
-
-	@ApiModelProperty("大屏副标题")
-	private String subTitle;
+	@ApiModelProperty("跳转链接")
+	private String thirdUrl;
 
 	public DashboardIdRes() {};
 
-	public DashboardIdRes(String dashboardId, String taskType) {
+	public DashboardIdRes(String dashboardId, String thirdUrl) {
 		this.setDashboardId(dashboardId);
-		this.dashboardType = 1;
-		this.taskType = taskType;
-		this.taskSubType = 1;
-		this.title = "XXX任务态势";
-		this.subTitle = "";
-
+		this.dashboardType = 3;
+		this.level = 3;
+		this.taskSubType = 0;
+		this.thirdUrl = thirdUrl;
 	}
 
 	public void setTaskSubType(String taskSubType) {

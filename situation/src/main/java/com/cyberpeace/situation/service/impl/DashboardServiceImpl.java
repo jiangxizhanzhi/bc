@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service.impl;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,10 +98,19 @@ public class DashboardServiceImpl implements DashboardService {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
+		DashboardIdRes dashboardIdRes;
+
+		// 处理三方靶标
+		if (StringUtils.isEmpty(situationPublishInstances.getAttributeId())) {
+			dashboardIdRes = new DashboardIdRes(situationPublishInstances.getResourceId(),
+					situationPublishInstances.getThirdUrl());
+			return dashboardIdRes;
+		}
+
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
 				.getByResourceId(situationPublishInstances.getAttributeId());
 
-		DashboardIdRes dashboardIdRes = BeanUtils.copy(dashboardAttribute, DashboardIdRes.class);
+		dashboardIdRes = BeanUtils.copy(dashboardAttribute, DashboardIdRes.class);
 		dashboardIdRes.setDashboardId(situationPublishInstances.getResourceId());
 
 		return dashboardIdRes;

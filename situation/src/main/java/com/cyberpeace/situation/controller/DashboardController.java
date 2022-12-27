@@ -21,6 +21,7 @@ import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.DynamicParameter;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -115,6 +116,13 @@ public class DashboardController {
 			getDashboardBasicAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
 					name = "dashboard_id", value = "大屏ID") String dashboardId) {
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
+	}
+
+	@ApiOperation("获取动态字段列表")
+	@GetMapping("/dynamic_parameter/")
+	public BaseRsp<List<JSONObject>>
+	getDynamicParameter() {
+		return new BaseRsp<>(DynamicParameter.getTaskDynamicParameter());
 	}
 
 	@ApiOperation("推送大屏属性变更消息")

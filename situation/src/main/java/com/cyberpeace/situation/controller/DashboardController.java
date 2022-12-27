@@ -68,7 +68,7 @@ public class DashboardController {
 	@Autowired
 	private EventTypeContextMapper eventTypeContextMapper;
 
-	@ApiOperation("获取任务/科目发布的大屏ID")
+	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
 	public BaseRsp<DashboardIdRes> getDashboardId(
 			@ApiParam(name = "task_id", value = "任务ID",
@@ -99,6 +99,14 @@ public class DashboardController {
 
 		return new BaseRsp<>(dashboardId);
 
+	}
+
+	@ApiOperation("获取大屏类型属性（后台）")
+	@GetMapping("/attribute/type/")
+	public BaseRsp<DashboardIdRes>
+	getDashboardTypeAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
+			name = "dashboard_id", value = "大屏ID") String dashboardId) {
+		return new BaseRsp<>(dashboardService.getAttributeByDashboardId(dashboardId));
 	}
 
 	@ApiOperation("获取大屏基本属性")

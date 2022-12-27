@@ -20,4 +20,6 @@ public interface DashboardService {
 	 */
 	DashboardIdRes getAttributeByTaskId(String taskId, String subjectId);
 
+	DashboardIdRes getAttributeByDashboardId(String dashboardId);
+
 }

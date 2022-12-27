@@ -75,9 +75,23 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public DashboardIdRes getAttributeByTaskId(String taskId, String subjectId) {
-
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
 				.selectPublicedByTaskId(taskId, subjectId);
+
+		return getIdByInstance(situationPublishInstances);
+
+	}
+
+	@Override
+	public DashboardIdRes getAttributeByDashboardId(String dashboardId) {
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(dashboardId);
+
+		return getIdByInstance(situationPublishInstances);
+
+	}
+
+	public DashboardIdRes getIdByInstance(SituationPublishInstance situationPublishInstances) {
 
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);

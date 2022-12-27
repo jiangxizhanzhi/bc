@@ -263,48 +263,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean pauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		// 1. 场景已暂停，返回true
-		if (localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
-			return true;
-		}
-		// 2. 发送mp请求
-		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
-
-		if (!result) {
-			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
-			return false;
-		}
-		// 3. 修改本地数据
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
-		localScene.setPauseTime(new Date());
-		updateById(localScene);
-
-		return true;
+		return pauseScene(localScene);
 	}
 
 	@Override
 	public Boolean unpauseScene(String localSceneId) {
 		LocalScene localScene = getById(localSceneId);
 		// 1、 确认场景处于暂停状态，可以恢复
-		ensureScenePaused(localScene);
-		// 2、 发送mp请求
-		Boolean result = remoteSceneService.unpauseScene(getSceneOpsContext(localScene));
-
-		if (!result) {
-			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
-			return false;
-		}
-		// 3、修改本地数据
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
-
-		if (localScene.getEndTime() != null) {
-			// 计算暂停时间
-			long seconds = TimeUtil.getIntervalSeconds(localScene.getPauseTime(), new Date());
-			Date endTime = TimeUtil.addSeconds(localScene.getEndTime(), seconds);
-			localScene.setEndTime(endTime);
-		}
-		updateById(localScene);
-
-		return true;
+		return unpauseScene(localScene);
 	}
 
 	private void ensureScenePaused(LocalScene localScene) {
@@ -465,8 +431,56 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.deleteSnapshot(deleteContext);
 	}
 
+	@Override
+	public Boolean pauseScene(LocalScene localScene) {
+
+		// 1. 场景已暂停，返回true
+		if (localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
+			return true;
+		}
+		// 2. 发送mp请求
+		Boolean result = remoteSceneService.pauseScene(getSceneOpsContext(localScene));
+
+		if (!result) {
+			log.error("failed to pause scene [{}]", localScene.getMpSceneId());
+			return false;
+		}
+		// 3. 修改本地数据
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
+		localScene.setPauseTime(new Date());
+		updateById(localScene);
+
+		return true;
+	}
+
+	@Override
+	public Boolean unpauseScene(LocalScene localScene) {
+
+		// 1、 确认场景处于暂停状态，可以恢复
+		ensureScenePaused(localScene);
+		// 2、 发送mp请求
+		Boolean result = remoteSceneService.unpauseScene(getSceneOpsContext(localScene));
+
+		if (!result) {
+			log.error("failed to unpause scene [{}]", localScene.getMpSceneId());
+			return false;
+		}
+		// 3、修改本地数据
+		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+
+		if (localScene.getEndTime() != null) {
+			// 计算暂停时间
+			long seconds = TimeUtil.getIntervalSeconds(localScene.getPauseTime(), new Date());
+			Date endTime = TimeUtil.addSeconds(localScene.getEndTime(), seconds);
+			localScene.setEndTime(endTime);
+		}
+		updateById(localScene);
+
+		return true;
+	}
+
 	private NodeSnapshotContext getNodeSnapshotContext(LocalScene localScene,
-			CreateSnapshotContext context) {
+													   CreateSnapshotContext context) {
 		SceneOpsContext opsContext = getSceneOpsContext(localScene);
 		NodeSnapshotContext snapshotContext = BeanUtils.copy(opsContext, NodeSnapshotContext.class);
 		org.springframework.beans.BeanUtils.copyProperties(context, snapshotContext);

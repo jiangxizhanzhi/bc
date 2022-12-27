@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.bo.ClassroomWsMessageIdentifier;
 import org.apache.commons.collections.CollectionUtils;
@@ -364,6 +365,30 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		}
 
 		return ojLocalSceneService.selectMonitorList(ojLocalSceneList);
+	}
+
+	@Override
+	public Boolean updateSceneStatus(String groupId) {
+		ClassroomGroupInfo groupInfo = validateGroup(groupId);
+
+		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
+		if (null == ojLocalScene) {
+			log.error("Group scene not found! group_id=[{}]", groupId);
+			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
+		if (null == localScene) {
+			log.error("Group scene not found! group_id=[{}], local_scene_id=[{}]", groupId,
+					ojLocalScene.getLocalSceneId());
+			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
+		}
+
+		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode()) {
+			return localSceneService.unpauseScene(localScene);
+		} else {
+			return localSceneService.pauseScene(localScene);
+		}
 	}
 
 	/**

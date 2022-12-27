@@ -141,7 +141,7 @@ public class DashboardController {
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId("e5c71717f6b44152943ef28a15dd4040");
 		JSONObject data = JsonUtil.java2JsonObject(dashboardAttribute);
 		ViewAngle viewAngle = JsonUtil.toJsonObject(data.getString("viewAngle"), ViewAngle.class);
 		data.put("longitude", viewAngle.getLongitude());

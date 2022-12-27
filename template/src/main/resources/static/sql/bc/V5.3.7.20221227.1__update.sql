@@ -1,0 +1,1 @@
+ALTER TABLE oj_classroom DROP INDEX org_lesson_uniq;

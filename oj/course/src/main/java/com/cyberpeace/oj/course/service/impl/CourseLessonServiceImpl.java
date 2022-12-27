@@ -188,7 +188,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	@Override
-	public LessonInfoBo getLessonDetail(String courseId, String lessonId, AuthContext authContext) {
+	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, AuthContext authContext) {
 
 		// 课时数据校验
 		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
@@ -262,27 +262,26 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			OjLocalScene ojLocalScene = null;
 			ClassroomGroupInfo groupInfo = null;
 			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
+					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
+					infoBo.setGroupId(groupInfo.getResourceId());
+					infoBo.setRoomId(roomId);
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-					if (null != ojLocalScene) {
-						infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
-						infoBo.setGroupId(groupInfo.getResourceId());
-					}
 
 					// 设置课程表编号
-					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
-					Date now = new Date();
-					if (null != classroom && classroom.getStartTime().before(now)
-							&& classroom.getEndTime().after(now)) {
-						infoBo.setRoomId(classroom.getResourceId());
-					}
+//					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
+//					Date now = new Date();
+//					if (null != classroom && classroom.getStartTime().before(now)
+//							&& classroom.getEndTime().after(now)) {
+//						infoBo.setRoomId(classroom.getResourceId());
+//					}
 				}
 			}
 
 			// 查询课时场景
-			if (null == ojLocalScene) {
+			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(lessonId,
 						lesson.getSceneShareMode(), authContext);
 			}
@@ -292,11 +291,13 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				infoBo.setSceneData(sceneData);
 			}
 		} else if (lesson.getType().intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()) {
-			ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+			ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
+					roomId, authContext);
 			if (groupInfo != null) {
 				Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
 				Date now = new Date();
-				if (null != classroom && classroom.getStartTime().before(now) && classroom.getEndTime().after(now)) {
+				if (null != classroom && classroom.getStartTime().before(now)
+						&& classroom.getEndTime().after(now)) {
 					infoBo.setRoomId(classroom.getResourceId());
 				}
 			}
@@ -953,7 +954,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public TopoSceneDataBo getTopoScene(String lessonId, AuthContext authContext) {
+	public TopoSceneDataBo getTopoScene(String lessonId, String roomId, AuthContext authContext) {
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (null == courseLesson) {
@@ -974,14 +975,14 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			ClassroomGroupInfo groupInfo = null;
 
 			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, authContext);
+				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 				}
 			}
 
 			// 查询课时场景
-			if (null == ojLocalScene) {
+			if (null == ojLocalScene && StringUtils.isBlank(roomId)) {
 				ojLocalScene = ojLocalSceneService.selectOjLocalScene(courseLesson.getResourceId(),
 						courseLesson.getSceneShareMode(), authContext);
 			}

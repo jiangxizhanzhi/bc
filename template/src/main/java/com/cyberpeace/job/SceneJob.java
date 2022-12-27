@@ -109,6 +109,7 @@ public class SceneJob {
 				log.error(
 						"CountDownFifteenMin job not found group! oj_local_scene_id=[{}], group_id=[{}]",
 						ojLocalScene.getResourceId(), ojLocalScene.getBusinessId());
+				continue;
 			}
 
 			Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
@@ -116,12 +117,15 @@ public class SceneJob {
 				log.error(
 						"CountDownFifteenMin job not found classroom! oj_local_scene_id=[{}], room_id = [{}]",
 						ojLocalScene.getResourceId(), groupInfo.getClassroomId());
+				continue;
 			}
 
 			// 组织推送数据
 			JSONObject tipMessage = new JSONObject();
-			tipMessage.put(JsonKeyConstant.BUSINESS_ID, classroom.getCourseId()
-					+ CommonConstant.LEFT_OBLIQUE_LINE + classroom.getLessonId());
+			tipMessage.put(JsonKeyConstant.BUSINESS_ID,
+					classroom.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
+							+ classroom.getLessonId() + CommonConstant.LEFT_OBLIQUE_LINE
+							+ "?room_id=" + classroom.getResourceId());
 			tipMessage.put(JsonKeyConstant.BUSINESS_TYPE, localScene.getBusinessCode());
 			tipMessage.put(JsonKeyConstant.SCENE_NAME, localScene.getSceneName());
 

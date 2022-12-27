@@ -86,11 +86,11 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	private ClassroomValidateHandler classroomValidateHandler;
 
 	@Override
-	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext) {
-		if (authContext.getIsWeb()) {
+	public ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext) {
+
+		if (authContext.getIsWeb() && StringUtils.isNotBlank(roomId)) {
 			// 查询课堂信息
-			Classroom classroom = classroomMapper
-					.selectByOrgAndLesson(authContext.getOrganization(), lessonId);
+			Classroom classroom = classroomMapper.selectById(roomId);
 			if (null == classroom) {
 				return null;
 			}

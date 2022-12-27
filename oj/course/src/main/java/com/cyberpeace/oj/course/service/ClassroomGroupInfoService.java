@@ -17,7 +17,7 @@ public interface ClassroomGroupInfoService extends IService<ClassroomGroupInfo> 
 	 * @param authContext
 	 * @return
 	 */
-	ClassroomGroupInfo selectByLessonAndUser(String lessonId, AuthContext authContext);
+	ClassroomGroupInfo selectByLessonAndUser(String lessonId, String roomId, AuthContext authContext);
 
 	/**
 	 *  查询课堂分组信息

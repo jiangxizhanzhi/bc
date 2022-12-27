@@ -76,10 +76,6 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
-		if (!StringUtils.isBlank(toolReq.getPublishTime())) {
-			Date date = DateUtil.StringToDate(toolReq.getPublishTime(), DateUtil.SHOT_PATTERN);
-			tool.setPublishTime(date);
-		}
 
 		tool.setCover(utilService.replaceFileUrl(tool.getCover()));
 		toolService.validateToolNameExist(tool);
@@ -96,11 +92,6 @@ public class ToolController {
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
-		if (!StringUtils.isBlank(toolupdateReq.getPublishTime())) {
-			Date date = DateUtil.StringToDate(toolupdateReq.getPublishTime(),
-					DateUtil.SHOT_PATTERN);
-			tool.setPublishTime(date);
-		}
 		toolService.validateEditToolNameExist(tool);
 		toolService.updateById(tool);
 

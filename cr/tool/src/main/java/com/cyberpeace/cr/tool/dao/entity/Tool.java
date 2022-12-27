@@ -58,9 +58,6 @@ public class Tool extends BaseTable {
 	@Deprecated
 	private String tag;
 
-	@TableField(updateStrategy = FieldStrategy.IGNORED)
-	private Date publishTime;
-
 	private String scene;
 
 	private String version;

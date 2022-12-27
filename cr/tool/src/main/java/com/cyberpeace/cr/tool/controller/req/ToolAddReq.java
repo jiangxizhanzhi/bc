@@ -55,8 +55,5 @@ public class ToolAddReq implements Serializable {
 	@ApiModelProperty("靶标ID")
 	private String imageResourceId;
 
-	@ApiModelProperty("发布时间")
-	private String publishTime;
-
 	private Boolean toolPublic = true;
 }

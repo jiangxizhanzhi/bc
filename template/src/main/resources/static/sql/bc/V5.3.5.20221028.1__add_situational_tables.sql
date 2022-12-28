@@ -620,3 +620,7 @@ CREATE TABLE `situation_plot_pixel`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+
+ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;
+ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;

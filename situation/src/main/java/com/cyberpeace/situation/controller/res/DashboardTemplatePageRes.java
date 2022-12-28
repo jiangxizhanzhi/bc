@@ -26,4 +26,7 @@ public class DashboardTemplatePageRes extends PageReqBase implements Serializabl
 
     @ApiModelProperty("缩略图")
     private String thumbnail;
+
+    @ApiModelProperty("编辑状态")
+    private Boolean editStatus;
 }

@@ -36,7 +36,7 @@
 
         SELECT * FROM situation_publish_instance
         <where>
-            public_status = 2
+            status = 2
             <if test="taskId != null and taskId != ''">
                 and task_id = #{taskId}
             </if>

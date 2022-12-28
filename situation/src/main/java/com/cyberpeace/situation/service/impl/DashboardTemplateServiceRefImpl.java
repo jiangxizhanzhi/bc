@@ -74,6 +74,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             }
         }
 
+        dashboardTemplateRef.setEditStatus(dashboardTemplateInfo.getEditStatus());
         dashboardTemplateRef.setComponentsSetting(dashboardComponentsIdList.toString());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override

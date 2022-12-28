@@ -51,8 +51,8 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("任务/科目开始时间")
 	private Date startTime;
 
-	@ApiModelProperty("拓扑ID")
-	private String topoId = "demo";
+	@ApiModelProperty("环境配置方案ID")
+	private String envId;
 
 	@ApiModelProperty("刷新时间（s）")
 	private Integer refresh = 5;
@@ -77,10 +77,6 @@ public class DashboardBasicAttributeRes implements Serializable {
 
 	public void setViewAngle(String viewAngle) {
 		this.viewAngle = JsonUtil.toJsonObject(viewAngle, ViewAngle.class);
-	}
-
-	public void setEnvId(String envId) {
-		this.topoId = envId;
 	}
 
 }

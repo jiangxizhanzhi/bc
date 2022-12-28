@@ -21,6 +21,7 @@ import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.DynamicParameter;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -68,7 +69,7 @@ public class DashboardController {
 	@Autowired
 	private EventTypeContextMapper eventTypeContextMapper;
 
-	@ApiOperation("获取任务/科目发布的大屏ID")
+	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
 	public BaseRsp<DashboardIdRes> getDashboardId(
 			@ApiParam(name = "task_id", value = "任务ID",
@@ -101,12 +102,27 @@ public class DashboardController {
 
 	}
 
+	@ApiOperation("获取大屏类型属性（后台）")
+	@GetMapping("/attribute/type/")
+	public BaseRsp<DashboardIdRes>
+	getDashboardTypeAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
+			name = "dashboard_id", value = "大屏ID") String dashboardId) {
+		return new BaseRsp<>(dashboardService.getAttributeByDashboardId(dashboardId));
+	}
+
 	@ApiOperation("获取大屏基本属性")
 	@GetMapping("/basic_attribute/")
 	public BaseRsp<DashboardBasicAttributeRes>
 			getDashboardBasicAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
 					name = "dashboard_id", value = "大屏ID") String dashboardId) {
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
+	}
+
+	@ApiOperation("获取动态字段列表")
+	@GetMapping("/dynamic_parameter/")
+	public BaseRsp<List<JSONObject>>
+	getDynamicParameter() {
+		return new BaseRsp<>(DynamicParameter.getTaskDynamicParameter());
 	}
 
 	@ApiOperation("推送大屏属性变更消息")
@@ -125,7 +141,7 @@ public class DashboardController {
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getById("lgzx");
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId("e5c71717f6b44152943ef28a15dd4040");
 		JSONObject data = JsonUtil.java2JsonObject(dashboardAttribute);
 		ViewAngle viewAngle = JsonUtil.toJsonObject(data.getString("viewAngle"), ViewAngle.class);
 		data.put("longitude", viewAngle.getLongitude());

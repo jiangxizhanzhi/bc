@@ -36,7 +36,7 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private String taskType;
 
-	private String taskSubType;
+	private String taskSubType = "0";
 
 	private Date startTime;
 

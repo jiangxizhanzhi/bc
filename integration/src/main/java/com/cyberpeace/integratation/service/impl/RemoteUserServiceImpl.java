@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -54,6 +55,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String AUTH_PERMISSION_MENUS_URL;
 
+	private String USERINFO_IDS_URL;
+
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, List<UserInfo>>() {
@@ -82,6 +85,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
+		USERINFO_IDS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("userinfo.ids");
 	}
 
 	@Override
@@ -176,10 +180,14 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public List<UserInfo> getByIdList(List<String> ids) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 
-		if (ids.size() > 0) {
-			UserPageContext userPageContext = new UserPageContext();
-			userPageContext.setIds(String.join(",", ids));
-			userInfoList = getFuzzyQueryUserList(userPageContext);
+		if (CollectionUtils.isEmpty(ids)) {
+			return userInfoList;
+		}
+
+		JSONArray jsonArray = HttpClientUtil.post(USERINFO_IDS_URL, ids, JSONArray.class);
+		for (Object json : jsonArray) {
+			UserInfo userInfo = userInfoFromJsonObject((JSONObject) json);
+			userInfoList.add(userInfo);
 		}
 
 		return userInfoList;

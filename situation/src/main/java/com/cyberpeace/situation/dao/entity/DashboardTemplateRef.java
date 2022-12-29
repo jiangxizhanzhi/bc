@@ -42,6 +42,9 @@ public class DashboardTemplateRef extends BaseTable {
     @ApiModelProperty("填充色")
     private String bgColor;
 
+    @ApiModelProperty("编辑状态")
+    private Boolean editStatus;
+
     @ApiModelProperty("刷新频率")
     private Integer refresh;
 

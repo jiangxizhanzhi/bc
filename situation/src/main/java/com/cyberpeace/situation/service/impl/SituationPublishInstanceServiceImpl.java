@@ -92,12 +92,10 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setCreateUserId(userId);
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
         situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
-        situationPublishInstance.setEdit(true);
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
-        dashboardAttribute.setDashboardType(DashboardType.ZB.getCode());
         dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
         dashboardAttribute.setTitle("");
         dashboardAttribute.setSubTitle("");
@@ -107,8 +105,12 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null);
         Integer level = dashboardTemplateInfo.getLevel();
         Integer refresh = dashboardTemplateInfo.getRefresh();
+        Boolean editStatus = dashboardTemplateInfo.getEditStatus();
         dashboardAttribute.setLevel(level == null ? DashboardLevel.RW.getCode() : level);
         dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
+        dashboardAttribute.setDashboardType(editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
+        situationPublishInstance.setEdit(editStatus);
+
 
         // 从可视化方案中拷贝属性
         SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());

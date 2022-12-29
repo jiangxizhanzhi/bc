@@ -33,9 +33,6 @@ public class ToolRsp implements Serializable {
 	@ApiModelProperty("平台名称")
 	private List<String> platforms;
 
-	@ApiModelProperty("发布时间")
-	private String publishTime;
-
 	@ApiModelProperty("ID")
 	private String resourceId;
 

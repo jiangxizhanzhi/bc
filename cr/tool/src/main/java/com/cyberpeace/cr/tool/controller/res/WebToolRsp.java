@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @ApiModel("前台工具库信息")
 @Data
@@ -24,7 +25,7 @@ public class WebToolRsp implements Serializable {
     @ApiModelProperty("ID")
     private String resourceId;
 
-    @ApiModelProperty("发布时间")
-    private String publishTime;
+    @ApiModelProperty("平台名称")
+    private List<String> platforms;
 
 }

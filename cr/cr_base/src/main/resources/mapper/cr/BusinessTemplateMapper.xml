@@ -180,6 +180,10 @@
         `operation_auth_ids` like
         #{likeUserId}
     </select>
+    <select id="getAllIds" resultType="java.lang.String">
+        select resource_id
+        from cr_business_template
+    </select>
 
 
 </mapper>

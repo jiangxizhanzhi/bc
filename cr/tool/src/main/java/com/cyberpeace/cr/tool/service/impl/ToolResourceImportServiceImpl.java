@@ -173,9 +173,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 		List<String> tag = data.get("tag");
 		tool.setTag(toStr(tag));
 
-		List<String> publishTime = data.get("发布时间");
-		setPublishTime(tool, publishTime);
-
 		List<String> version = data.get("版本号");
 		setVersionAndFiles(tool, version, mdFile);
 		return tool;
@@ -266,15 +263,6 @@ public class ToolResourceImportServiceImpl implements ToolResourceImportService 
 			}
 		}
 		return "";
-	}
-
-	private void setPublishTime(Tool tool, List<String> publishTime) {
-		String s = toStr(publishTime);
-		if (!s.equals("无")) {
-			String replace = s.replace("/", "-");
-			Date date = DateUtil.StringToDate(replace, DateUtil.SHOT_PATTERN);
-			tool.setPublishTime(date);
-		}
 	}
 
 	private void setCracked(Tool tool, List<String> cracked) {

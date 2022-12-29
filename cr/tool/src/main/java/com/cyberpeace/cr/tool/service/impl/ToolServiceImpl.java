@@ -109,7 +109,6 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 			setAboutFile(toolRsp, tool);
 		}
 
-		toolRsp.setPublishTime(DateUtil.DateToString(tool.getPublishTime(), DateUtil.SHOT_PATTERN));
 		toolRsp.setCreateTime(DateUtil.DateToString(tool.getCreateTime(), DateUtil.SHOT_PATTERN));
 		toolRsp.setUpdateTime(DateUtil.DateToString(tool.getUpdateTime(), DateUtil.SHOT_PATTERN));
 

@@ -56,4 +56,6 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 
 	List<BusinessTemplate> getAllByIds(@Param("resourceIds") List<String> resourceIds,
 			@Param("type") Integer type);
+
+	List<String> getAllIds();
 }

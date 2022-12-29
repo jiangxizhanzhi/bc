@@ -936,12 +936,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		// 获取用户组装
-		Map<String, UserInfo> userInfoMap;
-		if (userIds.size() >= CommonConstant.NINE_NINE_NINE) {
-			userInfoMap = remoteUserService.allUsers();
-		} else {
-			userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-		}
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
 		DashboardInfo dashboardInfo = new DashboardInfo();
 		List<DashboardUser> friendUsers = Lists.newArrayList();
@@ -1077,14 +1072,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			if (changeCourse(classroom.getOrganizationId(), course)) {
 				changeCourses.add(course);
 			}
-			
-			// 校验是否已存在课程表
-			Classroom existClassRoom = classroomMapper
-					.selectByOrgAndLesson(classroom.getOrganizationId(), classroom.getLessonId());
-			if (null != existClassRoom && (StringUtils.isBlank(existClassRoom.getTrainPlanId())
-					|| !existClassRoom.getTrainPlanId().equals(trainPlan.getResourceId()))) {
-				throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
-			}
+
 			classroom.setTrainPlanId(trainPlan.getResourceId());
 			classrooms.add(classroom);
 		}

@@ -199,4 +199,7 @@ public interface MenuConstant {
 
     //绘标图元管理
     String CMS_SITUATION_PLOT_PIXEL = "plot-element-management";
+
+    //图形资源管理
+    String CMS_SITUATION_DRAWING_RESOURCE = "drawing-resource-management";
 }

@@ -17,4 +17,12 @@ public class SubjectContext implements Serializable {
 	@ApiModelProperty(value = "科目状态")
 	private String subjectStatus;
 
+	public void setKeyWord(String keyWord) {
+		this.subjectId = keyWord;
+	}
+
+	public void setValueWord(String valueWord) {
+		this.subjectName = valueWord;
+	}
+
 }

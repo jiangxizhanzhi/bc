@@ -99,6 +99,24 @@ public interface RemoteSituationService {
 	List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq);
 
 	/**
+	 * 获取平台节点链路状态信息
+	 * @return
+	 */
+	NodeConnectionContext getNodeConnection(NodeIdApiReq nodeIdApiReq);
+
+	/**
+	 * 获取平台节点脆弱性分析信息
+	 * @return
+	 */
+	NodeWeakInfoContext getNodeWeakInfo(NodeIdApiReq nodeIdApiReq);
+
+	/**
+	 * 获取平台节点脆弱性列表
+	 * @return
+	 */
+	ListRsp<NodeWeakContext> getNodeWeakList(NodeIdPageReq nodeIdPageReq);
+
+	/**
 	 * 获取任务事件列表
 	 * @return
 	 */

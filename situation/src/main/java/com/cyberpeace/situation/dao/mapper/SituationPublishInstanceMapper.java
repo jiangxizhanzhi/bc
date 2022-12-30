@@ -1,5 +1,7 @@
 package com.cyberpeace.situation.dao.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,8 +12,6 @@ import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 
-import java.util.List;
-
 @Mapper
 public interface SituationPublishInstanceMapper extends BaseMapper<SituationPublishInstance> {
 
@@ -20,5 +20,6 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 
 	List<String> getAttributeIds(@Param("resourceIds") List<String> resourceIds);
 
-	SituationPublishInstance selectPublicedByTaskId(@Param("taskId")String taskId, @Param("subjectId")String subjectId);
+	SituationPublishInstance selectPublicedBySubjectId(@Param("taskId") String taskId,
+			@Param("subjectId") String subjectId);
 }

@@ -31,7 +31,7 @@
         </where>
     </select>
 
-    <select id="selectPublicedByTaskId"
+    <select id="selectPublicedBySubjectId"
             resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
 
         SELECT * FROM situation_publish_instance

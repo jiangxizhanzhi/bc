@@ -22,7 +22,8 @@ public enum MessageType {
 	TaskEventJt(12,"task_event_jt"),
 	TaskEventAd(13,"task_event_ad"),
 	BackToHome(14, "back_home"),
-	JumpPage(15, "jump_page");
+	JumpPage(15, "jump_page"),
+	NodeMigration(16, "node_migration");
 
 	@Getter
 	private Integer code;

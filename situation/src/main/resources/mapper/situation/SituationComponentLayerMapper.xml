@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationComponentLayerMapper">
+
+    <insert id="batchInsert">
+        INSERT INTO situation_components_layer
+        (resource_id, component_id, template_id, name,
+        order, combination)
+        VALUES
+        <foreach collection="componentLayerList" item="item" separator=",">
+            (#{item.resourceId}, #{item.componentId}, #{item.templateId}, #{item.name},
+            #{item.order}, #{item.combination})
+        </foreach>
+    </insert>
+
+    <select id="selectByTemplateId" resultType="com.cyberpeace.situation.dao.entity.ComponentLayer">
+
+    </select>
+</mapper>

@@ -66,7 +66,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         JSONArray dashboardComponentsIdList = new JSONArray();
         List<DashboardComponents> dashboardComponentsList = dashboardTemplateInfo.getComponentsSetting();
         
-        if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
+        if (CollectionUtils.isNotEmpty(dashboardComponentsList)) {
             for (DashboardComponents dashboardComponents : dashboardComponentsList) {
                 String componentsResourceId = IDGeneratorUtil.getID();
                 dashboardComponents.setResourceId(componentsResourceId);

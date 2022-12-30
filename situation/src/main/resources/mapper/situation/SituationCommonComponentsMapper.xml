@@ -16,4 +16,8 @@
         </if>
         ORDER BY type
     </select>
+    <select id="selectByName" resultType="com.cyberpeace.situation.dao.entity.SituationCommonComponents">
+        select * from situation_common_components where component_type = 2
+        and name like concat('%', #{name} ,'%')
+    </select>
 </mapper>

@@ -189,6 +189,31 @@ public class ThirdPartyController {
 		return new BaseRsp<>(remoteSituationService.getUserTrend(nodeIdApiReq));
 	}
 
+	@ApiOperation("获取平台节点链路状态信息")
+	@PostMapping("/node/connection/")
+	public BaseRsp<NodeConnectionContext>
+			getNodeConnection(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeConnection(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取平台节点脆弱性分析信息")
+	@PostMapping("/node/weak/info/")
+	public BaseRsp<NodeWeakInfoContext>
+			getNodeWeakInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeWeakInfo(nodeIdApiReq));
+	}
+
+	@ApiOperation("获取平台节点脆弱性列表")
+	@PostMapping("/node/weak/list/")
+	public BaseRsp<ListRsp<NodeWeakContext>>
+			getNodeWeakList(@RequestBody @Validated NodePageReq nodeListApiReq) {
+
+		return new BaseRsp<>(remoteSituationService
+				.getNodeWeakList(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+	}
+
 	@ApiOperation("获取任务事件列表")
 	@PostMapping("/event/task/")
 	public BaseRsp<List<TaskEventContext>>

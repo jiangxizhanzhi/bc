@@ -23,6 +23,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
+import com.cyberpeace.integratation.model.situation.res.LgNodeWeakRsp;
 import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
 import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
@@ -58,6 +59,12 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	private String USER_ACTION_URL;
 
 	private String USER_TREND_URL;
+
+	private String NODE_CONNECTION_URL;
+
+	private String NODE_WEAK_INFO_URL;
+
+	private String NODE_WEAK_LIST_URL;
 
 	private String TASK_EVENT_URL;
 
@@ -97,6 +104,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		NODE_TREND_URL = outerHostTs + ConfigUtil.getContextProperty("node.trend");
 		USER_ACTION_URL = outerHostTs + ConfigUtil.getContextProperty("user.action");
 		USER_TREND_URL = outerHostTs + ConfigUtil.getContextProperty("user.trend");
+		NODE_CONNECTION_URL = outerHostTs + ConfigUtil.getContextProperty("node.connection");
+		NODE_WEAK_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("node.weak.info");
+		NODE_WEAK_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("node.weak.list");
 		TASK_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.task");
 		AD_EVENT_URL = outerHostTs + ConfigUtil.getContextProperty("event.ad");
 		NODE_STATUS_URL = outerHostTs + ConfigUtil.getContextProperty("event.node");
@@ -227,6 +237,25 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq) {
 		String rsp = HttpClientUtil.post(USER_TREND_URL, nodeIdApiReq, String.class);
 		List<UserTrendContext> res = JsonUtil.toJsonObjectArray(rsp, UserTrendContext.class);
+		return res;
+	}
+
+	@Override
+	public NodeConnectionContext getNodeConnection(NodeIdApiReq nodeIdApiReq) {
+		return HttpClientUtil.post(NODE_CONNECTION_URL, nodeIdApiReq, NodeConnectionContext.class);
+	}
+
+	@Override
+	public NodeWeakInfoContext getNodeWeakInfo(NodeIdApiReq nodeIdApiReq) {
+		return HttpClientUtil.post(NODE_WEAK_INFO_URL, nodeIdApiReq, NodeWeakInfoContext.class);
+	}
+
+	@Override
+	public ListRsp<NodeWeakContext> getNodeWeakList(NodeIdPageReq nodeIdPageReq) {
+		LgNodeWeakRsp rsp = HttpClientUtil.post(NODE_WEAK_LIST_URL, nodeIdPageReq,
+				LgNodeWeakRsp.class);
+		ListRsp<NodeWeakContext> res = rsp.convert();
+		res.setList(rsp.getList());
 		return res;
 	}
 

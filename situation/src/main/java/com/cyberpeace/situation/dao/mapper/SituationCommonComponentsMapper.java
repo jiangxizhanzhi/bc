@@ -9,6 +9,8 @@ import com.cyberpeace.situation.dao.entity.SituationCommonComponents;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @Author xuxz
  * @Date 16/11/2022 下午5:12
@@ -18,4 +20,6 @@ public interface SituationCommonComponentsMapper extends BaseMapper<SituationCom
 
     IPage<SituationCommonComponentsPageRes> selectPage(@Param("page") Page page,
                                  @Param("situationCommonComponentsPageReq") SituationCommonComponentsPageReq situationCommonComponentsPageReq);
+
+    List<SituationCommonComponents> selectByName(@Param("name")String name);
 }

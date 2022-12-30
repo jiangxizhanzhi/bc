@@ -624,3 +624,6 @@ CREATE TABLE `situation_plot_pixel`
 
 ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;
 ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;
+
+ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `topic` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '主题' AFTER `bg_color`;
+ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `topic` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '主题' AFTER `bg_color`;

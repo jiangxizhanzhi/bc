@@ -45,6 +45,9 @@ public class DashBoardTemplateReq implements Serializable {
     @ApiModelProperty("刷新频率")
     private Integer refresh;
 
+    @ApiModelProperty("背景主题")
+    private String topic;
+
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponentsReq> componentsSetting;
 }

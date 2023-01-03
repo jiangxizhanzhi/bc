@@ -13,17 +13,17 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.gateway.controller.req.ControlCommandReq;
-import com.cyberpeace.gateway.controller.req.EmissionReq;
-import com.cyberpeace.gateway.controller.req.SituationSchemeBo;
-import com.cyberpeace.gateway.controller.req.ThirdDashboardReq;
+import com.cyberpeace.gateway.controller.req.*;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +37,9 @@ public class ExternalSituationController {
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@Autowired
 	private AttachmentService attachmentService;
@@ -73,6 +76,29 @@ public class ExternalSituationController {
 		log.info("成功接收指令：{}", JsonUtil.toJsonString(req));
 		BooleanRes res = new BooleanRes();
 		res.setResult(true);
+		return new BaseRsp<>(res);
+	}
+
+	@CrossOrigin("*")
+	@ApiOperation("接收节点迁移信息")
+	@PostMapping("/migration/")
+	public BaseRsp<BooleanRes> receiveMigration(@RequestBody @Validated NodeMigrationReq req) {
+
+		BooleanRes res = new BooleanRes();
+		res.setResult(true);
+
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectPublicedBySubjectId(req.getTaskId(), req.getSubjectId());
+
+		if (situationPublishInstance == null) {
+			return new BaseRsp<>(res);
+		}
+
+		WsMessage<NodeMigrationReq> wsMessage = new WsMessage<>(MessageType.NodeMigration.getDesc(),
+				req);
+		situationHandlerService.pushDataToDashboard(wsMessage,
+				situationPublishInstance.getResourceId());
+
 		return new BaseRsp<>(res);
 	}
 

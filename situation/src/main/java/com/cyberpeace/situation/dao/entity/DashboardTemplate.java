@@ -45,6 +45,9 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("编辑状态")
     private Boolean editStatus;
 
+    @ApiModelProperty("颜色主题")
+    private String topic;
+
     @ApiModelProperty("刷新频率")
     private Integer refresh;
 

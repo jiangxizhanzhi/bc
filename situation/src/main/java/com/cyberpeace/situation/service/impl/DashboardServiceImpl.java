@@ -77,7 +77,7 @@ public class DashboardServiceImpl implements DashboardService {
 	@Override
 	public DashboardIdRes getAttributeByTaskId(String taskId, String subjectId) {
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
-				.selectPublicedByTaskId(taskId, subjectId);
+				.selectPublicedBySubjectId(taskId, subjectId);
 
 		return getIdByInstance(situationPublishInstances);
 

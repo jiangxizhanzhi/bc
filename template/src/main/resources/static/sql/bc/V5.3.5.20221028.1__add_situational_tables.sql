@@ -624,3 +624,21 @@ CREATE TABLE `situation_plot_pixel`
 
 ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;
 ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `edit_status` TINYINT(4) DEFAULT 1 NOT NULL COMMENT '模板编辑权限' AFTER `bg_color`;
+
+ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `topic` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '主题' AFTER `bg_color`;
+ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `topic` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '主题' AFTER `bg_color`;
+
+-- ----------------------------
+-- Table structure for situation_components_layer
+-- ----------------------------
+CREATE TABLE `situation_components_layer` (
+                                              `id` int NOT NULL AUTO_INCREMENT,
+                                              `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                              `component_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '组件id',
+                                              `template_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '模板id',
+                                              `name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图层名称',
+                                              `order` int DEFAULT NULL COMMENT '图层排序',
+                                              `combination` text CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '组合',
+                                              PRIMARY KEY (`id`) USING BTREE,
+                                              UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

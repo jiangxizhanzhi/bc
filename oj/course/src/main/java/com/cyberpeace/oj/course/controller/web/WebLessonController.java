@@ -51,12 +51,12 @@ public class WebLessonController {
 	@ApiImplicitParams({ @ApiImplicitParam(name = "lesson_id", value = "课时编号", dataTypeClass = String.class),
 			@ApiImplicitParam(name = "course_id", value = "课程编号", dataTypeClass = String.class) })
     @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-    public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId,
+    public BaseRsp<LessonInfoBo> lessonDetail(@RequestParam("course_id") String courseId, @RequestParam(value = "learned_type", required = true) Integer learnedType,
                                               @RequestParam("lesson_id") String lessonId, @RequestParam(value = "room_id", required = false) String roomId) {
 
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.TRUE);
-        LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, authContext);
+        LessonInfoBo infoBo = courseLessonService.getLessonDetail(courseId, lessonId, roomId, learnedType ,authContext);
 
 		// 记录远程操作日志
 		courseLessonService.createMpLog(infoBo);

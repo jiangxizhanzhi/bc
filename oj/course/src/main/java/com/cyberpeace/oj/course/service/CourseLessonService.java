@@ -24,7 +24,7 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonId
 	 * @return
 	 */
-	LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, AuthContext authContext);
+	LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext);
 
 	/**
 	 * 查询后台课时详情数据

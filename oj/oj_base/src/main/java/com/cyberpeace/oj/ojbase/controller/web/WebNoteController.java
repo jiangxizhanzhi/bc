@@ -90,7 +90,7 @@ public class WebNoteController {
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
 	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
+			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION, MenuConstant.CMS_CLASS_ROOM },
 			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
 

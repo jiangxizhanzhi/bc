@@ -19,4 +19,7 @@ public class TopoContext implements Serializable {
 	@ApiModelProperty("连线信息")
 	private List<ConnectionContext> connections;
 
+	@ApiModelProperty("区域信息")
+	private Map<String, AreaContext> areas;
+
 }

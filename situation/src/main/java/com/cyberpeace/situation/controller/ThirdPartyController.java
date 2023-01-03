@@ -212,12 +212,11 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取平台节点脆弱性列表")
-	@PostMapping("/node/weak/list/")
-	public BaseRsp<ListRsp<NodeWeakContext>>
-			getNodeWeakList(@RequestBody @Validated NodePageReq nodeListApiReq) {
+	@GetMapping("/node/weak/list/")
+	public BaseRsp<ListRsp<NodeWeakContext>> getNodeWeakList(NodePageReq nodePageReq) {
 
 		return new BaseRsp<>(remoteSituationService
-				.getNodeWeakList(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+				.getNodeWeakList(BeanUtils.copy(nodePageReq, NodeIdPageReq.class)));
 	}
 
 	@ApiOperation("获取任务事件列表")

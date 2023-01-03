@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -147,6 +148,10 @@ public class SceneJob {
 
 			// 设置当前线程用户
 			UserInfo userInfo = remoteUserService.getById(localScene.getUserId());
+			if (null == userInfo) {
+				log.error("The scene initiator is not found, use the super administrator instead! user_id=[{}]", localScene.getUserId());
+				userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+			}
 			UserInfoContext.setUserContext(userInfo);
 
 			// 调用关闭接口

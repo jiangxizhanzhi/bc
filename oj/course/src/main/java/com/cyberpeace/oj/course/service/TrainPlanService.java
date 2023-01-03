@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.controller.res.TrainPlanRsp;
 import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
@@ -19,7 +20,7 @@ public interface TrainPlanService extends IService<TrainPlan> {
 	 */
 	List<TrainPlanBo> trainPlanList(UserInfo userInfo);
 
-	IPage<TrainPlanRsp> page(PageReqBase pageReqBase, UserInfo userInfo);
+	IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo);
 
 	void checkNameRepeat(String name, String id);
 }

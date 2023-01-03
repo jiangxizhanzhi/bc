@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,10 +42,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	}
 
 	@Override
-	public IPage<TrainPlanRsp> page(PageReqBase pageReqBase, UserInfo userInfo) {
+	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
 
-		Page page = pageReqBase.toPageParam();
-		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, pageReqBase.getPattern(),
+		Page page = trainPlanReq.toPageParam();
+		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
 				userInfo.getUserId());
 
 		return result;

@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -21,6 +22,7 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -31,6 +33,7 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
@@ -102,6 +105,45 @@ public class AdminClassroomController {
 		List<ClassroomBo> classroomBos = classroomService.selectList(roomListQuery, authContext);
 
 		return new BaseRsp<>(classroomBos);
+	}
+
+	@ApiOperation("后台课程表信息批量删除")
+	@DeleteMapping("delete_batch")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<Integer> batchDeleteClassroom(@RequestBody @Validated DeleteReq delReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		for (String id : delReq.getIds()) {
+			Integer result = classroomService.deleteClassroom(id, authContext);
+		}
+
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("后台课程表分页查询")
+	@GetMapping("/list/page")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<ListRsp<ClassroomBo>> page(@Validated ClassroomPageReq classroomPageReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		if (!authContext.getSuperAdmin() && StringUtils.isBlank(authContext.getOrganization())) {
+			return new BaseRsp<>();
+		}
+
+		ClassRoomPageQuery roomListQuery = BeanUtils.copy(classroomPageReq,
+				ClassRoomPageQuery.class);
+
+		// 非超级管理员仅查看自己创建的课程表
+		if (!authContext.getSuperAdmin()) {
+			roomListQuery.setUserId(authContext.getUserId());
+		}
+
+		// 数据查询
+		IPage<ClassroomBo> iPage = classroomService.selectPage(roomListQuery, authContext);
+
+		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}
 
 	@ApiOperation("后台课程表创建")

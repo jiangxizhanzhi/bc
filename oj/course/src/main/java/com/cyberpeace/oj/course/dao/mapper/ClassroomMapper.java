@@ -1,12 +1,15 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
-import com.cyberpeace.oj.course.dao.entity.Classroom;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
 
 @Mapper
 public interface ClassroomMapper extends BaseMapper<Classroom> {
@@ -62,4 +65,8 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	void deleteByOrgIds(@Param("orgIds") List<String> orgIds);
+
+	IPage<Classroom> page(Page listQuery, String userId, String trainPlanId);
+
+	List<String> selectIdsByPlanIds(List<String> ids);
 }

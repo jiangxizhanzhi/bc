@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
@@ -10,6 +11,7 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
 
@@ -129,4 +131,8 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param orgs 删除组织ids
 	 */
 	void removeClassrooms(List<String> orgs);
+
+	IPage<ClassroomBo>  selectPage(ClassRoomPageQuery roomListQuery, AuthContext authContext);
+
+	List<String> selectIdsByPlanIds(List<String> ids);
 }

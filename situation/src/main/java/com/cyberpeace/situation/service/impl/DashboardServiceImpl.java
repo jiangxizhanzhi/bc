@@ -17,6 +17,7 @@ import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -26,6 +27,9 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
 
 	@Override
 	public DashboardBasicAttributeRes getDashboardBasicAttribute(String dashboardId) {
@@ -76,11 +80,11 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public DashboardIdRes getAttributeByTaskId(String taskId, String subjectId) {
-		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
-				.selectPublicedBySubjectId(taskId, subjectId);
+
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceService
+				.selectReleasedBySubjectId(taskId, subjectId);
 
 		return getIdByInstance(situationPublishInstances);
-
 	}
 
 	@Override

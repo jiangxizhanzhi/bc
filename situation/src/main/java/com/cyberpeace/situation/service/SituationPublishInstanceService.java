@@ -6,12 +6,12 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
-import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
-import com.cyberpeace.situation.controller.res.SituationPublishInstanceListRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 
 public interface SituationPublishInstanceService extends IService<SituationPublishInstance> {
+
+    SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId);
 
     SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq);
 

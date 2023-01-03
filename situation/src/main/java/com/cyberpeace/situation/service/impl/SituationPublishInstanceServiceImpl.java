@@ -79,6 +79,17 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     private DashboardAttributeMapper dashboardAttributeMapper;
 
     @Override
+    public SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId){
+
+        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectPublicedBySubjectId(taskId, subjectId);
+        if(null == situationPublishInstance){
+            throw new BusinessException(SituationErrorCode.NO_RELEASED_DASHBOARD);
+        }
+
+        return situationPublishInstance;
+    }
+
+    @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
 
         // 拷贝属性

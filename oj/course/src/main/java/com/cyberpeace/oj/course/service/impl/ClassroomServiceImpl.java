@@ -1040,7 +1040,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 										 AuthContext authContext) {
 		Page page = roomListQuery.toPageParam();
 		IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
-				roomListQuery.getTrainPlanId());
+				roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg());
 
 		return result.convert(classroom -> entityToBo(classroom));
 

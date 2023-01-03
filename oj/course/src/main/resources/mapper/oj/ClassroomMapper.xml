@@ -110,9 +110,16 @@
                     and create_user_id = #{userId}
                 </if>
 
-                <if test="trainPlanId != null and trainPlanId != ''">
+                <if test="trainPlanId != null">
                     and train_plan_id = #{trainPlanId}
                 </if>
+
+            <if test="childrenOrg != null and childrenOrg.size() != 0">
+                and organization_id in
+                <foreach collection="childrenOrg" item="orgId" open="(" close=")" separator=",">
+                    #{orgId}
+                </foreach>
+            </if>
 
         </where>
     </select>

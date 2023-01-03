@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.model.UserPageContext;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -74,6 +76,10 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 					.username(noteListQuery.getUserName()).build();
 			List<UserInfo> userList = remoteUserService.getFuzzyQueryUserList(pageContext);
 			List<String> userIds = StreamApiUtils.map(userList, UserInfo::getUserId);
+			if (CollectionUtils.isEmpty(userIds)) {
+				return page;
+			}
+
 			listQuery.setUserIds(userIds);
 
 			userInfoMap = StreamApiUtils.toMap(userList, UserInfo::getUserId,

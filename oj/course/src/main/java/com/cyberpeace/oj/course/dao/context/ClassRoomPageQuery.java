@@ -15,4 +15,8 @@ public class ClassRoomPageQuery extends PageReqBase {
 
 	private String trainPlanId;
 
+	private String organizationId;
+
+	private List<String> childrenOrg;
+
 }

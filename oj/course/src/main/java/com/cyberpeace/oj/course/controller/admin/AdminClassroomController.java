@@ -135,6 +135,13 @@ public class AdminClassroomController {
 		ClassRoomPageQuery roomListQuery = BeanUtils.copy(classroomPageReq,
 				ClassRoomPageQuery.class);
 
+		// 查询数据组装
+		if (StringUtils.isNotBlank(classroomPageReq.getOrganizationId())) {
+			List<String> orgIds = remoteOrganizationService
+					.childrenList(classroomPageReq.getOrganizationId(), true);
+			roomListQuery.setChildrenOrg(orgIds);
+		}
+
 		// 非超级管理员仅查看自己创建的课程表
 		if (!authContext.getSuperAdmin()) {
 			roomListQuery.setUserId(authContext.getUserId());

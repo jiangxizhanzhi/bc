@@ -1,21 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
-import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
-import com.cyberpeace.oj.practice.dao.entity.*;
-import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
-import com.cyberpeace.oj.practice.service.PracticeOperationService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
-import com.cyberpeace.oj.practice.service.bo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +11,26 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
+import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
+import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperService;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.*;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;

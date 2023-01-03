@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller.req;
 
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import io.swagger.annotations.ApiModelProperty;
@@ -22,15 +23,18 @@ public class DashBoardTemplateReq implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("模板名称")
+    @NotBlank(groups = {Update.class, Create.class})
     private String name;
 
     @ApiModelProperty("模板类型")
+    @NotBlank(groups = {Update.class, Create.class})
     private String type;
 
     @ApiModelProperty("模板级别")
     private Integer level;
 
     @ApiModelProperty("缩略图")
+    @NotBlank(groups = {Update.class, Create.class})
     private String thumbnail;
 
     @ApiModelProperty("画布高度")

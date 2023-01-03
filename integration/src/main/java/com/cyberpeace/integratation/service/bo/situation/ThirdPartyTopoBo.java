@@ -19,9 +19,9 @@ public class ThirdPartyTopoBo implements Serializable {
 
 	private Map<String, String> areas = Maps.newHashMap();
 
-	private Map<String, ElementContext> networks;
+	private List<ElementContext> networks;
 
-	private Map<String, ElementContext> nodes;
+	private List<ElementContext> nodes;
 
 	private List<ConnectionContext> connections;
 
@@ -30,13 +30,15 @@ public class ThirdPartyTopoBo implements Serializable {
 		context.setBaseInfo(this.baseInfo);
 		context.setConnections(this.connections);
 		context.setElements(Maps.newHashMap());
-		this.networks.forEach((networkId, network) -> {
+		this.networks.forEach(network -> {
 			network.setElementType("network");
-			context.getElements().put(networkId, network);
+			network.setDeviceType("网络设备-外部网络");
+			context.getElements().put(network.getElementId(), network);
 		});
-		this.nodes.forEach((nodeId, node) -> {
+		this.nodes.forEach(node -> {
 			node.setElementType("node");
-			context.getElements().put(nodeId, node);
+			node.setDeviceType("操作系统-LINUX");
+			context.getElements().put(node.getElementId(), node);
 		});
 		return context;
 	}

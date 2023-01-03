@@ -102,4 +102,31 @@
             #{orgId}
         </foreach>
     </select>
+    <select id="page" resultType="com.cyberpeace.oj.course.dao.entity.Classroom">
+        select * from oj_classroom
+        <where>
+
+                <if test="userId != null and userId != ''">
+                    and create_user_id = #{userId}
+                </if>
+
+                <if test="trainPlanId != null and trainPlanId != ''">
+                    and train_plan_id = #{trainPlanId}
+                </if>
+
+        </where>
+    </select>
+    <select id="selectIdsByPlanIds" resultType="java.lang.String">
+        select resource_id from oj_classroom
+        <where>
+
+                <if test="ids != null and ids.size() != 0">
+                     train_plan_id in
+                    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+                </if>
+
+        </where>
+    </select>
 </mapper>

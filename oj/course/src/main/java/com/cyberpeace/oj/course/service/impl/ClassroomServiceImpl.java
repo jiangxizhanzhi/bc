@@ -3,6 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1031,6 +1033,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (!orgIds.isEmpty()) {
 			classroomMapper.deleteByOrgIds(orgIds);
 		}
+	}
+
+	@Override
+	public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
+										 AuthContext authContext) {
+		Page page = roomListQuery.toPageParam();
+		IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
+				roomListQuery.getTrainPlanId());
+
+		return result.convert(classroom -> entityToBo(classroom));
+
+	}
+
+	@Override
+	public List<String> selectIdsByPlanIds(List<String> ids) {
+		return classroomMapper.selectIdsByPlanIds(ids);
 	}
 
 	@Override

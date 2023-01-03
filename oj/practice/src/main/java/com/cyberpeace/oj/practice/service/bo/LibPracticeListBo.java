@@ -39,4 +39,7 @@ public class LibPracticeListBo implements Serializable {
 
 	@ApiModelProperty("分值")
 	private Double score;
+
+	@ApiModelProperty("答案")
+	private String answer;
 }

@@ -188,7 +188,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	private ClassroomGroupInfoMapper classroomGroupInfoMapper;
 
 	@Override
-	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, AuthContext authContext) {
+	public LessonInfoBo getLessonDetail(String courseId, String lessonId, String roomId, Integer learnedType, AuthContext authContext) {
 
 		// 课时数据校验
 		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonId, authContext);
@@ -307,6 +307,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		try {
 			LessonRecord lessonRecord = LessonRecord.builder().lessonId(lessonId).courseId(courseId)
 					.userId(authContext.getUserId()).build();
+			lessonRecord.setUpdateTime(new Date());
+			lessonRecord.setLearnedType(learnedType);
 			lessonRecordMapper.insert(lessonRecord);
 		} catch (DuplicateKeyException e) {
 			// 代表数据库已存在学习记录 不做任何处理

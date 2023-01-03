@@ -20,6 +20,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class AdminPersonalStatsController {
 
 	@ApiOperation("个人课程学习统计")
 	@GetMapping("/person-stats-detail/course")
-	@RequiresPermissions(MenuConstant.CMS_COURSE_STATISTICS)
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSE_STATISTICS, MenuConstant.WEB_PERSON_CENTER}, logical = Logical.OR)
 	public BaseRsp<ListRsp<PersonalStatsDetail4CourseBo>> personalStatsDetail4Course(
 			PageReqBase pageReq,
 			@ApiParam("用户resource_id") @RequestParam(value = "user_id") String userId) {

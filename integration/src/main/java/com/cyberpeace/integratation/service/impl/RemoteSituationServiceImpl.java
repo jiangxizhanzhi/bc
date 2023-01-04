@@ -314,6 +314,12 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		if (StringUtils.isNotBlank(topoReq.getPlatformId())) {
 			query = query + "&platformId=" + topoReq.getPlatformId();
 		} ;
+		if (StringUtils.isNotBlank(topoReq.getTaskId())) {
+			query = query + "&taskId=" + topoReq.getTaskId();
+		} ;
+		if (StringUtils.isNotBlank(topoReq.getSubjectId())) {
+			query = query + "&subjectId=" + topoReq.getSubjectId();
+		} ;
 		if (topoReq.getLevel() != 0) {
 			query = query + "&level=" + topoReq.getLevel();
 		} ;

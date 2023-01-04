@@ -145,4 +145,9 @@ public interface SituationErrorCode {
 	 * 不允许修改任务方案
 	 */
 	String CAN_NOT_MODIFY_TASK = "106005";
+
+	/**
+	 * 暂无已发布的大屏
+	 */
+	String NO_RELEASED_DASHBOARD = "106006";
 }

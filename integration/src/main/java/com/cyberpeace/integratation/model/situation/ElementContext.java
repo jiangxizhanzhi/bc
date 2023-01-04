@@ -3,8 +3,12 @@ package com.cyberpeace.integratation.model.situation;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.util.EnumUtils;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -30,7 +34,7 @@ public class ElementContext implements Serializable {
 	private String thirdUrl;
 
 	@ApiModelProperty("虚实类型")
-	private String vrType;
+	private String vrType = ElementVrType.VIRTUAL.desc;
 
 	@ApiModelProperty("设备类型")
 	private String deviceType;
@@ -44,10 +48,57 @@ public class ElementContext implements Serializable {
 	@ApiModelProperty("父节点ID")
 	private String parent;
 
+	@ApiModelProperty("父节点ID列表")
+	private List<String> parentIds;
+
 	@ApiModelProperty("子节点ID列表")
 	private List<String> child;
 
 	@ApiModelProperty("节点坐标")
 	private PositionContext position;
+
+	public enum ElementRole implements GenericEnum {
+
+		RED(1, "红方"), BLUE(2, "蓝方"), WHITE(3, "白方");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private ElementRole(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public enum ElementVrType implements GenericEnum {
+
+		VIRTUAL(1, "virtual"), ENTITY(2, "entity");
+
+		@Getter
+		private Integer code;
+
+		@Getter
+		private String desc;
+
+		private ElementVrType(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public void setRole(Integer role) {
+		this.role = EnumUtils.getEnumDescByCode(role, ElementRole.class);
+	}
+
+	public void setVrType(Integer type) {
+		this.vrType = EnumUtils.getEnumDescByCode(type, ElementVrType.class);
+	}
+
+	public void setParents(List<String> ids) {
+		this.parentIds = ids;
+	}
 
 }

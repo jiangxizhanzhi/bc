@@ -64,6 +64,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     @Override
     public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
+        //校验模板名称
+        checkTemplateName(dashBoardTemplateReq.getName(), null);
+
         DashboardTemplate dashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
         dashboardTemplate.setResourceId(IDGeneratorUtil.getID());
         String componentsSetting = dashboardTemplate.getComponentsSetting();
@@ -90,6 +93,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     @Override
     public String updateDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
+        //校验模板名称
+        checkTemplateName(dashBoardTemplateReq.getName(), dashBoardTemplateReq.getResourceId());
+
         String resourceId = dashBoardTemplateReq.getResourceId();
         DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(resourceId);
         if (dashboardTemplate == null) {
@@ -565,5 +571,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         newDashboardComponents.addAll(gisDashboardComponentList);
         newDashboardComponents.addAll(dashboardComponentsList);
         return newDashboardComponents;
+    }
+
+    private void checkTemplateName(String name, String resourceId){
+        String oldResourceId = dashboardTemplateMapper.selectByNameString(name);
+        if (StringUtils.isNotBlank(oldResourceId)) {
+            if ((StringUtils.isNotBlank(resourceId) && !Objects.equals(oldResourceId, resourceId)) || StringUtils.isBlank(resourceId)) {
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
+        }
     }
 }

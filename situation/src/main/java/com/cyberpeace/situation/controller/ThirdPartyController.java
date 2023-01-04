@@ -106,9 +106,15 @@ public class ThirdPartyController {
 
 	@ApiOperation("获取任务类型字典")
 	@GetMapping("/task_type/list/")
-	public BaseRsp<List<HashMap<String, String>>> getTaskType() {
+	public BaseRsp<List<HashMap<String, String>>>
+			getTaskType(@ApiParam(name = "all", value = "是否返回全部类型",
+					required = false) @RequestParam(value = "all", required = false) Boolean all) {
 
-		return new BaseRsp<>(TaskType.getTaskTypeMap());
+		if (all == null || !all) {
+			return new BaseRsp<>(TaskType.getTaskTypeMap(true));
+		}
+
+		return new BaseRsp<>(TaskType.getTaskTypeMap(false));
 	}
 
 	@ApiOperation("获取任务状态字典")
@@ -206,12 +212,11 @@ public class ThirdPartyController {
 	}
 
 	@ApiOperation("获取平台节点脆弱性列表")
-	@PostMapping("/node/weak/list/")
-	public BaseRsp<ListRsp<NodeWeakContext>>
-			getNodeWeakList(@RequestBody @Validated NodePageReq nodeListApiReq) {
+	@GetMapping("/node/weak/list/")
+	public BaseRsp<ListRsp<NodeWeakContext>> getNodeWeakList(NodePageReq nodePageReq) {
 
 		return new BaseRsp<>(remoteSituationService
-				.getNodeWeakList(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+				.getNodeWeakList(BeanUtils.copy(nodePageReq, NodeIdPageReq.class)));
 	}
 
 	@ApiOperation("获取任务事件列表")

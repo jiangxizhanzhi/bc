@@ -12,10 +12,12 @@ public enum TaskStatus {
 	/**
 	 * 任务状态
 	 */
-
-	WKS("1", "未开始"),
-	RWZX("2", "任务执行"),
-	YJS("3", "已结束");
+	RWLX("RWZT01", "立项"),
+	DSP("RWZT02", "待审批"),
+	RWZB("RWZT03", "任务准备"),
+	RWZX("RWZT04", "任务执行"),
+	YWC("RWZT05", "已完成"),
+	QT("RWZT99", "其它");
 
 	@Getter
 	private String code;

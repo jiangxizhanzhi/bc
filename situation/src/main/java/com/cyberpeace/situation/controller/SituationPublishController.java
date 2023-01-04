@@ -187,16 +187,24 @@ public class SituationPublishController {
 	@ApiOperation("态势实例发布")
 	@PostMapping("release")
 	public BaseRsp releaseSituationPublishInstance(@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
+
+		// 获取大屏实例
 		String resourceId = situationInstanceReleaseReq.getResourceId();
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		situationPublishInstances.setStatus(SituationInstanceStatus.RELEASE.getCode());
-		//没有科目id时，默认可以发布
+
+		// 三级大屏没有科目ID时，抛出异常
+		String taskId = situationPublishInstances.getTaskId();
 		String subjectId = situationPublishInstances.getSubjectId();
-		if (StringUtils.isNotBlank(subjectId)) {
-			// TODO发布逻辑暂定 获取当前科目下仅 能有一个大屏发布
+		if (StringUtils.isNotBlank(taskId) && StringUtils.isBlank(subjectId)){
+			throw new BusinessException(SituationErrorCode.SUBJECT_EMPTY_ERROR);
+		}
+
+		// 三级大屏同一科目下仅能有一个大屏发布
+		if (StringUtils.isNotBlank(taskId)){
 			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
 			queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
 			queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());

@@ -216,11 +216,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Paper paper = paperMapper.selectById(lesson.getPaperId());
 
 		String orgId = authContext.getOrganization();
-		if (null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId)) {
-			infoBo.setPaperPublic(true);
-		} else {
-			infoBo.setPaperPublic(false);
-		}
+		infoBo.setPaperPublic(
+				null != paper.getReadAuthIds() && paper.getReadAuthIds().contains(orgId));
+
 		Integer countByPaper = paperService.practiceCountByPaper(lesson.getPaperId());
 		infoBo.setPracticeCount(countByPaper);
 
@@ -251,6 +249,23 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 		infoBo.setVideoUrl(utilService.handlerFileUrl(lesson.getVideoUrl()));
 
+		// 判断聊天框前端是否应该显示
+		ClassroomGroupInfo groupInfo = null;
+		if (StringUtils.isNotBlank(roomId)) {
+			Classroom classroom = classroomMapper.selectById(roomId);
+			if (null != classroom) {
+				groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(roomId,
+						authContext.getUserId());
+				Date current = new Date();
+				if ((null != groupInfo || lesson.getType()
+						.intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue())
+						&& current.after(classroom.getStartTime())
+						&& current.before(classroom.getEndTime())) {
+					infoBo.setRoomId(roomId);
+				}
+			}
+		}
+
 		// 查询课时场景信息
 		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
 				&& StringUtils.isNotBlank(lesson.getTopoId())) {
@@ -260,23 +275,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 			// 前台需要先查询课堂场景
 			OjLocalScene ojLocalScene = null;
-			ClassroomGroupInfo groupInfo = null;
 			if (authContext.getIsWeb()) {
-				groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId, roomId, authContext);
 				if (null != groupInfo) {
 					infoBo.setSceneShareMode(SceneShare.GROUP.getCode());
 					infoBo.setGroupId(groupInfo.getResourceId());
-					infoBo.setRoomId(roomId);
 					// 存在课堂场景 则设置group_id用于前端简历websocket
 					ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
-
-					// 设置课程表编号
-//					Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
-//					Date now = new Date();
-//					if (null != classroom && classroom.getStartTime().before(now)
-//							&& classroom.getEndTime().after(now)) {
-//						infoBo.setRoomId(classroom.getResourceId());
-//					}
 				}
 			}
 
@@ -290,18 +294,8 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				JSONObject sceneData = ojLocalSceneService.getSceneData(ojLocalScene);
 				infoBo.setSceneData(sceneData);
 			}
-		} else if (lesson.getType().intValue() == CourseLesson.LessonType.THEORY.getCode().intValue()) {
-			ClassroomGroupInfo groupInfo = classroomGroupInfoService.selectByLessonAndUser(lessonId,
-					roomId, authContext);
-			if (groupInfo != null) {
-				Classroom classroom = classroomMapper.selectById(groupInfo.getClassroomId());
-				Date now = new Date();
-				if (null != classroom && classroom.getStartTime().before(now)
-						&& classroom.getEndTime().after(now)) {
-					infoBo.setRoomId(classroom.getResourceId());
-				}
-			}
 		}
+
 
 		// 添加学习记录
 		try {

@@ -17,7 +17,7 @@ public interface UserModelService {
 	 * @param pattern 用户名模糊匹配
 	 * @return 用户行为分页列表
 	 */
-	ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern);
+	ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern, Integer accessOs);
 
 	/**
 	 * 获取用户行为模拟详情

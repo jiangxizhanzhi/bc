@@ -55,10 +55,10 @@ public class UserModelServiceImpl implements UserModelService {
 	private UserTypeService userTypeService;
 
 	@Override
-	public ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern) {
+	public ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern, Integer accessOs) {
 		// get user_behaviors
 		IPage<UserModel> userBehaviorIPage = userModelMapper.pageUserBehaviors(page, userTypeId,
-				pattern);
+				pattern, accessOs);
 		// get user types
 		Set<String> userTypeIds = userBehaviorIPage.getRecords().stream()
 				.map(UserModel::getUserTypeId).collect(Collectors.toSet());

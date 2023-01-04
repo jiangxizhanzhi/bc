@@ -14,4 +14,9 @@ public class PageReqWithType extends PageReqBase {
 	@Getter
 	@Setter
 	private String type;
+
+	@ApiModelProperty(value = "操作系统类型")
+	@Getter
+	@Setter
+	private Integer access_os;
 }

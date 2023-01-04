@@ -33,7 +33,7 @@ public class UserModelController {
 	public BaseRsp<ListRsp<UserModelBo>> getUserModelPage(PageReqWithType pageReq) {
 		Page page = pageReq.toPageParam();
 		ListRsp<UserModelBo> res = userModelService.listUserModel(page, pageReq.getType(),
-				pageReq.getPattern());
+				pageReq.getPattern(), pageReq.getAccess_os());
 		return new BaseRsp<>(res);
 	}
 

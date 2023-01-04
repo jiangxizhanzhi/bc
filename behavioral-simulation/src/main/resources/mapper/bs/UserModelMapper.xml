@@ -24,6 +24,11 @@
             <if test="pattern != null and pattern != ''">
                 and user_name like #{search}
             </if>
+
+            <if test="accessOs != null and accessOs != 0">
+                and access_os = #{accessOs}
+            </if>
+
         </where>
         order by id desc
     </select>

@@ -20,4 +20,7 @@
     <select id="selectByNameString" resultType="java.lang.String">
         SELECT resource_id FROM situation_dashboard_template WHERE name = #{name}
     </select>
+    <select id="selectByType" resultType="java.lang.String">
+        SELECT resource_id FROM situation_dashboard_template WHERE type = #{type} and edit_status = 0
+    </select>
 </mapper>

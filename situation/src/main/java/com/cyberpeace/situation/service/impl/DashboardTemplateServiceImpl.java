@@ -15,10 +15,7 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.dao.mapper.ApiRequestMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
-import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.DataSourceService;
@@ -61,6 +58,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     @Autowired
     private DataSourceService dataSourceService;
+
+    @Autowired
+    private SituationCategoryMapper situationCategoryMapper;
 
     @Override
     public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
@@ -580,5 +580,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                 throw new BusinessException(ErrorCode.NAME_DUPLICATE);
             }
         }
+    }
+    
+    @Override
+    public String getDefaultTemplateId(String taskType){
+        SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
+
+        return dashboardTemplateMapper.selectByType(situationCategory.getResourceId());
     }
 }

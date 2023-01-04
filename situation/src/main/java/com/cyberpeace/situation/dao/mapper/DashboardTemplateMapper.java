@@ -20,4 +20,6 @@ public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
                                                @Param("dashboardTemplatePageReq") DashboardTemplatePageReq dashboardTemplatePageReq);
 
     String selectByNameString(@Param("name")String name);
+
+    String selectByType(@Param("type")String type);
 }

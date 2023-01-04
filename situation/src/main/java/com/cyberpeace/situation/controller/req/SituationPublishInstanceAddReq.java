@@ -43,7 +43,7 @@ public class SituationPublishInstanceAddReq {
     @ApiModelProperty(value = "模板ID")
     private String templateId;
 
-    @ApiModelProperty(value = "任务类型")
+    @ApiModelProperty(value = "任务分类")
     private String category;
 
     @ApiModelProperty(value = "缩略图", required = true)

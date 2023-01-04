@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -56,9 +57,9 @@ public class DynamicEffectMappingReq implements Serializable {
     @ApiModelProperty(value = "线形", required = true)
     private String line;
 
-    @NotBlank(groups = { Create.class },
+    @NotNull(groups = { Create.class },
             message = SituationErrorCode.LINE_SIZE_DOC_EMPTY_ERROR)
     @ApiModelProperty(value = "线形大小", required = true)
-    private String lineSize;
+    private Integer lineSize;
 
 }

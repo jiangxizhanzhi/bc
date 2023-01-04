@@ -278,8 +278,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		if (authContext.getIsWeb()) {
 			List<LessonRecord> recordList = lessonRecordMapper
 					.listByLessonAndUser(authContext.getUserId(), lessonIds);
-			Map<String, LessonRecord> recordMap = recordList.stream().collect(
-					Collectors.toMap(LessonRecord::getLessonId, lessonRecord -> lessonRecord));
+			Map<String, List<LessonRecord>> recordMap = recordList.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));
 			configBos.forEach(lessonConfig -> lessonConfig
 					.setLearn(null != recordMap.get(lessonConfig.getLessonId())));
 		}

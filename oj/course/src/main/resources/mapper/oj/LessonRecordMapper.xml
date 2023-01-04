@@ -53,4 +53,18 @@
         </where>
     </select>
 
+    <update id="updateLearnedTime">
+        update oj_lesson_record
+        <set>
+            update_time = now()
+        </set>
+        where
+        lesson_id = #{lessonId}
+        and course_id = #{courseId}
+        and user_id = #{userId}
+        and learned_type = #{learnedType}
+        and room_id = #{roomId}
+    </update>
+
+
 </mapper>

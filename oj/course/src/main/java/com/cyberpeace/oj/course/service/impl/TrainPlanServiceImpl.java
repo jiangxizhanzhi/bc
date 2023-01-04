@@ -46,7 +46,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 
 		Page page = trainPlanReq.toPageParam();
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
-				userInfo.getUserId());
+				userInfo.getUserId(), userInfo.isSuperuser());
 
 		return result;
 	}

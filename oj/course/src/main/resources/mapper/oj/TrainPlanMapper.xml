@@ -26,7 +26,11 @@
         FROM   oj_classroom
         group by train_plan_id) b
         on a.resource_id = b.train_plan_id
-        where a.create_user_id = #{userId}
+        where 1=1
+        <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
+            and a.create_user_id = #{userId}
+        </if>
+
         <if test="null != organizationId and organizationId != ''">
 
             and a.resource_id in (select train_plan_id  FROM   oj_classroom where organization_id = #{organizationId})
@@ -34,7 +38,9 @@
 
         union SELECT train_plan_id,'Temp Plan',min(start_time) start_time,max(end_time) end_time,count(1) count, max(update_time)  update_time
         FROM   oj_classroom where train_plan_id = ''
-        and  create_user_id = #{userId}
+        <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
+            and create_user_id = #{userId}
+        </if>
         <if test="null != organizationId and organizationId != ''">
             and organization_id = #{organizationId}
         </if>

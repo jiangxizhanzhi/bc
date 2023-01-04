@@ -278,7 +278,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	public enum CHAT_TYPE implements GenericEnum {
 
 		/** 聊天室类型*/
-		RED_VS_BLUE(4, "红蓝对抗"), COMMON(0, "通用");
+		RED_VS_BLUE(4, "红蓝对抗"), COMMON(0, "通用"), CLASSROOM(1, "课程表");
 
 		private Integer type;
 

@@ -284,7 +284,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		ChatWsMessageIdentifier messageIdentifier = new ChatWsMessageIdentifier();
 		messageIdentifier.setPath(WsPath.CLASSROOM_CHAT);
 		messageIdentifier.setBusinessId(classroom.getResourceId());
-		messageIdentifier.setBusinessType(ChatWebSocketHandler.CHAT_TYPE.COMMON.getCode());
+		messageIdentifier.setBusinessType(ChatWebSocketHandler.CHAT_TYPE.CLASSROOM.getCode());
 		messageIdentifier.setUserId(toUserId);
 
 		chatWebSocketHandler.pushChatMessage(messageIdentifier, UserInfoContext.getUserContext(),

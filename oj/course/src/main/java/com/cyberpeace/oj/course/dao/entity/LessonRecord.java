@@ -24,6 +24,8 @@ public class LessonRecord extends BaseTable {
 
 	private String courseId;
 
+	private String roomId;
+
 	private Integer learnedType;
 
 	public enum LearnedType implements GenericEnum {

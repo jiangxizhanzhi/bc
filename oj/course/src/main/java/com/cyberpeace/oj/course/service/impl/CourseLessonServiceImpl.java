@@ -300,15 +300,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 添加学习记录
 		try {
 			LessonRecord lessonRecord = LessonRecord.builder().lessonId(lessonId).courseId(courseId)
-					.userId(authContext.getUserId()).build();
+					.userId(authContext.getUserId()).learnedType(learnedType).roomId(roomId).build();
 			lessonRecordMapper.insert(lessonRecord);
 		} catch (DuplicateKeyException e) {
-			LambdaQueryWrapper<LessonRecord> queryWrapper = new LambdaQueryWrapper<>();
-			queryWrapper.eq(LessonRecord::getCourseId, courseId).eq(LessonRecord::getLessonId, lessonId).eq(LessonRecord::getUserId, authContext.getUserId());
-			LessonRecord lessonRecord = lessonRecordMapper.selectOne(queryWrapper);
-			lessonRecord.setUpdateTime(new Date());
-			lessonRecord.setLearnedType(learnedType);
-			lessonRecordMapper.updateById(lessonRecord);
+			lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, roomId);
 			// 代表数据库已存在学习记录 不做任何处理
 		}
 

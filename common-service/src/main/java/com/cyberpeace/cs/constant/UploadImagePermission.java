@@ -27,7 +27,7 @@ public enum UploadImagePermission implements GenericEnum {
 	CMS_THEORY_IMAGE(13, "后台理论习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_THEORY_PRACTICE}),
 	CMS_OPERATION_IMAGE(14, "后台实操习题", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_PRACTICE_OPERATION}),
 	CMS_SITUATION_PLOT(15,"态势绘标图元", FileTypeContant.PLOT_PNG, new String[] {MenuConstant.CMS_SITUATION_PLOT_PIXEL}),
-	CMS_SITUATION_COMPONENTS(16, "", FileTypeContant.PICTURE_TYPE, new String[] {MenuConstant.CMS_SITUATION_DRAWING_RESOURCE});
+	CMS_SITUATION_COMPONENTS(16, "后台图形管理", FileTypeContant.DRAWING, new String[] {MenuConstant.CMS_SITUATION_DRAWING_RESOURCE});
 
 	@Getter
 	public Integer code;

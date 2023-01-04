@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -223,10 +224,14 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         List<SituationCategory> categories = situationCategoryMapper.selectList(new LambdaQueryWrapper<>());
         List<LocalType> statusList = SituationInstanceStatus.getMsgList();
 
+        //模板列表
+        List<DashboardTemplateRef> dashboardTemplateRefs = dashboardTemplateRefMapper.selectList(new LambdaQueryWrapper<>());
+
         //填充相关名称
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
                 String category = situationPublishInstancePageRes.getCategory();
+                String templateId = situationPublishInstancePageRes.getTemplateId();
 
                 // 赋值大屏类型
                 categories.forEach(situationCategory -> {
@@ -239,6 +244,13 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 statusList.forEach(localType -> {
                     if (Objects.equals(localType.getCode(), situationPublishInstancePageRes.getStatus())) {
                         situationPublishInstancePageRes.setStatus(localType.getMsg());
+                    }
+                });
+
+                //模板编辑状态
+                dashboardTemplateRefs.forEach(dashboardTemplateRef -> {
+                    if (StringUtils.isNotBlank(templateId) && Objects.equals(templateId, dashboardTemplateRef.getResourceId())) {
+                        situationPublishInstancePageRes.setTemplateEdit(dashboardTemplateRef.getEditStatus());
                     }
                 });
             }

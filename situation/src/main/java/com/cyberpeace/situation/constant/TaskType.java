@@ -14,15 +14,14 @@ public enum TaskType {
 	 */
 
 	QB("", "全部", "全部",false, true),
-	XNJD("SY01", "性能鉴定", "性能鉴定试验",false, true),
-	XNRZ("SY02", "性能认证", "性能认证",false, true),
-	SYZZ("SY03", "作战试验", "作战试验",false, false),
+	XNJD("SY01", "性能鉴定试验", "性能鉴定试验",false, true),
+	XNRZ("SY02", "性能验证试验", "性能验证试验",false, true),
+	SYZZ("SY03", "作战试验", "作战试验",false, true),
 	QTSY("SY99", "其它试验", "其它试验",false, false),
-	HLDK("XL05", "红蓝对抗", "红蓝对抗",true, true),
-	ZZSY("XL01", "ZZ试验", "武器训练",true, true),
-	DQJS("XL03", "夺旗竞赛", "夺旗训练",true, true),
-	ZZXL("XL04", "自主训练", "单兵训练",true, true),
-	ZXBW("XL02", "专项比武", "竞赛训练",true, true),
+	HLDK("XL03", "红蓝对抗", "红蓝对抗",true, true),
+	DQJS("XL02", "夺旗竞赛", "夺旗竞赛",true, true),
+	ZZXL("XL04", "自主训练", "自主训练",true, true),
+	ZXBW("XL01", "专项比武", "专项比武",true, true),
 	QTXL("XL99", "其它训练", "其它训练",false, false);
 
 	@Getter

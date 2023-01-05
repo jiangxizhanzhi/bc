@@ -3,6 +3,7 @@ package com.cyberpeace.situation.service;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.SituationDrawingPageReq;
 import com.cyberpeace.situation.controller.req.SituationDrawingReq;
+import com.cyberpeace.situation.controller.res.SituationDrawingPageRes;
 import com.cyberpeace.situation.dao.entity.SituationDrawing;
 import com.cyberpeace.situation.dao.entity.SituationDrawingCategory;
 
@@ -52,7 +53,7 @@ public interface SituationDrawingService {
      * @param situationDrawingPageReq
      * @return
      */
-    ListRsp<SituationDrawing> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq);
+    ListRsp<SituationDrawingPageRes> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq);
 
     /**
      * 获取类型

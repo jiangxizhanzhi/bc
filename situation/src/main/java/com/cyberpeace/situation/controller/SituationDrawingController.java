@@ -5,6 +5,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.SituationDrawingPageRes;
 import com.cyberpeace.situation.dao.entity.SituationDrawing;
 import com.cyberpeace.situation.dao.entity.SituationDrawingCategory;
 import com.cyberpeace.situation.dao.entity.SituationPlotPixel;
@@ -61,7 +62,7 @@ public class SituationDrawingController {
 
     @ApiOperation("图形资源分页查询")
     @GetMapping("/list")
-    public BaseRsp<ListRsp<SituationDrawing>> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
+    public BaseRsp<ListRsp<SituationDrawingPageRes>> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
         return new BaseRsp<>(situationDrawingService.getSituationDrawingPage(situationDrawingPageReq));
     }
 

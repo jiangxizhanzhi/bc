@@ -366,7 +366,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomListBo.setResourceOccupiedNums(
 					topologyNodesStats.get(item.getBusinessTemplate().getTopoId()).getResourceOccupiedNums());
 
-			// todo db字段与数据库不同, 是否需要同步?
 			singleRoomListBo.getEventData()
 					.setDifficult(item.getBusinessTemplate().getDifficulty());
 			singleRoomListBo.getEventData().setCategory(item.getSingleTemplate().getSubType());

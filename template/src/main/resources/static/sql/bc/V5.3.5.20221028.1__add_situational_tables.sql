@@ -675,3 +675,5 @@ CREATE TABLE `situation_drawing_category` (
 INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe411', '图标资源', '2023-01-04 13:56:47', '2023-01-04 13:56:49');
 INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe412', '边框资源', '2023-01-04 13:57:02', '2023-01-04 13:57:03');
 INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe413', '装饰线资源', '2023-01-04 13:57:18', '2023-01-04 13:57:19');
+
+ALTER TABLE `bc`.`situation_dashboard_components_setting` CHANGE `component_setting` `component_setting` LONGTEXT NULL;

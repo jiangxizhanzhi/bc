@@ -284,4 +284,7 @@ public interface OjBusinessErrorCode {
 
 	/** 课时类型不正确，当前类型为xxx*/
 	String ACCESS_LESSON_TYPE = "102093";
+
+	/** 所有学员未提交报告 */
+	String NO_REPORT_CAN_BE_EXPORTED = "102094";
 }

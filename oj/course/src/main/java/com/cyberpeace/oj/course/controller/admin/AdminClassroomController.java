@@ -390,4 +390,11 @@ public class AdminClassroomController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	@ApiOperation("实验报告导出")
+	@GetMapping("/report/export")
+	public void exportReport(HttpServletResponse httpServletResponse,@RequestParam("classroom_id") String classroomId){
+		String destPdfPath = classroomService.exportReport(classroomId);
+		FileUtil.setResponse(new File(destPdfPath), true, httpServletResponse);
+	}
+
 }

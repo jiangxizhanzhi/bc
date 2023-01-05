@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+<!--    <link rel="stylesheet" type="text/css" href="css/index.css">-->
+    <style>
+        <#include "./css/index.css">
+    </style>
+</head>
+
+<body>
+<div class="page">
+  <!-- 实验报告 -->
+  <div class="report">
+    <div class="title">实验报告</div>
+    <div class="report-info">
+      <div>${report_content}</div>
+<!--      <div class="report-title">-->
+<!--        一、实验名称-->
+<!--      </div>-->
+<!--      <div class="content">-->
+<!--        在精神的眼睛看来，人心比任何地方都更眩目，也更黑暗；精神的眼睛所注视的任何东西，也没有人心这样可怕，这样复杂，这样神秘，这样无边无际。-->
+<!--      </div>-->
+<!--      <div class="report-title">-->
+<!--        二、实验内容-->
+<!--      </div>-->
+<!--      <div class="content">-->
+<!--        在精神的眼睛看来，人心比任何地方都更眩目，也更黑暗；精神的眼睛所注视的任何东西，也没有人心这样可怕，这样复杂，这样神秘，这样无边无际。-->
+<!--      </div>-->
+    </div>
+  </div>
+  <!-- 评分 -->
+  <div class="score-area">
+    <div class="left-title">评分:</div>
+    <div class="score">${score}</div>
+  </div>
+  <!-- 是否通过 -->
+  <div class="pass-area">
+    <div class="left-title">是否通过:</div>
+    <div class="pass-result">${passed}</div>
+  </div>
+  <!-- 评语 -->
+  <div class="comment-area">
+    <div class="left-title">评语:</div>
+    <div class="comment-info">${evaluate_comment}</div>
+  </div>
+</div>
+</body>
+
+</html>

@@ -1,10 +1,14 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +21,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.ExcelHeader;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -1122,6 +1123,65 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		});
 
 		return classrooms;
+	}
+
+	@Override
+	public String exportReport(String classroomId){
+		String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
+
+		// 基本数据校验
+		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
+		CourseLesson courseLesson = courseValidateHandler
+				.validateLessonExist(classroom.getLessonId(), false);
+		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		String lessonName = lesson.getName();
+		String  htmlPath = basePath + File.separator + lessonName;
+		FileUtil.mkdirs(htmlPath);
+
+		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
+				true);
+		Map<String, String> orgMap = remoteOrganizationService
+				.childrenMap(classroom.getOrganizationId(), true);
+		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
+		List<ClassroomReportBo> data = StreamApiUtils.map(userInfos,
+				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
+		List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent()!=null);
+		if(filterData.size() == 0){
+			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
+		}
+		for(ClassroomReportBo classroomReportBo: filterData){
+			JSONObject jsonObject = new JSONObject();
+			String mdContent = classroomReportBo.getContent();
+			jsonObject.put("report_content", MdUtil.mdToHtmlForApiDoc(mdContent));
+			if(classroomReportBo.getPassed() == null){
+				jsonObject.put("passed", "未审核");
+			}else if(classroomReportBo.getPassed()){
+				jsonObject.put("passed", "是");
+			}else {
+				jsonObject.put("passed", "否");
+			}
+			if(classroomReportBo.getScore() == null){
+				jsonObject.put("score", "未审核");
+			}else {
+				jsonObject.put("score", classroomReportBo.getScore().toString());
+			}
+			if(classroomReportBo.getEvaluateComment() == null){
+				jsonObject.put("evaluate_comment", "未审核");
+			}else {
+				jsonObject.put("evaluate_comment", classroomReportBo.getEvaluateComment());
+			}
+			String destHtmlPath = htmlPath + File.separator + classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + lessonName + "-课时报告.html";
+			HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
+			// 在同目录下生成pdf
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			FileUtil.deleteDir(new File(destHtmlPath));
+		}
+		File zipFile = new File(ZipUtil.toZip(htmlPath));
+		zipFile.renameTo(new File(basePath + File.separator + lessonName + "-实验报告.zip"));
+		FileUtil.deleteDir(new File(htmlPath));
+		return basePath + File.separator + lessonName + "-实验报告.zip";
 	}
 
 	/**

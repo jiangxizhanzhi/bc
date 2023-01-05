@@ -412,7 +412,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 							+ mpLogFile.getAgentName() + "&osType=" + mpLogFile.getOsType()
 							+ "&paths=" + mpLogFile.getPath();
 
-					JSONObject data = HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+					JSONObject data = HttpClientUtil.rawSpecialGet(targetUrl, JSONObject.class);
 					for (Object fileUrl : (List) data.get("list")) {
 						String downloadUrl = JsonUtil
 								.toJsonObject(fileUrl.toString(), JSONObject.class)

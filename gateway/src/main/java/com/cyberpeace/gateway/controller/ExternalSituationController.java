@@ -1,5 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import com.cyberpeace.gateway.controller.req.*;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
+import com.cyberpeace.situation.constant.OrderType;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -25,6 +28,7 @@ import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.model.ws.WsTaskStatus;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
@@ -64,6 +68,23 @@ public class ExternalSituationController {
 			controlCmd(@RequestBody @Validated ControlCommandReq controlCommandReq) {
 
 		log.info(String.format("成功接收指令：%s", JsonUtil.toJsonString(controlCommandReq)));
+
+		OrderType orderType = Arrays.stream(OrderType.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(controlCommandReq.getOrderType())).findFirst()
+				.orElse(OrderType.QT);
+
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectPublicedBySubjectId(controlCommandReq.getTaskId(),
+						controlCommandReq.getSubjectId());
+
+		if (situationPublishInstance == null || orderType.getAction() == null) {
+			return new BaseRsp<>(new ControlRes("1", "0"));
+		}
+
+		WsMessage<WsTaskStatus> wsMessage = new WsMessage<>(MessageType.TaskStatus.getDesc(),
+				new WsTaskStatus(orderType.getAction()));
+		situationHandlerService.pushDataToDashboard(wsMessage,
+				situationPublishInstance.getResourceId());
 
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}

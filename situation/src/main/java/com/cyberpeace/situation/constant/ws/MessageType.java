@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant.ws;
 
+import com.cyberpeace.situation.constant.TaskStatus;
 import lombok.Getter;
 
 public enum MessageType {
@@ -23,7 +24,8 @@ public enum MessageType {
 	TaskEventAd(13,"task_event_ad"),
 	BackToHome(14, "back_home"),
 	JumpPage(15, "jump_page"),
-	NodeMigration(16, "node_migration");
+	NodeMigration(16, "node_migration"),
+	TaskStatus(17, "status");
 
 	@Getter
 	private Integer code;

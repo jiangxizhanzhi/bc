@@ -77,6 +77,8 @@ public class RbTemplateController {
 
 		rbTemplateListRsp
 				.setNodesCount(topologyNodesStats.get(rbTemplateData.getTopoId()).getNodeCounts());
+		rbTemplateListRsp
+				.setResourceOccupiedNums(topologyNodesStats.get(rbTemplateData.getTopoId()).getResourceOccupiedNums());
 		rbTemplateListRsp.setResourceId(rbTemplateData.getResourceId());
 		rbTemplateListRsp.setCrEventInfo(baseInfoRsp);
 		String roleString = rbTemplateData.getRoleConfig();

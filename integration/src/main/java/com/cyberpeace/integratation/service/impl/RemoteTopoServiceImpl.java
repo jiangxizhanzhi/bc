@@ -109,6 +109,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TopoDigest topoDigest = new TopoDigest();
 		topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
 		topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
+		topoDigest.setResourceOccupiedNums(mpTopoStatistic.getResourceOccupiedNums());
 
 		return topoDigest;
 	}
@@ -131,6 +132,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 					TopoDigest topoDigest = new TopoDigest();
 					topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
 					topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
+					topoDigest.setResourceOccupiedNums(mpTopoStatistic.getResourceOccupiedNums());
 					return topoDigest;
 				}));
 	}

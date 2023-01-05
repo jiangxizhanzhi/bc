@@ -41,4 +41,8 @@ public interface WebConstant {
 
 	/** 外部接口使用*/
 	String OJ_HEADER_KEY_VALUE = "Cmycjs1bWUHsKb8r";
+
+	String TOKEN = "token";
+
+	String YW_TOKEN = "xxxx";
 }

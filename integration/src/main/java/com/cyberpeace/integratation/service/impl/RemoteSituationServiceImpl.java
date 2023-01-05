@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.WebConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +87,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_RELEASE_SCREEN;
 
+	private String YW_BC_LIST;
+
 	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -93,6 +96,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
 		String outerHostXd = "http://" + ConfigUtil.getContextProperty("outer.host.xd");
+		String outerHostYw = "http://" + ConfigUtil.getContextProperty("outer.host.yw");
 		TASK_URL = outerHostTs + ConfigUtil.getContextProperty("task.list");
 		PLAN_URL = outerHostXd + ConfigUtil.getContextProperty("plan.list");
 		SUBJECT_URL = outerHostTs + ConfigUtil.getContextProperty("subject.list");
@@ -119,6 +123,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
+		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
 	}
 
 	@Override
@@ -383,6 +388,13 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {
 		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
 		List<NodeIdBo> res = JsonUtil.toJsonObjectArray(rsp, NodeIdBo.class);
+		return res;
+	}
+
+	@Override
+	public List<BcContext> getBcList(String type){
+		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, WebConstant.YW_TOKEN);
+		List<BcContext> res = JsonUtil.toJsonObjectArray(rsp, BcContext.class);
 		return res;
 	}
 }

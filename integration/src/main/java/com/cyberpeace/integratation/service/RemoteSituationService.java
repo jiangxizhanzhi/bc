@@ -173,4 +173,6 @@ public interface RemoteSituationService {
 	 * @param dashboardId
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
+
+	List<BcContext> getBcList(String type);
 }

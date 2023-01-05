@@ -277,4 +277,12 @@ public class ThirdPartyController {
 		List<TopoHistoryBo> res = remoteSituationService.getTopoHistory(req);
 		return new BaseRsp<>(res);
 	}
+
+	@ApiOperation("获取站点列表")
+	@GetMapping("/bc/list/")
+	public BaseRsp<List<BcContext>>
+			getBcList(@ApiParam(value = "站点类型", name = "type") String type) {
+		List<BcContext> res = remoteSituationService.getBcList(type);
+		return new BaseRsp<>(res);
+	}
 }

@@ -1,9 +1,11 @@
 package com.cyberpeace.situation.dao.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.situation.constant.BcStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,5 +37,39 @@ public class Center extends BaseTable implements Serializable {
 
 	@ApiModelProperty("状态")
 	private String status;
+
+	public void setGroupId(String groupId) {
+		this.centerId = groupId;
+	}
+
+	public void setName(String name) {
+		this.centerName = name;
+	}
+
+	public void setBcLocation(String bcLocation) {
+		this.location = bcLocation;
+	}
+
+	public void setOrganizeAddress(String organizeAddress) {
+		this.region = organizeAddress;
+	}
+
+	public void setBcAddress(String bcAddress) {
+		this.address = bcAddress;
+	}
+
+	public void setBcLongitude(String bcLongitude) {
+		this.longitude = bcLongitude;
+	}
+
+	public void setBcLatitude(String bcLatitude) {
+		this.latitude = bcLatitude;
+	}
+
+	public void setBcStatus(String bcStatus) {
+		this.status = Arrays.stream(BcStatus.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(bcStatus)).findFirst().orElse(BcStatus.WJC)
+				.getName();;
+	}
 
 }

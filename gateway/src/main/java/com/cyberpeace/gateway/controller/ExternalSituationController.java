@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
@@ -73,19 +74,21 @@ public class ExternalSituationController {
 	public BaseRsp<ScreenPathRes>
 			receiveScheme(@RequestBody @Validated SituationSchemeBo schemeBo) {
 
+		String dashboardId = schemeBo.getDashboardId();
+
+		if (StringUtils.isNotBlank(dashboardId)) {
+			return new BaseRsp<>(new ScreenPathRes(dashboardId));
+		}
+
 		SituationPublishInstanceAddReq situationPublishInstanceAddReq = BeanUtils.copy(schemeBo,
 				SituationPublishInstanceAddReq.class);
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
 				.insertOne(situationPublishInstanceAddReq);
-
+		dashboardId = situationPublishInstance.getResourceId();
 		log.info("成功接收可视化方案：{}", JsonUtil.toJsonString(schemeBo));
 
-		ScreenPathRes res = new ScreenPathRes();
-
-		res.setPath("/page/mg/admin/cr/admin/situation-release/edit/"
-				+ situationPublishInstance.getResourceId());
-		return new BaseRsp<>(res);
+		return new BaseRsp<>(new ScreenPathRes(dashboardId));
 	}
 
 	@CrossOrigin("*")

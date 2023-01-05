@@ -83,7 +83,7 @@ public class ExternalSituationController {
 
 		ScreenPathRes res = new ScreenPathRes();
 
-		res.setPath("/page/mg/admin/cr/admin/situation-release/edit/"
+		res.setPath("/cr/admin/situation-release/edit/"
 				+ situationPublishInstance.getResourceId());
 		return new BaseRsp<>(res);
 	}

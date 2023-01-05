@@ -135,4 +135,6 @@ public interface ClassroomService extends IService<Classroom> {
 	IPage<ClassroomBo>  selectPage(ClassRoomPageQuery roomListQuery, AuthContext authContext);
 
 	List<String> selectIdsByPlanIds(List<String> ids);
+
+	String exportReport(String classroomId);
 }

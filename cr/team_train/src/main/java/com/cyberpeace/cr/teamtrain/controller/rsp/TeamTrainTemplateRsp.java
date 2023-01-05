@@ -29,7 +29,7 @@ public class TeamTrainTemplateRsp implements Serializable {
 	@ApiModelProperty(value = "节点数")
 	private Integer nodesCount;
 
-	@ApiModelProperty(value = "拓扑中占用物理资源的节点数")
+	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
 
 	@ApiModelProperty(value = "时间轴配置")

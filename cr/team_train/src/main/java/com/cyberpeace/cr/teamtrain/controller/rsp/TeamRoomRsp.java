@@ -84,6 +84,6 @@ public class TeamRoomRsp implements Serializable {
 	@ApiModelProperty(value = "是否关联 Engage")
 	private Boolean isEngageRelated;
 
-	@ApiModelProperty(value = "拓扑中占用物理资源的节点数")
+	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
 }

@@ -144,6 +144,8 @@ public class TeamTrainStudentsController {
 			teamRoomRsp.setRolesData(rolesData);
 			teamRoomRsp.setNodesCount(
 					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+			teamRoomRsp.setResourceOccupiedNums(
+					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(

@@ -202,6 +202,8 @@ public class RbRoomController {
 			RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
 			rbRoomRsp.setNodesCount(
 					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
+			rbRoomRsp.setResourceOccupiedNums(
+					topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			rbRoomRsp.setRolePermission(getSelfRoleUsers(crRoles, userId));
 			rbRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(rbRoomData.getPreSkill(), String.class));

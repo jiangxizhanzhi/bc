@@ -264,6 +264,8 @@ public class TeamTrainTemplateController {
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 		teamTrainTemplateRsp.setNodesCount(
 				topologyNodesStats.get(teamTemplateData.getTopoId()).getNodeCounts());
+		teamTrainTemplateRsp.setResourceOccupiedNums(
+				topologyNodesStats.get(teamTemplateData.getTopoId()).getResourceOccupiedNums());
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);

@@ -10,4 +10,6 @@ public class BusinessTemplateData extends BusinessTemplate {
 
 	private Integer nodesNum;
 
+	private Integer resourceOccupiedNums;
+
 }

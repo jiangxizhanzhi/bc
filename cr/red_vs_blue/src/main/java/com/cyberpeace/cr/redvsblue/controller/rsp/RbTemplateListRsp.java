@@ -20,4 +20,7 @@ public class RbTemplateListRsp {
 	@ApiModelProperty(value = "角色信息")
 	private List<RbTemplateRoleRsp> roleInfo;
 
+	@ApiModelProperty(value = "拓扑中占用物理资源的节点数")
+	private Integer resourceOccupiedNums;
+
 }

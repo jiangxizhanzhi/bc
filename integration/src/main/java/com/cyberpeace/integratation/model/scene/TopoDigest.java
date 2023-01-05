@@ -15,5 +15,10 @@ public class TopoDigest implements Serializable {
 	 */
 	private Integer nodeCounts;
 
+	/**
+	 * 拓扑中占用物理资源的节点数
+	 */
+	private Integer resourceOccupiedNums;
+
 	private String topoId;
 }

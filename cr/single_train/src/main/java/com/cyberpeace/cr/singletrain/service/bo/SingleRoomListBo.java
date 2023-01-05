@@ -22,6 +22,9 @@ public class SingleRoomListBo extends SingleRoomBo implements Serializable {
     @ApiModelProperty("单兵训练场景节点统计")
     private Integer nodesCountData;
 
+    @ApiModelProperty(value = "拓扑中占用物理资源的节点数")
+    private Integer resourceOccupiedNums;
+
     // 分页接口不需要, 忽略
     @JsonIgnore
     private JSONObject missionsScheme;

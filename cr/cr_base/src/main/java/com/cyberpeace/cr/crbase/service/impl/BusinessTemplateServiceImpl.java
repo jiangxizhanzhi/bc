@@ -293,8 +293,10 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				.collect(Collectors.toList());
 		Map<String, TopoDigest> nodeCountMap = remoteTopoService.batchGetTopoDigest(topoIds);
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
-			businessTemplate.setNodesNum(nodeCountMap
-					.getOrDefault(businessTemplate.getTopoId(), new TopoDigest()).getNodeCounts());
+			if (nodeCountMap.containsKey(businessTemplate.getTopoId())) {
+				businessTemplate.setNodesNum(nodeCountMap.get(businessTemplate.getTopoId()).getNodeCounts());
+				businessTemplate.setResourceOccupiedNums(nodeCountMap.get(businessTemplate.getTopoId()).getResourceOccupiedNums());
+			}
 		}
 
 		return result;

@@ -199,4 +199,5 @@ public interface RemoteSceneService {
 
 	void replaceAccessIpExe(JSONObject elementPorts);
 
+    Boolean createNode(NodeOpsContext nodeOpsContext);
 }

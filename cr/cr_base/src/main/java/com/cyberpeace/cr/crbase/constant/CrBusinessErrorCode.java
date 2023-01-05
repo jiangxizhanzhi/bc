@@ -414,4 +414,7 @@ public interface CrBusinessErrorCode {
 
 	/** 题解长度超长 */
 	String ILLEGAL_WRITEUP_LEN = "101125";
+
+	// 创建启动节点失败
+	String FAILED_TO_CREATE_NODE = "101126";
 }

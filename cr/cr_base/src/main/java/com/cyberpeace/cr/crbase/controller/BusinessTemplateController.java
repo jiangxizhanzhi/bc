@@ -327,6 +327,23 @@ public class BusinessTemplateController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("创建启动节点")
+	@PostMapping("/node/create")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
+			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+	public BaseRsp createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
+		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
+		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		Boolean result = localSceneService.createNode(template.getLocalSceneId(),
+				nodeOpsReq.getNodeId());
+		if (!result) {
+			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		return new BaseRsp();
+	}
+
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,

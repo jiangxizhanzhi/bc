@@ -48,6 +48,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String TASK_LIST_URL;
 
+	private String SUBJECT_LIST_URL;
+
 	private String NETWORK_INFO_URL;
 
 	private String NODE_INFO_URL;
@@ -98,6 +100,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
 		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");
 		TASK_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("task.list.all");
+		SUBJECT_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("subject.list.all");
 		NETWORK_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("network.info");
 		NODE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("node.info");
 		NODE_ACTION_URL = outerHostTs + ConfigUtil.getContextProperty("node.action");
@@ -198,6 +201,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		ListRsp<TaskContext> res = rsp.convert();
 		res.setList(rsp.getList());
 		return res;
+	}
+
+	@Override
+	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq){
+		String rsp = HttpClientUtil.post(SUBJECT_LIST_URL, subjectListReq, String.class);
+		List<SubjectContext> res = JsonUtil.toJsonObjectArray(rsp, SubjectContext.class);
+		return res;
+
 	}
 
 	@Override

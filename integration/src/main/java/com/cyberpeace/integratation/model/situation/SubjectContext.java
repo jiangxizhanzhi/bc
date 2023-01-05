@@ -8,6 +8,24 @@ import lombok.Data;
 @Data
 public class SubjectContext implements Serializable {
 
+	@ApiModelProperty(value = "科目开始时间")
+	private String startTime;
+
+	@ApiModelProperty(value = "科目结束时间")
+	private String endTime;
+
+	@ApiModelProperty(value = "任务ID")
+	private String taskId;
+
+	@ApiModelProperty(value = "任务名称")
+	private String taskName;
+
+	@ApiModelProperty(value = "任务状态")
+	private String taskStatus;
+
+	@ApiModelProperty(value = "任务类型")
+	private String taskType;
+
 	@ApiModelProperty(value = "科目ID")
 	private String subjectId;
 

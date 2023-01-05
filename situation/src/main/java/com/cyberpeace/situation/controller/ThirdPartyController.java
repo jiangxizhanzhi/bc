@@ -139,6 +139,12 @@ public class ThirdPartyController {
 				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
 	}
 
+	@ApiOperation("获取科目列表")
+	@GetMapping("/subject/list/")
+	public BaseRsp<List<SubjectContext>> getSubjectList(SubjectListReq subjectListReq) {
+		return new BaseRsp<>(remoteSituationService.getSubjectList(subjectListReq));
+	}
+
 	@ApiOperation("获取节点基础信息")
 	@PostMapping("/node/info/")
 	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {

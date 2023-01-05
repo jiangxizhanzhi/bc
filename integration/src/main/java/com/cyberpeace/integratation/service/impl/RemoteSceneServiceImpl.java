@@ -48,6 +48,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_UNPAUSE_URL;
 
+	private String NODE_CREATE_URL;
+
 	private String NODE_RESTART_URL;
 
 	private String NODE_RECREATE_URL;
@@ -112,6 +114,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_UNPAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.unpause");
 
 		SCENE_DUMP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.dump");
+
+		NODE_CREATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.create");
 
 		NODE_RESTART_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.restart");
 
@@ -195,6 +199,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public Boolean unpauseScene(SceneOpsContext sceneOpContext) {
 		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
+	}
+	@Override
+	public Boolean createNode(NodeOpsContext nodeOpsContext) {
+		return HttpClientUtil.post(NODE_CREATE_URL, nodeOpsContext, Boolean.class);
 	}
 
 	@Override

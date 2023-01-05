@@ -530,4 +530,23 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 				enableRecording);
 		remoteTopoService.sync(JsonUtil.java2JsonObject(context));
 	}
+
+	@Override
+	public Boolean createNode(String localSceneId, String nodeId) {
+
+
+		LocalScene localScene = getById(localSceneId);
+		if (localScene == null || StringUtils.isBlank(localScene.getMpSceneId())) {
+			log.error("invalid localScene {}", localSceneId);
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		NodeOpsContext nodeOpsContext = getNodeOpsContext(localScene, nodeId);
+		Boolean result = remoteSceneService.createNode(nodeOpsContext);
+		if (!result) {
+			log.error("failed to create node [{}] in scene [{}]", nodeId,
+					localScene.getMpSceneId());
+			throw new BusinessException(ErrorCode.FAILED_TO_CREATE_NODE);
+		}
+		return true;
+	}
 }

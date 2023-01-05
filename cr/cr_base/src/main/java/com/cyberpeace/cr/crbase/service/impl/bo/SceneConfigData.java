@@ -22,4 +22,6 @@ public class SceneConfigData implements Serializable {
 	@ApiModelProperty(value = "拓扑LOGO")
 	private String logo;
 
+	@ApiModelProperty(value = "是否只是部分启动")
+	private Boolean supportPartialStart;
 }

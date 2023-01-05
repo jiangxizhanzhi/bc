@@ -162,4 +162,6 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return
 	 */
 	Boolean unpauseScene(LocalScene localScene);
+
+    Boolean createNode(String localSceneId, String nodeId);
 }

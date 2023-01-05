@@ -47,9 +47,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
-	@Autowired
-	private SituationWebSocketHandler situationWebSocketHandler;
-
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -632,7 +629,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		messageContext.setMessageIdentifier(identifier);
 		messageContext.setData(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase));
 
-		situationWebSocketHandler.pushMessageToDashboard(messageContext);
+		myWebSocketHandler.pushMessageToDashboard(messageContext, dashboardId);
 	}
 
 	@Async

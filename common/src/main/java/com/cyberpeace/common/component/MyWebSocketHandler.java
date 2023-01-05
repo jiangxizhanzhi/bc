@@ -32,7 +32,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
 	 * 2.1、 value的key=该业务场景下的用户id
 	 * 2.2、value的value=该业务场景下指定用户的session
 	 */
-	protected Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
+	private Map<String, Map<String, Set<CpWebSession>>> businessSocketSessionMap = Maps
 			.newConcurrentMap();
 
 	@Override
@@ -192,6 +192,27 @@ public class MyWebSocketHandler implements WebSocketHandler {
 				userSession.sendMessage(toSendMessage);
 			}
 		}
+	}
+
+	private final String AND = "&";
+
+	public <T> void pushMessageToDashboard(
+			WebSocketMessageContext message, String dashboardId) {
+		String path = message.getMessageIdentifier().getPath();
+		businessSocketSessionMap.forEach((key, value) -> {
+			if (match(key, dashboardId, path)) {
+				value.forEach((userId, sessionSet) -> {
+					pushToSessions(message, sessionSet, userId, dashboardId + AND + path);
+				});
+			}
+		});
+	}
+
+	private Boolean match(String key, String dashboardId, String path) {
+		if (key.contains(path + AND) || key.contains(AND + path)) {
+			return key.contains(dashboardId + AND) || key.contains(AND + dashboardId);
+		}
+		return false;
 	}
 
 	private Set<CpWebSession> getUserSession(String identifierId, String userId) {

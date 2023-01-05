@@ -79,4 +79,6 @@ public interface DashboardTemplateService {
      */
     JSONArray getEchartsOption(String componentsSetting, String customParams);
 
+    String getDefaultTemplateId(String taskType);
+
 }

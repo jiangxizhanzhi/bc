@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationDrawingMapper">
+    <select id="selectByName" resultType="java.lang.String">
+        SELECT resource_id FROM  situation_drawing WHERE `name` = #{name}
+    </select>
+    <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.SituationDrawingPageRes">
+        SELECT * FROM situation_drawing WHERE 1 = 1
+        <if test="situationDrawingPageReq.name != null and situationDrawingPageReq.name !=''">
+            AND `name` LIKE concat("%",#{situationDrawingPageReq.name},"%")
+        </if>
+        <if test="situationDrawingPageReq.type != null and situationDrawingPageReq.type !=''">
+            AND `type` = #{situationDrawingPageReq.type}
+        </if>
+    </select>
+</mapper>

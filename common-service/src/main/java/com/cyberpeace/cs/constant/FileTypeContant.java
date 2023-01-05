@@ -37,4 +37,7 @@ public interface FileTypeContant {
 
 	/** 后台绘标图元上传 */
 	String PLOT_PNG = "PNG";
+
+	/** 后台图形上传 */
+	String DRAWING = "JPEG,PNG,JPG,SVG";
 }

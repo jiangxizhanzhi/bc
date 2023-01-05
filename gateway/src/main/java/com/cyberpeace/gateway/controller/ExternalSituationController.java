@@ -20,10 +20,13 @@ import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +50,12 @@ public class ExternalSituationController {
 	@Autowired
 	private UtilService utilService;
 
+	@Autowired
+	private DashboardTemplateService dashboardTemplateService;
+
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
 	@PostMapping("control")
@@ -63,9 +72,19 @@ public class ExternalSituationController {
 	@PostMapping("/scheme")
 	public BaseRsp<ScreenPathRes>
 			receiveScheme(@RequestBody @Validated SituationSchemeBo schemeBo) {
+
+		SituationPublishInstanceAddReq situationPublishInstanceAddReq = BeanUtils.copy(schemeBo,
+				SituationPublishInstanceAddReq.class);
+
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
+				.insertOne(situationPublishInstanceAddReq);
+
 		log.info("成功接收可视化方案：{}", JsonUtil.toJsonString(schemeBo));
+
 		ScreenPathRes res = new ScreenPathRes();
-		res.setPath("/xx/yy");
+
+		res.setPath("/page/mg/admin/cr/admin/situation-release/edit/"
+				+ situationPublishInstance.getResourceId());
 		return new BaseRsp<>(res);
 	}
 

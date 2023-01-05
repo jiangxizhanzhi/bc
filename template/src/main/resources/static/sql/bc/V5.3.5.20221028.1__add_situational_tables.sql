@@ -642,3 +642,36 @@ CREATE TABLE `situation_components_layer` (
                                               PRIMARY KEY (`id`) USING BTREE,
                                               UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_drawing
+-- ----------------------------
+CREATE TABLE `situation_drawing` (
+                                     `id` INT(10) NOT NULL AUTO_INCREMENT,
+                                     `resource_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源id',
+                                     `name` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形名称',
+                                     `type` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形类型',
+                                     `drawing_url` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形url',
+                                     `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
+                                     `create_time` DATETIME DEFAULT NULL,
+                                     `update_time` DATETIME DEFAULT NULL,
+                                     PRIMARY KEY (`id`) USING BTREE,
+                                     UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE=INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_drawing_category
+-- ----------------------------
+CREATE TABLE `situation_drawing_category` (
+                                              `id` INT(10) NOT NULL AUTO_INCREMENT,
+                                              `resource_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                                              `name` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类型名称',
+                                              `create_time` DATETIME DEFAULT NULL,
+                                              `update_time` DATETIME DEFAULT NULL,
+                                              PRIMARY KEY (`id`) USING BTREE,
+                                              UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE=INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe411', '图标资源', '2023-01-04 13:56:47', '2023-01-04 13:56:49');
+INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe412', '边框资源', '2023-01-04 13:57:02', '2023-01-04 13:57:03');
+INSERT INTO `bc`.`situation_drawing_category` (`resource_id`, `name`, `create_time`, `update_time`) VALUES ('3d301075defc4b818783e1fb76afe413', '装饰线资源', '2023-01-04 13:57:18', '2023-01-04 13:57:19');

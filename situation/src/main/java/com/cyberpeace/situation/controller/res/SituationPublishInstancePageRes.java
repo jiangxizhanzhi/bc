@@ -46,4 +46,7 @@ public class SituationPublishInstancePageRes implements Serializable {
     @ApiModelProperty("是否可编辑")
     private Boolean edit;
 
+    @ApiModelProperty("模板可编辑")
+    private Boolean templateEdit;
+
 }

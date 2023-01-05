@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -97,9 +98,13 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 SituationPublishInstance.class);
 
         // 校验参数
-        checkParams(situationPublishInstanceAddReq);
+//        checkParams(situationPublishInstanceAddReq);
 
-        String userId = UserInfoContext.getUserContext().getUserId();
+        if (StringUtils.isBlank(situationPublishInstance.getDescription())){
+            situationPublishInstance.setDescription("默认描述");
+        }
+
+        String userId = "";
         situationPublishInstance.setCreateUserId(userId);
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
         situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
@@ -108,11 +113,39 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
         dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
-        dashboardAttribute.setTitle("");
-        dashboardAttribute.setSubTitle("");
+
+        // 从可视化方案中拷贝属性
+        SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());
+
+        situationPublishInstance.setSubRangeId(scheme.getSubRangeId());
+        situationPublishInstance.setSubRangeName(scheme.getSubRangeName());
+        situationPublishInstance.setTaskName(scheme.getTaskName());
+        situationPublishInstance.setSubjectName(scheme.getSubjectName());
+
+        dashboardAttribute.setEnvId(scheme.getEnvId());
+        dashboardAttribute.setStartTime(TimeUtil.toDate1(scheme.getStartTime()));
+        dashboardAttribute.setSchemeName(scheme.getSchemeName());
+        dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
+        dashboardAttribute.setTaskType(scheme.getTaskType());
+        dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
+        String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "LG中心" : scheme.getSubRangeName();
+        String taskName = scheme.getTaskName();
+        dashboardAttribute.setTitle(rangeName + "任务态势");
+        dashboardAttribute.setSubTitle(taskName + "任务");
+
+        // 如果大屏名称不存在，默认生成
+        if (StringUtils.isBlank(situationPublishInstance.getName())){
+            situationPublishInstance.setName("想定大屏-" + taskName);
+        }
 
         // 从大屏模板中拷贝属性
         String templateId = situationPublishInstanceAddReq.getTemplateId();
+        // 模板不存在时获取默认模板
+        if (templateId == null){
+            String defaultTemplateId = dashboardTemplateService.getDefaultTemplateId(scheme.getTaskType());
+            templateId = dashboardTemplateRefService.createDashboardTemplate(defaultTemplateId).getResourceId();
+        }
+
         DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null);
         Integer level = dashboardTemplateInfo.getLevel();
         Integer refresh = dashboardTemplateInfo.getRefresh();
@@ -121,18 +154,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
         dashboardAttribute.setDashboardType(editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
         situationPublishInstance.setEdit(editStatus);
-
-
-        // 从可视化方案中拷贝属性
-        SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());
-        situationPublishInstance.setSubRangeId(scheme.getSubRangeId());
-        situationPublishInstance.setSubRangeName(scheme.getSubRangeName());
-
-        dashboardAttribute.setEnvId(scheme.getEnvId());
-        dashboardAttribute.setStartTime(TimeUtil.toDate1(scheme.getStartTime()));
-        dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
-        dashboardAttribute.setTaskType(scheme.getTaskType());
-        dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
+        situationPublishInstance.setThumbnail(dashboardTemplateInfo.getThumbnail());
+        situationPublishInstance.setTemplateId(dashboardTemplateInfo.getResourceId());
 
         // 处理实例类型
         String taskType = scheme.getTaskType();
@@ -166,7 +189,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 }
             }
         });
-        return null;
+        return situationPublishInstance;
     }
 
     private void checkParams(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
@@ -223,10 +246,14 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         List<SituationCategory> categories = situationCategoryMapper.selectList(new LambdaQueryWrapper<>());
         List<LocalType> statusList = SituationInstanceStatus.getMsgList();
 
+        //模板列表
+        List<DashboardTemplateRef> dashboardTemplateRefs = dashboardTemplateRefMapper.selectList(new LambdaQueryWrapper<>());
+
         //填充相关名称
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
                 String category = situationPublishInstancePageRes.getCategory();
+                String templateId = situationPublishInstancePageRes.getTemplateId();
 
                 // 赋值大屏类型
                 categories.forEach(situationCategory -> {
@@ -239,6 +266,13 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 statusList.forEach(localType -> {
                     if (Objects.equals(localType.getCode(), situationPublishInstancePageRes.getStatus())) {
                         situationPublishInstancePageRes.setStatus(localType.getMsg());
+                    }
+                });
+
+                //模板编辑状态
+                dashboardTemplateRefs.forEach(dashboardTemplateRef -> {
+                    if (StringUtils.isNotBlank(templateId) && Objects.equals(templateId, dashboardTemplateRef.getResourceId())) {
+                        situationPublishInstancePageRes.setTemplateEdit(dashboardTemplateRef.getEditStatus());
                     }
                 });
             }

@@ -48,6 +48,9 @@ public class DashboardTemplateRef extends BaseTable {
     @ApiModelProperty("背景主题")
     private String topic;
 
+    @ApiModelProperty("视角配置")
+    private String viewAngle;
+
     @ApiModelProperty("刷新频率")
     private Integer refresh;
 

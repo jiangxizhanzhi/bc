@@ -1128,7 +1128,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public String exportReport(String classroomId){
 		String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
-
+		String suffix = "-实验报告.zip";
 		// 基本数据校验
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
 		CourseLesson courseLesson = courseValidateHandler
@@ -1179,9 +1179,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			FileUtil.deleteDir(new File(destHtmlPath));
 		}
 		File zipFile = new File(ZipUtil.toZip(htmlPath));
-		zipFile.renameTo(new File(basePath + File.separator + lessonName + "-实验报告.zip"));
+		zipFile.renameTo(new File(basePath + File.separator + lessonName + suffix));
 		FileUtil.deleteDir(new File(htmlPath));
-		return basePath + File.separator + lessonName + "-实验报告.zip";
+		return basePath + File.separator + lessonName + suffix;
 	}
 
 	/**

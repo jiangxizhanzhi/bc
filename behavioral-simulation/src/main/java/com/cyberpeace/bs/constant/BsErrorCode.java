@@ -66,4 +66,9 @@ public interface BsErrorCode {
 	 * 指定用户模型不存在
 	 */
 	String USER_MODEL_MISSING = "105013";
+
+	/**
+	 * 未配置外部网络网段
+	 */
+	String SEGMENT_NOT_CONFIGURED = "105014";
 }

@@ -1,5 +1,22 @@
 package com.cyberpeace.bs.service.impl;
 
+import java.time.LocalTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.constant.BsConstants;
@@ -25,38 +42,25 @@ import com.cyberpeace.bs.service.bo.monitor.MonitorSimulatorDetail;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.utils.BsUtil;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	private final Map<String, BsTimer> timerMap = Maps.newConcurrentMap();
+	
+	private String EXTERNAL_IP_SEGMENT;
 
 	@Autowired
 	UserSimulatorMapper userSimulatorMapper;
@@ -82,6 +86,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Autowired
 	DeviceOccupationMapper deviceOccupationMapper;
 
+	@PostConstruct
+	public void init() {
+		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
+	}
 
 	@Override
 	public List<UserSimulatorBo> listSimulator() {
@@ -417,7 +425,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			throw new BusinessException(BsErrorCode.INVALID_DEVICE_ID);
 		}
 		simulator.setDeviceId(deviceId);
-		String deviceIp = BsUtil.getIp(nodeBo.getIpConfig());
+		String deviceIp = getIp(nodeBo.getIpConfig());
 		if (StringUtils.isBlank(deviceIp)) {
 			throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
 		}
@@ -506,5 +514,31 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				timerMap.remove(resourceId);
 			}
 		}
+	}
+
+	/**
+	 * 获取ip
+	 * @param ipBoList
+	 * @return
+	 */
+	private String getIp(List<IpBo> ipBoList) {
+		if (org.apache.shiro.util.CollectionUtils.isEmpty(ipBoList)) {
+			return CommonConstant.EMPTY_STRING;
+		}
+		if (ipBoList.size() == 1) {
+			return ipBoList.get(0).getIp();
+		}
+		if (StringUtils.isBlank(EXTERNAL_IP_SEGMENT)) {
+			throw new BusinessException(BsErrorCode.SEGMENT_NOT_CONFIGURED);
+		}
+		String ip;
+		for (IpBo ipBo : ipBoList) {
+			ip = ipBo.getIp();
+			if (BsUtil.isInRange(ip, EXTERNAL_IP_SEGMENT)) {
+				return ip;
+			}
+		}
+		log.error("No valid external ip found.");
+		return CommonConstant.EMPTY_LIST_JSON;
 	}
 }

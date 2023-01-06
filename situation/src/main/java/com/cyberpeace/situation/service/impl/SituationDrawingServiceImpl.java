@@ -83,7 +83,7 @@ public class SituationDrawingServiceImpl extends ServiceImpl<SituationDrawingMap
     }
 
     @Override
-    public ListRsp<SituationDrawing> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
+    public ListRsp<SituationDrawingPageRes> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
         Page page = situationDrawingPageReq.toPageParam();
         IPage<SituationDrawingPageRes> situationDrawingPageResIPage = situationDrawingMapper.selectPage(page, situationDrawingPageReq);
 

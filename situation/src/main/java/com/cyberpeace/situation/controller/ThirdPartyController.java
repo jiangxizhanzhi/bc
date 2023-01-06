@@ -139,6 +139,12 @@ public class ThirdPartyController {
 				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
 	}
 
+	@ApiOperation("获取科目列表")
+	@GetMapping("/subject/list/")
+	public BaseRsp<List<SubjectContext>> getSubjectList(SubjectListReq subjectListReq) {
+		return new BaseRsp<>(remoteSituationService.getSubjectList(subjectListReq));
+	}
+
 	@ApiOperation("获取节点基础信息")
 	@PostMapping("/node/info/")
 	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
@@ -269,6 +275,14 @@ public class ThirdPartyController {
 	@GetMapping("/task/topo/history")
 	public BaseRsp<List<TopoHistoryBo>> getTopoHistory(SituationTaskReq req) {
 		List<TopoHistoryBo> res = remoteSituationService.getTopoHistory(req);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取站点列表")
+	@GetMapping("/bc/list/")
+	public BaseRsp<List<BcContext>>
+			getBcList(@ApiParam(value = "站点类型", name = "type") String type) {
+		List<BcContext> res = remoteSituationService.getBcList(type);
 		return new BaseRsp<>(res);
 	}
 }

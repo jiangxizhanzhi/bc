@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
+import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.cyberpeace.situation.dao.entity.Station;
 import com.cyberpeace.situation.dao.entity.SubRange;
 import com.cyberpeace.situation.dao.mapper.CenterMapper;
@@ -19,7 +23,6 @@ import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.StationMapper;
 import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
-import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     @Autowired
     private EventTypeContextMapper eventTypeContextMapper;
+
+    @Autowired
+    private RemoteSituationService remoteSituationService;
 
     private volatile Map<String, Center> centerCache = Maps.newHashMap();
 
@@ -108,7 +114,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     private synchronized void centerInit() {
         if (centerCache.isEmpty()) {
-            List<Center> centers = centerMapper.getCenters();
+            List<BcContext> bcs = remoteSituationService.getBcList("RL");
+            List<Center> centers = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(bcs), Center.class);
             for (Center center : centers) {
                 String centerId = center.getCenterId();
                 if (!centerCache.containsKey(centerId)) {

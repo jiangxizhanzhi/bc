@@ -69,6 +69,12 @@ public interface RemoteSituationService {
 	ListRsp<TaskContext> getTaskList(TaskListReq taskListReq);
 
 	/**
+	 * 获取科目列表
+	 * @return
+	 */
+	List<SubjectContext> getSubjectList(SubjectListReq subjectListReq);
+
+	/**
 	 * 获取节点基础信息
 	 * @return
 	 */
@@ -167,4 +173,6 @@ public interface RemoteSituationService {
 	 * @param dashboardId
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
+
+	List<BcContext> getBcList(String type);
 }

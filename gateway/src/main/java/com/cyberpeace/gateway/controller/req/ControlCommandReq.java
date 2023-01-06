@@ -52,30 +52,27 @@ public class ControlCommandReq implements Serializable {
 	@ApiModelProperty(value = "任务唯一识别ID")
 	private String seqId;
 
-	@JsonProperty("timeOperation")
+	@JsonProperty("time_operation")
 	@ApiModelProperty(value = "ZZ开始时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date timeOperation;
 
-	@JsonProperty("timeStandard")
+	@JsonProperty("time_standard")
 	@ApiModelProperty(value = "天文开始时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date timeStandard;
 
-	@JsonProperty("timeFactor")
+	@JsonProperty("time_factor")
 	@ApiModelProperty(value = "时间倍率")
 	private String timeFactor;
 
 	@JsonProperty("createTime")
 	@ApiModelProperty(value = "入库时间")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
 	@JsonProperty("moduleId")
 	@ApiModelProperty(value = "子模块ID")
 	private String moduleId;
-
-	public void setCreateTime(Long createTime) {
-		this.createTime = new Date(createTime);
-	}
 
 }

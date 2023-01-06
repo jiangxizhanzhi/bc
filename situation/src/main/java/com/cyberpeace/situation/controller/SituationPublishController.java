@@ -219,10 +219,12 @@ public class SituationPublishController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				situationPublishInstanceMapper.updateById(situationPublishInstances);
-				Boolean result = remoteSituationService.releaseScreen(situationPublishInstances.getSchemeId(),
-						situationPublishInstances.getResourceId());
-				if (!result) {
-					throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
+				if (StringUtils.isNotBlank(subjectId)){
+					Boolean result = remoteSituationService.releaseScreen(situationPublishInstances.getSchemeId(),
+							situationPublishInstances.getResourceId());
+					if (!result) {
+						throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
+					}
 				}
 			}
 		});

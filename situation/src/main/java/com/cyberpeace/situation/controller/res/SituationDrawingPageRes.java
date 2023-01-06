@@ -3,11 +3,12 @@ package com.cyberpeace.situation.controller.res;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.situation.dao.entity.SituationDrawing;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
+
 
 /**
  * @Author xuxz
@@ -32,4 +33,6 @@ public class SituationDrawingPageRes extends PageReqBase implements Serializable
     private String createUserId;
 
     private String createUserName;
+
+    private Date createTime;
 }

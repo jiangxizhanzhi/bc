@@ -145,6 +145,19 @@ public class HttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
+	public static <T> T ywGet(String url, Class<T> resultType, String token) {
+		// 1、设置请求线程数据
+		setContext(url);
+
+		// 2、生成get请求
+		HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		httpGet.setHeader(WebConstant.TOKEN, token);
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
+	}
+
 	/**
 	 * 设置请求上下文
 	 * @param url

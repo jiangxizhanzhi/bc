@@ -53,7 +53,7 @@ public interface RemoteSituationService {
 	 * 获取平台列表
 	 * @return List<PlatformContext>
 	 */
-	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId);
+	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId, String schemeId);
 
 	/**
 	 * 获取网络信息

@@ -176,10 +176,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<PlatformContext> getPlatformList(String taskId, String subjectId,
-			String subRangeId) {
-		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?task_id=" + taskId
-				+ "&subject_id=" + subjectId + "&sub_range_id=" + subRangeId, JSONArray.class);
+	public List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId,
+			String schemeId) {
+		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?taskId=" + taskId
+				+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId,
+				JSONArray.class);
 		return JSONArray.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
 	}
 

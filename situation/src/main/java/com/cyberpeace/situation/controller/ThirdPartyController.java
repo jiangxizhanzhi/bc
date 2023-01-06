@@ -102,9 +102,11 @@ public class ThirdPartyController {
 			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
 					value = "subject_id", required = false) String subjectId,
 			@ApiParam(name = "sub_range_id", value = "分靶场ID", required = false) @RequestParam(
-					value = "sub_range_id", required = false) String subRangeId) {
+					value = "sub_range_id", required = false) String subRangeId,
+			@ApiParam(name = "scheme_id", value = "可视化方案ID", required = false) @RequestParam(
+					value = "scheme_id", required = false) String schemeId) {
 		List<PlatformContext> platformList = remoteSituationService.getPlatformList(taskId,
-				subjectId, subRangeId);
+				subjectId, subRangeId, schemeId);
 
 		return new BaseRsp<>(platformList);
 	}

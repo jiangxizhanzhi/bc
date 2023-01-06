@@ -558,18 +558,29 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     public List<DashboardComponents> sortDashboardComponents(List<DashboardComponents> dashboardComponentsList){
         List<DashboardComponents> gisDashboardComponentList = new ArrayList<>();
+        List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
         for (DashboardComponents dashboardComponents : dashboardComponentsList) {
             String componentSetting = dashboardComponents.getComponentSetting();
+            String type = dashboardComponents.getType();
             JSONObject jsonObject = JSONObject.parseObject(componentSetting);
             String componentType = jsonObject.getString("component_type");
-            if (componentType != null && Objects.equals("0", componentType)) {
+            if (componentType != null && (Objects.equals("0", componentType) || Objects.equals("1", componentType))) {
                 gisDashboardComponentList.add(dashboardComponents);
+            }
+            if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                commonDashboardComponentList.add(dashboardComponents);
             }
         }
         dashboardComponentsList.removeAll(gisDashboardComponentList);
+        dashboardComponentsList.removeAll(commonDashboardComponentList);
         List<DashboardComponents> newDashboardComponents = new ArrayList<>();
+        //GIS或者拓扑资源排首位
         newDashboardComponents.addAll(gisDashboardComponentList);
+        //通用控件或二维组件
         newDashboardComponents.addAll(dashboardComponentsList);
+        //全局控件
+        newDashboardComponents.addAll(commonDashboardComponentList);
+
         return newDashboardComponents;
     }
 

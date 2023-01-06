@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Author xuxz
@@ -31,22 +32,34 @@ public class SituationPublishInstancePageRes implements Serializable {
     @ApiModelProperty(value = "科目名称")
     private String subjectName;
 
-    @ApiModelProperty("任务id")
+    @ApiModelProperty(value = "任务id")
     private String taskId;
 
-    @ApiModelProperty("科目id")
+    @ApiModelProperty(value = "科目id")
     private String subjectId;
 
-    @ApiModelProperty("模板id")
+    @ApiModelProperty(value = "模板id")
     private String templateId;
 
-    @ApiModelProperty("大屏属性ID")
+    @ApiModelProperty(value = "大屏属性ID")
     private String attributeId;
 
-    @ApiModelProperty("是否可编辑")
+    @ApiModelProperty(value = "是否可编辑")
     private Boolean edit;
 
-    @ApiModelProperty("模板可编辑")
+    @ApiModelProperty(value = "模板可编辑")
     private Boolean templateEdit;
+
+    @ApiModelProperty(value = "任务状态")
+    private String taskStatus;
+
+    @ApiModelProperty(value = "科目状态")
+    private String subjectStatus;
+
+    @ApiModelProperty(value = "科目开始时间")
+    private String startTime;
+
+    @ApiModelProperty(value = "科目结束时间")
+    private String endTime;
 
 }

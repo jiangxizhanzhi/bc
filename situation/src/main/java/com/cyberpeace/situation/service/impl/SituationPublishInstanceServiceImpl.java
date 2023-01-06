@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.integratation.model.situation.SubjectContext;
+import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,11 +251,16 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         //模板列表
         List<DashboardTemplateRef> dashboardTemplateRefs = dashboardTemplateRefMapper.selectList(new LambdaQueryWrapper<>());
 
+        //任务科目列表
+        List<SubjectContext> subjectList = remoteSituationService.getSubjectList(new SubjectListReq());
+
         //填充相关名称
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
                 String category = situationPublishInstancePageRes.getCategory();
                 String templateId = situationPublishInstancePageRes.getTemplateId();
+                String taskId = situationPublishInstancePageRes.getTaskId();
+                String subjectId = situationPublishInstancePageRes.getSubjectId();
 
                 // 赋值大屏类型
                 categories.forEach(situationCategory -> {
@@ -275,6 +282,25 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                         situationPublishInstancePageRes.setTemplateEdit(dashboardTemplateRef.getEditStatus());
                     }
                 });
+
+                //设置任务科目信息
+                if (StringUtils.isNotBlank(taskId)) {
+                    subjectList.forEach(subjectContext -> {
+                        //设置任务信息
+                        if (subjectContext.getTaskId().equals(taskId)) {
+                            situationPublishInstancePageRes.setTaskName(subjectContext.getTaskName());
+                            situationPublishInstancePageRes.setTaskStatus(subjectContext.getTaskStatus());
+
+                            //设置科目信息
+                            if (StringUtils.isNotBlank(subjectId) && subjectContext.getSubjectId().equals(subjectId)) {
+                                situationPublishInstancePageRes.setSubjectName(subjectContext.getSubjectName());
+                                situationPublishInstancePageRes.setSubjectStatus(subjectContext.getSubjectStatus());
+                                situationPublishInstancePageRes.setStartTime(subjectContext.getStartTime());
+                                situationPublishInstancePageRes.setEndTime(subjectContext.getEndTime());
+                            }
+                        }
+                    });
+                }
             }
         }
         situationPublishInstancePage.setRecords(situationPublishInstancePageResList);

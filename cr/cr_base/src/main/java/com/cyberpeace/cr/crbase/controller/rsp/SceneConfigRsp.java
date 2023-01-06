@@ -11,4 +11,7 @@ public class SceneConfigRsp {
 
 	@ApiModelProperty(value = "是否启动测试场景")
 	private Boolean hasScene;
+
+	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
+	private Integer resourceOccupiedNums;
 }

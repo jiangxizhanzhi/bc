@@ -121,6 +121,7 @@ public class BusinessTemplateController {
 					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
 			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
 			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
+			sceneConfigInfo.setResourceOccupiedNums(businessTemplateData.getResourceOccupiedNums());
 			sceneConfigInfo
 					.setHasScene(StringUtils.isNotBlank(businessTemplateData.getLocalSceneId()));
 			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);

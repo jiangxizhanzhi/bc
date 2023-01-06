@@ -49,6 +49,4 @@ public class BusinessTemplateRsp implements Serializable {
 	@ApiModelProperty(value = "场景编排")
 	private SceneConfigRsp sceneConfigInfo;
 
-	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
-	private Integer resourceOccupiedNums;
 }

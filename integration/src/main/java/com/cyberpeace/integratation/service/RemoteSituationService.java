@@ -144,7 +144,7 @@ public interface RemoteSituationService {
 	 * 获取拓扑
 	 * @return TopoContext
 	 */
-	TopoContext getTopo(TopoReq topoReq);
+	TopoContext getTopo(TopoReq topoReq, Boolean adjust);
 
 	/**
 	 * 想定-获取任务下可视化方案列表
@@ -174,9 +174,4 @@ public interface RemoteSituationService {
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
 
-	List<BcContext> getBcList(String type);
-
-	List<ModelTypeContext> getModelTypeList();
-
-	List<ModelContext> getModelList();
 }

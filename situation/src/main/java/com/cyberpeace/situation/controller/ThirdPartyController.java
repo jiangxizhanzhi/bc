@@ -14,6 +14,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.cyberpeace.situation.constant.TaskStatus;
@@ -39,6 +40,9 @@ public class ThirdPartyController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private RemoteOperationService remoteOperationService;
 
 	@ApiOperation("获取攻防事件类型列表")
 	@GetMapping("/event_type/list/")
@@ -254,7 +258,7 @@ public class ThirdPartyController {
 	@PostMapping("/topo/")
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
-		return new BaseRsp<>(remoteSituationService.getTopo(topoReq));
+		return new BaseRsp<>(remoteSituationService.getTopo(topoReq, false));
 	}
 
 	@ApiOperation("想定-获取任务下可视化方案列表")
@@ -283,21 +287,21 @@ public class ThirdPartyController {
 	@GetMapping("/bc/list/")
 	public BaseRsp<List<BcContext>>
 			getBcList(@ApiParam(value = "站点类型", name = "type") String type) {
-		List<BcContext> res = remoteSituationService.getBcList(type);
+		List<BcContext> res = remoteOperationService.getBcList(type);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取模型列表")
 	@GetMapping("/model/list/")
 	public BaseRsp<Map<String, ModelContext>> getModelList() {
-		Map<String, ModelContext> res = thirdPartyService.getModelList();
+		Map<String, ModelContext> res = remoteOperationService.getModelListMap();
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取模型类型列表")
 	@GetMapping("/model/type/list/")
 	public BaseRsp<Map<String, ModelTypeContext>> getModelTypeList() {
-		Map<String, ModelTypeContext> res = thirdPartyService.getModelTypeList();
+		Map<String, ModelTypeContext> res = remoteOperationService.getModelTypeListMap();
 		return new BaseRsp<>(res);
 	}
 }

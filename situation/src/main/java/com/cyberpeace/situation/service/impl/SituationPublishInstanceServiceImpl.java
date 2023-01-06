@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.cyberpeace.integratation.model.situation.SubjectContext;
-import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +20,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.model.situation.SubjectContext;
+import com.cyberpeace.integratation.model.situation.TopoContext;
+import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
+import com.cyberpeace.integratation.model.situation.req.TopoReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.SchemeVisualizationBo;
 import com.cyberpeace.situation.constant.*;
@@ -32,10 +33,7 @@ import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
-import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
-import com.cyberpeace.situation.dao.entity.SituationCategory;
-import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
+import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
@@ -80,6 +78,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     @Autowired
     private DashboardAttributeMapper dashboardAttributeMapper;
+
+    @Autowired
+    private TopoConfigMapper topoConfigMapper;
 
     @Override
     public SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId){
@@ -186,12 +187,21 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 try {
                     situationPublishInstanceMapper.insert(situationPublishInstance);
                     dashboardAttributeMapper.insert(dashboardAttribute);
+                    positionAdjust(situationPublishInstance.getSubRangeId(), situationPublishInstance.getTaskId(),
+                            situationPublishInstance.getSubjectId(), dashboardAttribute.getEnvId());
                 } catch (DuplicateKeyException e) {
                     throw new BusinessException(ErrorCode.NAME_DUPLICATE);
                 }
             }
         });
         return situationPublishInstance;
+    }
+
+    private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId){
+        TopoReq req = new TopoReq(subRangeId, taskId, subjectId, envId);
+        TopoContext topoContext = remoteSituationService.getTopo(req, false);
+        TopoConfig topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
+        topoConfigMapper.insert(topoConfig);
     }
 
     private void checkParams(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {

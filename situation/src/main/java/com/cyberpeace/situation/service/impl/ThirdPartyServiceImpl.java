@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.BcContext;
-import com.cyberpeace.integratation.model.situation.ModelContext;
-import com.cyberpeace.integratation.model.situation.ModelTypeContext;
+import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
@@ -53,6 +52,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	@Autowired
 	private RemoteSituationService remoteSituationService;
 
+	@Autowired
+	private RemoteOperationService remoteOperationService;
+
 	private volatile Map<String, Center> centerCache = Maps.newHashMap();
 
 	private volatile Map<String, SubRange> subRangeCache = Maps.newHashMap();
@@ -60,10 +62,6 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private volatile Map<String, List<Station>> stationCache = Maps.newHashMap();
 
 	private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
-
-	private volatile Map<String, ModelContext> modelListCache = Maps.newHashMap();
-
-	private volatile Map<String, ModelTypeContext> modelTypeListCache = Maps.newHashMap();
 
 	@Override
 	public List<SubRange> getSubRanges() {
@@ -107,7 +105,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private synchronized void subRangeInit() {
 		if (subRangeCache.isEmpty()) {
-			List<BcContext> bcList = remoteSituationService.getBcList("RF");
+			List<BcContext> bcList = remoteOperationService.getBcList("RF");
 			List<SubRange> subRanges = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(bcList),
 					SubRange.class);
 			for (SubRange subRange : subRanges) {
@@ -123,7 +121,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private synchronized void centerInit() {
 		if (centerCache.isEmpty()) {
-			List<BcContext> bcList = remoteSituationService.getBcList("RL");
+			List<BcContext> bcList = remoteOperationService.getBcList("RL");
 			List<Center> centers = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(bcList),
 					Center.class);
 			for (Center center : centers) {
@@ -139,7 +137,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private synchronized void stationInit(String subRangeId) {
 		if (stationCache.get(subRangeId) == null) {
-			List<BcContext> bcList = remoteSituationService.getBcList("RC");
+			List<BcContext> bcList = remoteOperationService.getBcList("RC");
 			List<Station> stations = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(bcList),
 					Station.class);
 			List<Station> bcStations = Lists.newArrayList();
@@ -182,35 +180,5 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 			});
 			parentType.setSubTypes(list);
 		}
-	}
-
-	@Override
-	public Map<String, ModelContext> getModelList() {
-		if (modelListCache.isEmpty()) {
-			modelListInit();
-		}
-		return modelListCache;
-	}
-
-	private void modelListInit() {
-		List<ModelContext> modelList = remoteSituationService.getModelList();
-		modelList.forEach(model -> {
-			modelListCache.put(model.getId(), model);
-		});
-	}
-
-	@Override
-	public Map<String, ModelTypeContext> getModelTypeList() {
-		if (modelTypeListCache.isEmpty()) {
-			modelTypeListInit();
-		}
-		return modelTypeListCache;
-	}
-
-	private void modelTypeListInit() {
-		List<ModelTypeContext> modelTypeList = remoteSituationService.getModelTypeList();
-		modelTypeList.forEach(modelType -> {
-			modelTypeListCache.put(modelType.getId(), modelType);
-		});
 	}
 }

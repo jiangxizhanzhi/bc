@@ -175,4 +175,8 @@ public interface RemoteSituationService {
 	Boolean releaseScreen(String schemeId, String dashboardId);
 
 	List<BcContext> getBcList(String type);
+
+	List<ModelTypeContext> getModelTypeList();
+
+	List<ModelContext> getModelList();
 }

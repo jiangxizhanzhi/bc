@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.integratation.model.situation.ModelContext;
+import com.cyberpeace.integratation.model.situation.ModelTypeContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
@@ -58,6 +60,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private volatile Map<String, List<Station>> stationCache = Maps.newHashMap();
 
 	private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
+
+	private volatile Map<String, ModelContext> modelListCache = Maps.newHashMap();
+
+	private volatile Map<String, ModelTypeContext> modelTypeListCache = Maps.newHashMap();
 
 	@Override
 	public List<SubRange> getSubRanges() {
@@ -176,5 +182,35 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 			});
 			parentType.setSubTypes(list);
 		}
+	}
+
+	@Override
+	public Map<String, ModelContext> getModelList() {
+		if (modelListCache.isEmpty()) {
+			modelListInit();
+		}
+		return modelListCache;
+	}
+
+	private void modelListInit() {
+		List<ModelContext> modelList = remoteSituationService.getModelList();
+		modelList.forEach(model -> {
+			modelListCache.put(model.getId(), model);
+		});
+	}
+
+	@Override
+	public Map<String, ModelTypeContext> getModelTypeList() {
+		if (modelTypeListCache.isEmpty()) {
+			modelTypeListInit();
+		}
+		return modelTypeListCache;
+	}
+
+	private void modelTypeListInit() {
+		List<ModelTypeContext> modelTypeList = remoteSituationService.getModelTypeList();
+		modelTypeList.forEach(modelType -> {
+			modelTypeListCache.put(modelType.getId(), modelType);
+		});
 	}
 }

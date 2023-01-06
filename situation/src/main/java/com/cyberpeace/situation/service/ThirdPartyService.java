@@ -1,11 +1,14 @@
 package com.cyberpeace.situation.service;
 
+import java.util.List;
+import java.util.Map;
+
+import com.cyberpeace.integratation.model.situation.ModelContext;
+import com.cyberpeace.integratation.model.situation.ModelTypeContext;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
 import com.cyberpeace.situation.dao.entity.SubRange;
-
-import java.util.List;
 
 /**
  * @Author xuxz
@@ -13,11 +16,15 @@ import java.util.List;
  */
 public interface ThirdPartyService {
 
-    List<SubRange> getSubRanges();
+	List<Center> getCenters();
 
-    List<Center> getCenters();
+	List<SubRange> getSubRanges();
 
-    List<Station> getStations(String subRangeId);
+	List<Station> getStations(String subRangeId);
 
-    List<EventTypeRes> getEventTypes();
+	List<EventTypeRes> getEventTypes();
+
+	Map<String, ModelContext> getModelList();
+
+	Map<String, ModelTypeContext> getModelTypeList();
 }

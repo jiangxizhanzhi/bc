@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,6 +284,20 @@ public class ThirdPartyController {
 	public BaseRsp<List<BcContext>>
 			getBcList(@ApiParam(value = "站点类型", name = "type") String type) {
 		List<BcContext> res = remoteSituationService.getBcList(type);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取模型列表")
+	@GetMapping("/model/list/")
+	public BaseRsp<Map<String, ModelContext>> getModelList() {
+		Map<String, ModelContext> res = thirdPartyService.getModelList();
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取模型类型列表")
+	@GetMapping("/model/type/list/")
+	public BaseRsp<Map<String, ModelTypeContext>> getModelTypeList() {
+		Map<String, ModelTypeContext> res = thirdPartyService.getModelTypeList();
 		return new BaseRsp<>(res);
 	}
 }

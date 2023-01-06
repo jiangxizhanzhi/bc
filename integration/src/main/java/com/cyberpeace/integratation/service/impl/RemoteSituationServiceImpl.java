@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.WebConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -89,6 +89,10 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String YW_BC_LIST;
 
+	private String YW_MODEL_LIST;
+
+	private String YW_MODEL_TYPE_LIST;
+
 	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
@@ -124,6 +128,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
+		YW_MODEL_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.list");
+		YW_MODEL_TYPE_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.type.list");
 	}
 
 	@Override
@@ -209,7 +215,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq){
+	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq) {
 		String rsp = HttpClientUtil.post(SUBJECT_LIST_URL, subjectListReq, String.class);
 		List<SubjectContext> res = JsonUtil.toJsonObjectArray(rsp, SubjectContext.class);
 		return res;
@@ -392,9 +398,23 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<BcContext> getBcList(String type){
+	public List<BcContext> getBcList(String type) {
 		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, WebConstant.YW_TOKEN);
 		List<BcContext> res = JsonUtil.toJsonObjectArray(rsp, BcContext.class);
+		return res;
+	}
+
+	@Override
+	public List<ModelTypeContext> getModelTypeList() {
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_TYPE_LIST, String.class, WebConstant.YW_TOKEN);
+		List<ModelTypeContext> res = JsonUtil.toJsonObjectArray(rsp, ModelTypeContext.class);
+		return res;
+	}
+
+	@Override
+	public List<ModelContext> getModelList() {
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_LIST, String.class, WebConstant.YW_TOKEN);
+		List<ModelContext> res = JsonUtil.toJsonObjectArray(rsp, ModelContext.class);
 		return res;
 	}
 }

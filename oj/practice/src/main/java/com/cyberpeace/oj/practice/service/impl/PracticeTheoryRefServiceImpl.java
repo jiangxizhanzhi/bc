@@ -60,6 +60,7 @@ public class PracticeTheoryRefServiceImpl extends ServiceImpl<PracticeTheoryRefM
 			// 设置习题类型和题型
 			theoryLesonBo.setQuestionType(practiceTheory.getTheoryType());
 			theoryLesonBo.setPracticeType(PracticeCategory.PracticeType.THEORY.getCode());
+			theoryLesonBo.setRefId(practiceTheoryRef.getResourceId());
 			if (practiceTheory.getTheoryType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
 					.getCode().intValue()) {
 				List<BlankAnswer> answers = JsonUtil.toJsonObjectArray(practiceTheory.getAnswer(),

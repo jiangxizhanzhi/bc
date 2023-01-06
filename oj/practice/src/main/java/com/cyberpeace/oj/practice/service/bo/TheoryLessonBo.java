@@ -13,6 +13,9 @@ import java.io.Serializable;
 @ApiModel
 public class TheoryLessonBo implements Serializable {
 
+    @ApiModelProperty("快照编号")
+    private String refId;
+
     @ApiModelProperty("答案")
     private String answer;
 

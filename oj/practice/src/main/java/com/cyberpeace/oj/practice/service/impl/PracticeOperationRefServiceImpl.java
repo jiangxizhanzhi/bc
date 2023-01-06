@@ -112,7 +112,7 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 							operationLessonBo.setSceneData(sceneData);
 						}
 					}
-
+					operationLessonBo.setRefId(practiceOperationRef.getResourceId());
 					// 是否展示答案
 					if (!viewAnswer) {
 						operationLessonBo.setAnswer(null);

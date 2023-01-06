@@ -886,6 +886,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 					AdminLessonPracticeBo practiceBo = BeanUtils.copy(theoryLessonBo,
 							AdminLessonPracticeBo.class);
 					practiceBo.setTitle(practiceBo.getContent());
+
 					return practiceBo;
 				});
 		List<AdminLessonPracticeBo> practiceBoList = StreamApiUtils.map(operationLessonBos,

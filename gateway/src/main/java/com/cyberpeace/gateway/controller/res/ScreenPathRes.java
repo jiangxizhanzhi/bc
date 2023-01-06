@@ -15,7 +15,7 @@ public class ScreenPathRes implements Serializable {
 	private String dashboardId;
 
 	public ScreenPathRes(String dashboardId) {
-		this.path = "/page/mg/admin/cr/admin/situation-release/edit/" + dashboardId;
+		this.path = "/cr/admin/situation-release/edit/" + dashboardId;
 		this.dashboardId = dashboardId;
 	}
 

@@ -412,6 +412,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			theoryRef.setOptionRandom(
 					practiceMap.get(practiceTheory.getResourceId()).getOptionRandom());
+			//如果是传入的是先取消后增加的新习题，需要覆盖原有旧的习题
+			if(StringUtils.isEmpty((practiceMap.get(practiceTheory.getResourceId()).getRefId()))){
+				//遍历原有题目，如果包含此题目，将题目快照覆盖
+				for (PracticeTheoryRef practiceTheoryRef : theoryRefList) {
+					if(practiceTheoryRef.getOriginId().equals(theoryRef.getOriginId())){
+						practiceTheoryRef.setSnapshot(theoryRef.getSnapshot());
+					}
+				}
+			}
 			theoryRef.setResourceId(IDGeneratorUtil.getID());
 			theoryRefList.add(theoryRef);
 		});

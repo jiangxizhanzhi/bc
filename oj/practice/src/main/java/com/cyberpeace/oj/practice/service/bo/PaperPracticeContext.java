@@ -17,6 +17,9 @@ public class PaperPracticeContext implements Serializable {
 	@NotBlank
 	private String resourceId;
 
+	@ApiModelProperty("快照编号")
+	private String refId;
+
 	@ApiModelProperty("习题类型")
 	@NotNull
 	private Integer practiceType;

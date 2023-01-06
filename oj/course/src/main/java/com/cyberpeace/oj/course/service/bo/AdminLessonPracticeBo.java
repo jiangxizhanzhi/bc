@@ -35,6 +35,9 @@ public class AdminLessonPracticeBo implements Serializable {
     @ApiModelProperty("资源编号")
     private String resourceId;
 
+    @ApiModelProperty("快照编号")
+    private String refId;
+
     @ApiModelProperty("分值")
     private Double score;
 

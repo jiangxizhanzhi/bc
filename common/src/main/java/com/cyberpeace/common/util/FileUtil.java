@@ -1,10 +1,13 @@
 package com.cyberpeace.common.util;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -292,7 +295,7 @@ public class FileUtil {
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", "attachment;filename=" + file.getName());
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8"));
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();

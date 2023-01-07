@@ -41,10 +41,10 @@ public class WsEventAd implements Serializable {
 	private Integer targetActionType;
 
 	@ApiModelProperty("源节点动效路径")
-	private Integer sourceNodeDynamicDir;
+	private String sourceNodeDynamicDir;
 
 	@ApiModelProperty("目的节点动效路径")
-	private Integer targetNodeDynamicDir;
+	private String targetNodeDynamicDir;
 
 	@ApiModelProperty("线型")
 	private LineStyle lineStyle;
@@ -58,7 +58,7 @@ public class WsEventAd implements Serializable {
 	@ApiModelProperty("事件信息")
 	private EventInfo eventInfo;
 
-	public void load(AdEventContext context){
+	public void load(AdEventContext context) {
 		this.sourceId = context.getSourceId();
 		this.targetId = context.getTargetId();
 		EventInfo info = new EventInfo();

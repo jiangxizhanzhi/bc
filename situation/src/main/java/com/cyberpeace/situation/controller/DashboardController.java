@@ -30,9 +30,11 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.entity.EventTypeContext;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryMapper;
 import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
 import com.cyberpeace.situation.model.LineStyle;
@@ -42,6 +44,7 @@ import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
+import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +72,9 @@ public class DashboardController {
 
 	@Autowired
 	private EventTypeContextMapper eventTypeContextMapper;
+
+	@Autowired
+	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
 
 	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
@@ -228,6 +234,21 @@ public class DashboardController {
 				.selectBatchByType(codeTypeMap.keySet());
 		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
 				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
+
+		// 查询动效列表
+		List<String> dynamicEffectNames = Lists.newArrayList();
+		mappingEffectList.forEach(dynamicEffectsMapping -> {
+			dynamicEffectNames.add(dynamicEffectsMapping.getSourceNodeDynamic());
+			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
+		});
+
+		List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
+				.selectByNames(dynamicEffectNames);
+		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
+		dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
+			dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(), dynamicEffectsLibrary);
+		});
+
 		// 转化
 		contextList.forEach(context -> {
 			WsEventAd ad = new WsEventAd();
@@ -240,6 +261,10 @@ public class DashboardController {
 				DynamicEffectsMapping effect = mappingEffectMap.get(code);
 				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
 						effect.getLine());
+				ad.setSourceNodeDynamicDir(dynamicEffectsLibraryMap
+						.get(effect.getSourceNodeDynamic()).getSourceNodeDynamicDir());
+				ad.setTargetNodeDynamicDir(dynamicEffectsLibraryMap
+						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());;
 				ad.setLineStyle(lineStyle);
 				ad.setLookAtTarget(effect.getFocus());
 			} else {

@@ -349,7 +349,7 @@ class Board {
 				}
 			}
 			if (!flag) {
-				blocks.remove(0);
+				blockList.remove(0);
 			}
 		}
 

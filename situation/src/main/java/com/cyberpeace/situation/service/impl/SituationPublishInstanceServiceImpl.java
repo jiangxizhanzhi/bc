@@ -199,7 +199,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId){
         TopoReq req = new TopoReq(subRangeId, taskId, subjectId, envId);
-        TopoContext topoContext = remoteSituationService.getTopo(req, false);
+        TopoContext topoContext = remoteSituationService.getTopo(req, true);
         TopoConfig topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
         topoConfigMapper.insert(topoConfig);
     }

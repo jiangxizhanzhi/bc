@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.constant.ws;
 
-import com.cyberpeace.situation.constant.TaskStatus;
 import lombok.Getter;
 
 public enum MessageType {

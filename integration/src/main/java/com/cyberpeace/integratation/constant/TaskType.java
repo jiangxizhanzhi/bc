@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant;
+package com.cyberpeace.integratation.constant;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

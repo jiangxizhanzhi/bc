@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.situation.constant.TaskType;
+import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.situation.controller.res.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,9 +25,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.integratation.model.situation.SituationPlan;
-import com.cyberpeace.integratation.model.situation.SituationSubject;
-import com.cyberpeace.integratation.model.situation.SituationTask;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;

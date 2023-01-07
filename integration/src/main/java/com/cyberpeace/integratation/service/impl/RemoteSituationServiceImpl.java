@@ -203,10 +203,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
 		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
-		List<NodeIdBo> nodeIdBoList = getNodeIdList(nodeListReq);
-		List<String> nodeIdList = nodeIdBoList.stream().map(NodeIdBo::getNodeId)
-				.collect(Collectors.toList());
-
+		List<String> nodeIdList = getNodeIdList(nodeListReq);
 		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
 		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
@@ -403,9 +400,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return rsp.getResult();
 	}
 
-	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {
+	private List<String> getNodeIdList(NodeListReq nodeListReq) {
 		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
-		List<NodeIdBo> res = JsonUtil.toJsonObjectArray(rsp, NodeIdBo.class);
+		List<String> res = JsonUtil.toJsonObjectArray(rsp, String.class);
 		return res;
 	}
 

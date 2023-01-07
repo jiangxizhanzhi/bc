@@ -317,4 +317,15 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return PageUtil.getListResult(situationPublishInstancePage);
     }
 
+    @Override
+    public String getEnvIdByDashboardId(String dashboardId){
+        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(dashboardId);
+        if (null == situationPublishInstance) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+
+        return dashboardAttribute.getEnvId();
+    }
+
 }

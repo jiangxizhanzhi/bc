@@ -41,4 +41,7 @@ public class BcContext implements Serializable {
 	@ApiModelProperty("机构类型")
 	private String type;
 
+	@ApiModelProperty("场站数量")
+	private String bcNumber;
+
 }

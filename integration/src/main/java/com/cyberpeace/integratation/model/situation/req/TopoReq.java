@@ -23,4 +23,13 @@ public class TopoReq extends TaskBaseReq implements Serializable {
 	@ApiModelProperty("变更ID")
 	private String updateId;
 
+	public TopoReq(String subRangeId, String taskId, String subjectId, String envId) {
+		this.setSubRangeId(subRangeId);
+		this.setTaskId(taskId);
+		this.setSubjectId(subjectId);
+		this.envId = envId;
+	}
+
+	public TopoReq() {}
+
 }

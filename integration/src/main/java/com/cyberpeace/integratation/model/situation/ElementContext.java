@@ -48,6 +48,9 @@ public class ElementContext implements Serializable {
 	@ApiModelProperty("父节点ID")
 	private String parent;
 
+	@ApiModelProperty("平台ID")
+	private String platformId;
+
 	@ApiModelProperty("父节点ID列表")
 	private List<String> parentIds;
 

@@ -22,6 +22,7 @@ import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -137,6 +138,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             List<DashboardComponents> sourceDashboardComponents = new ArrayList<>();
             List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
+            List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
             for (DashboardComponents dashboardComponent : dashboardComponents) {
                 //视角筛选
                 String sourceType = dashboardComponent.getType();
@@ -147,19 +149,28 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 String componentSetting = dashboardComponent.getComponentSetting();
                 JSONObject jsonObject = JSONObject.parseObject(componentSetting);
                 String componentType = jsonObject.getString("component_type");
-                if (componentType != null && Objects.equals("0", componentType)) {
+                if (componentType != null && (Objects.equals("0", componentType) || Objects.equals("1", componentType))) {
                     sortDashboardComponents.add(dashboardComponent);
+                }
+                if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                    commonDashboardComponentList.add(dashboardComponent);
                 }
             }
             sourceDashboardComponents.removeAll(sortDashboardComponents);
-
+            sourceDashboardComponents.removeAll(commonDashboardComponentList);
             //按图层进行排序
             List<DashboardComponents> dashboardComponentsList =
                     sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
 
+            //添加二位组件配置
             sortDashboardComponents.addAll(dashboardComponentsList);
 
+            //添加全局控件和公共控件
+            sortDashboardComponents.addAll(commonDashboardComponentList);
+
             dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
+
+
         }
         return dashboardTemplateRes;
     }

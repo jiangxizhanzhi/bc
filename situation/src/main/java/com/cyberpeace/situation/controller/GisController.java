@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -24,9 +25,12 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
+import com.cyberpeace.situation.controller.req.TemplateViewAngleReq;
 import com.cyberpeace.situation.dao.entity.GisMark;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 
@@ -48,6 +52,9 @@ public class GisController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
 	@ApiOperation("新增标绘配置")
 	@PostMapping("/mark/")
@@ -152,5 +159,20 @@ public class GisController {
 		GisMark gisMark = gisMarkMapper.selectById(markId);
 		gisMark.setDeleteTime(new Date());
 		gisMarkMapper.updateById(gisMark);
+	}
+
+	@ApiOperation("通过模板ID获取平台列表")
+	@GetMapping("/template/platform/")
+	public BaseRsp<List<PlatformContext>>
+			getPlatformByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
+					name = "template_id", value = "模板ID") String templateId) {
+		return new BaseRsp<>(Lists.newArrayList());
+	}
+
+	@ApiOperation("保存模板视角信息")
+	@PostMapping("/template/view_angle/")
+	public BaseRsp<Boolean>
+			saveTemplateView(@RequestBody @Validated TemplateViewAngleReq templateViewAngleReq) {
+		return new BaseRsp<>(true);
 	}
 }

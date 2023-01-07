@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
 
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
@@ -20,7 +19,6 @@ import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.model.UserModelBase;
 import com.cyberpeace.bs.service.bo.model.UserModelBo;
 import com.cyberpeace.bs.service.bo.simulator.BehaviorConfigRaw;
-import com.cyberpeace.bs.service.bo.simulator.IpBo;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
@@ -33,8 +31,6 @@ import com.google.common.collect.Maps;
 public class BsUtil {
 
 	private static final String JSON_LIST_INITIAL = "[";
-
-	private static final String EMPTY_STRING = "";
 
 	/**
 	 * 解析存储的行为列表json
@@ -189,18 +185,6 @@ public class BsUtil {
 	}
 
 	/**
-	 * 获取ip
-	 * @param ipBoList
-	 * @return
-	 */
-	public static String getIp(List<IpBo> ipBoList) {
-		if (CollectionUtils.isEmpty(ipBoList)) {
-			return EMPTY_STRING;
-		}
-		return ipBoList.get(0).getIp();
-	}
-
-	/**
 	 * 将行为设备id转为int
 	 *
 	 * @param deviceId
@@ -240,6 +224,26 @@ public class BsUtil {
 			return raw.subList(0, length);
 		}
 		return raw;
+	}
+
+	/**
+	 * 判断ip是否在指定的网段
+	 * @param ip
+	 * @param cidr 网段 如 10.0.40.0/24
+	 * @return
+	 */
+	public static boolean isInRange(String ip, String cidr) {
+		String[] ips = ip.split("\\.");
+		int ipAddr = (Integer.parseInt(ips[0]) << 24) | (Integer.parseInt(ips[1]) << 16)
+				| (Integer.parseInt(ips[2]) << 8) | Integer.parseInt(ips[3]);
+		int type = Integer.parseInt(cidr.replaceAll(".*/", ""));
+		int mask = 0xFFFFFFFF << (32 - type);
+		String cidrIp = cidr.replaceAll("/.*", "");
+		String[] cidrIps = cidrIp.split("\\.");
+		int cidrIpAddr = (Integer.parseInt(cidrIps[0]) << 24) | (Integer.parseInt(cidrIps[1]) << 16)
+				| (Integer.parseInt(cidrIps[2]) << 8) | Integer.parseInt(cidrIps[3]);
+
+		return (ipAddr & mask) == (cidrIpAddr & mask);
 	}
 
 }

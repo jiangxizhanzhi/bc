@@ -53,7 +53,7 @@ public interface RemoteSituationService {
 	 * 获取平台列表
 	 * @return List<PlatformContext>
 	 */
-	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId);
+	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId, String schemeId);
 
 	/**
 	 * 获取网络信息
@@ -144,7 +144,7 @@ public interface RemoteSituationService {
 	 * 获取拓扑
 	 * @return TopoContext
 	 */
-	TopoContext getTopo(TopoReq topoReq);
+	TopoContext getTopo(TopoReq topoReq, Boolean adjust);
 
 	/**
 	 * 想定-获取任务下可视化方案列表
@@ -174,5 +174,4 @@ public interface RemoteSituationService {
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
 
-	List<BcContext> getBcList(String type);
 }

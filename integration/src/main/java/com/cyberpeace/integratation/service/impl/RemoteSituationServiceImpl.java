@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.common.constant.WebConstant;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -87,7 +87,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_RELEASE_SCREEN;
 
-	private String YW_BC_LIST;
+	@Autowired
+	private RemoteOperationServiceImpl remoteOperationService;
 
 	Cache<String, Date> queryTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
@@ -96,7 +97,6 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
 		String outerHostXd = "http://" + ConfigUtil.getContextProperty("outer.host.xd");
-		String outerHostYw = "http://" + ConfigUtil.getContextProperty("outer.host.yw");
 		TASK_URL = outerHostTs + ConfigUtil.getContextProperty("task.list");
 		PLAN_URL = outerHostXd + ConfigUtil.getContextProperty("plan.list");
 		SUBJECT_URL = outerHostTs + ConfigUtil.getContextProperty("subject.list");
@@ -123,7 +123,6 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
-		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
 	}
 
 	@Override
@@ -177,10 +176,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<PlatformContext> getPlatformList(String taskId, String subjectId,
-			String subRangeId) {
-		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?task_id=" + taskId
-				+ "&subject_id=" + subjectId + "&sub_range_id=" + subRangeId, JSONArray.class);
+	public List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId,
+			String schemeId) {
+		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?taskId=" + taskId
+				+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId,
+				JSONArray.class);
 		return JSONArray.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
 	}
 
@@ -209,7 +209,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq){
+	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq) {
 		String rsp = HttpClientUtil.post(SUBJECT_LIST_URL, subjectListReq, String.class);
 		List<SubjectContext> res = JsonUtil.toJsonObjectArray(rsp, SubjectContext.class);
 		return res;
@@ -320,7 +320,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public TopoContext getTopo(TopoReq topoReq) {
+	public TopoContext getTopo(TopoReq topoReq, Boolean adjust) {
 
 		String query = "?envId=" + topoReq.getEnvId();
 
@@ -336,14 +336,16 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		if (StringUtils.isNotBlank(topoReq.getSubjectId())) {
 			query = query + "&subjectId=" + topoReq.getSubjectId();
 		} ;
-		if (topoReq.getLevel() != 0) {
+		if (topoReq.getLevel() != null) {
 			query = query + "&level=" + topoReq.getLevel();
 		} ;
 
 		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + query,
 				ThirdPartyTopoBo.class);
 
-		TopoContext topoContext = topoBo.convert();
+		TopoContext topoContext = topoBo.convert(adjust,
+				remoteOperationService.getModelTypeListMap(),
+				remoteOperationService.getModelListMap());
 
 		topoBo.setAreas(topoContext);
 
@@ -391,10 +393,4 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return res;
 	}
 
-	@Override
-	public List<BcContext> getBcList(String type){
-		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, WebConstant.YW_TOKEN);
-		List<BcContext> res = JsonUtil.toJsonObjectArray(rsp, BcContext.class);
-		return res;
-	}
 }

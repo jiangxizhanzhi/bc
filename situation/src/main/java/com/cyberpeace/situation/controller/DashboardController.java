@@ -194,7 +194,7 @@ public class DashboardController {
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());
 		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts);
-		situationHandlerService.batchPushDataToDashboard("", eventReq.getDashboardId(),
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(), eventReq.getDashboardId(),
 				eventReq.getFeatureId(), eventAds, null, null);
 
 		return new BaseRsp<>(true);

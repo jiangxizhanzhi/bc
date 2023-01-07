@@ -94,7 +94,7 @@ public class ThirdPartyTopoBo implements Serializable {
 				ElementContext elementContext = elementContextMap.get(elementId); // assert not null
 				PositionContext positionContext = elementContext.getPosition();
 				positionContext.setX(position.getCol().floatValue() * 100);
-				positionContext.setX(position.getRow().floatValue() * 100);
+				positionContext.setY(position.getRow().floatValue() * 100);
 			});
 		});
 

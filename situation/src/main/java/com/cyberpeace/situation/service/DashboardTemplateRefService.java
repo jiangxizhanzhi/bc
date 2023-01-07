@@ -4,6 +4,7 @@ import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
+import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 
 import java.util.List;
 
@@ -50,5 +51,7 @@ public interface DashboardTemplateRefService {
      * @param situationPublishInstanceReviewRes
      */
     void exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes);
+
+    DashboardTemplateContext getDashboardTemplateContext(String templateId);
 
 }

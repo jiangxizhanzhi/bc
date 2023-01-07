@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -181,16 +182,28 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?taskId=" + taskId
 				+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId,
 				JSONArray.class);
-		return JSONArray.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
+		List<PlatformContext> platformContexts = JSONArray
+				.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
+
+		Map<String, ModelContext> modelListCache = remoteOperationService.getModelListMap();
+
+		platformContexts.forEach(platformContext -> {
+			platformContext.setPlatformUrl(
+					getModelThreeDimensionPic(modelListCache, platformContext.getModelId()));
+		});
+		return platformContexts;
+	}
+
+	private String getModelThreeDimensionPic(Map<String, ModelContext> modelContextMap,
+			String modelId) {
+		ModelContext modelContext = modelContextMap.get(modelId);
+		return modelContext == null ? null : modelContext.getThreeDimensionPic();
 	}
 
 	@Override
 	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
 		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
-		List<NodeIdBo> nodeIdBoList = getNodeIdList(nodeListReq);
-		List<String> nodeIdList = nodeIdBoList.stream().map(NodeIdBo::getNodeId)
-				.collect(Collectors.toList());
-
+		List<String> nodeIdList = getNodeIdList(nodeListReq);
 		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
 		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
@@ -387,9 +400,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return rsp.getResult();
 	}
 
-	private List<NodeIdBo> getNodeIdList(NodeListReq nodeListReq) {
+	private List<String> getNodeIdList(NodeListReq nodeListReq) {
 		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
-		List<NodeIdBo> res = JsonUtil.toJsonObjectArray(rsp, NodeIdBo.class);
+		List<String> res = JsonUtil.toJsonObjectArray(rsp, String.class);
 		return res;
 	}
 

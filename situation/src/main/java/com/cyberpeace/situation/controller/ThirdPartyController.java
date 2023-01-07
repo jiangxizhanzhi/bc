@@ -260,7 +260,7 @@ public class ThirdPartyController {
 	@PostMapping("/topo/")
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
-		return new BaseRsp<>(remoteSituationService.getTopo(topoReq, false));
+		return new BaseRsp<>(remoteSituationService.getTopo(topoReq, true));
 	}
 
 	@ApiOperation("想定-获取任务下可视化方案列表")

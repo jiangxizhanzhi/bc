@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -26,12 +25,16 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
 import com.cyberpeace.situation.controller.req.TemplateViewAngleReq;
+import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 
 import io.swagger.annotations.Api;
@@ -47,6 +50,12 @@ public class GisController {
 
 	@Autowired
 	private GisMarkMapper gisMarkMapper;
+
+	@Autowired
+	private DashboardTemplateRefService dashboardTemplateRefService;
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
 
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
@@ -163,10 +172,23 @@ public class GisController {
 
 	@ApiOperation("通过模板ID获取平台列表")
 	@GetMapping("/template/platform/")
-	public BaseRsp<List<PlatformContext>>
+	public BaseRsp<TemplatePlatformRes>
 			getPlatformByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
 					name = "template_id", value = "模板ID") String templateId) {
-		return new BaseRsp<>(Lists.newArrayList());
+
+		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
+				.getDashboardTemplateContext(templateId);
+
+		if (dashboardTemplateContext == null) {
+			return new BaseRsp<>(new TemplatePlatformRes());
+		}
+		List<PlatformContext> platformContexts = remoteSituationService.getPlatformList(
+				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
+				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
+
+		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
+		templatePlatformRes.setPlatformList(platformContexts);
+		return new BaseRsp<>(templatePlatformRes);
 	}
 
 	@ApiOperation("保存模板视角信息")

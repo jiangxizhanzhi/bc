@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -30,6 +29,7 @@ import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
 import com.cyberpeace.situation.controller.req.TemplateViewAngleReq;
+import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
@@ -172,7 +172,7 @@ public class GisController {
 
 	@ApiOperation("通过模板ID获取平台列表")
 	@GetMapping("/template/platform/")
-	public BaseRsp<List<PlatformContext>>
+	public BaseRsp<TemplatePlatformRes>
 			getPlatformByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
 					name = "template_id", value = "模板ID") String templateId) {
 
@@ -180,12 +180,15 @@ public class GisController {
 				.getDashboardTemplateContext(templateId);
 
 		if (dashboardTemplateContext == null) {
-			return new BaseRsp<>(Lists.newArrayList());
+			return new BaseRsp<>(new TemplatePlatformRes());
 		}
 		List<PlatformContext> platformContexts = remoteSituationService.getPlatformList(
 				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
 				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
-		return new BaseRsp<>(platformContexts);
+
+		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
+		templatePlatformRes.setPlatformList(platformContexts);
+		return new BaseRsp<>(templatePlatformRes);
 	}
 
 	@ApiOperation("保存模板视角信息")

@@ -5,11 +5,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.integratation.model.situation.TopoContext;
-import com.cyberpeace.integratation.model.situation.req.TopoReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.controller.req.NodePositionReq;
+import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 
@@ -30,21 +28,21 @@ public class TopoController {
 	@Autowired
 	private RemoteSituationService remoteSituationService;
 
-	@ApiOperation("通过模板ID获取拓扑")
-	@GetMapping("/template/topo/")
-	public BaseRsp<TopoContext>
-			getTopoByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
-					name = "template_id", value = "模板ID") String templateId) {
+	@ApiOperation("通过模板ID获取大屏ID")
+	@GetMapping("/template/dashboard/")
+	public BaseRsp<DashboardIdRes> getTopoByTemplateId(@RequestParam(value = "template_id",
+			required = false) @ApiParam(name = "template_id", value = "模板ID") String templateId) {
 
 		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
 				.getDashboardTemplateContext(templateId);
 
 		if (dashboardTemplateContext == null) {
-			return new BaseRsp<>(new TopoContext());
+			return new BaseRsp<>(new DashboardIdRes());
 		}
-		TopoContext topoContext = remoteSituationService
-				.getTopo(BeanUtils.copy(dashboardTemplateContext, TopoReq.class), true);
-		return new BaseRsp<>(topoContext);
+
+		DashboardIdRes dashboardIdRes = new DashboardIdRes();
+		dashboardIdRes.setDashboardId(dashboardTemplateContext.getDashboardId());
+		return new BaseRsp<>(dashboardIdRes);
 	}
 
 	@ApiOperation("更新拓扑节点坐标")

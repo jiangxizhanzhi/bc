@@ -11,13 +11,10 @@ import lombok.Data;
 @Data
 public class NodePositionReq implements Serializable {
 
-	@ApiModelProperty("模板ID")
-	private String templateId;
+	@ApiModelProperty("环境配置方案ID")
+	private String envId;
 
-	@ApiModelProperty("类型 1-模板 2-实例")
-	private Integer type;
-
-	@ApiModelProperty("初始视角")
+	@ApiModelProperty("节点坐标")
 	private Map<String, PositionContext> position;
 
 }

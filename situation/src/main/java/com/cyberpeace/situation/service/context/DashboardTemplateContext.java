@@ -14,6 +14,9 @@ public class DashboardTemplateContext implements Serializable {
 	@ApiModelProperty("模板ID")
 	private String templateId;
 
+	@ApiModelProperty("大屏ID")
+	private String dashboardId;
+
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;
 
@@ -33,6 +36,7 @@ public class DashboardTemplateContext implements Serializable {
 
 	public DashboardTemplateContext(SituationPublishInstance situationPublishInstance,
 			DashboardAttribute dashboardAttribute) {
+		this.dashboardId = situationPublishInstance.getResourceId();
 		this.templateId = situationPublishInstance.getTemplateId();
 		this.subRangeId = situationPublishInstance.getSubRangeId();
 		this.taskId = situationPublishInstance.getTaskId();

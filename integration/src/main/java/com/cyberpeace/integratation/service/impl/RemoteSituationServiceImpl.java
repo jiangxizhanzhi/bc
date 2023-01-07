@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -181,7 +182,22 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?taskId=" + taskId
 				+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId,
 				JSONArray.class);
-		return JSONArray.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
+		List<PlatformContext> platformContexts = JSONArray
+				.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
+
+		Map<String, ModelContext> modelListCache = remoteOperationService.getModelListMap();
+
+		platformContexts.forEach(platformContext -> {
+			platformContext.setPlatformUrl(
+					getModelThreeDimensionPic(modelListCache, platformContext.getModelId()));
+		});
+		return platformContexts;
+	}
+
+	private String getModelThreeDimensionPic(Map<String, ModelContext> modelContextMap,
+			String modelId) {
+		ModelContext modelContext = modelContextMap.get(modelId);
+		return modelContext == null ? null : modelContext.getThreeDimensionPic();
 	}
 
 	@Override

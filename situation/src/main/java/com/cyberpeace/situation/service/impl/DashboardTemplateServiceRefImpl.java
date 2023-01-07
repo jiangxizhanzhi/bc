@@ -1,5 +1,19 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,32 +22,21 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.situation.controller.req.CustomParamReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
-import com.cyberpeace.situation.controller.req.DashboardComponentsResourceReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
+import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 
 /**
  * @Author xuxz
@@ -54,6 +57,12 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     @Autowired
     private DashboardTemplateService dashboardTemplateService;
 
+    @Autowired
+    private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
+    @Autowired
+    private DashboardAttributeMapper dashboardAttributeMapper;
+
     @Override
     public DashboardTemplateRef createDashboardTemplate(String resourceId) {
 
@@ -66,7 +75,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         dashboardTemplateRef.setResourceId(IDGeneratorUtil.getID());
         JSONArray dashboardComponentsIdList = new JSONArray();
         List<DashboardComponents> dashboardComponentsList = dashboardTemplateInfo.getComponentsSetting();
-        
+
         if (CollectionUtils.isNotEmpty(dashboardComponentsList)) {
             for (DashboardComponents dashboardComponents : dashboardComponentsList) {
                 String componentsResourceId = IDGeneratorUtil.getID();
@@ -254,5 +263,17 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 }
             }
         }
+    }
+
+    @Override
+    public DashboardTemplateContext getDashboardTemplateContext(String templateId) {
+        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+                .selectByTemplateId(templateId);
+        if (situationPublishInstance == null) {
+            return null;
+        }
+        DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+                .getByResourceId(situationPublishInstance.getAttributeId());
+        return new DashboardTemplateContext(situationPublishInstance, dashboardAttribute);
     }
 }

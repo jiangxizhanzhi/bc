@@ -45,4 +45,11 @@
             </if>
         </where>
     </select>
+    <select id="selectByTemplateId"
+            resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
+        SELECT * FROM situation_publish_instance
+        <where>
+            template_id = #{templateId}
+        </where>
+    </select>
 </mapper>

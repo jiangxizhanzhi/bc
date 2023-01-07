@@ -26,12 +26,15 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
 import com.cyberpeace.situation.controller.req.TemplateViewAngleReq;
 import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 
 import io.swagger.annotations.Api;
@@ -47,6 +50,12 @@ public class GisController {
 
 	@Autowired
 	private GisMarkMapper gisMarkMapper;
+
+	@Autowired
+	private DashboardTemplateRefService dashboardTemplateRefService;
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
 
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
@@ -166,7 +175,17 @@ public class GisController {
 	public BaseRsp<List<PlatformContext>>
 			getPlatformByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
 					name = "template_id", value = "模板ID") String templateId) {
-		return new BaseRsp<>(Lists.newArrayList());
+
+		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
+				.getDashboardTemplateContext(templateId);
+
+		if (dashboardTemplateContext == null) {
+			return new BaseRsp<>(Lists.newArrayList());
+		}
+		List<PlatformContext> platformContexts = remoteSituationService.getPlatformList(
+				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
+				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
+		return new BaseRsp<>(platformContexts);
 	}
 
 	@ApiOperation("保存模板视角信息")

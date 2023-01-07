@@ -1,14 +1,17 @@
 package com.cyberpeace.situation.controller.req;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.situation.model.ViewAngle;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @Author xuxz
@@ -51,6 +54,9 @@ public class DashBoardTemplateReq implements Serializable {
 
     @ApiModelProperty("背景主题")
     private String topic;
+
+    @ApiModelProperty("初始视角")
+    private ViewAngle viewAngle;
 
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponentsReq> componentsSetting;

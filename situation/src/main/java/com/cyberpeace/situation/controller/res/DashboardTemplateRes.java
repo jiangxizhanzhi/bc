@@ -1,11 +1,13 @@
 package com.cyberpeace.situation.controller.res;
 
-import com.cyberpeace.situation.dao.entity.DashboardComponents;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import com.cyberpeace.situation.model.ViewAngle;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @Author xuxz
@@ -42,6 +44,9 @@ public class DashboardTemplateRes implements Serializable {
 
     @ApiModelProperty("背景主题")
     private String topic;
+
+    @ApiModelProperty("初始视角")
+    private ViewAngle viewAngle;
 
     @ApiModelProperty("刷新频率")
     private Integer refresh;

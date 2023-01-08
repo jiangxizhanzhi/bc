@@ -496,6 +496,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				for (BehaviorSimple behavior : behaviorSimpleList) {
 					if (behavior.getStartTime().isAfter(start)) {
 						int index = now.getHour() - behavior.getStartTime().getHour();
+						if (index < 0) {
+							index += 24;
+						}
 						arr[index] += BsUtil.calStep(behavior.getId());
 					}
 				}

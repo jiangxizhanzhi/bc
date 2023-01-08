@@ -14,4 +14,12 @@ public class NodeTypeStatisticsContext implements Serializable {
 	@ApiModelProperty("数量")
 	private Integer count;
 
+	public NodeTypeStatisticsContext() {}
+
+	public NodeTypeStatisticsContext(String typeName, Integer value) {
+
+		this.nodeType = typeName;
+		this.count = value;
+	}
+
 }

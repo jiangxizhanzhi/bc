@@ -207,7 +207,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         }
 
         TopoReq req = new TopoReq(subRangeId, taskId, subjectId, envId);
-        TopoContext topoContext = remoteSituationService.getTopo(req, true);
+        TopoContext topoContext = remoteSituationService.getTopo(req, false);
         topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
         topoConfigMapper.insert(topoConfig);
     }

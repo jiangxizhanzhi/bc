@@ -132,6 +132,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
         dashboardAttribute.setTaskType(scheme.getTaskType());
         dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
+        if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())){
+            dashboardAttribute.setTaskSubType("1");
+        }
         String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "LG中心" : scheme.getSubRangeName();
         String taskName = scheme.getTaskName();
         dashboardAttribute.setTitle(rangeName + "任务态势");

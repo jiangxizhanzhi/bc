@@ -19,14 +19,15 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.gateway.controller.req.*;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
-import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.integratation.constant.OrderType;
+import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.model.ws.DashboardMessage;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsTaskStatus;
 import com.cyberpeace.situation.service.DashboardTemplateService;
@@ -78,6 +79,15 @@ public class ExternalSituationController {
 						controlCommandReq.getSubjectId());
 
 		if (situationPublishInstance == null || orderType.getAction() == null) {
+			return new BaseRsp<>(new ControlRes("1", "0"));
+		}
+
+		if (orderType.getAction().equals("message")) {
+			WsMessage<DashboardMessage> message = new WsMessage<>(MessageType.Message.getDesc(),
+					new DashboardMessage(
+							situationPublishInstance.getTaskName() + orderType.getName(), 5));
+			situationHandlerService.pushDataToDashboard(message,
+					situationPublishInstance.getResourceId());
 			return new BaseRsp<>(new ControlRes("1", "0"));
 		}
 

@@ -59,7 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	private final Map<String, BsTimer> timerMap = Maps.newConcurrentMap();
-	
+
 	private String EXTERNAL_IP_SEGMENT;
 
 	@Autowired
@@ -486,6 +486,26 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				hours * BsConstants.MINUTE_PER_HOUR, 0));
 		// activity
 		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), hours, 0));
+		if (BsUtil.markedId.containsKey(resourceId)) {
+			if (res.getActivity().getYStep().stream().reduce(Integer::sum).orElse(0) == 0) {
+				List<BehaviorSimple> behaviorSimpleList = BsUtil
+						.parseBehaviorList(simulator.getBehaviorList());
+				LocalTime now = LocalTime.now();
+				LocalTime start = BsUtil.markedId.get(resourceId);
+				int[] arr = new int[24];
+				for (BehaviorSimple behavior : behaviorSimpleList) {
+					if (behavior.getStartTime().isAfter(start)) {
+						int index = now.getHour() - behavior.getStartTime().getHour();
+						arr[index] += BsUtil.calStep(behavior.getId());
+					}
+				}
+				List<Integer> steps = Lists.newArrayList();
+				for (int i = 0; i < 8; i++) {
+					steps.add(arr[7 - i]);
+				}
+				res.getActivity().setYStep(steps);
+			}
+		}
 		// session
 		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), hours * 2, 0));
 

@@ -4,32 +4,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.situation.dao.entity.TopoConfig;
-import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.constant.TaskStatus;
+import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
-import com.cyberpeace.integratation.constant.TaskStatus;
-import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
 import com.cyberpeace.situation.dao.entity.SubRange;
+import com.cyberpeace.situation.dao.entity.TopoConfig;
+import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
 
 import io.swagger.annotations.Api;
@@ -271,12 +271,13 @@ public class ThirdPartyController {
 
 		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
 		// 处理编排后的拓扑坐标
-		if (StringUtils.isNotBlank(topoReq.getEnvId())){
+		if (StringUtils.isNotBlank(topoReq.getEnvId())) {
 			TopoConfig topoConfig = topoConfigMapper.selectByEnvId(topoReq.getEnvId());
-			if (topoConfig != null){
+			if (topoConfig != null) {
 				JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
 				Map<String, ElementSlimContext> elementSlimContextMap = JSONObject.parseObject(
-						json.toJSONString(), new TypeReference<Map<String, ElementSlimContext>>() {});
+						json.toJSONString(),
+						new TypeReference<Map<String, ElementSlimContext>>() {});
 				topoContext.getElements().forEach((key, element) -> {
 					element.setPosition(elementSlimContextMap.get(key).getPosition());
 				});

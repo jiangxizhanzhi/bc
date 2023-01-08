@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.situation.constant.BcStatus;
+import com.cyberpeace.integratation.constant.BcStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

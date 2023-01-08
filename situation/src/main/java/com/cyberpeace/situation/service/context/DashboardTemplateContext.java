@@ -32,6 +32,9 @@ public class DashboardTemplateContext implements Serializable {
 	@ApiModelProperty("环境配置方案ID")
 	private String envId;
 
+	@ApiModelProperty("视角配置")
+	private String viewAngle;
+
 	public DashboardTemplateContext() {}
 
 	public DashboardTemplateContext(SituationPublishInstance situationPublishInstance,
@@ -43,6 +46,7 @@ public class DashboardTemplateContext implements Serializable {
 		this.subjectId = situationPublishInstance.getSubjectId();
 		this.schemeId = dashboardAttribute.getSchemeId();
 		this.envId = dashboardAttribute.getEnvId();
+		this.viewAngle = dashboardAttribute.getViewAngle();
 	}
 
 }

@@ -1,18 +1,22 @@
 package com.cyberpeace.situation.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.context.DashboardTemplateRefContext;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author xuxz
@@ -28,9 +32,10 @@ public class DashboardTemplateRefController {
 
     @ApiOperation("新增态势数据")
     @PostMapping()
-    public BaseRsp<DashboardTemplateRef> createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
+    public BaseRsp<DashboardTemplateRefContext> createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
                                                                          String resourceId) {
-        return new BaseRsp<>(dashboardTemplateRefService.createDashboardTemplate(resourceId));
+        DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefService.createDashboardTemplate(resourceId);
+        return new BaseRsp<>(BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRefContext.class));
     }
 
     @ApiOperation("修改态势数据")

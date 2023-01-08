@@ -28,11 +28,11 @@ import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
-import com.cyberpeace.situation.controller.req.TemplateViewAngleReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
+import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
@@ -172,9 +172,11 @@ public class GisController {
 
 	@ApiOperation("通过模板ID获取平台列表")
 	@GetMapping("/template/platform/")
-	public BaseRsp<TemplatePlatformRes>
-			getPlatformByTemplateId(@RequestParam("template_id") @ApiParam(required = true,
-					name = "template_id", value = "模板ID") String templateId) {
+	public BaseRsp<TemplatePlatformRes> getPlatformByTemplateId(
+			@RequestParam("template_id") @ApiParam(required = true, name = "template_id",
+					value = "模板ID") String templateId,
+			@RequestParam("type") @ApiParam(required = true, name = "type",
+					value = "类型 1-模板 2-实例") Integer type) {
 
 		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
 				.getDashboardTemplateContext(templateId);
@@ -188,13 +190,9 @@ public class GisController {
 
 		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
 		templatePlatformRes.setPlatformList(platformContexts);
+		templatePlatformRes.setViewAngle(
+				JsonUtil.toJsonObject(dashboardTemplateContext.getViewAngle(), ViewAngle.class));
 		return new BaseRsp<>(templatePlatformRes);
 	}
 
-	@ApiOperation("保存模板视角信息")
-	@PostMapping("/template/view_angle/")
-	public BaseRsp<Boolean>
-			saveTemplateView(@RequestBody @Validated TemplateViewAngleReq templateViewAngleReq) {
-		return new BaseRsp<>(true);
-	}
 }

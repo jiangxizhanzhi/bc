@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import com.cyberpeace.integratation.constant.TaskType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -315,6 +316,17 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         }
         situationPublishInstancePage.setRecords(situationPublishInstancePageResList);
         return PageUtil.getListResult(situationPublishInstancePage);
+    }
+
+    @Override
+    public String getEnvIdByDashboardId(String dashboardId){
+        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(dashboardId);
+        if (null == situationPublishInstance) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+
+        return dashboardAttribute.getEnvId();
     }
 
 }

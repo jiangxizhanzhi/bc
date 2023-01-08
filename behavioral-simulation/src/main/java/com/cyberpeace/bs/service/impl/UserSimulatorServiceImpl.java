@@ -522,7 +522,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	 * @return
 	 */
 	private String getIp(List<IpBo> ipBoList) {
-		if (org.apache.shiro.util.CollectionUtils.isEmpty(ipBoList)) {
+		if (CollectionUtils.isEmpty(ipBoList)) {
 			return CommonConstant.EMPTY_STRING;
 		}
 		if (ipBoList.size() == 1) {

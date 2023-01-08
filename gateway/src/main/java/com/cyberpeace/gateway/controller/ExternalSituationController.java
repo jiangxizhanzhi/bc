@@ -20,7 +20,7 @@ import com.cyberpeace.gateway.controller.req.*;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
-import com.cyberpeace.situation.constant.OrderType;
+import com.cyberpeace.integratation.constant.OrderType;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.constant.ws.MessageType;

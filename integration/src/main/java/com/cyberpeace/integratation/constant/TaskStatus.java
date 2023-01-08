@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant;
+package com.cyberpeace.integratation.constant;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -7,16 +7,17 @@ import java.util.List;
 
 import lombok.Getter;
 
-public enum SubjectStatus {
+public enum TaskStatus {
 
 	/**
 	 * 任务状态
 	 */
-	WKS("1", "未开始"),
-	CSH("2", "初始化完成"),
-	JXZ("3", "进行中"),
-	ZTZ("4", "暂停中"),
-	ZZ("5", "终止");
+	RWLX("RWZT01", "立项"),
+	DSP("RWZT02", "待审批"),
+	RWZB("RWZT03", "任务准备"),
+	RWZX("RWZT04", "任务执行"),
+	YWC("RWZT05", "已完成"),
+	QT("RWZT99", "其它");
 
 	@Getter
 	private String code;
@@ -24,14 +25,14 @@ public enum SubjectStatus {
 	@Getter
 	private String name;
 
-	SubjectStatus(String code, String name) {
+	TaskStatus(String code, String name) {
 		this.code = code;
 		this.name = name;
 	}
 
-	public static List<HashMap<String, String>> getSubjectStatusMap() {
+	public static List<HashMap<String, String>> getTaskStatusMap() {
 		List<HashMap<String, String>> list = new ArrayList<>();
-		for (SubjectStatus taskType : EnumSet.allOf(SubjectStatus.class)) {
+		for (TaskStatus taskType : EnumSet.allOf(TaskStatus.class)) {
 			HashMap<String, String> map = new HashMap<>();
 			map.put("name", taskType.name);
 			map.put("code", taskType.code);

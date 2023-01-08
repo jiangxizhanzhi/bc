@@ -13,36 +13,33 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.DynamicParameter;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.constant.TaskStatus;
-import com.cyberpeace.situation.constant.TaskType;
+import com.cyberpeace.integratation.constant.TaskStatus;
+import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
-import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
-import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
-import com.cyberpeace.situation.dao.entity.EventTypeContext;
-import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
-import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryMapper;
-import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
-import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
+import com.cyberpeace.situation.dao.entity.*;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
 import com.google.common.collect.Maps;
 
@@ -75,6 +72,12 @@ public class DashboardController {
 
 	@Autowired
 	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
+
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private TopoConfigMapper topoConfigMapper;
 
 	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
@@ -193,9 +196,17 @@ public class DashboardController {
 
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());
-		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts);
-		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(), eventReq.getDashboardId(),
-				eventReq.getFeatureId(), eventAds, null, null);
+
+		String envId = situationPublishInstanceService
+				.getEnvIdByDashboardId(eventReq.getDashboardId());
+		TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
+		JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
+		Map<String, ElementSlimContext> elementSlimContextMap = JSONObject.parseObject(
+				json.toJSONString(), new TypeReference<Map<String, ElementSlimContext>>() {});
+
+		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts, elementSlimContextMap);
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(),
+				eventReq.getDashboardId(), eventReq.getFeatureId(), eventAds, null, null);
 
 		return new BaseRsp<>(true);
 	}
@@ -212,7 +223,8 @@ public class DashboardController {
 		return new BaseRsp<>(true);
 	}
 
-	private List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList) {
+	private List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList,
+			Map<String, ElementSlimContext> elementSlimContextMap) {
 		List<WsEventAd> adList = Lists.newArrayList();
 		if (CollectionUtils.isEmpty(contextList)) {
 			return adList;
@@ -253,6 +265,10 @@ public class DashboardController {
 		contextList.forEach(context -> {
 			WsEventAd ad = new WsEventAd();
 			ad.load(context);
+			ad.setSourceParentIds(elementSlimContextMap.get(ad.getSourceId()).getParentIds());
+			ad.setTargetParentIds(elementSlimContextMap.get(ad.getTargetId()).getParentIds());
+			ad.setSourcePlatformId(elementSlimContextMap.get(ad.getSourceId()).getPlatformId());
+			ad.setTargetPlatformId(elementSlimContextMap.get(ad.getTargetId()).getPlatformId());
 
 			String code = nameCodeMap.get(context.getEventSubType());
 			if (mappingEffectMap.containsKey(code)) {

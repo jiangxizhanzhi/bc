@@ -27,4 +27,6 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
      * @return
      */
     ListRsp<SituationPublishInstancePageRes> getSituationPublishInstancePage(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq);
+
+    String getEnvIdByDashboardId(String dashboardId);
 }

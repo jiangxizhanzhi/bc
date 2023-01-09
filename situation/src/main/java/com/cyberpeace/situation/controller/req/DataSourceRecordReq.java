@@ -40,4 +40,7 @@ public class DataSourceRecordReq implements Serializable {
 
     @ApiModelProperty("密码")
     private String password;
+
+    @ApiModelProperty("连接状态")
+    private Boolean connectStatus;
 }

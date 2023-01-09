@@ -107,6 +107,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         DataSourceRecord dataSourceRecord = dataSourceRecordReqToDataSourceRecord(dataSourceRecordReq);
         dataSourceRecord.setResourceId(IDGeneratorUtil.getID());
         dataSourceRecord.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+        dataSourceRecord.setConnectStatus(Boolean.TRUE);
         dataSourceRecordMapper.insert(dataSourceRecord);
         return dataSourceRecord.getResourceId();
     }
@@ -262,6 +263,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             String password = decryptedPwd(dataSourceRecordReq.getPassword());
             conn = DriverManager.getConnection(url, dataSourceRecordReq.getUserName(), password);
             if (conn != null) {
+                dataSourceRecordReq.setConnectStatus(Boolean.TRUE);
                 if (connectionCache.containsKey(url)) {
                     connectionCache.replace(url, conn);
                 }else {
@@ -271,7 +273,10 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             return conn;
         } catch (ClassNotFoundException | SQLException e) {
             log.error(e.getMessage());
+            dataSourceRecordReq.setConnectStatus(Boolean.FALSE);
             throw new BusinessException(ErrorCode.CONNECT_DATABASE_FAILED);
+        } finally {
+            updateDataSourceRecord(dataSourceRecordReq);
         }
     }
 

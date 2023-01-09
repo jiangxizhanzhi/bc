@@ -40,5 +40,7 @@ public class ApiRequestRes extends PageReqBase implements Serializable {
     @ApiModelProperty("请求头")
     private String requestHeaders;
 
+    @ApiModelProperty("连接状态")
+    private Boolean connectStatus;
 
 }

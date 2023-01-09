@@ -245,6 +245,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         if (dataSourceTemplate == null) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_DB_TYPE);
         }
+        String resourceId = dataSourceRecordReq.getResourceId();
         Connection conn = null;
         try {
             Class.forName(dataSourceTemplate.getDataSource());
@@ -276,7 +277,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             dataSourceRecordReq.setConnectStatus(Boolean.FALSE);
             throw new BusinessException(ErrorCode.CONNECT_DATABASE_FAILED);
         } finally {
-            updateDataSourceRecord(dataSourceRecordReq);
+            if (StringUtils.isNotBlank(resourceId)) {
+                updateDataSourceRecord(dataSourceRecordReq);
+            }
         }
     }
 

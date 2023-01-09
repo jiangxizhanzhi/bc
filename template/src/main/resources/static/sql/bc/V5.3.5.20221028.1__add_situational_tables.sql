@@ -715,3 +715,5 @@ CREATE TABLE `situation_topo_config`
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 ALTER TABLE `bc`.`situation_datasource_record` ADD COLUMN `connect_status` BOOLEAN DEFAULT 1 NOT NULL COMMENT '连接状态'  AFTER `connect_address`;
+
+ALTER TABLE `bc`.`situation_api_request` ADD COLUMN `connect_status` BOOLEAN DEFAULT 1 NOT NULL COMMENT '连接状态' AFTER `request_method`;

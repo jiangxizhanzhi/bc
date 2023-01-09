@@ -38,6 +38,9 @@ public class ApiRequest extends BaseTable {
     @ApiModelProperty("请求方法")
     private String requestMethod;
 
+    @ApiModelProperty("连接状态")
+    private Boolean connectStatus;
+
     @ApiModelProperty("请求参数")
     private String requestParams;
 

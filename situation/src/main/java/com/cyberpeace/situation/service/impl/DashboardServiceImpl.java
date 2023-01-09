@@ -50,6 +50,7 @@ public class DashboardServiceImpl implements DashboardService {
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
 			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
 
+			dashboardBasicAttributeRes.setSchemeId(situationPublishInstances.getSchemeId());
 			dashboardBasicAttributeRes.setDashboardId(situationPublishInstances.getResourceId());
 			dashboardBasicAttributeRes.setSubRangeId(situationPublishInstances.getSubRangeId());
 			dashboardBasicAttributeRes.setTaskId(situationPublishInstances.getTaskId());

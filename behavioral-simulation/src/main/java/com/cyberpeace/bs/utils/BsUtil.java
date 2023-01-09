@@ -4,11 +4,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +29,10 @@ import com.google.common.collect.Maps;
 public class BsUtil {
 
 	private static final String JSON_LIST_INITIAL = "[";
+
+	public static final Map<String, Integer> stepMap = Maps.newHashMap();
+
+	public static final Map<String, LocalTime> markedId = Maps.newHashMap();
 
 	/**
 	 * 解析存储的行为列表json
@@ -246,4 +248,11 @@ public class BsUtil {
 		return (ipAddr & mask) == (cidrIpAddr & mask);
 	}
 
+	public static int calStep(String id) {
+		if(stepMap.containsKey(id)){
+			return stepMap.get(id);
+		} else {
+			return (int)((new Long(id)) % 4) + 8;
+		}
+	}
 }

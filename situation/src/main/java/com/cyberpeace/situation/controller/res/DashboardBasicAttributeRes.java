@@ -51,6 +51,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("任务/科目开始时间")
 	private Date startTime;
 
+	@ApiModelProperty("可视化方案ID")
+	private String schemeId;
+
 	@ApiModelProperty("环境配置方案ID")
 	private String envId;
 

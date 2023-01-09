@@ -18,6 +18,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.constant.TaskStatus;
+import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
@@ -25,8 +27,6 @@ import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.DynamicParameter;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.integratation.constant.TaskStatus;
-import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
@@ -254,12 +254,17 @@ public class DashboardController {
 			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
 		});
 
-		List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
-				.selectByNames(dynamicEffectNames);
 		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
-		dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
-			dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(), dynamicEffectsLibrary);
-		});
+
+		if (!dynamicEffectNames.isEmpty()) {
+			List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
+					.selectByNames(dynamicEffectNames);
+
+			dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
+				dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(),
+						dynamicEffectsLibrary);
+			});
+		}
 
 		// 转化
 		contextList.forEach(context -> {

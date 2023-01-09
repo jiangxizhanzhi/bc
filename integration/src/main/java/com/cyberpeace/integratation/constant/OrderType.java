@@ -8,8 +8,8 @@ public enum OrderType {
 	 * 指令类型
 	 */
 
-	CS("initialize", "初始化", null),
-	KS("begin", "开始", null),
+	CS("initialize", "初始化", "message"),
+	KS("begin", "开始", "message"),
 	ZT("stop", "暂停", "pause"),
 	JX("continue", "继续", "recovery"),
 	ZZ("termination", "终止", "stop"),

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.cyberpeace.integratation.constant.TaskType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.SubjectContext;
 import com.cyberpeace.integratation.model.situation.TopoContext;
 import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
@@ -132,6 +132,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
         dashboardAttribute.setTaskType(scheme.getTaskType());
         dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
+        if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())){
+            dashboardAttribute.setTaskSubType("1");
+        }
         String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "LG中心" : scheme.getSubRangeName();
         String taskName = scheme.getTaskName();
         dashboardAttribute.setTitle(rangeName + "任务态势");
@@ -199,9 +202,16 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     }
 
     private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId){
+
+        // 不重复处理拓扑坐标
+        TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
+        if (topoConfig != null){
+            return;
+        }
+
         TopoReq req = new TopoReq(subRangeId, taskId, subjectId, envId);
-        TopoContext topoContext = remoteSituationService.getTopo(req, true);
-        TopoConfig topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
+        TopoContext topoContext = remoteSituationService.getTopo(req, false);
+        topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
         topoConfigMapper.insert(topoConfig);
     }
 

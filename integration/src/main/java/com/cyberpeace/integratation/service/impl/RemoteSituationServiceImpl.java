@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -32,6 +31,8 @@ import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
@@ -204,11 +205,36 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
 		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
 		List<String> nodeIdList = getNodeIdList(nodeListReq);
+		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(
+				XD_TOPO_URL + "?platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class);
+		Map<String, Integer> nodeTypeStatistics = Maps.newHashMap();
+		List<NodeTypeStatisticsContext> nodeTypeStatisticsContexts = Lists.newArrayList();
+		topoBo.getNodes().forEach(elementContext -> {
+			if (nodeTypeStatistics.get(elementContext.getDeviceType()) == null) {
+				nodeTypeStatistics.put(elementContext.getDeviceType(), 1);
+			} else {
+				nodeTypeStatistics.put(elementContext.getDeviceType(),
+						nodeTypeStatistics.get(elementContext.getDeviceType()) + 1);
+			}
+		});
+
+		Map<String, ModelTypeContext> modelTypeContextMap = remoteOperationService
+				.getModelTypeListMap();
+
+		nodeTypeStatistics.forEach((key, value) -> {
+
+			if (modelTypeContextMap.get(key) != null) {
+				nodeTypeStatisticsContexts.add(new NodeTypeStatisticsContext(
+						modelTypeContextMap.get(key).getTypeName(), value));
+			}
+		});
+
 		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
 		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
 				nodeListApiReq, NetworkInfoContext.class);
-
+		networkInfoContext.setNodeCount(nodeIdList.size());
+		networkInfoContext.setNodeTypeStatistics(nodeTypeStatisticsContexts);
 		return networkInfoContext;
 	}
 

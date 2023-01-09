@@ -24,7 +24,8 @@ public enum MessageType {
 	BackToHome(14, "back_home"),
 	JumpPage(15, "jump_page"),
 	NodeMigration(16, "node_migration"),
-	TaskStatus(17, "status");
+	TaskStatus(17, "status"),
+	Message(18, "message");
 
 	@Getter
 	private Integer code;

@@ -19,7 +19,7 @@ public class ThirdPartyTopoBo implements Serializable {
 
 	private SceneContext baseInfo;
 
-	private Map<String, String> areas = Maps.newHashMap();
+	private List<AreaContext> areas = Lists.newArrayList();
 
 	private List<ElementContext> networks;
 
@@ -33,6 +33,7 @@ public class ThirdPartyTopoBo implements Serializable {
 		context.setBaseInfo(this.baseInfo);
 		context.setConnections(this.connections);
 		context.setElements(Maps.newHashMap());
+		context.setAreas(Maps.newHashMap());
 		Map<String, ElementContext> elementContextMap = Maps.newHashMap();
 		this.networks.forEach(network -> {
 			network.setElementType("network");
@@ -48,6 +49,9 @@ public class ThirdPartyTopoBo implements Serializable {
 			context.getElements().put(node.getElementId(), node);
 			elementContextMap.put(node.getElementId(), node);
 		});
+		this.areas.forEach(area -> {
+			context.getAreas().put(area.getAreaId(), area);
+		});
 		if (adjust) {
 			this.positionAdjust(elementContextMap);
 		}
@@ -56,7 +60,7 @@ public class ThirdPartyTopoBo implements Serializable {
 
 	private String getModelType(Map<String, ModelTypeContext> modelTypeContextMap, String typeId) {
 		ModelTypeContext modelTypeContext = modelTypeContextMap.get(typeId);
-		return modelTypeContext == null ? "未知类型" : modelTypeContext.getTypeName();
+		return modelTypeContext == null ? typeId : modelTypeContext.getTypeName();
 	}
 
 	private String getModelThreeDimensionPic(Map<String, ModelContext> modelContextMap,

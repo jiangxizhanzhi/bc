@@ -1,15 +1,14 @@
 package com.cyberpeace.bs.utils;
 
-import com.cyberpeace.bs.constant.BsErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.SystemPropUtil;
+import java.io.InputStream;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -18,13 +17,16 @@ import org.slf4j.impl.TraceIdContext;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.utils.model.LcResponse;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.HttpclientContext;
 import com.cyberpeace.common.model.HttpclientModel;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -179,6 +181,10 @@ public class LcHttpClient {
 	}
 
 	private static void setAuthorization(HttpUriRequest request) {
+		request.setHeader("Authorization", getToken());
+	}
+
+	private static String getToken() {
 		if (ROOT_TOKEN == null) {
 			String token = SystemPropUtil.getProp("LC_PERMANENT_TOKEN");
 			if (StringUtils.isBlank(token)) {
@@ -186,8 +192,7 @@ public class LcHttpClient {
 			}
 			ROOT_TOKEN = token;
 		}
-		String token = "Bearer " + ROOT_TOKEN;
-		request.setHeader("Authorization", token);
+		return "Bearer " + ROOT_TOKEN;
 	}
 
 	/**
@@ -197,5 +202,52 @@ public class LcHttpClient {
 	private static void setContext(String url) {
 		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
 		HttpclientContext.setContext(httpclientModel);
+	}
+
+	public static InputStream getInputStreamByPost(String url, String json) {
+		InputStream inputStream = null;
+		try {
+			// 1.创建httpclient对象
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			// 2.创建post方式请求对象
+			HttpPost httpPost = new HttpPost(url);
+			// 4.设置 json body
+			httpPost.addHeader("Content-Type", "application/json");
+			httpPost.setEntity(new StringEntity(json));
+			// 5.设置消息头
+//			httpPost.setHeader("Accept-Charset", "utf-8");
+			// 在请求中明确定义不要进行压缩
+//			httpPost.setHeader("Accept-Encoding", "identity");
+			httpPost.setHeader("Authorization", getToken());
+			// 6.发送消息，获取响应
+			CloseableHttpResponse res = httpClient.execute(httpPost);
+			if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				// 7.拿到响应结果实体
+				HttpEntity entity = res.getEntity();
+				if (entity != null) {
+					// 8.获取响应类型
+					Header header = entity.getContentType();
+					// 获取响应头部信息
+					if (header.toString().contains("application/zip")) {
+						inputStream = entity.getContent();
+					} else { // .2.返回的是错误信息
+						String resultMsg = EntityUtils.toString(entity);
+						JSONObject resultJson = JSONObject.parseObject(resultMsg);
+						throw new BusinessException(
+								resultJson.getJSONObject("head").getString("msg"));
+					}
+				}
+				// 8.释放资源
+				EntityUtils.consume(entity);
+			} else {
+				throw new BusinessException();
+			}
+			// 9.关闭连接
+			res.close();
+			return inputStream;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException();
+		}
 	}
 }

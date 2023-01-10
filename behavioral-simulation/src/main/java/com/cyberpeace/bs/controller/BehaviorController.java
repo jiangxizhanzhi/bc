@@ -17,6 +17,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+
 @Api(tags = "行为模拟-行为管理")
 @RestController
 @RequestMapping("/bs/behavior")
@@ -52,5 +60,41 @@ public class BehaviorController {
 	public BaseRsp<Boolean> deleteBehavior(@Validated @RequestBody IdListReq req) {
 		Boolean rsp = lcService.deleteBehavior(req.getIds());
 		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("导出行为")
+	@PostMapping("/export")
+	public void exportFile(HttpServletResponse response, @Validated @RequestBody IdListReq req)
+			throws IOException {
+		ServletOutputStream out = null;
+		InputStream inputStream = null;
+		try {
+			// 与服务器建立连接
+			inputStream = lcService.getBehaviorExportStream(req.getIds());
+			try {
+				// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+				response.setContentType("multipart/form-data");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			out = response.getOutputStream();
+			// 读取文件流
+			int len = 0;
+			byte[] buffer = new byte[1024 * 10];
+			while ((len = inputStream.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

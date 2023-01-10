@@ -8,6 +8,8 @@ import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -71,4 +73,11 @@ public interface LcService {
 	 * @param behaviorIds
 	 */
     Boolean deleteBehavior(List<String> behaviorIds);
+
+	/**
+	 * 获取 lc 行为导出文件流
+	 * @param behaviorIds
+	 * @return
+	 */
+	InputStream getBehaviorExportStream(List<String> behaviorIds) throws IOException;
 }

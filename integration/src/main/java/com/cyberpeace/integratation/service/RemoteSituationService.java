@@ -10,34 +10,6 @@ import com.cyberpeace.integratation.service.bo.situation.*;
 public interface RemoteSituationService {
 
 	/**
-	 * 根据任务获取科目list
-	 * @param taskIds 任务id
-	 * @return
-	 */
-	List<SituationSubject> getSubjectByTasks(List<String> taskIds);
-
-	/**
-	 * 根据任务获取科目list
-	 * @param taskId 任务id
-	 * @return
-	 */
-	List<SituationSubject> getSubjectByTask(String taskId);
-
-	/**
-	 * 根据任务类型获取任务list
-	 * @param type 任务类型
-	 * @param resourceId taskId
-	 * @return
-	 */
-	List<SituationTask> getTasks(String type, String resourceId);
-
-	/**
-	 * 获取所有想定方案
-	 * @return
-	 */
-	List<SituationPlan> getPlans();
-
-	/**
 	 * 获取分靶场详情
 	 * @return SubRangeInfoContext
 	 */

@@ -80,6 +80,11 @@ public class LcServiceImpl implements LcService {
 	 */
 	private String MONITOR_URL = "api/v1/monitor/findByDevice";
 
+	/**
+	 * 删除 lc 行为
+	 */
+	private String DELETE_BEHAVIOR_URL = "/api/v1/flowchart/delete-batch";
+
 
 	@PostConstruct
 	public void init() {
@@ -258,4 +263,11 @@ public class LcServiceImpl implements LcService {
 		LcMonitorRsp rsp = LcHttpClient.post(targetUrl, req, LcMonitorRsp.class);
 		return rsp;
 	}
+
+    @Override
+    public Boolean deleteBehavior(List<String> behaviorIds) {
+        String targetUrl = LC_HOST_PORT + DELETE_BEHAVIOR_URL;
+		Boolean rsp = LcHttpClient.post(targetUrl, behaviorIds, Boolean.class);
+		return rsp;
+    }
 }

@@ -65,4 +65,10 @@ public interface LcService {
 	 * @return
 	 */
 	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime);
+
+	/**
+	 * 批量删除lc行为
+	 * @param behaviorIds
+	 */
+    Boolean deleteBehavior(List<String> behaviorIds);
 }

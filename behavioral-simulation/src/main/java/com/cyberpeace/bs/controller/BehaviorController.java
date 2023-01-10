@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.controller;
 
+import com.cyberpeace.bs.controller.req.IdListReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,5 +45,12 @@ public class BehaviorController {
 	public BaseRsp updateVariables(@Validated @RequestBody VariableModifyReq req) {
 		lcService.updateVariable(req);
 		return new BaseRsp();
+	}
+
+	@ApiOperation("批量删除行为接口")
+	@DeleteMapping("/")
+	public BaseRsp<Boolean> deleteBehavior(@Validated @RequestBody IdListReq req) {
+		Boolean rsp = lcService.deleteBehavior(req.getIds());
+		return new BaseRsp<>(rsp);
 	}
 }

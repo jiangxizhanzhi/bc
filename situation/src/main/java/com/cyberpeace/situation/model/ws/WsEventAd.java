@@ -53,7 +53,7 @@ public class WsEventAd implements Serializable {
 	private Boolean lookAtTarget;
 
 	@ApiModelProperty("持续时间（秒）")
-	private Integer duration;
+	private Integer duration = 5;
 
 	@ApiModelProperty("事件信息")
 	private EventInfo eventInfo;

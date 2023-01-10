@@ -911,8 +911,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (!userIds.contains(ResourceImportConstant.SUPER_ADMIN_HASH)) {
 			userIds.add(ResourceImportConstant.SUPER_ADMIN_HASH);
 		}
+
 		if (!userIds.contains(classroom.getCreateUserId())) {
 			userIds.add(classroom.getCreateUserId());
+		}
+
+		// 防止创建者被删除
+		UserInfo createUser = remoteUserService.getById(classroom.getCreateUserId());
+		if (null == createUser) {
+			userIds.remove(classroom.getCreateUserId());
 		}
 
 		// 获取用户组装

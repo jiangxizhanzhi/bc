@@ -264,10 +264,11 @@ public class LcServiceImpl implements LcService {
 		return rsp;
 	}
 
-    @Override
-    public Boolean deleteBehavior(List<String> behaviorIds) {
-        String targetUrl = LC_HOST_PORT + DELETE_BEHAVIOR_URL;
-		Boolean rsp = LcHttpClient.post(targetUrl, behaviorIds, Boolean.class);
+	@Override
+	public Boolean deleteBehavior(List<String> behaviorIds) {
+		String targetUrl = LC_HOST_PORT + DELETE_BEHAVIOR_URL;
+		List<Long> lcBehaviorIds = behaviorIds.stream().map(Long::new).collect(Collectors.toList());
+		Boolean rsp = LcHttpClient.post(targetUrl, lcBehaviorIds, Boolean.class);
 		return rsp;
-    }
+	}
 }

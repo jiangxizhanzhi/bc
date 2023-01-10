@@ -1,10 +1,22 @@
 package com.cyberpeace.bs.controller;
 
-import com.cyberpeace.bs.controller.req.IdListReq;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
@@ -16,14 +28,6 @@ import com.cyberpeace.common.model.ListRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
 
 @Api(tags = "行为模拟-行为管理")
 @RestController
@@ -68,15 +72,28 @@ public class BehaviorController {
 			throws IOException {
 		ServletOutputStream out = null;
 		InputStream inputStream = null;
+		CloseableHttpResponse res = lcService.getBehaviorExportRsp(req.getIds());
 		try {
 			// 与服务器建立连接
-			inputStream = lcService.getBehaviorExportStream(req.getIds());
-			try {
-				// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
-				response.setContentType("multipart/form-data");
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				throw new RuntimeException("远程错误: " + res.getEntity().getContent().toString());
 			}
+			// 7.拿到响应结果实体
+			HttpEntity entity = res.getEntity();
+			if (entity == null) {
+				throw new RuntimeException("Empty response");
+			}
+			// 8.获取响应类型
+			Header contentType = entity.getContentType();
+			// 获取响应头部信息
+			if (!contentType.toString().contains("application/zip")) {
+				String resultMsg = EntityUtils.toString(entity);
+				JSONObject resultJson = JSONObject.parseObject(resultMsg);
+				throw new RuntimeException(resultJson.getString("msg"));
+			}
+			inputStream = entity.getContent();
+			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+			response.setContentType("multipart/form-data");
 			out = response.getOutputStream();
 			// 读取文件流
 			int len = 0;
@@ -85,9 +102,14 @@ public class BehaviorController {
 				out.write(buffer, 0, len);
 			}
 			out.flush();
+			// 8.释放资源
+			EntityUtils.consume(entity);
 		} catch (Exception e) {
 			e.printStackTrace();
+			response.setStatus(500);
 		} finally {
+			// 9.关闭连接
+			res.close();
 			if (inputStream != null) {
 				try {
 					inputStream.close();

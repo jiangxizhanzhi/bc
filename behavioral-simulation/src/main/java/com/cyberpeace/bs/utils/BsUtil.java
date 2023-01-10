@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.compress.utils.Lists;
@@ -22,6 +23,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.google.common.collect.Maps;
+import org.apache.shiro.util.CollectionUtils;
 
 /**
  * @author SN
@@ -249,10 +251,17 @@ public class BsUtil {
 	}
 
 	public static int calStep(String id) {
-		if(stepMap.containsKey(id)){
+		if (stepMap.containsKey(id)) {
 			return stepMap.get(id);
 		} else {
-			return (int)((new Long(id)) % 4) + 8;
+			return (int) ((new Long(id)) % 4) + 8;
 		}
+	}
+
+	public static List<Long> getLcBehaviorIds(List<String> behaviorIds) {
+		if (CollectionUtils.isEmpty(behaviorIds)) {
+			return Lists.newArrayList();
+		}
+		return behaviorIds.stream().map(Long::new).collect(Collectors.toList());
 	}
 }

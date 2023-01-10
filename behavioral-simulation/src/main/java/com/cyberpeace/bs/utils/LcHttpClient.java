@@ -204,8 +204,8 @@ public class LcHttpClient {
 		HttpclientContext.setContext(httpclientModel);
 	}
 
-	public static InputStream getInputStreamByPost(String url, String json) {
-		InputStream inputStream = null;
+	public static CloseableHttpResponse getClosableHttpRspByPost(String url, String json) {
+		CloseableHttpResponse res = null;
 		try {
 			// 1.创建httpclient对象
 			CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -220,34 +220,11 @@ public class LcHttpClient {
 //			httpPost.setHeader("Accept-Encoding", "identity");
 			httpPost.setHeader("Authorization", getToken());
 			// 6.发送消息，获取响应
-			CloseableHttpResponse res = httpClient.execute(httpPost);
-			if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// 7.拿到响应结果实体
-				HttpEntity entity = res.getEntity();
-				if (entity != null) {
-					// 8.获取响应类型
-					Header header = entity.getContentType();
-					// 获取响应头部信息
-					if (header.toString().contains("application/zip")) {
-						inputStream = entity.getContent();
-					} else { // .2.返回的是错误信息
-						String resultMsg = EntityUtils.toString(entity);
-						JSONObject resultJson = JSONObject.parseObject(resultMsg);
-						throw new BusinessException(
-								resultJson.getJSONObject("head").getString("msg"));
-					}
-				}
-				// 8.释放资源
-				EntityUtils.consume(entity);
-			} else {
-				throw new BusinessException();
-			}
-			// 9.关闭连接
-			res.close();
-			return inputStream;
-		} catch (Exception e) {
+			res = httpClient.execute(httpPost);
+		} catch (Exception e){
 			e.printStackTrace();
 			throw new BusinessException();
 		}
+		return res;
 	}
 }

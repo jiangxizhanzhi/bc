@@ -20,26 +20,18 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -286,19 +278,16 @@ public class LcServiceImpl implements LcService {
 	@Override
 	public Boolean deleteBehavior(List<String> behaviorIds) {
 		String targetUrl = LC_HOST_PORT + DELETE_BEHAVIOR_URL;
-		List<Long> lcBehaviorIds = behaviorIds.stream().map(Long::new).collect(Collectors.toList());
+		List<Long> lcBehaviorIds = BsUtil.getLcBehaviorIds(behaviorIds);
 		Boolean rsp = LcHttpClient.post(targetUrl, lcBehaviorIds, Boolean.class);
 		return rsp;
 	}
 
 	@Override
-	public InputStream getBehaviorExportStream(List<String> behaviorIds) throws IOException {
-
+	public CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException {
 		String targetUrl = LC_HOST_PORT + BEHAVIOR_EXPORT;
-		List<Long> lcBehaviorIds = behaviorIds.stream().map(Long::new).collect(Collectors.toList());
+		List<Long> lcBehaviorIds = BsUtil.getLcBehaviorIds(behaviorIds);
 		String body = JsonUtil.toJsonString(lcBehaviorIds);
-		InputStream inputStream = LcHttpClient.getInputStreamByPost(targetUrl, body);
-		return inputStream;
-
+		return LcHttpClient.getClosableHttpRspByPost(targetUrl, body);
 	}
 }

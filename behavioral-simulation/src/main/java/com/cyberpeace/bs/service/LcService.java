@@ -7,6 +7,7 @@ import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,5 +80,5 @@ public interface LcService {
 	 * @param behaviorIds
 	 * @return
 	 */
-	InputStream getBehaviorExportStream(List<String> behaviorIds) throws IOException;
+	CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException;
 }

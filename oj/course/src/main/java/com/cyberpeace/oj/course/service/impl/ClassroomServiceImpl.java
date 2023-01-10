@@ -998,7 +998,10 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 		if (null == userMap.get(classroom.getCreateUserId())) {
 			UserInfo create = remoteUserService.getById(classroom.getCreateUserId());
-			userInfos.add(create);
+			// 防止创建者被删除
+			if (null != create) {
+				userInfos.add(create);
+			}
 		}
 
 		// 数据转换

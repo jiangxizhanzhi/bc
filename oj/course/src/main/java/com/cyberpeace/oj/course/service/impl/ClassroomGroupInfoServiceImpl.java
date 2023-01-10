@@ -551,10 +551,7 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	 */
 	private List<ClassroomGroupInfo> getUpdateAndDeleteNoneGroup(String classroomId,
 			List<String> deleteUserIds) {
-		
-		if (CollectionUtils.isEmpty(deleteUserIds)) {
-			return Lists.newArrayList();
-		}
+
 		// 数据查询 校验
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 		if (CollectionUtils.isEmpty(groupInfos)) {

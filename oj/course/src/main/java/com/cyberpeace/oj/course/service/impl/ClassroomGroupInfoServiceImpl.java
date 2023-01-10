@@ -137,10 +137,6 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 		// 计算删除的用户 将用户从组中删除 创建者可能不在本组织内
 		List<String> deleteUserIds = (List<String>) CollectionUtils.removeAll(classroomUserIds,
 				orgUserIds);
-		if (CollectionUtils.isNotEmpty(deleteUserIds)) {
-			deleteUserIds.remove(classroom.getCreateUserId());
-		}
-
 		List<ClassroomGroupInfo> updateGroups = getUpdateAndDeleteNoneGroup(classroomId,
 				deleteUserIds);
 
@@ -555,6 +551,10 @@ public class ClassroomGroupInfoServiceImpl extends ServiceImpl<ClassroomGroupInf
 	 */
 	private List<ClassroomGroupInfo> getUpdateAndDeleteNoneGroup(String classroomId,
 			List<String> deleteUserIds) {
+		
+		if (CollectionUtils.isEmpty(deleteUserIds)) {
+			return Lists.newArrayList();
+		}
 		// 数据查询 校验
 		List<ClassroomGroupInfo> groupInfos = classroomGroupInfoMapper.selectByRoom(classroomId);
 		if (CollectionUtils.isEmpty(groupInfos)) {

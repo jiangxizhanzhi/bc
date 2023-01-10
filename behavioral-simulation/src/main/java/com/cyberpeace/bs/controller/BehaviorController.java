@@ -93,7 +93,7 @@ public class BehaviorController {
 			}
 			inputStream = entity.getContent();
 			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
-			response.setContentType("multipart/form-data");
+			response.setContentType("application/zip");
 			out = response.getOutputStream();
 			// 读取文件流
 			int len = 0;

@@ -162,7 +162,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	 * @return
 	 */
 	@Override
-	@Cacheable(cacheNames = "getFuzzyQueryuser", key = "#userPageContext")
+	@Cacheable(cacheNames = "getFuzzyQueryuser", key = "#p0.ids+#p0.username+#p0.page+#p0.perPage")
 	public List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext) {
 		List<UserInfo> userInfoList = new ArrayList<>();
 

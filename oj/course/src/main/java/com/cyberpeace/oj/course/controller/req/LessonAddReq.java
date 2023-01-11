@@ -52,10 +52,10 @@ public class LessonAddReq implements Serializable {
 	private String courseId;
 
 	@ApiModelProperty("讲义文件")
-	private MultipartFile handout;
+	private String handout;
 
 	@ApiModelProperty("视频文件")
-	private MultipartFile video;
+	private String video;
 
 	@ApiModelProperty(name = "oj_scene_config", value = "场景配置信息")
 	private String ojSceneConfig;

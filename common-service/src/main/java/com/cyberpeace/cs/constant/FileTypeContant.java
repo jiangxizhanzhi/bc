@@ -23,4 +23,14 @@ public interface FileTypeContant {
 	/** 工具库文件上传*/
 	String TOOL_ATTACHMENT = "ZIP,RAR";
 
+	/**
+	 * 课时讲义文件上传
+	 */
+	String VIDEO_ATTACHMENT_TYPE = "MP4, M4V";
+
+	/**
+	 * 课时视频文件上传
+	 */
+	String HANDOUT_ATTACHMENT_TYPE = "PDF,ZIP,DOC,DOCX,PPT,PPTX";
+
 }

@@ -996,34 +996,29 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	}
 
 	@Override
-	public void uploadHandout(CourseLesson courseLesson, MultipartFile handout) {
+	public void uploadHandout(CourseLesson courseLesson, String handout) {
 
 		if (null == handout) {
 			return;
 		}
 
-		FileUtil.validateFileSuffix(handout.getOriginalFilename(),
-				FileTypeContant.LESSON_HANDOUT_TYPE);
-		String suffix = FileUtil.getFileSuffix(handout.getOriginalFilename());
-		suffix = suffix.toLowerCase();
+		String[] split = handout.split("\\.");
+		String suffix = split[split.length-1];
 
 		// zip可能为md 或者 html
 		if (suffix.equals(FileSunffixConstant.ZIP.getDesc())) {
 
 			// 文件上传至服务器 原始文件地址存储
-			String markdownPath = String.format(AttachmentPath.MARKDOWN.getDesc(),
-					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, handout);
-			courseLesson.setOriginMarkdownFile(attachmentBo.getFilePath());
+			courseLesson.setOriginMarkdownFile(handout);
 
 			// 获取讲义文件存储地址
 			String handoutPath = String.format(AttachmentPath.HANDOUT.getDesc(),
 					courseLesson.getCourseId());
-			String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+			String realPath = handout;
 
 			// 计算要解压的文件地址
 			String unzipPath = handoutPath + FileUtil.getFileName(realPath, false);
-			ZipUtil.unzipToDest(realPath, unzipPath);
+			ZipUtil.unzipToDest(handout, unzipPath);
 
 			// 获取解压的讲义文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
@@ -1040,43 +1035,37 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// pdf讲义文件上传
 		if (suffix.equals(FileSunffixConstant.PDF.getDesc())) {
 			courseLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
-			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
+			courseLesson.setHandoutUrl(handout);
 		}
 
 		// word文档
 		if (suffix.equals(FileSunffixConstant.DOC.getDesc())
 				|| suffix.equals(FileSunffixConstant.DOCX.getDesc())) {
 			courseLesson.setHandoutType(CourseLesson.HandoutType.DOC.getCode());
-			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
+			courseLesson.setHandoutUrl(handout);
 		}
 
 		// ppt文档
 		if (suffix.equals(FileSunffixConstant.PPT.getDesc())
 				|| suffix.equals(FileSunffixConstant.PPTX.getDesc())) {
 			courseLesson.setHandoutType(CourseLesson.HandoutType.PPT.getCode());
-			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
+			courseLesson.setHandoutUrl(handout);
 		}
 
 		// xls文档
 		if (suffix.equals(FileSunffixConstant.XLS.getDesc())
 				|| suffix.equals(FileSunffixConstant.XLSX.getDesc())) {
 			courseLesson.setHandoutType(CourseLesson.HandoutType.XLS.getCode());
-			courseLesson.setHandoutUrl(uploadHandout(courseLesson.getCourseId(), handout));
+			courseLesson.setHandoutUrl(handout);
 		}
 
 	}
 
 	@Override
-	public void uploadVideo(CourseLesson courseLesson, MultipartFile video) {
+	public void uploadVideo(CourseLesson courseLesson, String video) {
 
 		if (null != video) {
-			FileUtil.validateSuffix(video, FileSunffixConstant.MP4.getDesc(),
-					FileSunffixConstant.M4V.getDesc());
-
-			String videoPath = String.format(AttachmentPath.VIDEO.getDesc(),
-					courseLesson.getCourseId());
-			AttachmentBo attachmentBo = attachmentService.uploadDest(videoPath, false, video);
-			courseLesson.setVideoUrl(attachmentBo.getFilePath());
+			courseLesson.setVideoUrl(video);
 		}
 	}
 

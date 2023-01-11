@@ -1,22 +1,12 @@
 package com.cyberpeace.bs.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
@@ -71,60 +61,8 @@ public class BehaviorController {
 
 	@ApiOperation("导出行为")
 	@PostMapping("/export")
-	public void exportFile(HttpServletResponse response, @Validated @RequestBody IdListReq req)
-			throws IOException {
-		ServletOutputStream out = null;
-		InputStream inputStream = null;
-		CloseableHttpResponse res = lcService.getBehaviorExportRsp(req.getIds());
-		try {
-			if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-				throw new RuntimeException("远程错误: " + res.getEntity().getContent().toString());
-			}
-			// 7.拿到响应结果实体
-			HttpEntity entity = res.getEntity();
-			if (entity == null) {
-				throw new RuntimeException("Empty response");
-			}
-			// 8.获取响应类型
-			Header contentType = entity.getContentType();
-			// 获取响应头部信息
-			if (!contentType.toString().contains("application/zip")) {
-				String resultMsg = EntityUtils.toString(entity);
-				JSONObject resultJson = JSONObject.parseObject(resultMsg);
-				throw new RuntimeException(resultJson.getString("msg"));
-			}
-			inputStream = entity.getContent();
-			// 1.设置文件ContentType类型
-			response.setContentType("application/zip");
-			response.setHeader("Content-Disposition", String.format(
-					"attachment; filename=behavior_export_%d.zip", System.currentTimeMillis()));
-			out = response.getOutputStream();
-			// 读取文件流
-			int len = 0;
-			byte[] buffer = new byte[1024 * 10];
-			while ((len = inputStream.read(buffer)) != -1) {
-				out.write(buffer, 0, len);
-			}
-			out.flush();
-			// 8.释放资源
-			EntityUtils.consume(entity);
-		} catch (Exception e) {
-			e.printStackTrace();
-			response.setStatus(500);
-		} finally {
-			try {
-				// 9.关闭连接
-				res.close();
-				if (inputStream != null) {
-					inputStream.close();
-				}
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public void exportFile(HttpServletResponse response, @Validated @RequestBody IdListReq req) {
+		lcService.exportBehavior(response, req.getIds());
 	}
 
 	@ApiOperation("导入行为")

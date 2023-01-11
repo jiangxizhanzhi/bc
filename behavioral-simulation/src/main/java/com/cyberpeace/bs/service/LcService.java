@@ -1,10 +1,10 @@
 package com.cyberpeace.bs.service;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
@@ -78,16 +78,16 @@ public interface LcService {
 	Boolean deleteBehavior(List<String> behaviorIds);
 
 	/**
-	 * 获取 lc 行为导出文件流
-	 * @param behaviorIds
-	 * @return
-	 */
-	CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException;
-
-	/**
 	 * 导入 lc 行为文件
 	 * @param file
 	 * @return
 	 */
 	String importBehavior(MultipartFile file);
+
+	/**
+	 * 导出 lc 行为
+	 * @param response 
+	 * @param behaviorIds
+	 */
+	void exportBehavior(HttpServletResponse response, List<String> behaviorIds);
 }

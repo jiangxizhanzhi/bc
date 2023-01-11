@@ -1,10 +1,17 @@
 package com.cyberpeace.bs.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
@@ -204,27 +211,6 @@ public class LcHttpClient {
 		HttpclientContext.setContext(httpclientModel);
 	}
 
-	public static CloseableHttpResponse getClosableHttpRspByPost(String url, String json) {
-		CloseableHttpResponse res = null;
-		try {
-			// 1.创建httpclient对象
-			CloseableHttpClient httpClient = HttpClients.createDefault();
-			// 2.创建post方式请求对象
-			HttpPost httpPost = new HttpPost(url);
-			// 4.设置 json body
-			httpPost.addHeader("Content-Type", "application/json");
-			httpPost.setEntity(new StringEntity(json));
-			// set headers
-			setAuthorization(httpPost);
-			// 6.发送消息，获取响应
-			res = httpClient.execute(httpPost);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BusinessException();
-		}
-		return res;
-	}
-
 	public static String uploadFile2Lc(String url, MultipartFile file) {
 		// 1、设置请求线程数据
 		setContext(url);
@@ -244,5 +230,97 @@ public class LcHttpClient {
 		httpPost.setEntity(entity);
 		String rsp = doHttp(httpPost, String.class);
 		return rsp;
+	}
+
+	public static void exportBehavior(HttpServletResponse response, List<Long> lcBehaviorIds,
+			String url) {
+		ServletOutputStream out = null;
+		InputStream inputStream = null;
+		CloseableHttpResponse lcRsp = getClosableHttpRspByPost(url, lcBehaviorIds);
+		if (lcRsp == null) {
+			doException(response);
+			return;
+		}
+		try {
+			// not 200 rsp
+			if (lcRsp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				log.error("lc remote exception: {}", lcRsp.getEntity().getContent().toString());
+				response.setStatus(lcRsp.getStatusLine().getStatusCode());
+				return;
+			}
+			// 拿到响应结果实体
+			HttpEntity entity = lcRsp.getEntity();
+			if (entity == null) {
+				log.error("Empty response from lc behavior export");
+				doException(response);
+				return;
+			}
+			// 获取响应类型
+			Header contentType = entity.getContentType();
+			// 返回不是zip包
+			if (!contentType.toString().contains("application/zip")) {
+				String msg = parseHttpResponse(
+						EntityUtils.toString(lcRsp.getEntity(), WebConstant.ENCODING),
+						String.class);
+				log.error("rsp not a zip file" + msg);
+				return;
+			}
+			// 获取文件流
+			inputStream = entity.getContent();
+			// 设置文件ContentType类型和文件名
+			response.setContentType("application/zip");
+			response.setHeader("Content-Disposition", String.format(
+					"attachment; filename=behavior_export_%d.zip", System.currentTimeMillis()));
+			out = response.getOutputStream();
+			// input文件流写入out
+			int len = 0;
+			byte[] buffer = new byte[1024 * 10];
+			while ((len = inputStream.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+			// 释放资源
+			EntityUtils.consume(entity);
+		} catch (Exception e) {
+			log.error("failed to export behavior", e);
+			doException(response);
+		} finally {
+			try {
+				// 释放资源
+				lcRsp.close();
+				if (inputStream != null) {
+					inputStream.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private static <T> CloseableHttpResponse getClosableHttpRspByPost(String url, T body) {
+		CloseableHttpResponse res = null;
+		try {
+			// 1.创建httpclient对象
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			// 2.创建post方式请求对象
+			HttpPost httpPost = new HttpPost(url);
+			// 4.设置 json body
+			httpPost.addHeader("Content-Type", "application/json");
+			httpPost.setEntity(new StringEntity(JsonUtil.toJsonString(body)));
+			// set headers
+			setAuthorization(httpPost);
+			// do request
+			res = httpClient.execute(httpPost);
+		} catch (Exception e) {
+			log.error("failed to get rsp from lc: ", e);
+		}
+		return res;
+	}
+
+	private static void doException(HttpServletResponse response) {
+		response.setStatus(500);
 	}
 }

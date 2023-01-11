@@ -1,15 +1,14 @@
 package com.cyberpeace.bs.service.impl;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -286,17 +285,16 @@ public class LcServiceImpl implements LcService {
 	}
 
 	@Override
-	public CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException {
-		String targetUrl = LC_HOST_PORT + BEHAVIOR_EXPORT;
-		List<Long> lcBehaviorIds = BsUtil.getLcBehaviorIds(behaviorIds);
-		String body = JsonUtil.toJsonString(lcBehaviorIds);
-		return LcHttpClient.getClosableHttpRspByPost(targetUrl, body);
-	}
-
-	@Override
 	public String importBehavior(MultipartFile file) {
 		String url = LC_HOST_PORT + BEHAVIOR_IMPORT_GZ;
 		String rsp = LcHttpClient.uploadFile2Lc(url, file);
 		return rsp;
+	}
+
+	@Override
+	public void exportBehavior(HttpServletResponse response, List<String> behaviorIds) {
+		String targetUrl = LC_HOST_PORT + BEHAVIOR_EXPORT;
+		List<Long> lcBehaviorIds = BsUtil.getLcBehaviorIds(behaviorIds);
+		LcHttpClient.exportBehavior(response, lcBehaviorIds, targetUrl);
 	}
 }

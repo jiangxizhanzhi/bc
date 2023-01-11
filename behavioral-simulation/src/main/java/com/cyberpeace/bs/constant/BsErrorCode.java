@@ -71,4 +71,9 @@ public interface BsErrorCode {
 	 * 未配置外部网络网段
 	 */
 	String SEGMENT_NOT_CONFIGURED = "105014";
+
+	/**
+	 * 导出行为失败
+	 */
+	String FAILED_TO_EXPORT = "105015";
 }

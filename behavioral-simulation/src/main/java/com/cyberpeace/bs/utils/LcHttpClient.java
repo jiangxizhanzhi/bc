@@ -8,7 +8,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -238,32 +237,20 @@ public class LcHttpClient {
 		InputStream inputStream = null;
 		CloseableHttpResponse lcRsp = getClosableHttpRspByPost(url, lcBehaviorIds);
 		if (lcRsp == null) {
-			doException(response);
-			return;
+			throw new RemoteServiceException();
 		}
 		try {
-			// not 200 rsp
-			if (lcRsp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-				log.error("lc remote exception: {}", lcRsp.getEntity().getContent().toString());
-				response.setStatus(lcRsp.getStatusLine().getStatusCode());
-				return;
-			}
 			// 拿到响应结果实体
 			HttpEntity entity = lcRsp.getEntity();
 			if (entity == null) {
-				log.error("Empty response from lc behavior export");
-				doException(response);
-				return;
+				throw new RemoteServiceException("Empty response from lc behavior export");
 			}
-			// 获取响应类型
-			Header contentType = entity.getContentType();
-			// 返回不是zip包
-			if (!contentType.toString().contains("application/zip")) {
-				String msg = parseHttpResponse(
-						EntityUtils.toString(lcRsp.getEntity(), WebConstant.ENCODING),
-						String.class);
-				log.error("rsp not a zip file" + msg);
-				return;
+			// not 200 rsp || not zip file
+			if (lcRsp.getStatusLine().getStatusCode() != HttpStatus.SC_OK
+					|| !entity.getContentType().toString().contains("application/zip")) {
+				String body = EntityUtils.toString(lcRsp.getEntity(), WebConstant.ENCODING);
+				log.error("lc remote exception: {}", body);
+				throw new RemoteServiceException(getErrorMessage(body));
 			}
 			// 获取文件流
 			inputStream = entity.getContent();
@@ -281,9 +268,11 @@ public class LcHttpClient {
 			out.flush();
 			// 释放资源
 			EntityUtils.consume(entity);
+		} catch (RemoteServiceException e1) {
+			throw e1;
 		} catch (Exception e) {
 			log.error("failed to export behavior", e);
-			doException(response);
+			throw new BusinessException(BsErrorCode.FAILED_TO_EXPORT);
 		} finally {
 			try {
 				// 释放资源
@@ -297,6 +286,20 @@ public class LcHttpClient {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * 尝试获取错误提示
+	 * @param rsp 
+	 * @return
+	 */
+	private static String getErrorMessage(String rsp) {
+		try {
+			LcResponse response = JsonUtil.toJsonObject(rsp, LcResponse.class);
+			return response.getMsg();
+		} catch (Exception e) {
+			return rsp;
 		}
 	}
 
@@ -318,9 +321,5 @@ public class LcHttpClient {
 			log.error("failed to get rsp from lc: ", e);
 		}
 		return res;
-	}
-
-	private static void doException(HttpServletResponse response) {
-		response.setStatus(500);
 	}
 }

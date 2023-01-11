@@ -83,4 +83,11 @@ public class ApiRequestController {
     public BaseRsp<JSONObject> getConnectSourceData(@RequestBody @Validated ApiConnectReq apiConnectReq){
         return new BaseRsp<>(JSONObject.parseObject(apiRequestService.apiConnectTest(apiConnectReq)));
     }
+
+    @ApiOperation("api列表页测试连接")
+    @PostMapping("list/test")
+    public BaseRsp<String> apiConnectTest(@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id", value = "api资源id")
+                                                                String resourceId) {
+        return new BaseRsp<>(apiRequestService.apiConnectTest(resourceId));
+    }
 }

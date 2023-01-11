@@ -16,6 +16,7 @@ import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.DataSourceService;
@@ -140,9 +141,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         String componentsSetting = dashboardTemplate.getComponentsSetting();
+        String viewAngle = dashboardTemplate.getViewAngle();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplate, DashboardTemplateRes.class);
-
+        if (StringUtils.isNotBlank(viewAngle)) {
+            dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
+        }
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             //按图层进行排序
@@ -231,10 +235,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         DashboardTemplate dashboardTemplate = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplate.class);
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        ViewAngle viewAngle = dashBoardTemplateReq.getViewAngle();
         if (CollectionUtils.isNotEmpty(componentsSetting)) {
             jsonArray.addAll(componentsSetting);
         }
         dashboardTemplate.setComponentsSetting(jsonArray.toString());
+        if (viewAngle != null) {
+            dashboardTemplate.setViewAngle(JSONObject.toJSONString(viewAngle));
+        }
         return dashboardTemplate;
     }
 

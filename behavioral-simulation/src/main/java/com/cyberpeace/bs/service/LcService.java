@@ -7,7 +7,10 @@ import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -65,4 +68,17 @@ public interface LcService {
 	 * @return
 	 */
 	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime);
+
+	/**
+	 * 批量删除lc行为
+	 * @param behaviorIds
+	 */
+    Boolean deleteBehavior(List<String> behaviorIds);
+
+	/**
+	 * 获取 lc 行为导出文件流
+	 * @param behaviorIds
+	 * @return
+	 */
+	CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException;
 }

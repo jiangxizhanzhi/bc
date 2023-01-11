@@ -35,6 +35,7 @@ import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.LineStyle;
 import com.cyberpeace.situation.model.ViewAngle;
+import com.cyberpeace.situation.model.ws.DashboardMessage;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
@@ -205,6 +206,17 @@ public class DashboardController {
 				json.toJSONString(), new TypeReference<Map<String, ElementSlimContext>>() {});
 
 		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts, elementSlimContextMap);
+
+		List<DashboardMessage> messages = Lists.newArrayList();
+		eventAds.forEach(wsEventAd -> {
+			messages.add(new DashboardMessage(wsEventAd.getEventInfo().getDescription(), 5));
+		});
+
+		// 推送攻防事件消息弹窗
+		situationHandlerService.batchPushDataToDashboard(MessageType.Message.getDesc(),
+				eventReq.getDashboardId(), eventReq.getFeatureId(), messages, null, null);
+
+		// 推送攻防事件数据
 		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(),
 				eventReq.getDashboardId(), eventReq.getFeatureId(), eventAds, null, null);
 

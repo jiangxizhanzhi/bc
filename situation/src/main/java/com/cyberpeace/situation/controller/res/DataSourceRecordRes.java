@@ -28,4 +28,6 @@ public class DataSourceRecordRes extends PageReqBase implements Serializable {
     @ApiModelProperty("数据源连接端口")
     private String port;
 
+    @ApiModelProperty("连接状态")
+    private Boolean connectStatus;
 }

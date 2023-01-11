@@ -56,4 +56,12 @@ public interface ApiRequestService {
      * @return
      */
     ListRsp<ApiRequestRes> getApiConnectPage(ApiRequestPageReq apiRequestPageReq);
+
+    /**
+     * 根据resourceId测试连接
+     * @param resourceId
+     * @return
+     */
+    String apiConnectTest(String resourceId);
+
 }

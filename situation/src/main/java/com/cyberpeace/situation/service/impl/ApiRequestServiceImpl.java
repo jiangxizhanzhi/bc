@@ -55,6 +55,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         String userId = UserInfoContext.getUserContext().getUserId();
         apiRequest.setResourceId(IDGeneratorUtil.getID());
         apiRequest.setCreateUserId(userId);
+        apiRequest.setConnectStatus(Boolean.TRUE);
         apiRequestMapper.insert(apiRequest);
         return apiRequest.getResourceId();
     }
@@ -100,6 +101,8 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         JSONObject body = getBody(apiConnectReq);
         HttpEntity httpEntity = new HttpEntity(body, headers);
         String requestUrl = apiConnectReq.getRequestUrl();
+        String resourceId = apiConnectReq.getResourceId();
+        ApiRequest apiRequest = apiConnectReqToApiRequest(apiConnectReq);
         String message = null;
         try {
             ResponseEntity response = restTemplate.exchange(requestUrl, Objects.requireNonNull(HttpMethod.resolve(requestMethod)), httpEntity, String.class);
@@ -107,9 +110,15 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
             if (response.getBody() != null) {
                 message = response.getBody().toString();
             }
+            apiRequest.setConnectStatus(Boolean.TRUE);
         } catch (Exception e) {
             log.info(e.getMessage());
-            return e.getMessage();
+            apiRequest.setConnectStatus(Boolean.FALSE);
+            message = e.getMessage();
+        } finally {
+            if (StringUtils.isNotBlank(resourceId)) {
+                apiRequestMapper.updateById(apiRequest);
+            }
         }
         return message;
     }
@@ -120,6 +129,16 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.FALSE);
         return PageUtil.getListResult(this.getBaseMapper().selectPage(page, authContext, apiRequestPageReq));
+    }
+
+    @Override
+    public String apiConnectTest(String resourceId) {
+        ApiRequest apiRequest = apiRequestMapper.selectById(resourceId);
+        if (apiRequest == null) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        ApiConnectReq apiConnectReq = apiRequestToApiConnectReq(apiRequest);
+        return apiConnectTest(apiConnectReq);
     }
 
     private ApiRequest apiConnectReqToApiRequest(ApiConnectReq apiConnectReq) {

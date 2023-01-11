@@ -47,4 +47,7 @@ public class DataSourceRecord extends BaseTable implements Serializable {
 
     @ApiModelProperty("创建了")
     private String createUserId;
+
+    @ApiModelProperty("连接状态")
+    private Boolean connectStatus;
 }

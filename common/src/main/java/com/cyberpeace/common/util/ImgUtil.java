@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.luciad.imageio.webp.WebPReadParam;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class ImgUtil {
 	//webp格式的图片转成jpg格式的图片
 	public static void webpToJpg(String webpPath, String jpgPath) throws IOException {
 		if(!jpgPath.endsWith("jpg")){
-			throw new BusinessException();
+			throw new BusinessException(ErrorCode.ILLEGAL_PICTURE_SUFFIX);
 		}
 
 		// Obtain a WebP ImageReader instance

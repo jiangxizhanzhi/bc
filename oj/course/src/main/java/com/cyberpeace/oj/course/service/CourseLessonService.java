@@ -149,14 +149,14 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param courseLesson
 	 * @param handout
 	 */
-	void uploadHandout(CourseLesson courseLesson, MultipartFile handout);
+	void uploadHandout(CourseLesson courseLesson, String handout);
 
 	/**
 	 * 上传视频文件
 	 * @param courseLesson
 	 * @param video
 	 */
-	void uploadVideo(CourseLesson courseLesson, MultipartFile video);
+	void uploadVideo(CourseLesson courseLesson, String video);
 
 	/**
 	 * 课时批量删除

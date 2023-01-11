@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1134,8 +1136,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), false);
 		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
+		//课程名称
 		String lessonName = lesson.getName();
 		String  htmlPath = basePath + File.separator + lessonName;
+		//清理目录
+		File file = new File(htmlPath);
+		if (file.exists()) {
+			FileUtil.deleteDir(file);
+		}
 		FileUtil.mkdirs(htmlPath);
 
 		List<UserInfo> userInfos = remoteUserService.ListByOrgId(classroom.getOrganizationId(),
@@ -1145,37 +1153,78 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Map<String, UserInfo> evaluateUser = Maps.newHashMap();
 		List<ClassroomReportBo> data = StreamApiUtils.map(userInfos,
 				userInfo -> userToReportBo(userInfo, courseLesson, orgMap, evaluateUser));
+		//过滤实验报告为空的情况
 		List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent()!=null);
-		if(filterData.size() == 0){
+		if (filterData.size() == 0){
 			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
 		}
 		for(ClassroomReportBo classroomReportBo: filterData){
+			String personName = classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + lessonName + "-课时报告";
+			String baseClassroomPath = htmlPath + File.separator + personName;
 			JSONObject jsonObject = new JSONObject();
 			String mdContent = classroomReportBo.getContent();
+			//处理图片
+			List<String> strList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_IMAGE);
+			for (String str : strList) {
+				String imgUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
+				try {
+					//判断图片真实类型
+					String realType = ImgUtil.imgType(new File(imgUrl));
+					if (realType.equals("webp")) {
+						//图片真实类型为webp时，html转pdf图片无法显示，需要将图片转成jpg
+						String imgName = EnumUtils.getEnumDescByCode(AttachmentPath.UPLOAD_IMAGE.getCode(), AttachmentPath.class) + IDGeneratorUtil.getID() + ".jpg";
+						ImgUtil.webpToJpg(imgUrl, imgName);
+						imgUrl = imgName;
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				imgUrl = "http://" + SystemPropUtil.getProp("BC_HOST") + imgUrl;
+				log.info("imgUrl:" + imgUrl);
+				mdContent = mdContent.replace(str, String.format(MdConstant.ONLY_URL_IMG, imgUrl));
+			}
+			//附件
+			List<String> urlList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_URL);
+			for (int j = 0; j < urlList.size(); j++) {
+				String str = urlList.get(j);
+				String fileUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
+				if (fileUrl.startsWith("http")) {
+					continue;
+				}
+				FileUtil.copyFile(fileUrl,
+						baseClassroomPath + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(fileUrl), false);
+				fileUrl = (j + 1) + "." + FileUtil.getFileSuffix(fileUrl);
+				mdContent = mdContent.replace(str, fileUrl);
+			}
+			//实验报告
 			jsonObject.put("report_content", MdUtil.mdToHtmlForApiDoc(mdContent));
-			if(classroomReportBo.getPassed() == null){
+			//是否通过
+			if (classroomReportBo.getPassed() == null) {
 				jsonObject.put("passed", "未审核");
-			}else if(classroomReportBo.getPassed()){
+			} else if (classroomReportBo.getPassed()) {
 				jsonObject.put("passed", "是");
-			}else {
+			} else {
 				jsonObject.put("passed", "否");
 			}
-			if(classroomReportBo.getScore() == null){
+			//评分
+			if (classroomReportBo.getScore() == null) {
 				jsonObject.put("score", "未审核");
-			}else {
+			} else {
 				jsonObject.put("score", classroomReportBo.getScore().toString());
 			}
-			if(classroomReportBo.getEvaluateComment() == null){
+			//评语
+			if (classroomReportBo.getEvaluateComment() == null) {
 				jsonObject.put("evaluate_comment", "未审核");
-			}else {
+			} else {
 				jsonObject.put("evaluate_comment", classroomReportBo.getEvaluateComment());
 			}
-			String destHtmlPath = htmlPath + File.separator + classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + lessonName + "-课时报告.html";
+			String destHtmlPath = baseClassroomPath + File.separator + personName + ".html";
 			HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
 			// 在同目录下生成pdf
 			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
 					+ "pdf";
 			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			//删除html文件
 			FileUtil.deleteDir(new File(destHtmlPath));
 		}
 		File zipFile = new File(ZipUtil.toZip(htmlPath));

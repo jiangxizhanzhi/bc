@@ -96,4 +96,7 @@ public interface PatternConstant {
 
 	/** 判断题答案*/
 	String JUDGEMENT_ANSWER = "^[a-zA-Z]$";
+
+	/** 匹配markdown文件中的链接*/
+	String MARKDOWN_URL = "[^!]\\[.*?\\]\\(.+?\\)";
 }

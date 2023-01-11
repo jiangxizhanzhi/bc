@@ -6,14 +6,23 @@ import java.io.InputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.bs.controller.req.IdListReq;
@@ -74,7 +83,6 @@ public class BehaviorController {
 		InputStream inputStream = null;
 		CloseableHttpResponse res = lcService.getBehaviorExportRsp(req.getIds());
 		try {
-			// 与服务器建立连接
 			if (res.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
 				throw new RuntimeException("远程错误: " + res.getEntity().getContent().toString());
 			}
@@ -92,8 +100,10 @@ public class BehaviorController {
 				throw new RuntimeException(resultJson.getString("msg"));
 			}
 			inputStream = entity.getContent();
-			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+			// 1.设置文件ContentType类型
 			response.setContentType("application/zip");
+			response.setHeader("Content-Disposition", String.format(
+					"attachment; filename=behavior_export_%d.zip", System.currentTimeMillis()));
 			out = response.getOutputStream();
 			// 读取文件流
 			int len = 0;
@@ -119,4 +129,15 @@ public class BehaviorController {
 			}
 		}
 	}
+
+	@ApiOperation("导入行为")
+	@PutMapping("/import")
+	public BaseRsp importBehavior(@RequestParam("file") MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			throw new BusinessException(ErrorCode.EMPTY_FILE);
+		}
+		Object rsp = lcService.importBehavior(file);
+		return new BaseRsp(rsp);
+	}
+
 }

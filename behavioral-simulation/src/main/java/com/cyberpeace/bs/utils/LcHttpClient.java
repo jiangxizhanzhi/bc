@@ -1,22 +1,24 @@
 package com.cyberpeace.bs.utils;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.utils.model.LcResponse;
 import com.cyberpeace.common.constant.WebConstant;
@@ -214,17 +216,58 @@ public class LcHttpClient {
 			// 4.设置 json body
 			httpPost.addHeader("Content-Type", "application/json");
 			httpPost.setEntity(new StringEntity(json));
-			// 5.设置消息头
-//			httpPost.setHeader("Accept-Charset", "utf-8");
-			// 在请求中明确定义不要进行压缩
-//			httpPost.setHeader("Accept-Encoding", "identity");
-			httpPost.setHeader("Authorization", getToken());
+			// set headers
+			setAuthorization(httpPost);
+//			httpPost.setHeader("Content-Disposition", String.format(
+//					"attachment;fileName=behavior_export_%d.zip", System.currentTimeMillis()));
 			// 6.发送消息，获取响应
 			res = httpClient.execute(httpPost);
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException();
 		}
 		return res;
 	}
+
+	public static Object uploadFile2Lc(String url, MultipartFile file) {
+		// 创建HttpClients实体类
+		CloseableHttpClient client = HttpClients.createDefault();
+		String filename = file.getOriginalFilename();
+		Object object = null;
+//		try {
+//			HttpPost httpPost = new HttpPost(url);
+//			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+//			// 这里就是自己踩的坑,需要使用file.getBytes()
+//			// builder.addBinaryBody("file",file.getInputStream(),ContentType.create("multipart/form-data"),filename);
+//			// 使用这个，另一个服务就可以接收到这个file文件了
+//			builder.addBinaryBody("file", file.getBytes(),
+//					ContentType.create("multipart/form-data"), filename);
+//			StringBody stringBody = new StringBody(resourceId, ContentType.MULTIPART_FORM_DATA);
+//			builder.addPart("resource_id", stringBody);
+//			HttpEntity entity = builder.build();
+//			httpPost.setEntity(entity);
+//
+//			ResponseHandler<Object> rh = new ResponseHandler<Object>() {
+//
+//				@Override
+//				public Object handleResponse(HttpResponse response) throws IOException {
+//					HttpEntity entity = response.getEntity();
+//					String result = EntityUtils.toString(entity, "UTF-8");
+//					return result;
+//				}
+//			};
+//			client = HttpClients.createDefault();
+//			object = client.execute(httpPost, rh);
+//		} catch (Exception e) {
+//			LogUtil.error(String.format(e.toString()));
+//		} finally {
+//			try {
+//				client.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+		return object;
+	}
+
 }

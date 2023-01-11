@@ -20,13 +20,17 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -290,4 +294,14 @@ public class LcServiceImpl implements LcService {
 		String body = JsonUtil.toJsonString(lcBehaviorIds);
 		return LcHttpClient.getClosableHttpRspByPost(targetUrl, body);
 	}
+
+    @Override
+    public Object importBehavior(MultipartFile file) {
+		// 获取文件的文件名字(后面要用到)
+		String filename = file.getOriginalFilename();
+		// 这个url是要上传到另一个服务器上接口
+		String url = LC_HOST_PORT;
+		Object rsp = LcHttpClient.uploadFile2Lc(url, file);
+		return rsp;
+    }
 }

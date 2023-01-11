@@ -8,6 +8,7 @@ import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,4 +82,11 @@ public interface LcService {
 	 * @return
 	 */
 	CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException;
+
+	/**
+	 * 导入 lc 行为文件
+	 * @param file
+	 * @return
+	 */
+	Object importBehavior(MultipartFile file);
 }

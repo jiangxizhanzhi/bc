@@ -155,4 +155,7 @@ public interface ErrorCode {
 
 	/** 创建启动节点失败 */
 	String FAILED_TO_CREATE_NODE = "100050";
+
+	/** 图片后缀不为jpg */
+	String ILLEGAL_PICTURE_SUFFIX = "100051";
 }

@@ -235,7 +235,9 @@ public class LcHttpClient {
 			String url) {
 		ServletOutputStream out = null;
 		InputStream inputStream = null;
-		CloseableHttpResponse lcRsp = getClosableHttpRspByPost(url, lcBehaviorIds);
+		// 创建httpclient对象
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse lcRsp = getClosableHttpRspByPost(httpClient, url, lcBehaviorIds);
 		if (lcRsp == null) {
 			throw new RemoteServiceException();
 		}
@@ -276,6 +278,7 @@ public class LcHttpClient {
 		} finally {
 			try {
 				// 释放资源
+				httpClient.close();
 				lcRsp.close();
 				if (inputStream != null) {
 					inputStream.close();
@@ -303,11 +306,10 @@ public class LcHttpClient {
 		}
 	}
 
-	private static <T> CloseableHttpResponse getClosableHttpRspByPost(String url, T body) {
+	private static <T> CloseableHttpResponse
+			getClosableHttpRspByPost(CloseableHttpClient httpClient, String url, T body) {
 		CloseableHttpResponse res = null;
 		try {
-			// 1.创建httpclient对象
-			CloseableHttpClient httpClient = HttpClients.createDefault();
 			// 2.创建post方式请求对象
 			HttpPost httpPost = new HttpPost(url);
 			// 4.设置 json body

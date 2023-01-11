@@ -143,8 +143,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		Map<String, ModelContext> modelListCache = remoteOperationService.getModelListMap();
 
 		platformContexts.forEach(platformContext -> {
-			platformContext.setPlatformUrl(
-					getModelThreeDimensionPic(modelListCache, platformContext.getModelId()));
+			String platformUrl = getModelThreeDimensionPic(modelListCache,
+					platformContext.getModelId());
+			if (platformUrl != null) {
+				platformContext.setPlatformUrl(platformUrl);
+			}
 		});
 		return platformContexts;
 	}

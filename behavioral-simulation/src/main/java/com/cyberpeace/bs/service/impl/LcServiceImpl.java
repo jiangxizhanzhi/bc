@@ -100,6 +100,11 @@ public class LcServiceImpl implements LcService {
 	 */
 	private String BEHAVIOR_EXPORT = "api/v1/flowcharts/export";
 
+	/**
+	 * 行为导入
+	 */
+	private String BEHAVIOR_IMPORT_GZ = "api/v1/flowcharts/behaviorImport";
+
 
 	@PostConstruct
 	public void init() {
@@ -300,7 +305,7 @@ public class LcServiceImpl implements LcService {
 		// 获取文件的文件名字(后面要用到)
 		String filename = file.getOriginalFilename();
 		// 这个url是要上传到另一个服务器上接口
-		String url = LC_HOST_PORT;
+		String url = LC_HOST_PORT + BEHAVIOR_IMPORT_GZ;
 		Object rsp = LcHttpClient.uploadFile2Lc(url, file);
 		return rsp;
     }

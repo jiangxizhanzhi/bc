@@ -241,8 +241,9 @@ public class LcHttpClient {
 					ContentType.create("multipart/form-data"), filename);
 			HttpEntity entity = builder.build();
 			httpPost.setEntity(entity);
-			httpPost.setHeader("Content-Type",
-					"multipart/form-data; boundary=---------------" + System.currentTimeMillis());
+			setAuthorization(httpPost);
+//			httpPost.setHeader("Content-Type",
+//					"multipart/form-data; boundary=---------------" + System.currentTimeMillis());
 			client = HttpClients.createDefault();
 			object = client.execute(httpPost);
 		} catch (Exception e) {

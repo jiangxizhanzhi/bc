@@ -118,14 +118,17 @@ public class BehaviorController {
 			e.printStackTrace();
 			response.setStatus(500);
 		} finally {
-			// 9.关闭连接
-			res.close();
-			if (inputStream != null) {
-				try {
+			try {
+				// 9.关闭连接
+				res.close();
+				if (inputStream != null) {
 					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

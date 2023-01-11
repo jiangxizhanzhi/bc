@@ -218,8 +218,8 @@ public class LcHttpClient {
 			httpPost.setEntity(new StringEntity(json));
 			// set headers
 			setAuthorization(httpPost);
-//			httpPost.setHeader("Content-Disposition", String.format(
-//					"attachment;fileName=behavior_export_%d.zip", System.currentTimeMillis()));
+			// httpPost.setHeader("Content-Disposition", String.format(
+			// "attachment;fileName=behavior_export_%d.zip", System.currentTimeMillis()));
 			// 6.发送消息，获取响应
 			res = httpClient.execute(httpPost);
 		} catch (Exception e) {
@@ -234,39 +234,26 @@ public class LcHttpClient {
 		CloseableHttpClient client = HttpClients.createDefault();
 		String filename = file.getOriginalFilename();
 		Object object = null;
-//		try {
-//			HttpPost httpPost = new HttpPost(url);
-//			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-//			// 这里就是自己踩的坑,需要使用file.getBytes()
-//			// builder.addBinaryBody("file",file.getInputStream(),ContentType.create("multipart/form-data"),filename);
-//			// 使用这个，另一个服务就可以接收到这个file文件了
-//			builder.addBinaryBody("file", file.getBytes(),
-//					ContentType.create("multipart/form-data"), filename);
-//			StringBody stringBody = new StringBody(resourceId, ContentType.MULTIPART_FORM_DATA);
-//			builder.addPart("resource_id", stringBody);
-//			HttpEntity entity = builder.build();
-//			httpPost.setEntity(entity);
-//
-//			ResponseHandler<Object> rh = new ResponseHandler<Object>() {
-//
-//				@Override
-//				public Object handleResponse(HttpResponse response) throws IOException {
-//					HttpEntity entity = response.getEntity();
-//					String result = EntityUtils.toString(entity, "UTF-8");
-//					return result;
-//				}
-//			};
-//			client = HttpClients.createDefault();
-//			object = client.execute(httpPost, rh);
-//		} catch (Exception e) {
-//			LogUtil.error(String.format(e.toString()));
-//		} finally {
-//			try {
-//				client.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		try {
+			HttpPost httpPost = new HttpPost(url);
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+			builder.addBinaryBody("file", file.getBytes(),
+					ContentType.create("multipart/form-data"), filename);
+			HttpEntity entity = builder.build();
+			httpPost.setEntity(entity);
+			httpPost.setHeader("Content-Type",
+					"multipart/form-data; boundary=---------------" + System.currentTimeMillis());
+			client = HttpClients.createDefault();
+			object = client.execute(httpPost);
+		} catch (Exception e) {
+			log.error("failed to upload file to lc: ", e);
+		} finally {
+			try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return object;
 	}
 

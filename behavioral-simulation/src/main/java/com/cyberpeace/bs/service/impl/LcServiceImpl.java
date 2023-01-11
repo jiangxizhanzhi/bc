@@ -1,5 +1,19 @@
 package com.cyberpeace.bs.service.impl;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
@@ -17,27 +31,8 @@ import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -105,7 +100,6 @@ public class LcServiceImpl implements LcService {
 	 */
 	private String BEHAVIOR_IMPORT_GZ = "api/v1/flowcharts/behaviorImport";
 
-
 	@PostConstruct
 	public void init() {
 		LC_HOST_PORT = SystemPropUtil.getProp("LC_HOST_PORT");
@@ -157,7 +151,6 @@ public class LcServiceImpl implements LcService {
 		LcHttpClient.post(targetUrl, req, String.class);
 	}
 
-
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior lcBehavior = new LcBehavior();
 		lcBehavior.setId(rspBo.getId());
@@ -172,7 +165,6 @@ public class LcServiceImpl implements LcService {
 		lcBehavior.getTag().add(rspBo.getTag());
 		return lcBehavior;
 	}
-
 
 	@Override
 	public List<LcBehaviorRspBo> getLcBehaviorListByIds(Collection<String> behaviorIds,
@@ -217,7 +209,7 @@ public class LcServiceImpl implements LcService {
 		List<LcVariableRspBo> lcVariableRspBos = res.getVariables();
 		VariableListBo listBo = new VariableListBo();
 		listBo.setBehaviorId(behaviorId);
-		if(CollectionUtils.isEmpty(lcVariableRspBos)){
+		if (CollectionUtils.isEmpty(lcVariableRspBos)) {
 			listBo.setVariables(Lists.newArrayList());
 			return listBo;
 		}
@@ -272,7 +264,8 @@ public class LcServiceImpl implements LcService {
 	}
 
 	@Override
-	public LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime) {
+	public LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity,
+			Long startTime) {
 
 		String targetUrl = LC_HOST_PORT + MONITOR_URL;
 		LcMonitorReq req = new LcMonitorReq();
@@ -300,13 +293,10 @@ public class LcServiceImpl implements LcService {
 		return LcHttpClient.getClosableHttpRspByPost(targetUrl, body);
 	}
 
-    @Override
-    public Object importBehavior(MultipartFile file) {
-		// 获取文件的文件名字(后面要用到)
-		String filename = file.getOriginalFilename();
-		// 这个url是要上传到另一个服务器上接口
+	@Override
+	public String importBehavior(MultipartFile file) {
 		String url = LC_HOST_PORT + BEHAVIOR_IMPORT_GZ;
-		Object rsp = LcHttpClient.uploadFile2Lc(url, file);
+		String rsp = LcHttpClient.uploadFile2Lc(url, file);
 		return rsp;
-    }
+	}
 }

@@ -1,7 +1,6 @@
 package com.cyberpeace.bs.utils;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -11,7 +10,6 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -218,8 +216,6 @@ public class LcHttpClient {
 			httpPost.setEntity(new StringEntity(json));
 			// set headers
 			setAuthorization(httpPost);
-			// httpPost.setHeader("Content-Disposition", String.format(
-			// "attachment;fileName=behavior_export_%d.zip", System.currentTimeMillis()));
 			// 6.发送消息，获取响应
 			res = httpClient.execute(httpPost);
 		} catch (Exception e) {
@@ -229,33 +225,24 @@ public class LcHttpClient {
 		return res;
 	}
 
-	public static Object uploadFile2Lc(String url, MultipartFile file) {
-		// 创建HttpClients实体类
-		CloseableHttpClient client = HttpClients.createDefault();
+	public static String uploadFile2Lc(String url, MultipartFile file) {
+		// 1、设置请求线程数据
+		setContext(url);
+		// 获取文件名
 		String filename = file.getOriginalFilename();
-		Object object = null;
+		HttpPost httpPost = new HttpPost(url);
+		// 创建请求体
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 		try {
-			HttpPost httpPost = new HttpPost(url);
-			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			builder.addBinaryBody("file", file.getBytes(),
 					ContentType.create("multipart/form-data"), filename);
-			HttpEntity entity = builder.build();
-			httpPost.setEntity(entity);
-			setAuthorization(httpPost);
-//			httpPost.setHeader("Content-Type",
-//					"multipart/form-data; boundary=---------------" + System.currentTimeMillis());
-			client = HttpClients.createDefault();
-			object = client.execute(httpPost);
-		} catch (Exception e) {
-			log.error("failed to upload file to lc: ", e);
-		} finally {
-			try {
-				client.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch (IOException e) {
+			log.error("load file error: ", e);
 		}
-		return object;
+		HttpEntity entity = builder.build();
+		// 设置请求体
+		httpPost.setEntity(entity);
+		String rsp = doHttp(httpPost, String.class);
+		return rsp;
 	}
-
 }

@@ -6,20 +6,12 @@ import java.io.InputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +23,8 @@ import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 
@@ -135,12 +129,12 @@ public class BehaviorController {
 
 	@ApiOperation("导入行为")
 	@PutMapping("/import")
-	public BaseRsp importBehavior(@RequestParam("file") MultipartFile file) {
+	public BaseRsp<String> importBehavior(@RequestParam("file") MultipartFile file) {
 		if (file == null || file.isEmpty()) {
 			throw new BusinessException(ErrorCode.EMPTY_FILE);
 		}
-		Object rsp = lcService.importBehavior(file);
-		return new BaseRsp(rsp);
+		String rsp = lcService.importBehavior(file);
+		return new BaseRsp<>(rsp);
 	}
 
 }

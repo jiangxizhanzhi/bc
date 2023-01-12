@@ -20,6 +20,10 @@ public class BaseMdParser implements MdContentParser<List<TheoryBaseMd>, String>
 
 	@Override
 	public List<TheoryBaseMd> parse(Object content) {
+		if(content == null){
+			return null;
+		}
+
 		String value = (String) content;
 		if (StringUtils.isBlank(value.trim())) {
 			return null;

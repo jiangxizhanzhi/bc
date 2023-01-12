@@ -1,6 +1,9 @@
 package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
+import com.cyberpeace.integratation.constant.SubjectStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,6 +44,18 @@ public class SubjectContext implements Serializable {
 
 	public void setValueWord(String valueWord) {
 		this.subjectName = valueWord;
+	}
+
+	public void setSubjectStatus(String subjectStatus) {
+		SubjectStatus status = Arrays.stream(SubjectStatus.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(subjectStatus)).findFirst()
+				.orElse(SubjectStatus.QT);
+
+		if (!status.getCode().equals(SubjectStatus.QT.getCode())) {
+			this.subjectStatus = status.getName();
+		} else {
+			this.subjectStatus = subjectStatus;
+		}
 	}
 
 }

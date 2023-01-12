@@ -25,6 +25,9 @@ public class GetNoteReq implements Serializable {
 	@NotNull
 	private Integer resourceType;
 
+	@ApiModelProperty(name = "user_id", value = "创建者")
+	private String userId;
+
 	public void setResource_id(String resourceId) {
 		this.resourceId = resourceId;
 	}
@@ -35,6 +38,10 @@ public class GetNoteReq implements Serializable {
 
 	public void setResource_type(Integer resourceType) {
 		this.resourceType = resourceType;
+	}
+
+	public void setUser_id(String userId) {
+		this.userId = userId;
 	}
 
 }

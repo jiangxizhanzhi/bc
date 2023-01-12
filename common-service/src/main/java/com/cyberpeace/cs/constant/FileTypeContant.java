@@ -26,7 +26,7 @@ public interface FileTypeContant {
 	/**
 	 * 课时讲义文件上传
 	 */
-	String VIDEO_ATTACHMENT_TYPE = "MP4, M4V";
+	String VIDEO_ATTACHMENT_TYPE = "MP4,M4V";
 
 	/**
 	 * 课时视频文件上传

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
+
 @Data
 @TableName("oj_train_plan")
 public class TrainPlan extends BaseTable {
@@ -17,4 +18,5 @@ public class TrainPlan extends BaseTable {
 
 	private String createUserId;
 
+	public static String TASK_SET = "Task Set";
 }

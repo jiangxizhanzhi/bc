@@ -1188,7 +1188,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			for (int j = 0; j < urlList.size(); j++) {
 				String str = urlList.get(j);
 				String fileUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
-				if (fileUrl.startsWith("http")) {
+				if (!new File(fileUrl).isFile()) {
 					continue;
 				}
 				FileUtil.copyFile(fileUrl,

@@ -98,7 +98,9 @@ public class WebNoteController {
 				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
 				.businessId(getNoteReq.getResourceId())
 				.userId(UserInfoContext.getUserContext().getUserId()).build();
-
+		if (StringUtils.isNotBlank(getNoteReq.getUserId())){
+			uniqueContext.setUserId(getNoteReq.getUserId());
+		}
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
 
 		// 无笔记存在 实验报告返回默认值

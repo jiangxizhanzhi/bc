@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.BaseTable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author xuxz
  * @Date 11/11/2022 上午10:47
@@ -54,4 +56,7 @@ public class DashboardTemplateRef extends BaseTable {
 
     @ApiModelProperty("组件配置")
     private String componentsSetting;
+
+    @ApiModelProperty("图层信息")
+    private String layerShow;
 }

@@ -142,10 +142,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
         String componentsSetting = dashboardTemplate.getComponentsSetting();
         String viewAngle = dashboardTemplate.getViewAngle();
+        String layerShow = dashboardTemplate.getLayerShow();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplate, DashboardTemplateRes.class);
         if (StringUtils.isNotBlank(viewAngle)) {
             dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
+        }
+        if (StringUtils.isNotBlank(layerShow)) {
+            dashboardTemplateRes.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
         }
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
@@ -235,6 +239,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         DashboardTemplate dashboardTemplate = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplate.class);
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
         ViewAngle viewAngle = dashBoardTemplateReq.getViewAngle();
         if (CollectionUtils.isNotEmpty(componentsSetting)) {
             jsonArray.addAll(componentsSetting);
@@ -243,6 +248,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         if (viewAngle != null) {
             dashboardTemplate.setViewAngle(JSONObject.toJSONString(viewAngle));
         }
+
+        if (CollectionUtils.isNotEmpty(layerShow)) {
+            JSONArray layerShowArray = new JSONArray();
+            layerShowArray.addAll(layerShow);
+            dashboardTemplate.setLayerShow(layerShowArray.toString());
+        }
+
         return dashboardTemplate;
     }
 

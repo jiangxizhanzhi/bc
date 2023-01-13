@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.controller.req.LayerShowReq;
+import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.model.ViewAngle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +29,6 @@ import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
-import com.cyberpeace.situation.dao.entity.DashboardComponents;
-import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
-import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
@@ -141,12 +139,16 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         String componentsSetting = dashboardTemplateRef.getComponentsSetting();
+        String layerShow = dashboardTemplateRef.getLayerShow();
 
         String viewAngle = dashboardTemplateRef.getViewAngle();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
         DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRes.class);
         if (StringUtils.isNotBlank(viewAngle)) {
             dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
+        }
+        if (StringUtils.isNotBlank(layerShow)) {
+            dashboardTemplateRes.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
         }
         //图层排序，默认将GIS图层置为最底层
         if (CollectionUtils.isNotEmpty(list)) {
@@ -214,6 +216,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         DashboardTemplateRef dashboardTemplateRef = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplateRef.class);
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
         ViewAngle viewAngle = dashBoardTemplateReq.getViewAngle();
         if (CollectionUtils.isNotEmpty(componentsSetting)) {
             jsonArray.addAll(componentsSetting);
@@ -222,6 +225,13 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         if (viewAngle != null) {
             dashboardTemplateRef.setViewAngle(JSONObject.toJSONString(viewAngle));
         }
+
+        if (CollectionUtils.isNotEmpty(layerShow)) {
+            JSONArray layerShowArray = new JSONArray();
+            layerShowArray.addAll(layerShow);
+            dashboardTemplateRef.setLayerShow(layerShowArray.toString());
+        }
+
         return dashboardTemplateRef;
     }
 

@@ -719,3 +719,7 @@ ALTER TABLE `bc`.`situation_datasource_record` ADD COLUMN `connect_status` BOOLE
 ALTER TABLE `bc`.`situation_api_request` ADD COLUMN `connect_status` BOOLEAN DEFAULT 1 NOT NULL COMMENT '连接状态' AFTER `request_method`;
 
 ALTER TABLE `bc`.`situation_api_request` CHANGE `request_url` `request_url` LONGTEXT NOT NULL COMMENT 'url', CHANGE `request_params` `request_params` LONGTEXT NULL COMMENT '参数', CHANGE `request_headers` `request_headers` LONGTEXT NULL COMMENT '请求头', CHANGE `response_params` `response_params` LONGTEXT NULL COMMENT '返回参数';
+
+ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `layer_show` LONGTEXT NULL COMMENT '图层信息' AFTER `view_angle`;
+
+ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `layer_show` LONGTEXT NULL COMMENT '图层信息' AFTER `view_angle`;

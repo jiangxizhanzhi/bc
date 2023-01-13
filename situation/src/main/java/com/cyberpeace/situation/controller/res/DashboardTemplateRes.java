@@ -3,7 +3,9 @@ package com.cyberpeace.situation.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.situation.controller.req.LayerShowReq;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import com.cyberpeace.situation.dao.entity.LayerShow;
 import com.cyberpeace.situation.model.ViewAngle;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -53,4 +55,7 @@ public class DashboardTemplateRes implements Serializable {
 
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponents> componentsSetting;
+
+    @ApiModelProperty("图层信息")
+    private List<LayerShowReq> layerShow;
 }

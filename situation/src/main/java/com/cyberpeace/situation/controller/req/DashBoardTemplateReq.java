@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.situation.dao.entity.LayerShow;
 import com.cyberpeace.situation.model.ViewAngle;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -60,4 +61,7 @@ public class DashBoardTemplateReq implements Serializable {
 
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponentsReq> componentsSetting;
+
+    @ApiModelProperty("图层信息")
+    private List<LayerShowReq> layerShow;
 }

@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +115,10 @@ public class SingleTemplateController {
 				.getById(requestData.getResourceId());
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(requestData.getResourceId());
+		if(singleTemplate == null){
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
+
+		}
 		// update single template
 		String oldMissionScheme = singleTemplate.getMissionsScheme();
 		reqToSingleTemplate(requestData, singleTemplate);

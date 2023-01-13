@@ -136,4 +136,11 @@
 
         </where>
     </select>
+    <select id="selectByUserPlan" resultType="com.cyberpeace.oj.course.dao.entity.Classroom">
+        select * from oj_classroom
+        where train_plan_id = #{planId}
+        <if test="userId != null and userId != ''">
+            and create_user_id = #{userId}
+        </if>
+    </select>
 </mapper>

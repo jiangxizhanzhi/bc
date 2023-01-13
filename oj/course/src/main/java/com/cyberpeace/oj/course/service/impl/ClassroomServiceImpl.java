@@ -2,15 +2,9 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +14,12 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.ExcelDataHandler;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -40,11 +37,13 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteAdService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.CalendarCompetitionBo;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
+import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
@@ -1329,17 +1328,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public void exportTrainPlan(UserInfo userInfo, String filePath) {
 		// 数据查询及转换
-		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userInfo.getUserId());
+		String userId =userInfo.isSuperuser() ? CommonConstant.EMPTY_STRING : userInfo.getUserId();
+
+		List<TrainPlan> trainPlanList = trainPlanMapper.selectByUser(userId);
+
 		List<TrainPlanExportBo> exportBoList = StreamApiUtils.flatMap(trainPlanList,
-				trainPlan -> planToExportBo(trainPlan));
+				trainPlan -> planToExportBo(userId, trainPlan));
 
 		// 数据导出
 		ExcelDataHandler.exportExcel(exportBoList, filePath, ExcelHeader.TRAIN_PLAN);
 	}
 
-	/** 数据转换*/
-	private List<TrainPlanExportBo> planToExportBo(TrainPlan trainPlan) {
-		List<Classroom> classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
+	/** 导出的数据转换
+	 *  会按照页面逻辑查询计划下的课程任务
+	 * */
+	private List<TrainPlanExportBo> planToExportBo(String userId, TrainPlan trainPlan) {
+		List<Classroom> classroomList = classroomMapper.selectByUserPlan(userId,trainPlan.getResourceId());
 		return StreamApiUtils.map(classroomList,
 				classroom -> classRoomToExportBo(trainPlan.getName(), classroom));
 	}

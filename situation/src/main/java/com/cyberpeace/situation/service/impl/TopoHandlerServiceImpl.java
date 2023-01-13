@@ -182,6 +182,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				deviceCategorie.getJSONArray("first_type_list").toString(), DeviceType.class);
 		List<DeviceType> secondDeviceTypes = JsonUtil.toJsonObjectArray(
 				deviceCategorie.getJSONArray("second_type_list").toString(), DeviceType.class);
+		List<DeviceType> thirdDeviceTypes = JsonUtil.toJsonObjectArray(
+				deviceCategorie.getJSONArray("third_type_list").toString(), DeviceType.class);
 
 		List<DeviceRole> roles = JsonUtil.toJsonObjectArray(
 				deviceCategorie.getJSONArray("role").toString(), DeviceRole.class);
@@ -196,6 +198,12 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		Map<Integer, String> secondCategorie = Maps.newHashMap();
 		for (DeviceType secondDeviceType : secondDeviceTypes) {
 			secondCategorie.put(secondDeviceType.getId(), secondDeviceType.getName());
+		}
+
+		// 处理靶标三级分类映射
+		Map<Integer, String> thirdCategorie = Maps.newHashMap();
+		for (DeviceType thirdDeviceType : thirdDeviceTypes) {
+			thirdCategorie.put(thirdDeviceType.getId(), thirdDeviceType.getName());
 		}
 
 		// 处理靶标角色映射
@@ -213,6 +221,7 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		CategorieMap categorieMap = new CategorieMap();
 		categorieMap.setFirstCategorie(firstCategorie);
 		categorieMap.setSecondCategorie(secondCategorie);
+		categorieMap.setThirdCategorie(thirdCategorie);
 		categorieMap.setRole(role);
 
 		return categorieMap;

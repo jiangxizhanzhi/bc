@@ -183,11 +183,18 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			// 处理类型数据
 			Integer category = elementExtendedInfo.getInteger("category");
 			Integer category2 = elementExtendedInfo.getInteger("category2");
+			Integer category3 = elementExtendedInfo.getInteger("category3");
 			String firstType = categorieMap.getFirstCategorie().getOrDefault(category, "其他");
 			String secondType = categorieMap.getSecondCategorie().getOrDefault(category2, "其他");
+			String thirdType = categorieMap.getThirdCategorie().getOrDefault(category3, "其他");
 
 			String icon3 = (String) element.getOrDefault("icon3", "");
-			String type = StringUtils.isEmpty(icon3) ? firstType + "-" + secondType : "定制-" + icon3;
+			String type = "";
+			if((secondType.equals("交换机")||secondType.equals("路由器")||secondType.equals("OTHER")) && !thirdType.equals("其他")){
+				type = firstType + "-" + thirdType;
+			}else {
+				type = StringUtils.isEmpty(icon3) ? firstType + "-" + secondType : "定制-" + icon3;
+			}
 
 			// 处理角色数据
 			Integer roleId = elementExtendedInfo.getInteger("role");

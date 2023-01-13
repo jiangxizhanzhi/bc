@@ -1,10 +1,10 @@
 package com.cyberpeace.situation.model;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Map;
 
 @Data
 public class CategorieMap implements Serializable {
@@ -17,5 +17,8 @@ public class CategorieMap implements Serializable {
 
 	@ApiModelProperty("二级类型映射")
 	private Map<Integer, String> secondCategorie;
+
+	@ApiModelProperty("三级映射")
+	private Map<Integer, String> thirdCategorie;
 
 }

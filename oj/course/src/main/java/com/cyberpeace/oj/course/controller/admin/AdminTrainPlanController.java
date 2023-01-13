@@ -73,7 +73,7 @@ public class AdminTrainPlanController {
 		ListRsp<TrainPlanRsp> listResult = PageUtil.getListResult(data);
 		for (TrainPlanRsp trainPlanRsp : listResult.getList()) {
 			if (StringUtils.isEmpty(trainPlanRsp.getName())) {
-				trainPlanRsp.setName("Temp Plan");
+				trainPlanRsp.setName(TrainPlan.TASK_SET);
 			}
 		}
 

@@ -190,6 +190,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		nodeListApiReq.setNodeIds(nodeIdList);
 		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
 				nodeListApiReq, NetworkInfoContext.class);
+
+		if (networkInfoContext == null) {
+			networkInfoContext = new NetworkInfoContext();
+		}
+
 		networkInfoContext.setNodeCount(nodeIdList.size());
 		networkInfoContext.setNodeTypeStatistics(nodeTypeStatisticsContexts);
 		return networkInfoContext;

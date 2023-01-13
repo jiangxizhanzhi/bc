@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.model.situation;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -16,8 +17,8 @@ public class NetworkInfoContext implements Serializable {
 	private List<NodeTypeStatisticsContext> nodeTypeStatistics;
 
 	@ApiModelProperty("发起攻击节点列表")
-	private List<NodeAttackStatisticsContext> attackNodeList;
+	private List<NodeAttackStatisticsContext> attackNodeList = Lists.newArrayList();
 
 	@ApiModelProperty("遭受攻击节点列表")
-	private List<NodeAttackedStatisticsContext> attackedNodeList;
+	private List<NodeAttackedStatisticsContext> attackedNodeList = Lists.newArrayList();
 }

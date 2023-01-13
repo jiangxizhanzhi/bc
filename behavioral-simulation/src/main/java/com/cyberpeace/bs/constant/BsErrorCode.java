@@ -76,4 +76,9 @@ public interface BsErrorCode {
 	 * 导出行为失败
 	 */
 	String FAILED_TO_EXPORT = "105015";
+
+	/**
+	 * 读取上传的文件失败
+	 */
+	String FAILED_TO_LOAD_FILE = "105016";
 }

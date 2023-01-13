@@ -223,6 +223,7 @@ public class LcHttpClient {
 					ContentType.create("multipart/form-data"), filename);
 		} catch (IOException e) {
 			log.error("load file error: ", e);
+			throw new BusinessException(BsErrorCode.FAILED_TO_LOAD_FILE);
 		}
 		HttpEntity entity = builder.build();
 		// 设置请求体

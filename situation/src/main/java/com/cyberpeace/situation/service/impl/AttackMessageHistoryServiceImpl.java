@@ -106,6 +106,15 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public void recovery(String sceneId) {
 		attackMessageHistoryMapper.recovery(sceneId);
+		//恢复所有瘫痪节点状态
+		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
+		Set<String> elementIdList = nodeMap.keySet();
+		List<WsRbElementStatus> wsRbElementStatusList = elementIdList.stream()
+																	 .map(elementId -> new WsRbElementStatus(elementId, 0))
+																	 .collect(Collectors.toList());
+		WsMessage<List<WsRbElementStatus>> wsMessage = new WsMessage<>(MessageType.RbNodeStatus.getDesc(),
+				wsRbElementStatusList);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 
 	@Override
@@ -159,18 +168,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	public void pushParalysisNodeStatus(String sceneId) {
 		List<HostCount> paralysisHostCountList = getHostTop(AttackType::getIsParalysis, sceneId);
 		List<String> paralysisHostIdList = StreamApiUtils.map(paralysisHostCountList, HostCount::getHostId);
-		SituationTopo situationTopo = situationHandlerService.getSituationTopoBySceneId(sceneId);
-		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
-																			.values());
-		List<String> elementIdList = StreamApiUtils.map(elementInfoList, ElementInfo::getElementId);
-		List<WsRbElementStatus> wsRbElementStatusList = elementIdList.stream()
-																		   .map(elementId -> {
-																		   	if(paralysisHostIdList.contains(elementId)){
-																		   		return new WsRbElementStatus(elementId, 1);
-																			}else {
-																				return new WsRbElementStatus(elementId, 0);
-																			}
-																		   })
+		List<WsRbElementStatus> wsRbElementStatusList = paralysisHostIdList.stream()
+																		   .map(elementId -> new WsRbElementStatus(elementId, 1))
 																		   .collect(Collectors.toList());
 		WsMessage<List<WsRbElementStatus>> wsMessage = new WsMessage<>(MessageType.RbNodeStatus.getDesc(),
 				wsRbElementStatusList);

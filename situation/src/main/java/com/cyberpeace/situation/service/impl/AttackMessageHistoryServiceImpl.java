@@ -78,12 +78,21 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		List<ElementInfo> elementInfoList = Lists.newArrayList(situationTopo.getElements()
 																			.values());
 		List<String> elementIdList = StreamApiUtils.map(elementInfoList, ElementInfo::getElementId);
+		List<AreaInfo> areaInfoList = Lists.newArrayList(situationTopo.getAreas()
+																	  .values());
+		List<String> areaIdList = StreamApiUtils.map(areaInfoList, AreaInfo::getAreaId);
+		//获取异常状态id
 		List<HostCount> paralysisHostCountList = getHostTop(AttackType::getIsParalysis, sceneId);
 		List<String> paralysisHostIdList = StreamApiUtils.map(paralysisHostCountList, HostCount::getHostId);
 		List<HostCount> exploitHostCountList = getHostTop(AttackType::getIsExploit, sceneId);
 		List<String> exploitHostIdList = StreamApiUtils.map(exploitHostCountList, HostCount::getHostId);
 		List<HostCount> virusHostCountList = getHostTop(AttackType::getIsVirus, sceneId);
 		List<String> virusHostIdList = StreamApiUtils.map(virusHostCountList, HostCount::getHostId);
+		//去除区域id
+		paralysisHostIdList.removeAll(areaIdList);
+		exploitHostIdList.removeAll(areaIdList);
+		virusHostIdList.removeAll(areaIdList);
+		//去除异常状态id
 		elementIdList.removeAll(paralysisHostIdList);
 		elementIdList.removeAll(exploitHostIdList);
 		elementIdList.removeAll(virusHostIdList);

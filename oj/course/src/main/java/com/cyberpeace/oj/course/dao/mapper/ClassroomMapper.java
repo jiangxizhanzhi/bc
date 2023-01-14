@@ -69,4 +69,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	IPage<Classroom> page(Page listQuery, String userId, String trainPlanId, List<String> childrenOrg);
 
 	List<String> selectIdsByPlanIds(List<String> ids);
+
+	List<Classroom> selectByUserPlan(String userId, String planId);
 }

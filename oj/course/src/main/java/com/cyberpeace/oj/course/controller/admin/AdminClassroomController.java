@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -159,6 +160,10 @@ public class AdminClassroomController {
 	public BaseRsp<Classroom>
 			createClassRoom(@RequestBody @Validated(Create.class) ClassroomReq classroomReq) {
 
+		//约定临时计划的id需要转换
+		if (TrainPlan.TASK_SET_ID.equals(classroomReq.getTrainPlanId())) {
+			classroomReq.setTrainPlanId("");
+		}
 		// 基本数据设置
 		Classroom classroom = BeanUtils.copy(classroomReq, Classroom.class);
 		classroom.setCreateUserId(UserInfoContext.getUserContext().getUserId());

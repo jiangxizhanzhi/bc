@@ -12,6 +12,7 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @ApiModel("课程新增信息")
@@ -69,4 +70,7 @@ public class CourseAddReq implements Serializable {
 		}
 	}
 
+	public String getName() {
+		return StringUtils.isNotBlank(name) ? name.trim() : name;
+	}
 }

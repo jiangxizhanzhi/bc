@@ -66,7 +66,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     public DashboardTemplateRef createDashboardTemplate(String resourceId) {
 
         //获取模板数据
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId, null);
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId, null, Boolean.FALSE);
         DashBoardTemplateReq dashBoardTemplateReq = BeanUtils.copy(dashboardTemplateInfo, DashBoardTemplateReq.class);
         DashboardTemplateRef dashboardTemplateRef = changeToDashboardTemplateRef(dashBoardTemplateReq);
 
@@ -133,7 +133,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     }
 
     @Override
-    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type) {
+    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type, Boolean isPreview) {
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(resourceId);
         if (dashboardTemplateRef == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -154,8 +154,6 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             List<DashboardComponents> sourceDashboardComponents = new ArrayList<>();
-            List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
-            List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
             for (DashboardComponents dashboardComponent : dashboardComponents) {
                 //视角筛选
                 String sourceType = dashboardComponent.getType();
@@ -163,29 +161,19 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     continue;
                 }
                 sourceDashboardComponents.add(dashboardComponent);
-                String componentSetting = dashboardComponent.getComponentSetting();
-                JSONObject jsonObject = JSONObject.parseObject(componentSetting);
-                String componentType = jsonObject.getString("component_type");
-                if (componentType != null && (Objects.equals("0", componentType) || Objects.equals("1", componentType))) {
-                    sortDashboardComponents.add(dashboardComponent);
-                }
-                if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
-                    commonDashboardComponentList.add(dashboardComponent);
-                }
             }
-            sourceDashboardComponents.removeAll(sortDashboardComponents);
-            sourceDashboardComponents.removeAll(commonDashboardComponentList);
-            //按图层进行排序
-            List<DashboardComponents> dashboardComponentsList =
-                    sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
 
-            //添加二位组件配置
-            sortDashboardComponents.addAll(dashboardComponentsList);
+            List<DashboardComponents> dashboardComponentsList;
+            //按图层进行排序，预览时需要正序图层，编辑时需要倒叙
+            if (isPreview) {
+                dashboardComponentsList =
+                        sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+            } else {
+                dashboardComponentsList =
+                        sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
+            }
 
-            //添加全局控件和公共控件
-            sortDashboardComponents.addAll(commonDashboardComponentList);
-
-            dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
+            dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
 
 
         }

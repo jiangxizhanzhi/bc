@@ -153,7 +153,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
             templateId = dashboardTemplateRefService.createDashboardTemplate(defaultTemplateId).getResourceId();
         }
 
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null);
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null, Boolean.FALSE);
         Integer level = dashboardTemplateInfo.getLevel();
         Integer refresh = dashboardTemplateInfo.getRefresh();
         Boolean editStatus = dashboardTemplateInfo.getEditStatus();

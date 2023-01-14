@@ -54,7 +54,7 @@ public class DashboardTemplateController {
                                                                           String resourceId,
                                                                   @RequestParam(value = "type", required = false) @ApiParam(name = "type", value = "视角类型")
                                                                           String type) {
-        return new BaseRsp<>(dashboardTemplateService.getDashboardTemplateInfo(resourceId, type));
+        return new BaseRsp<>(dashboardTemplateService.getDashboardTemplateInfo(resourceId, type, Boolean.FALSE));
     }
 
     @ApiOperation("批量删除改态势模板")

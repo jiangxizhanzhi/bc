@@ -135,7 +135,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     }
 
     @Override
-    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type) {
+    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type, Boolean isPreview) {
         DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(resourceId);
         if (dashboardTemplate == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -153,19 +153,21 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
-            //按图层进行排序
-            List<DashboardComponents> dashboardComponentsList =
-                    dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
-
-            //GIS资源放首位
-            List<DashboardComponents> sortDashboardComponentsList = sortDashboardComponents(dashboardComponentsList);
-
+            List<DashboardComponents> dashboardComponentsList;
+            //按图层进行排序，预览时需要正序图层，编辑时需要倒叙
+            if (isPreview) {
+                dashboardComponentsList =
+                        dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+            } else {
+                dashboardComponentsList =
+                        dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
+            }
             if (type == null) {
-                dashboardTemplateRes.setComponentsSetting(sortDashboardComponentsList);
+                dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
             } else {
                 //存在视角时，按视角类型筛选数据
                 List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
-                sortDashboardComponentsList.forEach(dashboardComponent -> {
+                dashboardComponentsList.forEach(dashboardComponent -> {
                     String componentType = dashboardComponent.getType();
                     if (Objects.equals(componentType, type)) {
                         typeDashboardComponents.add(dashboardComponent);
@@ -574,34 +576,6 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
         }
-    }
-
-    public List<DashboardComponents> sortDashboardComponents(List<DashboardComponents> dashboardComponentsList){
-        List<DashboardComponents> gisDashboardComponentList = new ArrayList<>();
-        List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
-        for (DashboardComponents dashboardComponents : dashboardComponentsList) {
-            String componentSetting = dashboardComponents.getComponentSetting();
-            String type = dashboardComponents.getType();
-            JSONObject jsonObject = JSONObject.parseObject(componentSetting);
-            String componentType = jsonObject.getString("component_type");
-            if (componentType != null && (Objects.equals("0", componentType) || Objects.equals("1", componentType))) {
-                gisDashboardComponentList.add(dashboardComponents);
-            }
-            if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
-                commonDashboardComponentList.add(dashboardComponents);
-            }
-        }
-        dashboardComponentsList.removeAll(gisDashboardComponentList);
-        dashboardComponentsList.removeAll(commonDashboardComponentList);
-        List<DashboardComponents> newDashboardComponents = new ArrayList<>();
-        //GIS或者拓扑资源排首位
-        newDashboardComponents.addAll(gisDashboardComponentList);
-        //通用控件或二维组件
-        newDashboardComponents.addAll(dashboardComponentsList);
-        //全局控件
-        newDashboardComponents.addAll(commonDashboardComponentList);
-
-        return newDashboardComponents;
     }
 
     private void checkTemplateName(String name, String resourceId){

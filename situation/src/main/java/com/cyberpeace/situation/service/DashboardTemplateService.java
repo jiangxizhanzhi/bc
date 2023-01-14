@@ -39,7 +39,7 @@ public interface DashboardTemplateService {
      * @param resourceId
      * @return
      */
-    DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type);
+    DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type, Boolean isPreview);
 
     /**
      * 批量态势模板

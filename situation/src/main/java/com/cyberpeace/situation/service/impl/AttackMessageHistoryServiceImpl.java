@@ -62,9 +62,8 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<HostCount> getHostTop5(Predicate<? super AttackType> filterValue, String sceneId) {
 		List<HostCount> HostCountTopList = getHostTop(filterValue, sceneId);
-		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
 		for (HostCount hostCount : HostCountTopList) {
-			hostCount.setHostName(nodeMap.get(hostCount.getHostId()));
+			hostCount.setHostName(getNameById(sceneId, hostCount.getHostId()));
 		}
 		if (HostCountTopList.size() > 5) {
 			return HostCountTopList.subList(0, 5);
@@ -103,24 +102,14 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<AttackLog> getAttackLog(String sceneId) {
 		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
-		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
-		Map<String, String> areaMap = situationHandlerService.getAreaMap(sceneId);
 		for (AttackLog attackLog : attackLogList) {
 			String sourceId = attackLog.getSourceId();
 			if (sourceId != null && !sourceId.equals("")) {
-				String sourceName = nodeMap.get(sourceId);
-				if (sourceName == null) {
-					sourceName = areaMap.get(sourceId);
-				}
-				attackLog.setSourceName(sourceName);
+				attackLog.setSourceName(getNameById(sceneId, sourceId));
 			}
 			String targetId = attackLog.getTargetId();
 			if (targetId != null && !targetId.equals("")) {
-				String targetName = nodeMap.get(targetId);
-				if (targetName == null) {
-					targetName = areaMap.get(sourceId);
-				}
-				attackLog.setTargetName(targetName);
+				attackLog.setTargetName(getNameById(sceneId, targetId));
 			}
 			attackLog.setAttackType(AttackType.getEnumByKeyWord(attackLog.getAttackType(), AttackType.class)
 											  .getMsg());
@@ -149,15 +138,9 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	@Override
 	public List<DefenseLog> getDefenseLog(String sceneId) {
 		List<DefenseLog> defenseLogList = attackMessageHistoryMapper.getDefenseLog(sceneId);
-		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
-		Map<String, String> areaMap = situationHandlerService.getAreaMap(sceneId);
-		defenseLogList.forEach(defenseLog -> {
-			String name = nodeMap.get(defenseLog.getHostId());
-			if(name == null){
-				name = areaMap.get(defenseLog.getHostId());
-			}
-			defenseLog.setHostName(name);
-		});
+		//设置名称
+		defenseLogList.forEach(defenseLog -> defenseLog.setHostName(getNameById(sceneId, defenseLog.getHostId())));
+		//设置防御类型
 		defenseLogList.forEach(defenseLog -> defenseLog.setDefenseType(DefenseType.getEnumByKeyWord(defenseLog.getDefenseType(), DefenseType.class)
 																				  .getMsg()));
 		return defenseLogList;
@@ -242,5 +225,15 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		attackMessageReq.setMediaAnimationList(JsonUtil.toJsonObjectArray(attackMessageHistory.getMediaAnimation(),
 				MediaAnimation.class));
 		return attackMessageReq;
+	}
+
+	private String getNameById(String sceneId, String nodeId){
+		Map<String, String> nodeMap = situationHandlerService.getNodeMap(sceneId);
+		Map<String, String> areaMap = situationHandlerService.getAreaMap(sceneId);
+		String name = nodeMap.get(nodeId);
+		if(name == null){
+			name = areaMap.get(nodeId);
+		}
+		return name;
 	}
 }

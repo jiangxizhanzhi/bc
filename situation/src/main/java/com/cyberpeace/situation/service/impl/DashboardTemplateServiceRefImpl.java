@@ -100,23 +100,33 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     @Override
     public String updateDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
         String resourceId = dashBoardTemplateReq.getResourceId();
+        List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
+
+        //资源校验
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(resourceId);
         if (dashboardTemplateRef == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+
+        //获取旧数据控件
         JSONArray newComponentsList = new JSONArray();
         List<String> oldComponentsList = JsonUtil.toJsonObjectArray(dashboardTemplateRef.getComponentsSetting(), String.class);
-        List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
-        if (CollectionUtils.isNotEmpty(componentsSetting)) {
-            for (DashboardComponentsReq dashboardComponentsReq : componentsSetting) {
+
+        //获取按图层排序后的控件
+        List<DashboardComponentsReq> sortDashboardComponentsReqList = dashboardTemplateService.sortComponent(componentsSetting, layerShow);
+        dashBoardTemplateReq.setComponentsSetting(sortDashboardComponentsReqList);
+        if (CollectionUtils.isNotEmpty(sortDashboardComponentsReqList)) {
+            for (DashboardComponentsReq dashboardComponentsReq : sortDashboardComponentsReqList) {
                 String newResourceId = IDGeneratorUtil.getID();
                 newComponentsList.add(newResourceId);
                 dashboardComponentsReq.setResourceId(newResourceId);
             }
         }
+
         DashboardTemplateRef toDashboardTemplateRef = changeToDashboardTemplateRef(dashBoardTemplateReq);
         toDashboardTemplateRef.setComponentsSetting(newComponentsList.toString());
-        List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(componentsSetting);
+        List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(sortDashboardComponentsReqList);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -150,10 +160,11 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         if (StringUtils.isNotBlank(layerShow)) {
             dashboardTemplateRes.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
         }
-        //图层排序，默认将GIS图层置为最底层
+        //图层排序
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             List<DashboardComponents> sourceDashboardComponents = new ArrayList<>();
+            List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
             for (DashboardComponents dashboardComponent : dashboardComponents) {
                 //视角筛选
                 String sourceType = dashboardComponent.getType();
@@ -161,19 +172,18 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     continue;
                 }
                 sourceDashboardComponents.add(dashboardComponent);
+                if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                    commonDashboardComponentList.add(dashboardComponent);
+                }
             }
 
-            List<DashboardComponents> dashboardComponentsList;
-            //按图层进行排序，预览时需要正序图层，编辑时需要倒叙
-            if (isPreview) {
-                dashboardComponentsList =
-                        sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
-            } else {
-                dashboardComponentsList =
-                        sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
-            }
+            //通用控件处理
+            sourceDashboardComponents.removeAll(commonDashboardComponentList);
+            List<DashboardComponents> sortDashboardComponent
+                    = sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+            commonDashboardComponentList.addAll(sortDashboardComponent);
 
-            dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
+            dashboardTemplateRes.setComponentsSetting(commonDashboardComponentList);
 
 
         }

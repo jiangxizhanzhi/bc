@@ -2,10 +2,7 @@ package com.cyberpeace.situation.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.ComponentsDataReq;
-import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
-import com.cyberpeace.situation.controller.req.DashboardComponentsResourceReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 
@@ -81,4 +78,11 @@ public interface DashboardTemplateService {
 
     String getDefaultTemplateId(String taskType);
 
+    /**
+     * 处理图层和组件配置顺序
+     * @param componentsSettingList
+     * @param layerShow
+     * @return
+     */
+    List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow);
 }

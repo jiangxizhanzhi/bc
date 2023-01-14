@@ -68,17 +68,26 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         //校验模板名称
         checkTemplateName(dashBoardTemplateReq.getName(), null);
 
+        //处理图层和组件配置顺序
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
+        List<DashboardComponentsReq> dashboardComponentsReqList = dashBoardTemplateReq.getComponentsSetting();
+        List<DashboardComponentsReq> sortDashboardComponentsReqList = sortComponent(dashboardComponentsReqList, layerShow);
+        dashBoardTemplateReq.setComponentsSetting(sortDashboardComponentsReqList);
+
         DashboardTemplate dashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
+
         dashboardTemplate.setResourceId(IDGeneratorUtil.getID());
         String componentsSetting = dashboardTemplate.getComponentsSetting();
         JSONArray dashboardComponentsIdList = new JSONArray();
         List<DashboardComponents> dashboardComponentsList =
                 JsonUtil.toJsonObjectArray(componentsSetting, DashboardComponents.class);
+
         for (DashboardComponents dashboardComponents : dashboardComponentsList) {
             String resourceId = IDGeneratorUtil.getID();
             dashboardComponents.setResourceId(resourceId);
             dashboardComponentsIdList.add(resourceId);
         }
+        
         dashboardTemplate.setComponentsSetting(dashboardComponentsIdList.toString());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -107,8 +116,10 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         List<String> oldComponentsList = JsonUtil.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class);
 
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
-        if (CollectionUtils.isNotEmpty(componentsSetting)) {
-            for (DashboardComponentsReq dashboardComponentsReq : componentsSetting) {
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
+        if (CollectionUtils.isNotEmpty(componentsSetting) && CollectionUtils.isNotEmpty(layerShow)) {
+            List<DashboardComponentsReq> sortComponentsSettingList = sortComponent(componentsSetting, layerShow);
+            for (DashboardComponentsReq dashboardComponentsReq : sortComponentsSettingList) {
                 String newResourceId = IDGeneratorUtil.getID();
                 newComponentsList.add(newResourceId);
                 dashboardComponentsReq.setResourceId(newResourceId);
@@ -153,28 +164,32 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
-            List<DashboardComponents> dashboardComponentsList;
-            //按图层进行排序，预览时需要正序图层，编辑时需要倒叙
-            if (isPreview) {
-                dashboardComponentsList =
-                        dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
-            } else {
-                dashboardComponentsList =
-                        dashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
-            }
+            List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
             if (type == null) {
-                dashboardTemplateRes.setComponentsSetting(dashboardComponentsList);
+                sortDashboardComponents.addAll(dashboardComponents);
             } else {
                 //存在视角时，按视角类型筛选数据
                 List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
-                dashboardComponentsList.forEach(dashboardComponent -> {
+                List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
+                dashboardComponents.forEach(dashboardComponent -> {
                     String componentType = dashboardComponent.getType();
                     if (Objects.equals(componentType, type)) {
                         typeDashboardComponents.add(dashboardComponent);
                     }
+                    //全局控件
+                    if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                        commonDashboardComponentList.add(dashboardComponent);
+                    }
                 });
-                dashboardTemplateRes.setComponentsSetting(typeDashboardComponents);
+                //处理控件顺序和全局控件
+                typeDashboardComponents.removeAll(commonDashboardComponentList);
+                commonDashboardComponentList.addAll(typeDashboardComponents);
+                sortDashboardComponents.addAll(commonDashboardComponentList);
             }
+            List<DashboardComponents> sortDashboardComponent
+                    = sortDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+
+            dashboardTemplateRes.setComponentsSetting(sortDashboardComponent);
         }
         return dashboardTemplateRes;
     }
@@ -592,5 +607,29 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
 
         return dashboardTemplateMapper.selectByType(situationCategory.getResourceId());
+    }
+
+    public List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow){
+        List<LayerShow> layerShowList = new ArrayList<>();
+        List<DashboardComponentsReq> sortComponentsSettingList = new ArrayList<>();
+        for (LayerShowReq layerShowReq : layerShow) {
+            List<LayerShow> children = layerShowReq.getChildren();
+            if (CollectionUtils.isNotEmpty(children)) {
+                layerShowList.addAll(children);
+            } else {
+                layerShowList.add(BeanUtils.copy(layerShowReq, LayerShow.class));
+            }
+        }
+        if (layerShowList.size() == componentsSettingList.size()) {
+            for (LayerShow show : layerShowList) {
+                Integer componentIndex = show.getComponentIndex();
+                DashboardComponentsReq dashboardComponentsReq =
+                        componentsSettingList.stream().filter(componentsSetting -> componentsSetting.getComponentIndex().equals(componentIndex)).findFirst().orElse(null);
+                if (dashboardComponentsReq != null) {
+                    sortComponentsSettingList.add(dashboardComponentsReq);
+                }
+            }
+        }
+        return sortComponentsSettingList;
     }
 }

@@ -20,4 +20,6 @@ public class LayerShow implements Serializable {
 
     private String id;
 
+    private Boolean selected;
+
 }

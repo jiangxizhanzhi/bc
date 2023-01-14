@@ -20,6 +20,7 @@ import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
+import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
@@ -52,6 +53,9 @@ public class SituationController {
 	@Autowired
 	private DynamicSchemeService dynamicSchemeService;
 
+	@Autowired
+	private AttackMessageHistoryService attackMessageHistoryService;
+
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
@@ -67,6 +71,13 @@ public class SituationController {
 
 		// 处理态势数据
 		SituationTopo situationTopo = situationHandlerService.getSituationTopo(sceneData);
+
+		//清理过期的动效历史
+		if (sceneId == null){
+			attackMessageHistoryService.clearIllegalData(topoId);
+		}else {
+			attackMessageHistoryService.clearIllegalData(sceneId);
+		}
 
 		return new BaseRsp<>(situationTopo);
 	}

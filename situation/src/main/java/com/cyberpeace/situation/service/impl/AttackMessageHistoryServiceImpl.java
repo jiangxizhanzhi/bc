@@ -199,6 +199,19 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		return sceneTrendList;
 	}
 
+	@Override
+	public void clearIllegalData(String sceneId) {
+		List<AttackLog> attackLogList = attackMessageHistoryMapper.getAttackLog(sceneId);
+		//获取源节点或目标节点已被删除的动效历史的resourceId列表
+		List<String> resourceIdList = attackLogList.stream()
+												   .filter(attackLog -> getNameById(sceneId, attackLog.getSourceId()) == null || getNameById(sceneId, attackLog.getTargetId()) == null)
+												   .map(AttackLog::getResourceId)
+												   .collect(Collectors.toList());
+		if (resourceIdList.size()>0){
+			attackMessageHistoryMapper.deleteBatchIds(resourceIdList);
+		}
+	}
+
 	public <E, T> List<HostCount> getHostTop(Predicate<? super AttackType> filterValue, String sceneId) {
 		List<String> attackTypeList = Lists.newArrayList(AttackType.values())
 										   .stream()

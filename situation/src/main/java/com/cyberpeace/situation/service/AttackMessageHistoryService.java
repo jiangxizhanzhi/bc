@@ -91,4 +91,10 @@ public interface AttackMessageHistoryService {
 	 * @return 防御趋势
 	 */
 	List<SceneTrend> getDefenseTrend(String sceneId);
+
+	/**
+	 * 清理因节点删除导致的脏数据
+	 * @param sceneId 场景编号
+	 */
+	void clearIllegalData(String sceneId);
 }

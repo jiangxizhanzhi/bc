@@ -8,6 +8,8 @@ import java.io.Serializable;
 @Data
 public class AttackLog implements Serializable {
 
+	private String resourceId;
+
 	@ApiModelProperty("时间")
 	private String time;
 

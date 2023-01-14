@@ -70,7 +70,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		planBo.setTrainPlanName(trainPlan.getName());
 
 		UserInfo user = remoteUserService.getById(trainPlan.getCreateUserId());
-		planBo.setUsername(userInfo.isSuperuser() ? user.getName() : CommonConstant.EMPTY_STRING);
+		if (null != user) {
+			planBo.setUsername(userInfo.isSuperuser() ? user.getName() : CommonConstant.EMPTY_STRING);
+		}
 		return planBo;
 	}
 }

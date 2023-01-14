@@ -261,7 +261,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
-		return businessTemplateMapper.selectIdsByUserId(userId);
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		if (userInfo.isSuperuser()) {
+			return businessTemplateMapper.getAllIds();
+		} else {
+			return businessTemplateMapper.selectIdsByUserId(userId);
+		}
 	}
 
 	@Override

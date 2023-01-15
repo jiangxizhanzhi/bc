@@ -25,7 +25,8 @@ public interface RemoteSituationService {
 	 * 获取平台列表
 	 * @return List<PlatformContext>
 	 */
-	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId, String schemeId);
+	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId,
+			String schemeId);
 
 	/**
 	 * 获取网络信息
@@ -145,5 +146,7 @@ public interface RemoteSituationService {
 	 * @param dashboardId
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
+
+	String getRunId(String subjectId);
 
 }

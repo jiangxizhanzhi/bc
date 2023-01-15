@@ -82,6 +82,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String XD_RELEASE_SCREEN;
 
+	private String PG_GET_RUN_ID;
+
 	@Autowired
 	private RemoteOperationServiceImpl remoteOperationService;
 
@@ -92,6 +94,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public void init() {
 		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
 		String outerHostXd = "http://" + ConfigUtil.getContextProperty("outer.host.xd");
+		String outerHostPg = "http://" + ConfigUtil.getContextProperty("outer.host.pg");
 		RANGE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("range.info");
 		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
 		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");
@@ -115,6 +118,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_TOPO_HISTORY = outerHostXd + ConfigUtil.getContextProperty("xd.topo.history");
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
+		PG_GET_RUN_ID = outerHostPg + ConfigUtil.getContextProperty("pg.run.get");
 	}
 
 	@Override
@@ -392,6 +396,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
 		List<String> res = JsonUtil.toJsonObjectArray(rsp, String.class);
 		return res;
+	}
+
+	public String getRunId(String subjectId) {
+		RunContext runContext = HttpClientUtil.rawGet(PG_GET_RUN_ID + subjectId, RunContext.class);
+		return runContext.getRunId();
 	}
 
 }

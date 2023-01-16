@@ -1085,7 +1085,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
 					orgMap);
-			validateOrgUnderClassroomTime(classroom.getOrganizationId(), classroom.getStartTime(),
+			validateOrgUnderClassroomTime(trainPlan.getResourceId(), classroom.getOrganizationId(), classroom.getStartTime(),
 					classroom.getEndTime(), i);
 			
 			Course course = courseMapper.selectById(classroom.getCourseId());
@@ -1503,10 +1503,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		return classroom;
 	}
-	
-	private void validateOrgUnderClassroomTime(String orgId, Date startTime, Date endTime, int rowIndex) {
+
+	/**
+	 * 校验组织下课程表的开始时间和结束时间是否存在冲突
+	 * @param planId
+	 * @param orgId
+	 * @param startTime
+	 * @param endTime
+	 * @param rowIndex
+	 */
+	private void validateOrgUnderClassroomTime(String planId, String orgId, Date startTime, Date endTime, int rowIndex) {
 		List<Classroom> classrooms = classroomMapper.selectByOrgId(orgId);
 		for (Classroom classroom : classrooms) {
+			if (planId.equals(classroom.getTrainPlanId())) {
+				continue;
+			}
+
 			boolean startIn = startTime.getTime() > classroom.getStartTime().getTime()
 					&& startTime.getTime() < classroom.getEndTime().getTime();
 			boolean endIn = endTime.getTime() > classroom.getStartTime().getTime()

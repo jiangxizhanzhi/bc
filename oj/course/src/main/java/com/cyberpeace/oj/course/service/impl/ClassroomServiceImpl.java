@@ -210,7 +210,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroomValidateHandler.validateUpdateClassroomTimeOverlap(classroom.getResourceId(),
 				classroom.getOrganizationId(), classroom.getStartTime(), classroom.getEndTime());
 		// 唯一索引 课时+组织id唯一性校验
-		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
+//		classroomValidateHandler.validateClassroomLessonExistExcludeItself(classroom.getLessonId(), classroom.getOrganizationId(), classroom);
 
 		// 课程权限校验
 		courseValidateHandler.validateCoursePermission(classroom.getCourseId(), authContext);
@@ -1085,6 +1085,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
 					orgMap);
+			validateOrgUnderClassroomTime(classroom.getOrganizationId(), classroom.getStartTime(),
+					classroom.getEndTime(), i);
+			
 			Course course = courseMapper.selectById(classroom.getCourseId());
 			if (null == course) {
 				continue;
@@ -1499,6 +1502,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		classroom.setOrganizationIds(JsonUtil.arrayToString(childrenList));
 
 		return classroom;
+	}
+	
+	private void validateOrgUnderClassroomTime(String orgId, Date startTime, Date endTime, int rowIndex) {
+		List<Classroom> classrooms = classroomMapper.selectByOrgId(orgId);
+		for (Classroom classroom : classrooms) {
+			boolean startIn = startTime.getTime() > classroom.getStartTime().getTime()
+					&& startTime.getTime() < classroom.getEndTime().getTime();
+			boolean endIn = endTime.getTime() > classroom.getStartTime().getTime()
+					&& endTime.getTime() < classroom.getEndTime().getTime();
+			boolean startAndEndEq = startTime.equals(classroom.getStartTime())
+					&& endTime.equals(classroom.getEndTime());
+
+			if (startIn || endIn || startAndEndEq) {
+				throw new BusinessException(OjBusinessErrorCode.IMPORT_CLASS_IN_SCHEDULES, rowIndex);
+			}
+		}
 	}
 
 	/**

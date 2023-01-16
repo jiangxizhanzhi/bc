@@ -198,10 +198,8 @@ public class ClassroomValidateHandler {
 			if (classroom.getResourceId().equals(classroomId)) {
 				continue;
 			}
-			if ((startTime.getTime() > classroom.getStartTime().getTime()
-					&& startTime.getTime() < classroom.getEndTime().getTime())
-					|| (endTime.getTime() > classroom.getStartTime().getTime()
-							&& endTime.getTime() < classroom.getEndTime().getTime())) {
+			if (!(startTime.getTime() >= classroom.getEndTime().getTime()
+					|| endTime.getTime() <= classroom.getStartTime().getTime())) {
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
 		}

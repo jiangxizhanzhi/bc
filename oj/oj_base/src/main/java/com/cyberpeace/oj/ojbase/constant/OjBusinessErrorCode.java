@@ -287,4 +287,7 @@ public interface OjBusinessErrorCode {
 
 	/** 所有学员未提交报告 */
 	String NO_REPORT_CAN_BE_EXPORTED = "102094";
+
+	/** 该班级在该时间段内已有课程安排*/
+	String IMPORT_CLASS_IN_SCHEDULES = "102095";
 }

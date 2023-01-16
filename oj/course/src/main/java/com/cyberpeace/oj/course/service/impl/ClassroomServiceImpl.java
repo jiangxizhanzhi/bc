@@ -1099,7 +1099,6 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		// 数据插入前校验
 		validateTime(classrooms);
-		validateOrgLessonSame(classrooms);
 		validateClassroomTime(classrooms);
 
 		// 数据库插入前 最好再次校验训练计划 防止解析时间过长

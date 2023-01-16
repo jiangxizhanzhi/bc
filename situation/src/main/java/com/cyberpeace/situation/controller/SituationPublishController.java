@@ -252,7 +252,7 @@ public class SituationPublishController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		String templateId = situationPublishInstances.getTemplateId();
-		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, type);
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, type, Boolean.TRUE);
 		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
 		// TODO 大屏地址
 		copy.setTemplateInfo(dashboardTemplateInfo);

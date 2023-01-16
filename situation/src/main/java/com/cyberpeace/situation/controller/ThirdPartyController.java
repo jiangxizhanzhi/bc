@@ -24,6 +24,7 @@ import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.Center;
 import com.cyberpeace.situation.dao.entity.Station;
@@ -329,5 +330,16 @@ public class ThirdPartyController {
 	public BaseRsp<Map<String, ModelTypeContext>> getModelTypeList() {
 		Map<String, ModelTypeContext> res = remoteOperationService.getModelTypeListMap();
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取评估页面链接")
+	@GetMapping("/evaluate/url/")
+	public BaseRsp<EvaluateUrlRes> getEvaluateUrl(
+			@ApiParam(name = "subject_id", value = "科目ID", required = true) @RequestParam(
+					value = "subject_id", required = true) String subjectId,
+			@ApiParam(name = "role", value = "角色", required = true) @RequestParam(value = "role",
+					required = true) String role) {
+		String runId = remoteSituationService.getRunId(subjectId);
+		return new BaseRsp<>(new EvaluateUrlRes(runId, role));
 	}
 }

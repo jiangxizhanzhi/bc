@@ -50,7 +50,7 @@ public class DashboardTemplateRefController {
                                                                           String resourceId,
                                                                   @RequestParam(value = "type", required = false) @ApiParam(name = "type", value = "视角类型")
                                                                           String type) {
-        return new BaseRsp<>(dashboardTemplateRefService.getDashboardTemplateInfo(resourceId,type));
+        return new BaseRsp<>(dashboardTemplateRefService.getDashboardTemplateInfo(resourceId,type, Boolean.FALSE));
     }
 
     @ApiOperation("批量删除改态势数据")

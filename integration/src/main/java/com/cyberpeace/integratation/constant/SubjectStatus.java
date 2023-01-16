@@ -10,8 +10,9 @@ import lombok.Getter;
 public enum SubjectStatus {
 
 	/**
-	 * 任务状态
+	 * 科目状态
 	 */
+	QT("0", "未知"),
 	WKS("1", "未开始"),
 	CSH("2", "初始化完成"),
 	JXZ("3", "进行中"),

@@ -1,22 +1,28 @@
 package com.cyberpeace.bs.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.impl.TraceIdContext;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.utils.model.LcResponse;
 import com.cyberpeace.common.constant.WebConstant;
@@ -204,26 +210,118 @@ public class LcHttpClient {
 		HttpclientContext.setContext(httpclientModel);
 	}
 
-	public static CloseableHttpResponse getClosableHttpRspByPost(String url, String json) {
+	public static String uploadFile2Lc(String url, MultipartFile file) {
+		// 1、设置请求线程数据
+		setContext(url);
+		// 获取文件名
+		String filename = file.getOriginalFilename();
+		HttpPost httpPost = new HttpPost(url);
+		// 创建请求体
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		try {
+			builder.addBinaryBody("file", file.getBytes(),
+					ContentType.create("multipart/form-data"), filename);
+		} catch (IOException e) {
+			log.error("load file error: ", e);
+			throw new BusinessException(BsErrorCode.FAILED_TO_LOAD_FILE);
+		}
+		HttpEntity entity = builder.build();
+		// 设置请求体
+		httpPost.setEntity(entity);
+		String rsp = doHttp(httpPost, String.class);
+		return rsp;
+	}
+
+	public static void exportBehavior(HttpServletResponse response, List<Long> lcBehaviorIds,
+			String url) {
+		ServletOutputStream out = null;
+		InputStream inputStream = null;
+		// 创建httpclient对象
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse lcRsp = getClosableHttpRspByPost(httpClient, url, lcBehaviorIds);
+		if (lcRsp == null) {
+			throw new RemoteServiceException();
+		}
+		try {
+			// 拿到响应结果实体
+			HttpEntity entity = lcRsp.getEntity();
+			if (entity == null) {
+				throw new RemoteServiceException("Empty response from lc behavior export");
+			}
+			// not 200 rsp || not zip file
+			if (lcRsp.getStatusLine().getStatusCode() != HttpStatus.SC_OK
+					|| !entity.getContentType().toString().contains("application/zip")) {
+				String body = EntityUtils.toString(lcRsp.getEntity(), WebConstant.ENCODING);
+				log.error("lc remote exception: {}", body);
+				throw new RemoteServiceException(getErrorMessage(body));
+			}
+			// 获取文件流
+			inputStream = entity.getContent();
+			// 设置文件ContentType类型和文件名
+			response.setContentType("application/zip");
+			response.setHeader("Content-Disposition", String.format(
+					"attachment; filename=behavior_export_%d.zip", System.currentTimeMillis()));
+			out = response.getOutputStream();
+			// input文件流写入out
+			int len = 0;
+			byte[] buffer = new byte[1024 * 10];
+			while ((len = inputStream.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+			// 释放资源
+			EntityUtils.consume(entity);
+		} catch (RemoteServiceException e1) {
+			throw e1;
+		} catch (Exception e) {
+			log.error("failed to export behavior", e);
+			throw new BusinessException(BsErrorCode.FAILED_TO_EXPORT);
+		} finally {
+			try {
+				// 释放资源
+				httpClient.close();
+				lcRsp.close();
+				if (inputStream != null) {
+					inputStream.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 尝试获取错误提示
+	 * @param rsp 
+	 * @return
+	 */
+	private static String getErrorMessage(String rsp) {
+		try {
+			LcResponse response = JsonUtil.toJsonObject(rsp, LcResponse.class);
+			return response.getMsg();
+		} catch (Exception e) {
+			return rsp;
+		}
+	}
+
+	private static <T> CloseableHttpResponse
+			getClosableHttpRspByPost(CloseableHttpClient httpClient, String url, T body) {
 		CloseableHttpResponse res = null;
 		try {
-			// 1.创建httpclient对象
-			CloseableHttpClient httpClient = HttpClients.createDefault();
 			// 2.创建post方式请求对象
 			HttpPost httpPost = new HttpPost(url);
 			// 4.设置 json body
 			httpPost.addHeader("Content-Type", "application/json");
-			httpPost.setEntity(new StringEntity(json));
-			// 5.设置消息头
-//			httpPost.setHeader("Accept-Charset", "utf-8");
-			// 在请求中明确定义不要进行压缩
-//			httpPost.setHeader("Accept-Encoding", "identity");
-			httpPost.setHeader("Authorization", getToken());
-			// 6.发送消息，获取响应
+			httpPost.setEntity(new StringEntity(JsonUtil.toJsonString(body)));
+			// set headers
+			setAuthorization(httpPost);
+			// do request
 			res = httpClient.execute(httpPost);
-		} catch (Exception e){
-			e.printStackTrace();
-			throw new BusinessException();
+		} catch (Exception e) {
+			log.error("failed to get rsp from lc: ", e);
 		}
 		return res;
 	}

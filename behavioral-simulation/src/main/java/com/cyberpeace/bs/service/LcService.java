@@ -1,5 +1,12 @@
 package com.cyberpeace.bs.service;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
@@ -7,33 +14,27 @@ import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
-import org.apache.http.client.methods.CloseableHttpResponse;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 龙测接口
  */
 public interface LcService {
 
-    /**
+	/**
 	 * 获取行为列表
 	 * @return 行为列表
 	 * @param pageReq
 	 */
 	ListRsp<LcBehavior> getLcBehaviorList(BehaviorPageReq pageReq);
 
-    /**
+	/**
 	 * 开启单个行为流量
 	 */
 	void startBehavior(ReleaseTaskReq req);
 
-    /**
-     * 停止单个行为流量
-     */
+	/**
+	 * 停止单个行为流量
+	 */
 	void stopBehavior(StopTaskReq req);
 
 	/**
@@ -67,18 +68,26 @@ public interface LcService {
 	 * 获取设备监控数据
 	 * @return
 	 */
-	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity, Long startTime);
+	LcMonitorRsp getDeviceMonitorData(String deviceId, String deviceIp, Boolean isEntity,
+			Long startTime);
 
 	/**
 	 * 批量删除lc行为
 	 * @param behaviorIds
 	 */
-    Boolean deleteBehavior(List<String> behaviorIds);
+	Boolean deleteBehavior(List<String> behaviorIds);
 
 	/**
-	 * 获取 lc 行为导出文件流
-	 * @param behaviorIds
+	 * 导入 lc 行为文件
+	 * @param file
 	 * @return
 	 */
-	CloseableHttpResponse getBehaviorExportRsp(List<String> behaviorIds) throws IOException;
+	String importBehavior(MultipartFile file);
+
+	/**
+	 * 导出 lc 行为
+	 * @param response 
+	 * @param behaviorIds
+	 */
+	void exportBehavior(HttpServletResponse response, List<String> behaviorIds);
 }

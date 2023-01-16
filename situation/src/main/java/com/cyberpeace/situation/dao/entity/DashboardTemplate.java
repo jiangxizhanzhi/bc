@@ -58,6 +58,9 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("组件配置")
     private String componentsSetting;
 
+    @ApiModelProperty("图层信息")
+    private String layerShow;
+
     public enum DashboardTemplateLevel{
 
         TOPOLOGY(2,"拓扑级"),

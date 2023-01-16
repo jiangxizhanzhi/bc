@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.controller.req.LayerShowReq;
+import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.model.ViewAngle;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +29,6 @@ import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
-import com.cyberpeace.situation.dao.entity.DashboardComponents;
-import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
-import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
@@ -68,7 +66,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     public DashboardTemplateRef createDashboardTemplate(String resourceId) {
 
         //获取模板数据
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId, null);
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateService.getDashboardTemplateInfo(resourceId, null, Boolean.FALSE);
         DashBoardTemplateReq dashBoardTemplateReq = BeanUtils.copy(dashboardTemplateInfo, DashBoardTemplateReq.class);
         DashboardTemplateRef dashboardTemplateRef = changeToDashboardTemplateRef(dashBoardTemplateReq);
 
@@ -102,23 +100,33 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     @Override
     public String updateDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
         String resourceId = dashBoardTemplateReq.getResourceId();
+        List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
+
+        //资源校验
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(resourceId);
         if (dashboardTemplateRef == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+
+        //获取旧数据控件
         JSONArray newComponentsList = new JSONArray();
         List<String> oldComponentsList = JsonUtil.toJsonObjectArray(dashboardTemplateRef.getComponentsSetting(), String.class);
-        List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
-        if (CollectionUtils.isNotEmpty(componentsSetting)) {
-            for (DashboardComponentsReq dashboardComponentsReq : componentsSetting) {
+
+        //获取按图层排序后的控件
+        List<DashboardComponentsReq> sortDashboardComponentsReqList = dashboardTemplateService.sortComponent(componentsSetting, layerShow);
+        dashBoardTemplateReq.setComponentsSetting(sortDashboardComponentsReqList);
+        if (CollectionUtils.isNotEmpty(sortDashboardComponentsReqList)) {
+            for (DashboardComponentsReq dashboardComponentsReq : sortDashboardComponentsReqList) {
                 String newResourceId = IDGeneratorUtil.getID();
                 newComponentsList.add(newResourceId);
                 dashboardComponentsReq.setResourceId(newResourceId);
             }
         }
+
         DashboardTemplateRef toDashboardTemplateRef = changeToDashboardTemplateRef(dashBoardTemplateReq);
         toDashboardTemplateRef.setComponentsSetting(newComponentsList.toString());
-        List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(componentsSetting);
+        List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(sortDashboardComponentsReqList);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -135,12 +143,13 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
     }
 
     @Override
-    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type) {
+    public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type, Boolean isPreview) {
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(resourceId);
         if (dashboardTemplateRef == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         String componentsSetting = dashboardTemplateRef.getComponentsSetting();
+        String layerShow = dashboardTemplateRef.getLayerShow();
 
         String viewAngle = dashboardTemplateRef.getViewAngle();
         List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
@@ -148,11 +157,13 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         if (StringUtils.isNotBlank(viewAngle)) {
             dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
         }
-        //图层排序，默认将GIS图层置为最底层
+        if (StringUtils.isNotBlank(layerShow)) {
+            dashboardTemplateRes.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
+        }
+        //图层排序
         if (CollectionUtils.isNotEmpty(list)) {
             List<DashboardComponents> dashboardComponents = dashboardComponentsMapper.selectBatchIds(list);
             List<DashboardComponents> sourceDashboardComponents = new ArrayList<>();
-            List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
             List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
             for (DashboardComponents dashboardComponent : dashboardComponents) {
                 //视角筛选
@@ -161,29 +172,18 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     continue;
                 }
                 sourceDashboardComponents.add(dashboardComponent);
-                String componentSetting = dashboardComponent.getComponentSetting();
-                JSONObject jsonObject = JSONObject.parseObject(componentSetting);
-                String componentType = jsonObject.getString("component_type");
-                if (componentType != null && (Objects.equals("0", componentType) || Objects.equals("1", componentType))) {
-                    sortDashboardComponents.add(dashboardComponent);
-                }
                 if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
                     commonDashboardComponentList.add(dashboardComponent);
                 }
             }
-            sourceDashboardComponents.removeAll(sortDashboardComponents);
+
+            //通用控件处理
             sourceDashboardComponents.removeAll(commonDashboardComponentList);
-            //按图层进行排序
-            List<DashboardComponents> dashboardComponentsList =
-                    sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex)).collect(Collectors.toList());
+            List<DashboardComponents> sortDashboardComponent
+                    = sourceDashboardComponents.stream().sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed()).collect(Collectors.toList());
+            commonDashboardComponentList.addAll(sortDashboardComponent);
 
-            //添加二位组件配置
-            sortDashboardComponents.addAll(dashboardComponentsList);
-
-            //添加全局控件和公共控件
-            sortDashboardComponents.addAll(commonDashboardComponentList);
-
-            dashboardTemplateRes.setComponentsSetting(sortDashboardComponents);
+            dashboardTemplateRes.setComponentsSetting(commonDashboardComponentList);
 
 
         }
@@ -214,6 +214,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         DashboardTemplateRef dashboardTemplateRef = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplateRef.class);
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
+        List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
         ViewAngle viewAngle = dashBoardTemplateReq.getViewAngle();
         if (CollectionUtils.isNotEmpty(componentsSetting)) {
             jsonArray.addAll(componentsSetting);
@@ -222,6 +223,13 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         if (viewAngle != null) {
             dashboardTemplateRef.setViewAngle(JSONObject.toJSONString(viewAngle));
         }
+
+        if (CollectionUtils.isNotEmpty(layerShow)) {
+            JSONArray layerShowArray = new JSONArray();
+            layerShowArray.addAll(layerShow);
+            dashboardTemplateRef.setLayerShow(layerShowArray.toString());
+        }
+
         return dashboardTemplateRef;
     }
 

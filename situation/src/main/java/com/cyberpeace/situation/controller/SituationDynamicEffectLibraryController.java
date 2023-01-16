@@ -23,6 +23,7 @@ import com.cyberpeace.situation.service.DynamicEffectsLibraryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -99,7 +100,7 @@ public class SituationDynamicEffectLibraryController {
             }
         }
 
-        if (null != type) {
+        if (null != type && !type.equals("")) {
             queryWrapper.eq(DynamicEffectsLibrary::getCategory, type);
         }
         queryWrapper.orderByDesc(DynamicEffectsLibrary::getCreateTime);

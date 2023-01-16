@@ -93,16 +93,15 @@ public class SituationDynamicEffectLibraryController {
 
         }
         String type = dynamicEffectLibraryFilterReq.getCategory();
-        if (null != type) {
+        if (null != type && !type.equals("")) {
             DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper.selectById(type);
             if (null == category) {
                 throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
             }
-        }
 
-        if (null != type && !type.equals("")) {
             queryWrapper.eq(DynamicEffectsLibrary::getCategory, type);
         }
+
         queryWrapper.orderByDesc(DynamicEffectsLibrary::getCreateTime);
         List<DynamicEffectsLibrary> res = dynamicEffectsLibraryMapper.selectList(queryWrapper);
         return new BaseRsp<>(res);

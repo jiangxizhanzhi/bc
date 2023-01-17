@@ -82,7 +82,7 @@ public class SituationTwoDimensionalComponentController {
 			queryWrapper.like(TwoDimensionalComponents::getName, twoDimensionalComponentsFilterReq.getName());
 
 		}
-		if (null != twoDimensionalComponentsFilterReq.getType()){
+		if (null != twoDimensionalComponentsFilterReq.getType() && !twoDimensionalComponentsFilterReq.getType().equals("")){
 			queryWrapper.eq(TwoDimensionalComponents::getType, twoDimensionalComponentsFilterReq.getType());
 		}
 		queryWrapper.orderByDesc(TwoDimensionalComponents::getCreateTime);

@@ -17,7 +17,8 @@ public interface UserModelService {
 	 * @param pattern 用户名模糊匹配
 	 * @return 用户行为分页列表
 	 */
-	ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern, Integer accessOs);
+	ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern,
+			Integer accessOs);
 
 	/**
 	 * 获取用户行为模拟详情
@@ -32,10 +33,10 @@ public interface UserModelService {
 	 */
 	void create(UserModelAddBo addBo);
 
-    /**
-     * 更新用户行为模拟详情
-     * @param modifyBo 前端输入编辑
-     */
+	/**
+	 * 更新用户行为模拟详情
+	 * @param modifyBo 前端输入编辑
+	 */
 	void update(UserModelModifyBo modifyBo);
 
 	/**
@@ -64,4 +65,11 @@ public interface UserModelService {
 	 * @return
 	 */
 	UserModel getOrException(String resourceId);
+
+	/**
+	 * 批量获取用户模型包含的行为列表，并附带行为变量值
+	 * @param userModelIds
+	 * @return
+	 */
+	List<UserModelWithVariable> getBehaviorsBatchWithVariables(List<String> userModelIds);
 }

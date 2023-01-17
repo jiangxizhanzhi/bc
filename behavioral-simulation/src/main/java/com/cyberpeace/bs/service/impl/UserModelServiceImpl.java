@@ -38,6 +38,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +57,8 @@ public class UserModelServiceImpl implements UserModelService {
 	private UserTypeService userTypeService;
 
 	@Override
-	public ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern, Integer accessOs) {
+	public ListRsp<UserModelBo> listUserModel(Page page, String userTypeId, String pattern,
+			Integer accessOs) {
 		// get user_behaviors
 		IPage<UserModel> userBehaviorIPage = userModelMapper.pageUserBehaviors(page, userTypeId,
 				pattern, accessOs);
@@ -84,7 +87,7 @@ public class UserModelServiceImpl implements UserModelService {
 		Map<String, BehaviorSimple> map = StreamApiUtils.toMap(behaviorSimpleList,
 				BehaviorSimple::getId, behavior -> behavior);
 		List<Behavior> behaviors;
-		if(behaviorSimpleList.isEmpty()){
+		if (behaviorSimpleList.isEmpty()) {
 			behaviors = Lists.newArrayList();
 		} else {
 			behaviors = lcService.getBehaviorListByIds(map.keySet());
@@ -155,7 +158,7 @@ public class UserModelServiceImpl implements UserModelService {
 		UserModel userModel = getOrException(userModelId);
 		List<BehaviorSimple> behaviorSimpleList = BsUtil
 				.parseBehaviorList(userModel.getBehaviorList());
-		if(behaviorSimpleList.isEmpty()){
+		if (behaviorSimpleList.isEmpty()) {
 			return Lists.newArrayList();
 		}
 		List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
@@ -164,6 +167,53 @@ public class UserModelServiceImpl implements UserModelService {
 		List<BehaviorWithVariable> res = rspBos.stream().map(this::createBehaviorWithVariable)
 				.collect(Collectors.toList());
 		return res;
+	}
+
+	@Override
+	public List<UserModelWithVariable> getBehaviorsBatchWithVariables(List<String> userModelIds) {
+		// get user models
+		List<UserModel> userModelList = userModelMapper.selectBatchIdsOrderByIdDesc(userModelIds);
+		Map<String, List<String>> userBehaviorMap = Maps.newHashMap();
+		Set<String> behaviorIdsAll = Sets.newHashSet();
+		for (UserModel userModel : userModelList) {
+			List<BehaviorSimple> behaviorSimpleList = BsUtil
+					.parseBehaviorList(userModel.getBehaviorList());
+			List<String> behaviorIds = behaviorSimpleList.stream().map(BehaviorSimple::getId)
+					.collect(Collectors.toList());
+			userBehaviorMap.put(userModel.getResourceId(), behaviorIds);
+			behaviorIdsAll.addAll(behaviorIds);
+		}
+		// get behaviors and variables
+		List<LcBehaviorRspBo> rspBos = lcService.getLcBehaviorListByIds(behaviorIdsAll, true);
+		Map<String, BehaviorWithVariable> behaviorMap = StreamApiUtils.toMap(rspBos,
+				LcBehaviorRspBo::getId, this::createBehaviorWithVariable);
+
+		List<UserModelWithVariable> res = Lists.newArrayList();
+		for (UserModel userModel : userModelList) {
+			UserModelWithVariable withVariable = new UserModelWithVariable();
+			withVariable.setUserModelId(userModel.getResourceId());
+			withVariable.setUserName(userModel.getUserName());
+			List<String> behaviorIds = userBehaviorMap.get(userModel.getResourceId());
+			for (String behaviorId : behaviorIds) {
+				if (behaviorMap.containsKey(behaviorId)) {
+					withVariable.getBehaviorList().add(behaviorMap.get(behaviorId));
+				}
+			}
+			res.add(withVariable);
+		}
+		return res;
+	}
+
+	@Override
+	public UserModel getOrException(String userModelId) {
+		if (StringUtils.isBlank(userModelId)) {
+			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
+		}
+		UserModel userModel = userModelMapper.selectById(userModelId);
+		if (null == userModel) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return userModel;
 	}
 
 	private BehaviorWithVariable createBehaviorWithVariable(LcBehaviorRspBo rspBo) {
@@ -195,18 +245,6 @@ public class UserModelServiceImpl implements UserModelService {
 		userModel.setBehaviorList(
 				JsonUtil.arrayToString(behaviorSimpleList, PropertyNamingStrategy.SnakeCase));
 		userModel.setAccessHabit(JsonUtil.arrayToString(reqBo.getAccessHabit()));
-		return userModel;
-	}
-
-	@Override
-	public UserModel getOrException(String userModelId) {
-		if (StringUtils.isBlank(userModelId)) {
-			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
-		}
-		UserModel userModel = userModelMapper.selectById(userModelId);
-		if (null == userModel) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 		return userModel;
 	}
 

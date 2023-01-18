@@ -41,7 +41,6 @@ import java.util.List;
 @RequestMapping("/oj/admin/course/personal-stats")
 @Slf4j
 public class AdminPersonalStatsController {
-	// todo ------- 数据准确性待验证 -------
 
 	@Autowired
 	LearnStatsService learnStatsService;

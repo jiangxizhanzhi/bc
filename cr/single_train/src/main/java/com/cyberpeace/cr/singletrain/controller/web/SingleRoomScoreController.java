@@ -108,7 +108,7 @@ public class SingleRoomScoreController {
 		UserInfo userInfo = remoteUserService.getById(user_hash);
 		data.put("user_id", userInfo.getUserId());
 		data.put("username", userInfo.getUserName());
-		// 获取用户LOGO todo 当前页面未展示
+		// 获取用户LOGO
 		try {
 			data.put("user_logo", mpEnvService.getMpHost() + userInfo.getAvatarUrl());
 		} catch (Exception e) {

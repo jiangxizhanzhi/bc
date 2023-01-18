@@ -63,7 +63,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		BeanUtils.copyProperties(trainObject, eventData);
 		BeanUtils.copyProperties(businessTemplate, eventData);
 
-		// 属性 todo create_user, scene_config_data
+		// 属性
 		eventData.setDifficult(businessTemplate.getDifficulty());
 		eventData.setCategory(trainObject.getSubType());
 		eventData.setPreSkill(JsonUtil.toJsonObjectArray(trainObject.getPreSkills(), String.class));

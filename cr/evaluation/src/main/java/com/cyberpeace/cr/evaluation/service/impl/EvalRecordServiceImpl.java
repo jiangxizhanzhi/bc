@@ -165,7 +165,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
     @Override
     public EvalRecord getEntity(String resourceId) {
-        // todo 文本调整
+        // 非法请求
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
         if (evalRecord == null) {
             throw new BusinessException("评估未找到");
@@ -303,7 +303,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 生成聚合项数据（四级）
         List<EvalIndexRef> indexRefs = Lists.newArrayList();
         Map<String, String> evalIndexIdsMap = Maps.newHashMap();
-        // todo 实际查询到变量项数量校验
+
         evalAggregations.forEach(evalAggregation -> {
             EvalIndexRef evalIndexRef = new EvalIndexRef();
             evalIndexRef.setResourceId(IDGeneratorUtil.getID());

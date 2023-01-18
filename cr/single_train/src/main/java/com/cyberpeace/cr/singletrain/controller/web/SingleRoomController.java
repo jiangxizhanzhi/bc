@@ -106,7 +106,6 @@ public class SingleRoomController {
 	@ApiOperation("任务提交")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> submitMission(@RequestBody @Validated SubmitMissionReq requestData) {
-		// todo mission refactor
 		CrCommonValidator.checkStringExist(requestData.getAnswer(),
 				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 
@@ -119,14 +118,12 @@ public class SingleRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleMissionBo> mission(@RequestParam("resource_id") String businessTemplateId,
 			@RequestParam("mission_id") String missionId) {
-		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getMission(businessTemplateId, missionId));
 	}
 
 	@GetMapping("/train_manual")
 	@ApiOperation("训练手册")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	// todo mission refactor
 	public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
 	}
@@ -143,7 +140,6 @@ public class SingleRoomController {
 	@ApiOperation("训练记录-markdown")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<String> trainRecordMd(@RequestParam("resource_id") String businessTemplateId) {
-		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getTrainRecordMarkdown(businessTemplateId));
 	}
 
@@ -152,7 +148,6 @@ public class SingleRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<TrainTimeLineBo>
 			trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
-		// todo mission refactor
 		return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
 	}
 

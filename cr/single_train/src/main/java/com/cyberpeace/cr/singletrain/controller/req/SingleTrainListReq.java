@@ -16,6 +16,5 @@ public class SingleTrainListReq extends PageReqBase implements Serializable {
     @ApiModelProperty("训练难度")
     private Integer difficult;
 
-    // todo 作用...
     private Integer withInstance;
 }

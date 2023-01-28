@@ -18,6 +18,12 @@ public class UserModelWithVariable implements Serializable {
 	@ApiModelProperty(value = "用户名称")
 	private String userName;
 
+	@ApiModelProperty(value = "是否限制带宽")
+	private Boolean bandwidthLimited;
+
+	@ApiModelProperty(value = "带宽限制")
+	private Integer bandwidth;
+
 	@ApiModelProperty(value = "行为列表")
 	private List<BehaviorWithVariable> behaviorList = Lists.newArrayList();
 }

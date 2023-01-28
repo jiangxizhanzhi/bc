@@ -193,6 +193,8 @@ public class UserModelServiceImpl implements UserModelService {
 			UserModelWithVariable withVariable = new UserModelWithVariable();
 			withVariable.setUserModelId(userModel.getResourceId());
 			withVariable.setUserName(userModel.getUserName());
+			withVariable.setBandwidthLimited(userModel.getBandwidthLimited());
+			withVariable.setBandwidth(userModel.getBandwidth());
 			List<String> behaviorIds = userBehaviorMap.get(userModel.getResourceId());
 			for (String behaviorId : behaviorIds) {
 				if (behaviorMap.containsKey(behaviorId)) {

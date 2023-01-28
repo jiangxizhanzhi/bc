@@ -1186,19 +1186,27 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			}
 			//附件
 			List<String> urlList = LocalStringUtil.getMatchStr(mdContent, PatternConstant.MARKDOWN_URL);
-			for (int j = 0; j < urlList.size(); j++) {
-				String str = urlList.get(j);
+			int j = 0;
+			for (String str: urlList) {
+				j++;
 				String fileUrl = str.substring(str.lastIndexOf("(") + 1, str.lastIndexOf(")"));
 				if (!new File(fileUrl).isFile()) {
 					continue;
 				}
 				FileUtil.copyFile(fileUrl,
-						baseClassroomPath + File.separator + (j + 1) + "." + FileUtil.getFileSuffix(fileUrl), false);
-				fileUrl = (j + 1) + "." + FileUtil.getFileSuffix(fileUrl);
+						baseClassroomPath + File.separator + j + "." + FileUtil.getFileSuffix(fileUrl), false);
+				fileUrl = j + "." + FileUtil.getFileSuffix(fileUrl);
 				mdContent = mdContent.replace(str, fileUrl);
 			}
+			//替换<p></p>标签中的\n、\r为<br>标签
+			String reportContent = MdUtil.mdToHtmlForApiDoc(mdContent);
+			List<String> pLabelList = LocalStringUtil.getMatchStr(reportContent, PatternConstant.HTML_P);
+			for(String pLabel: pLabelList){
+				String newPLabel = pLabel.replace("\n","<br>").replace("\r","<br>");
+				reportContent = reportContent.replace(pLabel, newPLabel);
+			}
 			//实验报告
-			jsonObject.put("report_content", MdUtil.mdToHtmlForApiDoc(mdContent));
+			jsonObject.put("report_content", reportContent);
 			//是否通过
 			if (classroomReportBo.getPassed() == null) {
 				jsonObject.put("passed", "未审核");

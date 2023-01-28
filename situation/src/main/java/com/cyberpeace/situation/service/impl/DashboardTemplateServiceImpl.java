@@ -612,15 +612,16 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     public List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow){
         List<LayerShow> layerShowList = new ArrayList<>();
         List<DashboardComponentsReq> sortComponentsSettingList = new ArrayList<>();
+        //获取所有图层信息
         for (LayerShowReq layerShowReq : layerShow) {
             List<LayerShow> children = layerShowReq.getChildren();
             if (CollectionUtils.isNotEmpty(children)) {
                 layerShowList.addAll(children);
-            } else {
-                layerShowList.add(BeanUtils.copy(layerShowReq, LayerShow.class));
             }
         }
+        //图层数量和控件数量保持一致
         if (layerShowList.size() == componentsSettingList.size()) {
+            //按图层顺序排列控件顺序
             for (LayerShow show : layerShowList) {
                 Integer componentIndex = show.getComponentIndex();
                 DashboardComponentsReq dashboardComponentsReq =

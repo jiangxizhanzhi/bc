@@ -7,6 +7,25 @@ img{
   width: 100%;
 }
 
+tr td,th{
+  border:1px solid rgba(255, 255, 255, 0.9);
+}
+
+table{
+  border-collapse: collapse;
+}
+
+pre{
+  background: rgba(255, 255, 255, 0.05);
+}
+
+blockquote {
+  margin: 0 0 1.875rem 1.875rem;
+  border-left: solid 2px #474d54;
+  padding-left: 30px;
+  margin-top: 35px;
+}
+
 .page{
   width: 100%;
 }

@@ -99,4 +99,7 @@ public interface PatternConstant {
 
 	/** 匹配markdown文件中的链接*/
 	String MARKDOWN_URL = "[^!]\\[.*?\\]\\(.+?\\)";
+
+	/** 匹配<p></p>标签*/
+	String HTML_P = "<p>(?:(?!<\\/p>)[\\s\\S])*<\\/p>";
 }

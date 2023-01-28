@@ -34,6 +34,7 @@
                cr_rb_room.create_user_id,
                cr_rb_room.create_time,
                cr_rb_room.enable_recording,
+               cr_rb_room.support_partial_start,
                cr_rb_room.modify_user_id,
                cr_rb_room.local_scene_id,
                cr_rb_room.copyed_topo_id,

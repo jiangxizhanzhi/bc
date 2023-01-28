@@ -12,3 +12,5 @@ create unique index user_lesson_uniq
 ALTER TABLE oj_train_plan MODIFY COLUMN `name` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '计划名称';
 
 ALTER TABLE oj_practice_theory_ref MODIFY COLUMN `snapshot` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '理论基础基础信息快照';
+
+ALTER TABLE cr_rb_room  add column `support_partial_start` tinyint(1) NULL COMMENT '是否部分启动' AFTER `enable_recording`;

@@ -61,5 +61,7 @@ public class RbRoomContext {
 
 	private Boolean enableRecording;
 
+ 	private Boolean supportPartialStart;
+
 	private String logo;
 }

@@ -173,6 +173,13 @@ public class MessageListener implements ChannelAwareMessageListener {
 					realListener.onSceneStartProcess(sceneContent, businessId, context);
 					break;
 				case SCENE_ELEMENT:
+					// 判断是否是已删除场景的推送消息
+					mpSceneId = object.getJSONObject("data").getString("cscene_id");
+					if (!localScene.getMpSceneId().equals(mpSceneId)) {
+						log.info("mp scene {} has been deleted, no longer belongs to business {}",
+								mpSceneId, businessId);
+						break;
+					}
 					WsSceneReportBO reportBO = new WsSceneReportBO("", type,
 							replaceAccessIp(object.getJSONObject("data")));
 					String content = JsonUtil.toJsonString(reportBO);

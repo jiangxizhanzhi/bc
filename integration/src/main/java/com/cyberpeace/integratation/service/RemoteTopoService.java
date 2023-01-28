@@ -71,4 +71,11 @@ public interface RemoteTopoService {
 	 * @return
 	 */
 	Boolean batchDeleteTopo(List<String> topoIds);
+
+	/**
+	 * 设置topo部分启动
+	 * @param topoId
+	 * @param supportPartialStart
+	 */
+	void setSupportPartialStart(String topoId, Boolean supportPartialStart);
 }

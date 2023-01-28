@@ -10,12 +10,14 @@ import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
-import com.cyberpeace.bs.service.bo.simulator.*;
+import com.cyberpeace.bs.service.bo.simulator.MeterPageReq;
+import com.cyberpeace.bs.service.bo.simulator.SceneIdName;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,31 +32,10 @@ public class UserSimulatorController {
 	@Autowired
 	UserSimulatorService userSimulatorService;
 
-	@ApiOperation("用户流量发生分页列表")
-	@GetMapping("/list")
-	public BaseRsp<ListRsp<UserSimulatorBo>> listTraffic(PageReqBase pageReqBase) {
-		ListRsp<UserSimulatorBo> res = userSimulatorService.pageSimulators(pageReqBase);
-		return new BaseRsp<>(res);
-	}
-
 	@ApiOperation("配管创建仪表")
 	@PostMapping("/create")
 	public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
 		userSimulatorService.batchCreate(addBo);
-		return new BaseRsp();
-	}
-
-	@ApiOperation("创建用户流量发生")
-	@PostMapping("/")
-	public BaseRsp create(@RequestBody @Validated UserSimulatorAddReq addReq) {
-		userSimulatorService.create(addReq);
-		return new BaseRsp();
-	}
-
-	@ApiOperation("批量删除用户流量发生")
-	@DeleteMapping("/")
-	public BaseRsp delete(@RequestBody @Validated IdListReq deleteReq) {
-		userSimulatorService.batchDelete(deleteReq.getIds());
 		return new BaseRsp();
 	}
 

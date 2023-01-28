@@ -4,12 +4,15 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
@@ -23,7 +26,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.google.common.collect.Maps;
-import org.apache.shiro.util.CollectionUtils;
 
 /**
  * @author SN
@@ -263,5 +265,20 @@ public class BsUtil {
 			return Lists.newArrayList();
 		}
 		return behaviorIds.stream().map(Long::new).collect(Collectors.toList());
+	}
+
+	/**
+	 * 解析json，失败返回空列表
+	 * @param json
+	 * @return
+	 */
+	public static List<String> parseListOrEmpty(String json) {
+		List<String> habits = Lists.newArrayList();
+		try {
+			habits = JsonUtil.toJsonObjectArray(json, String.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return habits;
 	}
 }

@@ -1,41 +1,17 @@
 package com.cyberpeace.bs.service;
 
+import java.util.List;
+
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
-import com.cyberpeace.bs.service.bo.simulator.*;
+import com.cyberpeace.bs.service.bo.simulator.MeterPageReq;
+import com.cyberpeace.bs.service.bo.simulator.SceneIdName;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
-
-import java.util.List;
-import java.util.Map;
 
 public interface UserSimulatorService {
-
-	/**
-	 * 列出全部前台用户流量发生
-	 * @return 前台用户流量发生
-	 */
-	List<UserSimulatorBo> listSimulator();
-
-	/**
-	 * 用户流量发生分页
-	 * @param pageReqBase
-	 * @return
-	 */
-	ListRsp<UserSimulatorBo> pageSimulators(PageReqBase pageReqBase);
-
-	/**
-	 * 批量删除前台用户流量发生
-	 * @param resourceIds 用户流量发生id列表
-	 */
-	void batchDelete(List<String> resourceIds);
-
-	/**
-	 * 创建前台用户流量发生
-	 * @param addReq 用户模拟创建请求体
-	 */
-	void create(UserSimulatorAddReq addReq);
 
 	/**
 	 * 启动用户模拟
@@ -51,7 +27,7 @@ public interface UserSimulatorService {
 
 	/**
 	 * 停止流量发生
-	 * @param resourceId 前台用户流量id 
+	 * @param resourceId 前台用户流量id
 	 */
 	void stopSimulator(String resourceId);
 
@@ -62,17 +38,11 @@ public interface UserSimulatorService {
 	void batchStopSimulator(List<String> simulatorIds);
 
 	/**
-	 * 获取定时器集合
-	 * @return 定时器集合
+	 * 发送执行行为请求之后，更新simulator进度
+	 * @param simulatorId 行为仪表id
+	 * @param behaviorId 记录行为id
 	 */
-	Map<String, BsTimer> getTimerMap();
-
-	/**
-	 * 发送行为流量之后，更新traffic进度
-	 * @param trafficId 流量发生编号
-	 * @param index 最近一次的行为编号
-	 */
-	void updateProcess(String trafficId, Integer index);
+	void updateProcess(String simulatorId, String behaviorId);
 
 	/**
 	 * 配管批量创建仪表
@@ -111,7 +81,7 @@ public interface UserSimulatorService {
 	 * 关闭场景时删除关联仪表
 	 * @param sceneIdList 场景id
 	 */
-    void deleteBySceneId(List<String> sceneIdList);
+	void deleteBySceneId(List<String> sceneIdList);
 
 	/**
 	 * 获取仪表关联的全部场景
@@ -131,7 +101,7 @@ public interface UserSimulatorService {
 	 * @param resourceId
 	 * @return
 	 */
-    MonitorDataRes getMonitorData(String resourceId);
+	MonitorDataRes getMonitorData(String resourceId);
 
 	List<String> getSceneIdList();
 }

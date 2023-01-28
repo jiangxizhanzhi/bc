@@ -1,9 +1,10 @@
 package com.cyberpeace.bs.service.impl;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -21,9 +22,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.dao.entity.UserInstance;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
+import com.cyberpeace.bs.dao.mapper.UserInstanceMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
 import com.cyberpeace.bs.service.LcService;
@@ -32,6 +35,7 @@ import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
 import com.cyberpeace.bs.service.bo.BsTimerTask;
+import com.cyberpeace.bs.service.bo.behavior.BehaviorInstance;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
@@ -46,11 +50,10 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserSimulatorServiceImpl implements UserSimulatorService {
 
-	private final Map<String, BsTimer> timerMap = Maps.newConcurrentMap();
+	private final Map<String, Map<String, BsTimer>> timerMap = Maps.newConcurrentMap();
 
 	private String EXTERNAL_IP_SEGMENT;
 
@@ -86,89 +89,160 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Autowired
 	DeviceOccupationMapper deviceOccupationMapper;
 
+	@Autowired
+	UserInstanceMapper userInstanceMapper;
+
 	@PostConstruct
 	public void init() {
 		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
 	}
 
 	@Override
-	public List<UserSimulatorBo> listSimulator() {
-		List<UserSimulator> simulators = userSimulatorMapper.selectAll();
-		List<UserSimulatorBo> userSimulatorBos = Lists.newArrayList();
-		simulators.forEach(simulator -> {
-			UserSimulatorBo simulatorBo = BeanUtils.copy(simulator, UserSimulatorBo.class);
-			BsUtil.setHabits(simulatorBo, simulator.getAccessHabit());
-			userSimulatorBos.add(simulatorBo);
-		});
-
-		return userSimulatorBos;
-	}
-
-    @Override
-    public ListRsp<UserSimulatorBo> pageSimulators(PageReqBase pageReqBase) {
-        Page page = pageReqBase.toPageParam();
-		IPage<UserSimulator> userSimulatorIPage = userSimulatorMapper.page(page, "");
-		userSimulatorIPage.convert(simulator -> {
-			UserSimulatorBo simulatorBo = BeanUtils.copy(simulator, UserSimulatorBo.class);
-			BsUtil.setHabits(simulatorBo, simulator.getAccessHabit());
-			return simulatorBo;
-		});
-		return PageUtil.getListResult(userSimulatorIPage);
-    }
-
-    @Override
-	public void batchDelete(List<String> resourceIds) {
-		if (CollectionUtils.isEmpty(resourceIds)) {
-			return;
-		}
-		userSimulatorMapper.deleteBatchIds(resourceIds);
-		batchRemoveTimer(resourceIds);
-	}
-
-
-	@Override
-	public void create(UserSimulatorAddReq addReq) {
-		String userModelId = addReq.getUserModelId();
-		if (StringUtils.isBlank(userModelId)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		UserModel userModel = userModelMapper.selectById(userModelId);
-		if (userModel == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		UserSimulator simulator = createUserSimulator(userModel, addReq);
-		userSimulatorMapper.insert(simulator);
-	}
-
-	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
 		log.info("create simulator request: {}", JsonUtil.toJsonString(addBo));
-		String sceneId = addBo.getSceneId();
-		List<String> userModelIds = addBo.getNodeList().stream()
-				.map(NodeBo::getUserModelId).collect(Collectors.toList());
+		List<String> userModelIds = Lists.newArrayList();
+		// collect user model ids
+		for (NodeBo nodeBo : addBo.getNodeList()) {
+			List<UserInstanceAddBo> userModelBos = nodeBo.getUserModels();
+			if (userModelBos != null) {
+				for (UserInstanceAddBo userInstanceAddBo : userModelBos) {
+					userModelIds.add(userInstanceAddBo.getUserModelId());
+				}
+			}
+		}
+		if (userModelIds.isEmpty()) {
+			log.info("user model not configured");
+			return;
+		}
+		// get user models
 		List<UserModel> userModelList = userModelMapper.selectBatchIds(userModelIds);
-		Map<String, UserModel> userModelMap = StreamApiUtils.toMap(userModelList, UserModel::getResourceId,
-				userModel -> userModel);
-		List<String> userTypeIds = userModelList.stream().map(UserModel::getUserTypeId).collect(Collectors.toList());
+		Map<String, UserModel> userModelMap = StreamApiUtils.toMap(userModelList,
+				UserModel::getResourceId, userModel -> userModel);
+		// get user types
+		List<String> userTypeIds = userModelList.stream().map(UserModel::getUserTypeId)
+				.collect(Collectors.toList());
 		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
-
+		// create user instances
+		List<UserInstance> userInstanceAll = Lists.newArrayList();
+		List<UserSimulator> simulatorList = Lists.newArrayList();
+		for (NodeBo nodeBo : addBo.getNodeList()) {
+			List<UserInstance> userInstanceList = createUserInstanceList(nodeBo.getUserModels(),
+					userModelMap, userTypeMap);
+			UserSimulator simulator = createSimulator(userInstanceList, nodeBo, addBo.getSceneId(),
+					addBo.getSceneName());
+			userInstanceAll.addAll(userInstanceList);
+			simulatorList.add(simulator);
+		}
+		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				for (NodeBo node : addBo.getNodeList()) {
-					String userModelId = node.getUserModelId();
-					UserModel userModel = userModelMap.get(userModelId);
-					if (userModel == null) {
-						throw new BusinessException(BsErrorCode.USER_MODEL_MISSING, userModelId);
-					}
-					String userType = userTypeMap.getOrDefault(userModel.getUserTypeId(), StringUtils.EMPTY);
-					UserSimulator simulator = createUserSimulator(userModel, node, sceneId,
-							addBo.getSceneName(), userType);
+
+				for (UserSimulator simulator : simulatorList) {
 					userSimulatorMapper.insert(simulator);
 				}
+				userInstanceMapper.insertUserInstanceBatch(userInstanceAll);
 			}
 		});
+
+	}
+
+	private UserSimulator createSimulator(List<UserInstance> userInstanceList, NodeBo nodeBo,
+			String sceneId, String sceneName) {
+		UserSimulator simulator = new UserSimulator();
+		simulator.setAccessOs(nodeBo.getType());
+
+		Set<String> habits = Sets.newHashSet();
+		simulator.setBandwidthLimited(false);
+		for (UserInstance instance : userInstanceList) {
+			// get start time and end time
+			if (simulator.getStartTime() == null
+					|| simulator.getStartTime().isAfter(instance.getStartTime())) {
+				simulator.setStartTime(instance.getStartTime());
+			}
+			if (simulator.getEndTime() == null
+					|| simulator.getEndTime().isBefore(instance.getEndTime())) {
+				simulator.setEndTime(instance.getEndTime());
+			}
+			// collect access habit
+			habits.addAll(BsUtil.parseListOrEmpty(instance.getAccessHabit()));
+			// bandwidth
+			if (instance.getBandwidthLimited()) {
+				simulator.setBandwidthLimited(true);
+				if (simulator.getBandwidth() == null
+						|| simulator.getBandwidth() > instance.getBandwidth()) {
+					simulator.setBandwidth(instance.getBandwidth());
+				}
+			}
+
+		}
+		// get user types
+		Set<String> userTypes = userInstanceList.stream().map(UserInstance::getUserType)
+				.collect(Collectors.toSet());
+		simulator.setUserTypes(JsonUtil.toJsonString(userTypes));
+		// user count
+		simulator.setUserCount(userInstanceList.size());
+		// behavior count
+		simulator.setUserCount(
+				userInstanceList.stream().mapToInt(UserInstance::getBehaviorCount).sum());
+		// access habit
+		simulator.setAccessHabit(JsonUtil.toJsonString(habits));
+		// status
+		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
+		// device
+		simulator.setDeviceId(nodeBo.getNodeId());
+		simulator.setDeviceName(nodeBo.getNodeName());
+		String deviceIp = getIp(nodeBo.getIpConfig());
+		if (StringUtils.isBlank(deviceIp)) {
+			throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
+		}
+		simulator.setDeviceIp(deviceIp);
+		simulator.setIsEntity(nodeBo.getIsEntity());
+		simulator.setSceneId(sceneId);
+		simulator.setSceneName(sceneName);
+		// set id
+		simulator.setResourceId(IDGeneratorUtil.getID());
+		userInstanceList
+				.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
+		return simulator;
+	}
+
+	private List<UserInstance> createUserInstanceList(List<UserInstanceAddBo> userModels,
+			Map<String, UserModel> userModelMap, Map<String, String> userTypeMap) {
+		List<UserInstance> instanceList = Lists.newArrayList();
+		if (userModels == null) {
+			return instanceList;
+		}
+		String userModelId;
+		UserModel userModel;
+		for (UserInstanceAddBo instanceAddBo : userModels) {
+			userModelId = instanceAddBo.getUserModelId();
+			userModel = userModelMap.get(userModelId);
+			if (userModel == null) {
+				continue;
+			}
+			// build user instance
+			UserInstance instance = new UserInstance();
+			instance.setUserName(userModel.getUserName());
+			instance.setUserTypeId(userModel.getUserTypeId());
+			instance.setUserType(
+					userTypeMap.getOrDefault(instance.getUserTypeId(), StringUtils.EMPTY));
+			BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
+			instance.setStartTime(statistic.getStartTime());
+			instance.setEndTime(statistic.getEndTime());
+			instance.setAccessConfig(userModel.getAccessConfig());
+			instance.setBehaviorList(userModel.getBehaviorList());
+			instance.setBehaviorVariable(JsonUtil.toJsonString(instanceAddBo.getBehaviorConfig()));
+			instance.setBehaviorCount(statistic.getBehaviorCount());
+			instance.setAccessHabit(userModel.getAccessHabit());
+			instance.setBandwidthLimited(userModel.getBandwidthLimited());
+			instance.setBandwidth(userModel.getBandwidth());
+			instance.setUserModelId(userModelId);
+
+			instanceList.add(instance);
+		}
+		return instanceList;
 	}
 
 	@Override
@@ -186,11 +260,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		Page page = pageReq.toPageParam();
 		String sceneId = pageReq.getScene_id();
 		IPage<UserSimulator> simulators = userSimulatorMapper.page(page, sceneId);
-		simulators.convert(simulator ->{
+		simulators.convert(simulator -> {
 			BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
 			behaviorMeterBo.setId(simulator.getDeviceId());
 			behaviorMeterBo.setIp(simulator.getDeviceIp());
-			behaviorMeterBo.setName(simulator.getUserName() + "_" + simulator.getSceneId());
+			behaviorMeterBo.setName("用户行为仪表" + "_" + simulator.getResourceId());
 			behaviorMeterBo.setResourceId(simulator.getResourceId());
 			behaviorMeterBo.setSceneName(simulator.getSceneName());
 			behaviorMeterBo.setStatus(simulator.getStatus());
@@ -203,31 +277,62 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public SimulatorDetail getDetail(String simulatorId) {
 		UserSimulator userSimulator = getOrException(simulatorId);
 		SimulatorDetail detail = BeanUtils.copy(userSimulator, SimulatorDetail.class);
-		detail.setAccessHabit(JsonUtil.toJsonObjectArray(userSimulator.getAccessHabit(), String.class));
-		List<BehaviorSimple> behaviors = BsUtil.parseBehaviorList(userSimulator.getBehaviorList());
-		List<String> behaviorIds = behaviors.stream().map(BehaviorSimple::getId)
-				.collect(Collectors.toList());
-		if (behaviorIds.isEmpty()) {
-			detail.setBehaviors(Lists.newArrayList());
-		} else {
-			List<LcBehaviorRspBo> lcBehaviorRspBos = lcService.getLcBehaviorListByIds(behaviorIds,
+		detail.setAccessHabit(
+				JsonUtil.toJsonObjectArray(userSimulator.getAccessHabit(), String.class));
+		detail.setUserTypes(JsonUtil.toJsonObjectArray(userSimulator.getUserTypes(), String.class));
+		// collect behavior ids and usernames
+		List<UserInstance> instanceList = userInstanceMapper.getBatchBySimulatorId(simulatorId);
+		Map<String, List<String>> userBehaviorMap = Maps.newHashMap();
+		Map<String, String> userNameMap = Maps.newHashMap();
+		Set<String> behaviorIdSet = Sets.newHashSet();
+		for (UserInstance instance : instanceList) {
+			List<String> behaviorIds = BsUtil.parseBehaviorList(instance.getBehaviorList()).stream()
+					.map(BehaviorSimple::getId).collect(Collectors.toList());
+			userBehaviorMap.put(instance.getUserModelId(), behaviorIds);
+			userNameMap.put(instance.getUserModelId(), instance.getUserName());
+			behaviorIdSet.addAll(behaviorIds);
+		}
+
+		detail.setBehaviors(Lists.newArrayList());
+		// get behaviors
+		if (!behaviorIdSet.isEmpty()) {
+			List<LcBehaviorRspBo> lcBehaviorRspBos = lcService.getLcBehaviorListByIds(behaviorIdSet,
 					false);
 			List<LcBehavior> lcBehaviors = lcBehaviorRspBos.stream().map(this::createLcBehavior)
 					.collect(Collectors.toList());
-			detail.setBehaviors(lcBehaviors);
+			Map<String, LcBehavior> behaviorMap = StreamApiUtils.toMap(lcBehaviors,
+					LcBehavior::getId, instance -> instance);
+			// 添加仪表包含的用户的行为
+			for (UserInstance instance : instanceList) {
+				String userModelId = instance.getUserModelId();
+				List<String> behaviorIds = userBehaviorMap.get(userModelId);
+				String userName = userNameMap.get(userModelId);
+				for (String behaviorId : behaviorIds) {
+					LcBehavior behavior = behaviorMap.get(behaviorId);
+					if (behavior == null) {
+						continue;
+					}
+					BehaviorInstance behaviorInstance = BeanUtils.deepCopy(behavior,
+							BehaviorInstance.class);
+					behaviorInstance.setUserName(userName);
+					detail.getBehaviors().add(behaviorInstance);
+				}
+			}
 		}
+
 		return detail;
 	}
 
-    @Override
-    public void deleteBySceneId(List<String> sceneIdList) {
+	@Override
+	public void deleteBySceneId(List<String> sceneIdList) {
 		log.info("Delete simulators by scene_id: {}", sceneIdList);
-        List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneIdList(sceneIdList);
-		if(relatedSimulatorIds.isEmpty()){
+		List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneIdList(sceneIdList);
+		if (relatedSimulatorIds.isEmpty()) {
 			return;
 		}
 		// 删除仪表，解除实体设备占用
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				userSimulatorMapper.deleteBySceneIdList(sceneIdList);
@@ -236,7 +341,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		});
 		// 删除定时任务
 		batchRemoveTimer(relatedSimulatorIds);
-    }
+	}
 
 	@Override
 	public List<SceneIdName> getSceneList() {
@@ -288,25 +393,29 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	private void start(UserSimulator simulator) {
-		// create timer
-		BsTimer timer = new BsTimer();
-		List<BehaviorSimple> behaviorList = BsUtil.parseBehaviorList(simulator.getBehaviorList());
-		int index = behaviorList.size();
-		Map<String, String> behaviorVariableMap = BsUtil.getVariableMap(simulator.getBehaviorVariable());
-		// get params
+		List<UserInstance> userInstanceList = userInstanceMapper
+				.getBatchBySimulatorId(simulator.getResourceId());
+		timerMap.putIfAbsent(simulator.getResourceId(), Maps.newHashMap());
+		// 一个用户一个timer
+		for (UserInstance instance : userInstanceList) {
+			// create timer
+			BsTimer timer = new BsTimer();
+			List<BehaviorSimple> behaviorList = BsUtil
+					.parseBehaviorList(instance.getBehaviorList());
+			// get params
+			Map<String, String> behaviorVariableMap = BsUtil
+					.getVariableMap(instance.getBehaviorVariable());
 
-		for (BehaviorSimple behavior : behaviorList) {
-			// 最后一个task index为0
-			index--;
-			BsTimerTask task = new BsTimerTask(simulator.getDeviceId(), simulator.getDeviceIp(),simulator.getIsEntity(),
-					behavior.getId(), index, simulator.getResourceId(),
-					behaviorVariableMap.getOrDefault(behavior.getId(), BsConstants.EMPTY_LIST_JSON), timer);
-			// 循环执行，间隔一天，跳过当天在当前时间之前的行为
-			timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
-					BsConstants.MILLI_IN_A_DAY);
+			for (BehaviorSimple behavior : behaviorList) {
+				// 最后一个task index为0
+				BsTimerTask task = new BsTimerTask(simulator, behavior.getId(), behaviorVariableMap
+						.getOrDefault(behavior.getId(), BsConstants.EMPTY_LIST_JSON));
+				// 循环执行，间隔一天，跳过当天在当前时间之前的行为
+				timer.scheduleAtFixedRate(task, BsUtil.getNextDate(behavior.getStartTime()),
+						BsConstants.MILLI_IN_A_DAY);
+			}
+			timerMap.get(simulator.getResourceId()).put(instance.getUserModelId(), timer);
 		}
-		timerMap.putIfAbsent(simulator.getResourceId(), timer);
-
 		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
 		userSimulatorMapper.updateById(simulator);
 	}
@@ -328,25 +437,18 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		}
 	}
 
-	private void stop(UserSimulator simulator){
+	private void stop(UserSimulator simulator) {
 		// cancel timer
-		BsTimer timer = timerMap.get(simulator.getResourceId());
-		if (timer != null) {
-			timer.cancel();
-			timerMap.remove(simulator.getResourceId());
-		}
+		removeTimer(simulator.getResourceId());
 		// get latest behavior id
-		List<BehaviorSimple> behaviorSimpleList = BsUtil
-				.parseBehaviorList(simulator.getBehaviorList());
-		if (!simulator.getExecutedIndex().equals(behaviorSimpleList.size())) {
+		String latestBehaviorId = simulator.getLastExeId();
+		if (latestBehaviorId != null) {
 			// stop latest executed behavior
-			String latestBehaviorId = behaviorSimpleList
-					.get(behaviorSimpleList.size() - simulator.getExecutedIndex() - 1).getId();
 			try {
 				StopTaskReq req = new StopTaskReq();
 				req.setChartId(new Long(latestBehaviorId));
 				req.setIsUsingIp(!simulator.getIsEntity());
-				if (req.getIsUsingIp()) {
+				if (Boolean.TRUE.equals(req.getIsUsingIp())) {
 					req.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
 				} else {
 					req.setDeviceId(new Integer(simulator.getDeviceId()));
@@ -354,8 +456,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				req.setIp(simulator.getDeviceIp());
 				lcService.stopBehavior(req);
 			} catch (Exception e) {
-				log.warn("Failed to stop behavior [{}] of simulator [{}]: {}",
-						latestBehaviorId, simulator.getResourceId(), e);
+				log.warn("Failed to stop behavior [{}] of simulator [{}]: {}", latestBehaviorId,
+						simulator.getResourceId(), e);
 			}
 		}
 		// update status
@@ -364,80 +466,16 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
-	public Map<String, BsTimer> getTimerMap() {
-		return timerMap;
-	}
-
-	@Override
-	public void updateProcess(String simulatorId, Integer index) {
-		userSimulatorMapper.updateProcess(simulatorId, index);
-	}
-
-
-	private UserSimulator createUserSimulator(UserModel userModel, UserSimulatorAddReq addReq) {
-		UserSimulator simulator = new UserSimulator();
-		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
-		simulator.setUserModelId(userModel.getResourceId());
-		simulator.setUserName(userModel.getUserName());
-		simulator.setUserTypeId(userModel.getUserTypeId());
-		simulator.setUserType(userTypeService.getNameById(userModel.getUserTypeId()));
-		simulator.setStartTime(statistic.getStartTime());
-		simulator.setEndTime(statistic.getEndTime());
-		simulator.setAccessConfig(userModel.getAccessConfig());
-		simulator.setAccessOs(userModel.getAccessOs());
-		simulator.setBehaviorList(userModel.getBehaviorList());
-		simulator.setBehaviorVariable(addReq.getBehaviorVariables());
-		simulator.setBehaviorCount(statistic.getBehaviorCount());
-		simulator.setAccessHabit(userModel.getAccessHabit());
-		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
-		simulator.setBandwidth(userModel.getBandwidth());
-		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
-		simulator.setExecutedIndex(statistic.getBehaviorCount());
-		simulator.setDeviceId(addReq.getDeviceId());
-		simulator.setDeviceIp(addReq.getDeviceIp());
-		simulator.setDeviceName(addReq.getDeviceName());
-		simulator.setSceneId(addReq.getSceneId());
-		return simulator;
-	}
-
-	private UserSimulator createUserSimulator(UserModel userModel, NodeBo nodeBo, String sceneId,
-			String sceneName, String userType) {
-		UserSimulator simulator = new UserSimulator();
-		BehaviorStatistic statistic = BsUtil.getBehaviorStatistic(userModel.getBehaviorList());
-		simulator.setUserModelId(userModel.getResourceId());
-		simulator.setUserName(userModel.getUserName());
-		simulator.setUserTypeId(userModel.getUserTypeId());
-		simulator.setUserType(userType);
-		simulator.setStartTime(statistic.getStartTime());
-		simulator.setEndTime(statistic.getEndTime());
-		simulator.setAccessConfig(userModel.getAccessConfig());
-		simulator.setAccessOs(userModel.getAccessOs());
-		simulator.setBehaviorList(userModel.getBehaviorList());
-		simulator.setBehaviorVariable(JsonUtil.arrayToString(nodeBo.getBehaviorConfig()));
-		simulator.setBehaviorCount(statistic.getBehaviorCount());
-		simulator.setAccessHabit(userModel.getAccessHabit());
-		simulator.setBandwidthLimited(userModel.getBandwidthLimited());
-		simulator.setBandwidth(userModel.getBandwidth());
-		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
-		simulator.setExecutedIndex(statistic.getBehaviorCount());
-		String deviceId = nodeBo.getNodeId();
-		if (StringUtils.isBlank(deviceId)) {
-			throw new BusinessException(BsErrorCode.INVALID_DEVICE_ID);
+	public void updateProcess(String simulatorId, String behaviorId) {
+		UserSimulator simulator = getOrException(simulatorId);
+		if (simulator.getLastExeDate().equals(LocalDate.now().toString())) {
+			simulator.setExeCount(simulator.getExeCount() + 1);
+		} else {
+			simulator.setLastExeDate(LocalDate.now().toString());
+			simulator.setExeCount(1);
 		}
-		simulator.setDeviceId(deviceId);
-		String deviceIp = getIp(nodeBo.getIpConfig());
-		if (StringUtils.isBlank(deviceIp)) {
-			throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
-		}
-		simulator.setDeviceIp(deviceIp);
-		simulator.setDeviceName(nodeBo.getNodeName());
-		if(nodeBo.getIsEntity() == null){
-			throw new BusinessException(BsErrorCode.ACTUAL_OR_VIRTUAL);
-		}
-		simulator.setIsEntity(nodeBo.getIsEntity());
-		simulator.setSceneId(sceneId);
-		simulator.setSceneName(sceneName);
-		return simulator;
+		simulator.setLastExeId(behaviorId);
+		userSimulatorMapper.updateById(simulator);
 	}
 
 	@Override
@@ -463,10 +501,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		res.setDetail(new MonitorSimulatorDetail());
 		res.getDetail().load(simulator);
 		// task percentage
-		if (LocalTime.now().isAfter(simulator.getStartTime())) {
-			res.calculateExecuted(simulator.getBehaviorCount(), simulator.getExecutedIndex());
+
+		if (LocalDate.now().toString().equals(simulator.getLastExeDate())) {
+			res.calculateExecuted(simulator.getBehaviorCount(), simulator.getExeCount());
 		} else {
-			res.calculateExecuted(simulator.getBehaviorCount(), simulator.getBehaviorCount());
+			res.calculateExecuted(simulator.getBehaviorCount(), 0);
 		}
 		// get lc monitor data
 		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;
@@ -475,40 +514,17 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// res init time
 		res.init(timestamp, hours);
 		// bandwidth & packet
-		res.getBandwidthAndPacket().setBandwidth(BsUtil.fill(lcMonitorRsp.getBandwidth(),
-				hours * BsConstants.MINUTE_PER_HOUR, 0));
-		res.getBandwidthAndPacket().setPacket(BsUtil.fill(lcMonitorRsp.getPacket(),
-				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getBandwidthAndPacket().setBandwidth(
+				BsUtil.fill(lcMonitorRsp.getBandwidth(), hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getBandwidthAndPacket().setPacket(
+				BsUtil.fill(lcMonitorRsp.getPacket(), hours * BsConstants.MINUTE_PER_HOUR, 0));
 		// connection
-		res.getConnection().setConnection(BsUtil.fill(lcMonitorRsp.getConnection(),
-				hours * BsConstants.MINUTE_PER_HOUR, 0));
-		res.getConnection().setConnected(BsUtil.fill(lcMonitorRsp.getConnected(),
-				hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnection(
+				BsUtil.fill(lcMonitorRsp.getConnection(), hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnected(
+				BsUtil.fill(lcMonitorRsp.getConnected(), hours * BsConstants.MINUTE_PER_HOUR, 0));
 		// activity
 		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), hours, 0));
-		if (BsUtil.markedId.containsKey(resourceId)) {
-			if (res.getActivity().getYStep().stream().reduce(Integer::sum).orElse(0) == 0) {
-				List<BehaviorSimple> behaviorSimpleList = BsUtil
-						.parseBehaviorList(simulator.getBehaviorList());
-				LocalTime now = LocalTime.now();
-				LocalTime start = BsUtil.markedId.get(resourceId);
-				int[] arr = new int[24];
-				for (BehaviorSimple behavior : behaviorSimpleList) {
-					if (behavior.getStartTime().isAfter(start)) {
-						int index = now.getHour() - behavior.getStartTime().getHour();
-						if (index < 0) {
-							index += 24;
-						}
-						arr[index] += BsUtil.calStep(behavior.getId());
-					}
-				}
-				List<Integer> steps = Lists.newArrayList();
-				for (int i = 0; i < 8; i++) {
-					steps.add(arr[7 - i]);
-				}
-				res.getActivity().setYStep(steps);
-			}
-		}
 		// session
 		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), hours * 2, 0));
 
@@ -528,15 +544,20 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return userSimulatorMapper.selectById(resourceId);
 	}
 
+	private void batchRemoveTimer(Collection<String> simulatorIds) {
+		for (String simulatorId : simulatorIds) {
+			removeTimer(simulatorId);
+		}
+	}
 
-	private void batchRemoveTimer(Collection<String> simulatorIds){
-		for (String resourceId : simulatorIds) {
-			BsTimer timer = timerMap.get(resourceId);
-			if (timer != null) {
+	private void removeTimer(String simulatorId) {
+		Map<String, BsTimer> timers = timerMap.get(simulatorId);
+		if (timers != null) {
+			for (BsTimer timer : timers.values()) {
 				timer.cancel();
-				timerMap.remove(resourceId);
 			}
 		}
+		timerMap.remove(simulatorId);
 	}
 
 	/**

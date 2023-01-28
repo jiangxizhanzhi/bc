@@ -65,10 +65,13 @@ public class MonitorDataRes implements Serializable {
         }
     }
 
-    public void calculateExecuted(Integer total, Integer executedIndex){
+	public void calculateExecuted(Integer total, Integer exeCount) {
         ExecutedBo bo = new ExecutedBo();
-        bo.setNotExecuted(executedIndex);
-        bo.setExecuted(total - executedIndex);
+		if (exeCount > total) {
+			exeCount = total;
+		}
+		bo.setNotExecuted(total - exeCount);
+		bo.setExecuted(exeCount);
         this.setExecutionState(bo);
     }
 }

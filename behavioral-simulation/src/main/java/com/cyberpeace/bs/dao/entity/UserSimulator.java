@@ -19,22 +19,6 @@ public class UserSimulator extends BaseTable {
 	private String resourceId;
 
 	/**
-	 * 用户名称
-	 */
-	private String userName;
-
-	/**
-	 * 用户类型id
-	 */
-	private String userTypeId;
-
-	/**
-	 * 用户类型名称
-	 * 保存名称
-	 */
-	private String userType;
-
-	/**
 	 * 开始时间
 	 */
 	private LocalTime startTime;
@@ -50,19 +34,12 @@ public class UserSimulator extends BaseTable {
 	private Integer accessOs;
 
 	/**
-	 * 访问配置
+	 * 用户类型名称
+	 * 保存名称
 	 */
-	private Integer accessConfig;
+	private String userTypes;
 
-	/**
-	 * 访问行为json
-	 */
-	private String behaviorList;
-
-	/**
-	 * 行为变量json
-	 */
-	private String behaviorVariable;
+	private Integer userCount;
 
 	/**
 	 * 行为数量
@@ -80,11 +57,6 @@ public class UserSimulator extends BaseTable {
 	private Boolean bandwidthLimited;
 
 	private Integer bandwidth;
-
-	/**
-	 * 最后已执行编号（倒排）
-	 */
-	private Integer executedIndex;
 
 	/**
 	 * 执行状态
@@ -122,9 +94,19 @@ public class UserSimulator extends BaseTable {
 	private String sceneName;
 
 	/**
-	 * 用户行为模型id
+	 * 最后执行的行为id
 	 */
-	private String userModelId;
+	private String lastExeId;
+
+	/**
+	 * 最后执行行为的日期
+	 */
+	private String lastExeDate;
+
+	/**
+	 * lastExeDate当日执行的个数
+	 */
+	private Integer exeCount;
 
 	public enum Status implements GenericEnum {
 

@@ -64,8 +64,8 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 		// 学习记录
 		List<LessonRecord> lessonRecords = lessonRecordMapper.listByLessonAndUser(userId,
 				lessonIds);
-		Map<String, LessonRecord> recordMap = lessonRecords.stream()
-				.collect(Collectors.toMap(LessonRecord::getLessonId, lessonRecord -> lessonRecord));
+
+		Map<String, List<LessonRecord>> recordMap = lessonRecords.stream().collect(Collectors.groupingBy(LessonRecord::getLessonId));
 
 		List<CourseStudyProcessBo> studyProcessBos = courses.stream().map(course -> {
 
@@ -82,8 +82,8 @@ public class CourseStatisticsServiceImpl implements CourseStatisticsService {
 			}
 			studyProcessBo.setLessonCount(lessonList.size());
 			List<CourseLesson> study = lessonList.stream().filter(lesson -> {
-				if (recordMap.get(lesson.getResourceId()) != null) {
-					return studyRecord.add(recordMap.get(lesson.getResourceId()));
+				if (recordMap.get(lesson.getResourceId()) != null && recordMap.get(lesson.getResourceId()).size() > 0) {
+					return studyRecord.add(recordMap.get(lesson.getResourceId()).get(0));
 				}
 				return false;
 			}).collect(Collectors.toList());

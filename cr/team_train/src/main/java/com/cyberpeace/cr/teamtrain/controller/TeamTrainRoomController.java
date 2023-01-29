@@ -318,7 +318,7 @@ public class TeamTrainRoomController {
 		teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.UPDATE, teamRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamTrainRoomModifyReq.getName()));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
 
 		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}

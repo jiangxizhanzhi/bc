@@ -90,4 +90,10 @@ public interface LcService {
 	 * @param behaviorIds
 	 */
 	void exportBehavior(HttpServletResponse response, List<String> behaviorIds);
+
+	/**
+	 * 获取录制行为跳转地址host
+	 * @return
+	 */
+	String getLcHost();
 }

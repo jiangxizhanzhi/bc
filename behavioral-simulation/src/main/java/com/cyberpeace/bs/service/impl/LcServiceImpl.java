@@ -297,4 +297,9 @@ public class LcServiceImpl implements LcService {
 		List<Long> lcBehaviorIds = BsUtil.getLcBehaviorIds(behaviorIds);
 		LcHttpClient.exportBehavior(response, lcBehaviorIds, targetUrl);
 	}
+
+	@Override
+	public String getLcHost() {
+		return LC_HOST_PORT;
+	}
 }

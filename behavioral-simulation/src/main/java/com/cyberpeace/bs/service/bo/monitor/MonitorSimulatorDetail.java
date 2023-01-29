@@ -19,14 +19,20 @@ public class MonitorSimulatorDetail implements Serializable {
     @ApiModelProperty(value = "仪表名称")
     private String name;
 
+	@ApiModelProperty(value = "试验任务名称")
+	private String sceneName;
+
+	@ApiModelProperty(value = "用户数")
+	private Integer userCount;
+
     @ApiModelProperty(value = "用户类型")
 	private List<String> userTypes;
 
     @ApiModelProperty(value = "运行设备")
     private String deviceName;
 
-    @ApiModelProperty(value = "行为数量")
-    private Integer behaviorCount;
+	@ApiModelProperty(value = "仪表地址")
+	private String deviceIp;
 
     @ApiModelProperty(value = "访问习惯")
     private List<String> accessHabit;
@@ -43,9 +49,11 @@ public class MonitorSimulatorDetail implements Serializable {
     public void load(UserSimulator simulator) {
         this.resourceId = simulator.getResourceId();
 		this.name = "用户行为仪表" + "_" + simulator.getResourceId();
+		this.sceneName = simulator.getSceneName();
+		this.userCount = simulator.getUserCount();
 		this.userTypes = JsonUtil.toJsonObjectArray(simulator.getUserTypes(), String.class);
         this.deviceName = simulator.getDeviceName();
-        this.behaviorCount = simulator.getBehaviorCount();
+		this.deviceIp = simulator.getDeviceIp();
         this.accessHabit = JsonUtil.toJsonObjectArray(simulator.getAccessHabit(), String.class);
         this.startTime = simulator.getStartTime();
         this.endTime = simulator.getEndTime();

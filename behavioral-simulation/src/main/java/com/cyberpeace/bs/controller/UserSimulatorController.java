@@ -10,10 +10,7 @@ import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
-import com.cyberpeace.bs.service.bo.simulator.MeterPageReq;
-import com.cyberpeace.bs.service.bo.simulator.SceneIdName;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
+import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
@@ -36,6 +33,13 @@ public class UserSimulatorController {
 	@PostMapping("/create")
 	public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
 		userSimulatorService.batchCreate(addBo);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("")
+	@PatchMapping("/modify")
+	public BaseRsp modifySimulator(@RequestBody @Validated NodeBo nodeBo) {
+
 		return new BaseRsp();
 	}
 

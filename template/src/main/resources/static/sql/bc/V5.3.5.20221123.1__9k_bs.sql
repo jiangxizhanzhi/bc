@@ -43,11 +43,12 @@ CREATE TABLE bs_user_simulator
 (
     `id`                int(11)       NOT NULL AUTO_INCREMENT COMMENT '自增主键',
     `resource_id`       varchar(32)   NOT NULL COMMENT '编号',
-    `user_types`        varchar(2048) NOT NULL COMMENT '用户类型名称',
     `start_time`        time          NULL COMMENT '开始时间',
     `end_time`          time          NULL COMMENT '结束时间',
     `access_os`         tinyint(1)    NOT NULL COMMENT '访问设备',
-    `behavior_count`    int(11)       NOT NULL COMMENT '行为数量',
+    `user_types`        varchar(2048) NOT NULL COMMENT '用户类型名称',
+    `user_count`        int(11)       NOT NULL  COMMENT '用户个数',
+    `behavior_count`    int(11)       NOT NULL  COMMENT '行为数量',
     `access_habit`      varchar(2048) NULL COMMENT '访问习惯',
     `bandwidth_limited` tinyint(1)    NOT NULL DEFAULT 0 COMMENT '是否控制带宽',
     `bandwidth`         smallint(6)   NULL     DEFAULT NULL COMMENT '访问带宽',
@@ -65,6 +66,7 @@ CREATE TABLE bs_user_simulator
     `update_time`       datetime      NULL     DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE,
+    UNIQUE INDEX `device_id` (`device_id`) USING BTREE,
     INDEX `scene_id` (`scene_id`) USING BTREE
 );
 

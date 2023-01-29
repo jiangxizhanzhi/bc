@@ -184,7 +184,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// user count
 		simulator.setUserCount(userInstanceList.size());
 		// behavior count
-		simulator.setUserCount(
+		simulator.setBehaviorCount(
 				userInstanceList.stream().mapToInt(UserInstance::getBehaviorCount).sum());
 		// access habit
 		simulator.setAccessHabit(JsonUtil.toJsonString(habits));
@@ -468,10 +468,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Override
 	public void updateProcess(String simulatorId, String behaviorId) {
 		UserSimulator simulator = getOrException(simulatorId);
-		if (simulator.getLastExeDate().equals(LocalDate.now().toString())) {
+		String dateNow = LocalDate.now().toString();
+		if (simulator.getLastExeDate().equals(dateNow)) {
 			simulator.setExeCount(simulator.getExeCount() + 1);
 		} else {
-			simulator.setLastExeDate(LocalDate.now().toString());
+			simulator.setLastExeDate(dateNow);
 			simulator.setExeCount(1);
 		}
 		simulator.setLastExeId(behaviorId);

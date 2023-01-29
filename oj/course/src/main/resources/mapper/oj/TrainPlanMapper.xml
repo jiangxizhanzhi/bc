@@ -36,6 +36,10 @@
 
         (SELECT min(start_time) start_time,max(end_time) end_time,count(1) count, train_plan_id,max(update_time)  update_time
         FROM   oj_classroom
+        where 1=1
+        <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
+            and create_user_id = #{userId}
+        </if>
         group by train_plan_id) b
         on a.resource_id = b.train_plan_id
         where 1=1

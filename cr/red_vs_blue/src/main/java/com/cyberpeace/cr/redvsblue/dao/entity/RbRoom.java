@@ -49,6 +49,8 @@ public class RbRoom extends BaseTable {
 
 	private Boolean enableRecording;
 
+	private Boolean supportPartialStart;
+
 	private String logo;
 
 	public RbRoom() {

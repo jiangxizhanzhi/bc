@@ -58,6 +58,9 @@ public class RbRoomReq implements Serializable {
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	@ApiModelProperty(value = "允许部分启动")
+	private Boolean supportPartialStart;
+
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 

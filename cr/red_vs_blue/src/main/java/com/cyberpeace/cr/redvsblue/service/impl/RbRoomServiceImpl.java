@@ -145,6 +145,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		RbRoom rbRoom = new RbRoom(rbRoomContext, template);
 		rbRoom.setCreateUserId(userId);
 		rbRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
+
+		//复制完topo后修改部分启动状态
+		remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),rbRoomContext.getSupportPartialStart());
+		rbRoom.setSupportPartialStart(rbRoomContext.getSupportPartialStart());
+
 		rbRoom.setTemplateName(businessTemplate.getName());
 		rbRoom.setTrainingStatus(RbRoom.TrainingStatusCode.UNOPENED.getCode());
 
@@ -395,6 +400,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 		if (rbRoomContext.getLogo() != null) {
 			rbRoom.setLogo(rbRoomContext.getLogo());
+		}
+		if (rbRoomContext.getSupportPartialStart() != null) {
+			//修改topo的部分启动状态
+			remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),rbRoomContext.getSupportPartialStart());
+			rbRoom.setSupportPartialStart(rbRoomContext.getSupportPartialStart());
 		}
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

@@ -51,6 +51,9 @@ public class RbRoomModifyReq implements Serializable {
 	@ApiModelProperty(value = "录屏开关")
 	private Boolean enableRecording;
 
+	@ApiModelProperty(value = "允许部分启动")
+	private Boolean supportPartialStart;
+
 	public void validate() {
 		if (name != null) {
 			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);

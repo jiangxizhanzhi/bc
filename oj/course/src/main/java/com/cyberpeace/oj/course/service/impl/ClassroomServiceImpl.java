@@ -1444,6 +1444,17 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		String courseId = courseMapper.selectByName(courseName);
+		List<Course> courseList = courseMapper.selectCourseByUserId(userInfo.getUserId());
+		List<String> authCourseIds = StreamApiUtils.map(courseList,
+				Course::getResourceId);
+		if(!authCourseIds.contains(courseId)){
+			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION, rowIndex);
+		}
+
+
+		Course course = courseMapper.selectById(courseId);
+
+
 		if (StringUtils.isBlank(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
 		}

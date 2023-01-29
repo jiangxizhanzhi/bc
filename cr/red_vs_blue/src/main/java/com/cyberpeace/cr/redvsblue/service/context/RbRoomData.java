@@ -51,6 +51,8 @@ public class RbRoomData implements Serializable {
 
 	private Boolean enableRecording;
 
+	private Boolean supportPartialStart;
+
 	private String logo;
 
 	private String businessTemplateId;

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,14 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		String targetUrl = TOPO_SYNC_UNLIMITED;
 		JSONObject res = HttpClientUtil.post(targetUrl, json, JSONObject.class);
 		return res.getString("id");
+	}
+
+
+	@Override
+	public void setSupportPartialStart(String topoId, Boolean enableRecording) {
+		TopoSupportPartialStartContext context = new TopoSupportPartialStartContext(topoId,
+				enableRecording);
+		sync(JsonUtil.java2JsonObject(context));
 	}
 
 	@Override

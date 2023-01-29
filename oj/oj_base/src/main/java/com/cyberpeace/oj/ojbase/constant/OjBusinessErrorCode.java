@@ -290,4 +290,7 @@ public interface OjBusinessErrorCode {
 
 	/** 该班级在该时间段内已有课程安排*/
 	String IMPORT_CLASS_IN_SCHEDULES = "102095";
+
+	/** 第x行 训练计划对应课程无权限*/
+	String PLAN_COURSE_NO_PERMISSION = "102096";
 }

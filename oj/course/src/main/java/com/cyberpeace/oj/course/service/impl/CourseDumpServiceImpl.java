@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,9 @@ import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 
+@Slf4j(topic = "resourceImport")
 @Service
 public class CourseDumpServiceImpl implements CourseDumpService {
-
-	private static final Logger log = LoggerFactory.getLogger("resourceImport");
 
 	@Autowired
 	private AttachmentService attachmentService;

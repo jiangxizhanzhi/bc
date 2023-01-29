@@ -129,14 +129,6 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	Boolean pauseScene(String resourceId, Integer status, AuthContext authContext);
 
 	/**
-	 * 资管习题数据导入
-	 *
-	 * @param envReqs
-	 * @return
-	 */
-	PracticeOperation parseRmCtf(String path, Map<String, String> envReqs, PracticeSet practiceSet);
-
-	/**
 	 * 获取拓扑场景数据信息
 	 * @param operationId
 	 * @return

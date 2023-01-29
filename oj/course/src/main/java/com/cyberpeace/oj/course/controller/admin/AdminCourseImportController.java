@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "oj-后台课程数据导入相关api")
-@Slf4j
+@Slf4j(topic = "resourceImport")
 @RestController
 @RequestMapping("/oj/admin/course")
 public class AdminCourseImportController {
@@ -49,22 +50,30 @@ public class AdminCourseImportController {
 	@PostMapping("/rm/import")
 	public BaseRsp<Boolean> RMCourseImport(@RequestBody RMCourseImportReq courseImportReq) {
 
-		// 路径是否存在校验
-		File file = new File(courseImportReq.getPath());
-		if (!file.exists()) {
-			log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
-			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+		try {
+			log.info("Resource management course import start! info=[{}]", JsonUtil.toJsonString(courseImportReq));
+
+			// 路径是否存在校验
+			File file = new File(courseImportReq.getPath());
+			if (!file.exists()) {
+				log.error("RMCourseImport：File path not exist! path=[{}]", courseImportReq.getPath());
+				throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
+			}
+
+			UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
+			AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
+			UserInfoContext.setUserContext(userInfo);
+
+			// 执行课程数据导入
+			Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
+					courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), authContext);
+			return new BaseRsp<>(result);
+		} catch (Exception e) {
+			log.error("Course import failed! course_path=[{}] catch error:", courseImportReq.getPath(), e);
+			courseImportService.destroyFailedTopo(courseImportReq.getEnvReqs(), courseImportReq.getOperationEnvReqs());
+			throw e;
 		}
 
-		UserInfo userInfo = remoteUserService.getById(ResourceImportConstant.SUPER_ADMIN_HASH);
-		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, false);
-		UserInfoContext.setUserContext(userInfo);
-
-		// 执行课程数据导入
-		Boolean result = courseImportService.rMCourseImport(courseImportReq.getPath(),
-				courseImportReq.getEnvReqs(),courseImportReq.getOperationEnvReqs(), authContext);
-
-		return new BaseRsp<>(result);
 	}
 
     @ApiOperation("课程导出")

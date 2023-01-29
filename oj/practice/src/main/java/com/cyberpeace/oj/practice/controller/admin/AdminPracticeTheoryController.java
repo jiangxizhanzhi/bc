@@ -29,6 +29,7 @@ import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryImportService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.AdminTheoryBo;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
@@ -68,6 +69,9 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private PracticeTheoryImportService practiceTheoryImportService;
 
 	@ApiOperation("理论基础习题新增")
 	@PostMapping("")
@@ -191,7 +195,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
 
 		// 执行资源数据导入
-		Boolean result = practiceTheoryService.importTheory(theoryImportReq.getPracticeSetId(),
+		Boolean result = practiceTheoryImportService.importTheory(theoryImportReq.getPracticeSetId(),
 				realPath, UserInfoContext.getUserContext().getUserId());
 		// 文件删除
 		new File(realPath).deleteOnExit();

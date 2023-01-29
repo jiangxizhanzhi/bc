@@ -87,8 +87,8 @@ public class CourseLesson extends BaseTable {
 	@ApiModelProperty("课后练习公开")
 	private Boolean paperPublic;
 
-	@TableField(exist = false)
-	List<PaperPracticeContext> paperPracticeContexts=Lists.newArrayList();
+	@TableField(exist = false,  value = "资管课时路径")
+	private String path;
 
 	public enum HandoutType implements GenericEnum {
 

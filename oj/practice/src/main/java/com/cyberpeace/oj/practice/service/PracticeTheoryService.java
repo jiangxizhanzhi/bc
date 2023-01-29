@@ -67,26 +67,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	List<String> selectPracticeListIds(AuthContext authContext);
 
 	/**
-	 * 资管理论习题导入
-	 * @param path
-	 * @return
-	 */
-	List<PracticeTheory> parseRmTheory(String path, PracticeSet practiceSet);
-
-	/**
 	 * 习题批量删除
 	 * @param resourceIds
 	 * @return
 	 */
 	Integer batchDelete(List<String> resourceIds);
-
-	/**
-	 * 理论习题资源导入
-	 * @param practiceSetId
-	 * @param realPath
-	 * @return
-	 */
-	Boolean importTheory(String practiceSetId, String realPath, String userId);
 
 	/**
 	 * 加载理论习题数据
@@ -118,14 +103,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
-
-	/**
-	 * 理论习题数据导入
-	 * @param path
-	 */
-	List<PracticeTheory> parseLessonPracticeTheory(String path);
-
-	List<PracticeTheory> importMdTheoryPractice(String filepath, MdTheoryPractice mdTheoryPractice);
 
 	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 }

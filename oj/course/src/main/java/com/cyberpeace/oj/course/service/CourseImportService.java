@@ -23,17 +23,16 @@ public interface CourseImportService {
 	 * @param course
 	 * @param path
 	 * @param envReqs
-	 * @param operationEnvReqs
 	 * @return
 	 */
-	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs,
-									 Map<String, String> nameMap);
+	List<CourseLesson> parseRmLesson(Course course, String path, Map<String, String> envReqs,
+			Map<String, String> nameMap);
 
 	/**
 	 * 组装课时路径信息
-	 * @param course
-	 * @param path
-	 * @param nameMap
+	 * @param course 课程信息
+	 * @param path 课程文件地址
+	 * @param nameMap key=名称 value=课时编号
 	 * @return
 	 */
 	List<LessonConfig> parseRmLessonConfig(Course course, String path, Map<String, String> nameMap);
@@ -53,4 +52,11 @@ public interface CourseImportService {
 	 * @return
 	 */
 	Boolean rMCombinedCourseImport(List<CombinedCourseImportContext> courseInfos, AuthContext authContext);
+
+	/**
+	 * 用于课程导入失败后，将topo进行删除操作
+	 * @param envReqs
+	 * @param operationEnvReqs
+	 */
+	void destroyFailedTopo(Map<String, String> envReqs, Map<String, Map<String, String>> operationEnvReqs);
 }

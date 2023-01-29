@@ -72,23 +72,6 @@ public interface PracticeSetService extends IService<PracticeSet> {
     void enableDelete(List<String> resourceIds, AuthContext authContext);
 
     /**
-     * 资管理论习题集数据导入
-     *
-     * @param path
-     * @return
-     */
-    boolean importRmTheorySet(String path);
-
-    /**
-     * 资管实操习题集导入
-     *
-     * @param path
-     * @param envReqs
-     * @return
-     */
-    List<String> importRmCtfSet(String path, Map<String, String> envReqs);
-
-    /**
      * 导出习题集生成压缩文件
      *
      * @param practiceSetIds 习题集编号
@@ -126,11 +109,6 @@ public interface PracticeSetService extends IService<PracticeSet> {
 
     void clearOrgAuth(String org);
 
-    List<PracticeTheory> importMdTheoryPractice(String path, MdTheoryPractice mdTheoryPractice);
-
     MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
-    List<PracticeTheory> importExcelTheoryPractice(String s);
-
-    List<PracticeOperation> importMdOperationPractice(String absolutePath, Map<String, String> stringStringMap);
 }

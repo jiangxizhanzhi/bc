@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -169,6 +170,23 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 					return practiceOperation;
 				});
 
-		practiceOperationService.exportPractice(pathname, practiceOperationList, disableImageExport);
+		practiceOperationService.exportPractice(pathname, practiceOperationList,
+				disableImageExport);
+	}
+
+	@Override
+	public List<String> selectLessonPracticeTopoIds(List<String> paperIds) {
+
+		List<PracticeOperationRef> operationRefs = StreamApiUtils.flatMap(paperIds,
+				paperId -> practiceOperationRefMapper.selectByPaperId(paperId));
+		if (CollectionUtils.isEmpty(operationRefs)) {
+			return Lists.newArrayList();
+		}
+
+		return StreamApiUtils.map(operationRefs, ref -> {
+			PracticeOperation operation = JsonUtil.toJsonObject(ref.getSnapshot(),
+					PracticeOperation.class);
+			return StringUtils.isBlank(operation.getTopoId()) ? null : operation.getTopoId();
+		});
 	}
 }

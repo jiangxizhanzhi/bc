@@ -22,5 +22,5 @@ public interface TrainPlanService extends IService<TrainPlan> {
 
 	IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo);
 
-	void checkNameRepeat(String name, String id);
+	void checkNameRepeat(String name, String id, String userId);
 }

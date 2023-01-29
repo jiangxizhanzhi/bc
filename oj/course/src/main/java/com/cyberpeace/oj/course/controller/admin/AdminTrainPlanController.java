@@ -87,7 +87,8 @@ public class AdminTrainPlanController {
 		TrainPlan trainPlan = BeanUtils.copy(trainPlanAddReq, TrainPlan.class);
 
 		// 校验name是否已存在
-		trainPlanService.checkNameRepeat(trainPlanAddReq.getName(), null);
+		trainPlanService.checkNameRepeat(trainPlanAddReq.getName(), null,
+				UserInfoContext.getUserContext().getUserId());
 
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 
@@ -105,7 +106,7 @@ public class AdminTrainPlanController {
 
 		// 校验name是否已存在
 		trainPlanService.checkNameRepeat(trainPlanUpdateReq.getName(),
-				trainPlanUpdateReq.getResourceId());
+				trainPlanUpdateReq.getResourceId(), UserInfoContext.getUserContext().getUserId());
 
 		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 

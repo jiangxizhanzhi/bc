@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +155,9 @@ public class PracticeValidateHandler {
 
 		boolean right = false;
 		PracticeTheory.TheoryType[] values = PracticeTheory.TheoryType.values();
-		List<PracticeTheory.TheoryType> collect = Arrays.stream(values).filter(item -> !item.getCode().equals(PracticeTheory.TheoryType.OPERATION.getCode())).collect(Collectors.toList());
+		List<PracticeTheory.TheoryType> collect = Arrays.stream(values).filter(
+				item -> !item.getCode().equals(PracticeTheory.TheoryType.OPERATION.getCode()))
+				.collect(Collectors.toList());
 		for (PracticeTheory.TheoryType theoryType : collect) {
 			right |= theoryType.getCode().intValue() == type;
 		}
@@ -303,9 +306,10 @@ public class PracticeValidateHandler {
 		}
 
 		for (String answer : answers) {
-			if (answer.length() < CommonConstant.ONE || answer.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
-				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG,
-						CommonConstant.ONE, CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
+			if (answer.length() < CommonConstant.ONE
+					|| answer.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
+				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG, CommonConstant.ONE,
+						CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
 			}
 		}
 
@@ -344,7 +348,7 @@ public class PracticeValidateHandler {
 	 * @param operation
 	 */
 	public void validateOperationUpdateSceneExist(PracticeOperation operation,
-												  JSONObject topoData) {
+			JSONObject topoData) {
 
 		// 场景数据查询
 		List<OjLocalScene> adminScenes = ojLocalSceneMapper
@@ -362,7 +366,7 @@ public class PracticeValidateHandler {
 	}
 
 	public void validateAttachmentLength(String practiceName, Integer dynamicFlag,
-										 List<String> attachments) {
+			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
 				&& attachments.size() > CommonConstant.ONE) {
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
@@ -370,9 +374,11 @@ public class PracticeValidateHandler {
 		}
 	}
 
-	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content, PracticeTheory practiceTheory) {
+	public void validateTheoryContentExistExcludeItself(String practiceSetId, String content,
+			PracticeTheory practiceTheory) {
 		String practiceId = practiceTheoryMapper.selectByContent(practiceSetId, content);
-		if (StringUtils.isNotBlank(practiceId) && !practiceId.equals(practiceTheory.getResourceId())) {
+		if (StringUtils.isNotBlank(practiceId)
+				&& !practiceId.equals(practiceTheory.getResourceId())) {
 			log.error("Practice theory content exist! practice_set_id=[{}], practice_id=[{}]",
 					practiceSetId, practiceId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
@@ -380,14 +386,35 @@ public class PracticeValidateHandler {
 	}
 
 	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
-		if(theoryType == PracticeTheory.TheoryType.SHORT_ANSWER
-				.getCode().intValue()){
+		if (theoryType == PracticeTheory.TheoryType.SHORT_ANSWER.getCode().intValue()) {
 			JSONArray objects = JSON.parseArray(keyword);
 			for (Object obj : objects) {
-				if (StringUtils.isBlank(obj.toString())){
+				if (StringUtils.isBlank(obj.toString())) {
 					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
 				}
 			}
+		}
+	}
+
+	/**
+	 * 校验习题集是否有权限访问，无权限抛出名称重复异常
+	 * @param practiceSet
+	 * @param userId
+	 */
+	public void validatePracticeSetPermission(PracticeSet practiceSet, String userId) {
+		if (practiceSet.getCreateUserId().equals(userId)) {
+			return;
+		}
+
+		if (practiceSet.getOperationAuthType()
+				.equals(AuthTable.AuthType.ALL_SHARE_MODE.getCode())) {
+			return;
+		}
+
+		List<String> authIds = JsonUtil.toJsonObjectArray(practiceSet.getOperationAuthIds(),
+				String.class);
+		if (!authIds.contains(userId)) {
+			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_IS_EXIST);
 		}
 	}
 }

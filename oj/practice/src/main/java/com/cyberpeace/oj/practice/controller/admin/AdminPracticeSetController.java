@@ -234,8 +234,11 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		Boolean result;
 		try {
 			result = practiceSetService.loadPracticeSet(realPath, UserInfoContext.getUserContext().getUserId());
-		}catch (Exception e){
-			log.error("error file:{}:{}",realPath,e.getStackTrace());
+		} catch (Exception e) {
+			if (e instanceof BusinessException) {
+				throw e;
+			}
+			log.error("error file:{}:{}", realPath, e);
 			throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
 		}
 		return new BaseRsp(result);

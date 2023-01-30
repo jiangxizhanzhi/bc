@@ -573,7 +573,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (StringUtils.isNotBlank(practiceSetId)) {
 			log.error("Practice set exist! practice_set_name=[{}], practice_set_id=[{}]",
 					setDumpLoadBo.getName(), practiceSetId);
-			return practiceSetMapper.selectById(practiceSetId);
+			PracticeSet practiceSet = practiceSetMapper.selectById(practiceSetId);
+			practiceValidateHandler.validatePracticeSetPermission(practiceSet, userId);
+			return practiceSet;
 		}
 
 		// 基本数据设置 先不设置resource_id 用来判断是新增还是已存在
@@ -581,7 +583,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		practiceSet.setBuiltin(CommonConstant.TRUE);
 		practiceSet.setReadAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
 		practiceSet.setReadAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
-		practiceSet.setOperationAuthType(AuthTable.AuthType.CUSTOM_SHARE_MODE.getCode());
+		practiceSet.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		practiceSet.setOperationAuthIds(JsonUtil.arrayToString(Lists.newArrayList()));
 		practiceSet.setCreateUserId(userId);
 		practiceSet.setPracticeCount(CommonConstant.ZERO);

@@ -293,4 +293,7 @@ public interface OjBusinessErrorCode {
 
 	/** 第x行 训练计划对应课程无权限*/
 	String PLAN_COURSE_NO_PERMISSION = "102096";
+
+	/** 习题集名称重复*/
+	String PRACTICE_SET_IS_EXIST = "102097";
 }

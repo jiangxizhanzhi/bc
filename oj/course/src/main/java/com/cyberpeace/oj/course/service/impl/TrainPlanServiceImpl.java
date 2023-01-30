@@ -48,18 +48,26 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
 				userInfo.getUserId(), userInfo.isSuperuser());
 
+		for (TrainPlanRsp trainPlanRsp : result.getRecords()) {
+			UserInfo user = remoteUserService.getById(trainPlanRsp.getCreateUserId());
+			if (null != user) {
+				trainPlanRsp.setCreateUser( user.getName() );
+			}
+		}
 		return result;
 	}
 
 	@Override
-	public void checkNameRepeat(String name, String id) {
+	public void checkNameRepeat(String name, String id, String userId) {
 		LambdaQueryWrapper<TrainPlan> queryWrapper = new LambdaQueryWrapper<>();
 		queryWrapper.eq(TrainPlan::getName, name);
+		queryWrapper.eq(TrainPlan::getCreateUserId, userId);
+
 		if (StringUtils.isNotBlank(id)) {
 			queryWrapper.ne(TrainPlan::getResourceId, id);
 		}
-		TrainPlan assessModel = trainPlanMapper.selectOne(queryWrapper);
-		if (null != assessModel) {
+		List<TrainPlan> assessModel = trainPlanMapper.selectList(queryWrapper);
+		if (null != assessModel && assessModel.size()>0) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 	}

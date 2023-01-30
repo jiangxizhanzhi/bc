@@ -362,7 +362,7 @@ public class RbRoomController {
 		rbRoom = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.UPDATE, rbRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbTrainRoomModifyReq.getName()));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1444,19 +1445,19 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		}
 
 		String courseId = courseMapper.selectByName(courseName);
-		List<Course> courseList = courseMapper.selectCourseByUserId(userInfo.getUserId());
-		List<String> authCourseIds = StreamApiUtils.map(courseList,
-				Course::getResourceId);
-		if(!authCourseIds.contains(courseId)){
-			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION, rowIndex);
-		}
-
-
-		Course course = courseMapper.selectById(courseId);
-
 
 		if (StringUtils.isBlank(courseId)) {
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
+		}
+
+		//查询当前用户有权限的所有课程
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.FALSE);
+		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
+
+
+		if(!authCourseIds.contains(courseId)){
+			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NO_PERMISSION, rowIndex);
 		}
 
 		String lessonName = roomData.get(CommonConstant.TWO);

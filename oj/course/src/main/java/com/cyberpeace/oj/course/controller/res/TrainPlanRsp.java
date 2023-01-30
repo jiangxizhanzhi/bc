@@ -25,7 +25,12 @@ public class TrainPlanRsp implements Serializable {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
-    @ApiModelProperty("姓名")
+    @ApiModelProperty("数量")
     private Integer count;
 
+    @ApiModelProperty("创建人id")
+    private String createUserId;
+
+    @ApiModelProperty("创建人名称")
+    private String createUser;
 }

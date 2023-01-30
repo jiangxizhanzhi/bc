@@ -300,10 +300,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		// 添加学习记录
 		try {
 			LessonRecord lessonRecord = LessonRecord.builder().lessonId(lessonId).courseId(courseId)
-					.userId(authContext.getUserId()).learnedType(learnedType).roomId(roomId).build();
+					.userId(authContext.getUserId()).build();
 			lessonRecordMapper.insert(lessonRecord);
 		} catch (DuplicateKeyException e) {
-			lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, roomId);
+			lessonRecordMapper.updateLearnedTime(lessonId, courseId, authContext.getUserId(), learnedType, StringUtils.isBlank(roomId) ? "" : roomId);
 			// 代表数据库已存在学习记录 不做任何处理
 		}
 

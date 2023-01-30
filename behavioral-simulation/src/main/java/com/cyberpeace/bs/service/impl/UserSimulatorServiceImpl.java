@@ -18,6 +18,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.constant.BsConstants;
@@ -63,8 +64,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	private final Map<String, Map<String, BsTimer>> timerMap = Maps.newConcurrentMap();
 
-	private String EXTERNAL_IP_SEGMENT;
-
 	@Autowired
 	UserSimulatorMapper userSimulatorMapper;
 
@@ -92,6 +91,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Autowired
 	UserInstanceMapper userInstanceMapper;
 
+	private String EXTERNAL_IP_SEGMENT;
+
 	@PostConstruct
 	public void init() {
 		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
@@ -99,7 +100,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
-		log.info("create simulator request: {}", JsonUtil.toJsonString(addBo));
+		log.info("create simulator request: {}",
+				JsonUtil.toJsonString(addBo, PropertyNamingStrategy.SnakeCase));
 		List<String> userModelIds = Lists.newArrayList();
 		// collect user model ids
 		for (NodeBo nodeBo : addBo.getNodeList()) {
@@ -130,6 +132,14 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 					userModelMap, userTypeMap);
 			UserSimulator simulator = createSimulator(userInstanceList, nodeBo, addBo.getSceneId(),
 					addBo.getSceneName());
+			// check ip
+			if (StringUtils.isBlank(simulator.getDeviceIp())) {
+				throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
+			}
+			// set id
+			simulator.setResourceId(IDGeneratorUtil.getID());
+			userInstanceList
+					.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
 			userInstanceAll.addAll(userInstanceList);
 			simulatorList.add(simulator);
 		}
@@ -142,7 +152,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				for (UserSimulator simulator : simulatorList) {
 					userSimulatorMapper.insert(simulator);
 				}
-				userInstanceMapper.insertUserInstanceBatch(userInstanceAll);
+				if (!userInstanceAll.isEmpty()) {
+					userInstanceMapper.insertUserInstanceBatch(userInstanceAll);
+				}
 			}
 		});
 
@@ -193,25 +205,18 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// device
 		simulator.setDeviceId(nodeBo.getNodeId());
 		simulator.setDeviceName(nodeBo.getNodeName());
-		String deviceIp = getIp(nodeBo.getIpConfig());
-		if (StringUtils.isBlank(deviceIp)) {
-			throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
-		}
-		simulator.setDeviceIp(deviceIp);
+		simulator.setDeviceIp(getIp(nodeBo.getIpConfig()));
 		simulator.setIsEntity(nodeBo.getIsEntity());
 		simulator.setSceneId(sceneId);
 		simulator.setSceneName(sceneName);
-		// set id
-		simulator.setResourceId(IDGeneratorUtil.getID());
-		userInstanceList
-				.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
+
 		return simulator;
 	}
 
 	private List<UserInstance> createUserInstanceList(List<UserInstanceAddBo> userModels,
 			Map<String, UserModel> userModelMap, Map<String, String> userTypeMap) {
 		List<UserInstance> instanceList = Lists.newArrayList();
-		if (userModels == null) {
+		if (CollectionUtils.isEmpty(userModels)) {
 			return instanceList;
 		}
 		String userModelId;
@@ -336,6 +341,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				userSimulatorMapper.deleteBySceneIdList(sceneIdList);
+				userInstanceMapper.deleteBySimulatorIds(relatedSimulatorIds);
 				deviceOccupationMapper.releaseBySceneIdList(sceneIdList);
 			}
 		});
@@ -395,6 +401,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	private void start(UserSimulator simulator) {
 		List<UserInstance> userInstanceList = userInstanceMapper
 				.getBatchBySimulatorId(simulator.getResourceId());
+		createTimerTask(simulator, userInstanceList);
+		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
+		userSimulatorMapper.updateById(simulator);
+	}
+
+	private void createTimerTask(UserSimulator simulator, List<UserInstance> userInstanceList) {
 		timerMap.putIfAbsent(simulator.getResourceId(), Maps.newHashMap());
 		// 一个用户一个timer
 		for (UserInstance instance : userInstanceList) {
@@ -416,8 +428,6 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			}
 			timerMap.get(simulator.getResourceId()).put(instance.getUserModelId(), timer);
 		}
-		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
-		userSimulatorMapper.updateById(simulator);
 	}
 
 	@Override
@@ -536,6 +546,87 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public List<String> getSceneIdList() {
 		List<SceneIdName> sceneList = userSimulatorMapper.getSceneList();
 		return sceneList.stream().map(SceneIdName::getSceneId).collect(Collectors.toList());
+	}
+
+	@Override
+	public void modifySimulator(SimulatorModifyBo modifyBo) {
+		String nodeId = modifyBo.getNodeId();
+		UserSimulator simulator = getByNodeId(nodeId);
+
+		log.info("modify simulator request: {}",
+				JsonUtil.toJsonString(modifyBo, PropertyNamingStrategy.SnakeCase));
+		List<String> userModelIds = Lists.newArrayList();
+		// collect user model ids
+		for (UserInstanceAddBo userInstanceAddBo : modifyBo.getUserModels()) {
+			userModelIds.add(userInstanceAddBo.getUserModelId());
+		}
+		// get user models
+		List<UserModel> userModelList = Lists.newArrayList();
+		if (!userModelIds.isEmpty()) {
+			userModelList = userModelMapper.selectBatchIds(userModelIds);
+		}
+
+		Map<String, UserModel> userModelMap = StreamApiUtils.toMap(userModelList,
+				UserModel::getResourceId, userModel -> userModel);
+		// get user types
+		List<String> userTypeIds = userModelList.stream().map(UserModel::getUserTypeId)
+				.collect(Collectors.toList());
+		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
+		// create user instances
+		List<UserInstance> userInstanceList = createUserInstanceList(modifyBo.getUserModels(),
+				userModelMap, userTypeMap);
+		// create new Simulator
+		NodeBo nodeBo = BeanUtils.copy(modifyBo, NodeBo.class);
+		UserSimulator newSimulator = createSimulator(userInstanceList, nodeBo,
+				simulator.getSceneId(), simulator.getSceneName());
+		newSimulator.setResourceId(simulator.getResourceId());
+		newSimulator.setAccessOs(simulator.getAccessOs());
+		newSimulator.setIsEntity(simulator.getIsEntity());
+		newSimulator.setDeviceName(simulator.getDeviceName());
+		newSimulator.setDeviceIp(simulator.getDeviceIp());
+		newSimulator.setStatus(simulator.getStatus());
+		// set id
+		for (UserInstance instance : userInstanceList) {
+			instance.setUserSimulatorId(simulator.getResourceId());
+		}
+		// save
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				userSimulatorMapper.deleteById(simulator.getResourceId());
+				userSimulatorMapper.insert(newSimulator);
+				// 更新user_instance
+				userInstanceMapper.deleteBySimulatorId(newSimulator.getResourceId());
+				if (!userInstanceList.isEmpty()) {
+					userInstanceMapper.insertUserInstanceBatch(userInstanceList);
+				}
+				// 处理定时任务
+				if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+					// 清除原有的定时任务，再重新生成此次请求包含的
+					removeTimer(simulator.getResourceId());
+					try {
+						createTimerTask(newSimulator, userInstanceList);
+					} catch (Exception e) {
+						// 重新启动失败则状态设为停止
+						newSimulator.setStatus(UserSimulator.Status.STOPPED.getCode());
+						log.error("failed to start simulator after modification", e);
+						userSimulatorMapper.updateById(newSimulator);
+					}
+				}
+			}
+		});
+	}
+
+	private UserSimulator getByNodeId(String nodeId) {
+		if (StringUtils.isBlank(nodeId)) {
+			throw new BusinessException(BsErrorCode.NODE_ID_MISSING);
+		}
+		UserSimulator simulator = userSimulatorMapper.selectByNodeId(nodeId);
+		if (simulator == null) {
+			throw new BusinessException(BsErrorCode.SIMULATOR_NOT_FOUND);
+		}
+		return simulator;
 	}
 
 	private UserSimulator getOrNull(String resourceId) {

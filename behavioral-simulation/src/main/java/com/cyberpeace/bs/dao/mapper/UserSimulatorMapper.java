@@ -24,7 +24,7 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 
 	IPage<UserSimulator> page(@Param("page") Page page, @Param("sceneId") String sceneId);
 
-    List<String> getIdsBySceneId(@Param("sceneId") String sceneId);
+	List<String> getIdsBySceneId(@Param("sceneId") String sceneId);
 
 	void deleteBySceneId(@Param("sceneId") String sceneId);
 
@@ -33,4 +33,6 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	List<String> getIdsBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
 
 	void deleteBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
+
+	UserSimulator selectByNodeId(@Param("nodeId") String nodeId);
 }

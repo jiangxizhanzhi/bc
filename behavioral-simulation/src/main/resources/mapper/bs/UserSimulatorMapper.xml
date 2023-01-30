@@ -54,4 +54,9 @@
             #{sceneId}
         </foreach>
     </select>
+    <select id="selectByNodeId" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
+        select *
+        from bs_user_simulator
+        where device_id = #{nodeId}
+    </select>
 </mapper>

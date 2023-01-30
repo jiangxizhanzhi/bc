@@ -14,6 +14,18 @@
             #{userInstance.userSimulatorId}, now())
         </foreach>
     </insert>
+    <delete id="deleteBySimulatorIds">
+        delete from bs_user_instance
+        where user_simulator_id in
+        <foreach collection="simulatorIds" open="(" close=")" item="simulatorId" separator=",">
+            #{simulatorId}
+        </foreach>
+    </delete>
+    <delete id="deleteBySimulatorId">
+        delete
+        from bs_user_instance
+        where user_simulator_id = #{simulatorId}
+    </delete>
     <select id="getBatchBySimulatorId" resultType="com.cyberpeace.bs.dao.entity.UserInstance">
         select *
         from bs_user_instance

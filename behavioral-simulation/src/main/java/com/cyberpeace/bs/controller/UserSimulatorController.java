@@ -36,10 +36,10 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("")
+	@ApiOperation("更新仪表用户")
 	@PatchMapping("/modify")
-	public BaseRsp modifySimulator(@RequestBody @Validated NodeBo nodeBo) {
-
+	public BaseRsp modifySimulator(@RequestBody @Validated SimulatorModifyBo modifyBo) {
+		userSimulatorService.modifySimulator(modifyBo);
 		return new BaseRsp();
 	}
 

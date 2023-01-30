@@ -4,10 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
-import com.cyberpeace.bs.service.bo.simulator.MeterPageReq;
-import com.cyberpeace.bs.service.bo.simulator.SceneIdName;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
-import com.cyberpeace.bs.service.bo.simulator.SimulatorDetail;
+import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.common.model.ListRsp;
 
@@ -76,7 +73,6 @@ public interface UserSimulatorService {
 	 */
 	SimulatorDetail getDetail(String simulatorId);
 
-
 	/**
 	 * 关闭场景时删除关联仪表
 	 * @param sceneIdList 场景id
@@ -103,5 +99,15 @@ public interface UserSimulatorService {
 	 */
 	MonitorDataRes getMonitorData(String resourceId);
 
+	/**
+	 * 获取仪表关联的全部场景id
+	 * @return
+	 */
 	List<String> getSceneIdList();
+
+	/**
+	 * 更新单个仪表包含的用户行为
+	 * @param modifyBo
+	 */
+	void modifySimulator(SimulatorModifyBo modifyBo);
 }

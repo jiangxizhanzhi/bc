@@ -112,12 +112,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				}
 			}
 		}
-		if (userModelIds.isEmpty()) {
-			log.info("user model not configured");
-			return;
-		}
 		// get user models
-		List<UserModel> userModelList = userModelMapper.selectBatchIds(userModelIds);
+		List<UserModel> userModelList = Lists.newArrayList();
+		if (!userModelIds.isEmpty()) {
+			userModelList = userModelMapper.selectBatchIds(userModelIds);
+		}
 		Map<String, UserModel> userModelMap = StreamApiUtils.toMap(userModelList,
 				UserModel::getResourceId, userModel -> userModel);
 		// get user types
@@ -401,6 +400,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	private void start(UserSimulator simulator) {
 		List<UserInstance> userInstanceList = userInstanceMapper
 				.getBatchBySimulatorId(simulator.getResourceId());
+		// 启动定时任务前，先删除可能已存在的任务
+		removeTimer(simulator.getResourceId());
 		createTimerTask(simulator, userInstanceList);
 		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
 		userSimulatorMapper.updateById(simulator);

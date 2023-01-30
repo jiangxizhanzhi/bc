@@ -455,29 +455,7 @@ CREATE TABLE `situation_dashboard_template_ref`
     UNIQUE INDEX `resourceId`(`resource_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Table structure for situation_sub_range
--- ----------------------------
-CREATE TABLE `situation_sub_range`
-(
-    `id`             int                                                     NOT NULL AUTO_INCREMENT,
-    `sub_range_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `location`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`        varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `latitude`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `station_count`  int NULL DEFAULT 0,
-    `status`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT NULL,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `sub_range_id`(`sub_range_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE `situation_event_type_context`
+CREATE TABLE `situation_event_type`
 (
     `id`                 INT                                                     NOT NULL AUTO_INCREMENT,
     `code`               VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
@@ -508,48 +486,6 @@ CREATE TABLE `situation_gis_mark`
     `delete_time`  datetime NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_center
--- ----------------------------
-CREATE TABLE `situation_center`
-(
-    `id`          int                                                     NOT NULL AUTO_INCREMENT,
-    `center_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `center_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `location`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`     varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `latitude`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `status`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT '0',
-    `create_time` datetime NULL DEFAULT NULL,
-    `update_time` datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `center_id`(`center_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_station
--- ----------------------------
-CREATE TABLE `situation_station`
-(
-    `id`           int                                                     NOT NULL AUTO_INCREMENT,
-    `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `station_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `station_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `station_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `location`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `latitude`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `status`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT '0',
-    `create_time`  datetime NULL DEFAULT NULL,
-    `update_time`  datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `station_id`(`station_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------

@@ -3,9 +3,9 @@ package com.cyberpeace.situation.service;
 import java.util.List;
 
 import com.cyberpeace.situation.controller.res.EventTypeRes;
-import com.cyberpeace.situation.dao.entity.Center;
-import com.cyberpeace.situation.dao.entity.Station;
-import com.cyberpeace.situation.dao.entity.SubRange;
+import com.cyberpeace.situation.service.context.site.CenterContext;
+import com.cyberpeace.situation.service.context.site.RangeContext;
+import com.cyberpeace.situation.service.context.site.StationContext;
 
 /**
  * @Author xuxz
@@ -13,12 +13,36 @@ import com.cyberpeace.situation.dao.entity.SubRange;
  */
 public interface ThirdPartyService {
 
-	List<Center> getCenters();
+	/**
+	 * 获取LG中心列表
+	 * @return List<CenterContext>
+	 */
+	List<CenterContext> getCenters();
 
-	List<SubRange> getSubRanges();
+	/**
+	 * 获取分靶场列表
+	 * @return List<RangeContext>
+	 */
+	List<RangeContext> getRanges();
 
-	List<Station> getStations(String subRangeId);
+	/**
+	 * 获取分靶场
+	 * @param rangeId 分靶场ID
+	 * @return RangeContext
+	 */
+	RangeContext getRangeById(String rangeId);
 
+	/**
+	 * 获取场站列表
+	 * @param rangeId 分靶场ID
+	 * @return List<StationContext>
+	 */
+	List<StationContext> getStations(String rangeId);
+
+	/**
+	 * 获取攻防事件类型
+	 * @return List<EventTypeRes>
+	 */
 	List<EventTypeRes> getEventTypes();
 
 }

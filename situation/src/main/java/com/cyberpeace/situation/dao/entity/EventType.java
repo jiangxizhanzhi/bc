@@ -9,8 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_event_type_context")
-public class EventTypeContext extends BaseTable implements Serializable {
+@TableName("situation_event_type")
+public class EventType extends BaseTable implements Serializable {
 
 	@ApiModelProperty("编码")
 	private String code;

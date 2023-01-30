@@ -69,7 +69,7 @@ public class DashboardController {
 	private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
 
 	@Autowired
-	private EventTypeContextMapper eventTypeContextMapper;
+	private EventTypeMapper eventTypeMapper;
 
 	@Autowired
 	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
@@ -245,14 +245,14 @@ public class DashboardController {
 		Set<String> subTypes = contextList.stream().map(AdEventContext::getEventSubType)
 				.collect(Collectors.toSet());
 		// get code
-		List<EventTypeContext> typeContextList = eventTypeContextMapper.selectBatchByName(subTypes);
+		List<EventType> typeContextList = eventTypeMapper.selectBatchByName(subTypes);
 		if (typeContextList.size() != subTypes.size()) {
 			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
 		}
-		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList,
-				EventTypeContext::getName, EventTypeContext::getCode);
-		Map<String, EventTypeContext> codeTypeMap = StreamApiUtils.toMap(typeContextList,
-				EventTypeContext::getCode, context -> context);
+		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList, EventType::getName,
+				EventType::getCode);
+		Map<String, EventType> codeTypeMap = StreamApiUtils.toMap(typeContextList,
+				EventType::getCode, context -> context);
 		// 查找映射动效
 		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
 				.selectBatchByType(codeTypeMap.keySet());
@@ -303,7 +303,7 @@ public class DashboardController {
 			} else {
 				// 内置类型
 				ad.setDynamicType(1);
-				EventTypeContext typeContext = codeTypeMap.get(code);
+				EventType typeContext = codeTypeMap.get(code);
 				ad.setSourceActionType(typeContext.getSourceActionType());
 				ad.setTargetActionType(typeContext.getTargetActionType());
 				// todo

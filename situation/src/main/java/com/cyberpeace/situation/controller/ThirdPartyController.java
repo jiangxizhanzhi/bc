@@ -26,12 +26,12 @@ import com.cyberpeace.integratation.service.bo.situation.*;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
-import com.cyberpeace.situation.dao.entity.Center;
-import com.cyberpeace.situation.dao.entity.Station;
-import com.cyberpeace.situation.dao.entity.SubRange;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.service.ThirdPartyService;
+import com.cyberpeace.situation.service.context.site.CenterContext;
+import com.cyberpeace.situation.service.context.site.RangeContext;
+import com.cyberpeace.situation.service.context.site.StationContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,22 +63,23 @@ public class ThirdPartyController {
 
 	@ApiOperation("获取LG中心列表")
 	@GetMapping("/center/list/")
-	public BaseRsp<List<Center>> getCenters() {
+	public BaseRsp<List<CenterContext>> getCenters() {
 
 		return new BaseRsp<>(thirdPartyService.getCenters());
 	}
 
 	@ApiOperation("获取分靶场列表")
 	@GetMapping("/range/list/")
-	public BaseRsp<List<SubRange>> getSubRanges() {
+	public BaseRsp<List<RangeContext>> getSubRanges() {
 
-		return new BaseRsp<>(thirdPartyService.getSubRanges());
+		return new BaseRsp<>(thirdPartyService.getRanges());
 	}
 
 	@ApiOperation("获取场站列表")
 	@GetMapping("/station/list/")
-	public BaseRsp<List<Station>> getStations(@ApiParam(name = "sub_range_id", value = "分靶场ID",
-			required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
+	public BaseRsp<List<StationContext>>
+			getStations(@ApiParam(name = "sub_range_id", value = "分靶场ID",
+					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 
 		return new BaseRsp<>(thirdPartyService.getStations(subRangeId));
 	}

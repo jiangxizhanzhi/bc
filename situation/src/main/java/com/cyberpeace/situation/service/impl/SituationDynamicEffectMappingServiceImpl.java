@@ -18,13 +18,13 @@ import com.cyberpeace.situation.controller.req.DynamicEffectMappingPageReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingReq;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingUpdateReq;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
-import com.cyberpeace.situation.dao.mapper.EventTypeContextMapper;
+import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
-import com.cyberpeace.situation.dao.mapper.SubRangeMapper;
 import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.SituationDynamicEffectMappingService;
-import com.cyberpeace.situation.dao.entity.EventTypeContext;
-import com.cyberpeace.situation.dao.entity.SubRange;
+import com.cyberpeace.situation.dao.entity.EventType;
+import com.cyberpeace.situation.service.ThirdPartyService;
+import com.cyberpeace.situation.service.context.site.RangeContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -44,10 +44,10 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
 
     @Autowired
-    private SubRangeMapper subRangeMapper;
+    private EventTypeMapper eventTypeMapper;
 
     @Autowired
-    private EventTypeContextMapper eventTypeContextMapper;
+    private ThirdPartyService thirdPartyService;
 
     @Override
     public String setDynamicEffectsMapping(DynamicEffectMappingReq dynamicEffectMappingReq) {
@@ -57,7 +57,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         dynamicEffectsMapping.setCreateUserId(userId);
         String resourceId = IDGeneratorUtil.getID();
         dynamicEffectsMapping.setResourceId(resourceId);
-        SubRange subRange = subRangeMapper.getById(dynamicEffectsMapping.getCategory());
+        RangeContext subRange = thirdPartyService.getRangeById(dynamicEffectsMapping.getCategory());
 
         if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
@@ -77,8 +77,8 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         ListRsp<DynamicEffectsMapping> dynamicEffectsMappingListRsp =
                 PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
         List<DynamicEffectsMapping> list = dynamicEffectsMappingListRsp.getList();
-        List<EventTypeContext> eventTypeContextList = eventTypeContextMapper.getEventTypeContextList(null);
-        List<SubRange> subRanges = subRangeMapper.getSubRanges();
+        List<EventType> eventTypeList = eventTypeMapper.getEventTypeContextList(null);
+        List<RangeContext> subRanges = thirdPartyService.getRanges();
         if (CollectionUtils.isNotEmpty(list)) {
             for (DynamicEffectsMapping dynamicEffectsMapping : list) {
                 String colorCode = dynamicEffectsMapping.getColor();
@@ -100,15 +100,15 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
                     }
                 });
                 //设置攻击类型翻译
-                eventTypeContextList.forEach(eventTypeContext -> {
-                    if (eventTypeContext.getCode().equals(attackType)) {
-                        dynamicEffectsMapping.setAttackType(eventTypeContext.getName());
+                eventTypeList.forEach(eventType -> {
+                    if (eventType.getCode().equals(attackType)) {
+                        dynamicEffectsMapping.setAttackType(eventType.getName());
                     }
                 });
                 //设置靶场翻译
-                subRanges.forEach(subRangeContext -> {
-                    if (subRangeContext.getSubRangeId().equals(category)) {
-                        dynamicEffectsMapping.setCategory(subRangeContext.getSubRangeName());
+                subRanges.forEach(rangeContext -> {
+                    if (rangeContext.getSubRangeId().equals(category)) {
+                        dynamicEffectsMapping.setCategory(rangeContext.getSubRangeName());
                     }
                 });
             }
@@ -149,7 +149,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
-        SubRange subRange = subRangeMapper.getById(dynamicEffectsMapping.getCategory());
+        RangeContext subRange = thirdPartyService.getRangeById(dynamicEffectsMapping.getCategory());
 
         if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);

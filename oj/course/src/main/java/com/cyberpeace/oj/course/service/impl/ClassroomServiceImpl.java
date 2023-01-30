@@ -1304,17 +1304,23 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	/** 校验数据长度*/
 	private void validateDataLength(List<List<String>> sheetData) {
 
-		// 数据长度校验
+		// 数据长度校验 excel数据读取略去了表头，所以需加2才是正确行数
 		for (int i = 0; i < sheetData.size(); i++) {
+
+			// 空数据不管
+			if (!validateEmptyData(sheetData.get(i), i + CommonConstant.TWO)) {
+				continue;
+			}
+
 			if (sheetData.get(i).size() <= CommonConstant.FIVE) {
 				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
-						i + CommonConstant.ONE);
+						i + CommonConstant.TWO);
 			}
 
 			if (sheetData.get(i).size() == CommonConstant.SIX
 					&& sheetData.get(i).contains(CommonConstant.EMPTY_STRING)) {
 				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
-						i + CommonConstant.ONE);
+						i + CommonConstant.TWO);
 			}
 		}
 	}

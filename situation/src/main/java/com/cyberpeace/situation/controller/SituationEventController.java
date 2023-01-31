@@ -1,13 +1,22 @@
 package com.cyberpeace.situation.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.model.situation.AdEventContext;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.TopoHandlerService;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,32 +30,44 @@ public class SituationEventController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
-	@ApiOperation("获取随机普通动效")
+	@Autowired
+	private TopoHandlerService topoHandlerService;
+
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@ApiOperation("获取随机攻防动效")
 	@GetMapping("attack_event")
-	public BaseRsp<WsMessage<WsMultiNodeDynamic>> randomEvent(
-			@ApiParam(name = "scene_id", value = "场景编号") @RequestParam(value = "scene_id",
-					required = true) String sceneId,
-			@ApiParam(name = "action_code", value = "事件类型") @RequestParam(value = "action_code",
-					required = false) Integer actionCode) {
+	public BaseRsp<List<WsEventAd>> randomEvent(
+			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
+					required = true) String dashboardId,
+			@ApiParam(name = "event_type", value = "事件类型") @RequestParam(value = "event_type",
+					required = false) String eventType,
+			@ApiParam(name = "event_name", value = "事件名称") @RequestParam(value = "event_name",
+					required = false) String eventName) {
 
-		// 获取动效数据
-		WsMultiNodeDynamic wsEvent = situationHandlerService.getRandomWsMultNodeDynamic(sceneId,
-				actionCode);
+		// 获取随机两个节点ID
+		String envId = situationPublishInstanceService.getEnvIdByDashboardId(dashboardId);
+		Map<String, ElementSlimContext> elementSlimContextMap = topoHandlerService
+				.getTopoConfigByEnvId(envId);
+		Random random = new Random();
+		String[] elementIds = elementSlimContextMap.keySet().toArray(new String[0]);
+		String sourceId = elementIds[random.nextInt(elementIds.length)];
+		String targetId = elementIds[random.nextInt(elementIds.length)];
 
-		// 设置消息代码
-		String messageType = MessageType.AttackEvent.getDesc();
-		if (WsMultiElementDynamic.class.isInstance(wsEvent)) {
-			messageType = MessageType.AttackEventEE.getDesc();
-		} else if (WsMultiAreaDynamic.class.isInstance(wsEvent)) {
-			messageType = MessageType.AttackEventEA.getDesc();
-		}
+		// 构造事件数据
+		AdEventContext adEventContext = new AdEventContext(sourceId, targetId, eventName,
+				eventType);
 
-		// 推送ws消息
-		WsMessage<WsMultiNodeDynamic> wsMessage = new WsMessage<>(messageType, wsEvent);
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+		// 处理事件数据
+		List<WsEventAd> eventAds = situationHandlerService
+				.eventContext2EventAd(Lists.newArrayList(adEventContext), elementSlimContextMap);
+
+		// 推送攻防事件数据
+		situationHandlerService.pushEventAds(eventAds, dashboardId, null);
 
 		// 返回消息数据
-		BaseRsp<WsMessage<WsMultiNodeDynamic>> rsp = new BaseRsp<>(wsMessage);
+		BaseRsp<List<WsEventAd>> rsp = new BaseRsp<>(eventAds);
 		rsp.setMessage("成功推送事件");
 		return rsp;
 	}

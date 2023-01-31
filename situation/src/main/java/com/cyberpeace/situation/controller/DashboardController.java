@@ -3,21 +3,15 @@ package com.cyberpeace.situation.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
@@ -31,18 +25,16 @@ import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
-import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.dao.mapper.*;
-import com.cyberpeace.situation.model.LineStyle;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.model.ViewAngle;
-import com.cyberpeace.situation.model.ws.DashboardMessage;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
-import com.google.common.collect.Maps;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -66,19 +58,10 @@ public class DashboardController {
 	private RemoteSituationService remoteSituationService;
 
 	@Autowired
-	private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
-
-	@Autowired
-	private EventTypeMapper eventTypeMapper;
-
-	@Autowired
-	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
+	private TopoHandlerService topoHandlerService;
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
-
-	@Autowired
-	private TopoConfigMapper topoConfigMapper;
 
 	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
@@ -195,32 +178,25 @@ public class DashboardController {
 	@PostMapping("/event/task/ad/")
 	public BaseRsp<Boolean> getTaskAdEvent(@RequestBody @Validated EventMsgReq eventReq) {
 
+		// 获取三方攻防事件数据
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());
 
+		// 获取拓扑配置
 		String envId = situationPublishInstanceService
 				.getEnvIdByDashboardId(eventReq.getDashboardId());
-		TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
-		JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
-		Map<String, ElementSlimContext> elementSlimContextMap = JSONObject.parseObject(
-				json.toJSONString(), new TypeReference<Map<String, ElementSlimContext>>() {});
+		Map<String, ElementSlimContext> elementSlimContextMap = topoHandlerService
+				.getTopoConfigByEnvId(envId);
 
-		List<WsEventAd> eventAds = eventContext2EventAd(adEventContexts, elementSlimContextMap);
-
-		List<DashboardMessage> messages = Lists.newArrayList();
-		eventAds.forEach(wsEventAd -> {
-			messages.add(new DashboardMessage(wsEventAd.getEventInfo().getDescription(), 5));
-		});
-
-		// 推送攻防事件消息弹窗
-		situationHandlerService.batchPushDataToDashboard(MessageType.Message.getDesc(),
-				eventReq.getDashboardId(), eventReq.getFeatureId(), messages, null, null);
+		// 处理事件数据
+		List<WsEventAd> eventAds = situationHandlerService.eventContext2EventAd(adEventContexts,
+				elementSlimContextMap);
 
 		// 推送攻防事件数据
-		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(),
-				eventReq.getDashboardId(), eventReq.getFeatureId(), eventAds, null, null);
+		Boolean result = situationHandlerService.pushEventAds(eventAds, eventReq.getDashboardId(),
+				eventReq.getFeatureId());
 
-		return new BaseRsp<>(true);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("获取最新的节点状态事件")
@@ -233,87 +209,6 @@ public class DashboardController {
 				eventReq.getFeatureId(), nodeEventContexts, null, null);
 
 		return new BaseRsp<>(true);
-	}
-
-	private List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList,
-			Map<String, ElementSlimContext> elementSlimContextMap) {
-		List<WsEventAd> adList = Lists.newArrayList();
-		if (CollectionUtils.isEmpty(contextList)) {
-			return adList;
-		}
-		// collect types
-		Set<String> subTypes = contextList.stream().map(AdEventContext::getEventSubType)
-				.collect(Collectors.toSet());
-		// get code
-		List<EventType> typeContextList = eventTypeMapper.selectBatchByName(subTypes);
-		if (typeContextList.size() != subTypes.size()) {
-			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
-		}
-		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList, EventType::getName,
-				EventType::getCode);
-		Map<String, EventType> codeTypeMap = StreamApiUtils.toMap(typeContextList,
-				EventType::getCode, context -> context);
-		// 查找映射动效
-		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
-				.selectBatchByType(codeTypeMap.keySet());
-		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
-				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
-
-		// 查询动效列表
-		List<String> dynamicEffectNames = Lists.newArrayList();
-		mappingEffectList.forEach(dynamicEffectsMapping -> {
-			dynamicEffectNames.add(dynamicEffectsMapping.getSourceNodeDynamic());
-			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
-		});
-
-		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
-
-		if (!dynamicEffectNames.isEmpty()) {
-			List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
-					.selectByNames(dynamicEffectNames);
-
-			dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
-				dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(),
-						dynamicEffectsLibrary);
-			});
-		}
-
-		// 转化
-		contextList.forEach(context -> {
-			WsEventAd ad = new WsEventAd();
-			ad.load(context);
-			ad.setSourceParentIds(elementSlimContextMap.get(ad.getSourceId()).getParentIds());
-			ad.setTargetParentIds(elementSlimContextMap.get(ad.getTargetId()).getParentIds());
-			ad.setSourcePlatformId(elementSlimContextMap.get(ad.getSourceId()).getPlatformId());
-			ad.setTargetPlatformId(elementSlimContextMap.get(ad.getTargetId()).getPlatformId());
-
-			String code = nameCodeMap.get(context.getEventSubType());
-			if (mappingEffectMap.containsKey(code)) {
-				// 映射类型
-				ad.setDynamicType(2);
-				DynamicEffectsMapping effect = mappingEffectMap.get(code);
-				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
-						effect.getLine());
-				ad.setSourceNodeDynamicDir(dynamicEffectsLibraryMap
-						.get(effect.getSourceNodeDynamic()).getSourceNodeDynamicDir());
-				ad.setTargetNodeDynamicDir(dynamicEffectsLibraryMap
-						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());;
-				ad.setLineStyle(lineStyle);
-				ad.setLookAtTarget(effect.getFocus());
-			} else {
-				// 内置类型
-				ad.setDynamicType(1);
-				EventType typeContext = codeTypeMap.get(code);
-				ad.setSourceActionType(typeContext.getSourceActionType());
-				ad.setTargetActionType(typeContext.getTargetActionType());
-				// todo
-				LineStyle lineStyle = new LineStyle("#FF0000", 5, "dashed");
-				ad.setLineStyle(lineStyle);
-				ad.setLookAtTarget(false);
-			}
-			adList.add(ad);
-		});
-		return adList;
 	}
 
 }

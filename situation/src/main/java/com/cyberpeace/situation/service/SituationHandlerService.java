@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.situation.AdEventContext;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
@@ -177,5 +180,23 @@ public interface SituationHandlerService {
 	 * @return List<WsMessage>
 	 */
 	List<WsMessage> pushFlowEvents(FlowLogReq flowLogReq);
+
+	/**
+	 * 30态势-转换攻防动效事件数据
+	 * @param contextList
+	 * @param elementSlimContextMap
+	 * @return List<WsEventAd>
+	 */
+	List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList,
+			Map<String, ElementSlimContext> elementSlimContextMap);
+
+	/**
+	 * 30态势-推送攻防事件消息
+	 * @param eventAds
+	 * @param dashboardId
+	 * @param featureId
+	 * @return Boolean
+	 */
+	Boolean pushEventAds(List<WsEventAd> eventAds, String dashboardId, String featureId);
 
 }

@@ -1,18 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,8 +28,19 @@ import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -84,10 +82,10 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     private TopoConfigMapper topoConfigMapper;
 
     @Override
-    public SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId){
+    public SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId) {
 
         SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectPublicedBySubjectId(taskId, subjectId);
-        if(null == situationPublishInstance){
+        if (null == situationPublishInstance) {
             throw new BusinessException(SituationErrorCode.NO_RELEASED_DASHBOARD);
         }
 
@@ -104,7 +102,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         // 校验参数
 //        checkParams(situationPublishInstanceAddReq);
 
-        if (StringUtils.isBlank(situationPublishInstance.getDescription())){
+        if (StringUtils.isBlank(situationPublishInstance.getDescription())) {
             situationPublishInstance.setDescription("默认描述");
         }
 
@@ -132,7 +130,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
         dashboardAttribute.setTaskType(scheme.getTaskType());
         dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
-        if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())){
+        if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())) {
             dashboardAttribute.setTaskSubType("1");
         }
         String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "LG中心" : scheme.getSubRangeName();
@@ -141,14 +139,14 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setSubTitle(taskName + "任务");
 
         // 如果大屏名称不存在，默认生成
-        if (StringUtils.isBlank(situationPublishInstance.getName())){
+        if (StringUtils.isBlank(situationPublishInstance.getName())) {
             situationPublishInstance.setName("想定大屏-" + taskName);
         }
 
         // 从大屏模板中拷贝属性
         String templateId = situationPublishInstanceAddReq.getTemplateId();
         // 模板不存在时获取默认模板
-        if (templateId == null){
+        if (templateId == null) {
             String defaultTemplateId = dashboardTemplateService.getDefaultTemplateId(scheme.getTaskType());
             templateId = dashboardTemplateRefService.createDashboardTemplate(defaultTemplateId).getResourceId();
         }
@@ -201,11 +199,11 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return situationPublishInstance;
     }
 
-    private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId){
+    private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId) {
 
         // 不重复处理拓扑坐标
         TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
-        if (topoConfig != null){
+        if (topoConfig != null) {
             return;
         }
 
@@ -238,7 +236,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         }
 
         // 校验变更项，暂不允许修改任务信息
-        if (!Objects.equals(situationPublishInstance.getSchemeId(), situationPublishInstanceUpdateReq.getSchemeId())){
+        if (!Objects.equals(situationPublishInstance.getSchemeId(), situationPublishInstanceUpdateReq.getSchemeId())) {
             throw new BusinessException(SituationErrorCode.CAN_NOT_MODIFY_TASK);
         }
 
@@ -285,7 +283,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
                 // 赋值大屏类型
                 categories.forEach(situationCategory -> {
-                    if (situationCategory.getResourceId().equals(category)){
+                    if (situationCategory.getResourceId().equals(category)) {
                         situationPublishInstancePageRes.setCategory(situationCategory.getName());
                     }
                 });
@@ -329,7 +327,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     }
 
     @Override
-    public String getEnvIdByDashboardId(String dashboardId){
+    public String getEnvIdByDashboardId(String dashboardId) {
         SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(dashboardId);
         if (null == situationPublishInstance) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);

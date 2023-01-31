@@ -24,6 +24,7 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 
     /**
      * 分页查询
+     *
      * @return
      */
     ListRsp<SituationPublishInstancePageRes> getSituationPublishInstancePage(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq);

@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.oj.ojbase.constant.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,6 @@ import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
-import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
-import com.cyberpeace.oj.ojbase.constant.ClassroomType;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -1088,7 +1085,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					orgMap);
 			validateOrgUnderClassroomTime(trainPlan.getResourceId(), classroom.getOrganizationId(), classroom.getStartTime(),
 					classroom.getEndTime(), i);
-			
+
 			Course course = courseMapper.selectById(classroom.getCourseId());
 			if (null == course) {
 				continue;
@@ -1132,15 +1129,15 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public String exportReport(String classroomId){
 		String basePath = AttachmentPath.LESSON_HTML_TEMPLATE.getDesc();
-		String suffix = "-实验报告.zip";
 		// 基本数据校验
 		Classroom classroom = classroomValidateHandler.validateClassroomExist(classroomId);
 		CourseLesson courseLesson = courseValidateHandler
 				.validateLessonExist(classroom.getLessonId(), false);
 		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
 		//课程名称
-		String lessonName = lesson.getName();
-		String  htmlPath = basePath + File.separator + lessonName;
+		String initLessonName = lesson.getName();
+		String lessonName = initLessonName.replace(" ","");
+		String htmlPath = basePath + File.separator + lessonName;
 		//清理目录
 		File file = new File(htmlPath);
 		if (file.exists()) {
@@ -1161,7 +1158,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
 		}
 		for(ClassroomReportBo classroomReportBo: filterData){
-			String personName = classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + lessonName + "-课时报告";
+			String initPersonName =
+					classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + initLessonName + ClassroomExportReportConstant.SESSION_REPORT.getMsg();
+			String personName = initPersonName.replace(" ","");
 			String baseClassroomPath = htmlPath + File.separator + personName;
 			JSONObject jsonObject = new JSONObject();
 			String mdContent = classroomReportBo.getContent();
@@ -1210,37 +1209,46 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			jsonObject.put("report_content", reportContent);
 			//是否通过
 			if (classroomReportBo.getPassed() == null) {
-				jsonObject.put("passed", "未审核");
+				jsonObject.put("passed", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
 			} else if (classroomReportBo.getPassed()) {
-				jsonObject.put("passed", "是");
+				jsonObject.put("passed", ClassroomExportReportConstant.YES.getMsg());
 			} else {
-				jsonObject.put("passed", "否");
+				jsonObject.put("passed", ClassroomExportReportConstant.NO.getMsg());
 			}
 			//评分
 			if (classroomReportBo.getScore() == null) {
-				jsonObject.put("score", "未审核");
+				jsonObject.put("score", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
 			} else {
 				jsonObject.put("score", classroomReportBo.getScore().toString());
 			}
 			//评语
 			if (classroomReportBo.getEvaluateComment() == null) {
-				jsonObject.put("evaluate_comment", "未审核");
+				jsonObject.put("evaluate_comment", ClassroomExportReportConstant.NOT_APPROVED.getMsg());
 			} else {
 				jsonObject.put("evaluate_comment", classroomReportBo.getEvaluateComment());
 			}
+			jsonObject.put("report_content_title", ClassroomExportReportConstant.LABORATORY_REPORT_TITLE.getMsg());
+			jsonObject.put("score_title", ClassroomExportReportConstant.SCORE_TITLE.getMsg());
+			jsonObject.put("passed_title", ClassroomExportReportConstant.PASSED_TITLE.getMsg());
+			jsonObject.put("evaluate_comment_title", ClassroomExportReportConstant.EVALUATE_COMMENT_TITLE.getMsg());
 			String destHtmlPath = baseClassroomPath + File.separator + personName + ".html";
 			HtmlToPdfUtil.getHtmlTemplateInstance(jsonObject, HtmlTemplateEnum.LESSON, destHtmlPath);
 			// 在同目录下生成pdf
 			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
 					+ "pdf";
 			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			File pdfFile = new File(destPdfPath);
+			pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
 			//删除html文件
 			FileUtil.deleteDir(new File(destHtmlPath));
+			File baseClassroomFile = new File(baseClassroomPath);
+			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
 		}
 		File zipFile = new File(ZipUtil.toZip(htmlPath));
-		zipFile.renameTo(new File(basePath + File.separator + lessonName + suffix));
+		String zipPath = basePath + File.separator + initLessonName + ClassroomExportReportConstant.LABORATORY_REPORT_SUFFIX.getMsg();
+		zipFile.renameTo(new File(zipPath));
 		FileUtil.deleteDir(new File(htmlPath));
-		return basePath + File.separator + lessonName + suffix;
+		return zipPath;
 	}
 
 	/**

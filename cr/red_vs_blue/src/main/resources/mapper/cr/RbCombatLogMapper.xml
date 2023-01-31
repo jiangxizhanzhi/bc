@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper">
+
+    <select id="selectOneByOriginalLog" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog">
+        select *
+        from cr_rb_combat_log
+        <where>
+            <if test="originalLog != null and originalLog != ''">
+                <bind name="originalLog" value="'%' + userId + '%'"/>
+                original_log like #{originalLog}
+            </if>
+
+        </where>
+    </select>
+</mapper>

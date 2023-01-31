@@ -11,6 +11,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
@@ -87,7 +88,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             dashboardComponents.setResourceId(resourceId);
             dashboardComponentsIdList.add(resourceId);
         }
-        
+
         dashboardTemplate.setComponentsSetting(dashboardComponentsIdList.toString());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
@@ -177,7 +178,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                         typeDashboardComponents.add(dashboardComponent);
                     }
                     //全局控件
-                    if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                    if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")) {
                         commonDashboardComponentList.add(dashboardComponent);
                     }
                 });
@@ -454,7 +455,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             if (dataObject instanceof JSONObject) {
                 JSONObject objectData = jsonObject.getJSONObject("data");
                 jsonArray.addAll(objectData.getJSONArray(responseKey));
-            }else if (dataObject instanceof JSONArray) {
+            } else if (dataObject instanceof JSONArray) {
                 jsonArray.addAll(jsonObject.getJSONArray("data"));
             }
             if (!jsonArray.isEmpty()) {
@@ -593,7 +594,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
     }
 
-    private void checkTemplateName(String name, String resourceId){
+    private void checkTemplateName(String name, String resourceId) {
         String oldResourceId = dashboardTemplateMapper.selectByNameString(name);
         if (StringUtils.isNotBlank(oldResourceId)) {
             if ((StringUtils.isNotBlank(resourceId) && !Objects.equals(oldResourceId, resourceId)) || StringUtils.isBlank(resourceId)) {
@@ -601,15 +602,15 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             }
         }
     }
-    
+
     @Override
-    public String getDefaultTemplateId(String taskType){
+    public String getDefaultTemplateId(String taskType) {
         SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
 
         return dashboardTemplateMapper.selectByType(situationCategory.getResourceId());
     }
 
-    public List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow){
+    public List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow) {
         List<LayerShow> layerShowList = new ArrayList<>();
         List<DashboardComponentsReq> sortComponentsSettingList = new ArrayList<>();
         //获取所有图层信息
@@ -622,17 +623,19 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             }
         }
         //图层数量和控件数量保持一致
-        if (layerShowList.size() == componentsSettingList.size()) {
-            //按图层顺序排列控件顺序
-            for (LayerShow show : layerShowList) {
-                Integer componentIndex = show.getComponentIndex();
-                DashboardComponentsReq dashboardComponentsReq =
-                        componentsSettingList.stream().filter(componentsSetting -> componentsSetting.getComponentIndex().equals(componentIndex)).findFirst().orElse(null);
-                if (dashboardComponentsReq != null) {
-                    sortComponentsSettingList.add(dashboardComponentsReq);
-                }
+        if (layerShowList.size() != componentsSettingList.size()) {
+            throw new BusinessException(SituationErrorCode.LAYER_NUM_ERROR);
+        }
+        //按图层顺序排列控件顺序
+        for (LayerShow show : layerShowList) {
+            Integer componentIndex = show.getComponentIndex();
+            DashboardComponentsReq dashboardComponentsReq =
+                    componentsSettingList.stream().filter(componentsSetting -> componentsSetting.getComponentIndex().equals(componentIndex)).findFirst().orElse(null);
+            if (dashboardComponentsReq != null) {
+                sortComponentsSettingList.add(dashboardComponentsReq);
             }
         }
+
         return sortComponentsSettingList;
     }
 }

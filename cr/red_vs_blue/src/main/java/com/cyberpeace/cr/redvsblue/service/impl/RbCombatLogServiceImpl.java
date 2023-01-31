@@ -70,7 +70,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public Map<String, String> getInitDataFromZrLog(String syslog) {
-		List<String> stringList = new ArrayList<>(new HashSet<>(LocalStringUtil.getMatchStr(syslog, "(?=[ ]*)[0-9a-zA-Z_.]+=\".*\"(?=[ ]*)")));
+		List<String> stringList = new ArrayList<>(new HashSet<>(LocalStringUtil.getMatchStr(syslog, "(?=[ ]*)[0-9a-zA-Z_.]+=\"[^ ]*\"(?=[ ]*)")));
 		Map<String, String> initMap = new HashMap<>();
 		for (String str : stringList) {
 			String[] spStr = str.split("=");

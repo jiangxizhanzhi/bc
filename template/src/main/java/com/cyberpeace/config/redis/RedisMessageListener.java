@@ -2,6 +2,7 @@ package com.cyberpeace.config.redis;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,8 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,9 @@ public class RedisMessageListener implements MessageListener {
 
 	@Autowired
 	private RedisTemplate redisTemplate;
+
+	@Autowired
+	private RbCombatLogService rbCombatLogService;
 
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
@@ -41,8 +47,7 @@ public class RedisMessageListener implements MessageListener {
 		// 渠道名称转换
 		String patternStr = new String(pattern);
 		System.out.println("---消息内容---: " + msg);
-
-
+		rbCombatLogService.handlerLog(msg.toString().replaceAll("\\\\",""));
 	}
 
 	@Bean

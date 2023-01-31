@@ -414,4 +414,10 @@ public interface CrBusinessErrorCode {
 
 	/** 题解长度超长 */
 	String ILLEGAL_WRITEUP_LEN = "101125";
+
+	/** 日志重复 */
+	String LOG_REPEATED = "101126";
+
+	/** 未识别来源的数据 */
+	String UNRECOGNIZED_DATA_SOURCE = "101127";
 }

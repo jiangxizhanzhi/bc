@@ -1139,8 +1139,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.validateLessonExist(classroom.getLessonId(), false);
 		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
 		//课程名称
-		String lessonName = lesson.getName();
-		String  htmlPath = basePath + File.separator + lessonName;
+		String initLessonName = lesson.getName();
+		String lessonName = initLessonName.replace(" ","");
+		String htmlPath = basePath + File.separator + lessonName;
 		//清理目录
 		File file = new File(htmlPath);
 		if (file.exists()) {
@@ -1161,7 +1162,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
 		}
 		for(ClassroomReportBo classroomReportBo: filterData){
-			String personName = classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + lessonName + "-课时报告";
+			String initPersonName = classroomReportBo.getName() + "(" + classroomReportBo.getUserName() + ")-" + initLessonName + "-课时报告";
+			String personName = initPersonName.replace(" ","");
 			String baseClassroomPath = htmlPath + File.separator + personName;
 			JSONObject jsonObject = new JSONObject();
 			String mdContent = classroomReportBo.getContent();
@@ -1234,13 +1236,18 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
 					+ "pdf";
 			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+			File pdfFile = new File(destPdfPath);
+			pdfFile.renameTo(new File(baseClassroomPath + File.separator + initPersonName + ".pdf"));
 			//删除html文件
 			FileUtil.deleteDir(new File(destHtmlPath));
+			File baseClassroomFile = new File(baseClassroomPath);
+			baseClassroomFile.renameTo(new File(htmlPath + File.separator + initPersonName));
 		}
 		File zipFile = new File(ZipUtil.toZip(htmlPath));
-		zipFile.renameTo(new File(basePath + File.separator + lessonName + suffix));
+		String zipPath = basePath + File.separator + initLessonName + suffix;
+		zipFile.renameTo(new File(zipPath));
 		FileUtil.deleteDir(new File(htmlPath));
-		return basePath + File.separator + lessonName + suffix;
+		return zipPath;
 	}
 
 	/**

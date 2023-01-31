@@ -293,7 +293,7 @@ public class FileUtil {
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8"));
+			response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(file.getName(),"UTF-8").replaceAll("\\+","%20"));
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();

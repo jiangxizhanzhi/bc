@@ -41,14 +41,14 @@ public class ThirdPartyTopoBo implements Serializable {
 		this.networks.forEach(network -> {
 			network.setElementType("network");
 			network.setDeviceType(getModelType(modelTypeContextMap, network.getDeviceType()));
-			network.setModel(getModelThreeDimensionPic(modelContextMap, network.getModel()));
+			network.setModelType(getModelThreeDimensionPic(modelContextMap, network.getModel()));
 			context.getElements().put(network.getElementId(), network);
 			elementContextMap.put(network.getElementId(), network);
 		});
 		this.nodes.forEach(node -> {
 			node.setElementType("node");
 			node.setDeviceType(getModelType(modelTypeContextMap, node.getDeviceType()));
-			node.setModel(getModelThreeDimensionPic(modelContextMap, node.getModel()));
+			node.setModelType(getModelThreeDimensionPic(modelContextMap, node.getModel()));
 			context.getElements().put(node.getElementId(), node);
 			elementContextMap.put(node.getElementId(), node);
 		});

@@ -706,7 +706,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
 
 		// 推送ws消息
-		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.LinkStatus.getDesc(),
 				wsNodeStatus);
 		pushDataToRoom(wsMessage, sceneId);
 

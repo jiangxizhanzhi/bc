@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
+import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.model.ws.*;
@@ -36,8 +37,8 @@ public class SituationEventController {
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
 
-	@ApiOperation("获取随机攻防动效")
-	@GetMapping("attack_event")
+	@ApiOperation("推送随机攻防动效")
+	@GetMapping("event_ad")
 	public BaseRsp<List<WsEventAd>> randomEvent(
 			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
 					required = true) String dashboardId,
@@ -70,6 +71,27 @@ public class SituationEventController {
 		BaseRsp<List<WsEventAd>> rsp = new BaseRsp<>(eventAds);
 		rsp.setMessage("成功推送事件");
 		return rsp;
+	}
+
+	@ApiOperation("推送随机节点工作状态")
+	@GetMapping("event_node")
+	public BaseRsp<NodeEventContext> nodeStatus(
+			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
+					required = true) String dashboardId) {
+
+		// 获取随机节点
+		String envId = situationPublishInstanceService.getEnvIdByDashboardId(dashboardId);
+		Map<String, ElementSlimContext> elementSlimContextMap = topoHandlerService
+				.getTopoConfigByEnvId(envId);
+		Random random = new Random();
+		String[] elementIds = elementSlimContextMap.keySet().toArray(new String[0]);
+		String nodeId = elementIds[random.nextInt(elementIds.length)];
+
+		// 构造节点状态消息
+		NodeEventContext nodeEventContext = new NodeEventContext(nodeId);
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventNode.getDesc(),
+				dashboardId, null, Lists.newArrayList(nodeEventContext), null, null);
+		return new BaseRsp<>(nodeEventContext);
 	}
 
 	@ApiOperation("推送多节点动效")

@@ -3,6 +3,7 @@ package com.cyberpeace.bs.service;
 import java.util.List;
 
 import com.cyberpeace.bs.dao.entity.UserSimulator;
+import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
@@ -110,4 +111,16 @@ public interface UserSimulatorService {
 	 * @param modifyBo
 	 */
 	void modifySimulator(SimulatorModifyBo modifyBo);
+
+	/**
+	 * 动态更新场景时，更新行为仪表
+	 * @param updateBo
+	 */
+	void updateBatch(SimulatorAddBo updateBo);
+
+	/**
+	 * 展示现存的定时任务
+	 * @return
+	 */
+	List<SimulatorTimer> showTimers();
 }

@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.dao.mapper;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -16,7 +17,7 @@ public interface UserInstanceMapper {
 
 	List<UserInstance> getBatchBySimulatorId(@Param("simulatorId") String simulatorId);
 
-	void deleteBySimulatorIds(@Param("simulatorIds") List<String> simulatorIds);
+	void deleteBySimulatorIds(@Param("simulatorIds") Collection<String> simulatorIds);
 
 	void deleteBySimulatorId(@Param("simulatorId") String simulatorId);
 }

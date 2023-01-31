@@ -1,5 +1,6 @@
 package com.cyberpeace.bs.dao.entity;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -8,7 +9,7 @@ import lombok.Data;
 
 @Data
 @TableName("bs_user_instance")
-public class UserInstance {
+public class UserInstance implements Serializable {
 
 	private Integer id;
 

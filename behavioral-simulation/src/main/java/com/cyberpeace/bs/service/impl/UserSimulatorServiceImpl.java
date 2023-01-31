@@ -42,6 +42,7 @@ import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.LcMonitorRsp;
 import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
+import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.monitor.MonitorSimulatorDetail;
 import com.cyberpeace.bs.service.bo.simulator.*;
@@ -102,6 +103,25 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public void batchCreate(SimulatorAddBo addBo) {
 		log.info("create simulator request: {}",
 				JsonUtil.toJsonString(addBo, PropertyNamingStrategy.SnakeCase));
+		SimulatorAddResult result = createSimulatorBatch(addBo);
+		// save
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+				for (UserSimulator simulator : result.getSimulatorList()) {
+					userSimulatorMapper.insert(simulator);
+				}
+				if (!result.getUserInstanceList().isEmpty()) {
+					userInstanceMapper.insertUserInstanceBatch(result.getUserInstanceList());
+				}
+			}
+		});
+
+	}
+
+	private SimulatorAddResult createSimulatorBatch(SimulatorAddBo addBo) {
 		List<String> userModelIds = Lists.newArrayList();
 		// collect user model ids
 		for (NodeBo nodeBo : addBo.getNodeList()) {
@@ -123,9 +143,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		List<String> userTypeIds = userModelList.stream().map(UserModel::getUserTypeId)
 				.collect(Collectors.toList());
 		Map<String, String> userTypeMap = userTypeService.getIdNameMap(userTypeIds);
-		// create user instances
-		List<UserInstance> userInstanceAll = Lists.newArrayList();
-		List<UserSimulator> simulatorList = Lists.newArrayList();
+		// create res
+		SimulatorAddResult result = new SimulatorAddResult();
 		for (NodeBo nodeBo : addBo.getNodeList()) {
 			List<UserInstance> userInstanceList = createUserInstanceList(nodeBo.getUserModels(),
 					userModelMap, userTypeMap);
@@ -135,28 +154,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			if (StringUtils.isBlank(simulator.getDeviceIp())) {
 				throw new BusinessException(BsErrorCode.INVALID_DEVICE_IP);
 			}
-			// set id
-			simulator.setResourceId(IDGeneratorUtil.getID());
-			userInstanceList
-					.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
-			userInstanceAll.addAll(userInstanceList);
-			simulatorList.add(simulator);
+			result.getUserInstanceList().addAll(userInstanceList);
+			result.getSimulatorList().add(simulator);
+			result.getUserInstanceMap().put(simulator.getResourceId(), userInstanceList);
 		}
-		// save
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-				for (UserSimulator simulator : simulatorList) {
-					userSimulatorMapper.insert(simulator);
-				}
-				if (!userInstanceAll.isEmpty()) {
-					userInstanceMapper.insertUserInstanceBatch(userInstanceAll);
-				}
-			}
-		});
-
+		return result;
 	}
 
 	private UserSimulator createSimulator(List<UserInstance> userInstanceList, NodeBo nodeBo,
@@ -208,7 +210,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setIsEntity(nodeBo.getIsEntity());
 		simulator.setSceneId(sceneId);
 		simulator.setSceneName(sceneName);
-
+		// set id, 用节点id作为仪表id
+		simulator.setResourceId(nodeBo.getNodeId().replaceAll("-", ""));
+		userInstanceList
+				.forEach(instance -> instance.setUserSimulatorId(simulator.getResourceId()));
 		return simulator;
 	}
 
@@ -413,6 +418,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		for (UserInstance instance : userInstanceList) {
 			// create timer
 			BsTimer timer = new BsTimer();
+			timer.setUserName(instance.getUserName());
 			List<BehaviorSimple> behaviorList = BsUtil
 					.parseBehaviorList(instance.getBehaviorList());
 			// get params
@@ -580,16 +586,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		NodeBo nodeBo = BeanUtils.copy(modifyBo, NodeBo.class);
 		UserSimulator newSimulator = createSimulator(userInstanceList, nodeBo,
 				simulator.getSceneId(), simulator.getSceneName());
-		newSimulator.setResourceId(simulator.getResourceId());
 		newSimulator.setAccessOs(simulator.getAccessOs());
 		newSimulator.setIsEntity(simulator.getIsEntity());
 		newSimulator.setDeviceName(simulator.getDeviceName());
 		newSimulator.setDeviceIp(simulator.getDeviceIp());
 		newSimulator.setStatus(simulator.getStatus());
-		// set id
-		for (UserInstance instance : userInstanceList) {
-			instance.setUserSimulatorId(simulator.getResourceId());
-		}
+
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -615,6 +617,87 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 						userSimulatorMapper.updateById(newSimulator);
 					}
 				}
+			}
+		});
+	}
+
+	@Override
+	public void updateBatch(SimulatorAddBo updateBo) {
+		log.info("update simulator request: {}",
+				JsonUtil.toJsonString(updateBo, PropertyNamingStrategy.SnakeCase));
+		String sceneId = updateBo.getSceneId();
+		// 查询是否有和该场景相关的仪表
+		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchBySceneId(sceneId);
+		Map<String, UserSimulator> oldSimulatorMap = StreamApiUtils.toMap(simulatorList,
+				UserSimulator::getResourceId, simulator -> simulator);
+		List<String> oldSimulatorIds = simulatorList.stream().map(UserSimulator::getResourceId)
+				.collect(Collectors.toList());
+		// 创建新的仪表
+		SimulatorAddResult result = createSimulatorBatch(updateBo);
+		// 继承旧仪表的执行状态
+		for (UserSimulator simulator : result.getSimulatorList()) {
+			if (oldSimulatorMap.containsKey(simulator.getResourceId())) {
+				UserSimulator old = oldSimulatorMap.get(simulator.getResourceId());
+				simulator.setStatus(old.getStatus());
+				simulator.setLastExeId(old.getLastExeId());
+				simulator.setLastExeDate(old.getLastExeDate());
+				simulator.setExeCount(old.getExeCount());
+			}
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 删除旧的仪表和定时任务
+				deleteSimulatorByIds(oldSimulatorIds);
+				// save simulators
+				for (UserSimulator simulator : result.getSimulatorList()) {
+					userSimulatorMapper.insert(simulator);
+					// 创建定时任务
+					if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+						try {
+							createTimerTask(simulator,
+									result.getUserInstanceMap().get(simulator.getResourceId()));
+						} catch (Exception e) {
+							// 重新启动失败则状态设为停止
+							simulator.setStatus(UserSimulator.Status.STOPPED.getCode());
+							log.error("failed to start simulator {} after modification: {}",
+									simulator.getResourceId(), e);
+							userSimulatorMapper.updateById(simulator);
+						}
+					}
+				}
+				if (!result.getUserInstanceList().isEmpty()) {
+					userInstanceMapper.insertUserInstanceBatch(result.getUserInstanceList());
+				}
+			}
+		});
+	}
+
+	@Override
+	public List<SimulatorTimer> showTimers() {
+		List<SimulatorTimer> res = Lists.newArrayList();
+		timerMap.forEach((simulatorId, timers) -> {
+			SimulatorTimer simulatorTimer = new SimulatorTimer(simulatorId);
+			timers.forEach((userModelId, timer) -> simulatorTimer.addUser(userModelId,
+					timer.getUserName()));
+			res.add(simulatorTimer);
+		});
+		return res;
+	}
+
+	private void deleteSimulatorByIds(Collection<String> simulatorIds) {
+		if (CollectionUtils.isEmpty(simulatorIds)) {
+			return;
+		}
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				userSimulatorMapper.deleteBatchIds(simulatorIds);
+				userInstanceMapper.deleteBySimulatorIds(simulatorIds);
+				// 删除定时任务
+				batchRemoveTimer(simulatorIds);
 			}
 		});
 	}

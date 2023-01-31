@@ -36,10 +36,17 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("更新仪表用户")
+	@ApiOperation("更新单个仪表用户")
 	@PatchMapping("/modify")
 	public BaseRsp modifySimulator(@RequestBody @Validated SimulatorModifyBo modifyBo) {
 		userSimulatorService.modifySimulator(modifyBo);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("更新场景")
+	@PatchMapping("/update")
+	public BaseRsp modifyScene(@RequestBody @Validated SimulatorAddBo updateBo) {
+		userSimulatorService.updateBatch(updateBo);
 		return new BaseRsp();
 	}
 

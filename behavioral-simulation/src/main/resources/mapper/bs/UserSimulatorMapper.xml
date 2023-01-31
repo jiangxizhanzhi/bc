@@ -59,4 +59,9 @@
         from bs_user_simulator
         where device_id = #{nodeId}
     </select>
+    <select id="selectBatchBySceneId" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
+        select *
+        from bs_user_simulator
+        where scene_id = #{sceneId}
+    </select>
 </mapper>

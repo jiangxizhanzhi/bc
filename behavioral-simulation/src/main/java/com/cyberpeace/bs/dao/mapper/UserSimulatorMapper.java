@@ -35,4 +35,6 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	void deleteBySceneIdList(@Param("sceneIdList") List<String> sceneIdList);
 
 	UserSimulator selectByNodeId(@Param("nodeId") String nodeId);
+
+	List<UserSimulator> selectBatchBySceneId(@Param("sceneId") String sceneId);
 }

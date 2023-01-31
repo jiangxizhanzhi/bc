@@ -43,7 +43,6 @@ import java.util.List;
 @Api(tags = "组件库-态势发布大屏")
 @RestController
 @Slf4j
-@RequiresAuthentication
 @RequestMapping("/situation/publish")
 public class SituationPublishController {
 
@@ -61,9 +60,6 @@ public class SituationPublishController {
 
     @Autowired
     private SituationCategoryMapper situationCategoryMapper;
-
-    @Autowired
-    private DashboardTemplateMapper dashboardTemplateMapper;
 
     @Autowired
     private RemoteSituationService remoteSituationService;

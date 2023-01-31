@@ -13,6 +13,12 @@
         <if test="situationPublishInstanceFilterReq.category != null and situationPublishInstanceFilterReq.category != ''">
             AND category = #{situationPublishInstanceFilterReq.category}
         </if>
+        <if test="situationPublishInstanceFilterReq.startTime != null">
+            AND create_time &gt; #{situationPublishInstanceFilterReq.startTime}
+        </if>
+        <if test="situationPublishInstanceFilterReq.endTime != null">
+            AND create_time &lt; #{situationPublishInstanceFilterReq.endTime}
+        </if>
         <if test="situationPublishInstanceFilterReq.status != null and situationPublishInstanceFilterReq.status != ''">
             AND status = #{situationPublishInstanceFilterReq.status}
         </if>

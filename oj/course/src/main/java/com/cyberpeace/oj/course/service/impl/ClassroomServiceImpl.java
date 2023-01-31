@@ -1251,6 +1251,12 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		return zipPath;
 	}
 
+	@Override
+	public List<String> selectTempTaskIdsByUser(UserInfo userContext) {
+
+		return classroomMapper.selectTempTaskIdsByUser(userContext.getUserId(),userContext.isSuperuser()) ;
+	}
+
 	/**
 	 * 判断起止时间是否相同或起始时间大于结束时间
 	 *

@@ -617,6 +617,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             List<LayerShow> children = layerShowReq.getChildren();
             if (CollectionUtils.isNotEmpty(children)) {
                 layerShowList.addAll(children);
+            } else {
+                layerShowList.add(layerShowReq);
             }
         }
         //图层数量和控件数量保持一致

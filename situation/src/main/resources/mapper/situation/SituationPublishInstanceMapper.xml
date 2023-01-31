@@ -6,7 +6,10 @@
     <select id="getSituationPublishInstancePage"
             resultType="com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes">
 
-        SELECT * FROM situation_publish_instance WHERE 1 = 1
+        SELECT situation_publish_instance.*
+        FROM situation_publish_instance left join situation_dashboard_attribute on
+        situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
+        WHERE 1 = 1
         <if test="situationPublishInstanceFilterReq.name != null and situationPublishInstanceFilterReq.name != ''">
             AND name like concat("%", #{situationPublishInstanceFilterReq.name}, "%")
         </if>
@@ -14,10 +17,10 @@
             AND category = #{situationPublishInstanceFilterReq.category}
         </if>
         <if test="situationPublishInstanceFilterReq.startTime != null">
-            AND create_time &gt; #{situationPublishInstanceFilterReq.startTime}
+            AND situation_dashboard_attribute.start_time &gt; #{situationPublishInstanceFilterReq.startTime}
         </if>
         <if test="situationPublishInstanceFilterReq.endTime != null">
-            AND create_time &lt; #{situationPublishInstanceFilterReq.endTime}
+            AND situation_dashboard_attribute.start_time &lt; #{situationPublishInstanceFilterReq.endTime}
         </if>
         <if test="situationPublishInstanceFilterReq.status != null and situationPublishInstanceFilterReq.status != ''">
             AND status = #{situationPublishInstanceFilterReq.status}

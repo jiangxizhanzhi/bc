@@ -11,10 +11,7 @@ import com.cyberpeace.cs.controller.CommonController;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.ComponentsDataReq;
-import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
-import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
@@ -107,7 +104,8 @@ public class DashboardTemplateController {
 
     @ApiOperation("Base64截图上传")
     @PostMapping("upload/image")
-    public BaseRsp<AttachmentBo> uploadBackgroundImage(String base64) {
+    public BaseRsp<AttachmentBo> uploadBackgroundImage(@RequestBody @Validated ImageReq imageReq) {
+        String base64 = imageReq.getBase64();
         if (base64.contains("data:image")) {
             base64 = base64.substring(base64.indexOf(",") + 1);
         }

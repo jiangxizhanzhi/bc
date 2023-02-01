@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@Builder
 public class RbDefenseEvent implements Serializable {
 
 	// 攻击阶段数据

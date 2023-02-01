@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Builder
@@ -16,10 +17,10 @@ public class RbLostHost implements Serializable {
 	private String resourceId;
 
 	@ApiModelProperty(value = "角色")
-	private String group;
+	private Integer group;
 
 	@ApiModelProperty(value = "失陷时间")
-	private String lostTime;
+	private Date lostTime;
 
 	@ApiModelProperty(value = "失陷靶标名")
 	private String hostName;

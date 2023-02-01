@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@Builder
 public class RbAttackEvent implements Serializable {
 
 	// 攻击阶段数据
@@ -50,38 +52,11 @@ public class RbAttackEvent implements Serializable {
 	private String destMachine;
 
 	@ApiModelProperty(value = "攻击行为")
-	private String attackAction;
+	private String action;
 
 	@ApiModelProperty(value = "事件时间")
 	private String eventTime;
 
 	@ApiModelProperty(value = "事件描述")
 	private String eventDescribe;
-//
-//	public RbAttackDefenseStage(RbTemplate template, BusinessTemplate businessTemplate) {
-//		this.name = businessTemplate.getName();
-//		this.category = template.getSubType();
-//		this.description = businessTemplate.getDescription();
-//		this.createUser = businessTemplate.getCreateUserId();
-//		this.createTime = businessTemplate.getCreateTime();
-//		this.difficult = businessTemplate.getDifficulty();
-//		this.durationTime = template.getDurationTime();
-//		this.preSkill = JsonUtil.toJsonObjectArray(template.getPreSkill(), String.class);
-//		this.trainSkill = JsonUtil.toJsonObjectArray(template.getTrainSkill(), String.class);
-//		this.logo = businessTemplate.getLogo();
-//	}
-//
-//	public RbAttackDefenseStage(RbTemplateData rbTemplateData) {
-//
-//		this.name = rbTemplateData.getName();
-//		this.category = rbTemplateData.getSubType();
-//		this.description = rbTemplateData.getDescription();
-//		this.createUser = rbTemplateData.getCreateUserId();
-//		this.createTime = rbTemplateData.getCreateTime();
-//		this.difficult = rbTemplateData.getDifficulty();
-//		this.durationTime = rbTemplateData.getDurationTime();
-//		this.preSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getPreSkill(), String.class);
-//		this.trainSkill = JsonUtil.toJsonObjectArray(rbTemplateData.getTrainSkill(), String.class);
-//		this.logo = rbTemplateData.getLogo();
-//	}
 }

@@ -9,10 +9,10 @@ import lombok.Data;
 public class TaskListReq implements Serializable {
 
 	@ApiModelProperty("分页页码")
-	private Integer page;
+	private Integer page = 1;
 
 	@ApiModelProperty("每页条数")
-	private Integer pageSize;
+	private Integer pageSize = 10;
 
 	@ApiModelProperty("分靶场ID")
 	private String subRangeId;

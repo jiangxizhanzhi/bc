@@ -1,24 +1,28 @@
 package com.cyberpeace.situation.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.integratation.model.situation.AdEventContext;
-import com.cyberpeace.integratation.model.situation.ElementSlimContext;
-import com.cyberpeace.integratation.model.situation.NodeEventContext;
-import com.cyberpeace.integratation.model.situation.TaskEventContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.constant.TaskEvent;
+import com.cyberpeace.integratation.constant.TaskMode;
+import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.req.TaskListReq;
+import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.SiteType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.controller.req.EventTaskReq;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.context.site.CenterContext;
+import com.cyberpeace.situation.service.context.site.RangeContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -38,6 +42,12 @@ public class SituationEventController {
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private ThirdPartyService thirdPartyService;
 
 	@ApiOperation("推送随机攻防动效")
 	@GetMapping("event_ad")
@@ -98,9 +108,83 @@ public class SituationEventController {
 		return new BaseRsp<>(nodeEventContext);
 	}
 
-	@ApiOperation("推送任务动效")
+	@ApiOperation("推送随机任务动效")
+	@GetMapping("event_task")
+	public BaseRsp<TaskEventContext> randomEventTask(
+			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
+					required = true) String dashboardId,
+			@ApiParam(name = "task_event", value = "任务操作 1-下发 2-开始 3-结束") @RequestParam(
+					value = "task_event", required = false) String taskEvent) {
+
+		// 获取随机任务
+		List<TaskContext> tasks = remoteSituationService.getTaskList(new TaskListReq()).getList();
+		Random random = new Random();
+		TaskContext task = tasks.get(random.nextInt(tasks.size()));
+
+		// 获取靶场数据
+		RangeContext range = thirdPartyService.getRangeByName(task.getResponsibleRangeName());
+		CenterContext center = thirdPartyService.getCenters().get(0);
+
+		// 构造任务事件数据
+		TaskEventContext taskEventContext = BeanUtils.deepCopy(task, TaskEventContext.class);
+		taskEventContext.setResponsibleRangeId(range.getSubRangeId());
+
+		// 处理任务事件类型
+		if (taskEvent == null) {
+			taskEvent = TaskEvent.getRandomValue(TaskEvent.values());
+		} else {
+			String finalTaskEvent = taskEvent;
+			taskEvent = Arrays.stream(TaskEvent.class.getEnumConstants())
+					.filter(t -> t.getCode().equals(finalTaskEvent)).findFirst()
+					.orElse(TaskEvent.RWXF).getName();
+		}
+		taskEventContext.setTaskEvent(taskEvent);
+
+		String eventDesc = null;
+
+		if (TaskEvent.RWXF.getName().equals(taskEvent)) {
+			// 构造源节点数据
+			taskEventContext.setSourceType(SiteType.CENTER.getName());
+			taskEventContext.setSourceId(center.getCenterId());
+
+			// 构造目标节点数据
+			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getName(),
+					range.getSubRangeId());
+			List<TargetSiteContext> targetSiteContexts = Lists.newArrayList(mainRange);
+			String bcList = range.getSubRangeName();
+
+			if (!TaskMode.DL.getName().equals(task.getTaskMode())) {
+				List<RangeContext> rangeContexts = thirdPartyService.getRanges();
+				RangeContext tmpRange = rangeContexts.get(random.nextInt(rangeContexts.size()));
+				if (!tmpRange.getSubRangeId().equals(range.getSubRangeId())) {
+					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getName(),
+							tmpRange.getSubRangeId()));
+					bcList = bcList + "、" + tmpRange.getSubRangeName();
+				}
+			}
+			taskEventContext.setTargetSites(targetSiteContexts);
+			eventDesc = String.format("%s 向 %s 下发 %s", center.getCenterName(), bcList,
+					task.getTaskName());
+
+		} else if (TaskEvent.RWKS.getName().equals(taskEvent)) {
+			eventDesc = String.format("%s 开始执行 %s", range.getSubRangeName(), task.getTaskName());
+		} else if (TaskEvent.RWJS.getName().equals(taskEvent)) {
+			eventDesc = String.format("%s 结束执行 %s", range.getSubRangeName(), task.getTaskName());
+		} else {
+			return new BaseRsp<>();
+		}
+
+		taskEventContext.setEventDesc(eventDesc);
+		taskEventContext.setEventTime(new Date());
+		WsMessage<TaskEventContext> message = new WsMessage<>(MessageType.TaskEvent.getDesc(),
+				taskEventContext);
+		situationHandlerService.pushDataToDashboard(message, dashboardId);
+		return new BaseRsp<>(taskEventContext);
+	}
+
+	@ApiOperation("推送自定义任务动效")
 	@PostMapping("event_task")
-	public BaseRsp<TaskEventContext> randomEventTask(@RequestBody EventTaskReq eventTaskReq) {
+	public BaseRsp<TaskEventContext> pushEventTask(@RequestBody EventTaskReq eventTaskReq) {
 		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEvent.getDesc(),
 				eventTaskReq.getDashboardId(), eventTaskReq.getFeatureId(),
 				Lists.newArrayList(eventTaskReq.getTaskEvent()), null, null);

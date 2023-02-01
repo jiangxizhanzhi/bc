@@ -104,6 +104,18 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 		return rangeCache.get(rangeId);
 	}
 
+	@Override
+	public RangeContext getRangeByName(String rangeName) {
+		checkRangeData();
+		RangeContext rangeContext = null;
+		for (RangeContext range : rangeCache.values()) {
+			if (range.getSubRangeName().equals(rangeName)) {
+				rangeContext = range;
+			}
+		}
+		return rangeContext;
+	}
+
 	private void checkStationData(String rangeId) {
 		if (stationCache.get(rangeId) == null) {
 			stationInit();

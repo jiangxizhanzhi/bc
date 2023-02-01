@@ -33,6 +33,13 @@ public interface ThirdPartyService {
 	RangeContext getRangeById(String rangeId);
 
 	/**
+	 * 获取分靶场
+	 * @param rangeName 分靶场名称
+	 * @return RangeContext
+	 */
+	RangeContext getRangeByName(String rangeName);
+
+	/**
 	 * 获取场站列表
 	 * @param rangeId 分靶场ID
 	 * @return List<StationContext>

@@ -20,4 +20,7 @@ public interface UserInstanceMapper {
 	void deleteBySimulatorIds(@Param("simulatorIds") Collection<String> simulatorIds);
 
 	void deleteBySimulatorId(@Param("simulatorId") String simulatorId);
+
+	List<UserInstance>
+			getBatchBySimulatorIds(@Param("simulatorIds") Collection<String> simulatorIds);
 }

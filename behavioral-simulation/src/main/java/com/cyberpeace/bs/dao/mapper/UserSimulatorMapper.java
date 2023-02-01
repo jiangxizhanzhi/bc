@@ -22,6 +22,8 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 
 	Integer countByStatus(@Param("statusCode") Integer statusCode);
 
+	List<UserSimulator> selectBatchByStatus(@Param("code") Integer code);
+
 	IPage<UserSimulator> page(@Param("page") Page page, @Param("sceneId") String sceneId);
 
 	List<String> getIdsBySceneId(@Param("sceneId") String sceneId);
@@ -37,4 +39,5 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 	UserSimulator selectByNodeId(@Param("nodeId") String nodeId);
 
 	List<UserSimulator> selectBatchBySceneId(@Param("sceneId") String sceneId);
+
 }

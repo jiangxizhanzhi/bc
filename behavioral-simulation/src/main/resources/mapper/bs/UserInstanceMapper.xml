@@ -31,4 +31,12 @@
         from bs_user_instance
         where user_simulator_id = #{simulatorId}
     </select>
+    <select id="getBatchBySimulatorIds" resultType="com.cyberpeace.bs.dao.entity.UserInstance">
+        select *
+        from bs_user_instance
+        where user_simulator_id in
+        <foreach collection="simulatorIds" item="simulatorId" separator="," open="(" close=")">
+            #{simulatorId}
+        </foreach>
+    </select>
 </mapper>

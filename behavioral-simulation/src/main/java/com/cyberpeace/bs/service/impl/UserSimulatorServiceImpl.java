@@ -97,6 +97,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@PostConstruct
 	public void init() {
 		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
+		// 重启程序后恢复正在运行的仪表的定时任务
+		recoverTimerTask();
 	}
 
 	@Override
@@ -759,5 +761,34 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		}
 		log.error("No valid external ip found.");
 		return CommonConstant.EMPTY_LIST_JSON;
+	}
+
+	private void recoverTimerTask() {
+		// 获取正在运行的仪表
+		List<UserSimulator> activeSimulators = userSimulatorMapper
+				.selectBatchByStatus(UserSimulator.Status.RUNNING.getCode());
+		if (activeSimulators.isEmpty()) {
+			return;
+		}
+		// 获取仪表对应的用户
+		List<String> simulatorIds = activeSimulators.stream().map(UserSimulator::getResourceId)
+				.collect(Collectors.toList());
+		List<UserInstance> userInstanceList = userInstanceMapper
+				.getBatchBySimulatorIds(simulatorIds);
+		if (userInstanceList.isEmpty()) {
+			return;
+		}
+		Map<String, List<UserInstance>> instanceMap = Maps.newHashMap();
+		for (UserInstance instance : userInstanceList) {
+			String simulatorId = instance.getUserSimulatorId();
+			instanceMap.putIfAbsent(simulatorId, Lists.newArrayList());
+			instanceMap.get(simulatorId).add(instance);
+		}
+		// 创建定时任务
+		for (UserSimulator simulator : activeSimulators) {
+
+			createTimerTask(simulator,
+					instanceMap.getOrDefault(simulator.getResourceId(), Lists.newArrayList()));
+		}
 	}
 }

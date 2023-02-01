@@ -64,4 +64,9 @@
         from bs_user_simulator
         where scene_id = #{sceneId}
     </select>
+    <select id="selectBatchByStatus" resultType="com.cyberpeace.bs.dao.entity.UserSimulator">
+        select *
+        from bs_user_simulator
+        where status = #{code}
+    </select>
 </mapper>

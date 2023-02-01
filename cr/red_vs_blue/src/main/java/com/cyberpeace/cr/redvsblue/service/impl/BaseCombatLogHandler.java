@@ -118,7 +118,7 @@ public class BaseCombatLogHandler extends RbCombatLog {
 		}
 		nodeAscription.setNodeAscriptionList(singleNodeAscriptionList);
 		nodeAscription.setNodeData(nodeData);
-		nodeAscription.setSceneId(localScene.getResourceId());
+		nodeAscription.setRoomId(localScene.getBusinessInstanceId());
 		return nodeAscription;
 	}
 

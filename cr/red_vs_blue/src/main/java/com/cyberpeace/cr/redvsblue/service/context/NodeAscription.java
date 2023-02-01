@@ -10,7 +10,7 @@ import java.util.Map;
 @Data
 public class NodeAscription implements Serializable {
 
-	private String sceneId;
+	private String roomId;
 
 	private Map<String, String> nodeData;
 

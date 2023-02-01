@@ -11,8 +11,10 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
+import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
+import com.cyberpeace.situation.controller.req.EventTaskReq;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
@@ -39,7 +41,7 @@ public class SituationEventController {
 
 	@ApiOperation("推送随机攻防动效")
 	@GetMapping("event_ad")
-	public BaseRsp<List<WsEventAd>> randomEvent(
+	public BaseRsp<List<WsEventAd>> randomEventAd(
 			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
 					required = true) String dashboardId,
 			@ApiParam(name = "event_type", value = "事件类型") @RequestParam(value = "event_type",
@@ -75,9 +77,11 @@ public class SituationEventController {
 
 	@ApiOperation("推送随机节点工作状态")
 	@GetMapping("event_node")
-	public BaseRsp<NodeEventContext> nodeStatus(
+	public BaseRsp<NodeEventContext> randomEventNode(
 			@ApiParam(name = "dashboard_id", value = "大屏ID") @RequestParam(value = "dashboard_id",
-					required = true) String dashboardId) {
+					required = true) String dashboardId,
+			@ApiParam(name = "work_status", value = "工作状态 0-工作中 1-离线") @RequestParam(
+					value = "work_status", required = true) Integer workStatus) {
 
 		// 获取随机节点
 		String envId = situationPublishInstanceService.getEnvIdByDashboardId(dashboardId);
@@ -88,10 +92,19 @@ public class SituationEventController {
 		String nodeId = elementIds[random.nextInt(elementIds.length)];
 
 		// 构造节点状态消息
-		NodeEventContext nodeEventContext = new NodeEventContext(nodeId);
+		NodeEventContext nodeEventContext = new NodeEventContext(nodeId, workStatus);
 		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventNode.getDesc(),
 				dashboardId, null, Lists.newArrayList(nodeEventContext), null, null);
 		return new BaseRsp<>(nodeEventContext);
+	}
+
+	@ApiOperation("推送任务动效")
+	@PostMapping("event_task")
+	public BaseRsp<TaskEventContext> randomEventTask(@RequestBody EventTaskReq eventTaskReq) {
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEvent.getDesc(),
+				eventTaskReq.getDashboardId(), eventTaskReq.getFeatureId(),
+				Lists.newArrayList(eventTaskReq.getTaskEvent()), null, null);
+		return new BaseRsp<>(eventTaskReq.getTaskEvent());
 	}
 
 	@ApiOperation("推送多节点动效")

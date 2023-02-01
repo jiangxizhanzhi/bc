@@ -154,8 +154,9 @@ public class DashboardController {
 
 		List<TaskEventContext> taskEventContexts = remoteSituationService
 				.getTaskEventList(taskEventReq, taskEventReq.getFeatureId());
-		situationHandlerService.batchPushDataToDashboard("", taskEventReq.getDashboardId(),
-				taskEventReq.getFeatureId(), taskEventContexts, null, null);
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEvent.getDesc(),
+				taskEventReq.getDashboardId(), taskEventReq.getFeatureId(), taskEventContexts, null,
+				null);
 
 		return new BaseRsp<>(true);
 
@@ -205,8 +206,8 @@ public class DashboardController {
 
 		List<NodeEventContext> nodeEventContexts = remoteSituationService.getNodeEventList(eventReq,
 				eventReq.getFeatureId());
-		situationHandlerService.batchPushDataToDashboard("", eventReq.getDashboardId(),
-				eventReq.getFeatureId(), nodeEventContexts, null, null);
+		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventNode.getDesc(),
+				eventReq.getDashboardId(), eventReq.getFeatureId(), nodeEventContexts, null, null);
 
 		return new BaseRsp<>(true);
 	}

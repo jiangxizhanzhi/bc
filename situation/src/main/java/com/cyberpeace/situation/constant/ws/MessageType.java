@@ -21,7 +21,7 @@ public enum MessageType {
 	TaskEvent(11,"task_event"),
 	TaskEventJt(12,"task_event_jt"),
 	TaskEventAd(13,"event_ad"),
-	TaskEventNode(14,"event_node"),
+	TaskEventNode(14,"node_status"),
 	BackToHome(15, "back_home"),
 	JumpPage(16, "jump_page"),
 	NodeMigration(17, "node_migration"),

@@ -586,10 +586,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		NodeBo nodeBo = BeanUtils.copy(modifyBo, NodeBo.class);
 		UserSimulator newSimulator = createSimulator(userInstanceList, nodeBo,
 				simulator.getSceneId(), simulator.getSceneName());
-		newSimulator.setAccessOs(simulator.getAccessOs());
-		newSimulator.setIsEntity(simulator.getIsEntity());
-		newSimulator.setDeviceName(simulator.getDeviceName());
-		newSimulator.setDeviceIp(simulator.getDeviceIp());
+		// deviceId, deviceName, deviceIp, isEntity, lastExeId, lastExeDate,
+		// exeCount属性都是null
+		// 继承运行状态
 		newSimulator.setStatus(simulator.getStatus());
 
 		// save
@@ -597,8 +596,8 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				userSimulatorMapper.deleteById(simulator.getResourceId());
-				userSimulatorMapper.insert(newSimulator);
+				// 只会更新不为null的字段
+				userSimulatorMapper.updateById(newSimulator);
 				// 更新user_instance
 				userInstanceMapper.deleteBySimulatorId(newSimulator.getResourceId());
 				if (!userInstanceList.isEmpty()) {

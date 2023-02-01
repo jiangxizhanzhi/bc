@@ -2,9 +2,7 @@ package com.cyberpeace.bs.dao.entity;
 
 import java.time.LocalTime;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 
@@ -21,11 +19,13 @@ public class UserSimulator extends BaseTable {
 	/**
 	 * 开始时间
 	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private LocalTime startTime;
 
 	/**
 	 * 结束时间
 	 */
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private LocalTime endTime;
 
 	/**

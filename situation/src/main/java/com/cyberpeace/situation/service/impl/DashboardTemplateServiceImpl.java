@@ -610,12 +610,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         return dashboardTemplateMapper.selectByType(situationCategory.getResourceId());
     }
 
+    @Override
     public List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow) {
         List<LayerShow> layerShowList = new ArrayList<>();
         List<DashboardComponentsReq> sortComponentsSettingList = new ArrayList<>();
         //获取所有图层信息
         for (LayerShowReq layerShowReq : layerShow) {
-            List<LayerShow> children = layerShowReq.getChildren();
+            List<LayerShowReq> children = layerShowReq.getChildren();
             if (CollectionUtils.isNotEmpty(children)) {
                 layerShowList.addAll(children);
             } else {

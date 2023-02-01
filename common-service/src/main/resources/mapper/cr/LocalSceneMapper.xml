@@ -42,4 +42,9 @@
     <select id="selectAll" resultMap="baseResultMap">
         select * from local_scene
     </select>
+    <select id="selectOne" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
+        select *
+        from local_scene
+        limit 1
+    </select>
 </mapper>

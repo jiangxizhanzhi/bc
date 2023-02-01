@@ -41,4 +41,6 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
 
 	List<LocalScene> selectAll();
+
+	LocalScene selectOne();
 }

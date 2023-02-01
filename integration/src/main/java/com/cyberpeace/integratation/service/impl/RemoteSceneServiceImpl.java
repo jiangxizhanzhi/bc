@@ -94,6 +94,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DUMP_URL;
 
+	private String ALL_ELEMENT_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -159,6 +161,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.connection.status");
+
+		ALL_ELEMENT_URL = MP_HOST + ConfigUtil.getContextProperty("scene.all.element");
 
 	}
 
@@ -456,5 +460,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 				});
 			}
 		}
+	}
+
+	@Override
+	public JSONArray getAllElements(String sceneId){
+		String url = String.format(ALL_ELEMENT_URL, sceneId)  ;
+		JSONArray jSONArray = HttpClientUtil.rawSpecialGet(url, JSONArray.class);
+		return jSONArray;
 	}
 }

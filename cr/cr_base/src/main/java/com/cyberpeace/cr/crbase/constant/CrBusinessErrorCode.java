@@ -420,4 +420,7 @@ public interface CrBusinessErrorCode {
 
 	/** 未识别来源的数据 */
 	String UNRECOGNIZED_DATA_SOURCE = "101127";
+
+	/** 目标团队数据缺失 */
+	String DEST_GROUP_MISSING = "101128";
 }

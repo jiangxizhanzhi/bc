@@ -199,4 +199,6 @@ public interface RemoteSceneService {
 
 	void replaceAccessIpExe(JSONObject elementPorts);
 
+	JSONArray getAllElements(String sceneId);
+
 }

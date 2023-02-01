@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -13,9 +14,9 @@ public class NodeAscription implements Serializable {
 
 	private Map<String, String> nodeData;
 
-	private ArrayList<SingleNodeAscription> nodeAscriptionList;
+	private List<SingleNodeAscription> nodeAscriptionList;
 
-	public ArrayList<Integer> getAscription(String nodeIp){
+	public List<Integer> getAscription(String nodeIp){
 		for (SingleNodeAscription singleNodeAscription: nodeAscriptionList){
 			if (singleNodeAscription.getNodeIp().equals(nodeIp)){
 				return singleNodeAscription.getAscription();

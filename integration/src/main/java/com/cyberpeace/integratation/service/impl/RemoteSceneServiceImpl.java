@@ -463,9 +463,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONArray getAllElements(String sceneId){
-		String url = String.format(ALL_ELEMENT_URL, sceneId)  ;
-		JSONArray jSONArray = HttpClientUtil.rawSpecialGet(url, JSONArray.class);
-		return jSONArray;
+	public List<JSONObject> getAllElements(String sceneId){
+		String url = String.format(ALL_ELEMENT_URL, sceneId);
+		List<JSONObject> jsonObjectList = HttpClientUtil.rawSpecialGet(url, List.class);
+		return jsonObjectList;
 	}
 }

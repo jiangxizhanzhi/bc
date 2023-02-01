@@ -14,5 +14,5 @@ import java.util.List;
 @Data
 public class LayerShowReq extends LayerShow implements Serializable {
     @ApiModelProperty("组合图层")
-    private List<LayerShow> children;
+    private List<LayerShowReq> children;
 }

@@ -33,6 +33,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.OperationBo;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
+import com.cyberpeace.oj.practice.service.impl.PracticeValidateHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -64,6 +65,9 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@Autowired
 	private AttachmentService attachmentService;
+
+	@Autowired
+	private PracticeValidateHandler practiceValidateHandler;
 
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -215,8 +219,15 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 	public BaseRsp<Boolean>
 			updateSceneShare(@RequestBody @Validated SceneShareModeReq sceneShareModeReq) {
 
-		PracticeOperation operation = new PracticeOperation();
-		operation.setResourceId(sceneShareModeReq.getResourceId());
+		// 数据校验
+		PracticeOperation operation = practiceValidateHandler
+				.validateOperationExist(sceneShareModeReq.getResourceId());
+
+		if (operation.getDynamicEnv() && null != operation.getSceneShareMode()
+				&& StringUtils.isNotBlank(operation.getTopoId())) {
+			practiceValidateHandler.validateOperationUpdateShareModeSceneExist(operation);
+		}
+
 		operation.setSceneShareMode(sceneShareModeReq.getSceneShareMode());
 
 		int result = practiceOperationMapper.updateById(operation);

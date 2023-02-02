@@ -344,11 +344,11 @@ public class PracticeValidateHandler {
 	}
 
 	/**
-	 * 更新时校验场景是否存在
+	 * 修改时校验场景是否存在
 	 * @param operation
 	 */
 	public void validateOperationUpdateSceneExist(PracticeOperation operation,
-			JSONObject topoData) {
+												  JSONObject topoData) {
 
 		// 场景数据查询
 		List<OjLocalScene> adminScenes = ojLocalSceneMapper
@@ -415,6 +415,25 @@ public class PracticeValidateHandler {
 				String.class);
 		if (!authIds.contains(userId)) {
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_IS_EXIST);
+		}
+	}
+
+
+	/**
+	 * 更新隔离模式时校验场景是否存在
+	 * @param operation
+	 */
+	public void validateOperationUpdateShareModeSceneExist(PracticeOperation operation) {
+
+		// 场景数据查询
+		List<OjLocalScene> adminScenes = ojLocalSceneMapper
+				.selectByBusiness(operation.getResourceId(), false);
+		List<OjLocalScene> webScenes = ojLocalSceneMapper
+				.selectByBusiness(operation.getResourceId(), true);
+		if (CollectionUtils.isEmpty(adminScenes) && CollectionUtils.isEmpty(webScenes)) {
+			return;
+		} else {
+			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
 }

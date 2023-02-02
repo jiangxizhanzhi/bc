@@ -115,6 +115,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		CourseLesson courseLesson = validateLesson(groupInfo.getLessonId());
 		courseValidateHandler.validateLessonType(courseLesson.getType(),
 				CourseLesson.LessonType.EXPERIMENT.getCode());
+
+		//启动场景时，获取该课时最新的存活时间
+		groupInfo.setDestroyDelay(courseLesson.getDestroyDelay());
+
 		ojLocalSceneService.checkSceneStartCount(authContext.getUserId(), CommonConstant.ONE);
 
 		// 不为空返回已存在场景

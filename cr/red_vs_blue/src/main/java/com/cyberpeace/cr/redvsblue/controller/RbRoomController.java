@@ -142,6 +142,27 @@ public class RbRoomController {
 		return getRbRoom(rbRoom.getResourceId());
 	}
 
+	@ApiOperation("查询当前用户角色")
+	@GetMapping("get_role")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<BaseRole> getRbRoomRole(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
+
+		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(rbRoomData.getResourceId());
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		BaseRole baseRole = getSelfRoleUsers(crRoles, userId);
+
+
+		return new BaseRsp(baseRole);
+	}
+
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

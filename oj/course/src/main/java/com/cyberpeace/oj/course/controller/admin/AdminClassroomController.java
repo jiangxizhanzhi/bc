@@ -126,6 +126,7 @@ public class AdminClassroomController {
 	@GetMapping("/list/page")
 	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
 	public BaseRsp<ListRsp<ClassroomBo>> page(@Validated ClassroomPageReq classroomPageReq) {
+		classroomPageReq.setSort("start_time");
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

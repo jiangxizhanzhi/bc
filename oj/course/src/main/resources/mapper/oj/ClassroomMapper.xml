@@ -143,4 +143,13 @@
             and create_user_id = #{userId}
         </if>
     </select>
+    <select id="selectTempTaskIdsByUser" resultType="java.lang.String">
+        select resource_id from oj_classroom
+        <where>
+            train_plan_id = ''
+            <if test="isSuperUser != null and 'false'.toString() == isSuperUser.toString()">
+                and create_user_id = #{userId}
+            </if>
+        </where>
+    </select>
 </mapper>

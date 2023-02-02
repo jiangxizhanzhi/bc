@@ -71,4 +71,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	List<String> selectIdsByPlanIds(List<String> ids);
 
 	List<Classroom> selectByUserPlan(String userId, String planId);
+
+	List<String> selectTempTaskIdsByUser(String userId, boolean isSuperUser);
 }

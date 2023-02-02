@@ -108,8 +108,6 @@ public class AdminTrainPlanController {
 		trainPlanService.checkNameRepeat(trainPlanUpdateReq.getName(),
 				trainPlanUpdateReq.getResourceId(), UserInfoContext.getUserContext().getUserId());
 
-		trainPlan.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
 		trainPlanService.updateById(trainPlan);
 
 		return new BaseRsp<>();
@@ -137,6 +135,10 @@ public class AdminTrainPlanController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				//如果包括临时计划,添加该用户能够看到的临时任务
+				if(delReq.getIds().contains(TrainPlan.TASK_SET_ID)){
+					ids.addAll(classroomService.selectTempTaskIdsByUser(UserInfoContext.getUserContext())) ;
+				}
 				trainPlanService.removeByIds(delReq.getIds());
 
 				for (String id : ids) {

@@ -1131,6 +1131,9 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<ClassroomGroupInfo> groupInfos = StreamApiUtils.flatMap(classroomIds,
 				classroomId -> classroomGroupInfoMapper.selectByRoom(classroomId));
 		List<String> groupIds = StreamApiUtils.map(groupInfos, ClassroomGroupInfo::getResourceId);
+		if (CollectionUtils.isEmpty(groupIds)) {
+			return;
+		}
 		
 		// 课程表场景删除 防止课程表无法删除
 		List<OjLocalScene> scenes = ojLocalSceneMapper.selectByGroupIds(groupIds);

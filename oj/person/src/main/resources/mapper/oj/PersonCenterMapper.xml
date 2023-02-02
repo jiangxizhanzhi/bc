@@ -208,7 +208,7 @@
         from oj_lesson_record
         left join oj_course on oj_course.resource_id = oj_lesson_record.course_id
         left join oj_course_lesson on oj_course_lesson.resource_id = oj_lesson_record.lesson_id
-        where oj_lesson_record.user_id = #{userId} and oj_course.public = true
+        where oj_lesson_record.user_id = #{userId}
         <if test="lessonIds != null and lessonIds.size() != 0">
             and oj_lesson_record.lesson_id in
             <foreach collection="lessonIds" item="lessonId" open="(" close=")" separator=",">

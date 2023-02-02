@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
 	@Autowired
 	private CourseMapper courseMapper;
+
+	@Autowired
+	private CourseLessonMapper courseLessonMapper;
 
 	@Autowired
 	private PersonCenterMapper personCenterMapper;
@@ -127,9 +131,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> lessonIds = new ArrayList<>();
 		List<String> expLessonIds = new ArrayList<>();
 		if (null != authContext) {
-			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
-			lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
+			lessonIds = StreamApiUtils.getColumn(courseLessonMapper.selectList(null),CourseLesson::getResourceId);
 		}
 		// 获取用户课程学习数据
 		StudyRecord studyRecord = personCenterMapper.selectRecordByUser(userId, lessonIds);
@@ -167,15 +169,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		List<String> lessonIds = new ArrayList<>();
 		List<String> expLessonIds = new ArrayList<>();
 		if (null != authContext) {
-			List<String> courseIds = courseMapper.selectByAuth(authContext);
-			if(authContext.getIsWeb()){
-				List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
-				lessonIds = personCenterMapper.selectLessonByAuth(publicCourses);
-				expLessonIds = personCenterMapper.selectExpLessonByAuth(publicCourses);
-			} else {
-				lessonIds = personCenterMapper.selectLessonByAdmin(null);
-				expLessonIds = personCenterMapper.selectLessonByAdmin( CourseLesson.LessonType.EXPERIMENT.getCode());
-			}
+			lessonIds = personCenterMapper.selectLessonByAdmin(null);
+			expLessonIds = personCenterMapper.selectLessonByAdmin( CourseLesson.LessonType.EXPERIMENT.getCode());
 		}
 		List<LessonRecord> lessonRecord = personCenterMapper.selectLessonByTime(userId, startTime,
 				endTime, lessonIds);

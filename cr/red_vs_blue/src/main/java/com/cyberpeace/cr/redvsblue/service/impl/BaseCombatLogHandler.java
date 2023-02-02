@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
@@ -28,7 +29,11 @@ import java.util.*;
 
 public class BaseCombatLogHandler extends RbCombatLog {
 
+	static Map<String, BaseCombatLogHandler> map = new HashMap<>();
+
 	private Map<String, String> initData;
+
+	public RbCombatLog combatLog;
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
@@ -39,6 +44,9 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	public static BaseCombatLogHandler get(String key){
+		return map.get(key);
+	}
 	public BaseCombatLogHandler(Map<String, String> initMap) {
 		this.initData = initMap;
 
@@ -132,29 +140,27 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	}
 
 
-	public RbCombatRecordsRsp AddAttackDefenseStage(RbCombatRecordsRsp data, RbCombatLog rbCombatLog) {
+	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog) {
 		if(!rbCombatLog.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
 			RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
 					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).build();
-
-			data.setAttackDefenseStage(rbAttackDefenseStage);
+			data.getRbAttackDefenseStages().add(rbAttackDefenseStage);
 		}
 		return data;
 	}
 
-	public RbCombatRecordsRsp AddLostHost(RbCombatRecordsRsp data, RbCombatLog rbCombatLog){
+	public RbCombatRecordsAllDataRsp addLostHost(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
 		if(rbCombatLog.getIsLostHost()){
-
 			RbLostHost rbLostHost = RbLostHost.builder().
 					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).lostTime(rbCombatLog.getEventTime()).
 					hostName(StringUtils.isBlank(rbCombatLog.getDestName()) ? rbCombatLog.getAgentName() :rbCombatLog.getDestName()).
 					hostIp(StringUtils.isBlank(rbCombatLog.getDestIp()) ? rbCombatLog.getAgentIp() : rbCombatLog.getDestIp()).build();
-			data.setLostHost(rbLostHost);
+			data.getLostHosts().add(rbLostHost);
 		}
 		return data;
 	}
 
-	public RbCombatRecordsRsp AddAttackDefenseEvent(RbCombatRecordsRsp data, RbCombatLog rbCombatLog){
+	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
 		String sourceGroup = getGroupName(rbCombatLog.getSourceGroup());
 		String sourceIp = rbCombatLog.getSourceIp();
 		String sourceName = rbCombatLog.getSourceName();
@@ -183,7 +189,7 @@ public class BaseCombatLogHandler extends RbCombatLog {
 						.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 						.action(attackAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
 				rbAttackEvent = updateAttackEvent(rbAttackEvent, rbCombatLog);
-				data.setAttackEvent(rbAttackEvent);
+				data.getRbAttackDefenseEvents().add(rbAttackEvent);
 			} else if (rbCombatLog.getEventCategory().equals(CrCommonConstants.EventCategory.DEFENSE.getCode()) &&
 					!rbCombatLog.getDefenseAction().equals(CrCommonConstants.DefenseAction.OTHER.getCode())){
 				visible = Boolean.TRUE;
@@ -199,21 +205,21 @@ public class BaseCombatLogHandler extends RbCombatLog {
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 					.action(defenseAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();
 			rbDefenseEvent = updateDefenseEvent(rbDefenseEvent, rbCombatLog);
-			data.setDefenseEvent(rbDefenseEvent);
+			data.getRbAttackDefenseEvents().add(rbDefenseEvent);
 
 		}
 
 		return data;
 	}
 
-	private RbAttackEvent updateDefenseEvent(RbAttackEvent rbDefenseEvent, RbCombatLog rbCombatLog) {
+	public RbAttackEvent updateDefenseEvent(RbAttackEvent rbDefenseEvent, RbCombatLog rbCombatLog) {
 		if(rbDefenseEvent.getVisible()){
 			return rbDefenseEvent;
 		}
 		return null;
 	}
 
-	private RbAttackEvent updateAttackEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
+	public RbAttackEvent updateAttackEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
 		return rbAttackEvent;
 	}
 
@@ -231,6 +237,13 @@ public class BaseCombatLogHandler extends RbCombatLog {
 
 	public String getGroupName(Integer sourceGroup) {
 		return Objects.equals(sourceGroup, CrRole.RbRoleGroup.RED.getCode()) ?CrRole.RbRoleGroup.RED.getDesc() : CrRole.RbRoleGroup.BLUE.getDesc();
+	}
+
+	public RbCombatRecordsAllDataRsp addData(RbCombatLog combatLog, RbCombatRecordsAllDataRsp combatRecordsAllDataRsp){
+		combatRecordsAllDataRsp = addAttackDefenseStage(combatRecordsAllDataRsp, combatLog);
+		combatRecordsAllDataRsp = addLostHost(combatRecordsAllDataRsp, combatLog);
+		combatRecordsAllDataRsp = addAttackDefenseEvent(combatRecordsAllDataRsp, combatLog);
+		return combatRecordsAllDataRsp;
 	}
 
 

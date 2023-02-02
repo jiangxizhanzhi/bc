@@ -13,7 +13,7 @@ public class RbCommonCombatLogHandler extends BaseCombatLogHandler {
 	}
 
 
-	public RbCommonCombatLogHandler(Map<String, String> initMap) {
-		super(initMap);
-	}
+//	public RbCommonCombatLogHandler(Map<String, String> initMap) {
+//		super(initMap);
+//	}
 }

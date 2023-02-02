@@ -8,11 +8,8 @@ import java.util.Map;
 public class RbBruteforceInterLogHandler extends RbBruteforceExtLogHandler {
 
 
-	Integer eventType = EventType.BRUTEFORCE_INTER.getCode();
+//	Integer eventType = EventType.BRUTEFORCE_INTER.getCode();
 	Integer attackPattern = AttackPattern.BRUTEFORCE_INTER.getCode();
 
 
-	public RbBruteforceInterLogHandler(Map<String, String> initMap) {
-		super(initMap);
-	}
 }

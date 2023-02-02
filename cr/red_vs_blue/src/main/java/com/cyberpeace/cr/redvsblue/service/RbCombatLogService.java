@@ -15,4 +15,6 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
 	Boolean isSbSyslog(String syslog);
 
 	Map<String, String> getInitDataFromZrLog(String syslog);
+
+	<T> void pushDataToRoom(T data, String resourceId);
 }

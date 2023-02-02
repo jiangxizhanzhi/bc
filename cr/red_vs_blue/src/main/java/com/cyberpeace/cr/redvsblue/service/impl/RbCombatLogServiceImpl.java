@@ -1,13 +1,20 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +28,13 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	private Integer FLAG_LENGTH = 0;
 
 	@Autowired
+	private BaseCombatLogHandler baseCombatLogHandler;
+
+	@Autowired
 	private RbCombatLogMapper rbCombatLogMapper;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
 	public void handlerLog(String syslog) {
@@ -49,6 +62,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		if (initData.get("event_type") == null){
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
+		BaseCombatLogHandler combatLogHandler = baseCombatLogHandler.get("base_combat", initData);
+		String string = combatLogHandler.getDestName();
+		List<String> list = new ArrayList<>();
+		list.add("172.47.46.41");
+		combatLogHandler.getNodeAscription(list);
+
 		System.out.println(initData.toString());
 	}
 
@@ -70,7 +89,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public Map<String, String> getInitDataFromZrLog(String syslog) {
-		List<String> stringList = new ArrayList<>(new HashSet<>(LocalStringUtil.getMatchStr(syslog, "(?=[ ]*)[0-9a-zA-Z_.]+=\"[^ ]*\"(?=[ ]*)")));
+		List<String> stringList = new ArrayList<>(new HashSet<>(LocalStringUtil.getMatchStr(syslog, "(?=[ ]*)" +
+				"[0-9a-zA-Z_.]+=\"[^\"]*\"(?=[ ]*)")));
 		Map<String, String> initMap = new HashMap<>();
 		for (String str : stringList) {
 			String[] spStr = str.split("=");
@@ -110,6 +130,21 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 	}
+
+	@Override
+	public <T> void pushDataToRoom(T data, String resourceId) {
+
+		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
+		identifier.setPath(WsPath.RB_COMBAT_LOG);
+		identifier.setResourceId(resourceId);
+
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+																		.data(JsonUtil.toJsonString(data, PropertyNamingStrategy.SnakeCase))
+																		.messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
 
 
 }

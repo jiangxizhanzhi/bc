@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.EventType;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.ActionType;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackAction;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackPattern;
@@ -16,25 +17,25 @@ import java.util.Map;
 public class RbBruteforceExtLogHandler extends RbCommonCombatLogHandler {
 
 
-	Integer eventType = RbCombatLog.EventType.BRUTEFORCE_EXT.getCode();
+	Integer eventType = EventType.BRUTEFORCE_EXT.getCode();
 	Integer attackPhase = AttackPhase.DELIVERY.getCode();
 	Integer attackAction = AttackAction.PASSWORD_BRUTE.getCode();
 	Integer attackType = ActionType.BOUNDARY_BREAKTHROUGH.getCode();
 	Integer attackPattern = AttackPattern.BRUTEFORCE_EXT.getCode();
 
 
-	public RbBruteforceExtLogHandler(Map<String, String> initMap) {
-		super(initMap);
-	}
+//	public RbBruteforceExtLogHandler(Map<String, String> initMap) {
+//		super(initMap);
+//	}
 
-	public Integer getSourceGroup(){
-		Integer group = super.getSourceGroup();
-		if (null != group){
-			group = CrRole.RbRoleGroup.BLUE.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
-		}
-		return group;
-
-	}
+//	public Integer getSourceGroup(){
+//		Integer group = super.getSourceGroup();
+//		if (null != group){
+//			group = CrRole.RbRoleGroup.BLUE.getCode().equals(group) ? CrRole.RbRoleGroup.RED.getCode() :CrRole.RbRoleGroup.BLUE.getCode();
+//		}
+//		return group;
+//
+//	}
 
 	public Integer getDestGroup(){
 		Integer group = super.getDestGroup();
@@ -55,7 +56,7 @@ public class RbBruteforceExtLogHandler extends RbCommonCombatLogHandler {
 		return null;
 	}
 
-	private RbAttackEvent updateAttackEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
+	public RbAttackEvent updateAttackEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
 		if(rbCombatLog.getDestGroup() == rbCombatLog.getSourceGroup()){
 			String attackGroup = rbAttackEvent.getDestGroup();
 			Integer group = rbCombatLog.getDestGroup() == CrRole.RbRoleGroup.BLUE.getCode() ? CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();

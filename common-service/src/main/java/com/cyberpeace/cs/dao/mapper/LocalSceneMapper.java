@@ -42,5 +42,5 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 
 	List<LocalScene> selectAll();
 
-	LocalScene selectOne();
+	LocalScene selectOne(Integer code);
 }

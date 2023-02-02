@@ -38,6 +38,8 @@ public class WsPath {
 
 	public static final String SITUATION = "/ws/situation/scene";
 
+	public static final String RB_COMBAT_LOG = "/ws/red_vs_blue/red_vs_blue_docking";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {

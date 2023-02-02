@@ -10,7 +10,23 @@
                 <bind name="originalLog" value="'%' + userId + '%'"/>
                 original_log like #{originalLog}
             </if>
+        </where>
+    </select>
 
+    <select id="selectOneByRoomIdAndAgentIpAndIsLostHost"
+            resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog">
+        select *
+        from cr_rb_combat_log
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+            <if test="agentIp != null and agentIp != ''">
+                and agent_ip = #{agentIp}
+            </if>
+            <if test="isLostHost != null and isLostHost != ''">
+                and is_lost_host = #{isLostHost}
+            </if>
         </where>
     </select>
 </mapper>

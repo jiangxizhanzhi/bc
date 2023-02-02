@@ -4,36 +4,64 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefensePhase;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackAction;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefenseAction;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.ActionType;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackPattern;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackPhase;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.EventType;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.EventCategory;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbLostHost;
+import com.cyberpeace.cr.redvsblue.dao.entity.*;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.context.NodeAscription;
 import com.cyberpeace.cr.redvsblue.service.context.SingleNodeAscription;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
+@Data
+@Service
+public class BaseCombatLogHandler {
 
-public class BaseCombatLogHandler extends RbCombatLog {
+	private static Map<String, BaseCombatLogHandler> register = new HashMap<>();
 
 	static Map<String, BaseCombatLogHandler> map = new HashMap<>();
 
 	private Map<String, String> initData;
+	Integer eventType = EventType.BRUTEFORCE_EXT.getCode();
+	Integer eventCategory = EventCategory.OTHER.getCode();
+	Integer attackPhase = AttackPhase.OTHER.getCode();
+	Integer defensePhase = DefensePhase.OTHER.getCode();
+	Integer attackAction = AttackAction.OTHER.getCode();
+	Integer defenseAction = DefenseAction.OTHER.getCode();
+	Integer actionType = ActionType.OTHER.getCode();
+	Integer attackPattern = AttackPattern.OTHER.getCode();
+	RbCombatLog instance = null;
+	Boolean isLostHostSign = false;
 
-	public RbCombatLog combatLog;
+	@Autowired
+	private RbCombatLogMapper rbCombatLogMapper;
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
@@ -44,15 +72,26 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
-	public static BaseCombatLogHandler get(String key){
-		return map.get(key);
-	}
-	public BaseCombatLogHandler(Map<String, String> initMap) {
-		this.initData = initMap;
+	@Autowired
+	private RbCombatLogService rbCombatLogService;
 
-		if (initMap.isEmpty()) {
-			setAttr();
+	@PostConstruct
+	public void init() {
+		if (register.containsKey(getCode())) {
+			throw new Error("declareMessageType=[" + getCode() + "] repeat");
 		}
+		register.put(getCode(), this);
+	}
+
+	public String getCode() {
+		return "base_combat";
+	}
+
+	public BaseCombatLogHandler get(String type, Map<String, String> initData) {
+		BaseCombatLogHandler combatLogHandler = register.get(type);
+		combatLogHandler.setInitData(initData);
+		setAttr();
+		return combatLogHandler;
 	}
 
 	public void setAttr() {
@@ -72,9 +111,7 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	}
 
 	public NodeAscription getNodeAscription() {
-
-
-		return null;
+		return getNodeAscription(Arrays.asList(getDestIp(), getSourceIp()));
 	}
 
 	public Integer getDestGroup() {
@@ -86,33 +123,149 @@ public class BaseCombatLogHandler extends RbCombatLog {
 		}
 	}
 
-//		public void getDestName(){
-//			JSONObject elementInfo = getNodeAscription().get("node_data");
-//		}
-//
-//		public void getSourceName(){
-//
-//		}
+	public String getDestName() {
+		String destName = getNodeAscription().getNodeData()
+											 .get(getDestIp());
+		return destName != null ? destName : initData.get("host_name");
+	}
 
-	public String getRedVsBlue(){
+	public Integer getSourceGroup() {
+		List<Integer> group = getNodeAscription().getAscription(getDestIp());
+		if (group.size() == 1) {
+			return group.get(0);
+		} else if (group.size()==2 || getEventType().equals(EventCategory.ATTACK.getCode())) {
+			return getDestGroup().equals(CrRole.RbRoleGroup.RED.getCode())? CrRole.RbRoleGroup.BLUE.getCode(): CrRole.RbRoleGroup.RED.getCode();
+		} else {
+			return null;
+		}
+	}
+
+	public String getSourceName() {
+		return getNodeAscription().getNodeData().get(getSourceIp());
+	}
+
+	public String getRedVsBlue() {
 		NodeAscription nodeAscription = getNodeAscription();
 		return nodeAscription.getRoomId();
+	}
 
+	public String getAgentName() {
+		return initData.get("host_name");
+	}
+
+	public String getAgentIp() {
+		return initData.get("agent_ip");
+	}
+
+	public String getEventContent() {
+		return initData.get("event_content");
+	}
+
+	public Date getEventTime() {
+		return new Date(Long.parseLong(initData.get("datatime")));
+	}
+
+	public Boolean getIsLostHostSign() {
+		if (isLostHostSign && eventCategory.equals(EventCategory.ATTACK.getCode())) {
+			RbCombatLog rbCombatLog = rbCombatLogMapper.selectOneByRoomIdAndAgentIpAndIsLostHost(getRedVsBlue(), getAgentIp(), true);
+			if (rbCombatLog == null){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void validateRbInfo() {
+		if (getRedVsBlue() == null){
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_FOUND);
+		}
+		if (getSourceGroup().equals(getDestGroup())) {
+			throw new BusinessException(CrBusinessErrorCode.GROUP_INFO_CONFLICT);
+		}
+	}
+
+	public RbCombatLog getCombatLog() {
+		RbCombatLog rbCombatLog = new RbCombatLog();
+		rbCombatLog.setRoomId(getRedVsBlue());
+		rbCombatLog.setEventType(getEventType());
+		rbCombatLog.setEventCategory(getEventCategory());
+		rbCombatLog.setAttackPhase(getAttackPhase());
+		rbCombatLog.setDefensePhase(getDefensePhase());
+		rbCombatLog.setAttackAction(getAttackAction());
+		rbCombatLog.setDefenseAction(getDefenseAction());
+		rbCombatLog.setActionType(getActionType());
+		rbCombatLog.setSourceGroup(getSourceGroup());
+		rbCombatLog.setSourceIp(getSourceIp());
+		rbCombatLog.setSourceName(getSourceName());
+		rbCombatLog.setDestGroup(getDestGroup());
+		rbCombatLog.setDestIp(getDestIp());
+		rbCombatLog.setDestName(getDestName());
+		rbCombatLog.setAgentName(getAgentName());
+		rbCombatLog.setAgentIp(getAgentIp());
+		rbCombatLog.setEventContent(getEventContent());
+		rbCombatLog.setEventTime(getEventTime());
+		rbCombatLog.setIsLostHost(isLostHostSign);
+		rbCombatLog.setOriginalLog(initData.get("original_log"));
+		return rbCombatLog;
+	}
+
+	public void save() {
+		validateRbInfo();
+		RbCombatLog rbCombatLog = getCombatLog();
+		setInstance(rbCombatLog);
+		rbCombatLogMapper.insert(rbCombatLog);
+	}
+
+	public static void delayHandler(){
+		Integer delay = (int)(Math.random()*10) + 10;
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendMessage() {
+		RbCombatRecordsAllDataRsp data = addData(null);
+		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackDefenseStages()){
+			rbCombatLogService.pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
+		}
+		for (RbLostHost rbLostHost: data.getLostHosts()) {
+			rbCombatLogService.pushDataToRoom(rbLostHost, getRedVsBlue());
+		}
+		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
+			if (!rbAttackEvent.getVisible()) {
+				delayHandler();
+			}
+			rbCombatLogService.pushDataToRoom(rbAttackEvent, getRedVsBlue());
+		}
+	}
+
+	public RbCombatRecordsAllDataRsp addData(RbCombatRecordsAllDataRsp data) {
+		if (data == null){
+			data = new RbCombatRecordsAllDataRsp();
+		}
+		addAttackDefenseStage(data, getInstance());
+		addLostHost(data, getInstance());
+		addAttackDefenseEvent(data, getInstance());
+		return data;
 	}
 
 	public NodeAscription getNodeAscription(List<String> nodeIpList) {
 		NodeAscription nodeAscription = new NodeAscription();
 		// 默认同时只会启动一个场景
-		LocalScene localScene = localSceneMapper.selectOne();
+		LocalScene localScene = localSceneMapper.selectOne(LocalScene.BusinessCode.RED_VS_BLUE.getCode());
 		if (localScene == null) {
 			return nodeAscription;
 		}
-		List<CrRole> crRoleList = crRoleMapper.getRolesByRoom(localScene.getResourceId(),
+		List<CrRole> crRoleList = crRoleMapper.getRolesByRoom(localScene.getBusinessInstanceId(),
 				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		List<JSONObject> nodeInfoList = remoteSceneService.getAllElements(localScene.getMpSceneId());
 		List<SingleNodeAscription> singleNodeAscriptionList = new ArrayList<>();
 		Map<String, String> nodeData = new HashMap<>();
 		for (String nodeIp : nodeIpList) {
+			if (nodeIp == null)
+				continue;
 			List<Integer> ascription = new ArrayList<>();
 			SingleNodeAscription singleNodeAscription = new SingleNodeAscription(nodeIp, ascription);
 			for (JSONObject nodeInfo : nodeInfoList) {
@@ -122,10 +275,16 @@ public class BaseCombatLogHandler extends RbCombatLog {
 							.equals(nodeIp.trim())) {
 
 						for (CrRole crRole : crRoleList) {
-							List<String> visibleNodes = JsonUtil.toJsonObjectArray(crRole.getNodes(), String.class);
-							if (visibleNodes.contains(nodeInfo.getString("id"))) {
-								ascription.add(crRole.getRoleGroup());
-								nodeData.put(nodeIp, nodeInfo.getString("name"));
+							if (crRole.getNodes() == null) {
+								continue;
+							}
+							CrRoleNodesData crRoleNodesData = crRole.getNodeData();
+							for (CrRoleNode crRoleNode : crRoleNodesData.getVisibleNodes()) {
+								if (crRoleNode.getId()
+											  .equals(nodeInfo.getString("id"))) {
+									ascription.add(crRole.getRoleGroup());
+									nodeData.put(nodeIp, nodeInfo.getString("name"));
+								}
 							}
 						}
 					}
@@ -213,7 +372,7 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	}
 
 	public RbAttackEvent updateDefenseEvent(RbAttackEvent rbDefenseEvent, RbCombatLog rbCombatLog) {
-		if(rbDefenseEvent.getVisible()){
+		if (rbDefenseEvent.getVisible()) {
 			return rbDefenseEvent;
 		}
 		return null;
@@ -224,11 +383,11 @@ public class BaseCombatLogHandler extends RbCombatLog {
 	}
 
 	public String getMachineName(String group, String ip, String name) {
-		if(StringUtils.isNotBlank(group ) && StringUtils.isNotBlank(ip) && StringUtils.isNotBlank(name)){
+		if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(ip) && StringUtils.isNotBlank(name)) {
 			return String.format("%s的%s(%s)", group, name, ip);
-		} else if(StringUtils.isNotBlank(group) && StringUtils.isNotBlank(ip)){
+		} else if (StringUtils.isNotBlank(group) && StringUtils.isNotBlank(ip)) {
 			return String.format("%s(%s)", group, ip);
-		} else if(StringUtils.isNotBlank(ip)){
+		} else if (StringUtils.isNotBlank(ip)) {
 			return ip;
 		} else {
 			return group;

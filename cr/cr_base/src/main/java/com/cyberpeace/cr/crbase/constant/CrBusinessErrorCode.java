@@ -423,4 +423,10 @@ public interface CrBusinessErrorCode {
 
 	/** 目标团队数据缺失 */
 	String DEST_GROUP_MISSING = "101128";
+
+	/** 房间未找到 */
+	String ROOM_NOT_FOUND = "101129";
+
+	/** 团队数据冲突 */
+	String GROUP_INFO_CONFLICT = "101130";
 }

@@ -45,6 +45,11 @@
     <select id="selectOne" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
         select *
         from local_scene
+        <where>
+            <if test="code != null and code != ''">
+                business_code = #{code}
+            </if>
+        </where>
         limit 1
     </select>
 </mapper>

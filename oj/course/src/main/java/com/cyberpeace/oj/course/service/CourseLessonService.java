@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.course.dao.context.LessonContext;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
@@ -192,4 +193,42 @@ public interface CourseLessonService extends IService<CourseLesson> {
 	 * @param lessonInfoBo
 	 */
 	void createMpLog(LessonInfoBo lessonInfoBo);
+
+	/**
+	 * 根据课时列表查询启动的场景
+	 * @param lessonList
+	 * @param authContext
+	 * @return
+	 */
+	List<OjLocalScene> lessonSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext);
+
+	/**
+	 * 根据课时查询查询课后练习场景
+	 * @param lessonList 课时列表
+	 * @param authContext 权限
+	 * @return
+	 */
+	List<OjLocalScene> lessonPracticeSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext);
+
+	/**
+	 * 查询课时场景
+	 * @param lessonList
+	 * @param authContext
+	 * @return
+	 */
+    List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext);
+
+	/**
+	 * 获取课程下所有拓扑 包含课后练习
+	 * @param lessonList
+	 * @return
+	 */
+	List<String> selectLessonAllTopo(List<CourseLesson> lessonList);
+
+	/**
+	 * 清除场景和拓扑数据
+	 * @param scenes
+	 * @param topos
+	 */
+	void clearSceneAndTopos(List<OjLocalScene> scenes, List<String> topos);
 }

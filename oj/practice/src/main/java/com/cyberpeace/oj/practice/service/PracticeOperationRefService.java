@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
@@ -38,4 +39,19 @@ public interface PracticeOperationRefService extends IService<PracticeOperationR
 	 * @return
 	 */
 	List<String> selectLessonPracticeTopoIds(List<String> paperIds);
+
+	/**
+	 * 根据试卷编号查询课后练习
+	 * @param paperId 试卷编号
+	 * @param onlyTopo 仅获取包含拓扑的实操题目
+	 * @return
+	 */
+	List<PracticeOperation> operationByPaper(String paperId, boolean onlyTopo);
+
+	/**
+	 * 查询课后练习场景数据
+	 * @param paperId
+	 * @return
+	 */
+	List<OjLocalScene> operationByPaper(String lessonId, String paperId, AuthContext authContext);
 }

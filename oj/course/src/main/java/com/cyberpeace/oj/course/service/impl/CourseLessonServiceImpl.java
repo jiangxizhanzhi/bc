@@ -1072,9 +1072,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	@Override
 	public Integer batchDelete(String courseId, List<String> resourceIds, AuthContext authContext) {
 
-		AuthContext webAuth = BeanUtils.copy(authContext, AuthContext.class);
-		webAuth.setIsWeb(true);
-
 		courseValidateHandler.validateCourseExist(courseId);
 
 		List<Classroom> classrooms = classroomMapper.selectByLesson(resourceIds);
@@ -1082,18 +1079,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 		// 运行场景
 		List<CourseLesson> lessonList = courseLessonMapper.selectBatchIds(resourceIds);
-		List<CourseLesson> experimentList = StreamApiUtils.filter(lessonList,
-				lessonInfo -> lessonInfo.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
-						.getCode().intValue() && StringUtils.isNotBlank(lessonInfo.getTopoId()));
-
-		List<OjLocalScene> adminOjLocalScenes = StreamApiUtils.map(experimentList,
-				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
-						lessonInfo.getSceneShareMode(), authContext));
-
-		List<OjLocalScene> webOjLocalScenes = StreamApiUtils.map(experimentList,
-				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
-						lessonInfo.getSceneShareMode(), webAuth));
-		adminOjLocalScenes.addAll(webOjLocalScenes);
+		CourseSceneContext sceneContext = this.selectCourseScene(lessonList, authContext);
 
 		// 收藏
 		List<String> collectionIds = lessonList.stream()
@@ -1117,28 +1103,12 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				}
 
 				// 课堂相关
-				classroomIds.forEach(classroomId -> {
-					try {
-						classroomService.deleteClassroom(classroomId, authContext);
-					} catch (Exception e) {
-						// 删不掉就删不掉吧
-						log.error("Classroom scene delete failed! classroom_id=[{}], catch error:",
-								classroomId, e);
-					}
-				});
+				batchDeleteClassroom(classroomIds, authContext);
 
 				// 课后练习
 				lessonList.forEach(courseLesson -> {
 					practiceOperationRefMapper.deleteByPaper(courseLesson.getPaperId());
 					practiceTheoryRefMapper.deleteByPaper(courseLesson.getPaperId());
-					try {
-						if (StringUtils.isNotBlank(courseLesson.getTopoId())) {
-							remoteTopoService.deleteById(courseLesson.getTopoId());
-						}
-					} catch (Exception e) {
-						log.error("Lesson topo delete failed! topo_id=[{}], catch error:",
-								courseLesson.getTopoId(), e);
-					}
 				});
 
 				// 目录和场景
@@ -1146,34 +1116,140 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				return courseLessonMapper.deleteBatchIds(resourceIds);
 			}
 		});
-
-		adminOjLocalScenes.forEach(ojLocalScene -> {
-			try {
-				// 删不掉算了
-				ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene);
-			} catch (Exception e) {
-				log.error(
-						"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
-						ojLocalScene.getResourceId(), ojLocalScene.getBusinessId(), e);
-			}
-		});
-
-		// 场景删除
-		lessonList.forEach(courseLesson -> {
-			List<PracticeOperationRef> practiceRefs = practiceOperationRefMapper
-					.selectByPaperId(courseLesson.getPaperId());
-			practiceRefs.forEach(practiceRef -> {
-				try {
-					lessonPracticeSceneService.deleteScene(courseLesson.getResourceId(),
-							practiceRef.getOriginId(), authContext);
-				} catch (Exception e) {
-					// 场景删除失败不影响数据删除
-					log.error("Lesson practice scene delete failed! lesson_id={}, practice_id={}",
-							courseLesson.getResourceId(), practiceRef.getOriginId(), e);
-				}
-			});
-		});
+		
+		this.clearSceneAndTopos(sceneContext.getScenes(), sceneContext.getTopos());
 		return resourceIds.size();
+	}
+
+	/**
+	 * 批量删除课程表
+	 * @param classroomIds
+	 * @param authContext
+	 */
+	private void batchDeleteClassroom(List<String> classroomIds, AuthContext authContext) {
+
+		List<ClassroomGroupInfo> groupInfos = StreamApiUtils.flatMap(classroomIds,
+				classroomId -> classroomGroupInfoMapper.selectByRoom(classroomId));
+		List<String> groupIds = StreamApiUtils.map(groupInfos, ClassroomGroupInfo::getResourceId);
+		
+		// 课程表场景删除 防止课程表无法删除
+		List<OjLocalScene> scenes = ojLocalSceneMapper.selectByGroupIds(groupIds);
+		scenes.forEach(ojLocalScene -> ojLocalSceneService.deleteLocalAndRemoteScene(ojLocalScene));
+
+		for (String classroomId : classroomIds) {
+			classroomService.deleteClassroom(classroomId, authContext);
+		}
+	}
+
+	/**
+	 * 查询课程下的所有场景
+	 * @param lessonList
+	 * @return
+	 */
+	private CourseSceneContext selectCourseScene(List<CourseLesson> lessonList,
+			AuthContext authContext) {
+		if (CollectionUtils.isEmpty(lessonList)) {
+			return new CourseSceneContext();
+		}
+
+		// 课时场景
+		List<OjLocalScene> scenes = this.selectLessonAllScene(lessonList, authContext);
+		// topo查询
+		List<String> topos = this.selectLessonAllTopo(lessonList);
+		return new CourseSceneContext(scenes, topos);
+	}
+
+	@Override
+	public List<String> selectLessonAllTopo(List<CourseLesson> lessonList) {
+		List<String> topos = new ArrayList<>();
+
+		List<PracticeOperation> operations = StreamApiUtils.flatMap(lessonList,
+				lesson -> practiceOperationRefService.operationByPaper(lesson.getPaperId(), true));
+		List<String> lessonPracticeTopo = StreamApiUtils.map(operations,
+				operation -> operation.getTopoId());
+
+		List<String> lessonTopo = StreamApiUtils.map(lessonList,
+				lesson -> StringUtils.isNotBlank(lesson.getTopoId()) ? lesson.getTopoId() : null);
+		topos.addAll(lessonPracticeTopo);
+		topos.addAll(lessonTopo);
+		return topos;
+	}
+
+	@Override
+	public void clearSceneAndTopos(List<OjLocalScene> scenes, List<String> topos) {
+		// 场景删除
+		if (CollectionUtils.isNotEmpty(scenes)) {
+			for (OjLocalScene scene : scenes) {
+				try {
+					// 删不掉算了
+					ojLocalSceneService.deleteLocalAndRemoteScene(scene);
+				} catch (Exception e) {
+					log.error(
+							"Lesson scene delete failed! oj_local_scene_id=[{}], lesson_id=[{}], catch error:",
+							scene.getResourceId(), scene.getBusinessId(), e);
+					continue;
+				}
+			}
+		}
+		
+		// 拓扑删除
+		if (CollectionUtils.isNotEmpty(topos)) {
+			for (String topo : topos) {
+				try {
+					remoteTopoService.deleteById(topo);
+				} catch (Exception e) {
+					log.error("Lesson topo delete failed! topo_id=[{}], catch error:", topo, e);
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<OjLocalScene> selectLessonAllScene(List<CourseLesson> lessonList, AuthContext authContext) {
+		List<OjLocalScene> scenes = new ArrayList<>();
+		// 查询课时场景
+		List<OjLocalScene> lessonScene = this.lessonSceneByLessons(lessonList, authContext);
+		scenes.addAll(lessonScene);
+
+		// 查询课后练习场景 课后练习场景仅前台存在
+		AuthContext web = BeanUtils.copy(authContext, AuthContext.class);
+		web.setIsWeb(true);
+		List<OjLocalScene> lessonPracticeScene = this.lessonPracticeSceneByLessons(lessonList,
+				web);
+		scenes.addAll(lessonPracticeScene);
+		
+		return scenes;
+	}
+
+	@Override
+	public List<OjLocalScene> lessonSceneByLessons(List<CourseLesson> lessonList, AuthContext authContext) {
+
+		List<OjLocalScene> scenes = new ArrayList<>();
+		AuthContext reverse = BeanUtils.copy(authContext, AuthContext.class);
+		reverse.setIsWeb(!authContext.getIsWeb());
+		
+		List<CourseLesson> experimentList = StreamApiUtils.filter(lessonList,
+				lessonInfo -> lessonInfo.getType().intValue() == CourseLesson.LessonType.EXPERIMENT
+						.getCode().intValue() && StringUtils.isNotBlank(lessonInfo.getTopoId()));
+
+		List<OjLocalScene> sceneList = StreamApiUtils.map(experimentList,
+				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
+						lessonInfo.getSceneShareMode(), authContext));
+		List<OjLocalScene> reverseSceneList = StreamApiUtils.map(experimentList,
+				lessonInfo -> ojLocalSceneService.selectOjLocalScene(lessonInfo.getResourceId(),
+						lessonInfo.getSceneShareMode(), reverse));
+		
+		scenes.addAll(sceneList);
+		scenes.addAll(reverseSceneList);
+		
+		return scenes;
+	}
+
+	@Override
+	public List<OjLocalScene> lessonPracticeSceneByLessons(List<CourseLesson> lessonList,
+			AuthContext authContext) {
+		return StreamApiUtils.flatMap(lessonList, lesson -> practiceOperationRefService
+				.operationByPaper(lesson.getResourceId(), lesson.getPaperId(), authContext));
 	}
 
 	@Override

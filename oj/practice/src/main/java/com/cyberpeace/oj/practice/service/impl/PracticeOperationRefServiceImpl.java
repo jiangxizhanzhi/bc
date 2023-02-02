@@ -189,4 +189,29 @@ public class PracticeOperationRefServiceImpl extends ServiceImpl<PracticeOperati
 			return StringUtils.isBlank(operation.getTopoId()) ? null : operation.getTopoId();
 		});
 	}
+
+	@Override
+	public List<PracticeOperation> operationByPaper(String paperId, boolean onlyTopo) {
+
+		List<PracticeOperationRef> refList = practiceOperationRefMapper.selectByPaperId(paperId);
+		List<PracticeOperation> operations = StreamApiUtils.map(refList,
+				ref -> JsonUtil.toJsonObject(ref.getSnapshot(), PracticeOperation.class));
+
+		if (!onlyTopo) {
+			return operations;
+		}
+		return StreamApiUtils.filter(operations,
+				operation -> StringUtils.isNotBlank(operation.getTopoId()));
+	}
+
+	@Override
+	public List<OjLocalScene> operationByPaper(String lessonId, String paperId,
+			AuthContext authContext) {
+		List<PracticeOperation> operations = this.operationByPaper(paperId, true);
+		return StreamApiUtils.map(operations, operation -> {
+			String businessId = lessonId + CommonConstant.CODE_COMMA + operation.getResourceId();
+			return ojLocalSceneService.selectOjLocalScene(businessId, operation.getSceneShareMode(),
+					authContext);
+		});
+	}
 }

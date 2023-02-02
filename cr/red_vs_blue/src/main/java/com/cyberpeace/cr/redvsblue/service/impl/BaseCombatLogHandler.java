@@ -1,30 +1,23 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefensePhase;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackAction;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefenseAction;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.ActionType;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackPattern;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.AttackPhase;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.EventType;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants.EventCategory;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
-import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.context.NodeAscription;
 import com.cyberpeace.cr.redvsblue.service.context.SingleNodeAscription;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -32,10 +25,8 @@ import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Node;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -73,7 +64,7 @@ public class BaseCombatLogHandler {
 	private RemoteSceneService remoteSceneService;
 
 	@Autowired
-	private RbCombatLogService rbCombatLogService;
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@PostConstruct
 	public void init() {
@@ -228,16 +219,16 @@ public class BaseCombatLogHandler {
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
 		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackDefenseStages()){
-			rbCombatLogService.pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
+			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
 		}
 		for (RbLostHost rbLostHost: data.getLostHosts()) {
-			rbCombatLogService.pushDataToRoom(rbLostHost, getRedVsBlue());
+			pushDataToRoom(rbLostHost, getRedVsBlue());
 		}
 		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
 			if (!rbAttackEvent.getVisible()) {
 				delayHandler();
 			}
-			rbCombatLogService.pushDataToRoom(rbAttackEvent, getRedVsBlue());
+			pushDataToRoom(rbAttackEvent, getRedVsBlue());
 		}
 	}
 
@@ -403,6 +394,20 @@ public class BaseCombatLogHandler {
 		combatRecordsAllDataRsp = addLostHost(combatRecordsAllDataRsp, combatLog);
 		combatRecordsAllDataRsp = addAttackDefenseEvent(combatRecordsAllDataRsp, combatLog);
 		return combatRecordsAllDataRsp;
+	}
+
+	public <T> void pushDataToRoom(T data, String resourceId) {
+
+		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
+		identifier.setPath(WsPath.RB_COMBAT_LOG);
+		identifier.setResourceId(resourceId);
+
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+																		.data(JsonUtil.toJsonString(data,
+																				PropertyNamingStrategy.SnakeCase))
+																		.messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 

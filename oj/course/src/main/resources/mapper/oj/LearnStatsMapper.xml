@@ -113,7 +113,7 @@
                      where t.rw = 1) T5 on T5.course_id = T1.resource_id
         where T2.resource_id
         in (select lesson_id from oj_lesson_record where user_id = #{user_id})
-        group by T1.name order by T5.update_time desc
+        group by T1.name
     </select>
 
     <select id="afterClassIntegral" resultType="com.alibaba.fastjson.JSONObject">

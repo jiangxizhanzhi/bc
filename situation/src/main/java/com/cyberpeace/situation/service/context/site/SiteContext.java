@@ -1,32 +1,23 @@
-package com.cyberpeace.situation.dao.entity;
+package com.cyberpeace.situation.service.context.site;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.integratation.constant.BcStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_center")
-public class Center extends BaseTable implements Serializable {
+public class SiteContext implements Serializable {
 
-	@ApiModelProperty("LG中心ID")
-	private String centerId;
-
-	@ApiModelProperty("LG中心名称")
-	private String centerName;
-
-	@ApiModelProperty("LG中心位置")
+	@ApiModelProperty("地理位置")
 	private String location;
 
 	@ApiModelProperty("行政区划")
 	private String region;
 
-	@ApiModelProperty("LG中心地址")
+	@ApiModelProperty("具体地址")
 	private String address;
 
 	@ApiModelProperty("经度")
@@ -37,14 +28,6 @@ public class Center extends BaseTable implements Serializable {
 
 	@ApiModelProperty("状态")
 	private String status;
-
-	public void setGroupId(String groupId) {
-		this.centerId = groupId;
-	}
-
-	public void setName(String name) {
-		this.centerName = name;
-	}
 
 	public void setBcLocation(String bcLocation) {
 		this.location = bcLocation;
@@ -69,7 +52,11 @@ public class Center extends BaseTable implements Serializable {
 	public void setBcStatus(String bcStatus) {
 		this.status = Arrays.stream(BcStatus.class.getEnumConstants())
 				.filter(t -> t.getCode().equals(bcStatus)).findFirst().orElse(BcStatus.WJC)
-				.getName();;
+				.getName();
+	}
+
+	public String getId() {
+		return null;
 	}
 
 }

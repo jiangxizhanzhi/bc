@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -19,6 +20,7 @@ import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.mp.MpNodeStatus;
 import com.cyberpeace.integratation.model.scene.ElementCommonContext;
 import com.cyberpeace.integratation.model.scene.FlowLogsPageContext;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -26,7 +28,9 @@ import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
+import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
+import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsNodeStatus;
 import com.cyberpeace.situation.service.TopoHandlerService;
@@ -52,6 +56,9 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private TopoConfigMapper topoConfigMapper;
 
 	@Autowired
 	private SituationConfigMapper situationConfigMapper;
@@ -347,5 +354,19 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 				.getSceneFlowList(mpSceneData, interactiveType);
 
 		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
+	}
+
+	@Override
+	public Map<String, ElementSlimContext> getTopoConfigByEnvId(String envId) {
+		Map<String, ElementSlimContext> elementSlimContextMap = Maps.newHashMap();
+		if (StringUtils.isNotBlank(envId)) {
+			TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
+			if (topoConfig != null) {
+				JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
+				elementSlimContextMap = JSONObject.parseObject(json.toJSONString(),
+						new TypeReference<Map<String, ElementSlimContext>>() {});
+			}
+		}
+		return elementSlimContextMap;
 	}
 }

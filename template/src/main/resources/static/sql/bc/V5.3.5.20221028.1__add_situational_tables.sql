@@ -1,246 +1,19 @@
--- ----------------------------
--- Table structure for situation_two_dimensional_components
--- ----------------------------
-CREATE TABLE `situation_two_dimensional_components`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '组件名称',
-    `type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '图表类型',
-    `description`    varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL comment '描述',
-    `thumbnail`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
-    `component_code` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '组件代码',
-    `config`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '配置',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
-
--- ----------------------------
--- Table structure for situation_two_dimensional_components_category
--- ----------------------------
-CREATE TABLE `situation_two_dimensional_components_category`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '二维组件类型名称',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of situation_two_dimensional_components_category
--- ----------------------------
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (1, '05b739fc686a073756399f79c34039b5', '折线图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (2, '1102f907c7650ad541c381f59c700f5f', '柱状图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (3, '2eec84346538e972a962b165e499f52d', '饼图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (4, '2f4f15de59cd2dbadc5d8a582e9f6849', '散点图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (5, '3b6e90254227833303d908336b105ade', '雷达图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (6, '446bbba739678a4e6e103e7d214d55aa', '桑基图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (7, '6753aa8cad6fa9760308871e707ea033', '漏斗图', NULL, NULL, NULL);
-INSERT INTO `situation_two_dimensional_components_category`
-VALUES (8, '8568759a4d514ff730ed6eb1721a2f22', '旭日图', NULL, NULL, NULL);
-
--- ----------------------------
--- Table structure for situation_three_dimensional_components
--- ----------------------------
-CREATE TABLE `situation_three_dimensional_components`
-(
-    `id`                                    int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`                           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`                                  varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '组件名称',
-    `three_dimensional_components_category` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '组件类型',
-    `thumbnail`                             varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
-    `chart_standard_document`               varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '图表标准文件 .fbx或.tiff格式',
-    `create_user_id`                        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`                           datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`                           datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_three_dimensional_components_category
--- ----------------------------
-CREATE TABLE `situation_three_dimensional_components_category`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '分组名称',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_park_resource_library
--- ----------------------------
-CREATE TABLE `situation_park_resource_library`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '园区资源名称',
-    `category`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '资源类型',
-    `thumbnail`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
-    `resource_url`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '资源url',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_park_resource_library_category
--- ----------------------------
-CREATE TABLE `situation_park_resource_library_category`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '资源类型名称',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_dynamic_effects_library
--- ----------------------------
-CREATE TABLE `situation_dynamic_effects_library`
-(
-    `id`                       int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`                     varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '动效名称',
-    `category`                 varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL comment '动效类型',
-    `thumbnail`                varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '缩略图',
-    `source_node_dynamic_file` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '源节点动效文件',
-    `source_node_dynamic_dir`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动效文件解压目录',
-    `create_user_id`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`              datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`              datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_dynamic_effects_library_category
--- ----------------------------
-CREATE TABLE `situation_dynamic_effects_library_category`
-(
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL comment '动效类型名称',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT CURRENT_TIMESTAMP,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX name_uniq(name) USING BTREE,
-    UNIQUE INDEX `resource_id` (`resource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  CHARACTER SET = utf8
-  COLLATE = utf8_general_ci
-  ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for situation_publish_instance
--- ----------------------------
-CREATE TABLE `situation_publish_instance`
-(
-    `id`             int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '可视化大屏名称',
-    `description`    longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '大屏描述',
-    `attribute_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `scheme_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '想定方案id',
-    `sub_range_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `sub_range_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `task_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务ID',
-    `task_name`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务名称',
-    `subject_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '科目ID',
-    `subject_name`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '科目名称',
-    `template_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板id',
-    `thumbnail`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图',
-    `third_url`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '三方靶标url',
-    `status`         tinyint                                                 NOT NULL COMMENT '发布状态',
-    `public_status`  tinyint                                                 NOT NULL,
-    `edit`           tinyint                                                 NOT NULL,
-    `category`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT current_timestamp,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
-
+-- 通用表格
 -- ----------------------------
 -- Table structure for situation_category
 -- ----------------------------
 CREATE TABLE `situation_category`
 (
     `id`             int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
     `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '态势类型',
     `task_type`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务类型',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT current_timestamp,
-    `update_time`    datetime NULL DEFAULT NULL,
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人ID',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -269,102 +42,289 @@ VALUES (10, '1163d8cf19a1497abc971e0786798a5d', '其它训练', 'XL99', NULL, '2
 INSERT INTO `situation_category`
 VALUES (11, '26c4cf546d1f4557ac29f9fa8e8a6c3a', '三方靶标', NULL, NULL, '2022-12-27 21:15:55', '2023-01-02 10:21:41');
 
-
+-- 数据源管理
+-- ----------------------------
+-- Table structure for situation_datasource_template
+-- ----------------------------
 CREATE TABLE `situation_datasource_template`
 (
-    `id`             int(11) NOT NULL AUTO_INCREMENT,
-    `type`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `datasource`     varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `connect_url`    varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `connect_db_url` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    UNIQUE KEY `type` (`type`) USING BTREE,
-    PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB
-    AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = Dynamic;
+    `id`             int NULL DEFAULT NULL COMMENT '自增ID',
+    `type`           varchar(768) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据库类型',
+    `datasource`     varchar(768) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据源',
+    `connect_url`    varchar(768) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '连接URL',
+    `connect_db_url` varchar(768) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据库连接URL'
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-
-insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`)
-values ('1', 'MYSQL', 'com.mysql.cj.jdbc.Driver',
+-- ----------------------------
+-- Records of situation_datasource_template
+-- ----------------------------
+INSERT INTO `situation_datasource_template`
+VALUES (1, 'MYSQL', 'com.mysql.cj.jdbc.Driver',
         'jdbc:mysql://%s:%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8',
         'jdbc:mysql://%s:%s/%s?autoReconnect=true&useUnicode=true&characterEncoding=utf8');
-insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`)
-values ('2', 'ORACLE', 'oracle.jdbc.driver.OracleDriver', 'jdbc:oracle:thin:@%s:%s', 'jdbc:oracle:thin:@%s:%s');
-insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`)
-values ('3', 'DB2', 'com.ibm.db2.jcc.DB2Driver', 'jdbc:db2://%s:%s', 'jdbc:db2://%s:%s');
-insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`)
-values ('4', 'SQLSERVER', 'com.microsoft.sqlserver.jdbc.SQLServerDriver', 'jdbc:sqlserver://%s:%s',
+INSERT INTO `situation_datasource_template`
+VALUES (2, 'ORACLE', 'oracle.jdbc.driver.OracleDriver', 'jdbc:oracle:thin:@%s:%s', 'jdbc:oracle:thin:@%s:%s');
+INSERT INTO `situation_datasource_template`
+VALUES (3, 'DB2', 'com.ibm.db2.jcc.DB2Driver', 'jdbc:db2://%s:%s', 'jdbc:db2://%s:%s');
+INSERT INTO `situation_datasource_template`
+VALUES (4, 'SQLSERVER', 'com.microsoft.sqlserver.jdbc.SQLServerDriver', 'jdbc:sqlserver://%s:%s',
         'jdbc:sqlserver://%s:%s');
-insert into `situation_datasource_template` (`id`, `type`, `datasource`, `connect_url`, `connect_db_url`)
-values ('5', 'HIVE', 'org.apache.hadoop.hive.jdbc.HiveDriver', 'jdbc:hive2://%s:%s', 'jdbc:hive2://%s:%s/%s');
+INSERT INTO `situation_datasource_template`
+VALUES (5, 'HIVE', 'org.apache.hadoop.hive.jdbc.HiveDriver', 'jdbc:hive2://%s:%s', 'jdbc:hive2://%s:%s/%s');
 
-
+-- ----------------------------
+-- Table structure for situation_datasource_record
+-- ----------------------------
 CREATE TABLE `situation_datasource_record`
 (
-    `id`              int(11) NOT NULL AUTO_INCREMENT,
-    `resource_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `name`            varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '数据库连接名',
-    `type`            varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '数据库类型',
-    `port`            varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '端口',
-    `connect_address` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '连接地址',
-    `user_name`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '用户名',
-    `password`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '密码',
-    `create_user_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  DEFAULT NULL COMMENT '创建人',
-    `create_time`     datetime                                                DEFAULT NULL,
-    `update_time`     datetime                                                DEFAULT NULL,
-    UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
-    PRIMARY KEY `id` (`id`) USING BTREE
-) ENGINE=InnoDB
-    AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = Dynamic;
+    `id`              int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`     varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源ID',
+    `name`            varchar(768) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据库连接名',
+    `type`            varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据库类型',
+    `port`            varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '端口',
+    `connect_address` varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '连接地址',
+    `connect_status`  tinyint(1) NOT NULL DEFAULT 1 COMMENT '连接状态',
+    `user_name`       varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名',
+    `password`        varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
+    `create_user_id`  varchar(192) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`     datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`     datetime NULL DEFAULT NULL COMMENT '更新时间',
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
+    INDEX             `id`(`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Table structure for situation_api_request
+-- ----------------------------
 CREATE TABLE `situation_api_request`
 (
     `id`              int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci  NOT NULL COMMENT '资源id',
-    `name`            varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'api名称',
-    `description`     text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT 'api描述',
-    `request_url`     varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci  NOT NULL COMMENT 'url',
+    `resource_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci  NOT NULL COMMENT '资源ID',
+    `name`            varchar(256) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'API名称',
+    `description`     text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT 'API描述',
+    `request_url`     longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'URL',
     `request_method`  varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci  NOT NULL COMMENT '方法类型',
-    `request_params`  text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '参数',
-    `request_headers` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '请求头',
-    `response_key`    varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '返回参数key值',
-    `response_params` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '返回参数',
+    `connect_status`  tinyint(1) NOT NULL DEFAULT 1 COMMENT '连接状态',
+    `request_params`  longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '请求参数',
+    `request_headers` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '请求头',
+    `response_key`    varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL COMMENT '返回参数KEY值',
+    `response_params` longtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL COMMENT '返回参数',
     `create_user_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci  NOT NULL COMMENT '创建人',
-    `create_time`     datetime NULL DEFAULT NULL,
-    `update_time`     datetime NULL DEFAULT NULL,
+    `create_time`     datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`     datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX             `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = Dynamic;
+    INDEX             `id`(`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_unicode_ci ROW_FORMAT = DYNAMIC;
+
+
+-- 组件管理
+-- ----------------------------
+-- Table structure for situation_color_theme
+-- ----------------------------
+CREATE TABLE `situation_color_theme`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主题名称',
+    `option`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '主题配置',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '创建人ID',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for situation_dashboard_template
+-- Records of situation_color_theme
 -- ----------------------------
-CREATE TABLE `situation_dashboard_template`
+INSERT INTO `situation_color_theme`
+VALUES (1, '5b45a9b2d3f643e39b1a94be012ad2c6', '主题一',
+        '{\"color\":[\"#f37c0f\",\"#d81752\",\"#F4C947\",\"#DB335A\",\"#AA00E4\"]}', '3f655d87112f4ae094bbaf70830e20aa',
+        '2022-12-08 11:08:26', '2022-12-10 15:30:01');
+INSERT INTO `situation_color_theme`
+VALUES (2, '6f635c642aef40a68ad6e1410db87c7f', '主题二', '{\"color\":[\"#0FC5F3\",\"#17D8A1\",\"#F4C947\"]}',
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-10 15:33:31', '2022-12-12 09:34:19');
+INSERT INTO `situation_color_theme`
+VALUES (3, '5b65947dc9114faeae7ee960a2a80d0a', '主题三',
+        '{\"color\":[\"#754545\",\"#9B3838\",\"#996A6A\",\"#50971A\",\"#C22626\",\"#50E3C2\",\"#4A4A4A\",\"#D0021B\"]}',
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-12 11:37:14', '2022-12-30 11:38:42');
+INSERT INTO `situation_color_theme`
+VALUES (4, '47b46b30d7094ecfb87d7e0d4369567d', '主题四',
+        '{\"color\":[\"#3D7EEB\",\"#0FC5F3\",\"#17D8A1\",\"#F4C947\",\"#DB335A\",\"#AA00E4\",\"#F96C70\"]}',
+        '3f655d87112f4ae094bbaf70830e20aa', '2023-01-03 09:22:53', '2023-01-03 09:22:53');
+
+-- ----------------------------
+-- Table structure for situation_two_dimensional_components_category
+-- ----------------------------
+CREATE TABLE `situation_two_dimensional_components_category`
 (
-    `id`                 int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`               varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板名称',
-    `type`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '看板类型',
-    `level`              int NULL DEFAULT NULL COMMENT '模板等级',
-    `thumbnail`          varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图url',
-    `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `components_setting` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
-    `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
-    `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-    `edit_status`        tinyint(1) NOT NULL DEFAULT 1 COMMENT '模板编辑权限',
-    `refresh`            int NULL DEFAULT NULL,
-    `create_user_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
-    `create_time`        datetime NULL DEFAULT NULL,
-    `update_time`        datetime NULL DEFAULT NULL,
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '二维组件类型名称',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime                                                NOT NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resourceId`(`resource_id` ASC) USING BTREE
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of situation_two_dimensional_components_category
+-- ----------------------------
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (1, '05b739fc686a073756399f79c34039b5', '折线图', NULL, '2022-12-16 16:23:19', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (2, '1102f907c7650ad541c381f59c700f5f', '柱状图', NULL, '2022-12-16 16:23:17', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (3, '2eec84346538e972a962b165e499f52d', '饼图', NULL, '2022-12-16 16:23:15', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (4, '2f4f15de59cd2dbadc5d8a582e9f6849', '散点图', NULL, '2022-12-16 16:23:13', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (5, '3b6e90254227833303d908336b105ade', '雷达图', NULL, '2022-12-16 16:23:12', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (6, '446bbba739678a4e6e103e7d214d55aa', '桑基图', NULL, '2022-12-16 16:23:10', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (7, '6753aa8cad6fa9760308871e707ea033', '漏斗图', NULL, '2022-12-16 16:23:08', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (8, '8568759a4d514ff730ed6eb1721a2f22', '旭日图', NULL, '2022-12-16 16:23:06', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (9, '8568759a4d514ff730ed6eb1721a2f23', 'K线图', NULL, '2022-12-16 16:23:03', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (10, '8568759a4d514ff730ed6eb1721a2f24', '矩形树图', NULL, '2022-12-16 16:23:50', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (11, '8568759a4d514ff730ed6eb1721a2f25', '盒须图', NULL, '2022-12-16 16:23:53', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (12, '8568759a4d514ff730ed6eb1721a2f26', '关系图', NULL, '2022-12-16 16:24:10', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (13, '8568759a4d514ff730ed6eb1721a2f27', '仪表图', NULL, '2022-12-16 16:24:22', NULL);
+INSERT INTO `situation_two_dimensional_components_category`
+VALUES (14, '8568759a4d514ff730ed6eb1721a2f28', '地图', NULL, '2023-01-29 14:20:24', NULL);
+
+-- ----------------------------
+-- Table structure for situation_two_dimensional_components
+-- ----------------------------
+CREATE TABLE `situation_two_dimensional_components`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '组件名称',
+    `type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '图表类型',
+    `description`    varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
+    `thumbnail`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图',
+    `component_code` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '组件代码',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    `config`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_icon_category
+-- ----------------------------
+CREATE TABLE `situation_icon_category`
+(
+    `id`          int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类型名称',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of situation_icon_category
+-- ----------------------------
+INSERT INTO `situation_icon_category`
+VALUES (1, '7683ba68d9c64551a96f12be931ff52e', '网络安全类', '2022-12-15 09:54:43', '2022-12-15 09:54:45');
+INSERT INTO `situation_icon_category`
+VALUES (2, '7683ba68d9c64551a96f12be931ff52r', '路由器类图标', '2022-12-15 09:55:01', '2022-12-15 09:55:03');
+INSERT INTO `situation_icon_category`
+VALUES (3, '7683ba68d9c64551a96f12be931ff52t', '护盾图标', '2022-12-15 09:55:43', '2023-01-04 18:18:24');
+
+-- ----------------------------
+-- Table structure for situation_icon
+-- ----------------------------
+CREATE TABLE `situation_icon`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图标名称',
+    `icon_url`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图标地址',
+    `color`          varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '背景色',
+    `type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '类型',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_drawing_category
+-- ----------------------------
+CREATE TABLE `situation_drawing_category`
+(
+    `id`          int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类型名称',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_drawing
+-- ----------------------------
+CREATE TABLE `situation_drawing`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形名称',
+    `type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '图形类型',
+    `drawing_url`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形URL',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_common_components
+-- ----------------------------
+CREATE TABLE `situation_common_components`
+(
+    `id`             int                                                    NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源ID',
+    `name`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '组件名称',
+    `component_type` int                                                    NOT NULL COMMENT '组件类型',
+    `type`           int NULL DEFAULT NULL COMMENT '组件内部类型',
+    `img`            text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '背景图URL',
+    `url`            text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '指向资源URL',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- 模板管理
+-- ----------------------------
+-- Table structure for situation_components_layer
+-- ----------------------------
+CREATE TABLE `situation_components_layer`
+(
+    `id`           int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `component_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '组件ID',
+    `template_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板ID',
+    `name`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图层名称',
+    `order`        int NULL DEFAULT NULL COMMENT '图层排序',
+    `combination`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组合',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -372,186 +332,111 @@ CREATE TABLE `situation_dashboard_template`
 -- ----------------------------
 CREATE TABLE `situation_dashboard_components_setting`
 (
-    `id`                 int                                                    NOT NULL AUTO_INCREMENT,
-    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `type`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `component_index`    int                                                    NOT NULL DEFAULT 0,
-    `datasource_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `datasource_setting` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-    `components_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `component_setting`  longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
-    `create_time`        datetime NULL DEFAULT NULL,
-    `update_time`        datetime NULL DEFAULT NULL,
+    `id`                 int                                                    NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源ID',
+    `type`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '视角类型',
+    `component_index`    int                                                    NOT NULL DEFAULT 0 COMMENT '图层顺序',
+    `datasource_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '数据源ID',
+    `datasource_setting` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '数据源配置',
+    `components_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组件ID',
+    `component_setting`  longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
+    `create_time`        datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`        datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE `situation_common_components`
+-- ----------------------------
+-- Table structure for situation_dashboard_template
+-- ----------------------------
+CREATE TABLE `situation_dashboard_template`
 (
-    `id`             int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `component_type` int(10) NOT NULL COMMENT '组件类型',
-    `type`           int(10) NOT NULL COMMENT 'gis类型',
-    `name`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'gis名称',
-    `img`            varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '背景图url',
-    `url`            varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'url',
-    `create_time`    datetime DEFAULT NULL,
-    `update_time`    datetime DEFAULT NULL,
+    `id`                 int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`               varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板名称',
+    `type`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '看板类型',
+    `level`              int NULL DEFAULT NULL COMMENT '模板等级',
+    `thumbnail`          varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图URL',
+    `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布高度',
+    `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布宽度',
+    `components_setting` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
+    `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '填充色',
+    `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
+    `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
+    `layer_show`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图层信息',
+    `edit_status`        tinyint(1) NOT NULL DEFAULT 1 COMMENT '模板编辑权限',
+    `refresh`            int NULL DEFAULT NULL COMMENT '刷新间隔',
+    `create_user_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`        datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`        datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = Dynamic;
+    UNIQUE INDEX `resourceId`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE `situation_dynamic_effects_mapping`
-(
-    `id`                  int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`         varchar(64)  NOT NULL,
-    `name`                varchar(512) NOT NULL COMMENT '动效映射名称',
-    `category`            varchar(64)  NOT NULL COMMENT '动效类型',
-    `attack_type`         varchar(64)  NOT NULL COMMENT '攻击类型',
-    `source_node_dynamic` varchar(64)  NOT NULL COMMENT '源动效',
-    `target_node_dynamic` varchar(64)  NOT NULL COMMENT '目标动效',
-    `focus`               boolean      NOT NULL COMMENT '聚焦',
-    `color`               varchar(64)  NOT NULL COMMENT '颜色',
-    `line`                varchar(64)  NOT NULL COMMENT '线形',
-    `line_size`           int(10) NOT NULL COMMENT '线段大小',
-    `create_user_id`      varchar(64) DEFAULT NULL,
-    `create_time`         datetime    DEFAULT NULL,
-    `update_time`         datetime    DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `resource_id` (`resource_id`) USING BTREE,
-    UNIQUE KEY `name` (`name`) USING BTREE,
-    INDEX                 `attack_type` (`attack_type`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = Dynamic;
+-- ----------------------------
+-- Records of situation_dashboard_template
+-- ----------------------------
+INSERT INTO `situation_dashboard_template`
+VALUES (1, 'c3765b250f704fcca9d34233399cf615', '定制态势-红蓝对抗', '05b739fc686a073756399f79c34039b5', 3,
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', '#66AF9E', NULL, '{}', NULL,
+        0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+INSERT INTO `situation_dashboard_template`
+VALUES (2, '7fe161bb8863435c9f04aa99d24ffa5f', '定制态势-ZZ试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', '#66AF9E', NULL, '{}', NULL,
+        0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
+INSERT INTO `situation_dashboard_template`
+VALUES (3, 'a67104c93b02486890148b55c12693f1', '定制态势-ZZ实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
+INSERT INTO `situation_dashboard_template`
+VALUES (4, 'a67104c93b02486890148b55c12693f2', '定制态势-专项比武', '2eec84346538e972a962b165e499f52d', 3,
+        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
+INSERT INTO `situation_dashboard_template`
+VALUES (5, 'a67104c93b02486890148b55c12693f3', '定制态势-夺旗竞赛', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
+        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (6, 'a67104c93b02486890148b55c12693f4', '定制态势-夺旗竞赛-题目', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
+        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (7, 'a67104c93b02486890148b55c12693f5', '定制态势-自主训练', 'c71399e5569b4c2dba78c0c1e1fbae91', 3,
+        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (8, 'a67104c93b02486890148b55c12693f6', '定制态势-JJFY分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
+        '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
+        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 
 -- ----------------------------
 -- Table structure for situation_dashboard_template_ref
 -- ----------------------------
 CREATE TABLE `situation_dashboard_template_ref`
 (
-    `id`                 int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
+    `id`                 int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
     `name`               varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板名称',
     `type`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '看板类型',
     `level`              int NULL DEFAULT NULL COMMENT '模板等级',
-    `thumbnail`          varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图url',
-    `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `thumbnail`          varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图URL',
+    `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布高度',
+    `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布宽度',
     `components_setting` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
-    `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+    `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '填充色',
     `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
-    `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+    `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
+    `layer_show`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图层信息',
     `edit_status`        tinyint(1) NOT NULL DEFAULT 1 COMMENT '模板编辑权限',
-    `refresh`            int NULL DEFAULT NULL,
-    `create_user_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
-    `create_time`        datetime NULL DEFAULT NULL,
-    `update_time`        datetime NULL DEFAULT NULL,
+    `refresh`            int NULL DEFAULT NULL COMMENT '刷新间隔',
+    `create_user_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`        datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`        datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resourceId`(`resource_id` ASC) USING BTREE
+    UNIQUE INDEX `resourceId`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Table structure for situation_sub_range
--- ----------------------------
-CREATE TABLE `situation_sub_range`
-(
-    `id`             int                                                     NOT NULL AUTO_INCREMENT,
-    `sub_range_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `sub_range_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `sub_range_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `location`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`        varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `latitude`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `station_count`  int NULL DEFAULT 0,
-    `status`         varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-    `create_time`    datetime NULL DEFAULT NULL,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `sub_range_id`(`sub_range_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE `situation_event_type_context`
-(
-    `id`                 INT                                                     NOT NULL AUTO_INCREMENT,
-    `code`               VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`               VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `parent_node`        VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-    `source_action_type` TINYINT(1) NULL COMMENT '源动作类型',
-    `target_action_type` TINYINT(1) NULL COMMENT '目标动作类型',
-    `create_time`        DATETIME                                               DEFAULT NULL,
-    `update_time`        DATETIME                                               DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE KEY `code` (`code`) USING BTREE
-) ENGINE=INNODB AUTO_INCREMENT = 1
-    CHARACTER SET = utf8
-    COLLATE = utf8_general_ci
-    ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_gis_mark
--- ----------------------------
-CREATE TABLE `situation_gis_mark`
-(
-    `id`           int                                                    NOT NULL AUTO_INCREMENT,
-    `resource_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `config`       text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `dashboard_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `create_time`  datetime NULL DEFAULT current_timestamp,
-    `update_time`  datetime NULL DEFAULT NULL,
-    `delete_time`  datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_center
--- ----------------------------
-CREATE TABLE `situation_center`
-(
-    `id`          int                                                     NOT NULL AUTO_INCREMENT,
-    `center_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `center_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `location`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`     varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `latitude`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `status`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT '0',
-    `create_time` datetime NULL DEFAULT NULL,
-    `update_time` datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `center_id`(`center_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_station
--- ----------------------------
-CREATE TABLE `situation_station`
-(
-    `id`           int                                                     NOT NULL AUTO_INCREMENT,
-    `sub_range_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `station_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `station_name` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `station_type` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `location`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `region`       varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `address`      varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `longitude`    varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `latitude`     varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `status`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL DEFAULT '0',
-    `create_time`  datetime NULL DEFAULT NULL,
-    `update_time`  datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `station_id`(`station_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
+-- 大屏管理
 -- ----------------------------
 -- Table structure for situation_dashboard_attribute
 -- ----------------------------
@@ -578,125 +463,65 @@ CREATE TABLE `situation_dashboard_attribute`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE `situation_color_theme`
-(
-    `id`             int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-    `option`         text DEFAULT NULL,
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `create_time`    datetime NULL DEFAULT NULL,
-    `update_time`    datetime NULL DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+-- ----------------------------
+-- Records of situation_dashboard_attribute
+-- ----------------------------
+INSERT INTO `situation_dashboard_attribute`
+VALUES (1, 'e5c71717f6b44152943ef28a15dd4040', 1, 3, 1, 'LG中心综合态势', '', '', '', '', '', '', '0', '2001-11-08 22:11:08',
+        5,
+        '{\"altitude\":\"1000\",\"latitude\":\"30.45\",\"longitude\":\"112.3\",\"pitch\":41.232,\"roll\":3.1,\"yaw\":15.009}',
+        '2022-12-25 16:26:15', '2022-12-25 16:26:15');
+INSERT INTO `situation_dashboard_attribute`
+VALUES (2, '1df5d3df091f4bec9c1c6b05b625de7e', 1, 3, 2, 'ZH性分靶场综合态势', '', '', '', '', '', '', '0',
+        '2001-11-08 22:11:08', 5,
+        '{\"altitude\":\"1000\",\"latitude\":\"30.45\",\"longitude\":\"112.3\",\"pitch\":41.232,\"roll\":3.1,\"yaw\":15.009}',
+        '2022-12-25 16:26:52', '2022-12-25 16:26:52');
 
 -- ----------------------------
--- Table structure for situation_icon
+-- Table structure for situation_publish_instance
 -- ----------------------------
-CREATE TABLE `situation_icon`
+CREATE TABLE `situation_publish_instance`
 (
-    `id`             int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图标名称',
-    `icon_url`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图标地址',
-    `color`          varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT 'icon背景色',
-    `type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '类型',
-    `create_user_id` varchar(64)                                             NOT NULL COMMENT '创建者',
-    `create_time`    datetime DEFAULT NULL,
-    `update_time`    datetime DEFAULT NULL,
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '可视化大屏名称',
+    `description`    longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '大屏描述',
+    `attribute_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '属性ID',
+    `scheme_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '想定方案ID',
+    `sub_range_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分靶场名称',
+    `sub_range_id`   varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分靶场ID',
+    `task_id`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务ID',
+    `task_name`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务名称',
+    `subject_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '科目ID',
+    `subject_name`   varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '科目名称',
+    `template_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板ID',
+    `thumbnail`      varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图',
+    `third_url`      varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '三方靶标URL',
+    `status`         tinyint                                                 NOT NULL COMMENT '发布状态',
+    `public_status`  tinyint                                                 NOT NULL COMMENT '下发状态',
+    `edit`           tinyint                                                 NOT NULL COMMENT '是否可编辑',
+    `category`       varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '大屏类型',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for situation_icon_category
+-- Records of situation_publish_instance
 -- ----------------------------
-CREATE TABLE `situation_icon_category`
-(
-    `id`          int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`        varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类型名称',
-    `create_time` datetime DEFAULT NULL,
-    `update_time` datetime DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+INSERT INTO `situation_publish_instance`
+VALUES (1, 'lgzx', 'LG中心综合大屏', '', 'e5c71717f6b44152943ef28a15dd4040', '', '', '', '', '', '', '', '',
+        '/cpms/upload/images/35a305bee7a443209e2f19d04c2fb09d.png', NULL, 2, 2, 0, 'a4b3555767d14f01b88ee4f8ca471a3e',
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-25 16:26:15', '2023-01-05 11:59:27');
+INSERT INTO `situation_publish_instance`
+VALUES (2, 'zhxfbc', 'ZH性分靶场综合大屏', '', '1df5d3df091f4bec9c1c6b05b625de7e', '', 'ZH性分靶场', 'zhxfbc', '', '', '', '', '',
+        '/cpms/upload/images/35a305bee7a443209e2f19d04c2fb09d.png', NULL, 2, 2, 0, 'a4b3555767d14f01b88ee4f8ca471a3e',
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-25 16:26:52', '2022-12-25 16:26:52');
 
--- ----------------------------
--- Table structure for situation_icon_category
--- ----------------------------
-CREATE TABLE `situation_plot_pixel`
-(
-    `id`             int(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标绘图元名称',
-    `plot_url`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '背景图',
-    `color`          varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '背景色',
-    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
-    `create_time`    datetime                                               DEFAULT NULL,
-    `update_time`    datetime                                               DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_components_layer
--- ----------------------------
-CREATE TABLE `situation_components_layer`
-(
-    `id`           int                                                     NOT NULL AUTO_INCREMENT,
-    `resource_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `component_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '组件id',
-    `template_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '模板id',
-    `name`         varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图层名称',
-    `order`        int                                                    DEFAULT NULL COMMENT '图层排序',
-    `combination`  text CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '组合',
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_drawing
--- ----------------------------
-CREATE TABLE `situation_drawing`
-(
-    `id`             INT(10) NOT NULL AUTO_INCREMENT,
-    `resource_id`    VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源id',
-    `name`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形名称',
-    `type`           VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '图形类型',
-    `drawing_url`    VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图形url',
-    `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '创建人',
-    `create_time`    DATETIME                                               DEFAULT NULL,
-    `update_time`    DATETIME                                               DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE=INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Table structure for situation_drawing_category
--- ----------------------------
-CREATE TABLE `situation_drawing_category`
-(
-    `id`          INT(10) NOT NULL AUTO_INCREMENT,
-    `resource_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL,
-    `name`        VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '类型名称',
-    `create_time` DATETIME DEFAULT NULL,
-    `update_time` DATETIME DEFAULT NULL,
-    PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
-) ENGINE=INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of situation_drawing_category
--- ----------------------------
-INSERT INTO `situation_drawing_category`
-VALUES (1, '3d301075defc4b818783e1fb76afe411', '图标资源', '2023-01-04 13:56:47', '2023-01-04 13:56:49');
-INSERT INTO `situation_drawing_category`
-VALUES (2, '3d301075defc4b818783e1fb76afe412', '边框资源', '2023-01-04 13:57:02', '2023-01-04 13:57:03');
-INSERT INTO `situation_drawing_category`
-VALUES (3, '3d301075defc4b818783e1fb76afe413', '装饰线资源', '2023-01-04 13:57:18', '2023-01-04 13:57:19');
-
+-- 拓扑管理
 -- ----------------------------
 -- Table structure for situation_topo_config
 -- ----------------------------
@@ -714,12 +539,384 @@ CREATE TABLE `situation_topo_config`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-ALTER TABLE `bc`.`situation_datasource_record` ADD COLUMN `connect_status` BOOLEAN DEFAULT 1 NOT NULL COMMENT '连接状态'  AFTER `connect_address`;
+-- GIS标绘
+-- ----------------------------
+-- Table structure for situation_plot_pixel
+-- ----------------------------
+CREATE TABLE `situation_plot_pixel`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标绘图元名称',
+    `plot_url`       varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '背景图',
+    `color`          varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '背景色',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-ALTER TABLE `bc`.`situation_api_request` ADD COLUMN `connect_status` BOOLEAN DEFAULT 1 NOT NULL COMMENT '连接状态' AFTER `request_method`;
+-- ----------------------------
+-- Records of situation_plot_pixel
+-- ----------------------------
+INSERT INTO `situation_plot_pixel`
+VALUES (1, '9f7fc6ca811a4246842cc9cd4d0edb1f', 'GIS图元', '/cpms/upload/images/3f4ea1aa0e8f4a96b23cd62ce7aabff5.png',
+        '#49EB3D', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:38:31', '2023-01-05 19:38:31');
+INSERT INTO `situation_plot_pixel`
+VALUES (2, 'f4b45a7d9fd54c76b657687abed3b9a2', '地点图元', '/cpms/upload/images/afe0e02f4943499fb14ca4c6659b52a1.png',
+        '#EB3D56', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:38:49', '2023-01-05 19:38:49');
+INSERT INTO `situation_plot_pixel`
+VALUES (3, 'cdd13cde0da8477f8f1e6095090049d7', '方块图元', '/cpms/upload/images/1a0dcc5be054489fa807344c9bb418e4.png',
+        '#3D7EEB', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:39:04', '2023-01-05 19:39:04');
+INSERT INTO `situation_plot_pixel`
+VALUES (4, 'db0208f981604c91838853850268e79f', '红旗图元', '/cpms/upload/images/2877ff4358e746dab500283d4d7da0b3.png',
+        '#EB433D', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:39:14', '2023-01-05 19:39:42');
+INSERT INTO `situation_plot_pixel`
+VALUES (5, 'a5bdb2ed30ec4336b10e80c9490c2531', '箭头图元', '/cpms/upload/images/bd7e042a009645fe90cfb7dddc3846be.png',
+        '#3D7EEB', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:39:35', '2023-01-05 19:39:35');
+INSERT INTO `situation_plot_pixel`
+VALUES (6, '47e489c096054feaabb8034abefea24e', '聚焦图元', '/cpms/upload/images/45b856478d474e3aa78f23194d23de7a.png',
+        '#3DEB81', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:39:57', '2023-01-05 19:39:57');
+INSERT INTO `situation_plot_pixel`
+VALUES (7, 'a7255644fa7341298d91f4a8445fa5fb', '手势图元', '/cpms/upload/images/2f8681aa69ca4e42888706cfe5004b05.png',
+        '#A03DEB', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:40:16', '2023-01-05 19:40:16');
+INSERT INTO `situation_plot_pixel`
+VALUES (8, '11779254f770461a8903bef06f6155ef', '星星图元', '/cpms/upload/images/e6ac305149e04a0d96502e3cc53121b1.png',
+        '#EB3D3D', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:40:35', '2023-01-05 19:40:35');
+INSERT INTO `situation_plot_pixel`
+VALUES (9, 'bc7d92f190704cd5baa8c512074e2e9b', '区域图元', '/cpms/upload/images/16c85958c4bb42f2802fd099f4552072.png',
+        '#3DEBC6', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:42:04', '2023-01-05 19:42:04');
+INSERT INTO `situation_plot_pixel`
+VALUES (10, '0f1e1812965141e5ab4a39dfbba7f3de', '高度图元', '/cpms/upload/images/4a173b0e88724a62a9e9d7974b5d2f67.png',
+        '#3D7EEB', '3f655d87112f4ae094bbaf70830e20aa', '2023-01-05 19:42:17', '2023-01-05 19:42:17');
 
-ALTER TABLE `bc`.`situation_api_request` CHANGE `request_url` `request_url` LONGTEXT NOT NULL COMMENT 'url', CHANGE `request_params` `request_params` LONGTEXT NULL COMMENT '参数', CHANGE `request_headers` `request_headers` LONGTEXT NULL COMMENT '请求头', CHANGE `response_params` `response_params` LONGTEXT NULL COMMENT '返回参数';
+-- ----------------------------
+-- Table structure for situation_gis_mark
+-- ----------------------------
+CREATE TABLE `situation_gis_mark`
+(
+    `id`           int                                                    NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源ID',
+    `config`       text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '标会配置',
+    `dashboard_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '大屏ID',
+    `create_time`  datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`  datetime NULL DEFAULT NULL COMMENT '更新时间',
+    `delete_time`  datetime NULL DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-ALTER TABLE `bc`.`situation_dashboard_template` ADD COLUMN `layer_show` LONGTEXT NULL COMMENT '图层信息' AFTER `view_angle`;
+-- 动效管理
+-- ----------------------------
+-- Table structure for situation_dynamic_effects_library_category
+-- ----------------------------
+CREATE TABLE `situation_dynamic_effects_library_category`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动效类型名称',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
-ALTER TABLE `bc`.`situation_dashboard_template_ref` ADD COLUMN `layer_show` LONGTEXT NULL COMMENT '图层信息' AFTER `view_angle`;
+-- ----------------------------
+-- Records of situation_dynamic_effects_library_category
+-- ----------------------------
+INSERT INTO `situation_dynamic_effects_library_category`
+VALUES (1, '1588719333268889602', '常用动效库', '3f655d87112f4ae094bbaf70830e20aa', '2022-11-05 10:26:20',
+        '2022-11-05 13:49:08');
+
+-- ----------------------------
+-- Table structure for situation_dynamic_effects_library
+-- ----------------------------
+CREATE TABLE `situation_dynamic_effects_library`
+(
+    `id`                       int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`                     varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动效名称',
+    `category`                 varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '动效类型',
+    `thumbnail`                varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '缩略图',
+    `source_node_dynamic_file` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '源节点动效文件',
+    `source_node_dynamic_dir`  varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动效文件解压目录',
+    `create_user_id`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`              datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`              datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_dynamic_effects_mapping
+-- ----------------------------
+CREATE TABLE `situation_dynamic_effects_mapping`
+(
+    `id`                  int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`         varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`                varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动效映射名称',
+    `category`            varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '动效类型',
+    `attack_type`         varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '攻击类型',
+    `source_node_dynamic` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '源动效',
+    `target_node_dynamic` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '目标动效',
+    `focus`               tinyint                                                 NOT NULL DEFAULT 0 COMMENT '聚焦',
+    `color`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '颜色',
+    `line`                varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '线形',
+    `line_size`           int                                                     NOT NULL COMMENT '线段大小',
+    `create_user_id`      varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`         datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE,
+    UNIQUE INDEX `name`(`name`) USING BTREE,
+    INDEX                 `attack_type`(`attack_type`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- 攻防类型
+-- ----------------------------
+-- Table structure for situation_event_type
+-- ----------------------------
+CREATE TABLE `situation_event_type`
+(
+    `id`                 int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `code`               varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '事件编码',
+    `name`               varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '事件名称',
+    `parent_node`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '父类型',
+    `source_action_type` tinyint(1) NULL DEFAULT NULL COMMENT '源节点动作类型',
+    `target_action_type` tinyint(1) NULL DEFAULT NULL COMMENT '目标节点动作类型',
+    `create_time`        datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`        datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `code`(`code`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of situation_event_type
+-- ----------------------------
+INSERT INTO `situation_event_type`
+VALUES (1, '001', '拒绝服务攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (2, '002', '漏洞攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (3, '003', '后门攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (4, '004', '网络扫描', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (5, '005', '暴力破解', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (6, '006', '钓鱼攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (7, '007', 'ARP攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (8, '008', '内网扫描攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (9, '009', '内网漏洞攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (10, '010', '内网暴力破解', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (11, '011', '内网其它攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (12, '012', '复合型攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (13, '013', '其它网络攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (14, '014', '病毒木马', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (15, '015', '僵尸网络', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (16, '016', '蠕虫传播', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (17, '017', '勒索软件', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (18, '018', '挖矿软件', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (19, '019', '网页木马', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (20, '020', 'Webshell', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (21, '021', '漏洞利用型恶意程序', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (22, '022', '未知恶意程序', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (23, '023', '其它恶意程序', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (24, '024', '命令控制通信', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (25, '025', '木马随机域名', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (26, '026', '隐蔽隧道', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (27, '027', '恶意网址', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (28, '028', '恶意IP', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (29, '029', '木马反向连接', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (30, '030', '木马心跳连接', '2', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (31, '031', '不可信证书', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (32, '032', '其它恶意连接', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (33, '033', '钓鱼邮件', '3', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (34, '034', '勒索邮件', '3', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (35, '035', '垃圾邮件', '3', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (36, '036', '病毒邮件', '3', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (37, '037', '异常邮件', '3', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (38, '038', '敏感邮件', '3', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (39, '039', '访问控制', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (40, '040', '上网行为控制', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (41, '041', '黑白名单', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (42, '042', '终端审计', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (43, '043', '内容审计', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (44, '044', '设备接入违规', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (45, '045', '服务器违规外联', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (46, '046', '权限违规', '5', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (47, '047', '行为违规', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (48, '048', '其它违规行为', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (49, '049', '异常会话', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (50, '050', '异常网络连接', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (51, '051', '异常端口服务', '6', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (52, '052', '异常流量', '6', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (53, '053', '异常数据接收', '6', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (54, '054', '异常数据外发', '6', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (55, '055', '其它异常行为', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (56, '056', '网络可用性故障', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (57, '057', '网络广播风暴', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (58, '058', '网络地址冲突', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (59, '059', '硬件故障', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (60, '060', '性能告警', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (61, '061', '数据库错误', '7', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (62, '062', '软件/服务运行错误', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (63, '063', '其它运行故障', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (64, '064', '网络配置错误', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (65, '065', 'Windows配置错误', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (66, '066', 'Linux配置错误', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (67, '067', '应用服务配置错误', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (68, '068', '数据库 配置错误', '7', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (69, '069', '其它配置错误', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (70, '070', '账号登录异常', '5', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (71, '071', '账号认证异常', '5', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (72, '072', '账号管理异常', '5', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (73, '073', '账号操作异常', '5', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (74, '074', '账号失陷', '5', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (75, '075', 'Windows主机安全', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (76, '076', 'Linux主机安全', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (77, '077', '资产脆弱性', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (78, '078', '其它主机安全', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (79, '079', '数据篡改', '7', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (80, '080', '数据泄露', '7', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (81, '081', '数据窃取', '7', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (82, '082', '数据丢失', '7', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (83, '083', '数据假冒', '7', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (84, '084', '业务注册风险', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (85, '085', '业务登录风险', '4', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (86, '086', '业务运行风险', '4', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (87, '087', '业务违规', '4', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (88, '088', '注入攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (89, '089', '跨站攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (90, '090', 'Web漏洞攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (91, '091', '文件包含攻击', '2', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (92, '092', '网页木马', '2', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (93, '093', 'Webshell', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (94, '094', '爬虫攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (95, '095', 'Web扫描攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (96, '096', '协议违规', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (97, '097', '网站信息泄露', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (98, '098', '网页篡改', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (99, '099', 'CC攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (100, '100', '其它Web攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (101, '101', '复合Web攻击', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (102, '102', '其它类型攻击', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (103, '103', '其它APT攻击', '1', 9, 9, '2022-11-30 18:28:25', '2022-11-30 18:28:28');
+INSERT INTO `situation_event_type`
+VALUES (104, '104', 'APT投递', '1', 9, 9, '2022-11-30 18:29:03', '2022-11-30 18:29:05');
+INSERT INTO `situation_event_type`
+VALUES (105, '105', 'APT回连', '1', 9, 9, '2022-12-01 10:31:02', '2022-12-01 10:31:04');
+INSERT INTO `situation_event_type`
+VALUES (106, '1', '网络攻击', NULL, NULL, NULL, '2022-12-02 02:33:00', '2022-12-02 02:33:02');
+INSERT INTO `situation_event_type`
+VALUES (107, '2', '恶意样本', NULL, NULL, NULL, '2022-12-02 18:34:59', '2022-12-02 18:35:01');
+INSERT INTO `situation_event_type`
+VALUES (108, '3', '社会工程', NULL, NULL, NULL, '2022-12-03 10:36:58', '2022-12-03 10:37:00');
+INSERT INTO `situation_event_type`
+VALUES (109, '4', '业务安全', NULL, NULL, NULL, '2022-12-04 02:38:57', '2022-12-04 02:38:59');
+INSERT INTO `situation_event_type`
+VALUES (110, '5', '账号安全', NULL, NULL, NULL, '2022-12-04 18:40:56', '2022-12-04 18:40:58');
+INSERT INTO `situation_event_type`
+VALUES (111, '6', '攻击入侵', NULL, NULL, NULL, '2022-12-05 10:42:55', '2022-12-05 10:42:57');
+INSERT INTO `situation_event_type`
+VALUES (112, '7', '数据安全', NULL, NULL, NULL, '2022-12-06 02:44:54', '2022-12-06 02:44:56');

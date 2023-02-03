@@ -1,9 +1,11 @@
 package com.cyberpeace.situation.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.CategorieMap;
@@ -98,5 +100,12 @@ public interface TopoHandlerService {
 	 * @return Boolean
 	 */
 	Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType);
+
+	/**
+	 * 30态势-获取拓扑配置数据
+	 * @param envId
+	 * @return Map<String, ElementSlimContext>
+	 */
+	Map<String, ElementSlimContext> getTopoConfigByEnvId(String envId);
 
 }

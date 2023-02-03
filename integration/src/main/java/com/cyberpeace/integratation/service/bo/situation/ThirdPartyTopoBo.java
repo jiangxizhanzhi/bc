@@ -1,9 +1,12 @@
 package com.cyberpeace.integratation.service.bo.situation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import com.cyberpeace.integratation.model.situation.*;
 import com.google.common.collect.Lists;
@@ -38,14 +41,14 @@ public class ThirdPartyTopoBo implements Serializable {
 		this.networks.forEach(network -> {
 			network.setElementType("network");
 			network.setDeviceType(getModelType(modelTypeContextMap, network.getDeviceType()));
-			network.setModel(getModelThreeDimensionPic(modelContextMap, network.getModel()));
+			network.setModelType(getModelThreeDimensionPic(modelContextMap, network.getModel()));
 			context.getElements().put(network.getElementId(), network);
 			elementContextMap.put(network.getElementId(), network);
 		});
 		this.nodes.forEach(node -> {
 			node.setElementType("node");
 			node.setDeviceType(getModelType(modelTypeContextMap, node.getDeviceType()));
-			node.setModel(getModelThreeDimensionPic(modelContextMap, node.getModel()));
+			node.setModelType(getModelThreeDimensionPic(modelContextMap, node.getModel()));
 			context.getElements().put(node.getElementId(), node);
 			elementContextMap.put(node.getElementId(), node);
 		});
@@ -72,7 +75,8 @@ public class ThirdPartyTopoBo implements Serializable {
 	private void positionAdjust(Map<String, ElementContext> elementContextMap) {
 		Map<String, Element> elementMap = Maps.newHashMap();
 		elementContextMap.forEach((elementId, elementContext) -> {
-			Element element = new Element(elementContext.getHierarchy().intValue(), elementId);
+			Element element = new Element(elementContext.getHierarchy().intValue(), elementId,
+					elementContext.getPosition().getX(), elementContext.getPosition().getY());
 			elementMap.put(elementId, element);
 		});
 		elementContextMap.forEach((elementId, elementContext) -> {
@@ -82,25 +86,22 @@ public class ThirdPartyTopoBo implements Serializable {
 				parent.addChild(child);
 			});
 		});
-		elementContextMap.values().forEach(elementContext -> {
-			elementContext.getChild().forEach(elementMap::remove);
-		});
+		elementContextMap.values()
+				.forEach(elementContext -> elementContext.getChild().forEach(elementMap::remove));
 
 		List<Element> elements = Lists.newArrayList();
 		elements.addAll(elementMap.values());
 
 		Board board = new Board(elements);
 
-		board.getBlocks().forEach(block -> {
-			block.getElementPositions().forEach(elementPosition -> {
-				String elementId = elementPosition.getElement().getElementId();
-				Position position = elementPosition.getPosition();
-				ElementContext elementContext = elementContextMap.get(elementId); // assert not null
-				PositionContext positionContext = elementContext.getPosition();
-				positionContext.setX(position.getCol().floatValue() * 100);
-				positionContext.setY(position.getRow().floatValue() * 100);
-			});
-		});
+		board.getBlocks().forEach(block -> block.getElementPositions().forEach(elementPosition -> {
+			String elementId = elementPosition.getElement().getElementId();
+			Position position = elementPosition.getPosition();
+			ElementContext elementContext = elementContextMap.get(elementId); // assert not null
+			PositionContext positionContext = elementContext.getPosition();
+			positionContext.setX(position.getCol());
+			positionContext.setY(position.getRow());
+		}));
 
 	}
 
@@ -172,10 +173,23 @@ class Element {
 	private String elementId;
 
 	@Getter
-	private List<Element> children = Lists.newArrayList();
+	@NonNull
+	private Float PositionX;
+
+	@Getter
+	@NonNull
+	private Float PositionY;
+
+	@Getter
+	private final List<Element> children = Lists.newArrayList();
 
 	public void addChild(Element child) {
 		this.children.add(child);
+	}
+
+	public Position getRelativePosition(Position position0) {
+		return new Position(getPositionY() - position0.getRow(),
+				getPositionX() - position0.getCol());
 	}
 }
 
@@ -184,14 +198,18 @@ class Position {
 
 	@Getter
 	@NonNull
-	private Integer row;
+	private Float row;
 
 	@Getter
 	@NonNull
-	private Integer col;
+	private Float col;
 
 	public Position add(Position other) {
 		return new Position(this.row + other.row, this.col + other.col);
+	}
+
+	public Double square() {
+		return Math.pow(getRow(), 2) + Math.pow(getCol(), 2);
 	}
 }
 
@@ -218,33 +236,26 @@ class Border {
 
 	@Getter
 	@NonNull
-	private Integer left;
+	private Float left;
 
 	@Getter
 	@NonNull
-	private Integer right;
+	private Float right;
 
 	@Getter
 	@NonNull
-	private Integer top;
+	private Float top;
 
 	@Getter
 	@NonNull
-	private Integer bottom;
+	private Float bottom;
 
 }
 
-@RequiredArgsConstructor
 class Block {
 
 	@Getter
-	private List<ElementPosition> elementPositions = Lists.newArrayList();
-
-	@NonNull
-	private Integer rows;
-
-	@NonNull
-	private Integer cols;
+	private final List<ElementPosition> elementPositions = Lists.newArrayList();
 
 	@Getter
 	@NonNull
@@ -252,25 +263,81 @@ class Block {
 
 	@Getter
 	@NonNull
-	private Integer level;
+	private final Integer level;
 
 	private Border border;
 
-	public boolean conflict(Block block) {
+	@NonNull
+	private final Float height;
+
+	@NonNull
+	private final Float width;
+
+	public Block(@NonNull Position position, int level, List<Element> elements) {
+		if (elements.isEmpty())
+			throw new RuntimeException();
+
+		List<Float> xs = new ArrayList<>();
+		List<Float> ys = new ArrayList<>();
+		elements.forEach(element -> {
+			xs.add(element.getPositionX());
+			ys.add(element.getPositionY());
+		});
+
+		float minY = Collections.min(ys);
+		float maxY = Collections.max(ys);
+		float minX = Collections.min(xs);
+		float maxX = Collections.max(xs);
+
+		this.height = maxY - minY;
+		this.width = maxX - minX;
+
+		this.position = position;
+		this.level = level;
+		elements.forEach(element -> {
+			Position relativePosition = element
+					.getRelativePosition(new Position(0.5f * (minY + maxY), 0.5f * (minX + maxX)));
+			elementPositions.add(new ElementPosition(element, relativePosition, this));
+		});
+	}
+
+	@Nullable
+	public Position conflict(Block block) {
 		if (this == block) {
-			return false;
+			return null;
 		}
 
 		if (!this.level.equals(block.level)) {
-			return false;
+			return null;
 		}
 
-		if (((this.getBorder().getLeft() - block.getBorder().getRight())
-				* (block.getBorder().getLeft() - this.getBorder().getRight())) < 0) {
-			return false;
-		}
-		return ((this.getBorder().getTop() - block.getBorder().getBottom())
-				* (block.getBorder().getTop() - this.getBorder().getBottom())) >= 0;
+		float toLeft = getBorder().getLeft() - block.getBorder().getRight();
+		if (toLeft >= 0)
+			return null;
+		Position ret = new Position(0.0f, toLeft);
+
+		float toRight = getBorder().getRight() - block.getBorder().getLeft();
+		if (toRight <= 0)
+			return null;
+		Position ret2 = new Position(0.0f, toRight);
+		if (ret.square() > ret2.square())
+			ret = ret2;
+
+		float toTop = getBorder().getTop() - block.getBorder().getBottom();
+		if (toTop >= 0)
+			return null;
+		Position ret3 = new Position(toTop, 0.0f);
+		if (ret.square() > ret3.square())
+			ret = ret3;
+
+		float toBottom = getBorder().getBottom() - block.getBorder().getTop();
+		if (toBottom <= 0)
+			return null;
+		Position ret4 = new Position(toBottom, 0.0f);
+		if (ret.square() > ret4.square())
+			ret = ret4;
+
+		return ret;
 	}
 
 	public void move(Position delta) {
@@ -280,8 +347,10 @@ class Block {
 
 	public Border getBorder() {
 		if (this.border == null) {
-			this.border = new Border(this.position.getCol(), this.position.getCol() + this.cols - 1,
-					this.position.getRow(), this.position.getRow() + this.rows - 1);
+			float minStep = 100;
+			this.border = new Border(this.position.getCol() - minStep,
+					this.position.getCol() + this.width + minStep, this.position.getRow() - minStep,
+					this.position.getRow() + this.height + minStep);
 		}
 		return this.border;
 	}
@@ -291,92 +360,62 @@ class Block {
 class Board {
 
 	@Getter
-	private List<Block> blocks = Lists.newArrayList();
-
-	private static Position reshape(int count) {
-		int n = (int) Math.floor(Math.pow(count, 0.5));
-		if (n * n >= count) {
-			return new Position(n, n);
-		}
-		if ((n + 1) * n >= count) {
-			return new Position(n + 1, n);
-		}
-		return new Position(n + 1, n + 1);
-	}
-
-	private static Position calcDirection(Block current, Block anyBlock) {
-		if (anyBlock.getPosition().getRow() > current.getPosition().getRow()) {
-			return new Position(1, 0);
-		}
-		if (anyBlock.getPosition().getRow() < current.getPosition().getRow()) {
-			return new Position(-1, 0);
-		}
-		if (anyBlock.getPosition().getCol() > current.getPosition().getCol()) {
-			return new Position(0, 1);
-		}
-		return new Position(0, -1);
-	}
-
-	private void putBlock(Position position, int level, List<Element> elements) {
-		if (elements.isEmpty()) {
-			return;
-		}
-
-		Position rowsAndCols = reshape(elements.size());
-		int rows = rowsAndCols.getRow();
-		int cols = rowsAndCols.getCol();
-		Block block = new Block(rows, cols, position, level);
-		this.blocks.add(block);
-
-		List<Block> blockList = Lists.newArrayList();
-		blockList.add(block);
-		while (!blockList.isEmpty()) {
-			boolean flag = false;
-			for (Block anyBlock : this.blocks) {
-				if (blockList.get(0).conflict(anyBlock)) {
-					Position direction = calcDirection(blockList.get(0), anyBlock);
-
-					anyBlock.move(direction);
-					for (Block block0 : this.blocks) {
-						if (block0.conflict(anyBlock)) {
-							anyBlock.move(direction);
-							break;
-						}
-					}
-
-					if (!blockList.contains(anyBlock)) {
-						blockList.add(anyBlock);
-					}
-
-					flag = true;
-					break;
-				}
-			}
-			if (!flag) {
-				blockList.remove(0);
-			}
-		}
-
-		int index = 0;
-		for (Element element : elements) {
-			int row = index / cols; // assert row < rows
-			int col = index % cols;
-			block.getElementPositions()
-					.add(new ElementPosition(element, new Position(row, col), block));
-			this.putBlock(new Position(row, col), block.getLevel() + 1, element.getChildren());
-			index += 1;
-		}
-
-	}
+	private final List<Block> blocks = Lists.newArrayList();
 
 	public Board(List<Element> initialElements) {
-		int index = 0;
-		for (Element initialElement : initialElements) {
-			Position position = new Position(index, 0);
-			List<Element> elements = Lists.newArrayList();
-			elements.add(initialElement);
-			this.putBlock(position, initialElement.getLevel(), elements);
-			index += 1;
+		Integer level = null;
+		for (Element element : initialElements) {
+			if (level == null) {
+				level = element.getLevel();
+			} else {
+				if (!level.equals(element.getLevel())) {
+					throw new RuntimeException();
+				}
+			}
+		}
+		if (level == null)
+			throw new RuntimeException();
+
+		List<Block> blockList = new ArrayList<>();
+		blockList.add(new Block(new Position(0.0f, 0.0f), level, initialElements));
+
+		while (!blockList.isEmpty()) {
+			for (Block block : blockList) {
+				blocks.add(block);
+				List<Block> blockList2 = new ArrayList<>();
+				blockList2.add(block);
+				handlerConflict(blockList2);
+			}
+
+			List<Block> blockList1 = new ArrayList<>();
+			for (Block block : blockList) {
+				for (ElementPosition elementPosition : block.getElementPositions()) {
+					Element element = elementPosition.getElement();
+					if (element.getChildren().isEmpty())
+						continue;
+					blockList1.add(new Block(elementPosition.getPosition(), element.getLevel(),
+							element.getChildren()));
+				}
+			}
+			blockList = blockList1;
+		}
+	}
+
+	private void handlerConflict(List<Block> blockList) {
+		while (!blockList.isEmpty()) {
+			Block current = blockList.remove(0);
+			for (Block anyBlock : this.blocks) {
+				Position direction = current.conflict(anyBlock);
+				if (direction == null)
+					continue;
+				anyBlock.move(direction);
+				if (current.conflict(anyBlock) != null)
+					throw new RuntimeException();
+
+				if (!blockList.contains(anyBlock)) {
+					blockList.add(0, anyBlock);
+				}
+			}
 		}
 	}
 }

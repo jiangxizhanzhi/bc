@@ -45,4 +45,16 @@ public class AdEventContext implements Serializable {
 	@ApiModelProperty("目标节点IP")
 	private String targetIp;
 
+	public AdEventContext() {}
+
+	public AdEventContext(String sourceId, String targetId, String eventName, String eventType) {
+		Date now = new Date();
+		this.eventTime = now;
+		this.eventId = String.valueOf(now.getTime());
+		this.eventName = eventName;
+		this.eventSubType = eventType;
+		this.sourceId = sourceId;
+		this.targetId = targetId;
+	}
+
 }

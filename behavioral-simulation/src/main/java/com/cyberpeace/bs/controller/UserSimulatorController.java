@@ -15,7 +15,6 @@ import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,13 +29,6 @@ public class UserSimulatorController {
 	@Autowired
 	UserSimulatorService userSimulatorService;
 
-	@ApiOperation("用户流量发生分页列表")
-	@GetMapping("/list")
-	public BaseRsp<ListRsp<UserSimulatorBo>> listTraffic(PageReqBase pageReqBase) {
-		ListRsp<UserSimulatorBo> res = userSimulatorService.pageSimulators(pageReqBase);
-		return new BaseRsp<>(res);
-	}
-
 	@ApiOperation("配管创建仪表")
 	@PostMapping("/create")
 	public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
@@ -44,17 +36,17 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("创建用户流量发生")
-	@PostMapping("/")
-	public BaseRsp create(@RequestBody @Validated UserSimulatorAddReq addReq) {
-		userSimulatorService.create(addReq);
+	@ApiOperation("更新单个仪表用户")
+	@PatchMapping("/modify")
+	public BaseRsp modifySimulator(@RequestBody @Validated SimulatorModifyBo modifyBo) {
+		userSimulatorService.modifySimulator(modifyBo);
 		return new BaseRsp();
 	}
 
-	@ApiOperation("批量删除用户流量发生")
-	@DeleteMapping("/")
-	public BaseRsp delete(@RequestBody @Validated IdListReq deleteReq) {
-		userSimulatorService.batchDelete(deleteReq.getIds());
+	@ApiOperation("更新场景")
+	@PatchMapping("/update")
+	public BaseRsp modifyScene(@RequestBody @Validated SimulatorAddBo updateBo) {
+		userSimulatorService.updateBatch(updateBo);
 		return new BaseRsp();
 	}
 

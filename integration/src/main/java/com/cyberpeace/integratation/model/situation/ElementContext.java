@@ -3,6 +3,8 @@ package com.cyberpeace.integratation.model.situation;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.EnumUtils;
 
@@ -102,6 +104,10 @@ public class ElementContext implements Serializable {
 
 	public void setParents(List<String> ids) {
 		this.parentIds = ids;
+	}
+
+	public void setModelType(String modelType) {
+		this.model = StringUtils.isEmpty(modelType) ? "其他" : modelType;
 	}
 
 }

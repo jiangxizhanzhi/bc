@@ -1,17 +1,18 @@
 package com.cyberpeace.bs.service.bo;
 
+import java.util.List;
+import java.util.TimerTask;
+
 import com.cyberpeace.bs.constant.BsConstants;
+import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
-import com.cyberpeace.bs.service.bo.simulator.BsTimer;
 import com.cyberpeace.bs.service.bo.simulator.VariableBo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.TimerTask;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class BsTimerTask extends TimerTask {
@@ -24,36 +25,26 @@ public class BsTimerTask extends TimerTask {
 
     private final String behaviorId;
 
-    private final Integer index;
-
     private final String simulatorId;
-
-    private final BsTimer timer;
 
     private final String variable;
 
 
-    public BsTimerTask(String deviceId, String ip, Boolean isEntity, String behaviorId, Integer index,
-                       String simulatorId, String variable, BsTimer timer) {
-        this.deviceId = deviceId;
-        this.deviceIp = ip;
-        this.isEntity = isEntity;
+	public BsTimerTask(UserSimulator simulator, String behaviorId, String variable) {
+		this.deviceId = simulator.getDeviceId();
+		this.deviceIp = simulator.getDeviceIp();
+		this.isEntity = simulator.getIsEntity();
         this.behaviorId = behaviorId;
-        this.index = index;
-        this.simulatorId = simulatorId;
+		this.simulatorId = simulator.getResourceId();
         this.variable = variable;
-        this.timer = timer;
     }
 
     @Override
     public void run() {
         try {
-            log.info("timer task [{}] (index:{}) of user simulator [{}] starts with variable:[{}]",
-                    behaviorId, index, simulatorId, variable);
-            if (!timer.ifActive()) {
-                log.info("Timer is inactive, pass this task");
-                return;
-            }
+			log.info("timer task [{}] of user simulator [{}] starts with variable:[{}]", behaviorId,
+					simulatorId, variable);
+
             ReleaseTaskReq req = new ReleaseTaskReq();
             req.setIsUsingIp(!isEntity);
             if(isEntity){
@@ -70,7 +61,7 @@ public class BsTimerTask extends TimerTask {
 
             UserSimulatorService userSimulatorService = SpringContextUtil
                     .getBeanByClass(UserSimulatorService.class);
-            userSimulatorService.updateProcess(simulatorId, index);
+			userSimulatorService.updateProcess(simulatorId, behaviorId);
         } catch (Exception e) {
             log.error("User simulator timer task failed: ", e);
         }

@@ -1,5 +1,8 @@
 package com.cyberpeace.bs.dao.mapper;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,4 +19,7 @@ public interface UserModelMapper extends BaseMapper<UserModel> {
 	IPage<UserModel> pageUserBehaviors(@Param("pageUserBehaviors") Page page,
 			@Param("userTypeId") String userTypeId, @Param("pattern") String pattern,
 			@Param("accessOs") Integer accessOs);
+
+	List<UserModel>
+			selectBatchIdsOrderByIdDesc(@Param("userModelIds") Collection<String> userModelIds);
 }

@@ -75,4 +75,11 @@ public class BehaviorController {
 		return new BaseRsp<>(rsp);
 	}
 
+	@ApiOperation("获取行为录制跳转host")
+	@GetMapping("/host")
+	public BaseRsp<String> getLcHost() {
+		String host = lcService.getLcHost();
+		return new BaseRsp<>(host);
+	}
+
 }

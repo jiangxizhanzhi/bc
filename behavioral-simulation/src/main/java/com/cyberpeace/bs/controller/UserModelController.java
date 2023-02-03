@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.PageReqWithType;
 import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
@@ -81,5 +82,14 @@ public class UserModelController {
 			@ApiParam(value = "用户模型id", name = "resource_id") String resource_id) {
 		List<BehaviorWithVariable> res = userModelService.getBehaviorsWithVariables(resource_id);
 		return new BaseRsp(res);
+	}
+
+	@ApiOperation("批量获取多个用户模型包含的行为及行为变量")
+	@PostMapping("/behavior")
+	public BaseRsp<List<UserModelWithVariable>>
+			getBehaviorsBatchWithVariable(@Validated @RequestBody IdListReq req) {
+		List<UserModelWithVariable> res = userModelService
+				.getBehaviorsBatchWithVariables(req.getIds());
+		return new BaseRsp<>(res);
 	}
 }

@@ -4,7 +4,8 @@ import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
 
 public interface MeterService {
 
-    void startSingleBehavior(SingleBehaviorReq req);
+	void startSingleBehavior(SingleBehaviorReq req);
 
-    void stopSingleBehavior(SingleBehaviorReq req);
+	void stopSingleBehavior(SingleBehaviorReq req);
+
 }

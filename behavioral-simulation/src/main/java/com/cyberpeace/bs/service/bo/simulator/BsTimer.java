@@ -8,6 +8,8 @@ import java.util.Timer;
  */
 public class BsTimer extends Timer {
 
+	private String userName;
+
 	private Boolean isRunning = true;
 
 	private Integer index;
@@ -24,4 +26,11 @@ public class BsTimer extends Timer {
 		return this.isRunning;
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 }

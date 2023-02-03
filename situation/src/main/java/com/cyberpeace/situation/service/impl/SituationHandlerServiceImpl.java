@@ -2,8 +2,10 @@ package com.cyberpeace.situation.service.impl;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,13 +20,22 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.model.situation.AdEventContext;
+import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
+import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
+import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
+import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryMapper;
+import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
+import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -46,6 +57,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
+
+	@Autowired
+	private EventTypeMapper eventTypeMapper;
+
+	@Autowired
+	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
 
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
@@ -642,11 +662,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			return;
 		}
 
-		for (T data : datas) {
+		datas.forEach(data -> {
 			WsMessage<T> wsMessage = new WsMessage<>(code, data);
-			pushDataToDashboard(wsMessage, dashboardId, featureId);
-		}
-
+			if (featureId == null) {
+				pushDataToDashboard(wsMessage, dashboardId);
+			} else {
+				pushDataToDashboard(wsMessage, dashboardId, featureId);
+			}
+		});
 	}
 
 	@SneakyThrows
@@ -683,7 +706,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		WsNodeStatus wsNodeStatus = topoHandlerService.getNodeStatusMessage(sceneId);
 
 		// 推送ws消息
-		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.NodeStatus.getDesc(),
+		WsMessage<WsNodeStatus> wsMessage = new WsMessage<>(MessageType.LinkStatus.getDesc(),
 				wsNodeStatus);
 		pushDataToRoom(wsMessage, sceneId);
 
@@ -704,6 +727,110 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 		return wsMultiNodeDynamics;
 
+	}
+
+	@Override
+	public List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList,
+			Map<String, ElementSlimContext> elementSlimContextMap) {
+		List<WsEventAd> adList = org.apache.commons.compress.utils.Lists.newArrayList();
+		if (CollectionUtils.isEmpty(contextList)) {
+			return adList;
+		}
+		// collect types
+		Set<String> subTypes = contextList.stream().map(AdEventContext::getEventSubType)
+				.collect(Collectors.toSet());
+		// get code
+		List<EventType> typeContextList = eventTypeMapper.selectBatchByName(subTypes);
+		if (typeContextList.size() != subTypes.size()) {
+			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
+		}
+		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList, EventType::getName,
+				EventType::getCode);
+		Map<String, EventType> codeTypeMap = StreamApiUtils.toMap(typeContextList,
+				EventType::getCode, context -> context);
+		// 查找映射动效
+		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
+				.selectBatchByType(codeTypeMap.keySet());
+		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
+				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
+
+		// 查询动效列表
+		List<String> dynamicEffectNames = org.apache.commons.compress.utils.Lists.newArrayList();
+		mappingEffectList.forEach(dynamicEffectsMapping -> {
+			dynamicEffectNames.add(dynamicEffectsMapping.getSourceNodeDynamic());
+			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
+		});
+
+		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
+
+		if (!dynamicEffectNames.isEmpty()) {
+			List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
+					.selectByNames(dynamicEffectNames);
+
+			dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
+				dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(),
+						dynamicEffectsLibrary);
+			});
+		}
+
+		// 转化
+		contextList.forEach(context -> {
+			WsEventAd ad = new WsEventAd();
+			ad.load(context);
+			ad.setSourceParentIds(elementSlimContextMap.get(ad.getSourceId()).getParentIds());
+			ad.setTargetParentIds(elementSlimContextMap.get(ad.getTargetId()).getParentIds());
+			ad.setSourcePlatformId(elementSlimContextMap.get(ad.getSourceId()).getPlatformId());
+			ad.setTargetPlatformId(elementSlimContextMap.get(ad.getTargetId()).getPlatformId());
+
+			String code = nameCodeMap.get(context.getEventSubType());
+			if (mappingEffectMap.containsKey(code)) {
+				// 映射类型
+				ad.setDynamicType(2);
+				DynamicEffectsMapping effect = mappingEffectMap.get(code);
+				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
+						effect.getLine());
+				ad.setSourceNodeDynamicDir(dynamicEffectsLibraryMap
+						.get(effect.getSourceNodeDynamic()).getSourceNodeDynamicDir());
+				ad.setTargetNodeDynamicDir(dynamicEffectsLibraryMap
+						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());;
+				ad.setLineStyle(lineStyle);
+				ad.setLookAtTarget(effect.getFocus());
+			} else {
+				// 内置类型
+				ad.setDynamicType(1);
+				EventType typeContext = codeTypeMap.get(code);
+				ad.setSourceActionType(typeContext.getSourceActionType());
+				ad.setTargetActionType(typeContext.getTargetActionType());
+				// todo
+				LineStyle lineStyle = new LineStyle("#FF0000", 5, "dashed");
+				ad.setLineStyle(lineStyle);
+				ad.setLookAtTarget(false);
+			}
+			adList.add(ad);
+		});
+		return adList;
+	}
+
+	@Override
+	public Boolean pushEventAds(List<WsEventAd> eventAds, String dashboardId, String featureId) {
+
+		// 推送攻防事件消息弹窗
+		// pushDashboardMessage(eventAds, dashboardId, featureId);
+
+		// 推送攻防事件数据
+		batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(), dashboardId, featureId,
+				eventAds, null, null);
+
+		return true;
+	}
+
+	private void pushDashboardMsg(List<WsEventAd> eventAds, String dashboardId, String featureId) {
+		List<DashboardMessage> messages = org.apache.commons.compress.utils.Lists.newArrayList();
+		eventAds.forEach(wsEventAd -> {
+			messages.add(new DashboardMessage(wsEventAd.getEventInfo().getDescription(), 5));
+		});
+		batchPushDataToDashboard(MessageType.Message.getDesc(), dashboardId, featureId, messages,
+				null, null);
 	}
 
 }

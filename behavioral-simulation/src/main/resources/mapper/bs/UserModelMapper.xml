@@ -32,4 +32,12 @@
         </where>
         order by id desc
     </select>
+    <select id="selectBatchIdsOrderByIdDesc" resultType="com.cyberpeace.bs.dao.entity.UserModel">
+        select * from bs_user_model
+        where resource_id in
+        <foreach collection="userModelIds" item="userModelId" separator="," open="(" close=")">
+            #{userModelId}
+        </foreach>
+        order by id desc
+    </select>
 </mapper>

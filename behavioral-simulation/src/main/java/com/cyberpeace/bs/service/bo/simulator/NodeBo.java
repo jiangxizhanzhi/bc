@@ -1,19 +1,19 @@
 package com.cyberpeace.bs.service.bo.simulator;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 public class NodeBo implements Serializable {
 
-	@ApiModelProperty(value = "用户模型id", required = true)
-	private String userModelId;
-
 	@ApiModelProperty(value = "节点id", required = true)
 	private String nodeId;
+
+	@ApiModelProperty(value = "节点操作系统类型", required = true)
+	private Integer type;
 
 	@ApiModelProperty(value = "是否实体设备", required = true)
 	private Boolean isEntity;
@@ -25,5 +25,5 @@ public class NodeBo implements Serializable {
 	private List<IpBo> ipConfig;
 
 	@ApiModelProperty(value = "行为变量配置")
-	private List<BehaviorConfig> behaviorConfig;
+	private List<UserInstanceAddBo> userModels;
 }

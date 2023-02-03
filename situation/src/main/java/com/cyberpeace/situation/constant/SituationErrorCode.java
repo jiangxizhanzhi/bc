@@ -150,4 +150,9 @@ public interface SituationErrorCode {
 	 * 暂无已发布的大屏
 	 */
 	String NO_RELEASED_DASHBOARD = "106006";
+
+	/**
+	 * 图层数量异常
+	 */
+	String LAYER_NUM_ERROR = "106007";
 }

@@ -40,18 +40,22 @@ public interface BsErrorCode {
 	 * resource_id 不存在
 	 */
 	String RESOURCE_ID_MISSING = "105007";
+
 	/**
 	 * 设备id为空
 	 */
 	String INVALID_DEVICE_ID = "105008";
+
 	/**
 	 * 设备ip为空
 	 */
 	String INVALID_DEVICE_IP = "105009";
+
 	/**
 	 * 无效的设备类型
 	 */
 	String INVALID_DEVICE_TYPE = "105010";
+
 	/**
 	 * 无效的端口配置
 	 */
@@ -81,4 +85,14 @@ public interface BsErrorCode {
 	 * 读取上传的文件失败
 	 */
 	String FAILED_TO_LOAD_FILE = "105016";
+
+	/**
+	 * 场景节点id为空
+	 */
+	String NODE_ID_MISSING = "105017";
+
+	/**
+	 * 行为仪表不存在
+	 */
+	String SIMULATOR_NOT_FOUND = "105018";
 }

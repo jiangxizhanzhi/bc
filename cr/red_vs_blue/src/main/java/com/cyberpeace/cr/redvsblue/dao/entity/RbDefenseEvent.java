@@ -24,6 +24,8 @@ public class RbDefenseEvent implements Serializable {
 	@ApiModelProperty(value = "")
 	private String content;
 
+	private String eventDescribe;
+
 //	@ApiModelProperty(value = "创建时间")
 //	private Date createTime;
 //

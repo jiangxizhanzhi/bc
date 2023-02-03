@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,11 +53,10 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		if (initData.get("event_type") == null){
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
-		BaseCombatLogHandler combatLogHandler = baseCombatLogHandler.get("base_combat", initData);
-		String string = combatLogHandler.getDestName();
-		List<String> list = new ArrayList<>();
-		list.add("172.47.46.41");
-		combatLogHandler.getNodeAscription(list);
+
+		BaseCombatLogHandler combatLogHandler = baseCombatLogHandler.get(initData.get("datatype"), initData);
+		combatLogHandler.save();
+		combatLogHandler.sendMessage();
 
 		System.out.println(initData.toString());
 	}

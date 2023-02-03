@@ -429,4 +429,7 @@ public interface CrBusinessErrorCode {
 
 	/** 团队数据冲突 */
 	String GROUP_INFO_CONFLICT = "101130";
+
+	/** 忽略的数据 */
+	String IGNORED_DATA = "101131";
 }

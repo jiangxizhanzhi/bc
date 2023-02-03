@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbMaliceProcessMapper">
+
+
+    <select id="getQueryset" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbMaliceProcess">
+        select *
+        from cr_rb_malice_process
+        <where>
+            <if test="roomId != null and roomId != ''">
+                room_id = #{roomId}
+            </if>
+            <if test="machineId != null and machineId != ''">
+                and machine_id = #{machineId}
+            </if>
+            and process in
+            <foreach collection="cmdList" separator="," open="(" close=")" item="cmd">#{cmd}</foreach>
+        </where>
+    </select>
+</mapper>

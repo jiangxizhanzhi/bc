@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@Builder
 public class RbDefenseStage implements Serializable {
 
 	// 攻击阶段数据
@@ -17,7 +19,7 @@ public class RbDefenseStage implements Serializable {
 	private Integer group;
 
 	@ApiModelProperty(value = "防御阶段")
-	private String defensePhase;
+	private Integer defensePhase;
 
 	@ApiModelProperty(value = "防御内容")
 	private String content;

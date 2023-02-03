@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.service.impl;
+package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -18,6 +18,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbMaliceProcessMapper;
 import com.cyberpeace.cr.redvsblue.service.context.NodeAscription;
 import com.cyberpeace.cr.redvsblue.service.context.SingleNodeAscription;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -40,7 +41,7 @@ public class BaseCombatLogHandler {
 	static Map<String, BaseCombatLogHandler> map = new HashMap<>();
 
 	private Map<String, String> initData;
-	Integer eventType = EventType.BRUTEFORCE_EXT.getCode();
+	Integer eventType = EventType.OTHER.getCode();
 	Integer eventCategory = EventCategory.OTHER.getCode();
 	Integer attackPhase = AttackPhase.OTHER.getCode();
 	Integer defensePhase = DefensePhase.OTHER.getCode();
@@ -66,6 +67,9 @@ public class BaseCombatLogHandler {
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
 
+	@Autowired
+	private RbMaliceProcessMapper rbMaliceProcessMapper;
+
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(getCode())) {
@@ -80,6 +84,9 @@ public class BaseCombatLogHandler {
 
 	public BaseCombatLogHandler get(String type, Map<String, String> initData) {
 		BaseCombatLogHandler combatLogHandler = register.get(type);
+		if (combatLogHandler == null) {
+			combatLogHandler = register.get("common_combat");
+		}
 		combatLogHandler.setInitData(initData);
 		setAttr();
 		return combatLogHandler;
@@ -121,7 +128,7 @@ public class BaseCombatLogHandler {
 	}
 
 	public Integer getSourceGroup() {
-		List<Integer> group = getNodeAscription().getAscription(getDestIp());
+		List<Integer> group = getNodeAscription().getAscription(getSourceIp());
 		if (group.size() == 1) {
 			return group.get(0);
 		} else if (group.size()==2 || getEventType().equals(EventCategory.ATTACK.getCode())) {
@@ -170,34 +177,19 @@ public class BaseCombatLogHandler {
 		if (getRedVsBlue() == null){
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_FOUND);
 		}
-		if (getSourceGroup().equals(getDestGroup())) {
+		if (getSourceGroup() != null && getSourceGroup().equals(getDestGroup())) {
 			throw new BusinessException(CrBusinessErrorCode.GROUP_INFO_CONFLICT);
 		}
 	}
 
 	public RbCombatLog getCombatLog() {
-		RbCombatLog rbCombatLog = new RbCombatLog();
-		rbCombatLog.setRoomId(getRedVsBlue());
-		rbCombatLog.setEventType(getEventType());
-		rbCombatLog.setEventCategory(getEventCategory());
-		rbCombatLog.setAttackPhase(getAttackPhase());
-		rbCombatLog.setDefensePhase(getDefensePhase());
-		rbCombatLog.setAttackAction(getAttackAction());
-		rbCombatLog.setDefenseAction(getDefenseAction());
-		rbCombatLog.setActionType(getActionType());
-		rbCombatLog.setSourceGroup(getSourceGroup());
-		rbCombatLog.setSourceIp(getSourceIp());
-		rbCombatLog.setSourceName(getSourceName());
-		rbCombatLog.setDestGroup(getDestGroup());
-		rbCombatLog.setDestIp(getDestIp());
-		rbCombatLog.setDestName(getDestName());
-		rbCombatLog.setAgentName(getAgentName());
-		rbCombatLog.setAgentIp(getAgentIp());
-		rbCombatLog.setEventContent(getEventContent());
-		rbCombatLog.setEventTime(getEventTime());
-		rbCombatLog.setIsLostHost(isLostHostSign);
-		rbCombatLog.setOriginalLog(initData.get("original_log"));
-		return rbCombatLog;
+		return RbCombatLog.builder().roomId(getRedVsBlue()).eventType(getEventType()).eventCategory(getEventCategory()).attackPhase(getAttackPhase())
+						  .defensePhase(getDefensePhase()).attackAction(getAttackAction()).defenseAction(getDefenseAction())
+						  .actionType(getActionType()).sourceGroup(getSourceGroup()).sourceIp(getSourceIp())
+						  .sourceName(getSourceName()).destGroup(getDestGroup()).destIp(getDestIp())
+						  .destName(getDestName()).agentName(getAgentName()).agentIp(getAgentIp())
+						  .eventContent(getEventContent()).eventTime(getEventTime()).isLostHost(getIsLostHostSign())
+						  .originalLog(initData.get("original_log")).build();
 	}
 
 	public void save() {
@@ -289,11 +281,15 @@ public class BaseCombatLogHandler {
 		return nodeAscription;
 	}
 
+	public String getAttackStageContent(RbCombatLog rbCombatLog) {
+		return String.format("【%s】%s",
+				EventType.getEnumByCode(rbCombatLog.getEventType(), EventType.class).getDesc(), rbCombatLog.getEventContent());
+	}
 
 	public RbCombatRecordsAllDataRsp addAttackDefenseStage(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog) {
 		if(!rbCombatLog.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
 			RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
-					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).build();
+					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).content(getAttackStageContent(rbCombatLog)).build();
 			data.getRbAttackDefenseStages().add(rbAttackDefenseStage);
 		}
 		return data;

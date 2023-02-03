@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.constant;
 
+import com.cyberpeace.constant.BaseI18n;
 import lombok.Getter;
+
+import java.util.Arrays;
 
 /**
  * 靶场常用常量
@@ -200,7 +203,13 @@ public interface CrCommonConstants {
 		DefenseAction(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
-		}}
+		}
+
+		public static <T extends DefenseAction> T getEnumByCode(Integer code, Class<T> enumClass) {
+			return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getCode().equals(code))
+						 .findFirst().orElse(null);
+		}
+	}
 
 
 	// 行为类别
@@ -270,6 +279,37 @@ public interface CrCommonConstants {
 			this.code = code;
 			this.desc = desc;
 		}
+
+		public static <T extends EventType> T getEnumByCode(Integer code, Class<T> enumClass) {
+			return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getCode().equals(code))
+						 .findFirst().orElse(null);
+		}
+
+	}
+
+	public enum PermissionGroup implements BaseI18n {
+
+		ADMINISTRATOR(1,"管理员", "Administrator"),
+		DIRECTOR(2, "导演", "Director"),
+		REFEREE(3, "裁判", "Referee"),
+		RED(4, "红方", "Red"),
+		BLUE(5, "蓝方", "Blue")		;
+
+		@Getter
+		private final Integer code;
+
+		@Getter
+		private final String chinese;
+
+		@Getter
+		private final String english;
+
+		PermissionGroup(Integer code, String chinese, String english) {
+			this.code = code;
+			this.chinese = chinese;
+			this.english = english;
+		}
+
 
 	}
 

@@ -1,8 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-
-import java.util.Map;
+import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
 
 //其他日志处理类
 //@Service("operation")

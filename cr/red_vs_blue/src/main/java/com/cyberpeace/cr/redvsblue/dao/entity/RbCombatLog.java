@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@Builder
 @TableName("cr_rb_combat_log")
 public class RbCombatLog extends BaseTable {
 

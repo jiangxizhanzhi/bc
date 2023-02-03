@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,4 +19,10 @@ public class RbCombatRecordsAllDataRsp implements Serializable {
 
 	@ApiModelProperty(value = "攻击动态")
 	private List<RbAttackEvent> rbAttackDefenseEvents;
+
+	public RbCombatRecordsAllDataRsp() {
+		this.rbAttackDefenseStages = new ArrayList<>();
+		this.lostHosts = new ArrayList<>();
+		this.rbAttackDefenseEvents = new ArrayList<>();
+	}
 }

@@ -461,6 +461,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 					.setScore(practiceMap.get(practiceOperation.getResourceId()).getScore());
 			operationRef.setSnapshot(JsonUtil.toJsonString(practiceOperation));
 
+			//如果是传入的是先取消后增加的新习题，需要覆盖原有旧的习题
+			if(StringUtils.isEmpty((practiceMap.get(practiceOperation.getResourceId()).getRefId()))){
+				//遍历原有题目，如果包含此题目，将题目快照覆盖
+				for (PracticeOperationRef practiceOperationRef : operationRefList) {
+					if(practiceOperationRef.getOriginId().equals(operationRef.getOriginId())){
+						practiceOperationRef.setSnapshot(operationRef.getSnapshot());
+					}
+				}
+			}
 			operationRef.setResourceId(IDGeneratorUtil.getID());
 			operationRefList.add(operationRef);
 		});

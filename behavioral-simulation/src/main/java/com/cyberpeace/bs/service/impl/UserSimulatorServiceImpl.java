@@ -488,7 +488,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public void updateProcess(String simulatorId, String behaviorId) {
 		UserSimulator simulator = getOrException(simulatorId);
 		String dateNow = LocalDate.now().toString();
-		if (simulator.getLastExeDate().equals(dateNow)) {
+		if (dateNow.equals(simulator.getLastExeDate())) {
 			simulator.setExeCount(simulator.getExeCount() + 1);
 		} else {
 			simulator.setLastExeDate(dateNow);

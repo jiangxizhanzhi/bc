@@ -72,6 +72,7 @@ public class UserModelController {
 	@ApiOperation("获取活跃度曲线图和访问习惯饼图数据")
 	@PostMapping("/chart")
 	public BaseRsp<ChartResult> getChartData(@Validated @RequestBody ChartInput chartInput) {
+		chartInput.validate();
 		ChartResult res = userModelService.createChart(chartInput);
 		return new BaseRsp<>(res);
 	}

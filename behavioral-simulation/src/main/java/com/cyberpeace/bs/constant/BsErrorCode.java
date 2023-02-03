@@ -95,4 +95,9 @@ public interface BsErrorCode {
 	 * 行为仪表不存在
 	 */
 	String SIMULATOR_NOT_FOUND = "105018";
+
+	/**
+	 * 错误的时间范围；开始时间不能在结束时间之后
+	 */
+	String TIME_RANGE_ERROR = "105019";
 }

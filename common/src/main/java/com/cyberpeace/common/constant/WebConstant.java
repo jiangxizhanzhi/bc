@@ -44,5 +44,5 @@ public interface WebConstant {
 
 	String TOKEN = "token";
 
-	String YW_TOKEN = "xxxx";
+	String YW_TOKEN = "bf7b2e6d-cc9c-4d4b-bc77-e2046f7b2967";
 }

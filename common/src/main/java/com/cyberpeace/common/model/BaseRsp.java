@@ -25,4 +25,8 @@ public class BaseRsp<T> {
 	public BaseRsp(T data) {
 		this.data = data;
 	}
+
+	public void setMsg(String msg) {
+		this.message = msg;
+	}
 }

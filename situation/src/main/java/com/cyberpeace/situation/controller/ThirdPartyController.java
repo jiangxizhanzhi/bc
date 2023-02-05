@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -270,6 +271,13 @@ public class ThirdPartyController {
 	@ApiOperation("获取第三方拓扑数据")
 	@PostMapping("/topo/")
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
+
+		// 直接返回样例拓扑
+		if ("demo".equals(topoReq.getEnvId())){
+			InputStream inputStream = getClass().getResourceAsStream("/demoTopo.json");
+			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
+			return new BaseRsp<>(JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
+		}
 
 		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
 		// 处理编排后的拓扑坐标

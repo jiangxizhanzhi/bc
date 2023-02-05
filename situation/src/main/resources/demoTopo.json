@@ -1,0 +1,2991 @@
+{
+  "data": {
+    "base_info": {
+      "id": null,
+      "name": "测试勿删",
+      "desc": "",
+      "hierarchy": 2.0
+    },
+    "elements": {
+      "2529fde4-4d56-42b6-a505-5e04beab8da2": {
+        "element_id": "2529fde4-4d56-42b6-a505-5e04beab8da2",
+        "element_type": "node",
+        "name": "数据处理与存储系统DBCO",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 392.0,
+          "y": -80.0
+        }
+      },
+      "3a3077ef-51a2-4c96-af91-f033d275d8fd": {
+        "element_id": "3a3077ef-51a2-4c96-af91-f033d275d8fd",
+        "element_type": "node",
+        "name": "交易处理系统SECDS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1300.0,
+          "y": -160.0
+        }
+      },
+      "4dde5039-a35f-47e4-adeb-71a1eddb9fbb": {
+        "element_id": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "element_type": "node",
+        "name": "核心交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 608.0,
+          "y": 180.0
+        }
+      },
+      "703de151-a333-4994-9bb8-258e46d943b8": {
+        "element_id": "703de151-a333-4994-9bb8-258e46d943b8",
+        "element_type": "node",
+        "name": "网站服务器TFASCWEB(weblogic)",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-Web服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": 142.0,
+          "y": 1623.0
+        }
+      },
+      "9255fc2e-d1d1-413f-b4fb-9f0b4ce083ed": {
+        "element_id": "9255fc2e-d1d1-413f-b4fb-9f0b4ce083ed",
+        "element_type": "node",
+        "name": "数据审计与处理系统DBSAFE",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 1232.0,
+          "y": 440.0
+        }
+      },
+      "e4befeb0-d7c2-40b5-b6a7-2e800003a087": {
+        "element_id": "e4befeb0-d7c2-40b5-b6a7-2e800003a087",
+        "element_type": "node",
+        "name": "数据处理与存储系统DBCSEC",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "platform_id": null,
+        "parent_ids": [
+          "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d"
+        ],
+        "child": [],
+        "position": {
+          "x": 2206.0,
+          "y": 1523.0
+        }
+      },
+      "4833cebb-3f37-4e6e-a129-b1f8a50ccd57": {
+        "element_id": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "e5de0923-1f6b-4543-a4e2-a5aa3b04a8ec",
+          "00c8db3a-ee18-42ef-921e-f8d046b1c620",
+          "85ffa872-7a8a-42e6-8637-6394366bd839",
+          "0f398e9a-37b7-4427-8ea7-6b9ec8bcfad1"
+        ],
+        "position": {
+          "x": 224.0,
+          "y": 400.0
+        }
+      },
+      "25b42ec9-083b-4a8f-be15-6e2c59f93ce9": {
+        "element_id": "25b42ec9-083b-4a8f-be15-6e2c59f93ce9",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "98591f10-eacd-4f91-9156-954c52cec851",
+        "platform_id": null,
+        "parent_ids": [
+          "98591f10-eacd-4f91-9156-954c52cec851"
+        ],
+        "child": [],
+        "position": {
+          "x": 1340.0,
+          "y": 1400.0
+        }
+      },
+      "a59da7a7-b1ab-44b2-8921-a88e94efa98f": {
+        "element_id": "a59da7a7-b1ab-44b2-8921-a88e94efa98f",
+        "element_type": "node",
+        "name": "交易处理服务器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "platform_id": null,
+        "parent_ids": [
+          "a7a37153-4595-45bf-b016-27b87c81f556"
+        ],
+        "child": [],
+        "position": {
+          "x": 2010.0,
+          "y": 90.0
+        }
+      },
+      "dcba8b80-b661-4fec-80b8-5e7f295dd999": {
+        "element_id": "dcba8b80-b661-4fec-80b8-5e7f295dd999",
+        "element_type": "node",
+        "name": "期货交易服务器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": 192.0,
+          "y": 1380.0
+        }
+      },
+      "6845b051-11d0-481e-9cb7-02a27375daa9": {
+        "element_id": "6845b051-11d0-481e-9cb7-02a27375daa9",
+        "element_type": "node",
+        "name": "内网邮件服务器MAILSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 678.0,
+          "y": 1583.0
+        }
+      },
+      "8984fd64-a149-4b94-a3f1-bc4e21b1beae": {
+        "element_id": "8984fd64-a149-4b94-a3f1-bc4e21b1beae",
+        "element_type": "node",
+        "name": "杀毒服务器KVC-12",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 842.0,
+          "y": -160.0
+        }
+      },
+      "14f9add4-8fcd-4e27-86ea-5187f26f1866": {
+        "element_id": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "097c6ebc-1937-4f7f-90d3-1c7fba774c7e",
+          "f7311b20-9185-4d21-8f99-86fe4f86fe86",
+          "d6fff167-5ba2-4782-99c8-95b6b193e997",
+          "ecfe4dc0-0ccd-43b4-9014-e08489be1df9",
+          "77068c86-e22a-4930-832b-c33aba6e5e43",
+          "409ae3dd-fd3e-4954-a864-653ab5ed074b",
+          "b77c7f60-6732-4d5b-b185-bfc887913d51"
+        ],
+        "position": {
+          "x": 18.0,
+          "y": 433.0
+        }
+      },
+      "52d8aaa7-2965-494c-92ed-29f66810ca65": {
+        "element_id": "52d8aaa7-2965-494c-92ed-29f66810ca65",
+        "element_type": "node",
+        "name": "核心交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1780.0,
+          "y": 1260.0
+        }
+      },
+      "2ffdcab7-7015-45d0-bf95-6fae3bf69b4b": {
+        "element_id": "2ffdcab7-7015-45d0-bf95-6fae3bf69b4b",
+        "element_type": "node",
+        "name": "防火墙",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-防火墙",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1412.0,
+          "y": 153.0
+        }
+      },
+      "a04be001-74a2-4e17-8c55-2f945c489724": {
+        "element_id": "a04be001-74a2-4e17-8c55-2f945c489724",
+        "element_type": "node",
+        "name": "安全检测",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 750.0,
+          "y": 287.0
+        }
+      },
+      "b2c16ef8-af46-4ce7-b462-bbb68456e4f5": {
+        "element_id": "b2c16ef8-af46-4ce7-b462-bbb68456e4f5",
+        "element_type": "node",
+        "name": "证券交易服务器IMFSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1100.0,
+          "y": -160.0
+        }
+      },
+      "acaebca7-836c-467f-aa4c-f49d2746f5fe": {
+        "element_id": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "31fa3924-ece8-4e45-8bd0-4e82162506c9",
+          "06c30a0c-b8c3-4a3d-9a92-56e98b18cd6a",
+          "6e28ee36-e5f4-4c62-a3b8-48c27a668c36",
+          "b2c16ef8-af46-4ce7-b462-bbb68456e4f5",
+          "018cb6d6-44b5-482c-ac0b-8e77d86c05d3",
+          "f7fa43dc-264d-441b-b38d-165feca00611",
+          "3a3077ef-51a2-4c96-af91-f033d275d8fd",
+          "7cf01546-5813-4afd-b157-2408072b40ff"
+        ],
+        "position": {
+          "x": 1280.0,
+          "y": 40.0
+        }
+      },
+      "018cb6d6-44b5-482c-ac0b-8e77d86c05d3": {
+        "element_id": "018cb6d6-44b5-482c-ac0b-8e77d86c05d3",
+        "element_type": "node",
+        "name": "登录认证系统USERLOG",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-WINDOWS",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1232.0,
+          "y": -60.0
+        }
+      },
+      "134e3c46-9c47-4222-b99a-dbb99e959f33": {
+        "element_id": "134e3c46-9c47-4222-b99a-dbb99e959f33",
+        "element_type": "node",
+        "name": "数据处理与存储系统DBCSEC",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-WINDOWS",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 910.0,
+          "y": 1523.0
+        }
+      },
+      "2770a341-9fe9-414a-9240-cc56793a9bf7": {
+        "element_id": "2770a341-9fe9-414a-9240-cc56793a9bf7",
+        "element_type": "node",
+        "name": "路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 800.0,
+          "y": 1060.0
+        }
+      },
+      "4b5586fe-e7ef-4947-9e45-cbcf6ffd922d": {
+        "element_id": "4b5586fe-e7ef-4947-9e45-cbcf6ffd922d",
+        "element_type": "node",
+        "name": "客户交易备份数据库UDBBK-02",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-数据库",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 1252.0,
+          "y": 360.0
+        }
+      },
+      "97f1fbf3-74f7-445b-87cb-7fef35d2844c": {
+        "element_id": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "8984fd64-a149-4b94-a3f1-bc4e21b1beae",
+          "4657ce28-047e-4a34-a39d-49d590c7a416",
+          "fe10cf6f-4fb9-4a9b-9924-a9224a093d9d",
+          "743a40ec-15b0-446b-8314-d0966b746d37",
+          "76c0af70-6009-4454-b46f-af2870647298",
+          "e0ec303c-f93f-456e-b27e-57ab7c763559"
+        ],
+        "position": {
+          "x": 830.0,
+          "y": 40.0
+        }
+      },
+      "f8527f5f-624d-4cfd-8078-bd2191813fc2": {
+        "element_id": "f8527f5f-624d-4cfd-8078-bd2191813fc2",
+        "element_type": "node",
+        "name": "路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1140.0,
+          "y": 1080.0
+        }
+      },
+      "00c8db3a-ee18-42ef-921e-f8d046b1c620": {
+        "element_id": "00c8db3a-ee18-42ef-921e-f8d046b1c620",
+        "element_type": "node",
+        "name": "员工考勤系统KQ-02",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "platform_id": null,
+        "parent_ids": [
+          "4833cebb-3f37-4e6e-a129-b1f8a50ccd57"
+        ],
+        "child": [],
+        "position": {
+          "x": 304.0,
+          "y": 340.0
+        }
+      },
+      "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d": {
+        "element_id": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "1129f6fa-ef8d-4bf3-8653-55c02ec22041",
+          "1871cfd7-5ac5-486e-8c5c-26209e6e53bc",
+          "e4befeb0-d7c2-40b5-b6a7-2e800003a087",
+          "29cc54af-1afe-4cc7-aefb-ee48a29508b1",
+          "5ba08f89-874f-4987-9cee-346f3b414158"
+        ],
+        "position": {
+          "x": 2090.0,
+          "y": 1400.0
+        }
+      },
+      "743a40ec-15b0-446b-8314-d0966b746d37": {
+        "element_id": "743a40ec-15b0-446b-8314-d0966b746d37",
+        "element_type": "node",
+        "name": "OA办公系统服务器OAS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 870.0,
+          "y": -60.0
+        }
+      },
+      "d282b899-b324-4a79-824f-17647fe0ce7a": {
+        "element_id": "d282b899-b324-4a79-824f-17647fe0ce7a",
+        "element_type": "node",
+        "name": "票券系统服务器SECSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 136.0,
+          "y": 20.0
+        }
+      },
+      "76c0af70-6009-4454-b46f-af2870647298": {
+        "element_id": "76c0af70-6009-4454-b46f-af2870647298",
+        "element_type": "node",
+        "name": "文件服务器INFSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 960.0,
+          "y": -60.0
+        }
+      },
+      "89758b05-e342-41ed-8312-b9240c8f6303": {
+        "element_id": "89758b05-e342-41ed-8312-b9240c8f6303",
+        "element_type": "node",
+        "name": "行情同步服务器NS-07",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 608.0,
+          "y": 1503.0
+        }
+      },
+      "9d966b04-2b31-476b-b666-26b2f2aeea6f": {
+        "element_id": "9d966b04-2b31-476b-b666-26b2f2aeea6f",
+        "element_type": "node",
+        "name": "防火墙",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-防火墙",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1660.0,
+          "y": 1020.0
+        }
+      },
+      "ee91a512-9668-4790-a91b-47b497419a67": {
+        "element_id": "ee91a512-9668-4790-a91b-47b497419a67",
+        "element_type": "node",
+        "name": "网站数据库服务器TFASCWEBDB(MYSQL)",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-数据库",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": 222.0,
+          "y": 1503.0
+        }
+      },
+      "77068c86-e22a-4930-832b-c33aba6e5e43": {
+        "element_id": "77068c86-e22a-4930-832b-c33aba6e5e43",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": 18.0,
+          "y": 553.0
+        }
+      },
+      "ef4e3795-a847-419d-bc13-065c307914f5": {
+        "element_id": "ef4e3795-a847-419d-bc13-065c307914f5",
+        "element_type": "node",
+        "name": "文件服务器INFSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 1066.0,
+          "y": 497.0
+        }
+      },
+      "b9967c66-f7b4-4177-9279-d84a62781ecb": {
+        "element_id": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "f2ba5a53-ec42-4414-a2e5-eebc3cbbd98e",
+          "2529fde4-4d56-42b6-a505-5e04beab8da2",
+          "ef546234-f0e8-4bf9-9a97-7cdf8f387035",
+          "83bad927-acac-4f16-8dc6-4206da137e3a",
+          "d282b899-b324-4a79-824f-17647fe0ce7a",
+          "85827127-c9bc-4a98-9051-5f08ee1e2505"
+        ],
+        "position": {
+          "x": 262.0,
+          "y": -80.0
+        }
+      },
+      "77dde63b-2f9d-476e-b9b9-0cd7db409d0b": {
+        "element_id": "77dde63b-2f9d-476e-b9b9-0cd7db409d0b",
+        "element_type": "node",
+        "name": "防火墙",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-防火墙",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 302.0,
+          "y": 153.0
+        }
+      },
+      "0f5482e8-8306-47e5-b4c0-b5733e0efc72": {
+        "element_id": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "ec60ced1-76dd-425b-8ad3-dfdbe198addc",
+          "9255fc2e-d1d1-413f-b4fb-9f0b4ce083ed",
+          "d0918a40-94e3-4cc4-8a03-22aceae5adba",
+          "872302cd-1f2c-4dc6-8808-f8a8d346e1b9",
+          "ef13fdd7-8ef4-422b-94cc-e91311222f59",
+          "9ea687f0-5068-4cbc-aed3-8e76a4b8b97f",
+          "4b5586fe-e7ef-4947-9e45-cbcf6ffd922d",
+          "ef4e3795-a847-419d-bc13-065c307914f5"
+        ],
+        "position": {
+          "x": 1112.0,
+          "y": 360.0
+        }
+      },
+      "9ea687f0-5068-4cbc-aed3-8e76a4b8b97f": {
+        "element_id": "9ea687f0-5068-4cbc-aed3-8e76a4b8b97f",
+        "element_type": "node",
+        "name": "客户交易数据库UDB-01",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-数据库",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 960.0,
+          "y": 317.0
+        }
+      },
+      "8a96ac08-92f4-4e6c-9dab-d7509f46d1f8": {
+        "element_id": "8a96ac08-92f4-4e6c-9dab-d7509f46d1f8",
+        "element_type": "node",
+        "name": "投资系统服务器INVSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "98591f10-eacd-4f91-9156-954c52cec851",
+        "platform_id": null,
+        "parent_ids": [
+          "98591f10-eacd-4f91-9156-954c52cec851"
+        ],
+        "child": [],
+        "position": {
+          "x": 1348.0,
+          "y": 1523.0
+        }
+      },
+      "36dca785-b815-431b-bc74-f37bd6e71411": {
+        "element_id": "36dca785-b815-431b-bc74-f37bd6e71411",
+        "element_type": "node",
+        "name": "交易处理系统SECDS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 838.0,
+          "y": 1600.0
+        }
+      },
+      "83bad927-acac-4f16-8dc6-4206da137e3a": {
+        "element_id": "83bad927-acac-4f16-8dc6-4206da137e3a",
+        "element_type": "node",
+        "name": "期货系统服务器FUTSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 352.0,
+          "y": -180.0
+        }
+      },
+      "83c136d1-08a8-47d3-abdb-1911acb97e47": {
+        "element_id": "83c136d1-08a8-47d3-abdb-1911acb97e47",
+        "element_type": "node",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1080.0,
+          "y": 80.0
+        }
+      },
+      "f2b90a5f-83bd-45b3-ba36-5e15de07d79c": {
+        "element_id": "f2b90a5f-83bd-45b3-ba36-5e15de07d79c",
+        "element_type": "node",
+        "name": "核心路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 880.0,
+          "y": 980.0
+        }
+      },
+      "e71b042c-17a7-48a7-b5bb-27edc3b9bf18": {
+        "element_id": "e71b042c-17a7-48a7-b5bb-27edc3b9bf18",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 888.0,
+          "y": 1380.0
+        }
+      },
+      "409ae3dd-fd3e-4954-a864-653ab5ed074b": {
+        "element_id": "409ae3dd-fd3e-4954-a864-653ab5ed074b",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": -46.0,
+          "y": 340.0
+        }
+      },
+      "a6459d10-9a4d-4d85-ac98-a3fd75172caa": {
+        "element_id": "a6459d10-9a4d-4d85-ac98-a3fd75172caa",
+        "element_type": "node",
+        "name": "办公终端(office)",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": -76.0,
+          "y": 1360.0
+        }
+      },
+      "0f398e9a-37b7-4427-8ea7-6b9ec8bcfad1": {
+        "element_id": "0f398e9a-37b7-4427-8ea7-6b9ec8bcfad1",
+        "element_type": "node",
+        "name": "打印服务器PTSRV-14",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "platform_id": null,
+        "parent_ids": [
+          "4833cebb-3f37-4e6e-a129-b1f8a50ccd57"
+        ],
+        "child": [],
+        "position": {
+          "x": 304.0,
+          "y": 493.0
+        }
+      },
+      "e5de0923-1f6b-4543-a4e2-a5aa3b04a8ec": {
+        "element_id": "e5de0923-1f6b-4543-a4e2-a5aa3b04a8ec",
+        "element_type": "node",
+        "name": "集中杀毒系统KVC-08",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "platform_id": null,
+        "parent_ids": [
+          "4833cebb-3f37-4e6e-a129-b1f8a50ccd57"
+        ],
+        "child": [],
+        "position": {
+          "x": 314.0,
+          "y": 423.0
+        }
+      },
+      "1129f6fa-ef8d-4bf3-8653-55c02ec22041": {
+        "element_id": "1129f6fa-ef8d-4bf3-8653-55c02ec22041",
+        "element_type": "node",
+        "name": "内网邮件服务器MAILSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "platform_id": null,
+        "parent_ids": [
+          "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d"
+        ],
+        "child": [],
+        "position": {
+          "x": 1980.0,
+          "y": 1523.0
+        }
+      },
+      "eda43a97-949c-46a0-9e88-ad8b5a4e5178": {
+        "element_id": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "ee91a512-9668-4790-a91b-47b497419a67",
+          "dcba8b80-b661-4fec-80b8-5e7f295dd999",
+          "a6459d10-9a4d-4d85-ac98-a3fd75172caa",
+          "703de151-a333-4994-9bb8-258e46d943b8",
+          "0f4afcdc-1168-4b1b-8660-78e94589810f",
+          "bd392a6b-4d50-4099-977e-0f54001bbdcf"
+        ],
+        "position": {
+          "x": 62.0,
+          "y": 1400.0
+        }
+      },
+      "98591f10-eacd-4f91-9156-954c52cec851": {
+        "element_id": "98591f10-eacd-4f91-9156-954c52cec851",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "8f7c1927-e450-4090-98bc-26a8e4064745",
+          "8a96ac08-92f4-4e6c-9dab-d7509f46d1f8",
+          "07b7b15f-efc0-45f4-b03b-3f121d3b6ede",
+          "25b42ec9-083b-4a8f-be15-6e2c59f93ce9",
+          "f0dd920e-46ff-4331-8ad3-df9fead022f7"
+        ],
+        "position": {
+          "x": 1490.0,
+          "y": 1443.0
+        }
+      },
+      "ef546234-f0e8-4bf9-9a97-7cdf8f387035": {
+        "element_id": "ef546234-f0e8-4bf9-9a97-7cdf8f387035",
+        "element_type": "node",
+        "name": "邮件服务器TFASCMAIL",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 124.0,
+          "y": -80.0
+        }
+      },
+      "7fe83107-eb67-422f-8abd-8b9976571d59": {
+        "element_id": "7fe83107-eb67-422f-8abd-8b9976571d59",
+        "element_type": "node",
+        "name": "外部网络",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-外部网络",
+        "model": null,
+        "hierarchy": 1.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1040.0,
+          "y": 633.0
+        }
+      },
+      "4657ce28-047e-4a34-a39d-49d590c7a416": {
+        "element_id": "4657ce28-047e-4a34-a39d-49d590c7a416",
+        "element_type": "node",
+        "name": "内网邮件服务器MAILSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 740.0,
+          "y": -60.0
+        }
+      },
+      "defed920-57c2-49b6-a171-8d81b40a4605": {
+        "element_id": "defed920-57c2-49b6-a171-8d81b40a4605",
+        "element_type": "node",
+        "name": "核心路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 1070.0,
+          "y": 980.0
+        }
+      },
+      "06c30a0c-b8c3-4a3d-9a92-56e98b18cd6a": {
+        "element_id": "06c30a0c-b8c3-4a3d-9a92-56e98b18cd6a",
+        "element_type": "node",
+        "name": "行情同步服务器NS-07",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1120.0,
+          "y": -60.0
+        }
+      },
+      "5ba08f89-874f-4987-9cee-346f3b414158": {
+        "element_id": "5ba08f89-874f-4987-9cee-346f3b414158",
+        "element_type": "node",
+        "name": "行情同步服务器NS-07",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "platform_id": null,
+        "parent_ids": [
+          "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d"
+        ],
+        "child": [],
+        "position": {
+          "x": 1970.0,
+          "y": 1380.0
+        }
+      },
+      "ecfe4dc0-0ccd-43b4-9014-e08489be1df9": {
+        "element_id": "ecfe4dc0-0ccd-43b4-9014-e08489be1df9",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": -56.0,
+          "y": 493.0
+        }
+      },
+      "a7a37153-4595-45bf-b016-27b87c81f556": {
+        "element_id": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "a59da7a7-b1ab-44b2-8921-a88e94efa98f",
+          "c8624392-fa37-41e6-bddd-75c5ac303f40",
+          "2207260c-141e-49ff-bf1a-dd389965847f"
+        ],
+        "position": {
+          "x": 1880.0,
+          "y": 153.0
+        }
+      },
+      "3a595097-a320-4ac9-80ad-36c1f9aebc1e": {
+        "element_id": "3a595097-a320-4ac9-80ad-36c1f9aebc1e",
+        "element_type": "node",
+        "name": "防火墙",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-防火墙",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 274.0,
+          "y": 980.0
+        }
+      },
+      "d0918a40-94e3-4cc4-8a03-22aceae5adba": {
+        "element_id": "d0918a40-94e3-4cc4-8a03-22aceae5adba",
+        "element_type": "node",
+        "name": "视讯系统服务器VS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 1184.0,
+          "y": 510.0
+        }
+      },
+      "fb4ef16d-fa91-4117-8ea4-10f3becb7b90": {
+        "element_id": "fb4ef16d-fa91-4117-8ea4-10f3becb7b90",
+        "element_type": "node",
+        "name": "路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 960.0,
+          "y": 780.0
+        }
+      },
+      "872302cd-1f2c-4dc6-8808-f8a8d346e1b9": {
+        "element_id": "872302cd-1f2c-4dc6-8808-f8a8d346e1b9",
+        "element_type": "node",
+        "name": "前端服务机USRC-01",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-WINDOWS",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 1232.0,
+          "y": 277.0
+        }
+      },
+      "31fa3924-ece8-4e45-8bd0-4e82162506c9": {
+        "element_id": "31fa3924-ece8-4e45-8bd0-4e82162506c9",
+        "element_type": "node",
+        "name": "前端服务器USNS-01",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-Web服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1340.0,
+          "y": -60.0
+        }
+      },
+      "af171e3a-9105-4708-a1dc-718e120c50e4": {
+        "element_id": "af171e3a-9105-4708-a1dc-718e120c50e4",
+        "element_type": "node",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 164.0,
+          "y": 300.0
+        }
+      },
+      "6e28ee36-e5f4-4c62-a3b8-48c27a668c36": {
+        "element_id": "6e28ee36-e5f4-4c62-a3b8-48c27a668c36",
+        "element_type": "node",
+        "name": "移动代理服务器MOB",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1452.0,
+          "y": -50.0
+        }
+      },
+      "b39a4241-44aa-4506-8cf9-3345bac98f92": {
+        "element_id": "b39a4241-44aa-4506-8cf9-3345bac98f92",
+        "element_type": "node",
+        "name": "路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 640.0,
+          "y": 457.0
+        }
+      },
+      "097c6ebc-1937-4f7f-90d3-1c7fba774c7e": {
+        "element_id": "097c6ebc-1937-4f7f-90d3-1c7fba774c7e",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": 104.0,
+          "y": 533.0
+        }
+      },
+      "0f4afcdc-1168-4b1b-8660-78e94589810f": {
+        "element_id": "0f4afcdc-1168-4b1b-8660-78e94589810f",
+        "element_type": "node",
+        "name": "邮件服务器TFASCMAIL",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": -18.0,
+          "y": 1603.0
+        }
+      },
+      "f0dd920e-46ff-4331-8ad3-df9fead022f7": {
+        "element_id": "f0dd920e-46ff-4331-8ad3-df9fead022f7",
+        "element_type": "node",
+        "name": "网站数据库服务器TFASCWEBDB(MYSQL)",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-数据库",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "98591f10-eacd-4f91-9156-954c52cec851",
+        "platform_id": null,
+        "parent_ids": [
+          "98591f10-eacd-4f91-9156-954c52cec851"
+        ],
+        "child": [],
+        "position": {
+          "x": 1620.0,
+          "y": 1420.0
+        }
+      },
+      "85827127-c9bc-4a98-9051-5f08ee1e2505": {
+        "element_id": "85827127-c9bc-4a98-9051-5f08ee1e2505",
+        "element_type": "node",
+        "name": "网络服务器TFASECWEB",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-Web服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 364.0,
+          "y": 20.0
+        }
+      },
+      "8f7c1927-e450-4090-98bc-26a8e4064745": {
+        "element_id": "8f7c1927-e450-4090-98bc-26a8e4064745",
+        "element_type": "node",
+        "name": "邮件服务器TFASCMAIL",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-邮件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "98591f10-eacd-4f91-9156-954c52cec851",
+        "platform_id": null,
+        "parent_ids": [
+          "98591f10-eacd-4f91-9156-954c52cec851"
+        ],
+        "child": [],
+        "position": {
+          "x": 1470.0,
+          "y": 1603.0
+        }
+      },
+      "ef13fdd7-8ef4-422b-94cc-e91311222f59": {
+        "element_id": "ef13fdd7-8ef4-422b-94cc-e91311222f59",
+        "element_type": "node",
+        "name": "集中杀毒系统KVC-07",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 974.0,
+          "y": 490.0
+        }
+      },
+      "f7fa43dc-264d-441b-b38d-165feca00611": {
+        "element_id": "f7fa43dc-264d-441b-b38d-165feca00611",
+        "element_type": "node",
+        "name": "数据处理与存储系统DBCSEC",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1202.0,
+          "y": -160.0
+        }
+      },
+      "b77c7f60-6732-4d5b-b185-bfc887913d51": {
+        "element_id": "b77c7f60-6732-4d5b-b185-bfc887913d51",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": -56.0,
+          "y": 423.0
+        }
+      },
+      "eb08a0a3-7853-4bab-b803-7d27842db6c3": {
+        "element_id": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "element_type": "network",
+        "name": "交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [],
+        "child": [
+          "36dca785-b815-431b-bc74-f37bd6e71411",
+          "e71b042c-17a7-48a7-b5bb-27edc3b9bf18",
+          "89758b05-e342-41ed-8312-b9240c8f6303",
+          "8ce15461-d376-4ce8-87e8-5b1c58ff5cd9",
+          "6845b051-11d0-481e-9cb7-02a27375daa9",
+          "134e3c46-9c47-4222-b99a-dbb99e959f33"
+        ],
+        "position": {
+          "x": 758.0,
+          "y": 1423.0
+        }
+      },
+      "f7311b20-9185-4d21-8f99-86fe4f86fe86": {
+        "element_id": "f7311b20-9185-4d21-8f99-86fe4f86fe86",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": 124.0,
+          "y": 383.0
+        }
+      },
+      "7cf01546-5813-4afd-b157-2408072b40ff": {
+        "element_id": "7cf01546-5813-4afd-b157-2408072b40ff",
+        "element_type": "node",
+        "name": "目录服务系统DIRS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "platform_id": null,
+        "parent_ids": [
+          "acaebca7-836c-467f-aa4c-f49d2746f5fe"
+        ],
+        "child": [],
+        "position": {
+          "x": 1412.0,
+          "y": -160.0
+        }
+      },
+      "e0ec303c-f93f-456e-b27e-57ab7c763559": {
+        "element_id": "e0ec303c-f93f-456e-b27e-57ab7c763559",
+        "element_type": "node",
+        "name": "文件服务器NSFSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 750.0,
+          "y": -160.0
+        }
+      },
+      "f2ba5a53-ec42-4414-a2e5-eebc3cbbd98e": {
+        "element_id": "f2ba5a53-ec42-4414-a2e5-eebc3cbbd98e",
+        "element_type": "node",
+        "name": "投资系统服务器INVSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-n9k",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "platform_id": null,
+        "parent_ids": [
+          "b9967c66-f7b4-4177-9279-d84a62781ecb"
+        ],
+        "child": [],
+        "position": {
+          "x": 124.0,
+          "y": -160.0
+        }
+      },
+      "1871cfd7-5ac5-486e-8c5c-26209e6e53bc": {
+        "element_id": "1871cfd7-5ac5-486e-8c5c-26209e6e53bc",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-WINDOWS",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "platform_id": null,
+        "parent_ids": [
+          "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d"
+        ],
+        "child": [],
+        "position": {
+          "x": 2232.0,
+          "y": 1360.0
+        }
+      },
+      "d6fff167-5ba2-4782-99c8-95b6b193e997": {
+        "element_id": "d6fff167-5ba2-4782-99c8-95b6b193e997",
+        "element_type": "node",
+        "name": "办公终端",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "platform_id": null,
+        "parent_ids": [
+          "14f9add4-8fcd-4e27-86ea-5187f26f1866"
+        ],
+        "child": [],
+        "position": {
+          "x": 104.0,
+          "y": 453.0
+        }
+      },
+      "07b7b15f-efc0-45f4-b03b-3f121d3b6ede": {
+        "element_id": "07b7b15f-efc0-45f4-b03b-3f121d3b6ede",
+        "element_type": "node",
+        "name": "网站服务器TFASCWEB",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-Web服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "98591f10-eacd-4f91-9156-954c52cec851",
+        "platform_id": null,
+        "parent_ids": [
+          "98591f10-eacd-4f91-9156-954c52cec851"
+        ],
+        "child": [],
+        "position": {
+          "x": 1588.0,
+          "y": 1563.0
+        }
+      },
+      "c8624392-fa37-41e6-bddd-75c5ac303f40": {
+        "element_id": "c8624392-fa37-41e6-bddd-75c5ac303f40",
+        "element_type": "node",
+        "name": "交易处理服务器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-n9k",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "platform_id": null,
+        "parent_ids": [
+          "a7a37153-4595-45bf-b016-27b87c81f556"
+        ],
+        "child": [],
+        "position": {
+          "x": 2020.0,
+          "y": 193.0
+        }
+      },
+      "bd392a6b-4d50-4099-977e-0f54001bbdcf": {
+        "element_id": "bd392a6b-4d50-4099-977e-0f54001bbdcf",
+        "element_type": "node",
+        "name": "投资系统服务器INVSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-n9k",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "platform_id": null,
+        "parent_ids": [
+          "eda43a97-949c-46a0-9e88-ad8b5a4e5178"
+        ],
+        "child": [],
+        "position": {
+          "x": -76.0,
+          "y": 1483.0
+        }
+      },
+      "66006ad8-3164-4b1a-b47f-4c4c02d06d67": {
+        "element_id": "66006ad8-3164-4b1a-b47f-4c4c02d06d67",
+        "element_type": "node",
+        "name": "核心路由器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-路由器",
+        "model": null,
+        "hierarchy": 2.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 960.0,
+          "y": 880.0
+        }
+      },
+      "fe10cf6f-4fb9-4a9b-9924-a9224a093d9d": {
+        "element_id": "fe10cf6f-4fb9-4a9b-9924-a9224a093d9d",
+        "element_type": "node",
+        "name": "打印服务器PTSRV-03",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-文件服务器",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "platform_id": null,
+        "parent_ids": [
+          "97f1fbf3-74f7-445b-87cb-7fef35d2844c"
+        ],
+        "child": [],
+        "position": {
+          "x": 950.0,
+          "y": -160.0
+        }
+      },
+      "805cb34b-fd37-4c6c-a2c5-44f913346a03": {
+        "element_id": "805cb34b-fd37-4c6c-a2c5-44f913346a03",
+        "element_type": "node",
+        "name": "核心交换机",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "网络设备-交换机",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": null,
+        "platform_id": null,
+        "parent_ids": [
+          null
+        ],
+        "child": [],
+        "position": {
+          "x": 420.0,
+          "y": 1271.0
+        }
+      },
+      "85ffa872-7a8a-42e6-8637-6394366bd839": {
+        "element_id": "85ffa872-7a8a-42e6-8637-6394366bd839",
+        "element_type": "node",
+        "name": "内部网站NBW-14",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "platform_id": null,
+        "parent_ids": [
+          "4833cebb-3f37-4e6e-a129-b1f8a50ccd57"
+        ],
+        "child": [],
+        "position": {
+          "x": 224.0,
+          "y": 520.0
+        }
+      },
+      "8ce15461-d376-4ce8-87e8-5b1c58ff5cd9": {
+        "element_id": "8ce15461-d376-4ce8-87e8-5b1c58ff5cd9",
+        "element_type": "node",
+        "name": "证券交易服务器IMFSRV",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-n9k",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "platform_id": null,
+        "parent_ids": [
+          "eb08a0a3-7853-4bab-b803-7d27842db6c3"
+        ],
+        "child": [],
+        "position": {
+          "x": 618.0,
+          "y": 1380.0
+        }
+      },
+      "ec60ced1-76dd-425b-8ad3-dfdbe198addc": {
+        "element_id": "ec60ced1-76dd-425b-8ad3-dfdbe198addc",
+        "element_type": "node",
+        "name": "客户交易备份数据库UDBBK-01",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "应用系统-数据库",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "platform_id": null,
+        "parent_ids": [
+          "0f5482e8-8306-47e5-b4c0-b5733e0efc72"
+        ],
+        "child": [],
+        "position": {
+          "x": 942.0,
+          "y": 390.0
+        }
+      },
+      "2207260c-141e-49ff-bf1a-dd389965847f": {
+        "element_id": "2207260c-141e-49ff-bf1a-dd389965847f",
+        "element_type": "node",
+        "name": "信息发布服务器",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "定制-asr1001x",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "platform_id": null,
+        "parent_ids": [
+          "a7a37153-4595-45bf-b016-27b87c81f556"
+        ],
+        "child": [],
+        "position": {
+          "x": 1940.0,
+          "y": 280.0
+        }
+      },
+      "29cc54af-1afe-4cc7-aefb-ee48a29508b1": {
+        "element_id": "29cc54af-1afe-4cc7-aefb-ee48a29508b1",
+        "element_type": "node",
+        "name": "交易处理系统SECDS",
+        "role": null,
+        "desc": null,
+        "third_url": null,
+        "vr_type": "virtual",
+        "device_type": "操作系统-LINUX",
+        "model": null,
+        "hierarchy": 3.0,
+        "parent": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "platform_id": null,
+        "parent_ids": [
+          "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d"
+        ],
+        "child": [],
+        "position": {
+          "x": 2090.0,
+          "y": 1563.0
+        }
+      }
+    },
+    "connections": [
+      {
+        "connection_id": "9fde3698-677b-41d7-8113-59c9d32132ab",
+        "connection_type": "短波",
+        "source": "f2ba5a53-ec42-4414-a2e5-eebc3cbbd98e",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "5713d68a-7b1d-466b-829d-eebc1d2177e7",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "097c6ebc-1937-4f7f-90d3-1c7fba774c7e",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "9eb65b82-045c-4787-981a-187c0442dd4c",
+        "connection_type": "短波",
+        "source": "52d8aaa7-2965-494c-92ed-29f66810ca65",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e4faea8c-c4fe-44cc-b104-b83ae96451c1",
+        "connection_type": "短波",
+        "source": "31fa3924-ece8-4e45-8bd0-4e82162506c9",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "91b0d022-9e47-43a6-a825-735812c79288",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "ec60ced1-76dd-425b-8ad3-dfdbe198addc",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "6cde750f-7eb7-43ac-9d91-655f98a02dd8",
+        "connection_type": "短波",
+        "source": "f2b90a5f-83bd-45b3-ba36-5e15de07d79c",
+        "target": "defed920-57c2-49b6-a171-8d81b40a4605",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "a0be8d84-f9d6-4302-a01b-a273b7e49387",
+        "connection_type": "短波",
+        "source": "8f7c1927-e450-4090-98bc-26a8e4064745",
+        "target": "98591f10-eacd-4f91-9156-954c52cec851",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "082d8f9a-c9c4-4e15-babf-374f951e8a19",
+        "connection_type": "短波",
+        "source": "3a595097-a320-4ac9-80ad-36c1f9aebc1e",
+        "target": "7fe83107-eb67-422f-8abd-8b9976571d59",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e94257fb-139e-41f9-badb-7d6a42fff1af",
+        "connection_type": "短波",
+        "source": "8a96ac08-92f4-4e6c-9dab-d7509f46d1f8",
+        "target": "98591f10-eacd-4f91-9156-954c52cec851",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "90754b01-e1d3-4293-b4cd-c3d474ee8244",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "9255fc2e-d1d1-413f-b4fb-9f0b4ce083ed",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e4c42c16-33c9-4a6e-8935-4a9a16c7ba5f",
+        "connection_type": "短波",
+        "source": "ee91a512-9668-4790-a91b-47b497419a67",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "32f85508-7b2a-4d68-a6c2-2180b6e56429",
+        "connection_type": "短波",
+        "source": "fb4ef16d-fa91-4117-8ea4-10f3becb7b90",
+        "target": "66006ad8-3164-4b1a-b47f-4c4c02d06d67",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "df4591b8-4cc0-44b3-a2c5-c5a49011307f",
+        "connection_type": "短波",
+        "source": "2770a341-9fe9-414a-9240-cc56793a9bf7",
+        "target": "805cb34b-fd37-4c6c-a2c5-44f913346a03",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "d91b2968-b1cb-49d6-b27b-c2fea1da338e",
+        "connection_type": "短波",
+        "source": "af171e3a-9105-4708-a1dc-718e120c50e4",
+        "target": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "9d25c9ff-0bc5-4740-be8d-0e06f56dbf65",
+        "connection_type": "短波",
+        "source": "1129f6fa-ef8d-4bf3-8653-55c02ec22041",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "052cd4d3-7564-472d-86a2-287220ed9ce6",
+        "connection_type": "短波",
+        "source": "dcba8b80-b661-4fec-80b8-5e7f295dd999",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "a6b1b36e-13a0-4a64-85e1-9d0bac495678",
+        "connection_type": "短波",
+        "source": "2529fde4-4d56-42b6-a505-5e04beab8da2",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "6636789d-4481-4a6b-86c5-16f12d1b547d",
+        "connection_type": "短波",
+        "source": "66006ad8-3164-4b1a-b47f-4c4c02d06d67",
+        "target": "f2b90a5f-83bd-45b3-ba36-5e15de07d79c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3806e395-db84-4daa-bd4c-d91fe4c0b967",
+        "connection_type": "短波",
+        "source": "06c30a0c-b8c3-4a3d-9a92-56e98b18cd6a",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "86480ca7-a786-4639-ad9d-c57b4c57c681",
+        "connection_type": "短波",
+        "source": "83c136d1-08a8-47d3-abdb-1911acb97e47",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "b573f6b1-c1c3-4c27-8602-49f649559e08",
+        "connection_type": "短波",
+        "source": "2ffdcab7-7015-45d0-bf95-6fae3bf69b4b",
+        "target": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "aedc87a2-1193-43b4-8bfa-7a51585efd2b",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "f7311b20-9185-4d21-8f99-86fe4f86fe86",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "7e59c7b9-1f49-4c51-8652-a2e7aec3ab10",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "d0918a40-94e3-4cc4-8a03-22aceae5adba",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "2a8349bf-6cf3-4b4c-805b-1089d3f20313",
+        "connection_type": "短波",
+        "source": "36dca785-b815-431b-bc74-f37bd6e71411",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "c2d14376-e1f7-48e2-9dc0-e91f1a34d16e",
+        "connection_type": "短波",
+        "source": "07b7b15f-efc0-45f4-b03b-3f121d3b6ede",
+        "target": "98591f10-eacd-4f91-9156-954c52cec851",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "5991629f-6e17-41de-83af-a736e6092e08",
+        "connection_type": "短波",
+        "source": "a6459d10-9a4d-4d85-ac98-a3fd75172caa",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "7271a00c-bea1-436b-97f8-67fa1f6ba74d",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "d6fff167-5ba2-4782-99c8-95b6b193e997",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "30ff6169-5b43-41d7-9ef0-0ae9c4e1805a",
+        "connection_type": "短波",
+        "source": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "target": "e5de0923-1f6b-4543-a4e2-a5aa3b04a8ec",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e937eeec-0c08-4e38-8789-5eb9cbfa19ea",
+        "connection_type": "短波",
+        "source": "1871cfd7-5ac5-486e-8c5c-26209e6e53bc",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "41647ae8-0fdc-4faf-abe8-796f23fe4044",
+        "connection_type": "短波",
+        "source": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "target": "00c8db3a-ee18-42ef-921e-f8d046b1c620",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "04636e4e-4e86-4f9a-ac7a-333d03e83231",
+        "connection_type": "短波",
+        "source": "77dde63b-2f9d-476e-b9b9-0cd7db409d0b",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "b0279426-1745-4613-a334-bfdade18d99a",
+        "connection_type": "短波",
+        "source": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "target": "2ffdcab7-7015-45d0-bf95-6fae3bf69b4b",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e5738487-6867-41e3-9aac-78fd80ae3612",
+        "connection_type": "短波",
+        "source": "e71b042c-17a7-48a7-b5bb-27edc3b9bf18",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "9a80f949-37b7-4aa5-adec-ea5cec0c395b",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "872302cd-1f2c-4dc6-8808-f8a8d346e1b9",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "a3abbcf7-a27b-46fc-bcbd-12c6d568eef3",
+        "connection_type": "短波",
+        "source": "703de151-a333-4994-9bb8-258e46d943b8",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "fdb3f5d9-fe2b-4834-95d2-65b96d7b1b12",
+        "connection_type": "短波",
+        "source": "defed920-57c2-49b6-a171-8d81b40a4605",
+        "target": "f8527f5f-624d-4cfd-8078-bd2191813fc2",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "868f573f-37f6-406f-a097-16640b0273f4",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "ecfe4dc0-0ccd-43b4-9014-e08489be1df9",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "502453fa-cdc4-4c1a-a2f9-107b11def8a6",
+        "connection_type": "短波",
+        "source": "0f4afcdc-1168-4b1b-8660-78e94589810f",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "314d35f8-c0ca-4ddd-a75d-79e604533d55",
+        "connection_type": "短波",
+        "source": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "target": "85ffa872-7a8a-42e6-8637-6394366bd839",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "11c04b93-5733-481d-bc98-4a5c6fd6847b",
+        "connection_type": "短波",
+        "source": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "target": "805cb34b-fd37-4c6c-a2c5-44f913346a03",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "167658a7-6939-4a47-9764-dfc589f67ffb",
+        "connection_type": "短波",
+        "source": "ef546234-f0e8-4bf9-9a97-7cdf8f387035",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3252d4c7-7fbe-45b7-9d9a-89ff10800131",
+        "connection_type": "短波",
+        "source": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "target": "0f398e9a-37b7-4427-8ea7-6b9ec8bcfad1",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "ab35a897-0a14-4ee0-8293-e92849d11b56",
+        "connection_type": "短波",
+        "source": "8984fd64-a149-4b94-a3f1-bc4e21b1beae",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "22cd14bc-3dc8-414e-911c-7c701ec4e631",
+        "connection_type": "短波",
+        "source": "4657ce28-047e-4a34-a39d-49d590c7a416",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "1c9b32af-4dc4-442c-a66e-5def2beaf0cb",
+        "connection_type": "短波",
+        "source": "89758b05-e342-41ed-8312-b9240c8f6303",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "2258d1ac-8cac-4031-999e-9caaf0e543fd",
+        "connection_type": "短波",
+        "source": "98591f10-eacd-4f91-9156-954c52cec851",
+        "target": "52d8aaa7-2965-494c-92ed-29f66810ca65",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "294f277d-4b96-4728-94bc-7306fc4738a2",
+        "connection_type": "短波",
+        "source": "8ce15461-d376-4ce8-87e8-5b1c58ff5cd9",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "754e23e6-6ea2-4d94-ae09-39d4269ea3a8",
+        "connection_type": "短波",
+        "source": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "target": "a59da7a7-b1ab-44b2-8921-a88e94efa98f",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "01cff629-aee4-4f32-9406-73a58df57831",
+        "connection_type": "短波",
+        "source": "e4befeb0-d7c2-40b5-b6a7-2e800003a087",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "6f1422df-0baf-4329-9357-196a9557d43a",
+        "connection_type": "短波",
+        "source": "29cc54af-1afe-4cc7-aefb-ee48a29508b1",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "af7dcd8f-206c-434d-b0a5-7bba5e81593f",
+        "connection_type": "短波",
+        "source": "6e28ee36-e5f4-4c62-a3b8-48c27a668c36",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "181196f7-ee7f-44d5-ab32-121775a054cc",
+        "connection_type": "短波",
+        "source": "9d966b04-2b31-476b-b666-26b2f2aeea6f",
+        "target": "7fe83107-eb67-422f-8abd-8b9976571d59",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "ccc7c0e2-c9b4-4b78-b392-3b70bf77d7ef",
+        "connection_type": "短波",
+        "source": "b2c16ef8-af46-4ce7-b462-bbb68456e4f5",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "7abc5551-00a1-4d02-bdb2-402900fe9df3",
+        "connection_type": "短波",
+        "source": "77dde63b-2f9d-476e-b9b9-0cd7db409d0b",
+        "target": "7fe83107-eb67-422f-8abd-8b9976571d59",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "a8f61a69-059d-415f-9128-92a1096761cd",
+        "connection_type": "短波",
+        "source": "83c136d1-08a8-47d3-abdb-1911acb97e47",
+        "target": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "fc11d1dd-5f90-4962-8a77-5c6590b2e1db",
+        "connection_type": "短波",
+        "source": "018cb6d6-44b5-482c-ac0b-8e77d86c05d3",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e052c249-fd4c-40b3-aad6-0bc74a5a9c93",
+        "connection_type": "短波",
+        "source": "f7fa43dc-264d-441b-b38d-165feca00611",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "6dde3cd5-1a44-4f48-8203-98d2f8c460e9",
+        "connection_type": "短波",
+        "source": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "target": "a04be001-74a2-4e17-8c55-2f945c489724",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "21134d63-c2d3-45a2-aa12-871ab0dfebe0",
+        "connection_type": "短波",
+        "source": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "target": "c8624392-fa37-41e6-bddd-75c5ac303f40",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "9f4d6903-e24b-4821-953e-d1b47e6156b0",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "77068c86-e22a-4930-832b-c33aba6e5e43",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "175ea4b3-39c6-4c07-b8bb-11d9bc7c24d3",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "ef13fdd7-8ef4-422b-94cc-e91311222f59",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "b159901a-d0b8-4698-8fd2-0c77e3a23555",
+        "connection_type": "短波",
+        "source": "77dde63b-2f9d-476e-b9b9-0cd7db409d0b",
+        "target": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "ae8685cf-039d-444e-9a34-eebeac5ef7d4",
+        "connection_type": "短波",
+        "source": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "target": "805cb34b-fd37-4c6c-a2c5-44f913346a03",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "00aa5551-7f9b-4e97-b967-bb18a173d069",
+        "connection_type": "短波",
+        "source": "f2b90a5f-83bd-45b3-ba36-5e15de07d79c",
+        "target": "2770a341-9fe9-414a-9240-cc56793a9bf7",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "b2b6fc17-1853-4e4b-9180-a5a15ec4d309",
+        "connection_type": "短波",
+        "source": "83bad927-acac-4f16-8dc6-4206da137e3a",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3790c5ec-6482-49ab-a7a7-dda984ec9741",
+        "connection_type": "短波",
+        "source": "3a3077ef-51a2-4c96-af91-f033d275d8fd",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e0b7269c-38b1-4635-ab2d-8f1803a2bf6f",
+        "connection_type": "短波",
+        "source": "fe10cf6f-4fb9-4a9b-9924-a9224a093d9d",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "9cd5b0b8-63df-4a1b-8f5f-d34a80c87191",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "9ea687f0-5068-4cbc-aed3-8e76a4b8b97f",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "eda2b79a-9a18-47c6-8bd3-e0fbe4e1ea3d",
+        "connection_type": "短波",
+        "source": "af171e3a-9105-4708-a1dc-718e120c50e4",
+        "target": "4833cebb-3f37-4e6e-a129-b1f8a50ccd57",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "b788534e-c536-4bcc-afcc-43a8ef9b533f",
+        "connection_type": "短波",
+        "source": "a7a37153-4595-45bf-b016-27b87c81f556",
+        "target": "2207260c-141e-49ff-bf1a-dd389965847f",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3e830be2-7f23-4931-b8e3-0480d4f0568d",
+        "connection_type": "短波",
+        "source": "d282b899-b324-4a79-824f-17647fe0ce7a",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "7eea6fed-972d-4dfb-b271-1a5a97f51ac2",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "409ae3dd-fd3e-4954-a864-653ab5ed074b",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "381f540f-fe5f-4164-b0e0-e6f4ad1bde77",
+        "connection_type": "短波",
+        "source": "f8527f5f-624d-4cfd-8078-bd2191813fc2",
+        "target": "52d8aaa7-2965-494c-92ed-29f66810ca65",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "691b9c31-1b6f-4437-85c0-f017e3c0150b",
+        "connection_type": "短波",
+        "source": "743a40ec-15b0-446b-8314-d0966b746d37",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "22cb00ff-3f7d-4151-9ba0-414b8a2c573b",
+        "connection_type": "短波",
+        "source": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "target": "b77c7f60-6732-4d5b-b185-bfc887913d51",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "0a6e22c3-f266-4187-81c6-9ba87f03b4f8",
+        "connection_type": "短波",
+        "source": "25b42ec9-083b-4a8f-be15-6e2c59f93ce9",
+        "target": "98591f10-eacd-4f91-9156-954c52cec851",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3fbec8c3-7a31-4d93-a5dc-a77c0242790e",
+        "connection_type": "短波",
+        "source": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "target": "b39a4241-44aa-4506-8cf9-3345bac98f92",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e2f9fa14-4f5a-4850-85cc-91de147b6b4d",
+        "connection_type": "短波",
+        "source": "fb4ef16d-fa91-4117-8ea4-10f3becb7b90",
+        "target": "b39a4241-44aa-4506-8cf9-3345bac98f92",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "04e0ecd6-68ea-4a8f-a7dc-402d8244cd3a",
+        "connection_type": "短波",
+        "source": "6845b051-11d0-481e-9cb7-02a27375daa9",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "6d9a9c94-5b1b-4f6f-8fdf-aeb1a1b7efa5",
+        "connection_type": "短波",
+        "source": "5ba08f89-874f-4987-9cee-346f3b414158",
+        "target": "ff44afca-1baa-4ef0-8761-6c87f0e7fd7d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "193915ba-a427-4069-8dba-ca958a1332ea",
+        "connection_type": "短波",
+        "source": "805cb34b-fd37-4c6c-a2c5-44f913346a03",
+        "target": "3a595097-a320-4ac9-80ad-36c1f9aebc1e",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "527849d7-4cce-4efd-9f1b-353d8ac03c9e",
+        "connection_type": "短波",
+        "source": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "target": "83c136d1-08a8-47d3-abdb-1911acb97e47",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "8e8544d9-f8d9-4538-96a1-bb6817c7f3ae",
+        "connection_type": "短波",
+        "source": "f0dd920e-46ff-4331-8ad3-df9fead022f7",
+        "target": "98591f10-eacd-4f91-9156-954c52cec851",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "403cb3a9-62b1-45b3-8572-7ae98a211577",
+        "connection_type": "短波",
+        "source": "7cf01546-5813-4afd-b157-2408072b40ff",
+        "target": "acaebca7-836c-467f-aa4c-f49d2746f5fe",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "68e65281-891f-401d-acd1-aedadd9b7f3c",
+        "connection_type": "短波",
+        "source": "52d8aaa7-2965-494c-92ed-29f66810ca65",
+        "target": "9d966b04-2b31-476b-b666-26b2f2aeea6f",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "3e6668e8-5123-4763-aeb4-67c6dbbcf810",
+        "connection_type": "短波",
+        "source": "134e3c46-9c47-4222-b99a-dbb99e959f33",
+        "target": "eb08a0a3-7853-4bab-b803-7d27842db6c3",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "748d4b2c-85d9-4b16-889f-54e2735a83ef",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "4dde5039-a35f-47e4-adeb-71a1eddb9fbb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "2c52b64e-0833-4550-bb13-6b6a32503524",
+        "connection_type": "短波",
+        "source": "bd392a6b-4d50-4099-977e-0f54001bbdcf",
+        "target": "eda43a97-949c-46a0-9e88-ad8b5a4e5178",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "46b889d2-1494-472f-adcb-afba070bd849",
+        "connection_type": "短波",
+        "source": "af171e3a-9105-4708-a1dc-718e120c50e4",
+        "target": "14f9add4-8fcd-4e27-86ea-5187f26f1866",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "18b0b929-5e44-4b5c-b271-4866fd7ef357",
+        "connection_type": "短波",
+        "source": "76c0af70-6009-4454-b46f-af2870647298",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "38f1fe2e-395d-4fcd-bd7b-ad97eb3921d3",
+        "connection_type": "短波",
+        "source": "66006ad8-3164-4b1a-b47f-4c4c02d06d67",
+        "target": "defed920-57c2-49b6-a171-8d81b40a4605",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "dbb4b156-f7ab-4339-b1c7-866ffe0d60f8",
+        "connection_type": "短波",
+        "source": "e0ec303c-f93f-456e-b27e-57ab7c763559",
+        "target": "97f1fbf3-74f7-445b-87cb-7fef35d2844c",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "7f0f7e04-e13f-4cd6-a1d1-83072f260fb2",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "4b5586fe-e7ef-4947-9e45-cbcf6ffd922d",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "a041a72a-3b7f-49b0-b40a-dd4ec3863813",
+        "connection_type": "短波",
+        "source": "85827127-c9bc-4a98-9051-5f08ee1e2505",
+        "target": "b9967c66-f7b4-4177-9279-d84a62781ecb",
+        "hierarchy": 0.0
+      },
+      {
+        "connection_id": "e54da565-88cc-4afc-8aa4-464377f2c5c9",
+        "connection_type": "短波",
+        "source": "0f5482e8-8306-47e5-b4c0-b5733e0efc72",
+        "target": "ef4e3795-a847-419d-bc13-065c307914f5",
+        "hierarchy": 0.0
+      }
+    ],
+    "areas": {
+      "74625bf1-6728-448f-8ecb-dbfbca1253fc": {
+        "area_id": "74625bf1-6728-448f-8ecb-dbfbca1253fc",
+        "name": "DMZ区",
+        "scope": [
+          {
+            "x": -138.0,
+            "y": 1300.0
+          },
+          {
+            "x": -138.0,
+            "y": 1700.0
+          },
+          {
+            "x": 302.0,
+            "y": 1700.0
+          },
+          {
+            "x": 302.0,
+            "y": 1300.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "082eef40-fa95-4c7c-b928-b69de50fe9b2": {
+        "area_id": "082eef40-fa95-4c7c-b928-b69de50fe9b2",
+        "name": "金融交易子网(核心子网)",
+        "scope": [
+          {
+            "x": 680.0,
+            "y": -200.0
+          },
+          {
+            "x": 680.0,
+            "y": 140.0
+          },
+          {
+            "x": 1520.0,
+            "y": 140.0
+          },
+          {
+            "x": 1520.0,
+            "y": -200.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "330eaf9d-625f-4d54-8410-69b05085883b": {
+        "area_id": "330eaf9d-625f-4d54-8410-69b05085883b",
+        "name": null,
+        "scope": [
+          {
+            "x": 1300.0,
+            "y": 1300.0
+          },
+          {
+            "x": 1300.0,
+            "y": 1700.0
+          },
+          {
+            "x": 1700.0,
+            "y": 1700.0
+          },
+          {
+            "x": 1700.0,
+            "y": 1300.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "4e7f3ecb-02cb-4d02-b891-de8e1ed80812": {
+        "area_id": "4e7f3ecb-02cb-4d02-b891-de8e1ed80812",
+        "name": "内网办公区",
+        "scope": [
+          {
+            "x": -96.0,
+            "y": 273.0
+          },
+          {
+            "x": -96.0,
+            "y": 633.0
+          },
+          {
+            "x": 384.0,
+            "y": 633.0
+          },
+          {
+            "x": 384.0,
+            "y": 273.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "8c17fffa-5cc4-427f-a1fd-52027223fc56": {
+        "area_id": "8c17fffa-5cc4-427f-a1fd-52027223fc56",
+        "name": "内部数据子网",
+        "scope": [
+          {
+            "x": 882.0,
+            "y": 250.0
+          },
+          {
+            "x": 882.0,
+            "y": 590.0
+          },
+          {
+            "x": 1362.0,
+            "y": 590.0
+          },
+          {
+            "x": 1362.0,
+            "y": 250.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "2d15ffdb-d073-441d-b7ff-1c288e134c89": {
+        "area_id": "2d15ffdb-d073-441d-b7ff-1c288e134c89",
+        "name": "交易所分封网络",
+        "scope": [
+          {
+            "x": 1800.0,
+            "y": 40.0
+          },
+          {
+            "x": 1800.0,
+            "y": 380.0
+          },
+          {
+            "x": 2120.0,
+            "y": 380.0
+          },
+          {
+            "x": 2120.0,
+            "y": 40.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "f64dca39-75b0-476b-a38a-196551b50c72": {
+        "area_id": "f64dca39-75b0-476b-a38a-196551b50c72",
+        "name": "金融交易子网",
+        "scope": [
+          {
+            "x": 560.0,
+            "y": 1300.0
+          },
+          {
+            "x": 560.0,
+            "y": 1700.0
+          },
+          {
+            "x": 960.0,
+            "y": 1700.0
+          },
+          {
+            "x": 960.0,
+            "y": 1300.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "71670358-f6fc-4fba-996b-e56d2417dfcf": {
+        "area_id": "71670358-f6fc-4fba-996b-e56d2417dfcf",
+        "name": "金融交易子网",
+        "scope": [
+          {
+            "x": 1920.0,
+            "y": 1300.0
+          },
+          {
+            "x": 1920.0,
+            "y": 1700.0
+          },
+          {
+            "x": 2300.0,
+            "y": 1700.0
+          },
+          {
+            "x": 2300.0,
+            "y": 1300.0
+          }
+        ],
+        "hierarchy": 0.0
+      },
+      "fb5560a1-28c0-4393-b40c-f38a7aa49a56": {
+        "area_id": "fb5560a1-28c0-4393-b40c-f38a7aa49a56",
+        "name": "DMZ区",
+        "scope": [
+          {
+            "x": 102.0,
+            "y": -200.0
+          },
+          {
+            "x": 102.0,
+            "y": 80.0
+          },
+          {
+            "x": 462.0,
+            "y": 80.0
+          },
+          {
+            "x": 462.0,
+            "y": -200.0
+          }
+        ],
+        "hierarchy": 0.0
+      }
+    }
+  },
+  "code": "OJ-000000",
+  "message": null,
+  "detail": null,
+  "timestamp": 1673233179579
+}

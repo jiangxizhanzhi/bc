@@ -82,12 +82,13 @@ public class BaseCombatLogHandler {
 		return "base_combat";
 	}
 
-	public BaseCombatLogHandler get(String type, Map<String, String> initData) {
+	public BaseCombatLogHandler get(String type, Map<String, String> initData, RbCombatLog rbCombatLog) {
 		BaseCombatLogHandler combatLogHandler = register.get(type);
 		if (combatLogHandler == null) {
 			combatLogHandler = register.get("common_combat");
 		}
 		combatLogHandler.setInitData(initData);
+		combatLogHandler.setInstance(rbCombatLog);
 		setAttr();
 		return combatLogHandler;
 	}

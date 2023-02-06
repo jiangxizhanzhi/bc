@@ -12,7 +12,10 @@ import java.util.List;
 public class RbCombatRecordsAllDataRsp implements Serializable {
 
 	@ApiModelProperty(value = "攻击阶段")
-	private List<RbAttackDefenseStage> rbAttackDefenseStages;
+	private List<RbAttackDefenseStage> rbAttackStages;
+
+	@ApiModelProperty(value = "防御阶段")
+	private List<RbAttackDefenseStage> rbDefenseStages;
 
 	@ApiModelProperty(value = "失陷主机")
 	private List<RbLostHost> lostHosts;
@@ -21,7 +24,8 @@ public class RbCombatRecordsAllDataRsp implements Serializable {
 	private List<RbAttackEvent> rbAttackDefenseEvents;
 
 	public RbCombatRecordsAllDataRsp() {
-		this.rbAttackDefenseStages = new ArrayList<>();
+		this.rbAttackStages = new ArrayList<>();
+		this.rbDefenseStages = new ArrayList<>();
 		this.lostHosts = new ArrayList<>();
 		this.rbAttackDefenseEvents = new ArrayList<>();
 	}

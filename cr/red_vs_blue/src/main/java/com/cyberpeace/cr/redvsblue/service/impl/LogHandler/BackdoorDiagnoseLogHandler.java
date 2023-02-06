@@ -38,10 +38,10 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		setIsLostHostSign(false);
 	}
 
-	@Override
-	public void setAttr() {
-		// TODO 123
-	}
+//	@Override
+//	public static void setAttr() {
+//		// TODO 123
+//	}
 
 	@Override
 	public String getEventContent() {

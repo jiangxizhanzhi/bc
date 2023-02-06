@@ -82,19 +82,18 @@ public class BaseCombatLogHandler {
 		return "base_combat";
 	}
 
-	public BaseCombatLogHandler get(String type, Map<String, String> initData, RbCombatLog rbCombatLog) {
+	public static BaseCombatLogHandler get(String type, Map<String, String> initData, RbCombatLog rbCombatLog) {
 		BaseCombatLogHandler combatLogHandler = register.get(type);
 		if (combatLogHandler == null) {
 			combatLogHandler = register.get("common_combat");
 		}
 		combatLogHandler.setInitData(initData);
 		combatLogHandler.setInstance(rbCombatLog);
-		setAttr();
+		combatLogHandler.setAttr();
 		return combatLogHandler;
 	}
 
 	public void setAttr() {
-		;
 	}
 
 	public String getDestIp() {
@@ -211,7 +210,7 @@ public class BaseCombatLogHandler {
 
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
-		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackDefenseStages()){
+		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackStages()){
 			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
 		}
 		for (RbLostHost rbLostHost: data.getLostHosts()) {
@@ -248,8 +247,9 @@ public class BaseCombatLogHandler {
 		List<SingleNodeAscription> singleNodeAscriptionList = new ArrayList<>();
 		Map<String, String> nodeData = new HashMap<>();
 		for (String nodeIp : nodeIpList) {
-			if (nodeIp == null)
+			if (nodeIp == null) {
 				continue;
+			}
 			List<Integer> ascription = new ArrayList<>();
 			SingleNodeAscription singleNodeAscription = new SingleNodeAscription(nodeIp, ascription);
 			for (JSONObject nodeInfo : nodeInfoList) {
@@ -291,7 +291,7 @@ public class BaseCombatLogHandler {
 		if(!rbCombatLog.getAttackPhase().equals(CrCommonConstants.AttackPhase.OTHER.getCode())){
 			RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder().
 					resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getSourceGroup()).attackPhase(rbCombatLog.getAttackPhase()).content(getAttackStageContent(rbCombatLog)).build();
-			data.getRbAttackDefenseStages().add(rbAttackDefenseStage);
+			data.getRbAttackStages().add(rbAttackDefenseStage);
 		}
 		return data;
 	}

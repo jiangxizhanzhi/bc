@@ -22,7 +22,8 @@ public class FirewallPolicyLogHandler extends DefenseCombatLogHandler {
 		return "firewall_policy";
 	}
 
-	public String getDestIp() {
+	@Override
+    public String getDestIp() {
 		String destAddr = getInitData().get("destAddrIp");
 		if (StringUtils.isBlank(destAddr)) {
 			return destAddr.split("/")[0];
@@ -30,6 +31,7 @@ public class FirewallPolicyLogHandler extends DefenseCombatLogHandler {
 		return null;
 	}
 
+	@Override
 	public String getSourceIp() {
 		String srcAddr = getInitData().get("srcAddrIp");
 		if (StringUtils.isBlank(srcAddr)) {
@@ -38,24 +40,28 @@ public class FirewallPolicyLogHandler extends DefenseCombatLogHandler {
 		return null;
 	}
 
+	@Override
 	public Integer getSourceGroup() {
 		// todo 123
 		return null;
 	}
 
+	@Override
 	public Integer getDestGroup() {
 		return null;
 	}
 
+	@Override
 	public Date getEventTime() {
 		// todo 123
 		getInitData().get("cTime");
 		return null;
 	}
 
+	@Override
 	public String getEventContent() {
 		String groupName = getGroupName(getSourceGroup());
-		String action = getInitData().get("action").equals("ACCEPT")?"允许" : "禁止";
+		String action = "ACCEPT".equals(getInitData().get("action"))?"允许" : "禁止";
 		return String.format("%s配置策略为：%s%s到%s的网络访问", groupName, action, getSourceIp(), getDestIp());
 	}
 

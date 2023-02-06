@@ -87,7 +87,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 
-		BaseCombatLogHandler combatLogHandler = baseCombatLogHandler.get(initData.get("datatype"), initData, null);
+		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("datatype"), initData, null);
 		combatLogHandler.save();
 		combatLogHandler.sendMessage();
 
@@ -132,16 +132,16 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		LambdaQueryWrapper<RbCombatLog> filter = new LambdaQueryWrapper<>();
 		filter.eq(RbCombatLog::getRoomId, roomId);
 		List<RbCombatLog> rbCombatLogs = rbCombatLogMapper.selectList(filter);
-		RbCombatRecordsRsp res = new RbCombatRecordsRsp();
+		RbCombatRecordsRsp res;
 		RbCombatRecordsAllDataRsp tmpData = new RbCombatRecordsAllDataRsp();
 		rbCombatLogs.forEach(
 				rbCombatLog -> {
 					Integer eventType = rbCombatLog.getEventType();
-					BaseCombatLogHandler baseCombatLogHandler = BaseCombatLogHandler.get(String.valueOf(eventType));
+					BaseCombatLogHandler baseCombatLogHandler = BaseCombatLogHandler.get(String.valueOf(eventType), null, rbCombatLog);
 					baseCombatLogHandler.addData(rbCombatLog, tmpData);
 				}
 		);
-		handlerCombatData(tmpData);
+		res = handlerCombatData(tmpData);
 		return res;
     }
 
@@ -160,7 +160,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		String title = mission.getTitle();
-		RbCombatLog rbCombatLog = new RbCombatLog();
+		RbCombatLog rbCombatLog = RbCombatLog.builder().build();
 		if (title.equals("1_情报侦查")){
 			if(submitEvaluationReq.getScore() > 0){
 				String roomId = submitEvaluationReq.getRoomId();
@@ -178,7 +178,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	}
 
-	private void handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {
+	private RbCombatRecordsRsp handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {
 		RbCombatRecordsRsp res = new RbCombatRecordsRsp();
 		res.setNoGroup(tmpData.getRbAttackDefenseEvents());
 		Integer redCode = CrRole.RbRoleGroup.RED.getCode();
@@ -200,6 +200,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		groups.setBlueRole(blueGroup);
 		groups.setRedRole(redGroup);
 		res.setGroup(groups);
+		return res;
 
 	}
 

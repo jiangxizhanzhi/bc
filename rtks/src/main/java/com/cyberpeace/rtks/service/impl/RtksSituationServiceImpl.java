@@ -188,13 +188,12 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// get match records
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		if (recordContextList.isEmpty()) {
-			return Lists.newArrayList();
-		}
+
 		// get existing users
 		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
 				.distinct().collect(Collectors.toList());
-		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
+		Map<String, String> idNameMap = userIds.isEmpty() ? Maps.newHashMap()
+				: remoteUserService.getIdNameMap(userIds);
 		// count
 		Map<String, RoleContext> roleCountMap = Maps.newHashMap();
 		String userId;

@@ -715,6 +715,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 								practiceId, practiceTheory.getContent());
 						return null;
 					}
+					practiceTheory.setResourceId(IDGeneratorUtil.getID());
 
 					return practiceTheory;
 				});

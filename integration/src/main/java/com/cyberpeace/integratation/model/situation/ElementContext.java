@@ -98,9 +98,17 @@ public class ElementContext implements Serializable {
 		this.role = EnumUtils.getEnumDescByCode(role, ElementRole.class);
 	}
 
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public void setVrType(Integer type) {
 		this.vrType = EnumUtils.getEnumDescByCode(type, ElementVrType.class);
 	}
+
+	public void setVrType(String vrType) {
+		this.vrType = vrType;
+	};
 
 	public void setParents(List<String> ids) {
 		this.parentIds = ids;

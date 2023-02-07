@@ -115,3 +115,8 @@ p{
   padding-right: 50px;
   color: rgba(255, 255, 255, 0.9);
 }
+
+code,p,h1,h2,h3,h4,h5,h6,strong,a,li,del,input{
+  word-break: break-all;
+  white-space: pre-wrap;
+}

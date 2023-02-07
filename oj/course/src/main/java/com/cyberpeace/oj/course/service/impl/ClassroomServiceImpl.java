@@ -1198,13 +1198,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				fileUrl = j + "." + FileUtil.getFileSuffix(fileUrl);
 				mdContent = mdContent.replace(str, fileUrl);
 			}
-			//替换<p></p>标签中的\n、\r为<br>标签
 			String reportContent = MdUtil.mdToHtmlForApiDoc(mdContent);
-			List<String> pLabelList = LocalStringUtil.getMatchStr(reportContent, PatternConstant.HTML_P);
-			for(String pLabel: pLabelList){
-				String newPLabel = pLabel.replace("\n","<br>").replace("\r","<br>");
-				reportContent = reportContent.replace(pLabel, newPLabel);
-			}
 			//实验报告
 			jsonObject.put("report_content", reportContent);
 			//是否通过

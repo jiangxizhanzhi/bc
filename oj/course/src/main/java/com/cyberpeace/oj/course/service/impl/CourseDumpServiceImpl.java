@@ -197,7 +197,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 				s -> null != s.getParentId() && s.getParentId().equals(chapterOne.getResourceId()))
 				.sorted(Comparator.comparing(LessonConfig::getIndex)).collect(Collectors.toList());
 		for (LessonConfig chapterSecond : chapterSeconds) {
-			combineChapterSecond(destFilePath, currentChapter, index, chapterSecond,
+			combineChapterSecond(destFilePath, chapterIndex, index, chapterSecond,
 					chapterFileName, lessons, isDumpTopo, sceneNumber, disableImageExport);
 			index += 1;
 		}

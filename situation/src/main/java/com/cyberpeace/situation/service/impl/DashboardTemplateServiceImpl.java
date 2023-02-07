@@ -66,6 +66,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
     @Override
     public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
+        //存在resourceId直接走更新
+        String templateReqResourceId = dashBoardTemplateReq.getResourceId();
+        if (StringUtils.isNotBlank(templateReqResourceId)) {
+            this.updateDashboardTemplate(dashBoardTemplateReq);
+            return templateReqResourceId;
+        }
         //校验模板名称
         checkTemplateName(dashBoardTemplateReq.getName(), null);
 

@@ -29,11 +29,14 @@ import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
+import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.GisMark;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 
@@ -56,6 +59,12 @@ public class GisController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private DashboardTemplateMapper dashboardTemplateMapper;
+
+	@Autowired
+	private DashboardTemplateService dashboardTemplateService;
 
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
@@ -177,6 +186,14 @@ public class GisController {
 					value = "模板ID") String templateId,
 			@RequestParam("type") @ApiParam(required = true, name = "type",
 					value = "类型 1-模板 2-实例") Integer type) {
+
+		if (type.equals(1)) {
+			DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
+			if (dashboardTemplate != null) {
+				return new BaseRsp<>(new TemplatePlatformRes(
+						JsonUtil.toJsonObject(dashboardTemplate.getViewAngle(), ViewAngle.class)));
+			}
+		}
 
 		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
 				.getDashboardTemplateContext(templateId);

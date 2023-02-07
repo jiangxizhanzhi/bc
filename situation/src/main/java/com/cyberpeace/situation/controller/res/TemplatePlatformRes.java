@@ -20,4 +20,12 @@ public class TemplatePlatformRes implements Serializable {
 	@ApiModelProperty("初始视角")
 	private ViewAngle viewAngle;
 
+	public TemplatePlatformRes() {
+
+	}
+
+	public TemplatePlatformRes(ViewAngle viewAngle) {
+		this.viewAngle = viewAngle;
+	}
+
 }

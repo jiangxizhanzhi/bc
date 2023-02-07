@@ -139,7 +139,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 	public IPage<LibPracticeListBo> selectLibPractice(Page page, LibPracticeQueryBo queryBo,
 			AuthContext authContext) {
 
-		List<String> permissionIds = practiceSetMapper.selectByAuthAndPublic(authContext, authContext.getIsWeb());
+		List<String> permissionIds = practiceSetMapper.selectByAuthAndPublic(authContext, true);
 		if (CollectionUtils.isEmpty(permissionIds)
 				|| (StringUtils.isNotBlank(queryBo.getPracticeSetId())
 						&& !permissionIds.contains(queryBo.getPracticeSetId()))) {

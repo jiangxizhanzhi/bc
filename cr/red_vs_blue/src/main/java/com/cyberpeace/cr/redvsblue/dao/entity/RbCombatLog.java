@@ -4,17 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("cr_rb_combat_log")
 public class RbCombatLog extends BaseTable {
 

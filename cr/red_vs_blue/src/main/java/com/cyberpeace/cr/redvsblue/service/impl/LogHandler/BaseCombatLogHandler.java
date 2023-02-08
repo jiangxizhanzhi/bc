@@ -7,6 +7,7 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.*;
@@ -159,8 +160,8 @@ public class BaseCombatLogHandler {
 		return initData.get("event_content");
 	}
 
-	public Date getEventTime() {
-		return new Date(Long.parseLong(initData.get("datatime")));
+	public String getEventTime() {
+		return TimeUtil.format1(new Date(Long.parseLong(initData.get("datatime")) * 1000));
 	}
 
 	public Boolean getIsLostHostSign() {
@@ -186,9 +187,9 @@ public class BaseCombatLogHandler {
 		return RbCombatLog.builder().roomId(getRedVsBlue()).eventType(getEventType()).eventCategory(getEventCategory()).attackPhase(getAttackPhase())
 						  .defensePhase(getDefensePhase()).attackAction(getAttackAction()).defenseAction(getDefenseAction())
 						  .actionType(getActionType()).sourceGroup(getSourceGroup()).sourceIp(getSourceIp())
-						  .sourceName(getSourceName()).destGroup(getDestGroup()).destIp(getDestIp())
+						  .sourceName(getSourceName()).destGroup(this.getDestGroup()).destIp(getDestIp())
 						  .destName(getDestName()).agentName(getAgentName()).agentIp(getAgentIp())
-						  .eventContent(getEventContent()).eventTime(getEventTime()).isLostHost(getIsLostHostSign())
+						  .eventContent(getEventContent()).eventTime(TimeUtil.toDate1(getEventTime())).isLostHost(getIsLostHostSign())
 						  .originalLog(initData.get("original_log")).build();
 	}
 
@@ -217,7 +218,7 @@ public class BaseCombatLogHandler {
 			pushDataToRoom(rbLostHost, getRedVsBlue());
 		}
 		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
-			if (!rbAttackEvent.getVisible()) {
+			if (rbAttackEvent != null && !rbAttackEvent.getVisible()) {
 				delayHandler();
 			}
 			pushDataToRoom(rbAttackEvent, getRedVsBlue());
@@ -330,7 +331,7 @@ public class BaseCombatLogHandler {
 				attackEventDescribe = String.format("{%s}对{%s}发动【{%s}】攻击", sourceMachine, destMachine, attackAction);
 				defenseEventDescribe = String.format("{%s}检测到来自{%s}的【{%s}】攻击", sourceMachine, destMachine, attackAction);
 				visible = Boolean.FALSE;
-				RbAttackEvent rbAttackEvent = RbAttackEvent.builder().visible(visible).resourceId(rbCombatLog.getResourceId()).
+				RbAttackEvent rbAttackEvent = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).
 						group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("{%s}{%s}",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 						.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 						.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
@@ -405,6 +406,22 @@ public class BaseCombatLogHandler {
 																		.messageIdentifier(identifier).build();
 
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	public Boolean isSpringboard() {
+		Map<String, String> initData = this.getInitData();
+		String pName = initData.get("detail.pname");
+		if (StringUtils.isNotBlank(pName)) {
+			if (pName.startsWith("frp") || pName.startsWith("ew")) {
+				return true;
+			}
+		}
+
+		String comment = initData.get("detail.backdoor_type");
+		if (StringUtils.isNotBlank(comment) && comment.contains("Msf")) {
+			return true;
+		}
+		return false;
 	}
 
 

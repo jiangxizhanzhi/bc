@@ -6,9 +6,13 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 // 外网暴力破解日志处理类
+@Data
+@Service
 public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 
 
@@ -17,7 +21,6 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 	Integer attackAction = AttackAction.PASSWORD_BRUTE.getCode();
 	Integer attackType = ActionType.BOUNDARY_BREAKTHROUGH.getCode();
 	Integer attackPattern = AttackPattern.BRUTEFORCE_EXT.getCode();
-
 
 	@Override
 	public String getCode() {

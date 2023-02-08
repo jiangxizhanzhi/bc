@@ -38,14 +38,18 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		setIsLostHostSign(false);
 	}
 
-//	@Override
-//	public static void setAttr() {
-//		// TODO 123
-//	}
+	@Override
+	public void setAttr() {
+		if (isSpringboard()) {
+			setSpringboardAttr();
+		}else {
+			setDeliveryAttr();
+		}
+	}
 
 	@Override
 	public String getEventContent() {
-		if (getAttackAction().equals(CrCommonConstants.AttackAction.SPRINGBOARD.getCode())) {
+		if (CrCommonConstants.AttackAction.SPRINGBOARD.getCode().equals(getAttackAction())) {
 			return String.format("在%s上建立跳板", getDestName());
 		}else if (getAttackAction().equals(CrCommonConstants.AttackAction.DELIVERY.getCode())) {
 			return String.format("对%s进行文件投递", getDestName());
@@ -55,7 +59,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	@Override
 	public String getAttackStageContent(RbCombatLog rbCombatLog) {
-		if (rbCombatLog.getActionType().equals(CrCommonConstants.ActionType.DEFENSIVE_CONFRONTATION.getCode())) {
+		if (CrCommonConstants.ActionType.DEFENSIVE_CONFRONTATION.getCode().equals(rbCombatLog.getActionType())) {
 			return String.format("【文件投递】%s", rbCombatLog.getEventContent());
 		}
 		return rbCombatLog.getEventContent();
@@ -66,7 +70,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		String sourceGroup = rbAttackEvent.getSourceGroup();
 		String destMachine = rbAttackEvent.getDestMachine();
 		String action = rbAttackEvent.getAction();
-		if (rbCombatLog.getAttackAction().equals(CrCommonConstants.AttackAction.SPRINGBOARD.getCode())) {
+		if (CrCommonConstants.AttackAction.SPRINGBOARD.getCode().equals(rbCombatLog.getAttackAction())) {
 			rbAttackEvent.setEventDescribe(String.format("%s在%s上【建立跳板，实现端口转发】", sourceGroup, destMachine));
 		}else {
 			rbAttackEvent.setEventDescribe(String.format("%s对%s进行了【%s】", sourceGroup, destMachine, action));
@@ -84,7 +88,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 		String redVsBlue = getRedVsBlue();
 		String machineId = getInitData().get("agent_id");
 		String process = getInitData().get("detail.pid");
-		if (StringUtils.isBlank(process)) {
+		if (StringUtils.isNotBlank(process)) {
 			RbMaliceProcess rbMaliceProcess = new RbMaliceProcess(redVsBlue, machineId, process);
 			rbMaliceProcessMapper.insert(rbMaliceProcess);
 		}

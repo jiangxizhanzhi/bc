@@ -310,7 +310,20 @@ public interface CrCommonConstants {
 			this.english = english;
 		}
 
+	}
 
+	class RedVsBlueDockingWebsocket{
+		public static final Integer ATTACK_DEFENSE_STAGE = 1;
+		public static final Integer ATTACK_DEFENSE_LOG = 2;
+		public static final Integer RISK_DISCOVERY = 3;
+		public static final Integer LOST_HOST = 4;
+		public static final Integer ATTACK_PATTERN = 5;
+		public static final Integer TASK_PROGRESS = 6;
+		public static final Integer TASK_STATUS = 7;
+		public static final Integer SCORE = 8;
+		public static final Integer ATTACK_TYPE = 9;
+		public static final Integer ATTACK_DEFENSE_EVENT = 10;
+		public static final Integer DEFENSE_STAGE = 11;
 	}
 
 

@@ -58,7 +58,7 @@ public class MalicOperaLogHandler extends CommonCombatLogHandler {
 		} else if (isFirewallEnable()) {
 			setEventCategory(CrCommonConstants.EventCategory.DEFENSE.getCode());
 			setDefenseAction(CrCommonConstants.DefenseAction.HOST_HARDENING.getCode());
-		} else if (StringUtils.isBlank(getSourceIp())) {
+		} else if (StringUtils.isNotBlank(getSourceIp())) {
 			setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
 			setAttackPhase(CrCommonConstants.AttackPhase.EXPLOITATION.getCode());
 			setAttackAction(CrCommonConstants.AttackAction.OTHER.getCode());

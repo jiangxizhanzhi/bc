@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
@@ -21,8 +22,11 @@ public class DefenseMissionLogHandler extends DefenseCombatLogHandler {
 
 	@Override
 	public RbCombatRecordsAllDataRsp addData(RbCombatRecordsAllDataRsp data) {
-		// todo 123
-
+		if (data == null) {
+			data = new RbCombatRecordsAllDataRsp();
+		}
+		addDefenseStage(data);
+		addAttackDefenseEvent(data, getInstance());
 		return data;
 	}
 
@@ -33,8 +37,8 @@ public class DefenseMissionLogHandler extends DefenseCombatLogHandler {
 													  .content(String.format("【%s】%s", CrCommonConstants.EventType.getEnumByCode(rbCombatLog.getEventType(),
 															  CrCommonConstants.EventType.class).getDesc(), rbCombatLog.getEventContent()))
 													  .build();
-		// todo 123
-		return null;
+		data.getOther().put(CrCommonConstants.RedVsBlueDockingWebsocket.DEFENSE_STAGE, JsonUtil.java2JsonObject(rbDefenseStage));
+		return data;
 	}
 
 	public RbDefenseEvent updateDefenseEvent(RbDefenseEvent rbDefenseEvent, RbCombatLog rbCombatLog) {

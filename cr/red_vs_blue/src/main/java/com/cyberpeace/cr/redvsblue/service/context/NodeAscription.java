@@ -22,6 +22,6 @@ public class NodeAscription implements Serializable {
 				return singleNodeAscription.getAscription();
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

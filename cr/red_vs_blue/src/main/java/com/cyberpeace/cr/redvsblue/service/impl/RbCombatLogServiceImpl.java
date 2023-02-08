@@ -86,12 +86,10 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		if (initData.get("event_type") == null){
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
-
-		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("datatype"), initData, null);
+		System.out.println(initData.toString());
+		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("event_type"), initData, null);
 		combatLogHandler.save();
 		combatLogHandler.sendMessage();
-
-		System.out.println(initData.toString());
 	}
 
 	@Override

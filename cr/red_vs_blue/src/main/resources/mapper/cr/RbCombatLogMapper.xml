@@ -7,7 +7,7 @@
         from cr_rb_combat_log
         <where>
             <if test="originalLog != null and originalLog != ''">
-                <bind name="originalLog" value="'%' + userId + '%'"/>
+                <bind name="originalLog" value="'%' + originalLog + '%'"/>
                 original_log like #{originalLog}
             </if>
         </where>

@@ -52,13 +52,7 @@ public class ExcelDataHandler {
 			// 创建文件流
 			fileInputStream = new FileInputStream(filePath);
 
-			String fileSuffix = FileUtil.getFileSuffix(filePath);
-			if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
-				workbook = new HSSFWorkbook(fileInputStream);
-			}
-			if (fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
-				workbook = new XSSFWorkbook(fileInputStream);
-			}
+			workbook = WorkbookFactory.create(fileInputStream);
 
 			// 获取sheet
 			sheet = workbook.getSheetAt(sheetIndex);
@@ -87,13 +81,7 @@ public class ExcelDataHandler {
 		try {
 			fileInputStream = new FileInputStream(filePath);
 
-			String fileSuffix = FileUtil.getFileSuffix(filePath);
-			if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
-				workbook = new HSSFWorkbook(fileInputStream);
-			}
-			if (fileSuffix.equals(FileSunffixConstant.XLSX.getDesc())) {
-				workbook = new XSSFWorkbook(fileInputStream);
-			}
+			workbook = WorkbookFactory.create(fileInputStream);
 
 			// 获取sheet
 			sheet = workbook.getSheet(sheetName);

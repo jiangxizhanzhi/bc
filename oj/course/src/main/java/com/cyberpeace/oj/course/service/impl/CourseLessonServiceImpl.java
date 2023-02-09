@@ -669,6 +669,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 目录数组组装
 			lessonConfigs.add(initLessonConfig(courseLesson));
 		}
+		Set<String> lessonNameSet = courseLessons.stream().map(CourseLesson::getName).collect(Collectors.toSet());
+		if (courseLessons.size() != lessonNameSet.size()) {
+			throw new BusinessException(OjBusinessErrorCode.REPEAT_IMPORT_SAME_LESSON_NAME);
+		}
 
 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
 

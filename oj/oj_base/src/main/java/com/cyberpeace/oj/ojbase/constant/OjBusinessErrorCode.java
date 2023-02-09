@@ -296,4 +296,7 @@ public interface OjBusinessErrorCode {
 
 	/** 习题集名称重复*/
 	String PRACTICE_SET_IS_EXIST = "102097";
+
+	/** 重复导入相同名称课时*/
+	String REPEAT_IMPORT_SAME_LESSON_NAME = "102098";
 }

@@ -26,14 +26,13 @@ public class RbCombatRecordsAllDataRsp implements Serializable {
 	@ApiModelProperty(value = "攻击动态")
 	private List<RbAttackEvent> rbAttackDefenseEvents;
 
-	@ApiModelProperty()
-	private Map<Integer, JSONObject> other;
+
 
 	public RbCombatRecordsAllDataRsp() {
 		this.rbAttackStages = new ArrayList<>();
 		this.rbDefenseStages = new ArrayList<>();
 		this.lostHosts = new ArrayList<>();
 		this.rbAttackDefenseEvents = new ArrayList<>();
-		this.other = new HashMap<>();
+
 	}
 }

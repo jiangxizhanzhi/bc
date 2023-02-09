@@ -6,6 +6,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -321,17 +322,18 @@ public class BaseCombatLogHandler {
 		String defenseAction;
 		String attackEventDescribe;
 		String defenseEventDescribe;
+		RbAttackEvent rbAttackEvent = null;
 		if (!rbCombatLog.getAttackAction().equals(CrCommonConstants.AttackAction.OTHER.getCode()) ||
 				!rbCombatLog.getDefenseAction().equals(CrCommonConstants.DefenseAction.OTHER.getCode())){
 			if(rbCombatLog.getEventCategory().equals(CrCommonConstants.EventCategory.ATTACK.getCode()) &&
 					!rbCombatLog.getAttackAction().equals(CrCommonConstants.AttackAction.OTHER.getCode())) {
 				// TODO 获取attack action对应的AttackActionType
-				String attackAction = CrCommonConstants.AttackAction.OTHER.getDesc();
+				String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
 				defenseAction = CrCommonConstants.DefenseAction.ATTACK_SOURCE_DETECTED.getDesc();
 				attackEventDescribe = String.format("{%s}对{%s}发动【{%s}】攻击", sourceMachine, destMachine, attackAction);
 				defenseEventDescribe = String.format("{%s}检测到来自{%s}的【{%s}】攻击", sourceMachine, destMachine, attackAction);
 				visible = Boolean.FALSE;
-				RbAttackEvent rbAttackEvent = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).
+				rbAttackEvent = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).
 						group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("{%s}{%s}",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 						.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 						.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
@@ -342,7 +344,7 @@ public class BaseCombatLogHandler {
 					!rbCombatLog.getDefenseAction().equals(CrCommonConstants.DefenseAction.OTHER.getCode())){
 				visible = Boolean.TRUE;
 				// TODO 匹配对应的防御行为类型
-				defenseAction = CrCommonConstants.DefenseAction.CONFIGURE_FIREWALL_POLICY.getDesc();
+				defenseAction = EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class);
 				defenseEventDescribe = String.format("{%s}【{%s}】",destMachine, defenseAction);
 			} else {
 				return data;
@@ -353,7 +355,12 @@ public class BaseCombatLogHandler {
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 					.action(defenseAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();
 			rbDefenseEvent = updateDefenseEvent(rbDefenseEvent, rbCombatLog);
-			data.getRbAttackDefenseEvents().add(rbDefenseEvent);
+			if(null != rbAttackEvent){
+				data.getRbAttackDefenseEvents().add(rbAttackEvent);
+			}
+			if(null != rbDefenseEvent){
+				data.getRbAttackDefenseEvents().add(rbDefenseEvent);
+			}
 
 		}
 

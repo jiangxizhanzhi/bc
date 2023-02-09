@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDefenseEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDefenseStage;
@@ -32,12 +33,12 @@ public class DefenseMissionLogHandler extends DefenseCombatLogHandler {
 
 	public RbCombatRecordsAllDataRsp addDefenseStage(RbCombatRecordsAllDataRsp data) {
 		RbCombatLog rbCombatLog = getInstance();
-		RbDefenseStage rbDefenseStage = RbDefenseStage.builder().resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getDestGroup())
-													  .defensePhase(rbCombatLog.getDefensePhase())
+		RbAttackDefenseStage rbDefenseStage = RbAttackDefenseStage.builder().resourceId(rbCombatLog.getResourceId()).group(rbCombatLog.getDestGroup())
+													  .attackPhase(rbCombatLog.getDefensePhase())
 													  .content(String.format("【%s】%s", CrCommonConstants.EventType.getEnumByCode(rbCombatLog.getEventType(),
 															  CrCommonConstants.EventType.class).getDesc(), rbCombatLog.getEventContent()))
 													  .build();
-		data.getOther().put(CrCommonConstants.RedVsBlueDockingWebsocket.DEFENSE_STAGE, JsonUtil.java2JsonObject(rbDefenseStage));
+		data.getRbDefenseStages().add(rbDefenseStage);
 		return data;
 	}
 

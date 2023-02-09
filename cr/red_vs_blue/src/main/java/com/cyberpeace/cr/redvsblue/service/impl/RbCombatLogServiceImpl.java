@@ -145,12 +145,47 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public RbMissionStatusDataRsp getMissionStatus(String sceneId) {
-		RbRoom rbRoom = rbRoomMapper.selectById(sceneId);
-		String templateId = rbRoom.getTemplateId();
-		RbTemplate rbTemplate = rbTemplateMapper.selectById(templateId);
-		String roleConfig = rbTemplate.getRoleConfig();
-		List<MissionTemplate> missionTemplates = missionTemplateService.batchGetByMissionSchemeJson(roleConfig);
-		return null;
+		RbMissionStatusDataRsp res = new RbMissionStatusDataRsp();
+		List<RbMissionStatusGroupDataRsp> redRole = new ArrayList<>();
+		List<RbMissionStatusGroupDataRsp> blueRole = new ArrayList<>();
+
+		List<CrTask> crTasks = crTaskMapper.selectByRoomId(sceneId);
+		Map<String, List<CrTask>> taskMap = StreamApiUtils.groupBy(crTasks, CrTask::getRoleId);
+
+		List<CrRole> rolesByRoom = crRoleMapper.getRolesByRoom(sceneId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		Map<String, CrRole> stringCrRoleMap = StreamApiUtils.toMap(rolesByRoom, CrRole::getResourceId, tmp -> tmp);
+
+		List<Mission> missions = missionMapper.selectByRoomId(sceneId);
+		Map<String, String> missionMaps = StreamApiUtils.toMap(missions, Mission::getResourceId, MissionBase::getTitle);
+
+		for (Map.Entry<String, List<CrTask>> entry : taskMap.entrySet()) {
+			String roleId = entry.getKey();
+			CrRole crRole = stringCrRoleMap.get(roleId);
+			List<CrTask> value = entry.getValue();
+			if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
+				value.forEach(val ->{
+					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, val);
+					redRole.add(tmp);
+				});
+			}
+			if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())){
+				value.forEach(val ->{
+					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, val);
+					blueRole.add(tmp);
+				});
+			}
+		}
+		res.setRedRole(redRole);
+		res.setBlueRole(blueRole);
+		return res;
+	}
+
+
+	private RbMissionStatusGroupDataRsp getRbMissionStatusGroupDataRsp(Map<String, String> missionMaps, CrTask val) {
+		RbMissionStatusGroupDataRsp tmp = new RbMissionStatusGroupDataRsp();
+		tmp.setTask(missionMaps.get(val.getMissionId()));
+		tmp.setStatus(val.getStatus());
+		return tmp;
 	}
 
 	public RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId){

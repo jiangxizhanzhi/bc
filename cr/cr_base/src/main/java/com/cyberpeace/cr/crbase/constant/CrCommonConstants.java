@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.constant;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.constant.BaseI18n;
 import lombok.Getter;
 
@@ -76,7 +77,7 @@ public interface CrCommonConstants {
 	/**
 	 * 攻击方式
 	 */
-	public enum  AttackPattern {
+	public enum  AttackPattern implements GenericEnum {
 		OTHER(1, "其它"),
 		BRUTEFORCE_EXT(2, "外网暴力破解"),
 		BRUTEFORCE_INTER(3, "内网暴力破解"),
@@ -98,7 +99,7 @@ public interface CrCommonConstants {
 	
 
 	//事件类别
-	public enum EventCategory{
+	public enum EventCategory implements GenericEnum {
 		OTHER(1, "其它"),
 		ATTACK(2, "攻击"),
 		DEFENSE(3, "防守");
@@ -118,7 +119,7 @@ public interface CrCommonConstants {
 	
 
 	// 攻击阶段
-	public enum AttackPhase{
+	public enum AttackPhase implements GenericEnum {
 		OTHER(1, "其它"),
 		RECONNAISSANCE(2, "目标侦察"),
 		DELIVERY(3, "载荷投递"),
@@ -139,7 +140,7 @@ public interface CrCommonConstants {
 	
 
 	// 防御阶段
-	public enum DefensePhase{
+	public enum DefensePhase implements GenericEnum {
 		OTHER(1, "其它"),
 		COUNTER_INVESTIGATION(2, "反侦察"),
 		REVERSE_DELIVERY(3, "反投递"),
@@ -161,7 +162,7 @@ public interface CrCommonConstants {
 	
 
 	// 攻击行为
-	public enum AttackAction{
+	public enum AttackAction implements GenericEnum  {
 
 		OTHER(1, "其它"),
 		NET_SCAN(2, "网络扫描"),
@@ -185,7 +186,7 @@ public interface CrCommonConstants {
 	
 
 	// 防御行为
-	public enum DefenseAction{
+	public enum DefenseAction implements GenericEnum {
 
 		OTHER(1, "其它"),
 		ATTACK_SOURCE_DETECTED(2, "检测到攻击源"),
@@ -213,7 +214,7 @@ public interface CrCommonConstants {
 
 
 	// 行为类别
-	public enum ActionType{
+	public enum ActionType implements GenericEnum {
 		OTHER(1, "其它"),
 		BOUNDARY_BREAKTHROUGH(2, "边界突破"),
 		COMMAND_CONTROL(3, "命令与控制"),
@@ -237,7 +238,7 @@ public interface CrCommonConstants {
 	/**
 	 * 事件类型
 	 */
-	public enum EventType {
+	public enum EventType implements GenericEnum {
 
 		OTHER(1, "其它"),
 		BRUTEFORCE_EXT(2, "外网暴力破解"),

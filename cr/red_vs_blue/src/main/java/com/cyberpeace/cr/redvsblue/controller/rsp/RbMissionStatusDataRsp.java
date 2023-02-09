@@ -16,9 +16,9 @@ public class RbMissionStatusDataRsp implements Serializable {
 
 
     @ApiModelProperty(value = "红方攻击信息")
-    private RbMissionStatusGroupDataRsp redRole;
+    private List<RbMissionStatusGroupDataRsp> redRole;
 
     @ApiModelProperty(value = "蓝方攻击信息")
-    private RbMissionStatusGroupDataRsp blueRole;
+    private List<RbMissionStatusGroupDataRsp> blueRole;
 
 }

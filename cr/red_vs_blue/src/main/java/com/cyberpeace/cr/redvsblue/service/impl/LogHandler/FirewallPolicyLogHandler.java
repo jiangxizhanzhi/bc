@@ -5,6 +5,9 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefenseAction;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseEvent;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -71,24 +74,12 @@ public class FirewallPolicyLogHandler extends DefenseCombatLogHandler {
 	@Override
 	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog) {
 		String action = DefenseAction.getEnumByCode(rbCombatLog.getDefenseAction(), DefenseAction.class).getDesc();
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("visible", true);
-		jsonObject.put("resource_id", rbCombatLog.getResourceId());
-		jsonObject.put("group", null);
-		jsonObject.put("type", CrCommonConstants.EventCategory.DEFENSE.getCode());
-		jsonObject.put("group-type", getGroupName(rbCombatLog.getDestGroup()) + CrCommonConstants.EventCategory.DEFENSE.getDesc());
-		jsonObject.put("source_group", rbCombatLog.getSourceGroup());
-		jsonObject.put("source_ip", rbCombatLog.getSourceIp());
-		jsonObject.put("source_name", rbCombatLog.getSourceName());
-		jsonObject.put("dest_group", getGroupName(rbCombatLog.getDestGroup()));
-		jsonObject.put("dest_ip", rbCombatLog.getDestIp());
-		jsonObject.put("dest_name", rbCombatLog.getDestName());
-		jsonObject.put("action", action);
-		jsonObject.put("event_time", TimeUtil.format1(rbCombatLog.getEventTime()));
-		jsonObject.put("event_describe", rbCombatLog.getEventContent());
-		Map<Integer, JSONObject> other = data.getOther();
-		other.put(CrCommonConstants.RedVsBlueDockingWebsocket.ATTACK_DEFENSE_EVENT, jsonObject);
-		data.setOther(other);
+		RbAttackEvent event = RbAttackEvent.builder().visible(true).resourceId(rbCombatLog.getResourceId()).group(null)
+				.type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(getGroupName(rbCombatLog.getDestGroup()) + CrCommonConstants.EventCategory.DEFENSE.getDesc())
+				.sourceGroup(String.valueOf(rbCombatLog.getSourceGroup())).sourceIp(rbCombatLog.getSourceIp()).sourceName(rbCombatLog.getSourceName())
+				.destName(rbCombatLog.getDestName()).destGroup(String.valueOf(rbCombatLog.getDestGroup())).destIp(rbCombatLog.getDestIp())
+				.action(action).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(rbCombatLog.getEventContent()).build();
+		data.getRbAttackDefenseEvents().add(event);
 		return data;
 	}
 }

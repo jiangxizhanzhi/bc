@@ -1067,21 +1067,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		Map<String, String> orgMap = Maps.newHashMap();
 		List<Course> changeCourses = Lists.newArrayList();
 
-		for (int i = CommonConstant.ONE; i <= sheetData.size(); i++) {
+		//sheetData的第0个位置对应源文件的第二行，因此监测行数全部都要相差2
+		for (int i = CommonConstant.TWO; i < sheetData.size()+CommonConstant.TWO; i++) {
 
 			// 空数据不管
-			if (!validateEmptyData(sheetData.get(i - CommonConstant.ONE), i)) {
+			if (!validateEmptyData(sheetData.get(i - CommonConstant.TWO), i)) {
 				continue;
 			}
 
 			// 解析行
-			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i - CommonConstant.ONE),
+			TrainPlan trainPlan = parseTrainPlan(sheetData.get(i - CommonConstant.TWO),
 					userInfo.getUserId(), cover, i, trainPlanMap);
 
 			// 训练计划是否可覆盖 任务是否存在开始的
 			validatePlanStartAndExist(trainPlan.getResourceId(), trainPlan.getName(), cover, i);
 
-			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.ONE), userInfo, i,
+			Classroom classroom = parseClassroom(sheetData.get(i - CommonConstant.TWO), userInfo, i,
 					orgMap);
 			validateOrgUnderClassroomTime(trainPlan.getResourceId(), classroom.getOrganizationId(), classroom.getStartTime(),
 					classroom.getEndTime(), i);

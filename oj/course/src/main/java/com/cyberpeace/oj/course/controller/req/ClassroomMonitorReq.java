@@ -12,6 +12,9 @@ public class ClassroomMonitorReq extends PageReqBase {
 	@ApiModelProperty("课堂表编号")
 	private String classroomId;
 
+	@ApiModelProperty(value = "模糊查询筛选参数(不会转义)")
+	private String pattern;
+
 	public void setClassroom_id(String classroomId) {
 		this.classroomId = classroomId;
 	}

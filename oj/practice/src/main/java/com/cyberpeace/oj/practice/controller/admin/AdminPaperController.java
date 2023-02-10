@@ -62,7 +62,7 @@ public class AdminPaperController {
 
 		// 查询数据组装
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
+				CommonConstant.FALSE);
 		Page page = practiceListReq.toPageParam();
 		LibPracticeQueryBo queryBo = BeanUtils.copy(practiceListReq, LibPracticeQueryBo.class);
 
@@ -90,7 +90,7 @@ public class AdminPaperController {
 			@RequestParam(value = "children", required = false) Boolean children) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
+				CommonConstant.FALSE);
 
 		LibSelectRes libInfoBo = new LibSelectRes();
 		// 习题集数据查询

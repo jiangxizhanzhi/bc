@@ -711,6 +711,20 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				authContext.getIsWeb());
 		Paper paper = validatePaper(lesson, CommonConstant.TRUE);
 
+		//获取主观题数量（理论题的填空和简答）
+		List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService
+				.selectByPaper(paper.getResourceId(), false);
+		List<LessonTheoryBo> subjectTheoryBoList = StreamApiUtils.map(theoryLessonBos, theoryLessonBo -> {
+			LessonTheoryBo theoryBo = BeanUtils.copy(theoryLessonBo, LessonTheoryBo.class);
+			if(theoryBo.getQuestionType().intValue() == PracticeTheory.TheoryType.FILL_BLANK
+					.getCode().intValue() || theoryBo.getQuestionType().intValue() == PracticeTheory.TheoryType.SHORT_ANSWER
+					.getCode().intValue() ){
+				return theoryBo;
+
+			}
+			return null;
+		});
+
 		// 课后练习评估数据查询
 		LessonPaperEvaluate paperEvaluate = lessonPaperEvaluateMapper
 				.selectByUserAndLesson(answerContext.getUserId(), answerContext.getLessonId());
@@ -725,8 +739,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		List<PracticeSolvedBo> practiceSolvedBos = Lists.newArrayList();
 
 		AtomicInteger correctObjectNum = new AtomicInteger();
-		AtomicInteger totalObjectNum = new AtomicInteger();
-
+		Integer totalObjectNum = paper.getPracticeCount() - subjectTheoryBoList.size();
 		// 习题数据提交评估
 		List<EvaluateResult> evaluateResultList = StreamApiUtils.map(answers, submitContext -> {
 
@@ -762,7 +775,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 
 				// 客观题统计
 				if (isObject) {
-					totalObjectNum.addAndGet(1);
 					if (solvedBo.getSolved()) {
 						correctObjectNum.addAndGet(1);
 					}
@@ -783,7 +795,6 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				solvedBo.setUserAnswer(submitContext.getSubmitAnswer());
 				practiceSolvedBos.add(solvedBo);
 
-				totalObjectNum.addAndGet(1);
 				if (solvedBo.getSolved()) {
 					correctObjectNum.addAndGet(1);
 				}

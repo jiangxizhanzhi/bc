@@ -98,7 +98,7 @@ public interface UserSimulatorService {
 	 * @param resourceId
 	 * @return
 	 */
-	MonitorDataRes getMonitorData(String resourceId);
+	MonitorDataRes getMonitorData(String resourceId, Integer duration);
 
 	/**
 	 * 获取仪表关联的全部场景id

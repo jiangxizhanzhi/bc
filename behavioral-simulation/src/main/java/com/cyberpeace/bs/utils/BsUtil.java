@@ -32,11 +32,9 @@ import com.google.common.collect.Maps;
  */
 public class BsUtil {
 
-	private static final String JSON_LIST_INITIAL = "[";
-
 	public static final Map<String, Integer> stepMap = Maps.newHashMap();
-
 	public static final Map<String, LocalTime> markedId = Maps.newHashMap();
+	private static final String JSON_LIST_INITIAL = "[";
 
 	/**
 	 * 解析存储的行为列表json
@@ -227,7 +225,7 @@ public class BsUtil {
 			return out;
 		}
 		if (raw.size() > length) {
-			return raw.subList(0, length);
+			return raw.subList(raw.size() - length, raw.size());
 		}
 		return raw;
 	}

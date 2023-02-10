@@ -1,12 +1,14 @@
 package com.cyberpeace.bs.service.impl;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
@@ -272,7 +274,9 @@ public class LcServiceImpl implements LcService {
 		req.setDeviceIp(deviceIp);
 		req.setIsUsingIp(!isEntity);
 		req.setStartTime(startTime);
+		log.info("monitor query param={}, date={}", JsonUtil.toJsonString(req), JsonUtil.toJsonString(TimeUtil.format1(new Date())));
 		LcMonitorRsp rsp = LcHttpClient.post(targetUrl, req, LcMonitorRsp.class);
+		log.info("monitor rsp={}", JsonUtil.toJsonString(rsp));
 		return rsp;
 	}
 

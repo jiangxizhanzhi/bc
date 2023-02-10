@@ -13,7 +13,7 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 
     SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId);
 
-    SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq);
+    SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd);
 
     SituationPublishInstance updateOne(SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq);
 

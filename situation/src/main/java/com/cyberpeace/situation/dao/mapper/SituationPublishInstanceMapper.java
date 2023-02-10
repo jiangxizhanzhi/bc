@@ -23,5 +23,7 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 	SituationPublishInstance selectPublicedBySubjectId(@Param("taskId") String taskId,
 			@Param("subjectId") String subjectId);
 
+	String selectXdInstanceBySchemeId(@Param("schemeId") String schemeId);
+
 	SituationPublishInstance selectByTemplateId(@Param("templateId") String templateId);
 }

@@ -93,7 +93,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     }
 
     @Override
-    public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
+    public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd) {
 
         // 拷贝属性
         SituationPublishInstance situationPublishInstance = BeanUtils.copy(situationPublishInstanceAddReq,
@@ -158,7 +158,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setLevel(level == null ? DashboardLevel.RW.getCode() : level);
         dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
         dashboardAttribute.setDashboardType(editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
-        situationPublishInstance.setEdit(editStatus);
+        situationPublishInstance.setEdit(!isXd);
         situationPublishInstance.setThumbnail(dashboardTemplateInfo.getThumbnail());
         situationPublishInstance.setTemplateId(dashboardTemplateInfo.getResourceId());
 
@@ -249,7 +249,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return null;
     }
 
-    public void deleteUnusedSituation() {
+    @Override
+	public void deleteUnusedSituation() {
         List<String> list = dashboardTemplateRefMapper.selectAllId();
         dashboardTemplateRefService.deleteDashboardTemplate(list);
     }

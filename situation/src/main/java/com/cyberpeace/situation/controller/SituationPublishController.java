@@ -90,7 +90,7 @@ public class SituationPublishController {
     @PostMapping("")
     public BaseRsp<SituationPublishInstance>
     setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
-        SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq);
+        SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq, false);
 
         return new BaseRsp<>(situationPublishInstance);
     }

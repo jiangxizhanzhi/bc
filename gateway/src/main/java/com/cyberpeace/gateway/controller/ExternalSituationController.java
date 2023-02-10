@@ -105,17 +105,28 @@ public class ExternalSituationController {
 	public BaseRsp<ScreenPathRes>
 			receiveScheme(@RequestBody @Validated SituationSchemeBo schemeBo) {
 
+		// 提取请求中的大屏ID参数
 		String dashboardId = schemeBo.getDashboardId();
 
+		// 传入大屏ID时，直接跳转编辑页面
 		if (StringUtils.isNotBlank(dashboardId)) {
 			return new BaseRsp<>(new ScreenPathRes(dashboardId));
 		}
 
+		// 判断是否存在已有想定大屏
+		String xdDashboardId = situationPublishInstanceMapper
+				.selectXdInstanceBySchemeId(schemeBo.getSchemeId());
+
+		if (StringUtils.isNotBlank(xdDashboardId)) {
+			return new BaseRsp<>(new ScreenPathRes(xdDashboardId));
+		}
+
+		// 如果没有找到大屏，进行新增
 		SituationPublishInstanceAddReq situationPublishInstanceAddReq = BeanUtils.copy(schemeBo,
 				SituationPublishInstanceAddReq.class);
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
-				.insertOne(situationPublishInstanceAddReq);
+				.insertOne(situationPublishInstanceAddReq, true);
 		dashboardId = situationPublishInstance.getResourceId();
 		log.info("成功接收可视化方案：{}", JsonUtil.toJsonString(schemeBo));
 

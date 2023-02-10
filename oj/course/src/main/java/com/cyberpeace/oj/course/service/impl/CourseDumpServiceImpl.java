@@ -223,7 +223,7 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 		mdLesson.setDuration(lesson.getDuration().toString());
 		mdLesson.setKnowledge(lesson.getKnowledge());
 		String compulsory = Arrays.stream(CourseLesson.CompulsoryType.values()).filter(it -> Objects.equals(it.getCode(), lesson.getCompulsory())).collect(Collectors.toList()).get(0).getDesc();
-		mdLesson.setCompulsory(compulsory);
+		mdLesson.setCompulsory(compulsory.equals(CourseLesson.CompulsoryType.NOT_CONFIGURED.getDesc()) ? CourseLesson.CompulsoryType.ELECTIVE.getDesc() : compulsory);
 		mdParser.write(mdLesson, new File(readmeMDFileName));
 		log.info("dump lesson [{}] readme.md successfully!", lesson.getName());
 

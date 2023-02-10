@@ -36,6 +36,8 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 
 	private final String ROLE_UPDATE = "role_modify";
 
+	private final String USER_UPDATE = "user_modify";
+
 	private final String ORG = "org_delete";
 
 	@Autowired
@@ -132,6 +134,10 @@ public class AuthMessageListener implements ChannelAwareMessageListener {
 						// 更新角色时，消息通知清空缓存
 						remoteUserService.clearCache();
 						break;
+					case USER_UPDATE:
+					    // 更新用户的角色时，消息通知清空缓存
+						remoteUserService.clearCache();
+					break;
 					case ORG:
 						realListener.onOrgDelete(ids);
 						break;

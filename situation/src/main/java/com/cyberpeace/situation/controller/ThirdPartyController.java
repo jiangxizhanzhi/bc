@@ -273,13 +273,16 @@ public class ThirdPartyController {
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
 		// 直接返回样例拓扑
-		if ("demo".equals(topoReq.getEnvId())){
+		if ("demo".equals(topoReq.getEnvId())) {
 			InputStream inputStream = getClass().getResourceAsStream("/demoTopo.json");
-			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
-			return new BaseRsp<>(JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
+			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class)
+					.getJSONObject("data");
+			return new BaseRsp<>(
+					JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
 		}
 
 		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
+
 		// 处理编排后的拓扑坐标
 		if (StringUtils.isNotBlank(topoReq.getEnvId())) {
 			TopoConfig topoConfig = topoConfigMapper.selectByEnvId(topoReq.getEnvId());
@@ -289,7 +292,8 @@ public class ThirdPartyController {
 						json.toJSONString(),
 						new TypeReference<Map<String, ElementSlimContext>>() {});
 				topoContext.getElements().forEach((key, element) -> {
-					element.setPosition(elementSlimContextMap.get(key).getPosition());
+					element.setPosition(elementSlimContextMap
+							.getOrDefault(key, new ElementSlimContext()).getPosition());
 				});
 			}
 		}

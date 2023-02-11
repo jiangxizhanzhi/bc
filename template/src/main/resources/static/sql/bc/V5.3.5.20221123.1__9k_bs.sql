@@ -106,11 +106,6 @@ CREATE TABLE `bs_actual_device`
     UNIQUE INDEX `port` (`port`) USING BTREE
 );
 
--- 用户行为模拟 -设备类型
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 39, '全部', 'All');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 39, '默认仪表', 'Default');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 39, 'IXIA仪表', 'IXIA');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 39, '龙测仪表', 'Dragon Test');
 -- 用户行为模拟 -网络类型
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 40, '公网', 'Internet');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 40, '场景内网', 'Intranet');
@@ -129,3 +124,17 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 0, 44, '未开始', 'No
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 44, '运行中', 'Running');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 44, '暂停', 'Paused');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 44, '已结束', 'Stopped');
+-- 用户行为模拟 - 行为标签
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 41, '上网', 'Surf');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 41, '聊天', 'Chat');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 41, '邮件', 'Mail');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 41, '办公', 'Business');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 5, 41, '视频', 'Video');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 6, 41, '游戏', 'Gaming');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 7, 41, '博客', 'Blog');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 8, 41, '编程', 'Code');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 9, 41, '监控', 'Monitor');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 10, 41, '学习', 'Study');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 11, 41, '教学', 'Teach');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 12, 41, '数据库', 'Database');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 13, 41, '即时通信', 'Message');

@@ -538,15 +538,15 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		long startTimeStamp = timestamp + (hours - duration) * BsConstants.MILLI_IN_A_HOUR;
 		res.init(startTimeStamp, duration);
 		// bandwidth & packet
-		res.getBandwidthAndPacket().setBandwidth(BsUtil.fill(lcMonitorRsp.getBandwidth(),
-				duration * BsConstants.MINUTE_PER_HOUR, 0));
-		res.getBandwidthAndPacket().setPacket(
-				BsUtil.fill(lcMonitorRsp.getPacket(), duration * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getBandwidthAndPacket().setBandwidth(
+				BsUtil.fill(lcMonitorRsp.getBandwidth(), BsConstants.MINUTE_HALF_HOUR, 0));
+		res.getBandwidthAndPacket()
+				.setPacket(BsUtil.fill(lcMonitorRsp.getPacket(), BsConstants.MINUTE_HALF_HOUR, 0));
 		// connection
-		res.getConnection().setConnection(BsUtil.fill(lcMonitorRsp.getConnection(),
-				duration * BsConstants.MINUTE_PER_HOUR, 0));
-		res.getConnection().setConnected(BsUtil.fill(lcMonitorRsp.getConnected(),
-				duration * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnection(
+				BsUtil.fill(lcMonitorRsp.getConnection(), BsConstants.MINUTE_HALF_HOUR, 0));
+		res.getConnection().setConnected(
+				BsUtil.fill(lcMonitorRsp.getConnected(), BsConstants.MINUTE_HALF_HOUR, 0));
 		// activity
 		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), duration, 0));
 		// session

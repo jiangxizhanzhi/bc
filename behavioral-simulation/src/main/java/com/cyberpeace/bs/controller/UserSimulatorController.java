@@ -137,8 +137,9 @@ public class UserSimulatorController {
 	@ApiOperation("获取行为仪表监控数据")
 	@GetMapping("/monitor_data")
 	public BaseRsp<MonitorDataRes> getSimulatorMonitor(
-			@ApiParam(value = "仪表resource_id", name = "resource_id") String resource_id) {
-		MonitorDataRes res = userSimulatorService.getMonitorData(resource_id);
+			@ApiParam(value = "仪表resource_id", name = "resource_id") String resource_id,
+			@ApiParam(value = "监控时长", name = "duration") Integer duration) {
+		MonitorDataRes res = userSimulatorService.getMonitorData(resource_id, duration);
 		return new BaseRsp(res);
 	}
 

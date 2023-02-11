@@ -511,9 +511,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	}
 
 	@Override
-	public MonitorDataRes getMonitorData(String resourceId) {
+	public MonitorDataRes getMonitorData(String resourceId, Integer duration) {
 		// 统计8小时
 		int hours = 8;
+		if (null == duration || duration <= 0 || duration > 8) {
+			duration = 8;
+		}
 		// get meter
 		UserSimulator simulator = getOrException(resourceId);
 		MonitorDataRes res = new MonitorDataRes();
@@ -527,26 +530,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		} else {
 			res.calculateExecuted(simulator.getBehaviorCount(), 0);
 		}
-		// get lc monitor data
+		// get lc monitor data, 固定为8小时
 		long timestamp = System.currentTimeMillis() - hours * BsConstants.MILLI_IN_A_HOUR;
 		LcMonitorRsp lcMonitorRsp = lcService.getDeviceMonitorData(simulator.getDeviceId(),
 				simulator.getDeviceIp(), simulator.getIsEntity(), timestamp);
-		// res init time
-		res.init(timestamp, hours);
+		// res init time, 先获取实际的开始时间
+		long startTimeStamp = timestamp + (hours - duration) * BsConstants.MILLI_IN_A_HOUR;
+		res.init(startTimeStamp, duration);
 		// bandwidth & packet
-		res.getBandwidthAndPacket().setBandwidth(
-				BsUtil.fill(lcMonitorRsp.getBandwidth(), hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getBandwidthAndPacket().setBandwidth(BsUtil.fill(lcMonitorRsp.getBandwidth(),
+				duration * BsConstants.MINUTE_PER_HOUR, 0));
 		res.getBandwidthAndPacket().setPacket(
-				BsUtil.fill(lcMonitorRsp.getPacket(), hours * BsConstants.MINUTE_PER_HOUR, 0));
+				BsUtil.fill(lcMonitorRsp.getPacket(), duration * BsConstants.MINUTE_PER_HOUR, 0));
 		// connection
-		res.getConnection().setConnection(
-				BsUtil.fill(lcMonitorRsp.getConnection(), hours * BsConstants.MINUTE_PER_HOUR, 0));
-		res.getConnection().setConnected(
-				BsUtil.fill(lcMonitorRsp.getConnected(), hours * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnection(BsUtil.fill(lcMonitorRsp.getConnection(),
+				duration * BsConstants.MINUTE_PER_HOUR, 0));
+		res.getConnection().setConnected(BsUtil.fill(lcMonitorRsp.getConnected(),
+				duration * BsConstants.MINUTE_PER_HOUR, 0));
 		// activity
-		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), hours, 0));
+		res.getActivity().setYStep(BsUtil.fill(lcMonitorRsp.getStep(), duration, 0));
 		// session
-		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), hours * 2, 0));
+		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), duration * 2, 0));
 
 		return res;
 	}

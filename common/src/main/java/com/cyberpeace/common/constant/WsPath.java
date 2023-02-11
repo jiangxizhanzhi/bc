@@ -1,10 +1,9 @@
 package com.cyberpeace.common.constant;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 /**
  * 对外暴露的websocket路径
@@ -55,6 +54,7 @@ public class WsPath {
 		cache.add(CLASSROOM_CHAT);
 		cache.add(CLASSROOM_HELP);
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
+		cache.add(RB_COMBAT_LOG);
 	}
 
 	public static boolean validPath(String path) {

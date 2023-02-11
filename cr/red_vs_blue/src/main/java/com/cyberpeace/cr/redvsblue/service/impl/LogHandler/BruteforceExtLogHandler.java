@@ -4,6 +4,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.*;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import lombok.Data;
@@ -57,8 +58,8 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 		if(rbCombatLog.getDestGroup()
 					  .equals(rbCombatLog.getSourceGroup())){
 			String attackGroup = rbAttackEvent.getDestGroup();
-			Integer group = rbCombatLog.getDestGroup() == CrRole.RbRoleGroup.BLUE.getCode() ? CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
-			String groupName = super.getGroupName(group);
+			Integer group = rbCombatLog.getDestGroup().equals(CrRole.RbRoleGroup.BLUE.getCode()) ? CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+			String groupName = CrCommonUtil.getGroupName(group);
 			String sourceMachine = super.getMachineName(groupName, rbCombatLog.getSourceIp(), rbCombatLog.getSourceName());
 			String destMachine = super.getMachineName(groupName, rbCombatLog.getDestIp(), rbCombatLog.getDestName());
 			rbAttackEvent.setEventDescribe(String.format("%s通过%s对%S进行暴力破解", attackGroup, sourceMachine, destMachine));

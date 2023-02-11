@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
@@ -14,6 +16,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
@@ -25,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCombatLog> implements RbCombatLogService {
@@ -158,17 +163,18 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			String roleId = entry.getKey();
 			CrRole crRole = stringCrRoleMap.get(roleId);
 			List<CrTask> value = entry.getValue();
-			if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
-				value.forEach(val ->{
-					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, val);
+			Map<String, List<CrTask>> missons = StreamApiUtils.groupBy(value, CrTask::getMissionId);
+			for (Map.Entry<String, List<CrTask>> mission : missons.entrySet()) {
+				List<CrTask> sorted = mission.getValue().stream().sorted(Comparator.comparing(CrTask::getUpdateTime)).collect(Collectors.toList());
+				CrTask task = sorted.get(sorted.size()-1);
+				if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())){
+					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, task);
 					redRole.add(tmp);
-				});
-			}
-			if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())){
-				value.forEach(val ->{
-					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, val);
+				}
+				if(crRole.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode())){
+					RbMissionStatusGroupDataRsp tmp = getRbMissionStatusGroupDataRsp(missionMaps, task);
 					blueRole.add(tmp);
-				});
+				}
 			}
 		}
 		res.setRedRole(redRole);
@@ -184,26 +190,73 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		return tmp;
 	}
 
+	/**
+	 * 判断该任务是否属于情报侦察
+	 *
+	 * @param submitEvaluationReq
+	 * @param userId
+	 * @return
+	 */
+	@Override
 	public RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId){
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		String title = mission.getTitle();
 		RbCombatLog rbCombatLog = RbCombatLog.builder().build();
-		if (title.equals("1_情报侦查")){
+		if ("1_情报侦查".equals(title)){
 			if(submitEvaluationReq.getScore() > 0){
 				String roomId = submitEvaluationReq.getRoomId();
-				RbRoom rbRoom = rbRoomMapper.selectById(roomId);
 				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
 				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
-				String content = String.format("%s对%s的目标靶机进行情报侦察");
-				rbCombatLog.setRoomId(roomId);
 
+				String content = String.format("%s对%s的目标靶机进行情报侦察", CrCommonUtil.getGroupName(sourceGroup), CrCommonUtil.getGroupName(destGroup));
+				Map<String, Object> filterMap = new HashMap<>();
+				filterMap.put(roomId, roomId);
+				List<RbCombatLog> rbCombatLogs = rbCombatLogMapper.selectByMap(filterMap);
+				rbCombatLog = rbCombatLogs.get(0);
+				rbCombatLog.setRoomId(roomId);
+				rbCombatLog.setEventType(CrCommonConstants.EventType.ATTACK_MISSION.getCode());
+				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
+				CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(mission.getTitle(), CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
+				rbCombatLog.setAttackPhase(enumByCode.getStage());
+				rbCombatLog.setAttackAction(enumByCode.getAction());
+				rbCombatLog.setSourceGroup(sourceGroup);
+				rbCombatLog.setDestGroup(destGroup);
+				rbCombatLog.setEventContent(content);
+				rbCombatLogMapper.updateById(rbCombatLog);
 			}
 		}
 		return rbCombatLog;
+
+	}
+
+
+	/**
+	 * 判断该任务是否属于防御阶段
+	 *
+	 * @param submitEvaluationReq
+	 * @param userId
+	 */
+	@Override
+	public void defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId) {
+		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
+		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
+		Mission mission = missionMapper.selectById(crTask.getMissionId());
+		if (Arrays.asList("5_被攻击链条复现","6_定位攻击源", "7_清除跳板").contains(mission.getTitle())){
+			Integer submitScore = submitEvaluationReq.getScore();
+			if(null != submitScore && submitScore.equals(crTask.getScore()) && submitScore.equals(mission.getScore())
+					&& !submitEvaluationReq.getEvaluateStatus().equals(CrTask.TaskStatus.REJECT.getCode())){
+				String roomId = submitEvaluationReq.getRoomId();
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+				Integer destGroup = crRoleByRoomIdAndUserId.getRoleGroup();
+				Integer sourceGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(destGroup) ?
+						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+
+			}
+		}
 
 	}
 

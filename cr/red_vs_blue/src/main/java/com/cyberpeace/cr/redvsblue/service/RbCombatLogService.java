@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
@@ -24,4 +25,7 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
 
     RbMissionStatusDataRsp getMissionStatus(String sceneId);
 
+	RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+
+	void defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
 }

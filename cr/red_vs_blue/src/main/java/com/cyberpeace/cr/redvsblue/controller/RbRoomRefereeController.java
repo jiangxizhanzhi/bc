@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -55,6 +56,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@Autowired
+	private RbCombatLogService rbCombatLogService;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -187,7 +191,12 @@ public class RbRoomRefereeController {
 				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
-
+		// TODO 同步攻击阶段的判定  判断情报侦察任务完成情况
+		rbCombatLogService.intelligenceInvestigationMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		//  判断该任务是否属于防御阶段
+		rbCombatLogService.defenseStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		//  判断该任务是否属于攻击阶段渗透利用
+		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
 		return new BaseRsp<>();

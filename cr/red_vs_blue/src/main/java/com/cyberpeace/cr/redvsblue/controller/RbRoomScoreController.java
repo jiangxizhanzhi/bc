@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -209,11 +210,6 @@ public class RbRoomScoreController {
 		rbRoomService.checkRoomOpening(submitEvaluationReq.getRoomId());
 
 		crScoreController.updateSubmitEvaluation(submitEvaluationReq);
-		// TODO 同步攻击阶段的判定  判断情报侦察任务完成情况
-//		intelligenceInvestigationMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId())
-		//  判断该任务是否属于防御阶段
-		//  判断该任务是否属于攻击阶段渗透利用
-  		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
 
 		return new BaseRsp<>();
 	}

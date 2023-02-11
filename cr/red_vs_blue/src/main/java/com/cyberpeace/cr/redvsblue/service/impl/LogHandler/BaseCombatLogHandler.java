@@ -17,6 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
@@ -315,11 +316,11 @@ public class BaseCombatLogHandler {
 	}
 
 	public RbCombatRecordsAllDataRsp addAttackDefenseEvent(RbCombatRecordsAllDataRsp data, RbCombatLog rbCombatLog){
-		String sourceGroup = getGroupName(rbCombatLog.getSourceGroup());
+		String sourceGroup = CrCommonUtil.getGroupName(rbCombatLog.getSourceGroup());
 		String sourceIp = rbCombatLog.getSourceIp();
 		String sourceName = rbCombatLog.getSourceName();
 		String sourceMachine = getMachineName(sourceGroup, sourceIp, sourceName);
-		String destGroup = getGroupName(rbCombatLog.getDestGroup());
+		String destGroup = CrCommonUtil.getGroupName(rbCombatLog.getDestGroup());
 		String destIp = rbCombatLog.getDestIp();
 		String destName = rbCombatLog.getDestName();
 		String destMachine = getMachineName(destGroup, destIp, destName);
@@ -394,9 +395,7 @@ public class BaseCombatLogHandler {
 		}
 	}
 
-	public String getGroupName(Integer sourceGroup) {
-		return Objects.equals(sourceGroup, CrRole.RbRoleGroup.RED.getCode()) ?CrRole.RbRoleGroup.RED.getDesc() : CrRole.RbRoleGroup.BLUE.getDesc();
-	}
+
 
 	public RbCombatRecordsAllDataRsp addData(RbCombatLog combatLog, RbCombatRecordsAllDataRsp combatRecordsAllDataRsp){
 		combatRecordsAllDataRsp = addAttackDefenseStage(combatRecordsAllDataRsp, combatLog);

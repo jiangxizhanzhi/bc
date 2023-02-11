@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.utils;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -9,6 +10,7 @@ import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
@@ -95,5 +97,9 @@ public class CrCommonUtil {
 				i++;
 			}
 		}
+	}
+
+	public static String getGroupName(Integer sourceGroup) {
+		return Objects.equals(sourceGroup, CrRole.RbRoleGroup.RED.getCode()) ?CrRole.RbRoleGroup.RED.getDesc() : CrRole.RbRoleGroup.BLUE.getDesc();
 	}
 }

@@ -4,6 +4,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义win web命令执行日志处理类
 @Data
 @Service
 public class WebCommandWinLogHandler extends WebCommandLogHandler {

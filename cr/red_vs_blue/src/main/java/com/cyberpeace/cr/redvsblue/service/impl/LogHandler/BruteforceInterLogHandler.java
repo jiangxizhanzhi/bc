@@ -4,6 +4,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义内网暴力破解日志处理类
 @Data
 @Service
 public class BruteforceInterLogHandler extends BruteforceExtLogHandler{

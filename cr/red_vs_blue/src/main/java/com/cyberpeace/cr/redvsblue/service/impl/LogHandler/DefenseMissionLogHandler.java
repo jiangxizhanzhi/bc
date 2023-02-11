@@ -1,15 +1,14 @@
 package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDefenseEvent;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbDefenseStage;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义防御任务日志处理类
 @Data
 @Service
 public class DefenseMissionLogHandler extends DefenseCombatLogHandler {

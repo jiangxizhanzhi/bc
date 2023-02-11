@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class RbWsMessageIdentifier extends WsMessageIdentifier {
 
-	private String resourceId;
+	private String sceneId;
 }

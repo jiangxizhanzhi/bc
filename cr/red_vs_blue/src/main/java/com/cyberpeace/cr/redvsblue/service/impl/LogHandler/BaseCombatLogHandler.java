@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+//	基础日志处理类
 @Data
 @Service
 public class BaseCombatLogHandler {
@@ -133,7 +134,7 @@ public class BaseCombatLogHandler {
 		List<Integer> group = getNodeAscription().getAscription(getSourceIp());
 		if (group.size() == 1) {
 			return group.get(0);
-		} else if (group.size()==2 || getEventType().equals(EventCategory.ATTACK.getCode())) {
+		} else if (group.size()==2 || getEventCategory().equals(EventCategory.ATTACK.getCode())) {
 			return getDestGroup().equals(CrRole.RbRoleGroup.RED.getCode())? CrRole.RbRoleGroup.BLUE.getCode(): CrRole.RbRoleGroup.RED.getCode();
 		} else {
 			return null;
@@ -212,18 +213,22 @@ public class BaseCombatLogHandler {
 
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
-		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackStages()){
-			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
-		}
-		for (RbLostHost rbLostHost: data.getLostHosts()) {
-			pushDataToRoom(rbLostHost, getRedVsBlue());
-		}
-		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
-			if (rbAttackEvent != null && !rbAttackEvent.getVisible()) {
-				delayHandler();
-			}
-			pushDataToRoom(rbAttackEvent, getRedVsBlue());
-		}
+//		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackStages()) {
+//			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
+//		}
+//		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbDefenseStages()) {
+//			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
+//		}
+//		for (RbLostHost rbLostHost: data.getLostHosts()) {
+//			pushDataToRoom(rbLostHost, getRedVsBlue());
+//		}
+//		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
+//			if (rbAttackEvent != null && !rbAttackEvent.getVisible()) {
+//				delayHandler();
+//			}
+//			pushDataToRoom(rbAttackEvent, getRedVsBlue());
+//		}
+		pushDataToRoom(data, getRedVsBlue());
 	}
 
 	public RbCombatRecordsAllDataRsp addData(RbCombatRecordsAllDataRsp data) {
@@ -330,27 +335,26 @@ public class BaseCombatLogHandler {
 				// TODO 获取attack action对应的AttackActionType
 				String attackAction = EnumUtils.getEnumDescByCode(rbCombatLog.getAttackAction(), CrCommonConstants.AttackAction.class);
 				defenseAction = CrCommonConstants.DefenseAction.ATTACK_SOURCE_DETECTED.getDesc();
-				attackEventDescribe = String.format("{%s}对{%s}发动【{%s}】攻击", sourceMachine, destMachine, attackAction);
-				defenseEventDescribe = String.format("{%s}检测到来自{%s}的【{%s}】攻击", sourceMachine, destMachine, attackAction);
+				attackEventDescribe = String.format("%s对%s发动【%s】攻击", sourceMachine, destMachine, attackAction);
+				defenseEventDescribe = String.format("%s检测到来自%s的【%s】攻击", sourceMachine, destMachine, attackAction);
 				visible = Boolean.FALSE;
 				rbAttackEvent = RbAttackEvent.builder().visible(Boolean.TRUE).resourceId(rbCombatLog.getResourceId()).
-						group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("{%s}{%s}",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
+						group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 						.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 						.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 						.action(attackAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
 				rbAttackEvent = updateAttackEvent(rbAttackEvent, rbCombatLog);
-				data.getRbAttackDefenseEvents().add(rbAttackEvent);
 			} else if (rbCombatLog.getEventCategory().equals(CrCommonConstants.EventCategory.DEFENSE.getCode()) &&
 					!rbCombatLog.getDefenseAction().equals(CrCommonConstants.DefenseAction.OTHER.getCode())){
 				visible = Boolean.TRUE;
 				// TODO 匹配对应的防御行为类型
 				defenseAction = EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class);
-				defenseEventDescribe = String.format("{%s}【{%s}】",destMachine, defenseAction);
+				defenseEventDescribe = String.format("%s【%s】",destMachine, defenseAction);
 			} else {
 				return data;
 			}
 			RbAttackEvent rbDefenseEvent = RbAttackEvent.builder().visible(visible).resourceId(rbCombatLog.getResourceId()).
-					group(null).type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(String.format("{%s}{%s}",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					group(null).type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 					.action(defenseAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();
@@ -401,11 +405,11 @@ public class BaseCombatLogHandler {
 		return combatRecordsAllDataRsp;
 	}
 
-	public <T> void pushDataToRoom(T data, String resourceId) {
+	public <T> void pushDataToRoom(T data, String sceneId) {
 
 		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
 		identifier.setPath(WsPath.RB_COMBAT_LOG);
-		identifier.setResourceId(resourceId);
+		identifier.setSceneId(sceneId);
 
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
 																		.data(JsonUtil.toJsonString(data,

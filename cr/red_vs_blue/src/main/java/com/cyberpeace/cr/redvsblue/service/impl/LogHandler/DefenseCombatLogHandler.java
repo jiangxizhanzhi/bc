@@ -4,6 +4,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义防守日志处理类
 @Data
 @Service
 public class DefenseCombatLogHandler extends BaseCombatLogHandler {

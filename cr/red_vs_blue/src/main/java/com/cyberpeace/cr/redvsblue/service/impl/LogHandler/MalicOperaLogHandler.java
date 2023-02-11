@@ -9,6 +9,7 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+// 定义可疑操作日志处理类
 @Data
 @Service
 public class MalicOperaLogHandler extends CommonCombatLogHandler {

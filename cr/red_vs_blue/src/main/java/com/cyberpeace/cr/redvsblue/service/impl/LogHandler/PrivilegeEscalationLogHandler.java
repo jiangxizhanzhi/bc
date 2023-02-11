@@ -6,6 +6,7 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义本地提权日志处理类
 @Data
 @Service
 public class PrivilegeEscalationLogHandler extends AttackCombatLogHandler {

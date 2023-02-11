@@ -65,25 +65,27 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Map<String, String> initData = new HashMap<>();
 		if (isZrSyslog(syslog)) {
 			initData = getInitDataFromZrLog(syslog);
-			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
-					  .contains(initData.get("event_type"))) {
-				Map<String, String> bruteforceData = new HashMap<>();
-				bruteforceData.put("source_ip", initData.get("detail.src_ip"));
-				bruteforceData.put("dest_ip", initData.get("agent_ip"));
-				REPEATED_DATA.add(bruteforceData.toString());
-				int dataSize = new HashSet<>(REPEATED_DATA).size();
-				if (FLAG_LENGTH != dataSize){
-					FLAG_LENGTH = dataSize;
-				}else {
-					throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
-				}
-			}
+//			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
+//					  .contains(initData.get("event_type"))) {
+//				Map<String, String> bruteforceData = new HashMap<>();
+//				bruteforceData.put("source_ip", initData.get("detail.src_ip"));
+//				bruteforceData.put("dest_ip", initData.get("agent_ip"));
+//				REPEATED_DATA.add(bruteforceData.toString());
+//				int dataSize = new HashSet<>(REPEATED_DATA).size();
+//				if (FLAG_LENGTH != dataSize){
+//					FLAG_LENGTH = dataSize;
+//				}else {
+//					throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
+//				}
+//			}
 		} else if (isSbSyslog(syslog)) {
 			initData = getInitDataFromSbLog(syslog);
 		} else {
+			System.out.println("未知来源的数据:" + syslog);
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 		if (initData.get("event_type") == null){
+			System.out.println("未知来源的数据:" + syslog);
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
 		System.out.println(initData.toString());
@@ -94,18 +96,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public Boolean isZrSyslog(String syslog) {
-		if (syslog.contains("event_type")) {
-			return true;
-		}
-		return false;
+		return syslog.contains("event_type");
 	}
 
 	@Override
 	public Boolean isSbSyslog(String syslog) {
-		if (syslog.contains("{")) {
-			return true;
-		}
-		return false;
+		return syslog.contains("{");
 	}
 
 	@Override

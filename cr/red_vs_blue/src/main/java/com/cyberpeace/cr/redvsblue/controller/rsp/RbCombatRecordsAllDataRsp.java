@@ -1,15 +1,14 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.redvsblue.dao.entity.*;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbLostHost;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class RbCombatRecordsAllDataRsp implements Serializable {
@@ -25,8 +24,6 @@ public class RbCombatRecordsAllDataRsp implements Serializable {
 
 	@ApiModelProperty(value = "攻击动态")
 	private List<RbAttackEvent> rbAttackDefenseEvents;
-
-
 
 	public RbCombatRecordsAllDataRsp() {
 		this.rbAttackStages = new ArrayList<>();

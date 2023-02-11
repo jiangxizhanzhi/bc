@@ -4,6 +4,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+//	定义反弹Shell日志处理类
 @Data
 @Service
 public class BounceShellLogHandler extends AttackCombatLogHandler {

@@ -1,13 +1,10 @@
 package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.DefenseAction;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+// 定义防火墙策略日志处理类
 @Data
 @Service
 public class FirewallPolicyLogHandler extends DefenseCombatLogHandler {

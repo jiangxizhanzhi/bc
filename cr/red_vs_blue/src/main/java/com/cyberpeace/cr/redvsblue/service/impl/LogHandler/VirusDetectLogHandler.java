@@ -4,6 +4,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+// 定义Linux病毒查杀日志处理类
 @Data
 @Service
 public class VirusDetectLogHandler extends BackdoorDiagnoseLogHandler {

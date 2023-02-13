@@ -777,10 +777,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		contextList.forEach(context -> {
 			WsEventAd ad = new WsEventAd();
 			ad.load(context);
-			ad.setSourceParentIds(elementSlimContextMap.get(ad.getSourceId()).getParentIds());
-			ad.setTargetParentIds(elementSlimContextMap.get(ad.getTargetId()).getParentIds());
-			ad.setSourcePlatformId(elementSlimContextMap.get(ad.getSourceId()).getPlatformId());
-			ad.setTargetPlatformId(elementSlimContextMap.get(ad.getTargetId()).getPlatformId());
+			ad.setSourceParentIds(
+					getElementById(elementSlimContextMap, ad.getSourceId()).getParentIds());
+			ad.setTargetParentIds(
+					getElementById(elementSlimContextMap, ad.getTargetId()).getParentIds());
+			ad.setSourcePlatformId(
+					getElementById(elementSlimContextMap, ad.getSourceId()).getPlatformId());
+			ad.setTargetPlatformId(
+					getElementById(elementSlimContextMap, ad.getTargetId()).getPlatformId());
 
 			String code = nameCodeMap.get(context.getEventSubType());
 			if (mappingEffectMap.containsKey(code)) {
@@ -809,6 +813,11 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			adList.add(ad);
 		});
 		return adList;
+	}
+
+	private ElementSlimContext getElementById(Map<String, ElementSlimContext> elementSlimContextMap,
+			String key) {
+		return elementSlimContextMap.getOrDefault(key, new ElementSlimContext());
 	}
 
 	@Override

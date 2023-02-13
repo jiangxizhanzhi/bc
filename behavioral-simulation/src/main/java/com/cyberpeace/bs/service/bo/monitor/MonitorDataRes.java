@@ -47,7 +47,9 @@ public class MonitorDataRes implements Serializable {
 		LocalDateTime localDateTime = Instant.ofEpochMilli(timestamp).atZone(ZoneOffset.ofHours(8))
 				.toLocalDateTime();
 		LocalTime start = LocalTime.of(localDateTime.getHour(), localDateTime.getMinute());
-		for (int i = 0; i < hours * BsConstants.MINUTE_PER_HOUR; i++) {
+		// 按分钟统计的数据固定展示半个小时
+		for (int i = hours * BsConstants.MINUTE_PER_HOUR - BsConstants.MINUTE_HALF_HOUR; i < hours
+				* BsConstants.MINUTE_PER_HOUR; i++) {
 			xTimeMinutes.add(start.plusMinutes(i).toString());
 		}
 
@@ -55,14 +57,15 @@ public class MonitorDataRes implements Serializable {
 			activity.getXHour().add(start.plusHours(i + 1L).getHour() + BsConstants.HOUR);
 		}
 		LocalTime halfHourStart;
-		if (start.getMinute() < 30) {
-			halfHourStart = LocalTime.of(start.getHour(), 30);
+		if (start.getMinute() < BsConstants.MINUTE_HALF_HOUR) {
+			halfHourStart = LocalTime.of(start.getHour(), BsConstants.MINUTE_HALF_HOUR);
 		} else {
 			halfHourStart = LocalTime.of(start.getHour() + 1, 0);
 		}
 
 		for (int i = 0; i < hours * 2; i++) {
-			session.getXHalfHour().add(halfHourStart.plusMinutes(30L * i).toString());
+			session.getXHalfHour().add(
+					halfHourStart.plusMinutes((long) BsConstants.MINUTE_HALF_HOUR * i).toString());
 		}
 	}
 

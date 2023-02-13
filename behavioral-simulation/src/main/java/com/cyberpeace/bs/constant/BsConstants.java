@@ -9,6 +9,9 @@ public interface BsConstants {
 	int SECONDS_IN_A_HOUR = 60 * 60;
 
 	int MINUTE_PER_HOUR = 60;
+
+	int MINUTE_HALF_HOUR = 30;
+
 	/**
 	 * 一小时的分钟数
 	 */

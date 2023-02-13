@@ -22,4 +22,5 @@ public class LayerShow implements Serializable {
 
     private Boolean selected;
 
+    private String role;
 }

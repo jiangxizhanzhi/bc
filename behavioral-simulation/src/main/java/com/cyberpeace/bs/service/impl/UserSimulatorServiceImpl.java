@@ -30,8 +30,8 @@ import com.cyberpeace.bs.dao.mapper.DeviceOccupationMapper;
 import com.cyberpeace.bs.dao.mapper.UserInstanceMapper;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
 import com.cyberpeace.bs.dao.mapper.UserSimulatorMapper;
+import com.cyberpeace.bs.service.FlowReportService;
 import com.cyberpeace.bs.service.LcService;
-import com.cyberpeace.bs.service.UserModelService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.UserTypeService;
 import com.cyberpeace.bs.service.bo.BehaviorStatistic;
@@ -53,7 +53,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -66,31 +65,28 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	private final Map<String, Map<String, BsTimer>> timerMap = Maps.newConcurrentMap();
 
 	@Autowired
-	UserSimulatorMapper userSimulatorMapper;
+	private UserSimulatorMapper userSimulatorMapper;
 
 	@Autowired
-	UserModelMapper userModelMapper;
+	private UserModelMapper userModelMapper;
 
 	@Autowired
-	UserModelService userModelService;
+	private UserTypeService userTypeService;
 
 	@Autowired
-	RemoteSceneService remoteSceneService;
+	private LcService lcService;
 
 	@Autowired
-	UserTypeService userTypeService;
+	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	LcService lcService;
+	private DeviceOccupationMapper deviceOccupationMapper;
 
 	@Autowired
-	TransactionTemplate transactionTemplate;
+	private UserInstanceMapper userInstanceMapper;
 
 	@Autowired
-	DeviceOccupationMapper deviceOccupationMapper;
-
-	@Autowired
-	UserInstanceMapper userInstanceMapper;
+	private FlowReportService flowReportService;
 
 	private String EXTERNAL_IP_SEGMENT;
 
@@ -103,8 +99,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
-		log.info("create simulator request: {}",
-				JsonUtil.toJsonString(addBo, PropertyNamingStrategy.SnakeCase));
+		String reqString = JsonUtil.toJsonString(addBo, PropertyNamingStrategy.SnakeCase);
+		log.info("create simulator request: {}", reqString);
+		try {
+			flowReportService.reportCreation(reqString);
+		} catch (Exception e) {
+			log.error("failed to report creation: ", e);
+		}
 		SimulatorAddResult result = createSimulatorBatch(addBo);
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -552,6 +553,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// session
 		res.getSession().setYSession(BsUtil.fill(lcMonitorRsp.getSession(), duration * 2, 0));
 
+		// report
+		try {
+			flowReportService.reportMonitorData(res);
+		} catch (Exception e) {
+			log.error("failed to report monitor data:", e);
+		}
 		return res;
 	}
 

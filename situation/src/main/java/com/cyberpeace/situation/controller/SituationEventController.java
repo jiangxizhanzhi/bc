@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,7 +123,9 @@ public class SituationEventController {
 		TaskContext task = tasks.get(random.nextInt(tasks.size()));
 
 		// 获取靶场数据
-		RangeContext range = thirdPartyService.getRangeByName(task.getResponsibleRangeName());
+		String rangeName = StringUtils.isBlank(task.getResponsibleRangeName()) ? "综合性分靶场"
+				: task.getResponsibleRangeName();
+		RangeContext range = thirdPartyService.getRangeByName(rangeName);
 		CenterContext center = thirdPartyService.getCenters().get(0);
 
 		// 构造任务事件数据

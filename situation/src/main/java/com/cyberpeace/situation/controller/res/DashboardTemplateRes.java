@@ -1,15 +1,13 @@
 package com.cyberpeace.situation.controller.res;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.cyberpeace.situation.controller.req.LayerShowReq;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
-import com.cyberpeace.situation.dao.entity.LayerShow;
 import com.cyberpeace.situation.model.ViewAngle;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author xuxz

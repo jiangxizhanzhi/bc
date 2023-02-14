@@ -3,6 +3,12 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.oj.course.controller.req.GroupSceneReq;
+import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.mapper.ClassroomMapper;
+import com.cyberpeace.oj.course.service.ClassroomSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
@@ -44,6 +50,12 @@ public class WebClassroomController {
 	@Autowired
 	private ClassroomSignService classroomSignService;
 
+	@Autowired
+	private ClassroomMapper classroomMapper;
+
+	@Autowired
+	private ClassroomSceneService classroomSceneService;
+
 	@ApiOperation("前台课程表信息查询")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
@@ -68,8 +80,12 @@ public class WebClassroomController {
 		roomListQuery.setStartTime(startOfDay);
 		roomListQuery.setEndTime(endOfDay);
 
+		List<Classroom> classrooms = classroomMapper.selectList(new ClassRoomListQuery());
+		List<String> creators = StreamApiUtils.getColumn(classrooms, Classroom::getCreateUserId);
+
 		// 管理员查询自己创建和组织下的
-		if (authContext.getIsAdmin() && !authContext.getSuperAdmin()) {
+		// lgd 定制化 用户也能获取自己创建的课堂记录 提供开启私人场景的跳转入口
+		if ((authContext.getIsAdmin() && !authContext.getSuperAdmin()) || creators.contains(authContext.getUserId())) {
 			roomListQuery.setUserId(authContext.getUserId());
 			roomListQuery.setOrgId(authContext.getOrganization());
 		}
@@ -139,5 +155,29 @@ public class WebClassroomController {
 			@Param("group_id") String groupId) {
 		List<DashboardUser> dashboardUsers = classroomService.getChatGroupUsers(roomId, groupId);
 		return new BaseRsp<>(dashboardUsers);
+	}
+
+	@ApiOperation("课堂组场景启动")
+	@PostMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<JSONObject> startScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		JSONObject sceneData = classroomSceneService.startScene(groupSceneReq.getGroupId(),
+				authContext);
+		return new BaseRsp<>(sceneData);
+	}
+
+	@ApiOperation("课堂场景删除")
+	@DeleteMapping("")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+
+		Boolean result = classroomSceneService.deleteScene(groupSceneReq.getGroupId(), authContext);
+		return new BaseRsp<>(result);
 	}
 }

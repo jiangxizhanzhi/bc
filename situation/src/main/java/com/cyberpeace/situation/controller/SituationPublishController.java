@@ -15,12 +15,10 @@ import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.*;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
-import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
-import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import io.swagger.annotations.Api;
@@ -67,6 +65,9 @@ public class SituationPublishController {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    private DashboardTemplateRefMapper dashboardTemplateRefMapper;
+
     @ApiOperation("查询态势发布类型列表")
     @GetMapping("/category/list")
     public BaseRsp<List<SituationCategory>> getSituationPublishInstanceCategory() {
@@ -112,6 +113,8 @@ public class SituationPublishController {
         if (null == situationPublishInstance) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+
+        String originTemplateId = dashboardTemplateRefMapper.selectOriginTemplateId(situationPublishInstance.getTemplateId());
         SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
 
         DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
@@ -121,6 +124,7 @@ public class SituationPublishController {
         TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
                 .filter(t -> t.getCode().equals(dashboardAttribute.getTaskType())).findFirst().orElse(TaskType.QB);
         situationPublishInstanceRes.setTaskType(type.getDesc());
+        situationPublishInstanceRes.setOriginTemplateId(originTemplateId);
 
         return new BaseRsp<>(situationPublishInstanceRes);
     }

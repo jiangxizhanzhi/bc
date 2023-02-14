@@ -212,6 +212,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
     private DashboardTemplateRef changeToDashboardTemplateRef(DashBoardTemplateReq dashBoardTemplateReq) {
         DashboardTemplateRef dashboardTemplateRef = BeanUtils.copy(dashBoardTemplateReq, DashboardTemplateRef.class);
+        dashboardTemplateRef.setOriginTemplateId(dashBoardTemplateReq.getResourceId());
         JSONArray jsonArray = new JSONArray();
         List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq.getComponentsSetting();
         List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();

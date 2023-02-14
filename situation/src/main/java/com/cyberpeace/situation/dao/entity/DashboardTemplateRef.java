@@ -59,4 +59,8 @@ public class DashboardTemplateRef extends BaseTable {
 
     @ApiModelProperty("图层信息")
     private String layerShow;
+
+    @ApiModelProperty("原始模板ID")
+    private String originTemplateId;
+
 }

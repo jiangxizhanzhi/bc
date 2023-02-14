@@ -40,6 +40,7 @@ public class SituationPublishInstanceAddReq {
     @ApiModelProperty(value = "科目名称")
     private String subjectName;
 
+    @NotBlank(groups = Update.class, message = SituationErrorCode.TEMPLATE_EMPTY_ERROR)
     @ApiModelProperty(value = "模板ID")
     private String templateId;
 

@@ -155,4 +155,5 @@ public interface SituationErrorCode {
 	 * 图层数量异常
 	 */
 	String LAYER_NUM_ERROR = "106007";
+
 }

@@ -240,10 +240,11 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
             throw new BusinessException(SituationErrorCode.CAN_NOT_MODIFY_TASK);
         }
 
-        // 只允许修改名称、描述和缩略图
+        // 只允许修改名称、描述和缩略图、模板
         situationPublishInstance.setName(situationPublishInstanceUpdateReq.getName());
         situationPublishInstance.setDescription(situationPublishInstanceUpdateReq.getDescription());
         situationPublishInstance.setThumbnail(situationPublishInstanceUpdateReq.getThumbnail());
+        situationPublishInstance.setTemplateId(situationPublishInstanceUpdateReq.getTemplateId());
 
         situationPublishInstanceMapper.updateById(situationPublishInstance);
         return null;

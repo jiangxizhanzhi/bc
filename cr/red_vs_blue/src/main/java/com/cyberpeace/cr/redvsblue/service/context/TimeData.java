@@ -1,14 +1,14 @@
 package com.cyberpeace.cr.redvsblue.service.context;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.redvsblue.service.context.mission.ObjWithTime;
 import com.google.common.collect.Lists;
-
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 时间数据
@@ -121,5 +121,13 @@ public class TimeData {
 		}
 		this.accumulatedValue = accumulatedValue;
 		return yData;
+	}
+
+	public void handleXDataTime() {
+		List<String> xData = new ArrayList<>();
+		for (Date time: timeList) {
+			xData.add(TimeUtil.format9(time));
+		}
+		this.xData = xData;
 	}
 }

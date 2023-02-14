@@ -1,14 +1,5 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
@@ -44,8 +35,15 @@ import com.cyberpeace.cr.redvsblue.service.context.mission.UserCounter;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -290,6 +288,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 	public JSONObject getRbScoreProgress(String roomId, Integer roleType) {
 		// 获取实例实际开始时间和理论结束时间
 		TimeData timeData = getRbTimeData(roomId);
+		timeData.handleXDataTime();
 
 		RoleUserIds roleUserIds = getRoleInfo(roomId, roleType);
 		List<Integer> yData = getScoreProgress(timeData, roomId, roleUserIds);
@@ -334,6 +333,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 		// 获取实例实际开始时间和理论结束时间
 		TimeData timeData = getRbTimeData(roomId);
+		timeData.handleXDataTime();
 
 		JSONObject json = new JSONObject();
 

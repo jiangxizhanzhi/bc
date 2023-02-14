@@ -599,10 +599,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		NodeBo nodeBo = BeanUtils.copy(modifyBo, NodeBo.class);
 		UserSimulator newSimulator = createSimulator(userInstanceList, nodeBo,
 				simulator.getSceneId(), simulator.getSceneName());
-		// deviceId, deviceName, deviceIp, isEntity, lastExeId, lastExeDate,
+		// deviceId, deviceName, isEntity, lastExeId, lastExeDate,
 		// exeCount属性都是null
 		// 继承运行状态
 		newSimulator.setStatus(simulator.getStatus());
+		newSimulator.setDeviceIp(simulator.getDeviceIp());
 
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -771,7 +772,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			}
 		}
 		log.error("No valid external ip found.");
-		return CommonConstant.EMPTY_LIST_JSON;
+		return CommonConstant.EMPTY_STRING;
 	}
 
 	private void recoverTimerTask() {

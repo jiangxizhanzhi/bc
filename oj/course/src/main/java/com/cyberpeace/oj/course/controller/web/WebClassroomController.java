@@ -159,7 +159,7 @@ public class WebClassroomController {
 
 	@ApiOperation("课堂组场景启动")
 	@PostMapping("")
-	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<JSONObject> startScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
@@ -171,7 +171,7 @@ public class WebClassroomController {
 
 	@ApiOperation("课堂场景删除")
 	@DeleteMapping("")
-	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
 	public BaseRsp<Boolean> deleteScene(@RequestBody @Validated GroupSceneReq groupSceneReq) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),

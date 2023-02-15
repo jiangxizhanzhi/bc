@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
@@ -24,6 +26,7 @@ import com.cyberpeace.cr.hld.service.HldSceneService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.cs.service.impl.MessageListener;
+import com.cyberpeace.integratation.service.HldTaskService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +49,9 @@ public class HldSceneEventListener extends MessageListener {
 	private CrEventListenerHelper crEventListenerHelper;
 
 	@Autowired
+	private HldTaskService hldTaskService;
+
+	@Autowired
 	private CrRoleService crRoleService;
 
 	@Override
@@ -66,6 +72,22 @@ public class HldSceneEventListener extends MessageListener {
 	@Override
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		pushDataToWeb(data, businessId);
+		WsSceneReportBO sceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
+
+		if (JsonUtil
+				.java2JsonObject(
+						sceneReportBO.getData().getData().getJSONObject("data").get("scene"))
+				.get("event_status").equals(4)) {
+
+			HldRoom hldRoom = hldRoomService.getById(businessId);
+			log.info("hld scene succeed, call   businessId = {},taskId = {}", businessId,
+					hldRoom.getTaskId());
+			// 远程写入映射关系
+			if (!hldTaskService.updateTaskZt(hldRoom.getTaskId(), hldRoom.getResourceId())) {
+				throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+			}
+		}
+
 		return true;
 	}
 

@@ -127,9 +127,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 			throw new BusinessException(CrBusinessErrorCode.SAVE_LOCAL_DATA_FAILURE);
 		}
 		// 远程写入映射关系
-		if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
-		}
+		// if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
+		// throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+		// }
 		return sceneId;
 	}
 
@@ -233,9 +233,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 		room.setStatus(HldRoom.StatusCode.PAUSE.getCode());
 		hldRoomService.updateById(room);
 		// 远程写入映射关系
-		if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
-		}
+		// if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
+		// throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+		// }
 		return true;
 	}
 
@@ -254,9 +254,9 @@ public class HldSceneServiceImpl implements HldSceneService {
 		room.setStatus(HldRoom.StatusCode.RECOVERY.getCode());
 		hldRoomService.updateById(room);
 		// 远程写入映射关系
-		if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
-			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
-		}
+		// if (!hldTaskService.updateTaskZt(room.getTaskId(), room.getResourceId())) {
+		// throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_TASK_ZT);
+		// }
 		return true;
 	}
 

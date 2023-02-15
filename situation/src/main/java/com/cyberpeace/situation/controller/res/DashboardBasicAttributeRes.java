@@ -63,6 +63,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("初始视角")
 	private ViewAngle viewAngle;
 
+	@ApiModelProperty("地图数据源 1-谷歌 2-百度 3-高德")
+	private Integer mapSource = 1;
+
 	public DashboardBasicAttributeRes(String dashboardId, Integer level, String title,
 			String subTitle, String subRangeId, String taskId, Date startTime,
 			ViewAngle viewAngle) {

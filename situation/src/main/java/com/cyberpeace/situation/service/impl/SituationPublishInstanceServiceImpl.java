@@ -115,6 +115,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
         dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
+        // 默认使用谷歌地图源
+        dashboardAttribute.setMapSource(MapSource.GG.getCode());
 
         // 从可视化方案中拷贝属性
         SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());

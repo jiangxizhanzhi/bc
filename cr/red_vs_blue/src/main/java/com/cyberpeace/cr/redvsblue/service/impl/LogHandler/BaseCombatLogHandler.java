@@ -107,11 +107,16 @@ public class BaseCombatLogHandler {
 	}
 
 	public String getSourceIp() {
-		if (initData.get("src_ip") != null) {
-			return initData.get("src_ip");
+		String sourceIp = initData.get("src_ip");
+		if (sourceIp != null) {
+			return sourceIp;
 		} else {
-			return initData.get("detail.src_ip");
+			sourceIp = initData.get("detail.src_ip");
 		}
+		if (sourceIp == null) {
+			sourceIp = "";
+		}
+		return sourceIp;
 	}
 
 	public NodeAscription getNodeAscription() {

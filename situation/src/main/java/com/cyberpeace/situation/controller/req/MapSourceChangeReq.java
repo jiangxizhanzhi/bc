@@ -19,6 +19,5 @@ public class MapSourceChangeReq implements Serializable {
 	private String featureId;
 
 	@ApiModelProperty("地图源 1-谷歌 2-百度 3-高德")
-	@NotEmpty
 	private Integer code;
 }

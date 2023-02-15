@@ -198,17 +198,17 @@ public class SituationPublishController {
         }
 
         // 三级大屏同一科目下仅能有一个大屏发布
-		if (StringUtils.isNotBlank(taskId)) {
-			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-			queryWrapper.eq(SituationPublishInstance::getStatus,
-					SituationInstanceStatus.RELEASE.getCode());
-			queryWrapper.eq(SituationPublishInstance::getSubjectId,
-					situationPublishInstances.getSubjectId());
-			SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
-			if (null != one) {
-				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
-			}
-		}
+//		if (StringUtils.isNotBlank(taskId)) {
+//			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
+//			queryWrapper.eq(SituationPublishInstance::getStatus,
+//					SituationInstanceStatus.RELEASE.getCode());
+//			queryWrapper.eq(SituationPublishInstance::getSubjectId,
+//					situationPublishInstances.getSubjectId());
+//			SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
+//			if (null != one) {
+//				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+//			}
+//		}
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override

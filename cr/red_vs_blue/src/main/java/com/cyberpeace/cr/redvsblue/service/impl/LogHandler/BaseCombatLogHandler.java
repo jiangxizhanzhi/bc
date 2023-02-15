@@ -406,11 +406,11 @@ public class BaseCombatLogHandler {
 		return combatRecordsAllDataRsp;
 	}
 
-	public <T> void pushDataToRoom(T data, String sceneId) {
+	public <T> void pushDataToRoom(T data, String roomId) {
 
 		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
 		identifier.setPath(WsPath.RB_COMBAT_LOG);
-		identifier.setSceneId(sceneId);
+		identifier.setRoomId(roomId);
 
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
 																		.data(JsonUtil.toJsonString(data,

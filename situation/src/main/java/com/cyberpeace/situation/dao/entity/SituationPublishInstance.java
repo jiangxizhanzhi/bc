@@ -53,6 +53,9 @@ public class SituationPublishInstance extends BaseTable {
 	@ApiModelProperty("三方靶标URL")
 	private String thirdUrl;
 
+	@ApiModelProperty("是否为想定大屏")
+	private Boolean xd;
+
 	@ApiModelProperty("类型")
 	private String category;
 

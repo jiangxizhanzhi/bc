@@ -198,28 +198,32 @@ public class SituationPublishController {
         }
 
         // 三级大屏同一科目下仅能有一个大屏发布
-        if (StringUtils.isNotBlank(taskId)) {
-            LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-            queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
-            SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
-            if (null != one) {
-                throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
-            }
-        }
+		if (StringUtils.isNotBlank(taskId)) {
+			LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
+			queryWrapper.eq(SituationPublishInstance::getStatus,
+					SituationInstanceStatus.RELEASE.getCode());
+			queryWrapper.eq(SituationPublishInstance::getSubjectId,
+					situationPublishInstances.getSubjectId());
+			SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
+			if (null != one) {
+				throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+			}
+		}
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                situationPublishInstanceMapper.updateById(situationPublishInstances);
-                if (StringUtils.isNotBlank(subjectId)) {
+                // 想定大屏发布后调用想定接口进行备案
+                if (StringUtils.isNotBlank(subjectId) && situationPublishInstances.getXd()) {
                     Boolean result = remoteSituationService.releaseScreen(situationPublishInstances.getSchemeId(),
                             situationPublishInstances.getResourceId());
                     if (!result) {
                         throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
                     }
+                    // 发布过的想定大屏不允许自行编辑
+                    situationPublishInstances.setEdit(false);
                 }
+                situationPublishInstanceMapper.updateById(situationPublishInstances);
             }
         });
         return new BaseRsp<>();
@@ -233,6 +237,12 @@ public class SituationPublishController {
         if (null == situationPublishInstances) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+
+        // 想定大屏不允许主动取消发布
+        if (situationPublishInstances.getXd()) {
+            throw new BusinessException(SituationErrorCode.XD_DASHBOARD_CANCEL_ERROR);
+        }
+
         situationPublishInstances.setStatus(SituationInstanceStatus.DRAFT.getCode());
         situationPublishInstanceMapper.updateById(situationPublishInstances);
         return new BaseRsp<>();

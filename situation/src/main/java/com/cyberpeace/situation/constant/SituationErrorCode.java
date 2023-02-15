@@ -155,4 +155,9 @@ public interface SituationErrorCode {
 	 * 图层数量异常
 	 */
 	String LAYER_NUM_ERROR = "106007";
+
+	/**
+	 * 想定大屏不允许自行取消
+	 */
+	String XD_DASHBOARD_CANCEL_ERROR = "106008";
 }

@@ -158,7 +158,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         dashboardAttribute.setLevel(level == null ? DashboardLevel.RW.getCode() : level);
         dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
         dashboardAttribute.setDashboardType(editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
-        situationPublishInstance.setEdit(!isXd);
+        situationPublishInstance.setEdit(true);
+        situationPublishInstance.setXd(isXd);
         situationPublishInstance.setThumbnail(dashboardTemplateInfo.getThumbnail());
         situationPublishInstance.setTemplateId(dashboardTemplateInfo.getResourceId());
 

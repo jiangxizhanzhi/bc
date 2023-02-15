@@ -57,7 +57,7 @@
     <select id="selectXdInstanceBySchemeId" resultType="java.lang.String">
         SELECT resource_id FROM situation_publish_instance
         <where>
-            edit = 0
+            xd = 1
             <if test="schemeId != null and schemeId != ''">
                 and scheme_id = #{schemeId}
             </if>

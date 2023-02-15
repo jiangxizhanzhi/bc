@@ -33,7 +33,7 @@ import java.util.Objects;
 @Api(tags = "组件库-园区资源库")
 @RestController
 @Slf4j
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/situation/park_resource_library")
 public class SituationParkResourceLibraryController {
 

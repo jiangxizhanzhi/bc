@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势拓扑")
 @RestController
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/situation")
 public class SituationController {
 

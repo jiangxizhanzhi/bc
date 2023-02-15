@@ -27,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "组件映射-动效映射")
 @RestController
 @Slf4j
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/situation/dynamic/effect/mapping")
 public class SituationDynamicEffectMappingController {
 

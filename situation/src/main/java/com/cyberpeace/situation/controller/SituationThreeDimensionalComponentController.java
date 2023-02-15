@@ -31,7 +31,7 @@ import java.util.Objects;
 @Api(tags = "组件库-三维组件")
 @RestController
 @Slf4j
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/situation/three_dimensional_component")
 public class SituationThreeDimensionalComponentController {
 

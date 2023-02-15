@@ -129,6 +129,20 @@ public class DashboardController {
 		return new BaseRsp<>(true);
 	}
 
+	@ApiOperation("推送地图数据源变更消息")
+	@PostMapping("/map_source/")
+	public BaseRsp<Boolean>
+			pushMapSourceChange(@RequestBody @Validated MapSourceChangeReq mapSourceChangeReq) {
+
+		JSONObject data = new JSONObject();
+		data.put("value", mapSourceChangeReq.getCode());
+
+		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.MapSource.getDesc(), data);
+		situationHandlerService.pushDataToDashboard(wsMessage, mapSourceChangeReq.getDashboardId(),
+				mapSourceChangeReq.getFeatureId());
+		return new BaseRsp<>(true);
+	}
+
 	@ApiOperation("推送返回首页消息")
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>

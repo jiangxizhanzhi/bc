@@ -26,7 +26,8 @@ public enum MessageType {
 	JumpPage(16, "jump_page"),
 	NodeMigration(17, "node_migration"),
 	TaskStatus(18, "status"),
-	Message(19, "message");
+	Message(19, "message"),
+	MapSource(20, "map_source");
 
 	@Getter
 	private Integer code;

@@ -60,7 +60,7 @@ public class BackdoorDiagnoseLogHandler extends AttackCombatLogHandler {
 
 	@Override
 	public String getAttackStageContent(RbCombatLog rbCombatLog) {
-		if (CrCommonConstants.ActionType.DEFENSIVE_CONFRONTATION.getCode().equals(rbCombatLog.getActionType())) {
+		if (CrCommonConstants.AttackAction.DELIVERY.getCode().equals(rbCombatLog.getAttackAction())) {
 			return String.format("【文件投递】%s", rbCombatLog.getEventContent());
 		}
 		return rbCombatLog.getEventContent();

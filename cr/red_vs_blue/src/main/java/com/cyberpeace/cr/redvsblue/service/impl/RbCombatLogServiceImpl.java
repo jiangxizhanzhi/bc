@@ -18,7 +18,10 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
-import com.cyberpeace.cr.redvsblue.dao.entity.*;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackPhaseData;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbLostHost;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
@@ -29,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCombatLog> implements RbCombatLogService {
@@ -130,14 +132,16 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
     public RbCombatRecordsRsp getCombatRecords(String roomId) {
 		LambdaQueryWrapper<RbCombatLog> filter = new LambdaQueryWrapper<>();
 		filter.eq(RbCombatLog::getRoomId, roomId);
+		filter.orderByDesc(RbCombatLog::getEventTime);
 		List<RbCombatLog> rbCombatLogs = rbCombatLogMapper.selectList(filter);
 		RbCombatRecordsRsp res;
 		RbCombatRecordsAllDataRsp tmpData = new RbCombatRecordsAllDataRsp();
 		rbCombatLogs.forEach(
 				rbCombatLog -> {
 					Integer eventType = rbCombatLog.getEventType();
-					BaseCombatLogHandler baseCombatLogHandler = BaseCombatLogHandler.get(String.valueOf(eventType), null, rbCombatLog);
-					baseCombatLogHandler.addData(rbCombatLog, tmpData);
+					BaseCombatLogHandler baseCombatLogHandler = BaseCombatLogHandler.get(
+							EnumUtils.getEnumByCode(eventType, CrCommonConstants.EventType.class).getName(), null, rbCombatLog);
+					baseCombatLogHandler.addData(tmpData);
 				}
 		);
 		res = handlerCombatData(tmpData);

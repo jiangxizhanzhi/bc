@@ -298,6 +298,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 
 	private Map<Integer, List<RbAttackPhaseData>> handlerAttackDefenseStage(List<RbAttackDefenseStage> rbAttackDefenseStages) {
+		// todo 处理源节点所属为空的情况
+		rbAttackDefenseStages = rbAttackDefenseStages.stream().filter(rbAttackDefenseStage -> rbAttackDefenseStage.getGroup() != null).collect(Collectors.toList());
 		Map<Integer, List<RbAttackDefenseStage>> integerListMap = StreamApiUtils.groupBy(rbAttackDefenseStages, RbAttackDefenseStage::getGroup);
 		Map<Integer, List<RbAttackPhaseData>> groupStageData = new HashMap();
 		for (Map.Entry<Integer, List<RbAttackDefenseStage>> entry : integerListMap.entrySet()) {

@@ -149,18 +149,18 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
     }
 
 	@Override
-	public RbMissionStatusDataRsp getMissionStatus(String sceneId) {
+	public RbMissionStatusDataRsp getMissionStatus(String roomId) {
 		RbMissionStatusDataRsp res = new RbMissionStatusDataRsp();
 		List<RbMissionStatusGroupDataRsp> redRole = new ArrayList<>();
 		List<RbMissionStatusGroupDataRsp> blueRole = new ArrayList<>();
 
-		List<CrTask> crTasks = crTaskMapper.selectByRoomId(sceneId);
+		List<CrTask> crTasks = crTaskMapper.selectByRoomId(roomId);
 		Map<String, List<CrTask>> taskMap = StreamApiUtils.groupBy(crTasks, CrTask::getRoleId);
 
-		List<CrRole> rolesByRoom = crRoleMapper.getRolesByRoom(sceneId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		List<CrRole> rolesByRoom = crRoleMapper.getRolesByRoom(roomId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		Map<String, CrRole> stringCrRoleMap = StreamApiUtils.toMap(rolesByRoom, CrRole::getResourceId, tmp -> tmp);
 
-		List<Mission> missions = missionMapper.selectByRoomId(sceneId);
+		List<Mission> missions = missionMapper.selectByRoomId(roomId);
 		Map<String, String> missionMaps = StreamApiUtils.toMap(missions, Mission::getResourceId, MissionBase::getTitle);
 
 		for (Map.Entry<String, List<CrTask>> entry : taskMap.entrySet()) {

@@ -34,9 +34,9 @@ public class RbCombatController {
 
 	@ApiOperation("获取红蓝方任务状态")
 	@GetMapping("/team_mission_status")
-	public RbMissionStatusDataRsp getMissionStatus(@ApiParam(name = "scene_id", value = "查询id",
-			required = true) @RequestParam("scene_id") @NotBlank String sceneId) {
-		return rbCombatLogService.getMissionStatus(sceneId);
+	public RbMissionStatusDataRsp getMissionStatus(@ApiParam(name = "room_id", value = "查询id",
+			required = true) @RequestParam("room_id") @NotBlank String roomId) {
+		return rbCombatLogService.getMissionStatus(roomId);
 	}
 
 }

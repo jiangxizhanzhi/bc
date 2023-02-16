@@ -707,11 +707,22 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			bytePerSecond = lcService.getBandwidthSum();
 		} catch (RemoteServiceException e) {
 			log.error("remote error: ", e);
-		} catch (Exception e1){
+		} catch (Exception e1) {
 			log.error("failed to get bandwidth sum: ", e1);
 		}
 		// 单位 mbps
 		return BsUtil.divide(bytePerSecond, 128 * 1024);
+	}
+
+	@Override
+	public void deleteByNodeId(List<String> nodeIds) {
+		// List<String> simulatorIds = nodeIds.stream().map(nodeId ->
+		// nodeId.replaceAll("-", ""))
+		// .collect(Collectors.toList());
+		List<String> simulatorIds = userSimulatorMapper.getIdsByDeviceIds(nodeIds);
+		if (!simulatorIds.isEmpty()) {
+			deleteSimulatorByIds(simulatorIds);
+		}
 	}
 
 	private void deleteSimulatorByIds(Collection<String> simulatorIds) {

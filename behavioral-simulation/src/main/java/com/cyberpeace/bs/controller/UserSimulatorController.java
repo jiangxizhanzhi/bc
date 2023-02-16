@@ -128,6 +128,13 @@ public class UserSimulatorController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("编辑场景时删除一个节点")
+	@DeleteMapping("/node")
+	public BaseRsp deleteByNode(@RequestBody @Validated IdListReq idListReq) {
+		userSimulatorService.deleteByNodeId(idListReq.getIds());
+		return new BaseRsp();
+	}
+
 	@ApiOperation("获取行为仪表关联场景id列表")
 	@GetMapping("/scene_ids")
 	public BaseRsp<List<String>> getRelatedSceneIds() {

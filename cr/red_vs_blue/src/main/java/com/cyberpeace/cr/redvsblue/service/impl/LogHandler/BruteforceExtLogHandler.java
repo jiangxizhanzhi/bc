@@ -20,7 +20,7 @@ public class BruteforceExtLogHandler extends AttackCombatLogHandler {
 	Integer eventType = EventType.BRUTEFORCE_EXT.getCode();
 	Integer attackPhase = AttackPhase.DELIVERY.getCode();
 	Integer attackAction = AttackAction.PASSWORD_BRUTE.getCode();
-	Integer attackType = ActionType.BOUNDARY_BREAKTHROUGH.getCode();
+	Integer actionType = ActionType.BOUNDARY_BREAKTHROUGH.getCode();
 	Integer attackPattern = AttackPattern.BRUTEFORCE_EXT.getCode();
 
 	@Override

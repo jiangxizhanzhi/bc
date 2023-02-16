@@ -95,7 +95,6 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			System.out.println("未知来源的数据:" + syslog);
 			throw new BusinessException(CrBusinessErrorCode.UNRECOGNIZED_DATA_SOURCE);
 		}
-		System.out.println(initData.toString());
 		BaseCombatLogHandler combatLogHandler = BaseCombatLogHandler.get(initData.get("event_type"), initData, null);
 		combatLogHandler.save();
 		combatLogHandler.sendMessage();

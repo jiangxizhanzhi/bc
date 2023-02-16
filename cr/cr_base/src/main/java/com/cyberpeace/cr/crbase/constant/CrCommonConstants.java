@@ -334,7 +334,7 @@ public interface CrCommonConstants {
 		DIRECTOR(2, "导演", "Director"),
 		REFEREE(3, "裁判", "Referee"),
 		RED(4, "红方", "Red"),
-		BLUE(5, "蓝方", "Blue")		;
+		BLUE(5, "蓝方", "Blue");
 
 		@Getter
 		private final Integer code;

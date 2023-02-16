@@ -174,7 +174,7 @@ public class BaseCombatLogHandler {
 		return TimeUtil.format1(new Date(Long.parseLong(initData.get("datatime")) * 1000));
 	}
 
-	public Boolean getIsLostHostSign() {
+	public Boolean getIsLostHost() {
 		if (isLostHostSign && eventCategory.equals(EventCategory.ATTACK.getCode())) {
 			RbCombatLog rbCombatLog = rbCombatLogMapper.selectOneByRoomIdAndAgentIpAndIsLostHost(getRedVsBlue(), getAgentIp(), true);
 			if (rbCombatLog == null){
@@ -199,7 +199,7 @@ public class BaseCombatLogHandler {
 						  .actionType(getActionType()).sourceGroup(getSourceGroup()).sourceIp(getSourceIp())
 						  .sourceName(getSourceName()).destGroup(this.getDestGroup()).destIp(getDestIp())
 						  .destName(getDestName()).agentName(getAgentName()).agentIp(getAgentIp())
-						  .eventContent(getEventContent()).eventTime(TimeUtil.toDate1(getEventTime())).isLostHost(getIsLostHostSign())
+						  .eventContent(getEventContent()).eventTime(TimeUtil.toDate1(getEventTime())).isLostHost(getIsLostHost())
 						  .originalLog(initData.get("original_log")).build();
 	}
 

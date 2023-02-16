@@ -131,7 +131,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			if (spStr.length == 1) {
 				System.out.println(spStr);
 			} else {
-				initMap.put(spStr[0], spStr[1].replace("\"",""));
+				initMap.put(spStr[0], spStr[1].replace("\"","").trim());
 			}
 		}
 		initMap.put("original_log", syslog);

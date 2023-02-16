@@ -17,10 +17,10 @@
             AND category = #{situationPublishInstanceFilterReq.category}
         </if>
         <if test="situationPublishInstanceFilterReq.startTime != null">
-            AND situation_dashboard_attribute.start_time &gt; #{situationPublishInstanceFilterReq.startTime}
+            AND situation_publish_instance.update_time &gt; #{situationPublishInstanceFilterReq.startTime}
         </if>
         <if test="situationPublishInstanceFilterReq.endTime != null">
-            AND situation_dashboard_attribute.start_time &lt; #{situationPublishInstanceFilterReq.endTime}
+            AND situation_publish_instance.update_time &lt; #{situationPublishInstanceFilterReq.endTime}
         </if>
         <if test="situationPublishInstanceFilterReq.status != null and situationPublishInstanceFilterReq.status != ''">
             AND status = #{situationPublishInstanceFilterReq.status}

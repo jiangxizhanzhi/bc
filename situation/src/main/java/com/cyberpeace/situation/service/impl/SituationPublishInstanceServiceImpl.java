@@ -242,13 +242,22 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         if (!Objects.equals(situationPublishInstance.getSchemeId(), situationPublishInstanceUpdateReq.getSchemeId())) {
             throw new BusinessException(SituationErrorCode.CAN_NOT_MODIFY_TASK);
         }
-
-        // 只允许修改名称、描述和缩略图
+        //获取旧模板id
+        String templateId = situationPublishInstance.getTemplateId();
+        // 只允许修改名称、描述和缩略图、模板
         situationPublishInstance.setName(situationPublishInstanceUpdateReq.getName());
         situationPublishInstance.setDescription(situationPublishInstanceUpdateReq.getDescription());
         situationPublishInstance.setThumbnail(situationPublishInstanceUpdateReq.getThumbnail());
+        situationPublishInstance.setTemplateId(situationPublishInstanceUpdateReq.getTemplateId());
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                //删除旧模板数据
+                dashboardTemplateRefMapper.deleteById(templateId);
+                situationPublishInstanceMapper.updateById(situationPublishInstance);
+            }
+        });
 
-        situationPublishInstanceMapper.updateById(situationPublishInstance);
         return null;
     }
 

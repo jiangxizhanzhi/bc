@@ -65,4 +65,7 @@ public class SituationPublishInstancePageRes implements Serializable {
     @ApiModelProperty(value = "科目结束时间")
     private String endTime;
 
+    @ApiModelProperty(value = "更新时间")
+    private String updateTime;
+
 }

@@ -96,4 +96,11 @@ public interface LcService {
 	 * @return
 	 */
 	String getLcHost();
+
+	/**
+	 * 获取实时总带宽
+	 * @return
+	 */
+    Integer getBandwidthSum();
+
 }

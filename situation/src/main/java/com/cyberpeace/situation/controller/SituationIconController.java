@@ -13,6 +13,7 @@ import com.cyberpeace.situation.service.SituationIconService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "图标管理")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/icon")
 public class SituationIconController {
 

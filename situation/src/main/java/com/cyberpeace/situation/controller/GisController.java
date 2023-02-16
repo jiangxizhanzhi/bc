@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -48,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "GIS接口")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class GisController {
 

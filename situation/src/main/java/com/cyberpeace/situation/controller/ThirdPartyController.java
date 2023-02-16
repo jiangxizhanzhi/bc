@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "三方数据")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/third/")
 public class ThirdPartyController {
 

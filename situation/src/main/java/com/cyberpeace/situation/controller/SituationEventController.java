@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller;
 import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "推送态势事件")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/simulation")
 public class SituationEventController {
 

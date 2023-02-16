@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "拓扑接口")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/topo")
 public class TopoController {
 

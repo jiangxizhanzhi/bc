@@ -41,6 +41,7 @@ import java.util.List;
 @Api(tags = "组件库-态势发布大屏")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/publish")
 public class SituationPublishController {
 

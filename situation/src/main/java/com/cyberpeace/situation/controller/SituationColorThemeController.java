@@ -13,6 +13,7 @@ import com.cyberpeace.situation.service.SituationColorThemeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @Api(tags = "图表主题管理")
+@RequiresAuthentication
 @RequestMapping("situation/color/theme")
 public class SituationColorThemeController {
     @Autowired

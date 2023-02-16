@@ -38,7 +38,7 @@ import java.util.Objects;
 @Api(tags = "组件库-动效库")
 @RestController
 @Slf4j
-//@RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/situation/dynamic_effect_library")
 public class SituationDynamicEffectLibraryController {
 

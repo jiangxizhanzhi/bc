@@ -175,7 +175,7 @@ public class BaseCombatLogHandler {
 	}
 
 	public Boolean getIsLostHost() {
-		if (isLostHostSign && eventCategory.equals(EventCategory.ATTACK.getCode())) {
+		if (getIsLostHostSign() && getEventCategory().equals(EventCategory.ATTACK.getCode())) {
 			RbCombatLog rbCombatLog = rbCombatLogMapper.selectOneByRoomIdAndAgentIpAndIsLostHost(getRedVsBlue(), getAgentIp(), true);
 			if (rbCombatLog == null){
 				return true;
@@ -221,21 +221,6 @@ public class BaseCombatLogHandler {
 
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
-//		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbAttackStages()) {
-//			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
-//		}
-//		for (RbAttackDefenseStage rbAttackDefenseStage: data.getRbDefenseStages()) {
-//			pushDataToRoom(rbAttackDefenseStage, getRedVsBlue());
-//		}
-//		for (RbLostHost rbLostHost: data.getLostHosts()) {
-//			pushDataToRoom(rbLostHost, getRedVsBlue());
-//		}
-//		for (RbAttackEvent rbAttackEvent: data.getRbAttackDefenseEvents()) {
-//			if (rbAttackEvent != null && !rbAttackEvent.getVisible()) {
-//				delayHandler();
-//			}
-//			pushDataToRoom(rbAttackEvent, getRedVsBlue());
-//		}
 		pushDataToRoom(data, getRedVsBlue());
 	}
 

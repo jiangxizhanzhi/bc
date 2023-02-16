@@ -18,4 +18,7 @@ public class MissionStatusWs {
 	@ApiModelProperty(value = "攻击阶段任务")
 	private RbCombatLog attackStageMission;
 
+	@ApiModelProperty(value = "满分任务")
+	private RbCombatLog fullScoreMissonStatus;
+
 }

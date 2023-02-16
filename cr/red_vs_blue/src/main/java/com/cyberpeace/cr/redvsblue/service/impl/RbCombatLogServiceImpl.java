@@ -340,6 +340,21 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		return null;
 	}
 
+	@Override
+	public RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq, String userId) {
+		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
+		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
+		Mission mission = missionMapper.selectById(crTask.getMissionId());
+		String title = mission.getTitle();
+		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){
+			RbMissionStatusGroupDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupDataRsp();
+			missionStatusGroupDataRsp.setTask(title);
+			missionStatusGroupDataRsp.setStatus(CrTask.TaskStatus.SUCCESS.getCode());
+			return missionStatusGroupDataRsp;
+		}
+		return null;
+	}
+
 	private String getNodeIpDataByName(String roomId, String nodeName, Integer destGroup) {
 		RbRoom rbRoom = rbRoomMapper.selectById(roomId);
 		String localSceneId = rbRoom.getLocalSceneId();

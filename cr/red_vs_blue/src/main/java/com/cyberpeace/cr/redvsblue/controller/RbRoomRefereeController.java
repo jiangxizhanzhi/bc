@@ -11,6 +11,7 @@ import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
@@ -209,6 +210,7 @@ public class RbRoomRefereeController {
 		List<RbCombatLog> defenseStageMissions = rbCombatLogService.defenseStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		//  判断该任务是否属于攻击阶段渗透利用
 		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		RbMissionStatusGroupDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
@@ -223,7 +225,10 @@ public class RbRoomRefereeController {
 				.data(JsonUtil.toJsonString(data,
 						PropertyNamingStrategy.SnakeCase))
 				.messageIdentifier(identifier).build();
-
+		if(null != fullScoreMissionStatus){
+			messageContext.setData(JsonUtil.toJsonString(fullScoreMissionStatus,
+					PropertyNamingStrategy.SnakeCase));
+		}
 		myWebSocketHandler.pushMessage(messageContext, true);
 		return new BaseRsp<>();
 	}

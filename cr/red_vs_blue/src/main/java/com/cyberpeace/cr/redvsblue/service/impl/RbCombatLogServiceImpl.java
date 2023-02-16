@@ -430,7 +430,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
 				initMap.put(entry.getKey(), entry.getValue().toString().replace("\"",""));
 			}
-			if (initMap.get("srcAddrIp") != null && initMap.get("destAddrIp") != null) {
+			if (StringUtils.isBlank(initMap.get("srcAddrIp")) && StringUtils.isBlank(initMap.get("destAddrIp"))) {
 				initMap.put("event_type", "firewall_policy");
 				initMap.put("original_log", syslog);
 				return initMap;

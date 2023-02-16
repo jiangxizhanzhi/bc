@@ -4,8 +4,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
+import com.cyberpeace.cr.redvsblue.service.context.MissionStatusWs;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -59,6 +68,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private RbCombatLogService rbCombatLogService;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -192,13 +204,27 @@ public class RbRoomRefereeController {
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
 		// TODO 同步攻击阶段的判定  判断情报侦察任务完成情况
-		rbCombatLogService.intelligenceInvestigationMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		RbCombatLog investigationMission = rbCombatLogService.intelligenceInvestigationMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		//  判断该任务是否属于防御阶段
-		rbCombatLogService.defenseStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		List<RbCombatLog> defenseStageMissions = rbCombatLogService.defenseStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		//  判断该任务是否属于攻击阶段渗透利用
+		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
+		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
+		identifier.setPath(WsPath.RB_COMBAT_LOG);
+		identifier.setRoomId(submitEvaluationReq.getRoomId());
+		MissionStatusWs data = new MissionStatusWs();
+		data.setInvestigationMission(investigationMission);
+		data.setAttackStageMission(attackStageMission);
+		data.setDefenseStageMissions(defenseStageMissions);
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+				.data(JsonUtil.toJsonString(data,
+						PropertyNamingStrategy.SnakeCase))
+				.messageIdentifier(identifier).build();
+
+		myWebSocketHandler.pushMessage(messageContext, true);
 		return new BaseRsp<>();
 	}
 

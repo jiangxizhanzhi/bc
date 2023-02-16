@@ -6,6 +6,7 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,5 +26,7 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
 
 	RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId);
 
-	void defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+	List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+
+	RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
 }

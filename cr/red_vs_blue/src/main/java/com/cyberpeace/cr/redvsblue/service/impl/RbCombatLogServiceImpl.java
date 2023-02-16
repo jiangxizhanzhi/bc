@@ -16,17 +16,19 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackPhaseData;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbLostHost;
+import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +68,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Autowired
 	private CrRoleMapper crRoleMapper;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 
 	@Override
 	public void handlerLog(String syslog) {
@@ -216,10 +224,6 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
 
 				String content = String.format("%s对%s的目标靶机进行情报侦察", CrCommonUtil.getGroupName(sourceGroup), CrCommonUtil.getGroupName(destGroup));
-				Map<String, Object> filterMap = new HashMap<>();
-				filterMap.put(roomId, roomId);
-				List<RbCombatLog> rbCombatLogs = rbCombatLogMapper.selectByMap(filterMap);
-				rbCombatLog = rbCombatLogs.get(0);
 				rbCombatLog.setRoomId(roomId);
 				rbCombatLog.setEventType(CrCommonConstants.EventType.ATTACK_MISSION.getCode());
 				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
@@ -229,7 +233,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLog.setSourceGroup(sourceGroup);
 				rbCombatLog.setDestGroup(destGroup);
 				rbCombatLog.setEventContent(content);
-				rbCombatLogMapper.updateById(rbCombatLog);
+				rbCombatLogMapper.insert(rbCombatLog);
 			}
 		}
 		return rbCombatLog;
@@ -237,17 +241,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	}
 
 
-	/**
-	 * 判断该任务是否属于防御阶段
-	 *
-	 * @param submitEvaluationReq
-	 * @param userId
-	 */
 	@Override
-	public void defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId) {
+	public List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId) {
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
+		List<RbCombatLog> combatLogList = new ArrayList<>();
 		if (Arrays.asList("5_被攻击链条复现","6_定位攻击源", "7_清除跳板").contains(mission.getTitle())){
 			Integer submitScore = submitEvaluationReq.getScore();
 			if(null != submitScore && submitScore.equals(crTask.getScore()) && submitScore.equals(mission.getScore())
@@ -257,10 +256,96 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				Integer destGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				Integer sourceGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(destGroup) ?
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+				RbCombatLog rbCombatLog = new RbCombatLog();
+				rbCombatLog.setRoomId(submitEvaluationReq.getRoomId());
+				rbCombatLog.setEventType(CrCommonConstants.EventType.DEFENSE_MISSION.getCode());
+				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.DEFENSE.getCode());
+				CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(mission.getTitle(), CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
+				rbCombatLog.setDefenseAction(enumByCode.getStages().get(0));
+				rbCombatLog.setDefenseAction(enumByCode.getAction());
+				rbCombatLog.setSourceGroup(sourceGroup);
+				rbCombatLog.setDestGroup(destGroup);
+				rbCombatLog.setEventContent(CrCommonUtil.getGroupName(destGroup) + enumByCode.getContent());
+				rbCombatLogMapper.insert(rbCombatLog);
+				combatLogList.add(rbCombatLog);
 
+				if (!"5_被攻击链条复现".equals(mission.getTitle())){
+					rbCombatLog.setDefensePhase(enumByCode.getStages().get(1));
+					rbCombatLogMapper.insert(rbCombatLog);
+					combatLogList.add(rbCombatLog);
+				}
+				return combatLogList;
 			}
 		}
+		return null;
 
+	}
+
+	@Override
+	public RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq, String userId){
+		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
+		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
+		Mission mission = missionMapper.selectById(crTask.getMissionId());
+		String title = mission.getTitle();
+		String[] nodeNames = title.split("_");
+		String nodeName = nodeNames[1];
+		String[] serverNames = title.split("攻陷");
+		String serverName = serverNames[serverNames.length - 1];
+		Integer enumCodeByDesc = EnumUtils.getEnumCodeByDesc(nodeName, CrCommonConstants.Mission.class);
+		if(null != enumCodeByDesc){
+			Integer score = submitEvaluationReq.getScore();
+			if (null != score && score.equals(mission.getScore()) &&
+					!submitEvaluationReq.getScore().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())){
+				String roomId = submitEvaluationReq.getRoomId();
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
+				Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
+						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+				String ip = getNodeIpDataByName(roomId, serverName, destGroup);
+				String eventContent = String.format("%s攻陷%s的%s",
+						CrCommonUtil.getGroupName(sourceGroup), CrCommonUtil.getGroupName(destGroup), serverName);
+				RbCombatLog rbCombatLog = new RbCombatLog();
+				rbCombatLog.setRoomId(roomId);
+				rbCombatLog.setEventType(CrCommonConstants.EventType.ATTACK_MISSION.getCode());
+				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.ATTACK.getCode());
+				CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(nodeName, CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
+
+				rbCombatLog.setAttackPhase(enumByCode.getStage());
+				rbCombatLog.setAttackAction(enumByCode.getAction());
+				rbCombatLog.setSourceGroup(sourceGroup);
+				rbCombatLog.setDestGroup(destGroup);
+				rbCombatLog.setDestIp(ip);
+				rbCombatLog.setEventContent(eventContent);
+				rbCombatLogMapper.insert(rbCombatLog);
+				return rbCombatLog;
+			}
+		}
+		return null;
+	}
+
+	private String getNodeIpDataByName(String roomId, String nodeName, Integer destGroup) {
+		RbRoom rbRoom = rbRoomMapper.selectById(roomId);
+		String localSceneId = rbRoom.getLocalSceneId();
+		LocalScene localScene = localSceneMapper.selectById(localSceneId);
+		String mpSceneId = localScene.getMpSceneId();
+		List<JSONObject> nodeInfoList = remoteSceneService.getAllElements(mpSceneId);
+		List<CrRole> crRoleList = crRoleMapper.getRolesByRoom(roomId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		Map<Integer, List<CrRole>> integerListMap = StreamApiUtils.groupBy(crRoleList, CrRole::getRoleGroup);
+		CrRole crRole = integerListMap.get(destGroup).get(0);
+		for (JSONObject nodeInfo : nodeInfoList) {
+			List<JSONObject> ports = nodeInfo.getObject("ports", List.class);
+			for (JSONObject port : ports) {
+				String ip = port.getString("ip");
+				CrRoleNodesData crRoleNodesData = crRole.getNodeData();
+				for (CrRoleNode crRoleNode : crRoleNodesData.getVisibleNodes()) {
+					if (crRoleNode.getId().equals(nodeInfo.getString("id"))) {
+						return ip;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	private RbCombatRecordsRsp handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {

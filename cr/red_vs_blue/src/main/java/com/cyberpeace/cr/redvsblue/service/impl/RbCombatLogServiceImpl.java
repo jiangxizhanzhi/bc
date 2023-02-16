@@ -72,19 +72,19 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Map<String, String> initData = new HashMap<>();
 		if (isZrSyslog(syslog)) {
 			initData = getInitDataFromZrLog(syslog);
-//			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
-//					  .contains(initData.get("event_type"))) {
-//				Map<String, String> bruteforceData = new HashMap<>();
-//				bruteforceData.put("source_ip", initData.get("detail.src_ip"));
-//				bruteforceData.put("dest_ip", initData.get("agent_ip"));
-//				REPEATED_DATA.add(bruteforceData.toString());
-//				int dataSize = new HashSet<>(REPEATED_DATA).size();
-//				if (FLAG_LENGTH != dataSize){
-//					FLAG_LENGTH = dataSize;
-//				}else {
-//					throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
-//				}
-//			}
+			if (Arrays.asList("bruteforce_ext", "bruteforce_inter")
+					  .contains(initData.get("event_type"))) {
+				Map<String, String> bruteforceData = new HashMap<>();
+				bruteforceData.put("source_ip", initData.get("detail.src_ip"));
+				bruteforceData.put("dest_ip", initData.get("agent_ip"));
+				REPEATED_DATA.add(bruteforceData.toString());
+				int dataSize = new HashSet<>(REPEATED_DATA).size();
+				if (FLAG_LENGTH != dataSize){
+					FLAG_LENGTH = dataSize;
+				}else {
+					throw new BusinessException(CrBusinessErrorCode.LOG_REPEATED);
+				}
+			}
 		} else if (isSbSyslog(syslog)) {
 			initData = getInitDataFromSbLog(syslog);
 		} else {

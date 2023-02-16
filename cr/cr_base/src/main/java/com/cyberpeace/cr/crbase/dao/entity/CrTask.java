@@ -1,19 +1,18 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
-
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("cr_task")
@@ -97,7 +96,8 @@ public class CrTask extends BaseTable {
 		WAIT(0, "待评估"),
 		SUCCESS(1, "成功"),
 		FAIL(2, "失败"),
-		REJECT(3, "驳回");
+		REJECT(3, "驳回"),
+		IMCOMPLETE(4, "部分正确");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));

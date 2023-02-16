@@ -16,19 +16,17 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
-import com.cyberpeace.cr.redvsblue.dao.entity.*;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackPhaseData;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbLostHost;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -197,7 +195,21 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	private RbMissionStatusGroupDataRsp getRbMissionStatusGroupDataRsp(Map<String, String> missionMaps, CrTask val) {
 		RbMissionStatusGroupDataRsp tmp = new RbMissionStatusGroupDataRsp();
 		tmp.setTask(missionMaps.get(val.getMissionId()));
-		tmp.setStatus(val.getStatus());
+		Integer tmpStatue = 0;
+		Integer valStatue = val.getStatus();
+		Mission mission = missionMapper.selectById(val.getMissionId());
+		Integer score = val.getScore();
+		if (FINISHED_STATUS_LIST.contains(valStatue)) {
+			if (score.equals(0)) {
+				tmpStatue = CrTask.TaskStatus.FAIL.getCode();
+			}else if (score.equals(mission.getScore())) {
+				tmpStatue = CrTask.TaskStatus.SUCCESS.getCode();
+			}else {
+				// 部分正确
+				tmpStatue = CrTask.TaskStatus.IMCOMPLETE.getCode();
+			}
+		}
+		tmp.setStatus(tmpStatue);
 		return tmp;
 	}
 

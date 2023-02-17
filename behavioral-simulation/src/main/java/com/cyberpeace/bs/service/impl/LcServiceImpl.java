@@ -101,6 +101,11 @@ public class LcServiceImpl implements LcService {
 	 */
 	private String BEHAVIOR_IMPORT_GZ = "api/v1/flowcharts/behaviorImport";
 
+	/**
+	 * 实时总带宽
+	 */
+	private String BANDWIDTH_SUM = "api/v1/monitor/getAll";
+
 	@PostConstruct
 	public void init() {
 		LC_HOST_PORT = SystemPropUtil.getProp("LC_HOST_PORT");
@@ -306,4 +311,11 @@ public class LcServiceImpl implements LcService {
 	public String getLcHost() {
 		return LC_HOST_PORT;
 	}
+
+    @Override
+    public Integer getBandwidthSum() {
+		String targetUrl = LC_HOST_PORT + BANDWIDTH_SUM;
+		Integer rsp = LcHttpClient.rawGet(targetUrl, Integer.class);
+		return rsp;
+    }
 }

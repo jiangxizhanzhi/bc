@@ -279,4 +279,22 @@ public class BsUtil {
 		}
 		return habits;
 	}
+
+	/**
+	 * 计算带宽数值，向上取整除法
+	 * @param dividend
+	 * @param divisor
+	 * @return
+	 */
+	public static Integer divide(Integer dividend, Integer divisor) {
+
+		int ret = dividend / divisor;
+		int mod = dividend % divisor;
+
+		if (mod != 0) {
+			ret++;
+		}
+
+		return ret;
+	}
 }

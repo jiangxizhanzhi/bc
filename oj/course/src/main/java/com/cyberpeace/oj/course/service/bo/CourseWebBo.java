@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.bo;
 
+import com.cyberpeace.cs.controller.res.MarkScore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -58,4 +59,6 @@ public class CourseWebBo implements Serializable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("评价分数")
+	private MarkScore markScore;
 }

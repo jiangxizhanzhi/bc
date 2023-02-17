@@ -152,4 +152,7 @@ public interface ErrorCode {
 
 	/** 竞赛服务异常*/
 	String ERROR_AD_SERVICE = "100049";
+
+	/** 打分范围异常*/
+	String SCORE_RANGE_ERROR = "100050";
 }

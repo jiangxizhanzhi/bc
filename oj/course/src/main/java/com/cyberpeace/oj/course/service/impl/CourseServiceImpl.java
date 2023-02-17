@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.MarkingService;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -130,6 +131,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseStudyHistoryMapper courseStudyHistoryMapper;
+
+	@Autowired
+	private MarkingService markingService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
@@ -329,6 +333,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			CourseInfoBo courseInfoBo = courseToBo(course, true);
 			CourseWebBo courseWebBo = BeanUtils.copy(courseInfoBo, CourseWebBo.class);
 			courseWebBo.setEbook(course.getCourseType());
+			courseWebBo.setMarkScore(markingService.getMarkScoreByUserIdAndBusinessId(authContext.getUserId(),course.getResourceId()));
+
 			return courseWebBo;
 		}
 

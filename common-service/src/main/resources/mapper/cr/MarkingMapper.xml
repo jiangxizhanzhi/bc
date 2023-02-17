@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.cs.dao.mapper.MarkingMapper">
+
+
+
+    <sql id="Base_Column_List">
+        id,resource_id,business_id,
+        user_id,score,mark_type,
+        create_time,update_time
+    </sql>
+
+    <delete id="deleteByUserIdAndBusinessId">
+        delete
+        from marking
+        where user_id = #{userId}
+        and business_id = #{businessId}
+    </delete>
+    <select id="getByBusinessId" resultType="com.cyberpeace.cs.dao.entity.Marking">
+        select * from marking
+        where business_id = #{businessId}
+    </select>
+
+</mapper>

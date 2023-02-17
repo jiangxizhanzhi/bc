@@ -2,17 +2,31 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cs.service.MarkingService;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.oj.course.controller.req.CourseAddReq;
+import com.cyberpeace.oj.course.controller.req.CourseMarkingReq;
+import com.cyberpeace.oj.course.controller.req.CourseUpdateReq;
+import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.course.dao.entity.CourseCategory;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -47,6 +61,9 @@ public class WebCourseController {
 
 	@Autowired
 	private CourseCategoryService courseDirectionService;
+
+	@Autowired
+	private MarkingService markingService;
 
 	@ApiOperation("前台课程列表查询")
 	@GetMapping("/list")
@@ -87,7 +104,26 @@ public class WebCourseController {
 		CourseInfoBo course = courseService.selectById(resourceId, authContext);
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
+
+		courseRes.setMarkScore(markingService.getMarkScoreByUserIdAndBusinessId(authContext.getUserId(),resourceId ));
+
         return new BaseRsp(courseRes);
 	}
+
+	@ApiOperation("课程评分")
+	@PostMapping("mark_score")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	public BaseRsp<Course> markScore(@ApiParam(name = "addReq",
+			value = "课程基本信息") @Validated(Create.class) @RequestBody CourseMarkingReq addReq) {
+
+		addReq.validate();
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+ 		markingService.mark(userId,addReq.getCourseId(), addReq.getScore());
+
+		return new BaseRsp<>();
+	}
+
+
 
 }

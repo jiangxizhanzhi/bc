@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.res;
 
+import com.cyberpeace.cs.controller.res.MarkScore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -47,4 +48,6 @@ public class WebCourseRes implements Serializable {
 	@ApiModelProperty("访问量")
 	private Integer heat;
 
+	@ApiModelProperty("评价分数")
+	private MarkScore markScore;
 }

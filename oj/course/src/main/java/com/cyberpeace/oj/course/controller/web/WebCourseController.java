@@ -2,33 +2,16 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.AuthTable;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.service.MarkingService;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.oj.course.controller.req.CourseAddReq;
-import com.cyberpeace.oj.course.controller.req.CourseMarkingReq;
-import com.cyberpeace.oj.course.controller.req.CourseUpdateReq;
-import com.cyberpeace.oj.course.dao.entity.Course;
-import com.cyberpeace.oj.course.dao.entity.CourseCategory;
-import com.cyberpeace.oj.course.service.bo.CourseWebBo;
-import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
@@ -39,12 +22,17 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cs.controller.res.MarkScore;
+import com.cyberpeace.cs.service.MarkingService;
 import com.cyberpeace.oj.course.controller.req.CourseListReq;
+import com.cyberpeace.oj.course.controller.req.CourseMarkingReq;
 import com.cyberpeace.oj.course.controller.res.WebCourseRes;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
+import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -105,9 +93,10 @@ public class WebCourseController {
 
 		WebCourseRes courseRes = BeanUtils.copy(course, WebCourseRes.class);
 
-		courseRes.setMarkScore(markingService.getMarkScoreByUserIdAndBusinessId(authContext.getUserId(),resourceId ));
+		courseRes.setMarkScore(markingService
+				.getMarkScoreByUserIdAndBusinessId(authContext.getUserId(), resourceId));
 
-        return new BaseRsp(courseRes);
+		return new BaseRsp(courseRes);
 	}
 
 	@ApiOperation("课程评分")
@@ -119,11 +108,22 @@ public class WebCourseController {
 		addReq.validate();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
- 		markingService.mark(userId,addReq.getCourseId(), addReq.getScore());
+		markingService.mark(userId, addReq.getCourseId(), addReq.getScore());
 
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("查询课程评分")
+	@GetMapping("mark_score")
+	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+	public BaseRsp<Integer> markScore(
+			@ApiParam(name = "resource_id", value = "课程id", required = true) String resource_id) {
 
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		MarkScore markScore = markingService.getMarkScoreByUserIdAndBusinessId(userId, resource_id);
+
+		return new BaseRsp<>(markScore.getMarkScore());
+	}
 
 }

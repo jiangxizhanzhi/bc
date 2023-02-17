@@ -304,6 +304,9 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		String title = mission.getTitle();
+		if(!title.contains("_")){
+			return null;
+		}
 		String[] nodeNames = title.split("_");
 		String nodeName = nodeNames[1];
 		String[] serverNames = title.split("攻陷");

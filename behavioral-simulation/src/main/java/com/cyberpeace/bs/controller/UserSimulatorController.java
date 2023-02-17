@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
+import com.cyberpeace.bs.service.bo.CommandBo;
+import com.cyberpeace.bs.service.bo.CommandExecutor;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
@@ -31,22 +33,43 @@ public class UserSimulatorController {
 
 	@ApiOperation("配管创建仪表")
 	@PostMapping("/create")
-	public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
-		userSimulatorService.batchCreate(addBo);
+	public BaseRsp batchCreate(@RequestBody @Validated CommandBo<SimulatorAddBo> commandBo) {
+		SimulatorAddBo addBo = commandBo.getCommandBody();
+		new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "创建仪表失败") {
+
+			@Override
+			protected void doBusiness() {
+				userSimulatorService.batchCreate(addBo);
+			}
+		}.execute();
 		return new BaseRsp();
 	}
 
 	@ApiOperation("更新单个仪表用户")
 	@PatchMapping("/modify")
-	public BaseRsp modifySimulator(@RequestBody @Validated SimulatorModifyBo modifyBo) {
-		userSimulatorService.modifySimulator(modifyBo);
+	public BaseRsp modifySimulator(@RequestBody @Validated CommandBo<SimulatorModifyBo> commandBo) {
+		SimulatorModifyBo modifyBo = commandBo.getCommandBody();
+		new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "更新仪表用户失败") {
+
+			@Override
+			protected void doBusiness() {
+				userSimulatorService.modifySimulator(modifyBo);
+			}
+		}.execute();
 		return new BaseRsp();
 	}
 
 	@ApiOperation("更新场景")
 	@PatchMapping("/update")
-	public BaseRsp modifyScene(@RequestBody @Validated SimulatorAddBo updateBo) {
-		userSimulatorService.updateBatch(updateBo);
+	public BaseRsp modifyScene(@RequestBody @Validated CommandBo<SimulatorAddBo> commandBo) {
+		SimulatorAddBo updateBo = commandBo.getCommandBody();
+		new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "更新场景失败") {
+
+			@Override
+			protected void doBusiness() {
+				userSimulatorService.updateBatch(updateBo);
+			}
+		}.execute();
 		return new BaseRsp();
 	}
 

@@ -359,7 +359,7 @@ public class BaseCombatLogHandler {
 				return data;
 			}
 			RbAttackEvent rbDefenseEvent = RbAttackEvent.builder().visible(visible).resourceId(rbCombatLog.getResourceId()).
-					group(null).type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					group(null).type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(String.format("%s%s",sourceGroup, EventCategory.DEFENSE.getDesc()))
 					.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
 					.action(defenseAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();

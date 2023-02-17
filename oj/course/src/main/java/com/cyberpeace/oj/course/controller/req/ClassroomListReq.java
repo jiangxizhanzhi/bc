@@ -28,6 +28,9 @@ public class ClassroomListReq implements Serializable {
 	@ApiModelProperty(name = "train_plan_id", value = "训练计划编号")
 	private String trainPlanId;
 
+	@ApiModelProperty(name = "user_id", value = "教员id")
+	private String userId;
+
 	public void setStart_time(String startTime) {
 		this.startTime = startTime;
 	}
@@ -54,5 +57,9 @@ public class ClassroomListReq implements Serializable {
 
 	public void setTrain_plan_id(String trainPlanId) {
 		this.trainPlanId = trainPlanId;
+	}
+
+	public void setUser_id(String userId) {
+		this.userId = userId;
 	}
 }

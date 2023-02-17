@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.oj.course.controller.res.Teacher;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.bo.*;
@@ -129,4 +130,6 @@ public interface ClassroomService extends IService<Classroom> {
 	 * @param orgs 删除组织ids
 	 */
 	void removeClassrooms(List<String> orgs);
+
+    List<Teacher> getTeachers();
 }

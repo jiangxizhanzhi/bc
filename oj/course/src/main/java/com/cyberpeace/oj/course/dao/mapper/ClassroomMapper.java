@@ -62,4 +62,6 @@ public interface ClassroomMapper extends BaseMapper<Classroom> {
 	 * @return
 	 */
 	void deleteByOrgIds(@Param("orgIds") List<String> orgIds);
+
+    List<String> getTeacherIds();
 }

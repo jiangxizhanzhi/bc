@@ -3,6 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.role.NameElement;
+import com.cyberpeace.oj.course.controller.res.Teacher;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1036,6 +1038,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		if (!orgIds.isEmpty()) {
 			classroomMapper.deleteByOrgIds(orgIds);
 		}
+	}
+
+	@Override
+	public List<Teacher> getTeachers() {
+		List<Teacher> teacherList = Lists.newArrayList();
+		List<String> userList = classroomMapper.getTeacherIds();
+		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
+
+		userInfoList.forEach(userInfo -> {
+
+			Teacher teacher = new Teacher();
+			teacher.setResourceId(userInfo.getUserId());
+			teacher.setName(userInfo.getUserName());
+
+			teacherList.add(teacher);
+ 		});
+
+		return teacherList;
 	}
 
 	@Override

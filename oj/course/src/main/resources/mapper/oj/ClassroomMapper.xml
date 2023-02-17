@@ -102,4 +102,7 @@
             #{orgId}
         </foreach>
     </select>
+    <select id="getTeacherIds" resultType="java.lang.String">
+        select create_user_id from oj_classroom
+    </select>
 </mapper>

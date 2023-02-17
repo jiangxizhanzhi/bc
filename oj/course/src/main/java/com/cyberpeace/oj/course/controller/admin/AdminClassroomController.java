@@ -30,6 +30,7 @@ import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.oj.course.controller.req.*;
+import com.cyberpeace.oj.course.controller.res.Teacher;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
 import com.cyberpeace.oj.course.service.ClassroomService;
@@ -71,6 +72,23 @@ public class AdminClassroomController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@ApiOperation("后台课程表教员列表查询")
+	@GetMapping("/getTeachers")
+	@RequiresPermissions(MenuConstant.CMS_CLASS_ROOM)
+	public BaseRsp<List<Teacher>> getTeachers() {
+
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				false);
+		if (!authContext.getSuperAdmin()) {
+
+			return new BaseRsp<>();
+		}
+
+		List<Teacher> users = classroomService.getTeachers();
+
+		return new BaseRsp<>(users);
+	}
 
 	@ApiOperation("后台课程表查询")
 	@GetMapping("/list")

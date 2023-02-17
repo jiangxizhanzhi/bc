@@ -195,14 +195,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public Map<String, String> getIdNameMap(List<String> ids) {
 		Set<String> idsSet = Sets.newHashSet(ids);
-		List<UserInfo> userInfos = getByIdList(ids);
-		if (idsSet.size() != userInfos.size()) {
-			for (UserInfo info : userInfos) {
-				idsSet.remove(info.getUserId());
-			}
-			log.error("invalid user_id: " + idsSet);
-		}
-		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+		return StreamApiUtils.toMap(idsSet, id -> id, id -> "用户");
 	}
 
 	@Override

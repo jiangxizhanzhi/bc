@@ -40,4 +40,5 @@ public interface UserSimulatorMapper extends BaseMapper<UserSimulator> {
 
 	List<UserSimulator> selectBatchBySceneId(@Param("sceneId") String sceneId);
 
+	List<String> getIdsByDeviceIds(@Param("deviceIds") List<String> deviceIds);
 }

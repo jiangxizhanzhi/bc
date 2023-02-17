@@ -51,6 +51,7 @@ import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.google.common.collect.Maps;
@@ -700,6 +701,31 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			res.add(simulatorTimer);
 		});
 		return res;
+	}
+
+	@Override
+	public Integer getBandwidthSum() {
+		Integer bytePerSecond = 0;
+		try {
+			bytePerSecond = lcService.getBandwidthSum();
+		} catch (RemoteServiceException e) {
+			log.error("remote error: ", e);
+		} catch (Exception e1) {
+			log.error("failed to get bandwidth sum: ", e1);
+		}
+		// 单位 mbps
+		return BsUtil.divide(bytePerSecond, 128 * 1024);
+	}
+
+	@Override
+	public void deleteByNodeId(List<String> nodeIds) {
+		// List<String> simulatorIds = nodeIds.stream().map(nodeId ->
+		// nodeId.replaceAll("-", ""))
+		// .collect(Collectors.toList());
+		List<String> simulatorIds = userSimulatorMapper.getIdsByDeviceIds(nodeIds);
+		if (!simulatorIds.isEmpty()) {
+			deleteSimulatorByIds(simulatorIds);
+		}
 	}
 
 	private void deleteSimulatorByIds(Collection<String> simulatorIds) {

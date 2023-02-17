@@ -123,4 +123,16 @@ public interface UserSimulatorService {
 	 * @return
 	 */
 	List<SimulatorTimer> showTimers();
+
+	/**
+	 * 获取实时总带宽
+	 * @return
+	 */
+	Integer getBandwidthSum();
+
+	/**
+	 * 动态更新场景时, 删除特定节点的仪表
+	 * @param nodeIds
+	 */
+	void deleteByNodeId(List<String> nodeIds);
 }

@@ -69,4 +69,11 @@
         from bs_user_simulator
         where status = #{code}
     </select>
+    <select id="getIdsByDeviceIds" resultType="java.lang.String">
+        select resource_id from bs_user_simulator
+        where device_id in
+        <foreach collection="deviceIds" item="deviceId" open="(" close=")" separator=",">
+            #{deviceId}
+        </foreach>
+    </select>
 </mapper>

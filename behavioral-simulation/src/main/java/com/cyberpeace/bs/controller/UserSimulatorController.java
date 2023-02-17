@@ -95,7 +95,8 @@ public class UserSimulatorController {
 	@ApiOperation("行为实时总带宽")
 	@GetMapping("/bandwidth_count")
 	public BaseRsp<Integer> getBandwidthStatistics() {
-		return new BaseRsp<>(0);
+		Integer res = userSimulatorService.getBandwidthSum();
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("行为仪表分页列表")
@@ -124,6 +125,13 @@ public class UserSimulatorController {
 	@DeleteMapping("/scene")
 	public BaseRsp deleteSceneRelated(@RequestBody @Validated IdListReq idListReq) {
 		userSimulatorService.deleteBySceneId(idListReq.getIds());
+		return new BaseRsp();
+	}
+
+	@ApiOperation("编辑场景时删除一个节点")
+	@DeleteMapping("/node")
+	public BaseRsp deleteByNode(@RequestBody @Validated IdListReq idListReq) {
+		userSimulatorService.deleteByNodeId(idListReq.getIds());
 		return new BaseRsp();
 	}
 

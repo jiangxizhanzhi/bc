@@ -232,7 +232,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		String title = mission.getTitle();
 		RbCombatLog rbCombatLog = RbCombatLog.builder().build();
-		if ("1_情报侦查".equals(title)){
+		if ("1_情报侦察".equals(title)){
 			if(submitEvaluationReq.getScore() > 0){
 				String roomId = submitEvaluationReq.getRoomId();
 				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);

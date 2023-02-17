@@ -211,7 +211,7 @@ public class BaseCombatLogHandler {
 	}
 
 	public static void delayHandler(){
-		Integer delay = (int)(Math.random()*10) + 10;
+		Integer delay = (int)(Math.random()*10 + 10) * 1000;
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
@@ -221,6 +221,18 @@ public class BaseCombatLogHandler {
 
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
+		for (RbAttackEvent attackEvent: data.getRbAttackDefenseEvents()) {
+			if (!attackEvent.getVisible()) {
+				data.getRbAttackDefenseEvents().remove(attackEvent);
+				pushDataToRoom(data, getRedVsBlue());
+				RbCombatRecordsAllDataRsp rbCombatRecordsAllDataRsp = new RbCombatRecordsAllDataRsp();
+				rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(attackEvent);
+				// 处理防守消息延时
+				delayHandler();
+				pushDataToRoom(rbCombatRecordsAllDataRsp, getRedVsBlue());
+				return;
+			}
+		}
 		pushDataToRoom(data, getRedVsBlue());
 	}
 

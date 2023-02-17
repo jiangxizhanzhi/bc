@@ -33,7 +33,9 @@ import com.google.common.collect.Maps;
 public class BsUtil {
 
 	public static final Map<String, Integer> stepMap = Maps.newHashMap();
+
 	public static final Map<String, LocalTime> markedId = Maps.newHashMap();
+
 	private static final String JSON_LIST_INITIAL = "[";
 
 	/**
@@ -296,5 +298,21 @@ public class BsUtil {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * 解析tags
+	 * @param tagString
+	 * @return
+	 */
+	public static List<String> parseTags(String tagString) {
+		String[] tags = tagString.split(",");
+		List<String> res = Lists.newArrayList();
+		for (String tag : tags) {
+			if (StringUtils.isNotBlank(tag) && !"null".equals(tag)) {
+				res.add(tag);
+			}
+		}
+		return res;
 	}
 }

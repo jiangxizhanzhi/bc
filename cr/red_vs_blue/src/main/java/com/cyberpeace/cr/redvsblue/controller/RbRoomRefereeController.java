@@ -225,7 +225,7 @@ public class RbRoomRefereeController {
 				.data(JsonUtil.toJsonString(data,
 						PropertyNamingStrategy.SnakeCase))
 				.messageIdentifier(identifier).build();
-		if((null != investigationMission || defenseStageMissions.size() > 0 || null != attackStageMission) && null != fullScoreMissionStatus){
+		if((defenseStageMissions.size() > 0 || null != attackStageMission) && null != fullScoreMissionStatus){
 			messageContext.setData(JsonUtil.toJsonString(fullScoreMissionStatus,
 					PropertyNamingStrategy.SnakeCase));
 		}

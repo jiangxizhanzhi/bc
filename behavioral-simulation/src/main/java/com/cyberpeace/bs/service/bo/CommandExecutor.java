@@ -6,7 +6,9 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.HttpClientUtil;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract class CommandExecutor {
 
 	final String defaultErrorMessage;
@@ -38,7 +40,11 @@ public abstract class CommandExecutor {
 			}
 			throw e;
 		} finally {
-			callback();
+			try {
+				callback();
+			} catch (Exception e1) {
+				log.error("failed to callback: ", e1);
+			}
 		}
 	}
 

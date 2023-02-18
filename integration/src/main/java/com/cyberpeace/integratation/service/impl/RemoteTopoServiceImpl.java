@@ -131,6 +131,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 					TopoDigest topoDigest = new TopoDigest();
 					topoDigest.setTopoId(mpTopoStatistic.getCsceneId());
 					topoDigest.setNodeCounts(mpTopoStatistic.getNodesCount());
+					topoDigest.setCpu(mpTopoStatistic.getCpu());
+					topoDigest.setDisk(mpTopoStatistic.getDisk());
+					topoDigest.setRam(mpTopoStatistic.getRam());
+
 					return topoDigest;
 				}));
 	}

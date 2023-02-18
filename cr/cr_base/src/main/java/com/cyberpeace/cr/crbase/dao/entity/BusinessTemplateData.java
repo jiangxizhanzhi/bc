@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
+import com.cyberpeace.integratation.model.scene.TopoDigest;
 import lombok.Data;
 
 /**
@@ -9,5 +10,9 @@ import lombok.Data;
 public class BusinessTemplateData extends BusinessTemplate {
 
 	private Integer nodesNum;
+
+	private Integer subType;
+
+	private TopoDigest topoDigest;
 
 }

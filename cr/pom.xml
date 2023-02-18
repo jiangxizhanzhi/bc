@@ -19,6 +19,7 @@
     <modules>
         <module>tool</module>
         <module>cr_base</module>
+        <module>scene_manage</module>
         <module>red_vs_blue</module>
         <module>team_train</module>
         <module>single_train</module>

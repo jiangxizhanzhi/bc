@@ -164,6 +164,7 @@ public class LocalScene extends BaseTable {
 		LIVE_VULN(212, "漏洞"),
 		TEAM_TRAINING(213, "团队训练", "Team Training"),
 		RED_VS_BLUE(214, "红蓝对抗", "Cyber Wargame"),
+		SCENE_MANAGE(215, "场景管理", "Scene Manage"),
 		WEAPON_TEST(216, "武器"),
 		SYSTEM_TEST(217, "系统"),
 		SOFTWARE_TEST(221, "软件测试"),

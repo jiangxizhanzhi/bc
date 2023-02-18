@@ -285,6 +285,8 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		for (BusinessTemplateData businessTemplate : result.getRecords()) {
 			businessTemplate.setNodesNum(nodeCountMap
 					.getOrDefault(businessTemplate.getTopoId(), new TopoDigest()).getNodeCounts());
+			businessTemplate.setTopoDigest(nodeCountMap
+					.getOrDefault(businessTemplate.getTopoId(), new TopoDigest()));
 		}
 
 		return result;
@@ -362,8 +364,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 					// 校验是否符合删除条件
 					BusinessTemplateHandler handler = businessTemplateHandler
 							.getHandler(businessTemplate.getBusinessType());
-					handler.checkBeforeDel(businessTemplate);
-					// 先删除测试场景
+ 					// 先删除测试场景
 					if (StringUtils.isNotBlank(businessTemplate.getLocalSceneId())) {
 						LocalScene localScene = localSceneService
 								.getById(businessTemplate.getLocalSceneId());
@@ -485,6 +486,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
 			return LocalScene.BusinessCode.SYSTEM_TEST;
+		}
+		if (type.equals(BusinessTemplate.BusinessType.SCENE_MANAGE)) {
+			return LocalScene.BusinessCode.SCENE_MANAGE;
 		}
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}

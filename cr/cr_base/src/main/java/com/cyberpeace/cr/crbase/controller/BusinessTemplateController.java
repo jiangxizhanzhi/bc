@@ -121,6 +121,10 @@ public class BusinessTemplateController {
 					.toJsonObjectArray(businessTemplateData.getOperationAuthIds(), String.class));
 			SceneConfigRsp sceneConfigInfo = new SceneConfigRsp();
 			sceneConfigInfo.setNodeCount(businessTemplateData.getNodesNum());
+			sceneConfigInfo.setCpu(businessTemplateData.getTopoDigest().getCpu());
+			sceneConfigInfo.setDisk(businessTemplateData.getTopoDigest().getDisk());
+			sceneConfigInfo.setRam(businessTemplateData.getTopoDigest().getRam());
+
 			sceneConfigInfo
 					.setHasScene(StringUtils.isNotBlank(businessTemplateData.getLocalSceneId()));
 			businessTemplateRsp.setSceneConfigInfo(sceneConfigInfo);
@@ -189,6 +193,9 @@ public class BusinessTemplateController {
 				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {
 					module = OperationModule.RED_VS_BLUE;
 					msg = LogContent.RB_ROOM_TEMPLATE.getMsg();
+				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.SCENE_MANAGE.getCode())) {
+					module = OperationModule.SCENE_MANAGE;
+					msg = LogContent.SCENE_MANAGE_TEMPLATE.getMsg();
 				}
 
 

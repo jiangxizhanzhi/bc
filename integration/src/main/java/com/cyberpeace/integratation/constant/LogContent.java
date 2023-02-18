@@ -20,6 +20,7 @@ public enum LogContent implements BaseI18n {
 	SINGLE_TRAIN_TEMPLATE("Single train template","单兵训练模板"),
 	TEAM_TRAIN_TEMPLATE("Team train template","团队训练模板"),
 	RB_ROOM_TEMPLATE("Cyber Wargame template","红蓝对抗模板"),
+	SCENE_MANAGE_TEMPLATE("Scene Manage template","场景管理模板"),
 
 	TEAM_TRAIN_ROOM("Team Train scene","团队训练场景"),
 	RB_TRAIN_ROOM("Cyber Wargame scene","红蓝对抗场景"),

@@ -31,6 +31,9 @@ public class BusinessTemplateRsp implements Serializable {
 	@ApiModelProperty(value = "训练类型")
 	private Integer type;
 
+	@ApiModelProperty(value = "训练子类型（渗透测试。。。）")
+	private Integer subType;
+
 	@ApiModelProperty(value = "训练难度")
 	private Integer difficult;
 

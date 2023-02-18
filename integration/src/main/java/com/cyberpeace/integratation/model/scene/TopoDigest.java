@@ -16,4 +16,10 @@ public class TopoDigest implements Serializable {
 	private Integer nodeCounts;
 
 	private String topoId;
+
+	private Integer cpu;
+
+	private Integer disk;
+
+	private Integer ram;
 }

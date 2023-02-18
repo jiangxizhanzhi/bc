@@ -19,6 +19,12 @@ public class MpTopoStatistic implements Serializable {
 
 	private Integer npcCount;
 
+	private Integer cpu;
+
+	private Integer disk;
+
+	private Integer ram;
+
 	public Integer getNodesCount() {
 		int count = 0;
 		if (this.firewallCount != null) {
@@ -36,6 +42,7 @@ public class MpTopoStatistic implements Serializable {
 		if (this.npcCount != null) {
 			count += this.npcCount;
 		}
+
 		return count;
 	}
 }

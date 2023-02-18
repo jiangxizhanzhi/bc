@@ -63,6 +63,7 @@
         <cr.version>0.0.1-SNAPSHOT</cr.version>
         <cr.base.version>0.0.1-SNAPSHOT</cr.base.version>
         <cr.team.train.version>0.0.1-SNAPSHOT</cr.team.train.version>
+        <cr.scene_manage.version>0.0.1-SNAPSHOT</cr.scene_manage.version>
         <cr.single.train.version>0.0.1-SNAPSHOT</cr.single.train.version>
         <cr.redvsvblue.version>0.0.1-SNAPSHOT</cr.redvsvblue.version>
         <cr.tool.version>0.0.1-SNAPSHOT</cr.tool.version>

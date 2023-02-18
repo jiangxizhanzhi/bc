@@ -160,4 +160,9 @@ public interface SituationErrorCode {
 	 * 想定大屏不允许自行取消
 	 */
 	String XD_DASHBOARD_CANCEL_ERROR = "106008";
+
+	/**
+	 * 态势模板未关联拓
+	 */
+	String UNRELATED_TO_TOPO = "106009";
 }

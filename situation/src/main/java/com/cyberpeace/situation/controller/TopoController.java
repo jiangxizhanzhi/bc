@@ -2,6 +2,8 @@ package com.cyberpeace.situation.controller;
 
 import java.util.Map;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +54,7 @@ public class TopoController {
 				.getDashboardTemplateContext(templateId);
 
 		if (dashboardTemplateContext == null) {
-			return new BaseRsp<>(new DashboardIdRes());
+			throw new BusinessException(SituationErrorCode.UNRELATED_TO_TOPO);
 		}
 
 		DashboardIdRes dashboardIdRes = new DashboardIdRes();

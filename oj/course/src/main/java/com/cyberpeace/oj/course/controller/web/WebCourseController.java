@@ -114,9 +114,9 @@ public class WebCourseController {
 	}
 
 	@ApiOperation("查询课程评分")
-	@GetMapping("mark_score")
+	@GetMapping("get_mark_score")
 	@RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
-	public BaseRsp<Integer> markScore(
+	public BaseRsp<Integer> getMarkScore(
 			@ApiParam(name = "resource_id", value = "课程id", required = true) String resource_id) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();

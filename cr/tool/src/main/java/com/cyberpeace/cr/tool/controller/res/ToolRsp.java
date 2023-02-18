@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.cyberpeace.cr.tool.dao.entity.ToolFile;
 
+import com.cyberpeace.cs.controller.res.MarkScore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -92,4 +93,7 @@ public class ToolRsp implements Serializable {
 
 	@ApiModelProperty("标签")
 	private String tag;
+
+	@ApiModelProperty("评价分数")
+	private MarkScore markScore;
 }

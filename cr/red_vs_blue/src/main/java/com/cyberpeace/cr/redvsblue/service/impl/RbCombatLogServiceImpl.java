@@ -421,7 +421,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.destGroup(EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
 					.destIp("").destName("")
 					.groupType(String.format("%s%s",
-							EnumUtils.getEnumByCode(rbCombatLog.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
+							EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.DEFENSE.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class))
 					.eventTime(String.valueOf(rbCombatLog.getEventTime()))
 					.eventDescribe(rbCombatLog.getEventContent())

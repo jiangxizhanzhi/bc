@@ -489,7 +489,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	private RbCombatRecordsRsp handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {
 		RbCombatRecordsRsp res = new RbCombatRecordsRsp();
-		res.setNoGroup(tmpData.getRbAttackDefenseEvents());
+		res.setNoGroup(tmpData.getRbAttackDefenseEvents().stream().sorted(Comparator.comparing(RbAttackEvent::getEventTime).reversed()).collect(Collectors.toList()));
 		Integer redCode = CrRole.RbRoleGroup.RED.getCode();
 		Integer blueCode = CrRole.RbRoleGroup.BLUE.getCode();
 		Map<Integer, List<RbAttackPhaseData>> attackDefenseStageByGroup = handlerAttackDefenseStage(tmpData.getRbAttackStages());

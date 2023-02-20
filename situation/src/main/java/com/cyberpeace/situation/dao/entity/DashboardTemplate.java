@@ -40,6 +40,15 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("画布宽度")
     private String width;
 
+    @ApiModelProperty("背景类型")
+    private String bgType;
+
+    @ApiModelProperty("背景类型")
+    private String bgTemplate;
+
+    @ApiModelProperty("背景图片")
+    private String bgImg;
+
     @ApiModelProperty("填充色")
     private String bgColor;
 

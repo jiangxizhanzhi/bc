@@ -93,7 +93,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查询模板列表")
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<ListRsp<BusinessTemplateRsp>> getTemplate(TemplateReq listReq) {
 		BusinessTemplateQuery businessTemplateQuery = BeanUtils.copy(listReq,
 				BusinessTemplateQuery.class);
@@ -142,7 +142,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查询操作权限")
 	@GetMapping("/getShares")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<Share> getShares(
 			@ApiParam(name = "resource_id", value = "模板id", required = true) String resource_id) {
 		Share data = businessTemplateService.getShares(resource_id);
@@ -157,7 +157,7 @@ public class BusinessTemplateController {
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {
 		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
 
@@ -169,7 +169,7 @@ public class BusinessTemplateController {
 	@DeleteMapping()
 	@ApiOperation("批量删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
@@ -211,7 +211,7 @@ public class BusinessTemplateController {
 	@ApiOperation("校验模板名字")
 	@PatchMapping("/validate_name_patch/")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<String> validateNamePatch(@RequestBody @Validated NameValidReq nameValidReq) {
 		businessTemplateService.validateName(nameValidReq.getName(), nameValidReq.getType(),
 				nameValidReq.getId());
@@ -221,7 +221,7 @@ public class BusinessTemplateController {
 	@ApiOperation("启动后台测试场景")
 	@PostMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp testScene(@RequestBody TestSceneReq testSceneReq) {
 
 		String templateId = testSceneReq.getBusinessTemplateId();
@@ -271,7 +271,7 @@ public class BusinessTemplateController {
 	@ApiOperation("查看后台测试场景")
 	@GetMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp<SceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "业务模板id", required = true) String resource_id) {
 
@@ -284,7 +284,7 @@ public class BusinessTemplateController {
 	@ApiOperation("关闭后台场景测试")
 	@DeleteMapping("/testScene")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp stopTestScene(@RequestBody TestSceneReq testSceneReq) {
 		// 1.获取模板
 		String templateId = testSceneReq.getBusinessTemplateId();
@@ -303,7 +303,7 @@ public class BusinessTemplateController {
 	@ApiOperation("后台测试场景重启节点")
 	@PostMapping("/testScene/node/restart")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
@@ -320,7 +320,7 @@ public class BusinessTemplateController {
 	@ApiOperation("后台测试场景重建节点")
 	@PostMapping("/testScene/node/recreate")
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
-			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE }, logical = Logical.OR)
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {

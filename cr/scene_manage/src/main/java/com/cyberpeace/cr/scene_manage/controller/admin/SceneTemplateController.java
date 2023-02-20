@@ -54,7 +54,7 @@ public class SceneTemplateController {
 
 	@GetMapping
 	@ApiOperation("场景管理模板获取")
-	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
+	@RequiresPermissions(MenuConstant.CMS_CR_SCENE_MANAGE)
 	public BaseRsp<SceneTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
 		businessTemplateService.checkPermission(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
@@ -64,7 +64,7 @@ public class SceneTemplateController {
 
 	@PostMapping
 	@ApiOperation("场景管理模板创建")
-	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
+	@RequiresPermissions(MenuConstant.CMS_CR_SCENE_MANAGE)
 	public BaseRsp create(@RequestBody SceneTrainTemplateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`
 		SceneTrainTemplateReq requestData = BeanUtils.copy(requestDataRel,
@@ -100,7 +100,7 @@ public class SceneTemplateController {
 
 	@PatchMapping
 	@ApiOperation("场景管理模板更新")
-	@RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN)
+	@RequiresPermissions(MenuConstant.CMS_CR_SCENE_MANAGE)
 	public BaseRsp
 			update(@RequestBody SceneTrainTemplateUpdateReqRel requestDataRel) {
 		// 入参`event_data` -> `base_info`

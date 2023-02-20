@@ -43,7 +43,7 @@ public class SceneController {
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
 	public BaseRsp<Boolean> nodeSnapshot(@Valid @RequestBody NodeSnapShotReq snapShotReq) {
 
@@ -61,7 +61,7 @@ public class SceneController {
 	@DeleteMapping("/node/snapshot")
 	@ApiOperation("场景节点快照删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
 	public BaseRsp<Boolean> snapshotDelete(@Valid @RequestBody NodeSnapshotDeleteReq deleteReq) {
 
@@ -73,7 +73,7 @@ public class SceneController {
 	@GetMapping("/node/snapshot")
 	@ApiOperation("场景节点快照路径")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_CR_SCENE_MANAGE, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "scene_id", value = "场景编号", required = true),
 			@ApiImplicitParam(name = "id", value = "镜像编号", required = true) })

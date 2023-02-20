@@ -98,6 +98,9 @@ public interface MenuConstant {
     //任务方案
     String CMS_CR_MISSION_SCHEME = "cr-mission-arrange-folder";
 
+    //场景管理
+    String CMS_CR_SCENE_MANAGE = "cr-scene-management-folder";
+
     //背景流量
     String CMS_BACKGROUND_TRAFFIC = "static-traffic-list";
 

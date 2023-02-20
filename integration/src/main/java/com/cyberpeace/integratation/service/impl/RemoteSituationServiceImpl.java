@@ -352,7 +352,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 				remoteOperationService.getModelTypeListMap(),
 				remoteOperationService.getModelListMap());
 
-		topoBo.setAreas(topoContext);
+		// 二次处理区域数据
+		// topoBo.setAreas(topoContext);
 
 		return topoContext;
 	}

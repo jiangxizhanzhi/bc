@@ -177,8 +177,8 @@ public class BaseCombatLogHandler {
 
 	public Boolean getIsLostHost() {
 		if (getIsLostHostSign() && getEventCategory().equals(EventCategory.ATTACK.getCode())) {
-			RbCombatLog rbCombatLog = rbCombatLogMapper.selectOneByRoomIdAndAgentIpAndIsLostHost(getRedVsBlue(), getAgentIp(), true);
-			if (rbCombatLog == null){
+			List<RbCombatLog> rbCombatLog = rbCombatLogMapper.selectOneByRoomIdAndAgentIpAndIsLostHost(getRedVsBlue(), getAgentIp(), true);
+			if (rbCombatLog.isEmpty()){
 				return true;
 			}
 		}

@@ -81,4 +81,9 @@ public class UserInfo implements Serializable {
      */
     private Set<String> permissions;
 
+    /**
+     * 用户职级
+     */
+    private String rank;
+
 }

@@ -20,6 +20,9 @@ public class ClassroomReportBo implements Serializable {
 	@ApiModelProperty("用户姓名")
 	private String name;
 
+	@ApiModelProperty("用户职级")
+	private String rank;
+
 	@ApiModelProperty("组织编号")
 	private String organizationId;
 

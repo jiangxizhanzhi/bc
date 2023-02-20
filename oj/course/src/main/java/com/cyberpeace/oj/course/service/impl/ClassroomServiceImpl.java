@@ -871,6 +871,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 				practicePaperEvaluateBo.setName(userInfo.getName());
 				practicePaperEvaluateBo.setUserId(userInfo.getUserId());
+				practicePaperEvaluateBo.setRank(userInfo.getRank());
 				practicePaperEvaluateBo.setUsername(userInfo.getUserName());
 				// 组织信息查询
 				String organizationId = userInfo.getOrganizationId();

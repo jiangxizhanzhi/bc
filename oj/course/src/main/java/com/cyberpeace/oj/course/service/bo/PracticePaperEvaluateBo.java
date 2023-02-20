@@ -20,6 +20,9 @@ public class PracticePaperEvaluateBo implements Serializable {
 	@ApiModelProperty("用户id")
 	private String userId;
 
+	@ApiModelProperty("用户职级")
+	private String rank;
+
 	@ApiModelProperty("组织名称")
 	private String organizationName;
 

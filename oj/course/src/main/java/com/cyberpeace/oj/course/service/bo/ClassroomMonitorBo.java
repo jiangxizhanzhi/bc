@@ -37,4 +37,7 @@ public class ClassroomMonitorBo implements Serializable {
 
 	@ApiModelProperty("远程协助地址")
 	private String helpUrl;
+
+	@ApiModelProperty("用户职级")
+	private String rank;
 }

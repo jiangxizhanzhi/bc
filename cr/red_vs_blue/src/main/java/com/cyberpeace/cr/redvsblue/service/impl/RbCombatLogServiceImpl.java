@@ -430,8 +430,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.resourceId(attackStageMission.getResourceId())
 					.group(attackStageMission.getSourceGroup())
 					.attackPhase(attackStageMission.getAttackPhase())
-					.content(String.format("【%s】%s", EnumUtils.getEnumByCode(investigationMission.getEventType(),
-							CrCommonConstants.EventType.class).getDesc(),investigationMission.getEventContent())).build();
+					.content(String.format("【%s】%s", EnumUtils.getEnumDescByCode(attackStageMission.getEventType(),
+							CrCommonConstants.EventType.class), attackStageMission.getEventContent())).build();
 			rbCombatRecordsAllDataRsp.getRbAttackStages().add(rbAttackDefenseStage);
 			RbAttackEvent rbAttackEvent = RbAttackEvent.builder()
 					.resourceId(attackStageMission.getResourceId())
@@ -443,7 +443,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(attackStageMission.getAttackAction(), CrCommonConstants.AttackAction.class))
-					.eventTime(TimeUtil.format1(investigationMission.getEventTime()))
+					.eventTime(TimeUtil.format1(attackStageMission.getEventTime()))
 					.eventDescribe(attackStageMission.getEventContent())
 					.visible(Boolean.TRUE).build();
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);

@@ -13,6 +13,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.constant.RbSituationWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
@@ -219,6 +220,7 @@ public class RbRoomRefereeController {
 		data.setInvestigationMission(investigationMission);
 		data.setAttackStageMission(attackStageMission);
 		data.setDefenseStageMissions(defenseStageMissions);
+		data.setCode(RbSituationWsCode.MISSION_STATUS_UPDATE_CODE);
 		if((null != defenseStageMissions || null != attackStageMission) && null != fullScoreMissionStatus){
 			data.setFullScoreMissonStatus(fullScoreMissionStatus);
 		}

@@ -22,4 +22,6 @@ public class MissionStatusWs {
 	@ApiModelProperty(value = "满分任务")
 	private RbMissionStatusGroupDataRsp fullScoreMissonStatus;
 
+	@ApiModelProperty(value = "消息类型")
+	private Integer code;
 }

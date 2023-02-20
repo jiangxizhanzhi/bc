@@ -25,11 +25,13 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
 
     RbMissionStatusDataRsp getMissionStatus(String roomId);
 
-	RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+	RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq);
 
-	List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+	List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq);
 
-	RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq, String userId);
+	RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq);
 
-	RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq, String userId);
+	RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq);
+
+	void pushMissionReferee(String roomId, RbCombatLog investigationMission, List<RbCombatLog> defenseStageMissions, RbCombatLog attackStageMission);
 }

@@ -203,14 +203,14 @@ public class RbRoomRefereeController {
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
 		// TODO 同步攻击阶段的判定  判断情报侦察任务完成情况
-		RbCombatLog investigationMission = rbCombatLogService.intelligenceInvestigationMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		RbCombatLog investigationMission = rbCombatLogService.intelligenceInvestigationMission(submitEvaluationReq);
 		//  判断该任务是否属于防御阶段
-		List<RbCombatLog> defenseStageMissions = rbCombatLogService.defenseStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		List<RbCombatLog> defenseStageMissions = rbCombatLogService.defenseStageMission(submitEvaluationReq);
 		//  判断该任务是否属于攻击阶段渗透利用
-		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
-		RbMissionStatusGroupDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
+		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq);
+		RbMissionStatusGroupDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq);
 		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
-
+		rbCombatLogService.pushMissionReferee(submitEvaluationReq.getRoomId(), investigationMission, defenseStageMissions, attackStageMission);
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
 		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();

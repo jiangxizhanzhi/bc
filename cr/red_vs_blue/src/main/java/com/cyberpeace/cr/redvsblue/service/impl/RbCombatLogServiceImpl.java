@@ -222,11 +222,10 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	 * 判断该任务是否属于情报侦察
 	 *
 	 * @param submitEvaluationReq
-	 * @param userId
 	 * @return
 	 */
 	@Override
-	public RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq, String userId){
+	public RbCombatLog intelligenceInvestigationMission(SubmitEvaluationReq submitEvaluationReq){
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
@@ -235,7 +234,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		if ("1_情报侦察".equals(title)){
 			if(submitEvaluationReq.getScore() > 0){
 				String roomId = submitEvaluationReq.getRoomId();
-				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
 				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
@@ -259,7 +258,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 
 	@Override
-	public List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq, String userId) {
+	public List<RbCombatLog> defenseStageMission(SubmitEvaluationReq submitEvaluationReq) {
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
@@ -269,7 +268,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			if(null != submitScore && submitScore.equals(crTask.getScore()) && submitScore.equals(mission.getScore())
 					&& !submitEvaluationReq.getEvaluateStatus().equals(CrTask.TaskStatus.REJECT.getCode())){
 				String roomId = submitEvaluationReq.getRoomId();
-				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
 				Integer destGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				Integer sourceGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(destGroup) ?
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
@@ -299,7 +298,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	}
 
 	@Override
-	public RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq, String userId){
+	public RbCombatLog attackStageMission(SubmitEvaluationReq submitEvaluationReq){
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
@@ -317,7 +316,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			if (null != score && score.equals(mission.getScore()) &&
 					!submitEvaluationReq.getScore().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())){
 				String roomId = submitEvaluationReq.getRoomId();
-				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
+				CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
 				Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
 				Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
 						CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
@@ -344,7 +343,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	}
 
 	@Override
-	public RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq, String userId) {
+	public RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq) {
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
@@ -356,6 +355,11 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			return missionStatusGroupDataRsp;
 		}
 		return null;
+	}
+
+	@Override
+	public void pushMissionReferee(String roomId, RbCombatLog investigationMission, List<RbCombatLog> defenseStageMissions, RbCombatLog attackStageMission) {
+
 	}
 
 	private String getNodeIpDataByName(String roomId, String nodeName, Integer destGroup) {

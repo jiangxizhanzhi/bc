@@ -287,7 +287,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLog.setEventType(CrCommonConstants.EventType.DEFENSE_MISSION.getCode());
 				rbCombatLog.setEventCategory(CrCommonConstants.EventCategory.DEFENSE.getCode());
 				CrCommonConstants.Mission enumByCode = EnumUtils.getEnumByCode(EnumUtils.getEnumCodeByDesc(mission.getTitle(), CrCommonConstants.Mission.class), CrCommonConstants.Mission.class);
-				rbCombatLog.setDefenseAction(enumByCode.getStages().get(0));
+				rbCombatLog.setDefensePhase(enumByCode.getStages().get(0));
 				rbCombatLog.setDefenseAction(enumByCode.getAction());
 				rbCombatLog.setSourceGroup(sourceGroup);
 				rbCombatLog.setDestGroup(destGroup);

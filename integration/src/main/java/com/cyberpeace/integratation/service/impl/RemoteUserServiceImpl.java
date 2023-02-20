@@ -72,7 +72,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private MpEnvService mpEnvService;
 
 	@Autowired
-	private YhEnvService yhEnvService;
+	private SituationEnvService situationEnvService;
 
 	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
@@ -88,7 +88,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
-		TICKET_AUTHENTICATE_URL = yhEnvService.getYhHost()
+		TICKET_AUTHENTICATE_URL = situationEnvService.getYhHost()
 				+ ConfigUtil.getContextProperty("ticket.authenticate");
 	}
 

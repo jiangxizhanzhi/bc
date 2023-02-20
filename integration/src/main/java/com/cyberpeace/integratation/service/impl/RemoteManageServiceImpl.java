@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -17,9 +18,12 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 
 	private String GL_REPORT_LOG;
 
+	@Autowired
+	private SituationEnvService situationEnvService;
+
 	@PostConstruct
 	public void init() {
-		String outerHostGl = "http://" + ConfigUtil.getContextProperty("outer.host.gl");
+		String outerHostGl = situationEnvService.getTsGlHost();
 		GL_REPORT_STATUS = outerHostGl + ConfigUtil.getContextProperty("gl.report.status");
 		GL_REPORT_LOG = outerHostGl + ConfigUtil.getContextProperty("gl.report.log");
 	}

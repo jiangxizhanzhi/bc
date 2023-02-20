@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.WebConstant;
@@ -30,9 +31,12 @@ public class RemoteOperationServiceImpl implements RemoteOperationService {
 
 	private String YW_MODEL_TYPE_LIST;
 
+	@Autowired
+	private SituationEnvService situationEnvService;
+
 	@PostConstruct
 	public void init() {
-		String outerHostYw = "http://" + ConfigUtil.getContextProperty("outer.host.yw");
+		String outerHostYw = situationEnvService.getYwHost();
 		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
 		YW_MODEL_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.list");
 		YW_MODEL_TYPE_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.type.list");

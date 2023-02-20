@@ -2,25 +2,31 @@ package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.integratation.service.impl.SituationEnvService;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
 
-@Data
 public class EvaluateUrlRes implements Serializable {
 
 	@ApiModelProperty("评估链接")
 	private String url;
 
+	@Autowired
+	private SituationEnvService situationEnvService;
+
+	public String getUrl(){
+		return this.url;
+	}
+
 	public enum Role implements GenericEnum {
 
-		WHITE(0, "白方"),
-		RED(1, "红方"),
-		BLUE(2, "蓝方");
+		WHITE(0, "白方"), RED(1, "红方"), BLUE(2, "蓝方");
 
 		@Getter
 		private Integer code;
@@ -38,7 +44,7 @@ public class EvaluateUrlRes implements Serializable {
 	public EvaluateUrlRes(String runId, String role) {
 		if (runId != null) {
 			Integer type = EnumUtils.getEnumCodeByDesc(role, Role.class);
-			this.url = "http://" + ConfigUtil.getContextProperty("outer.host.pg.page")
+			this.url = situationEnvService.getPgPageHost()
 					+ ConfigUtil.getContextProperty("pg.run.page") + "?runId=" + runId + "&type="
 					+ type;
 		}

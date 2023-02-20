@@ -36,6 +36,9 @@ import com.google.common.collect.Maps;
 @Service
 public class RemoteSituationServiceImpl implements RemoteSituationService {
 
+	@Autowired
+	private SituationEnvService situationEnvService;
+
 	private String RANGE_INFO_URL;
 
 	private String CENTER_INFO_URL;
@@ -92,9 +95,9 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@PostConstruct
 	public void init() {
-		String outerHostTs = "http://" + ConfigUtil.getContextProperty("outer.host.ts");
-		String outerHostXd = "http://" + ConfigUtil.getContextProperty("outer.host.xd");
-		String outerHostPg = "http://" + ConfigUtil.getContextProperty("outer.host.pg");
+		String outerHostTs = situationEnvService.getTsHost();
+		String outerHostXd = situationEnvService.getXdHost();
+		String outerHostPg = situationEnvService.getPgHost();
 		RANGE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("range.info");
 		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
 		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");

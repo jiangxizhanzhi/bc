@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupWsDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
@@ -208,7 +209,7 @@ public class RbRoomRefereeController {
 		List<RbCombatLog> defenseStageMissions = rbCombatLogService.defenseStageMission(submitEvaluationReq);
 		//  判断该任务是否属于攻击阶段渗透利用
 		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq);
-		RbMissionStatusGroupDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq);
+		RbMissionStatusGroupWsDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq);
 		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
 		rbCombatLogService.pushMissionReferee(submitEvaluationReq.getRoomId(), investigationMission, defenseStageMissions, attackStageMission);
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),

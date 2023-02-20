@@ -343,15 +343,17 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	}
 
 	@Override
-	public RbMissionStatusGroupDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq) {
+	public RbMissionStatusGroupWsDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq) {
 		CrTaskSubmit crTaskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
 		CrTask crTask = crTaskMapper.selectById(crTaskSubmit.getTaskId());
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
+		CrRole crRole = crRoleMapper.selectById(crTask.getRoleId());
 		String title = mission.getTitle();
 		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){
-			RbMissionStatusGroupDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupDataRsp();
+			RbMissionStatusGroupWsDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupWsDataRsp();
 			missionStatusGroupDataRsp.setTask(title);
 			missionStatusGroupDataRsp.setStatus(CrTask.TaskStatus.SUCCESS.getCode());
+			missionStatusGroupDataRsp.setGroup(crRole.getRoleGroup());
 			return missionStatusGroupDataRsp;
 		}
 		return null;

@@ -1,15 +1,21 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.constant.RbSituationWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
@@ -77,6 +83,9 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
 	public void handlerLog(String syslog) {
@@ -250,9 +259,10 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLog.setDestGroup(destGroup);
 				rbCombatLog.setEventContent(content);
 				rbCombatLogMapper.insert(rbCombatLog);
+				return rbCombatLogMapper.selectById(rbCombatLog.getResourceId());
 			}
 		}
-		return rbCombatLog;
+		return null;
 
 	}
 
@@ -361,7 +371,92 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 
 	@Override
 	public void pushMissionReferee(String roomId, RbCombatLog investigationMission, List<RbCombatLog> defenseStageMissions, RbCombatLog attackStageMission) {
+		RbCombatRecordsAllDataRsp rbCombatRecordsAllDataRsp = new RbCombatRecordsAllDataRsp();
+		rbCombatRecordsAllDataRsp.setCode(RbSituationWsCode.LOG_HANDLER_RES_CODE);
+		if (investigationMission != null) {
+			RbAttackDefenseStage attackDefenseStage = RbAttackDefenseStage.builder().resourceId(investigationMission.getResourceId())
+					.group(investigationMission.getSourceGroup()).attackPhase(investigationMission.getAttackPhase())
+					.content(String.format("【%s】%s", EnumUtils.getEnumByCode(investigationMission.getEventType(),
+							CrCommonConstants.EventType.class).getDesc(),investigationMission.getEventContent())).build();
+			rbCombatRecordsAllDataRsp.getRbAttackStages().add(attackDefenseStage);
+			RbAttackEvent rbAttackEvent = RbAttackEvent.builder().resourceId(investigationMission.getResourceId())
+					.type(CrCommonConstants.EventCategory.ATTACK.getDesc())
+					.sourceGroup(EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.sourceIp("").sourceName("").destGroup(EnumUtils.getEnumByCode(investigationMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.destIp("").destName("").groupType(String.format("%s%s",
+							EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					.action(EnumUtils.getEnumDescByCode(investigationMission.getAttackAction(), CrCommonConstants.AttackAction.class))
+					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventDescribe(investigationMission.getEventContent())
+					.visible(Boolean.TRUE).build();
+			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
+		}
+		if (defenseStageMissions != null && defenseStageMissions.size() > 0) {
+			RbCombatLog rbCombatLog = defenseStageMissions.get(0);
+			RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder()
+					.resourceId(rbCombatLog.getResourceId())
+					.group(rbCombatLog.getDestGroup())
+					.attackPhase(rbCombatLog.getDefensePhase())
+					.content(String.format("【%s】%s", EnumUtils.getEnumByCode(rbCombatLog.getEventType(),
+							CrCommonConstants.EventType.class).getDesc(),rbCombatLog.getEventContent())).build();
+			rbCombatRecordsAllDataRsp.getRbDefenseStages().add(rbAttackDefenseStage);
+			if (defenseStageMissions.size() == 2) {
+				RbCombatLog tmpRbCombatLog = defenseStageMissions.get(1);
+				rbAttackDefenseStage = RbAttackDefenseStage.builder()
+						.resourceId(tmpRbCombatLog.getResourceId())
+						.group(tmpRbCombatLog.getDestGroup())
+						.attackPhase(tmpRbCombatLog.getDefensePhase())
+						.content(String.format("【%s】%s", EnumUtils.getEnumByCode(tmpRbCombatLog.getEventType(),
+								CrCommonConstants.EventType.class).getDesc(),tmpRbCombatLog.getEventContent())).build();
+				rbCombatRecordsAllDataRsp.getRbDefenseStages().add(rbAttackDefenseStage);
+			}
+			RbAttackEvent rbAttackEvent = RbAttackEvent.builder()
+					.resourceId(rbCombatLog.getResourceId())
+					.type(CrCommonConstants.EventCategory.DEFENSE.getDesc())
+					.sourceGroup(EnumUtils.getEnumByCode(rbCombatLog.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.sourceIp("").sourceName("")
+					.destGroup(EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.destIp("").destName("")
+					.groupType(String.format("%s%s",
+							EnumUtils.getEnumByCode(rbCombatLog.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					.action(EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class))
+					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventDescribe(rbCombatLog.getEventContent())
+					.visible(Boolean.TRUE).build();
+			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
+		}
+		if (attackStageMission != null) {
+			RbAttackDefenseStage rbAttackDefenseStage = RbAttackDefenseStage.builder()
+					.resourceId(attackStageMission.getResourceId())
+					.group(attackStageMission.getSourceGroup())
+					.attackPhase(attackStageMission.getAttackPhase())
+					.content(String.format("【%s】%s", EnumUtils.getEnumByCode(investigationMission.getEventType(),
+							CrCommonConstants.EventType.class).getDesc(),investigationMission.getEventContent())).build();
+			rbCombatRecordsAllDataRsp.getRbAttackStages().add(rbAttackDefenseStage);
+			RbAttackEvent rbAttackEvent = RbAttackEvent.builder()
+					.resourceId(attackStageMission.getResourceId())
+					.type(CrCommonConstants.EventCategory.ATTACK.name())
+					.sourceGroup(EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.sourceIp("").sourceName("")
+					.destGroup(EnumUtils.getEnumByCode(attackStageMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.destIp("").destName("")
+					.groupType(String.format("%s%s",
+							EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
+					.action(EnumUtils.getEnumDescByCode(attackStageMission.getAttackAction(), CrCommonConstants.AttackAction.class))
+					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventDescribe(attackStageMission.getEventContent())
+					.visible(Boolean.TRUE).build();
+			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
+		}
 
+		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
+		identifier.setPath(WsPath.RB_COMBAT_LOG);
+		identifier.setRoomId(roomId);
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+																		.data(JsonUtil.toJsonString(rbCombatRecordsAllDataRsp,
+																				PropertyNamingStrategy.SnakeCase))
+																		.messageIdentifier(identifier).build();
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 	private String getNodeIpDataByName(String roomId, String nodeName, Integer destGroup) {

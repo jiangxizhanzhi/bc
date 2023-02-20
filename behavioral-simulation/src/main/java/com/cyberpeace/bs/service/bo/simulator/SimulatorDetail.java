@@ -39,6 +39,9 @@ public class SimulatorDetail implements Serializable {
 	@ApiModelProperty(value = "执行设备名称")
 	private String deviceName;
 
+	@ApiModelProperty(value = "仪表状态")
+	private Integer status;
+
 	@ApiModelProperty(value = "行为列表")
 	private List<BehaviorInstance> behaviors;
 }

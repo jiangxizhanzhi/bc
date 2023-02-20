@@ -168,7 +168,7 @@ public class LcServiceImpl implements LcService {
 		lcBehavior.setCreateTime(rspBo.getCreateTime());
 		lcBehavior.setCreatorName(rspBo.getCreatorName());
 		lcBehavior.getApplication().add(rspBo.getApplication());
-		lcBehavior.getTag().add(rspBo.getTag());
+		lcBehavior.setTag(BsUtil.parseTags(rspBo.getTag()));
 		return lcBehavior;
 	}
 
@@ -202,7 +202,7 @@ public class LcServiceImpl implements LcService {
 		behavior.setName(rspBo.getFlowChartName());
 		behavior.setNetworkType(rspBo.getNetModel());
 		behavior.setStepCount(rspBo.getStepNum());
-		behavior.getTag().add(rspBo.getTag());
+		behavior.setTag(BsUtil.parseTags(rspBo.getTag()));
 		behavior.setId(rspBo.getId());
 		behavior.setTimeCost(BsUtil.s2Min(rspBo.getConsumeTime()));
 		return behavior;
@@ -312,10 +312,10 @@ public class LcServiceImpl implements LcService {
 		return LC_HOST_PORT;
 	}
 
-    @Override
-    public Integer getBandwidthSum() {
+	@Override
+	public Integer getBandwidthSum() {
 		String targetUrl = LC_HOST_PORT + BANDWIDTH_SUM;
 		Integer rsp = LcHttpClient.rawGet(targetUrl, Integer.class);
 		return rsp;
-    }
+	}
 }

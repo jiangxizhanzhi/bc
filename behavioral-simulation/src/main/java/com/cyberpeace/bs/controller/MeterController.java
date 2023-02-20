@@ -8,17 +8,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.service.MeterService;
 import com.cyberpeace.bs.service.UserSimulatorService;
+import com.cyberpeace.bs.service.bo.CommandBo;
 import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
 import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorModifyBo;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.common.model.BaseRsp;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "行为模拟-仪表相关")
+@Api(tags = "行为模拟-辅助测试")
 @RestController
 @RequestMapping("/bs/meter")
 // @RequiresAuthentication
@@ -63,6 +67,27 @@ public class MeterController {
 	public BaseRsp<List<SimulatorTimer>> getTimers() {
 		List<SimulatorTimer> res = userSimulatorService.showTimers();
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("test command 1")
+	@PostMapping("/test/create")
+	public BaseRsp testCommand1(@RequestBody @Validated CommandBo<SimulatorAddBo> commandBo) {
+		SimulatorAddBo addBo = commandBo.getCommandBody();
+		return new BaseRsp(addBo);
+	}
+
+	@ApiOperation("test command 2")
+	@PostMapping("/test/modify")
+	public BaseRsp testCommand2(@RequestBody @Validated CommandBo<SimulatorModifyBo> commandBo) {
+		SimulatorModifyBo addBo = commandBo.getCommandBody();
+		return new BaseRsp(addBo);
+	}
+
+	@ApiOperation("test command 1")
+	@PostMapping("/test/delete")
+	public BaseRsp testCommand3(@RequestBody @Validated CommandBo<IdListReq> commandBo) {
+		IdListReq addBo = commandBo.getCommandBody();
+		return new BaseRsp(addBo);
 	}
 
 }

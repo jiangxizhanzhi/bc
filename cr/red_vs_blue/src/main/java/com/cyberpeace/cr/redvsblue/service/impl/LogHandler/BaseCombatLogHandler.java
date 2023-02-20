@@ -350,7 +350,7 @@ public class BaseCombatLogHandler {
 						group(null).type(CrCommonConstants.EventCategory.ATTACK.getDesc()).groupType(String.format("%s%s",sourceGroup, CrCommonConstants.EventCategory.ATTACK.getDesc()))
 						.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 						.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
-						.action(attackAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
+						.action(attackAction).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(attackEventDescribe).build();
 				rbAttackEvent = updateAttackEvent(rbAttackEvent, rbCombatLog);
 			} else if (rbCombatLog.getEventCategory().equals(CrCommonConstants.EventCategory.DEFENSE.getCode()) &&
 					!rbCombatLog.getDefenseAction().equals(CrCommonConstants.DefenseAction.OTHER.getCode())){
@@ -365,7 +365,7 @@ public class BaseCombatLogHandler {
 					group(null).type(CrCommonConstants.EventCategory.DEFENSE.getDesc()).groupType(String.format("%s%s",sourceGroup, EventCategory.DEFENSE.getDesc()))
 					.sourceGroup(sourceGroup).sourceIp(sourceIp).sourceName(sourceName).sourceMachine(sourceMachine)
 					.destGroup(destGroup).destIp(destIp).destName(destName).destMachine(destMachine)
-					.action(defenseAction).eventTime(String.valueOf(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();
+					.action(defenseAction).eventTime(TimeUtil.format1(rbCombatLog.getEventTime())).eventDescribe(defenseEventDescribe).build();
 			rbDefenseEvent = updateDefenseEvent(rbDefenseEvent, rbCombatLog);
 			if(null != rbAttackEvent){
 				data.getRbAttackDefenseEvents().add(rbAttackEvent);

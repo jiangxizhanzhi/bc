@@ -9,10 +9,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.RbSituationWsCode;
@@ -389,7 +386,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.destIp("").destName("").groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(investigationMission.getAttackAction(), CrCommonConstants.AttackAction.class))
-					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventTime(TimeUtil.format1(investigationMission.getEventTime()))
 					.eventDescribe(investigationMission.getEventContent())
 					.visible(Boolean.TRUE).build();
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
@@ -423,7 +420,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.DEFENSE.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class))
-					.eventTime(String.valueOf(rbCombatLog.getEventTime()))
+					.eventTime(TimeUtil.format1(rbCombatLog.getEventTime()))
 					.eventDescribe(rbCombatLog.getEventContent())
 					.visible(Boolean.TRUE).build();
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
@@ -446,7 +443,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(attackStageMission.getAttackAction(), CrCommonConstants.AttackAction.class))
-					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventTime(TimeUtil.format1(investigationMission.getEventTime()))
 					.eventDescribe(attackStageMission.getEventContent())
 					.visible(Boolean.TRUE).build();
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);

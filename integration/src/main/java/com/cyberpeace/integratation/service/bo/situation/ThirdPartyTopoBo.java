@@ -22,7 +22,7 @@ public class ThirdPartyTopoBo implements Serializable {
 
 	private SceneContext baseInfo;
 
-	private List<AreaContext> areas = Lists.newArrayList();
+	private Map<String, AreaContext> areas = Maps.newHashMap();
 
 	private List<ElementContext> networks;
 
@@ -37,6 +37,12 @@ public class ThirdPartyTopoBo implements Serializable {
 		context.setConnections(this.connections);
 		context.setElements(Maps.newHashMap());
 		context.setAreas(Maps.newHashMap());
+
+		// 区域、节点、网络均为空时，直接返回数据
+		if (this.areas.isEmpty() && this.nodes.isEmpty() && this.networks.isEmpty()) {
+			return context;
+		}
+
 		Map<String, ElementContext> elementContextMap = Maps.newHashMap();
 		this.networks.forEach(network -> {
 			network.setElementType("network");
@@ -52,9 +58,9 @@ public class ThirdPartyTopoBo implements Serializable {
 			context.getElements().put(node.getElementId(), node);
 			elementContextMap.put(node.getElementId(), node);
 		});
-		this.areas.forEach(area -> {
-			context.getAreas().put(area.getAreaId(), area);
-		});
+
+		context.setAreas(this.areas);
+
 		if (adjust) {
 			this.positionAdjust(elementContextMap);
 		}

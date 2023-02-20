@@ -1,34 +1,16 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
-import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
-import com.cyberpeace.cr.redvsblue.service.context.MissionStatusWs;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
@@ -41,13 +23,28 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbWsMessageIdentifier;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.MissionStatusWs;
 import com.cyberpeace.integratation.service.RemoteUserService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗裁判")
 @RestController
@@ -212,6 +209,7 @@ public class RbRoomRefereeController {
 		RbCombatLog attackStageMission = rbCombatLogService.attackStageMission(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		RbMissionStatusGroupDataRsp fullScoreMissionStatus = rbCombatLogService.fullScoreMissionStatus(submitEvaluationReq, UserInfoContext.getUserContext().getUserId());
 		// 推送消息，更新大屏任务进度，任务状态，得分及得分趋势
+
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);
 		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
@@ -221,14 +219,13 @@ public class RbRoomRefereeController {
 		data.setInvestigationMission(investigationMission);
 		data.setAttackStageMission(attackStageMission);
 		data.setDefenseStageMissions(defenseStageMissions);
+		if((null != defenseStageMissions || null != attackStageMission) && null != fullScoreMissionStatus){
+			data.setFullScoreMissonStatus(fullScoreMissionStatus);
+		}
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
 				.data(JsonUtil.toJsonString(data,
 						PropertyNamingStrategy.SnakeCase))
 				.messageIdentifier(identifier).build();
-		if((null != defenseStageMissions || null != attackStageMission) && null != fullScoreMissionStatus){
-			messageContext.setData(JsonUtil.toJsonString(fullScoreMissionStatus,
-					PropertyNamingStrategy.SnakeCase));
-		}
 		myWebSocketHandler.pushMessage(messageContext, true);
 		return new BaseRsp<>();
 	}

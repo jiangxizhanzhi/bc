@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.context;
 
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,6 +20,6 @@ public class MissionStatusWs {
 	private RbCombatLog attackStageMission;
 
 	@ApiModelProperty(value = "满分任务")
-	private RbCombatLog fullScoreMissonStatus;
+	private RbMissionStatusGroupDataRsp fullScoreMissonStatus;
 
 }

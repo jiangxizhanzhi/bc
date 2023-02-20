@@ -293,12 +293,12 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLog.setDestGroup(destGroup);
 				rbCombatLog.setEventContent(CrCommonUtil.getGroupName(destGroup) + enumByCode.getContent());
 				rbCombatLogMapper.insert(rbCombatLog);
-				combatLogList.add(rbCombatLog);
+				combatLogList.add(rbCombatLogMapper.selectById(rbCombatLog.getResourceId()));
 
 				if (!"5_被攻击链条复现".equals(mission.getTitle())){
 					rbCombatLog.setDefensePhase(enumByCode.getStages().get(1));
 					rbCombatLogMapper.insert(rbCombatLog);
-					combatLogList.add(rbCombatLog);
+					combatLogList.add(rbCombatLogMapper.selectById(rbCombatLog.getResourceId()));
 				}
 				return combatLogList;
 			}
@@ -346,7 +346,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLog.setDestIp(ip);
 				rbCombatLog.setEventContent(eventContent);
 				rbCombatLogMapper.insert(rbCombatLog);
-				return rbCombatLog;
+				return rbCombatLogMapper.selectById(rbCombatLog.getResourceId());
 			}
 		}
 		return null;
@@ -420,7 +420,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(rbCombatLog.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class))
-					.eventTime(String.valueOf(investigationMission.getEventTime()))
+					.eventTime(String.valueOf(rbCombatLog.getEventTime()))
 					.eventDescribe(rbCombatLog.getEventContent())
 					.visible(Boolean.TRUE).build();
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);

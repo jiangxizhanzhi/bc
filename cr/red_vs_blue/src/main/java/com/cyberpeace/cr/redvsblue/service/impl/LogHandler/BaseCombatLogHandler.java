@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants.*;
+import com.cyberpeace.cr.crbase.constant.RbSituationWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
@@ -221,12 +222,14 @@ public class BaseCombatLogHandler {
 
 	public void sendMessage() {
 		RbCombatRecordsAllDataRsp data = addData(null);
+		data.setCode(RbSituationWsCode.LOG_HANDLER_RES_CODE);
 		for (RbAttackEvent attackEvent: data.getRbAttackDefenseEvents()) {
 			if (!attackEvent.getVisible()) {
 				data.getRbAttackDefenseEvents().remove(attackEvent);
 				pushDataToRoom(data, getRedVsBlue());
 				RbCombatRecordsAllDataRsp rbCombatRecordsAllDataRsp = new RbCombatRecordsAllDataRsp();
 				rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(attackEvent);
+				rbCombatRecordsAllDataRsp.setCode(RbSituationWsCode.LOG_HANDLER_RES_CODE);
 				// 处理防守消息延时
 				delayHandler();
 				pushDataToRoom(rbCombatRecordsAllDataRsp, getRedVsBlue());

@@ -165,4 +165,9 @@ public interface SituationErrorCode {
 	 * 态势模板未关联拓
 	 */
 	String UNRELATED_TO_TOPO = "106009";
+
+	/**
+	 * 可视化方案不允许为空
+	 */
+	String SCHEME_EMPTY_ERROR = "106010";
 }

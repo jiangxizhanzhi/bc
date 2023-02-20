@@ -19,6 +19,7 @@ public class SituationPublishInstanceAddReq {
     @ApiModelProperty(value = "大屏描述")
     private String description;
 
+    @NotBlank(groups = Create.class, message = SituationErrorCode.SCHEME_EMPTY_ERROR)
     @ApiModelProperty(value = "可视化方案ID")
     private String schemeId;
 

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.SubjectContext;
@@ -95,55 +96,70 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd) {
 
-        // 拷贝属性
+        // 复制大屏属性
         SituationPublishInstance situationPublishInstance = BeanUtils.copy(situationPublishInstanceAddReq,
                 SituationPublishInstance.class);
 
         // 校验参数
-//        checkParams(situationPublishInstanceAddReq);
+        checkParams(situationPublishInstanceAddReq);
 
-        if (StringUtils.isBlank(situationPublishInstance.getDescription())) {
-            situationPublishInstance.setDescription("默认描述");
-        }
-
-        String userId = "";
+        // 写入基本信息
+        String userId = UserInfoContext.getUserContext().getUserId();
         situationPublishInstance.setCreateUserId(userId);
+
+        // 大屏新增后默认为草稿
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
+
+        // 默认为未下发状态
         situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
         dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
         dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
+
+		// 建立实例与属性关联关系
+		situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
+
         // 默认使用谷歌地图源
         dashboardAttribute.setMapSource(MapSource.GG.getCode());
 
         // 从可视化方案中拷贝属性
         SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());
 
-        situationPublishInstance.setSubRangeId(scheme.getSubRangeId());
+        // 设置任务关联信息
+		situationPublishInstance.setSubRangeId(scheme.getSubRangeId());
         situationPublishInstance.setSubRangeName(scheme.getSubRangeName());
         situationPublishInstance.setTaskName(scheme.getTaskName());
         situationPublishInstance.setSubjectName(scheme.getSubjectName());
 
-        dashboardAttribute.setEnvId(scheme.getEnvId());
+        // 设置科目关联信息
+		dashboardAttribute.setEnvId(scheme.getEnvId());
         dashboardAttribute.setStartTime(TimeUtil.toDate1(scheme.getStartTime()));
         dashboardAttribute.setSchemeName(scheme.getSchemeName());
         dashboardAttribute.setSchemeDesc(scheme.getSchemeDesc());
         dashboardAttribute.setTaskType(scheme.getTaskType());
-        dashboardAttribute.setViewAngle(JsonUtil.toJsonString(scheme.getGisView()));
-        if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())) {
-            dashboardAttribute.setTaskSubType("1");
-        }
-        String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "LG中心" : scheme.getSubRangeName();
+
+		// 设置名称属性
+        String rangeName = StringUtils.isBlank(scheme.getSubRangeName()) ? "联管中心" : scheme.getSubRangeName();
         String taskName = scheme.getTaskName();
         dashboardAttribute.setTitle(rangeName + "任务态势");
-        dashboardAttribute.setSubTitle(taskName + "任务");
+        dashboardAttribute.setSubTitle(taskName);
 
-        // 如果大屏名称不存在，默认生成
+		// 设置任务子类型
+		if (TaskType.SYZZ.getCode().equals(scheme.getTaskType())) {
+			dashboardAttribute.setTaskSubType("1");
+		}
+
+        // 设置大屏名称
         if (StringUtils.isBlank(situationPublishInstance.getName())) {
-            situationPublishInstance.setName("想定大屏-" + taskName);
+            situationPublishInstance.setName(scheme.getSchemeName());
         }
+
+		// 设置描述
+		if (StringUtils.isBlank(situationPublishInstance.getDescription())) {
+			situationPublishInstance.setDescription(scheme.getSchemeDesc());
+		}
 
         // 从大屏模板中拷贝属性
         String templateId = situationPublishInstanceAddReq.getTemplateId();
@@ -153,37 +169,17 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
             templateId = dashboardTemplateRefService.createDashboardTemplate(defaultTemplateId).getResourceId();
         }
 
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, null, Boolean.FALSE);
-        Integer level = dashboardTemplateInfo.getLevel();
-        Integer refresh = dashboardTemplateInfo.getRefresh();
-        Boolean editStatus = dashboardTemplateInfo.getEditStatus();
-        dashboardAttribute.setLevel(level == null ? DashboardLevel.RW.getCode() : level);
-        dashboardAttribute.setRefresh(refresh == null ? 5 : refresh);
-        dashboardAttribute.setDashboardType(editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
+		// 所有大屏初始默认可编辑
         situationPublishInstance.setEdit(true);
+		
+		// 标记大屏来源是否为想定跳转
         situationPublishInstance.setXd(isXd);
-        situationPublishInstance.setThumbnail(dashboardTemplateInfo.getThumbnail());
-        situationPublishInstance.setTemplateId(dashboardTemplateInfo.getResourceId());
 
-        // 处理实例类型
-        String taskType = scheme.getTaskType();
-        SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
-        String category;
+        // 处理大屏类型字段
+		situationPublishInstance.setCategory(getCategoryByTaskType(scheme.getTaskType()));
 
-        if (situationCategory != null) {
-            category = situationCategory.getResourceId();
-        } else {
-            TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-                    .filter(t -> t.getCode().equals(taskType)).findFirst().orElse(TaskType.QB);
-            SituationCategory newCategory = new SituationCategory(type.getName(), type.getCode(), userId);
-            category = IDGeneratorUtil.getID();
-            newCategory.setResourceId(category);
-            situationCategoryMapper.insert(newCategory);
-        }
-        situationPublishInstance.setCategory(category);
-
-        // 建立实例与属性关联关系
-        situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
+		// 处理模板数据
+		setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
 
         // 写入数据库
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -202,6 +198,47 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         return situationPublishInstance;
     }
 
+	private void setInstanceTemplateInfo(String templateId, SituationPublishInstance instance,
+			DashboardAttribute attribute) {
+
+		// 提取模板中有效信息至大屏参数
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService
+				.getDashboardTemplateInfo(templateId, null, Boolean.FALSE);
+		Integer level = dashboardTemplateInfo.getLevel();
+		Integer refresh = dashboardTemplateInfo.getRefresh();
+		Boolean editStatus = dashboardTemplateInfo.getEditStatus();
+		attribute.setLevel(level == null ? DashboardLevel.RW.getCode() : level);
+		attribute.setRefresh(refresh == null ? 5 : refresh);
+		attribute.setDashboardType(
+				editStatus ? DashboardType.ZB.getCode() : DashboardType.DZ.getCode());
+
+		// 从模板中提取GIS视角信息
+		attribute.setViewAngle(JsonUtil.toJsonString(dashboardTemplateInfo.getViewAngle()));
+
+		// 提取模板中有效信息至大屏实例
+		instance.setThumbnail(dashboardTemplateInfo.getThumbnail());
+		instance.setTemplateId(dashboardTemplateInfo.getResourceId());
+	}
+
+	private String getCategoryByTaskType(String taskType){
+		// 处理实例类型
+		SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
+		String category;
+
+		if (situationCategory != null) {
+			category = situationCategory.getResourceId();
+		} else {
+			TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
+					.filter(t -> t.getCode().equals(taskType)).findFirst().orElse(TaskType.QB);
+			SituationCategory newCategory = new SituationCategory(type.getName(), type.getCode(), null);
+			category = IDGeneratorUtil.getID();
+			newCategory.setResourceId(category);
+			situationCategoryMapper.insert(newCategory);
+		}
+
+		return category;
+	}
+
     private void positionAdjust(String subRangeId, String taskId, String subjectId, String envId) {
 
         // 不重复处理拓扑坐标
@@ -217,9 +254,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     }
 
     private void checkParams(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
-        // 校验模板
+        // 校验模板实例是否存在
         checkTemplate(situationPublishInstanceAddReq);
-
     }
 
     private void checkTemplate(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
@@ -242,19 +278,26 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         if (!Objects.equals(situationPublishInstance.getSchemeId(), situationPublishInstanceUpdateReq.getSchemeId())) {
             throw new BusinessException(SituationErrorCode.CAN_NOT_MODIFY_TASK);
         }
+
         //获取旧模板id
-        String templateId = situationPublishInstance.getTemplateId();
+        String oldTemplateId = situationPublishInstance.getTemplateId();
+
         // 只允许修改名称、描述和缩略图、模板
         situationPublishInstance.setName(situationPublishInstanceUpdateReq.getName());
         situationPublishInstance.setDescription(situationPublishInstanceUpdateReq.getDescription());
         situationPublishInstance.setThumbnail(situationPublishInstanceUpdateReq.getThumbnail());
-        situationPublishInstance.setTemplateId(situationPublishInstanceUpdateReq.getTemplateId());
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+		setInstanceTemplateInfo(situationPublishInstanceUpdateReq.getTemplateId(), situationPublishInstance, dashboardAttribute);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                //删除旧模板数据
-                dashboardTemplateRefMapper.deleteById(templateId);
+                // 删除旧模板数据
+                dashboardTemplateRefMapper.deleteById(oldTemplateId);
+
+				// 更新态势实例数据
                 situationPublishInstanceMapper.updateById(situationPublishInstance);
+				dashboardAttributeMapper.updateById(dashboardAttribute);
             }
         });
 

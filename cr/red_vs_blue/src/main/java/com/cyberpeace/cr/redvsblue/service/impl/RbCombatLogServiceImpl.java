@@ -439,7 +439,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.sourceGroup(EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
 					.sourceIp("").sourceName("")
 					.destGroup(EnumUtils.getEnumByCode(attackStageMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.destIp("").destName("")
+					.destIp(attackStageMission.getDestIp()).destName("")
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(attackStageMission.getAttackAction(), CrCommonConstants.AttackAction.class))

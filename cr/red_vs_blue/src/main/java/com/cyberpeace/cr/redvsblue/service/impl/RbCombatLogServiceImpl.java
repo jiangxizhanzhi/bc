@@ -435,7 +435,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			rbCombatRecordsAllDataRsp.getRbAttackStages().add(rbAttackDefenseStage);
 			RbAttackEvent rbAttackEvent = RbAttackEvent.builder()
 					.resourceId(attackStageMission.getResourceId())
-					.type(CrCommonConstants.EventCategory.ATTACK.name())
+					.type(CrCommonConstants.EventCategory.ATTACK.getDesc())
 					.sourceGroup(EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
 					.sourceIp("").sourceName("")
 					.destGroup(EnumUtils.getEnumByCode(attackStageMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())

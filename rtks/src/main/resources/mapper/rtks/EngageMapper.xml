@@ -11,7 +11,8 @@
     </insert>
     <delete id="deleteRel">
         delete from rtks_engage_train_relation
-        where business_template_id in
+        where engage_id = #{resourceId}
+        and business_template_id in
         <foreach collection="businessTemplateIds" item="businessTemplateId" open="(" close=")" separator=",">
             #{businessTemplateId}
         </foreach>

@@ -20,7 +20,7 @@ public class MissionStatusWs {
 	private RbCombatLog attackStageMission;
 
 	@ApiModelProperty(value = "满分任务")
-	private RbMissionStatusGroupDataRsp fullScoreMissonStatus;
+	private RbMissionStatusGroupDataRsp fullScoreMissionStatus;
 
 	@ApiModelProperty(value = "消息类型")
 	private Integer code;

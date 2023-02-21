@@ -223,7 +223,7 @@ public class RbRoomRefereeController {
 		data.setDefenseStageMissions(defenseStageMissions);
 		data.setCode(RbSituationWsCode.MISSION_STATUS_UPDATE_CODE);
 		if((null != defenseStageMissions || null != attackStageMission || null != investigationMission) && null != fullScoreMissionStatus){
-			data.setFullScoreMissonStatus(fullScoreMissionStatus);
+			data.setFullScoreMissionStatus(fullScoreMissionStatus);
 		}
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
 				.data(JsonUtil.toJsonString(data,

@@ -1,8 +1,6 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,6 +55,7 @@ public class RbCombatLog extends BaseTable {
 
 	private String eventContent;
 
+	@TableField(fill = FieldFill.INSERT)
 	private Date eventTime;
 
 	private String originalLog;

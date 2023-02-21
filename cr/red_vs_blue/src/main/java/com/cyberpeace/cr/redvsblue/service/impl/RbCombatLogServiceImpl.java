@@ -395,8 +395,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			RbAttackEvent rbAttackEvent = RbAttackEvent.builder().resourceId(investigationMission.getResourceId())
 					.type(CrCommonConstants.EventCategory.ATTACK.getDesc())
 					.sourceGroup(EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.sourceIp(investigationMission.getSourceIp()).sourceName(investigationMission.getSourceName()).destGroup(EnumUtils.getEnumByCode(investigationMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.destIp(investigationMission.getDestIp()).destName(investigationMission.getDestName()).groupType(String.format("%s%s",
+					.sourceIp("").sourceName(investigationMission.getSourceName()).destGroup(EnumUtils.getEnumByCode(investigationMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.destIp("").destName(investigationMission.getDestName()).groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(investigationMission.getAttackAction(), CrCommonConstants.AttackAction.class))
 					.eventTime(TimeUtil.format1(investigationMission.getEventTime()))

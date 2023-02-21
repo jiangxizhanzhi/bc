@@ -395,8 +395,8 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			RbAttackEvent rbAttackEvent = RbAttackEvent.builder().resourceId(investigationMission.getResourceId())
 					.type(CrCommonConstants.EventCategory.ATTACK.getDesc())
 					.sourceGroup(EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.sourceIp("").sourceName("").destGroup(EnumUtils.getEnumByCode(investigationMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.destIp("").destName("").groupType(String.format("%s%s",
+					.sourceIp(investigationMission.getSourceIp()).sourceName(investigationMission.getSourceName()).destGroup(EnumUtils.getEnumByCode(investigationMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
+					.destIp(investigationMission.getDestIp()).destName(investigationMission.getDestName()).groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(investigationMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(investigationMission.getAttackAction(), CrCommonConstants.AttackAction.class))
 					.eventTime(TimeUtil.format1(investigationMission.getEventTime()))
@@ -427,9 +427,9 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.resourceId(rbCombatLog.getResourceId())
 					.type(CrCommonConstants.EventCategory.DEFENSE.getDesc())
 					.sourceGroup(EnumUtils.getEnumByCode(rbCombatLog.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.sourceIp("").sourceName("")
+					.sourceIp(rbCombatLog.getSourceIp()).sourceName(rbCombatLog.getSourceName())
 					.destGroup(EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.destIp("").destName("")
+					.destIp(rbCombatLog.getDestIp()).destName(rbCombatLog.getDestName())
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(rbCombatLog.getDestGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.DEFENSE.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(rbCombatLog.getDefenseAction(), CrCommonConstants.DefenseAction.class))
@@ -450,9 +450,9 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 					.resourceId(attackStageMission.getResourceId())
 					.type(CrCommonConstants.EventCategory.ATTACK.getDesc())
 					.sourceGroup(EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.sourceIp("").sourceName("")
+					.sourceIp(attackStageMission.getSourceIp()).sourceName(attackStageMission.getSourceName())
 					.destGroup(EnumUtils.getEnumByCode(attackStageMission.getDestGroup(), CrRole.RbRoleGroup.class).getChinese())
-					.destIp(attackStageMission.getDestIp()).destName("")
+					.destIp(attackStageMission.getDestIp()).destName(attackStageMission.getDestName())
 					.groupType(String.format("%s%s",
 							EnumUtils.getEnumByCode(attackStageMission.getSourceGroup(), CrRole.RbRoleGroup.class).getChinese(), CrCommonConstants.EventCategory.ATTACK.getDesc()))
 					.action(EnumUtils.getEnumDescByCode(attackStageMission.getAttackAction(), CrCommonConstants.AttackAction.class))

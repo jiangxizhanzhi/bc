@@ -292,7 +292,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				rbCombatLogMapper.insert(rbCombatLog);
 				combatLogList.add(rbCombatLogMapper.selectById(rbCombatLog.getResourceId()));
 
-				if (!"5_被攻击链条复现".equals(mission.getTitle())){
+				if (!"7_清除跳板".equals(mission.getTitle())){
 					rbCombatLog.setDefensePhase(enumByCode.getStages().get(1));
 					rbCombatLog.setResourceId(null);
 					rbCombatLog.setUpdateTime(null);

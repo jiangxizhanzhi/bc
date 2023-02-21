@@ -359,14 +359,27 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		Mission mission = missionMapper.selectById(crTask.getMissionId());
 		CrRole crRole = crRoleMapper.selectById(crTask.getRoleId());
 		String title = mission.getTitle();
+		String[] serverNames = title.split("攻陷");
+		String serverName = serverNames[serverNames.length - 1];
+		String roomId = submitEvaluationReq.getRoomId();
+		String ip = getIpByServerName(crTask, serverName, roomId);
 		if(crTaskSubmit.getMissionScore().equals(crTaskSubmit.getScore())){
 			RbMissionStatusGroupWsDataRsp missionStatusGroupDataRsp = new RbMissionStatusGroupWsDataRsp();
 			missionStatusGroupDataRsp.setTask(title);
 			missionStatusGroupDataRsp.setStatus(CrTask.TaskStatus.SUCCESS.getCode());
 			missionStatusGroupDataRsp.setGroup(crRole.getRoleGroup());
+			missionStatusGroupDataRsp.setDestIp(ip);
 			return missionStatusGroupDataRsp;
 		}
 		return null;
+	}
+
+	private String getIpByServerName(CrTask crTask, String serverName, String roomId) {
+		CrRole crRoleByRoomIdAndUserId = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, crTask.getUserId());
+		Integer sourceGroup = crRoleByRoomIdAndUserId.getRoleGroup();
+		Integer destGroup = CrRole.RbRoleGroup.BLUE.getCode().equals(sourceGroup) ?
+				CrRole.RbRoleGroup.RED.getCode() : CrRole.RbRoleGroup.BLUE.getCode();
+		return getNodeIpDataByName(roomId, serverName, destGroup);
 	}
 
 	@Override

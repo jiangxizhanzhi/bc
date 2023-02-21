@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 
-@Api(tags = "红蓝对抗城市沙盘")
+@Api(tags = "红蓝对抗态势")
 @Slf4j
 @RestController
 @RequestMapping("/cr/red_vs_blue/combat/")

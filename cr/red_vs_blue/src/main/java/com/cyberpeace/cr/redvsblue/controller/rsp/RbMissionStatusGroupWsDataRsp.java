@@ -13,4 +13,6 @@ public class RbMissionStatusGroupWsDataRsp extends RbMissionStatusGroupDataRsp {
 	@ApiModelProperty(value = "角色")
 	private Integer group;
 
+	@ApiModelProperty(value = "IP")
+	private String destIp;
 }

@@ -55,7 +55,6 @@ public class RbCombatLog extends BaseTable {
 
 	private String eventContent;
 
-	@TableField(fill = FieldFill.INSERT)
 	private Date eventTime;
 
 	private String originalLog;

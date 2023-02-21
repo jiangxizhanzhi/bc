@@ -928,5 +928,5 @@ ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_type` INT(10) DEFAULT 
 ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_type` INT(10) DEFAULT 0 NULL COMMENT '背景类型' AFTER `components_setting`,
     ADD COLUMN `bg_img` VARCHAR(512) NULL COMMENT '背景图' AFTER `bg_type`;
 
-ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_template` VARCHAR(512) NULL COMMENT '背景模板' AFTER `bg_img`;
-ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_template` VARCHAR(512) NULL COMMENT '背景模板' AFTER `bg_img`;
+ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;
+ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;

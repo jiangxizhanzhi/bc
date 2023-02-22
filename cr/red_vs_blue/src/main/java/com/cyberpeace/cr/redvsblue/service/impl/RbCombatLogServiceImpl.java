@@ -20,8 +20,6 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
@@ -472,24 +470,19 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
-	private String getNodeIpDataByName(String roomId, String nodeName, Integer destGroup) {
+	private String getNodeIpDataByName(String roomId, String name, Integer destGroup) {
 		RbRoom rbRoom = rbRoomMapper.selectById(roomId);
 		String localSceneId = rbRoom.getLocalSceneId();
 		LocalScene localScene = localSceneMapper.selectById(localSceneId);
 		String mpSceneId = localScene.getMpSceneId();
 		List<JSONObject> nodeInfoList = remoteSceneService.getAllElements(mpSceneId);
-		List<CrRole> crRoleList = crRoleMapper.getRolesByRoom(roomId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-		Map<Integer, List<CrRole>> integerListMap = StreamApiUtils.groupBy(crRoleList, CrRole::getRoleGroup);
-		CrRole crRole = integerListMap.get(destGroup).get(0);
 		for (JSONObject nodeInfo : nodeInfoList) {
-			List<JSONObject> ports = nodeInfo.getObject("ports", List.class);
-			for (JSONObject port : ports) {
-				String ip = port.getString("ip");
-				CrRoleNodesData crRoleNodesData = crRole.getNodeData();
-				for (CrRoleNode crRoleNode : crRoleNodesData.getVisibleNodes()) {
-					if (crRoleNode.getId().equals(nodeInfo.getString("id"))) {
-						return ip;
+			String nodeName = nodeInfo.getString("name");
+			if (name.equals(nodeName)) {
+				List<JSONObject> ports = nodeInfo.getObject("ports", List.class);
+				for (JSONObject port: ports) {
+					if (StringUtils.isNotBlank(port.getString("ip"))) {
+						return port.getString("ip");
 					}
 				}
 			}

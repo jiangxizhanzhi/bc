@@ -9,4 +9,6 @@ public interface RbSituationWsCode {
 
 	Integer MISSION_STATUS_UPDATE_CODE = 2;
 
+	Integer ONLY_PROVIDED_FRONT_CODE = 3;
+
 }

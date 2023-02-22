@@ -385,7 +385,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	@Override
 	public void pushMissionReferee(String roomId, RbCombatLog investigationMission, List<RbCombatLog> defenseStageMissions, RbCombatLog attackStageMission) {
 		RbCombatRecordsAllDataRsp rbCombatRecordsAllDataRsp = new RbCombatRecordsAllDataRsp();
-		rbCombatRecordsAllDataRsp.setCode(RbSituationWsCode.LOG_HANDLER_RES_CODE);
+		rbCombatRecordsAllDataRsp.setCode(RbSituationWsCode.ONLY_PROVIDED_FRONT_CODE);
 		if (investigationMission != null) {
 			RbAttackDefenseStage attackDefenseStage = RbAttackDefenseStage.builder().resourceId(investigationMission.getResourceId())
 					.group(investigationMission.getSourceGroup()).attackPhase(investigationMission.getAttackPhase())

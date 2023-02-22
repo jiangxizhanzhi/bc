@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -33,6 +34,8 @@ public class CourseMarkingReq implements Serializable {
 		int scoreMax = 10;
 		if (null != score ) {
 			CrCommonValidator.validateRange(score,1, 10, ErrorCode.SCORE_RANGE_ERROR);
+		} else {
+			throw new BusinessException(ErrorCode.SCORE_RANGE_ERROR, 1, 10);
 		}
 
 	}

@@ -3,8 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl.LogHandler;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsAllDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackDefenseStage;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbAttackEvent;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbDefenseEvent;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +41,8 @@ public class DefenseMissionLogHandler extends DefenseCombatLogHandler {
 		return data;
 	}
 
-	public RbDefenseEvent updateDefenseEvent(RbDefenseEvent rbDefenseEvent, RbCombatLog rbCombatLog) {
-		rbDefenseEvent.setEventDescribe(rbCombatLog.getEventContent());
-		return rbDefenseEvent;
+	public RbAttackEvent updateDefenseEvent(RbAttackEvent rbAttackEvent, RbCombatLog rbCombatLog) {
+		rbAttackEvent.setEventDescribe(rbCombatLog.getEventContent());
+		return rbAttackEvent;
 	}
 }

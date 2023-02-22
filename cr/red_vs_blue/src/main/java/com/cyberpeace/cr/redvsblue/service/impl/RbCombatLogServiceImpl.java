@@ -487,7 +487,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 				}
 			}
 		}
-		return null;
+		return "";
 	}
 
 	private RbCombatRecordsRsp handlerCombatData(RbCombatRecordsAllDataRsp tmpData) {

@@ -31,6 +31,8 @@ public class RemoteOperationServiceImpl implements RemoteOperationService {
 
 	private String YW_MODEL_TYPE_LIST;
 
+	private String YW_TOKEN;
+
 	@Autowired
 	private SituationEnvService situationEnvService;
 
@@ -40,25 +42,26 @@ public class RemoteOperationServiceImpl implements RemoteOperationService {
 		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
 		YW_MODEL_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.list");
 		YW_MODEL_TYPE_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.type.list");
+		YW_TOKEN = ConfigUtil.getContextProperty("yw.token");
 	}
 
 	@Override
 	public List<BcContext> getBcList(String type) {
-		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, WebConstant.YW_TOKEN);
+		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, YW_TOKEN);
 		List<BcContext> res = JsonUtil.toJsonObjectArray(rsp, BcContext.class);
 		return res;
 	}
 
 	@Override
 	public List<ModelTypeContext> getModelTypeList() {
-		String rsp = HttpClientUtil.ywGet(YW_MODEL_TYPE_LIST, String.class, WebConstant.YW_TOKEN);
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_TYPE_LIST, String.class, YW_TOKEN);
 		List<ModelTypeContext> res = JsonUtil.toJsonObjectArray(rsp, ModelTypeContext.class);
 		return res;
 	}
 
 	@Override
 	public List<ModelContext> getModelList() {
-		String rsp = HttpClientUtil.ywGet(YW_MODEL_LIST, String.class, WebConstant.YW_TOKEN);
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_LIST, String.class, YW_TOKEN);
 		List<ModelContext> res = JsonUtil.toJsonObjectArray(rsp, ModelContext.class);
 		return res;
 	}

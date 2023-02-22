@@ -19,13 +19,11 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.*;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCombatLogMapper;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
-import com.cyberpeace.cr.redvsblue.dao.mapper.RbTemplateMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.impl.LogHandler.BaseCombatLogHandler;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -47,19 +45,10 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 	private Integer FLAG_LENGTH = 0;
 
 	@Autowired
-	private BaseCombatLogHandler baseCombatLogHandler;
-
-	@Autowired
 	private RbCombatLogMapper rbCombatLogMapper;
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
-
-	@Autowired
-	private RbTemplateMapper rbTemplateMapper;
-
-	@Autowired
-	private MissionTemplateService missionTemplateService;
 
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
@@ -560,7 +549,7 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
 				initMap.put(entry.getKey(), entry.getValue().toString().replace("\"",""));
 			}
-			if (StringUtils.isBlank(initMap.get("srcAddrIp")) && StringUtils.isBlank(initMap.get("destAddrIp"))) {
+			if (StringUtils.isNotBlank(initMap.get("srcAddrIp")) && StringUtils.isNotBlank(initMap.get("destAddrIp"))) {
 				initMap.put("event_type", "firewall_policy");
 				initMap.put("original_log", syslog);
 				return initMap;

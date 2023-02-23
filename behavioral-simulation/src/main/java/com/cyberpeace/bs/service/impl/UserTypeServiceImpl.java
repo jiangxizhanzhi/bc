@@ -43,8 +43,9 @@ public class UserTypeServiceImpl implements UserTypeService {
 
 	@Override
 	public void create(UserTypeAddBo addBo) {
-		CrCommonValidator.validateNameLen(addBo.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		if (userTypeMapper.existByName(addBo.getName(), "")) {
+		String name = StringUtils.strip(addBo.getName());
+		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		if (userTypeMapper.existByName(name, "")) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		UserType userType = reqToEntity(addBo.getName());
@@ -53,8 +54,9 @@ public class UserTypeServiceImpl implements UserTypeService {
 
 	@Override
 	public void update(UserTypeModifyBo modifyBo) {
-		CrCommonValidator.validateNameLen(modifyBo.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		if (userTypeMapper.existByName(modifyBo.getName(), modifyBo.getResourceId())) {
+		String name = StringUtils.strip(modifyBo.getName());
+		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		if (userTypeMapper.existByName(name, modifyBo.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 		UserType userType = reqToEntity(modifyBo.getName());

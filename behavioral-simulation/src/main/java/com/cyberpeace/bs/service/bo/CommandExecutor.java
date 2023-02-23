@@ -51,9 +51,7 @@ public abstract class CommandExecutor {
 	/**
 	 * 具体业务
 	 */
-	protected void doBusiness() {
-
-	}
+	protected abstract void doBusiness();
 
 	private void callback() {
 		CallbackBo callbackBo = new CallbackBo();

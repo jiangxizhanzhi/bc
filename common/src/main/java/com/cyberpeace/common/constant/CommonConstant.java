@@ -104,4 +104,6 @@ public interface CommonConstant {
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 
+	String TWO_DIMENSIONAL_COMPONENTS = "components/";
+
 }

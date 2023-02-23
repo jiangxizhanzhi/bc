@@ -3,11 +3,14 @@ package com.cyberpeace.situation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
@@ -23,6 +26,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -135,4 +140,21 @@ public class SituationTwoDimensionalComponentController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("二维组件导出")
+	@GetMapping("export")
+	public BaseRsp<String> exportTwoDimensionalComponents(@RequestParam("resourceId") @NotBlank String resourceId){
+		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(resourceId);
+		if(null == twoDimensionalComponents){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String name = twoDimensionalComponents.getName();
+		String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
+		try {
+			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8);
+			FileUtil.writeString(twoDimensionalComponents.toString(),osw);
+		} catch (IOException e) {
+			throw new BusinessException(SituationErrorCode.COMPONENTS_EXPORT_FAILED);
+		}
+		return new BaseRsp<>(path);
+	}
 }

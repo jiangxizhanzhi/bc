@@ -156,4 +156,9 @@ public interface SituationErrorCode {
 	 */
 	String LAYER_NUM_ERROR = "106007";
 
+	/**
+	 * 二维组件导出失败
+	 */
+	String COMPONENTS_EXPORT_FAILED = "106008";
+
 }

@@ -1,6 +1,7 @@
 package com.cyberpeace.common.model.user;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -79,6 +80,6 @@ public class UserInfo implements Serializable {
     /**
      * 用户菜单权限
      */
-    private Set<String> permissions;
+    private Set<String> permissions = new HashSet<>();
 
 }

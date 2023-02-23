@@ -136,9 +136,14 @@ public class DashboardController {
 	public BaseRsp<Boolean>
 			pushMapSourceChange(@RequestBody @Validated MapSourceChangeReq mapSourceChangeReq) {
 
+		// 依据大屏ID修改相应的地图源属性
+		DashboardAttribute dashboardAttribute = dashboardService.getDashboardAttribute(mapSourceChangeReq.getDashboardId());
+		dashboardAttribute.setMapSource(mapSourceChangeReq.getCode());
+		dashboardAttributeMapper.updateById(dashboardAttribute);
+
+		// 推送地图切换消息
 		JSONObject data = new JSONObject();
 		data.put("value", mapSourceChangeReq.getCode());
-
 		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.MapSource.getDesc(), data);
 		situationHandlerService.pushDataToDashboard(wsMessage, mapSourceChangeReq.getDashboardId(),
 				mapSourceChangeReq.getFeatureId());

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbCombatRecordsRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusDataRsp;
-import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupDataRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.RbMissionStatusGroupWsDataRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbCombatLog;
 
@@ -35,4 +34,6 @@ public interface RbCombatLogService extends IService<RbCombatLog> {
 	RbMissionStatusGroupWsDataRsp fullScoreMissionStatus(SubmitEvaluationReq submitEvaluationReq);
 
 	void pushMissionReferee(String roomId, RbCombatLog investigationMission, List<RbCombatLog> defenseStageMissions, RbCombatLog attackStageMission);
+
+	void pushMissionToRoom(String roomId);
 }

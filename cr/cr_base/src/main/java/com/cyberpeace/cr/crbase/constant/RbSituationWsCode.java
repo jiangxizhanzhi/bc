@@ -11,4 +11,6 @@ public interface RbSituationWsCode {
 
 	Integer ONLY_PROVIDED_FRONT_CODE = 3;
 
+	Integer DISTRIBUTE_MISSION_CODE = 4;
+
 }

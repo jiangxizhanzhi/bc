@@ -449,13 +449,27 @@ public class RbCombatLogServiceImpl extends ServiceImpl<RbCombatLogMapper, RbCom
 			rbCombatRecordsAllDataRsp.getRbAttackDefenseEvents().add(rbAttackEvent);
 		}
 
+		pushDataToRoom(rbCombatRecordsAllDataRsp, roomId);
+	}
+
+	@Override
+	public void	pushMissionToRoom(String roomId) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("code", RbSituationWsCode.DISTRIBUTE_MISSION_CODE);
+		pushDataToRoom(jsonObject, roomId);
+	}
+
+	public <T> void pushDataToRoom(T data, String roomId) {
+
 		RbWsMessageIdentifier identifier = new RbWsMessageIdentifier();
 		identifier.setPath(WsPath.RB_COMBAT_LOG);
 		identifier.setRoomId(roomId);
+
 		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
-																		.data(JsonUtil.toJsonString(rbCombatRecordsAllDataRsp,
+																		.data(JsonUtil.toJsonString(data,
 																				PropertyNamingStrategy.SnakeCase))
 																		.messageIdentifier(identifier).build();
+
 		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 

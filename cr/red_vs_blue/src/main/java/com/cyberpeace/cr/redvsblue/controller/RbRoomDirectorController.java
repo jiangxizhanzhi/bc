@@ -1,23 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -47,18 +31,33 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbCombatLogService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -87,6 +86,9 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private RbCombatLogService rbCombatLogService;
 
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
@@ -168,6 +170,8 @@ public class RbRoomDirectorController {
 				UserInfoContext.getUserContext().getUserId());
 
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+
+		rbCombatLogService.pushMissionToRoom(crRole.getRoomId());
 
 		return new BaseRsp<>();
 	}

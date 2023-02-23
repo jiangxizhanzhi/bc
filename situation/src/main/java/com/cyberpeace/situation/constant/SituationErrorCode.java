@@ -161,4 +161,9 @@ public interface SituationErrorCode {
 	 */
 	String COMPONENTS_EXPORT_FAILED = "106008";
 
+	/**
+	 * 二维组件导出失败
+	 */
+	String COMPONENTS_IMPORT_FAILED = "106009";
+
 }

@@ -5,11 +5,13 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.*;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.io.*;
@@ -149,12 +152,26 @@ public class SituationTwoDimensionalComponentController {
 		}
 		String name = twoDimensionalComponents.getName();
 		String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
+		String jsonString = JsonUtil.toJsonString(twoDimensionalComponents);
 		try {
 			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8);
-			FileUtil.writeString(twoDimensionalComponents.toString(),osw);
+			FileUtil.writeString(jsonString,osw);
 		} catch (IOException e) {
 			throw new BusinessException(SituationErrorCode.COMPONENTS_EXPORT_FAILED);
 		}
 		return new BaseRsp<>(path);
+	}
+	@ApiOperation("二维组件导入")
+	@PutMapping("import")
+	public BaseRsp<TwoDimensionalComponents> importTwoDimensionalComponents(@RequestParam("file") MultipartFile file){
+		TwoDimensionalComponents twoDimensionalComponents = null;
+		try {
+			FileUtil.validateSuffix(file, FileSunffixConstant.JSON.getDesc());
+			InputStream inputStream = file.getInputStream();
+			twoDimensionalComponents = JsonUtil.toJsonObject(inputStream, TwoDimensionalComponents.class);
+		} catch (IOException e) {
+			throw new BusinessException(SituationErrorCode.COMPONENTS_IMPORT_FAILED);
+		}
+		return new BaseRsp<>(twoDimensionalComponents);
 	}
 }

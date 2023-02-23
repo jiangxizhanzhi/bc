@@ -14,6 +14,9 @@ public class PersonCollection implements Serializable {
   @ApiModelProperty("名称")
   private String name;
 
+  @ApiModelProperty("创建时间")
+  private String createTime;
+
   @ApiModelProperty("资源类型")
   private String businessType;
 }

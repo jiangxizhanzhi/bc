@@ -18,6 +18,9 @@ public class PersonNote extends NoteAddReq {
 	@ApiModelProperty("用户编号")
 	private String userId;
 
+	@ApiModelProperty("创建时间")
+	private String createTime;
+
 	@ApiModelProperty("主题名")
 	private String themeName;
 

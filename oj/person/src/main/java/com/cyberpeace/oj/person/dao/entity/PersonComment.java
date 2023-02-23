@@ -9,6 +9,9 @@ import lombok.Data;
 @ApiModel
 public class PersonComment extends CommentReq {
 
+	@ApiModelProperty("评论资源编号")
+	private String resourceId;
+
 	@ApiModelProperty("用户名")
 	private String username;
 
@@ -17,4 +20,13 @@ public class PersonComment extends CommentReq {
 
 	@ApiModelProperty("用户编号")
 	private String userId;
+
+	@ApiModelProperty("创建时间")
+	private String createTime;
+
+	@ApiModelProperty("评论回复数量")
+	private Integer replyNum;
+
+	@ApiModelProperty("被评论名称")
+	private String rootComment;
 }

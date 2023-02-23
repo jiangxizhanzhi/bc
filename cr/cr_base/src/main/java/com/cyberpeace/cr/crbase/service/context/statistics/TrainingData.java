@@ -21,6 +21,9 @@ public class TrainingData implements Serializable {
 	@ApiModelProperty(value = "实例id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "训练状态")
+	private Integer state;
+
 	@ApiModelProperty(value = "用户角色")
 	private Integer roleGroup;
 

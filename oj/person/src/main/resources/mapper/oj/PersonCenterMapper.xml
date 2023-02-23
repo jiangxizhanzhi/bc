@@ -45,12 +45,15 @@
 
 
     <select id="selectCommentByUser" resultMap="personComment">
-        select oj_comment.user_id,
+        select oj_comment.resource_id,
+        oj_comment.user_id,
         oj_comment.content,
         oj_comment.theme_name,
         oj_comment.business_type,
+        oj_comment.create_time,
+        oj_comment.root_id,
         IF(oj_comment.business_type = 2, concat(oj_course_lesson.course_id, '/',
-        oj_course_lesson.resource_id), oj_comment.business_id) as root_business_id
+        oj_course_lesson.resource_id), oj_comment.business_id)  as root_business_id
         from oj_comment
         left join oj_course_lesson on oj_comment.business_id = oj_course_lesson.resource_id
         where oj_comment.user_id = #{userId}
@@ -77,6 +80,7 @@
         oj_course_lesson.resource_id,'/',pp.p_resource_id ) else oj_note.business_id end) as business_id,
         oj_note.user_id,
         oj_note.content,
+        oj_note.create_time,
         oj_note.business_type as resource_type,
         oj_note.note_type,
         (case when oj_note.business_type = 1 then oj_course.name
@@ -177,6 +181,7 @@
         when oj_practice_theory.content is not null then oj_practice_theory.content
         when oj_practice_operation.title is not null then oj_practice_operation.title
         when oj_practice_operation.content is not null then oj_practice_operation.content END) as name,
+        oj_resource_collection.create_time,
         oj_resource_collection.business_type as business_type
         from oj_resource_collection
         left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and

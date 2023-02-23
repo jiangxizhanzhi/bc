@@ -360,6 +360,9 @@ CREATE TABLE `situation_dashboard_template`
     `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布高度',
     `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布宽度',
     `components_setting` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
+    `bg_type`            int NULL DEFAULT 0 COMMENT '背景类型',
+    `bg_img`             varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '背景图',
+    `bg_template`        text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板',
     `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '填充色',
     `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
     `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
@@ -423,6 +426,9 @@ CREATE TABLE `situation_dashboard_template_ref`
     `height`             varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布高度',
     `width`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '画布宽度',
     `components_setting` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '组件配置',
+    `bg_type`            int NULL DEFAULT 0 COMMENT '背景类型',
+    `bg_img`             varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '背景图',
+    `bg_template`        text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板',
     `bg_color`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '填充色',
     `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
     `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
@@ -922,13 +928,3 @@ INSERT INTO `situation_event_type`
 VALUES (111, '6', '攻击入侵', NULL, NULL, NULL, '2022-12-05 10:42:55', '2022-12-05 10:42:57');
 INSERT INTO `situation_event_type`
 VALUES (112, '7', '数据安全', NULL, NULL, NULL, '2022-12-06 02:44:54', '2022-12-06 02:44:56');
-
-
-ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_type` INT(10) DEFAULT 0 NULL COMMENT '背景类型' AFTER `components_setting`,
-    ADD COLUMN `bg_img` VARCHAR(512) NULL COMMENT '背景图' AFTER `bg_type`;
-
-ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_type` INT(10) DEFAULT 0 NULL COMMENT '背景类型' AFTER `components_setting`,
-    ADD COLUMN `bg_img` VARCHAR(512) NULL COMMENT '背景图' AFTER `bg_type`;
-
-ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;
-ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;

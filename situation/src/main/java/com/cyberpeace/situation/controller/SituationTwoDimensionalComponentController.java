@@ -8,6 +8,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.integratation.service.RemoteManageService;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
@@ -41,6 +43,9 @@ public class SituationTwoDimensionalComponentController {
 
 	@Autowired
 	private TwoDimensionalComponentsCategoryMapper twoDimensionalComponentsCategoryMapper;
+
+	@Autowired
+	private RemoteManageService remoteManageService;
 
 	@ApiOperation("查询二维组件类型列表")
 	@GetMapping("/category/list")
@@ -87,6 +92,7 @@ public class SituationTwoDimensionalComponentController {
 		}
 		queryWrapper.orderByDesc(TwoDimensionalComponents::getCreateTime);
 		List<TwoDimensionalComponents> res = twoDimensionalComponentsMapper.selectList(queryWrapper);
+		remoteManageService.writeLog(ServiceLogContext.SubModule.TJZJ, ServiceLogContext.Type.CX);
 		return new BaseRsp<>(res);
 	}
 

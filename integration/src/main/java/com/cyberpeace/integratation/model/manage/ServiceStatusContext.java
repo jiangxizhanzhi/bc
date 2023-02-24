@@ -16,7 +16,7 @@ public class ServiceStatusContext implements Serializable {
 	private String serviceName;
 
 	@ApiModelProperty("服务状态理由")
-	private String serviceReason = "自行检查";
+	private String serviceReason = "主进程处于运行状态，服务正常";
 
 	@ApiModelProperty("服务状态")
 	private String serviceStatus = "正常";

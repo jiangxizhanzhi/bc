@@ -40,7 +40,8 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 	}
 
 	@Override
-	public Boolean writeLog(ServiceLogContext serviceLogContext) {
+	public Boolean writeLog(ServiceLogContext.SubModule subModule, ServiceLogContext.Type type) {
+		ServiceLogContext serviceLogContext = new ServiceLogContext(subModule, type);
 		String result = HttpClientUtil.post(GL_REPORT_LOG, serviceLogContext, String.class);
 		return true;
 	}

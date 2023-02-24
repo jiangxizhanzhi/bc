@@ -30,11 +30,11 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 
 	@Override
 	public Boolean reportStatus() {
-		for (ServiceStatusContext.ServiceName serviceName : ServiceStatusContext.ServiceName
-				.values()) {
-			ServiceStatusContext serviceStatusContext = new ServiceStatusContext(
-					serviceName.getCode(), serviceName.getDesc());
+		for (ServiceStatusContext.Service service : ServiceStatusContext.Service.values()) {
+			ServiceStatusContext serviceStatusContext = new ServiceStatusContext(service.getCode(),
+					service.getDesc());
 			HttpClientUtil.post(GL_REPORT_STATUS, serviceStatusContext, String.class);
+
 		} ;
 		return true;
 	}

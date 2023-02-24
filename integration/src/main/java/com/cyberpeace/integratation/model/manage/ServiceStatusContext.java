@@ -15,8 +15,8 @@ public class ServiceStatusContext implements Serializable {
 	@ApiModelProperty("服务名称")
 	private String serviceName;
 
-	@ApiModelProperty("服务项目")
-	private String serviceReason;
+	@ApiModelProperty("服务状态理由")
+	private String serviceReason = "自行检查";
 
 	@ApiModelProperty("服务状态")
 	private String serviceStatus = "正常";
@@ -28,7 +28,7 @@ public class ServiceStatusContext implements Serializable {
 
 	public ServiceStatusContext() {}
 
-	public enum ServiceName {
+	public enum Service {
 
 		TXPTFXT(1, "图形平台分系统"),
 		STGLFXT(4, "视图管理分系统");
@@ -39,7 +39,7 @@ public class ServiceStatusContext implements Serializable {
 		@Getter
 		private String desc;
 
-		private ServiceName(Integer code, String desc) {
+		private Service(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

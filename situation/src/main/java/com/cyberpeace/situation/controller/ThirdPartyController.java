@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -85,6 +86,12 @@ public class ThirdPartyController {
 					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 
 		return new BaseRsp<>(thirdPartyService.getStations(subRangeId));
+	}
+
+	@ApiOperation("获取特定事件类型列表")
+	@GetMapping("/event/list/")
+	public BaseRsp<List<EventListRsp>> getEvents() {
+		return new BaseRsp<>(remoteSituationService.getEvents());
 	}
 
 	@ApiOperation("获取分靶场详情")

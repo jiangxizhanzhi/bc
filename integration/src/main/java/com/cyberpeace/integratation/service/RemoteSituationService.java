@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.bo.situation.*;
 
 public interface RemoteSituationService {
@@ -148,5 +149,7 @@ public interface RemoteSituationService {
 	Boolean releaseScreen(String schemeId, String dashboardId);
 
 	String getRunId(String subjectId);
+
+	List<EventListRsp> getEvents();
 
 }

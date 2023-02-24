@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.situation.res.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,6 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
-import com.cyberpeace.integratation.model.situation.res.LgNodeActionPageRsp;
-import com.cyberpeace.integratation.model.situation.res.LgNodeWeakRsp;
-import com.cyberpeace.integratation.model.situation.res.LgTaskContextPageRes;
-import com.cyberpeace.integratation.model.situation.res.LgUserActionRsp;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.google.common.cache.Cache;
@@ -87,6 +84,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String PG_GET_RUN_ID;
 
+	private String TS_GET_EVENT_LIST;
+
 	@Autowired
 	private RemoteOperationServiceImpl remoteOperationService;
 
@@ -122,6 +121,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 		PG_GET_RUN_ID = outerHostPg + ConfigUtil.getContextProperty("pg.run.get");
+		TS_GET_EVENT_LIST = outerHostTs + ConfigUtil.getContextProperty("event.list");
 	}
 
 	@Override
@@ -402,9 +402,16 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return res;
 	}
 
+	@Override
 	public String getRunId(String subjectId) {
 		RunContext runContext = HttpClientUtil.rawGet(PG_GET_RUN_ID + subjectId, RunContext.class);
 		return runContext.getRunId();
+	}
+
+	@Override
+	public List<EventListRsp> getEvents(){
+		String rsp = HttpClientUtil.rawGet(TS_GET_EVENT_LIST, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, EventListRsp.class);
 	}
 
 }

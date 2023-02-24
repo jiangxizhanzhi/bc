@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.cyberpeace.common.util.JsonUtil;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @TableName("situation_publish_instance")
@@ -19,6 +22,9 @@ public class SituationPublishInstance extends BaseTable {
 
 	@ApiModelProperty("大屏描述")
 	private String description;
+
+	@ApiModelProperty("特定事件")
+	private String events;
 
 	@ApiModelProperty("大屏属性ID")
 	private String attributeId;
@@ -69,4 +75,12 @@ public class SituationPublishInstance extends BaseTable {
 	private Boolean edit;
 
 	private String createUserId;
+
+	public void setEventList(List<String> events){
+		this.events = JsonUtil.toJsonString(events);
+	}
+
+	public List<String> getEventList(){
+		return JsonUtil.toJsonObjectArray(this.events, String.class);
+	}
 }

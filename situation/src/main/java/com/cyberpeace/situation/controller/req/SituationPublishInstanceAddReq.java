@@ -3,10 +3,12 @@ package com.cyberpeace.situation.controller.req;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 public class SituationPublishInstanceAddReq {
@@ -18,6 +20,9 @@ public class SituationPublishInstanceAddReq {
 
     @ApiModelProperty(value = "大屏描述")
     private String description;
+
+    @ApiModelProperty(value = "特定事件")
+    private List<String> eventList = Lists.newArrayList();
 
     @NotBlank(groups = Create.class, message = SituationErrorCode.SCHEME_EMPTY_ERROR)
     @ApiModelProperty(value = "可视化方案ID")

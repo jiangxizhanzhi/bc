@@ -13,7 +13,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.BcContext;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.situation.constant.SiteType;
-import com.cyberpeace.situation.controller.res.EventTypeContextRes;
+import com.cyberpeace.integratation.model.situation.ThirdDictContext;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
@@ -178,10 +178,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private void traversalNode(String parentNode, EventTypeRes parentType,
 			List<EventType> eventTypeList) {
 		if (CollectionUtils.isNotEmpty(eventTypeList)) {
-			List<EventTypeContextRes> list = new ArrayList<>();
+			List<ThirdDictContext> list = new ArrayList<>();
 			eventTypeList.forEach(eventType -> {
 				if (eventType.getParentNode().equals(parentNode)) {
-					list.add(BeanUtils.copy(eventType, EventTypeContextRes.class));
+					list.add(BeanUtils.copy(eventType, ThirdDictContext.class));
 				}
 			});
 			parentType.setSubTypes(list);

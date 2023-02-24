@@ -282,10 +282,11 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         //获取旧模板id
         String oldTemplateId = situationPublishInstance.getTemplateId();
 
-        // 只允许修改名称、描述和缩略图、模板
+        // 只允许修改名称、描述和缩略图、模板、特定事件
         situationPublishInstance.setName(situationPublishInstanceUpdateReq.getName());
         situationPublishInstance.setDescription(situationPublishInstanceUpdateReq.getDescription());
         situationPublishInstance.setThumbnail(situationPublishInstanceUpdateReq.getThumbnail());
+        situationPublishInstance.setEventList(situationPublishInstanceUpdateReq.getEventList());
 
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
 		setInstanceTemplateInfo(situationPublishInstanceUpdateReq.getTemplateId(), situationPublishInstance, dashboardAttribute);

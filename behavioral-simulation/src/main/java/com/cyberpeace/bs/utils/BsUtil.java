@@ -306,6 +306,9 @@ public class BsUtil {
 	 * @return
 	 */
 	public static List<String> parseTags(String tagString) {
+		if (StringUtils.isBlank(tagString)) {
+			return Lists.newArrayList();
+		}
 		String[] tags = tagString.split(",");
 		List<String> res = Lists.newArrayList();
 		for (String tag : tags) {

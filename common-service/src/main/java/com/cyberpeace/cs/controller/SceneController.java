@@ -47,6 +47,7 @@ public class SceneController {
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
 	public BaseRsp<Boolean> nodeSnapshot(@Valid @RequestBody NodeSnapShotReq snapShotReq) {
 
+		snapShotReq.setSnapshotName(snapShotReq.getSnapshotName().trim());
 		LocalScene localScene = localSceneMapper.selectBySceneId(snapShotReq.getSceneId());
 		if (null == localScene) {
 			log.error("LocalScene not found! mp_scene_id=[{}]", snapShotReq.getSceneId());

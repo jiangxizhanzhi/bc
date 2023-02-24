@@ -103,6 +103,9 @@ public class LcHttpClient {
 		try {
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
+			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				throw new RemoteServiceException(response.getStatusLine().getStatusCode() + "");
+			}
 
 			// 2、解析远程服务的返回值
 			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
@@ -116,7 +119,7 @@ public class LcHttpClient {
 				log.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException();
+				throw new RemoteServiceException(e.getMessage());
 			}
 		}
 
@@ -198,7 +201,7 @@ public class LcHttpClient {
 			}
 			ROOT_TOKEN = token;
 		}
-		return "Bearer " + ROOT_TOKEN;
+		return "Bearer 11" + ROOT_TOKEN;
 	}
 
 	/**

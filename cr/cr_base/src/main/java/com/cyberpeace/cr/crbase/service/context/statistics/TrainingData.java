@@ -30,6 +30,9 @@ public class TrainingData implements Serializable {
 	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
 
+	@ApiModelProperty(value = "训练类型")
+	private Integer subType;
+
 	@ApiModelProperty(value = "")
 	private String logo;
 

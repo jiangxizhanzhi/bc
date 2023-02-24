@@ -3,6 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.org.apache.bcel.internal.generic.RET;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,8 +60,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		}
 		List<TrainingData> related = Lists.newArrayList();
 		// 获取未结束的
-		List<RbRoom> rooms = rbRoomMapper.selectUnfinishedByIds(roomIds,
-				RbRoom.TrainingStatusCode.ENDED.getCode());
+		List<RbRoom> rooms = rbRoomMapper.selectBatchIds(roomIds);
 		for (RbRoom room : rooms) {
 
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
@@ -69,10 +70,28 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));
 			data.setDurationTime(durationTime);
+			data.setState(getState(room.getTrainingStatus()));
 			data.setRoleGroup(roleGroupMap.get(room.getResourceId()));
 
 			related.add(data);
 		}
 		return related;
+	}
+
+	private Integer getState(Integer trainingStatus) {
+		switch (trainingStatus) {
+			case 4:
+				return 0;
+			case 2:
+				return 1;
+			case 0:
+				return 2;
+			case 1:
+				return 1;
+			case 3:
+				return 1;
+			default:
+				return trainingStatus;
+		}
 	}
 }

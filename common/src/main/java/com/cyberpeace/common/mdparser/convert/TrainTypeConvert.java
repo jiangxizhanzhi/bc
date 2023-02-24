@@ -1,7 +1,9 @@
 package com.cyberpeace.common.mdparser.convert;
 
 
-public enum TrainTypeConvert implements MdConvertEnum<Integer, String> {
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
+public enum TrainTypeConvert implements MdConvertEnum<Integer, String> , GenericEnum {
 
 	TEST(1, "渗透测试"), MAINTENANCE(2, "运维防护"),
 	SIMULATION(3, "系统仿真"), SCENES(4, "综合场景"), OTHER(5, "其他");
@@ -22,6 +24,16 @@ public enum TrainTypeConvert implements MdConvertEnum<Integer, String> {
 
 	@Override
 	public String reTo() {
+		return desc;
+	}
+
+	@Override
+	public Integer getCode() {
+		return trainType;
+	}
+
+	@Override
+	public String getDesc() {
 		return desc;
 	}
 }

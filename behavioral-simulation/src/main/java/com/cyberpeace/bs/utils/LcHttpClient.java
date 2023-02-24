@@ -155,7 +155,8 @@ public class LcHttpClient {
 			if (null == baseRsp.getData()) {
 				return null;
 			}
-			return JsonUtil.toJsonObject(baseRsp.getData().toString(), resultType);
+			String jsonString = BsUtil.handleStringData(baseRsp.getData().toString(), resultType);
+			return JsonUtil.toJsonObject(jsonString, resultType);
 		} catch (RemoteServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -201,7 +202,7 @@ public class LcHttpClient {
 			}
 			ROOT_TOKEN = token;
 		}
-		return "Bearer 11" + ROOT_TOKEN;
+		return "Bearer " + ROOT_TOKEN;
 	}
 
 	/**

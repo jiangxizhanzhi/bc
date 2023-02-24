@@ -21,11 +21,17 @@ public class TrainingData implements Serializable {
 	@ApiModelProperty(value = "实例id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "训练状态")
+	private Integer state;
+
 	@ApiModelProperty(value = "用户角色")
 	private Integer roleGroup;
 
 	@ApiModelProperty(value = "开始时间")
 	private Date startTime;
+
+	@ApiModelProperty(value = "训练类型")
+	private Integer subType;
 
 	@ApiModelProperty(value = "")
 	private String logo;

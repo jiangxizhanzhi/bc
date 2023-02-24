@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,11 +66,13 @@ public class SingleTrainStatistics extends CrEventStatistics {
 			data.setAppId(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
 			data.setAppName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());
 			data.setRoleGroup(CrCommonConstants.STUDENT_ROLE);
-			data.setStartTime(room.getStartTime());
+			data.setState(room.getStartTime()==null ? 0 : 1);
+			data.setStartTime(room.getStartTime()==null ? room.getCreateTime() : room.getStartTime());
 
 			SingleTemplate singleTemplate = singleTemplateMapper
 					.getByBusinessId(businessTemplate.getResourceId());
 			data.setDurationTime(singleTemplate.getDurationTime());
+			data.setSubType(singleTemplate.getSubType());
 
 			dataList.add(data);
 		}

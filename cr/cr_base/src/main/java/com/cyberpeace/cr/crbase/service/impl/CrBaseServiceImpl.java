@@ -4,6 +4,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -60,11 +64,25 @@ public class CrBaseServiceImpl implements CrBaseService {
 				page.getPerPage(), (int) trainingDataPage.getTotal()));
 
 		ListRsp<TrainingData> trainingDataListRsp = PageUtil.getListResult(trainingDataPage);
-		// 6. make rsp
+
+		// 6. subType statistics
+		Map<Integer, List<TrainingData>> trainingDataMap = StreamApiUtils.groupBy(trainingDataList,TrainingData::getSubType);
+ 		List<Integer> trainTypes = EnumUtils.getListCode(TrainTypeConvert.class);
+		Map<Integer, Integer> trainingMap = Maps.newHashMap();
+
+		for (Integer trainType : trainTypes) {
+			Integer num = trainingDataMap.getOrDefault(trainType,Lists.newArrayList()).size();
+			trainingMap.put(trainType,num);
+		}
+
+
+		// 7. make rsp
 		TrainingStatisticsRsp rsp = new TrainingStatisticsRsp();
 		rsp.setCompleted(completeList);
 		rsp.setIncomplete(incompleteList);
 		rsp.setRelation(trainingDataListRsp);
+		rsp.setTrainingTypeMap(trainingMap);
+
 
 		return rsp;
 	}

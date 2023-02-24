@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.course.dao.entity.CourseLesson;
-import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -56,6 +56,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
 	@Autowired
 	private CourseLessonMapper courseLessonMapper;
+
+	@Autowired
+	private CommentMapper commentMapper;
 
 	@Autowired
 	private PersonCenterMapper personCenterMapper;
@@ -286,7 +289,15 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
 		// 获取用户信息
 		UserInfo userInfo = remoteUserService.getById(comment.getUserId());
+
+		List<Comment> comments = commentMapper.selectByParent(comment.getResourceId());
+
+		Comment rootComment = commentMapper.selectById(comment.getRootId());
+
 		comment.setUsername(userInfo.getUserName());
+		comment.setReplyNum(comments.size());
+		comment.setRootComment(rootComment == null ? "" : rootComment.getContent());
+
 		return comment;
 	}
 

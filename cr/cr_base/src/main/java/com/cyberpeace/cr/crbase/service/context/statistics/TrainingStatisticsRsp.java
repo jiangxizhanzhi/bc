@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.context.statistics;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.common.model.ListRsp;
 
@@ -23,4 +24,6 @@ public class TrainingStatisticsRsp implements Serializable {
 	@ApiModelProperty(value = "相关训练")
 	private ListRsp<TrainingData> relation;
 
+	@ApiModelProperty(value = "训练类型分布")
+	Map<Integer, Integer> trainingTypeMap;
 }

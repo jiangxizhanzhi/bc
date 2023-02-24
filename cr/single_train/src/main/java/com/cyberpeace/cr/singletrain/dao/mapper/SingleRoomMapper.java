@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -41,4 +42,6 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 	List<SingleRoom> selectByRoomIds(@Param("roomIds") List<String> roomIds);
 
 	List<SingleRoom> selectByTemplateId(@Param("businessTemplateId") String businessTemplateId);
+
+	List<SingleRoomData> selectAllByUserId(String userId);
 }

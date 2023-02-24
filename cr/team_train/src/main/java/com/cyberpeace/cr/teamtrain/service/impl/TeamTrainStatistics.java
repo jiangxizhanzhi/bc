@@ -58,9 +58,9 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			roleGroupMap.put(roomRoleContext.getRoomId(), roomRoleContext.getRoleGroup());
 		}
 		List<TrainingData> related = Lists.newArrayList();
-		// 过滤已结束的
-		List<TeamRoom> rooms = teamRoomMapper.selectUnfinishedByIds(roomIds,
-				TeamRoom.TrainingStatusCode.ENDED.getCode());
+		// 查询全部
+		List<TeamRoom> rooms = teamRoomMapper.selectBatchIds(roomIds);
+
 		for (TeamRoom room : rooms) {
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
 			data.setAppId(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
@@ -69,6 +69,7 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));
 			data.setDurationTime(durationTime);
+			data.setState(room.getTrainingStatus());
 			data.setRoleGroup(roleGroupMap.get(room.getResourceId()));
 
 			related.add(data);

@@ -57,16 +57,16 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	public List<TrainingData> getRelatedTraining(String userId) {
 
 		List<TrainingData> dataList = Lists.newArrayList();
-		List<SingleRoomData> rooms = singleRoomMapper.selectAllByUserId(userId);
+		List<SingleRoom> rooms = singleRoomMapper.selectUnfinishedByUserId(userId);
 
-		for (SingleRoomData room : rooms) {
+		for (SingleRoom room : rooms) {
 			BusinessTemplate businessTemplate = businessTemplateMapper
 					.selectById(room.getBusinessTemplateId());
 			TrainingData data = BeanUtils.copy(businessTemplate, TrainingData.class);
 			data.setAppId(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
 			data.setAppName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());
 			data.setRoleGroup(CrCommonConstants.STUDENT_ROLE);
-			data.setState(room.getStartTime()==null ? 0 : 2);
+			data.setState(room.getStartTime()==null ? 0 : 1);
 			data.setStartTime(room.getStartTime()==null ? room.getCreateTime() : room.getStartTime());
 
 			SingleTemplate singleTemplate = singleTemplateMapper

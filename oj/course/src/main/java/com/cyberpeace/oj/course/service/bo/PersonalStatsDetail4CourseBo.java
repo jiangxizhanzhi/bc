@@ -19,6 +19,9 @@ public class PersonalStatsDetail4CourseBo implements Serializable {
     @ApiModelProperty("方向名称")
     private String directionName;
 
+    @ApiModelProperty("课程图片地址")
+    private String logo;
+
     @ApiModelProperty("课时数量")
     private Integer lessonCount;
 

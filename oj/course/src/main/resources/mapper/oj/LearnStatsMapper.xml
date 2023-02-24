@@ -93,6 +93,7 @@
                T1.name,
                R1.name as direction_name,
                T1.difficulty,
+               T1.logo,
                (select count(*) from oj_course_lesson where course_id = T1.resource_id) as lesson_count,
                count(if(T2.type = #{theory_type}, TRUE, NULL)) as learned_theory,
                count(if(T2.type = #{exp_type}, TRUE, NULL)) as learned_exp,

@@ -19,7 +19,7 @@ import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 @RequestMapping("/exec/nfs/mount")
 public class NfsMountController {
 
-	private String MOUNT_SHELL = "mount -t nfs -o nolock -o soft %s:%s %s";
+	private String MOUNT_SHELL = "mount -t nfs -o nolock -o soft -o proto=udp -o port=2049 %s:%s %s";
 
 	private String UMOUNT_SHELL = "umount %s";
 

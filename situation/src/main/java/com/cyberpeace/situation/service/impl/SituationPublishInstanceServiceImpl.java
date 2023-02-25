@@ -288,13 +288,16 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setThumbnail(situationPublishInstanceUpdateReq.getThumbnail());
         situationPublishInstance.setEventList(situationPublishInstanceUpdateReq.getEventList());
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
-		setInstanceTemplateInfo(situationPublishInstanceUpdateReq.getTemplateId(), situationPublishInstance, dashboardAttribute);
+		String templateId = situationPublishInstanceUpdateReq.getTemplateId();
+        DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+		setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                // 删除旧模板数据
-                dashboardTemplateRefMapper.deleteById(oldTemplateId);
+                // 如果模板发生了变化，删除旧模板数据
+                if (!oldTemplateId.equals(templateId)){
+                    dashboardTemplateRefMapper.deleteById(oldTemplateId);
+                }
 
 				// 更新态势实例数据
                 situationPublishInstanceMapper.updateById(situationPublishInstance);

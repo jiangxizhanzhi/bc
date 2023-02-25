@@ -60,7 +60,7 @@ public class DashboardServiceImpl implements DashboardService {
 			List<String> events = Lists.newArrayList();
 			Map<String, String> typicalEventMap = thirdPartyService.getTypicalEventsMap();
 			situationPublishInstances.getEventList().forEach(event -> {
-				String subEvent = event.getContext().get(1);
+				String subEvent = event.get(1);
 				events.add(typicalEventMap.get(subEvent));
 			});
 

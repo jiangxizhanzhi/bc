@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.service.context.ListContext;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -25,7 +24,7 @@ public class SituationPublishInstanceAddReq {
 	private String description;
 
 	@ApiModelProperty(value = "特定事件")
-	private List<ListContext> eventList = Lists.newArrayList();
+	private List<List<String>> eventList = Lists.newArrayList();
 
 	@NotBlank(groups = Create.class, message = SituationErrorCode.SCHEME_EMPTY_ERROR)
 	@ApiModelProperty(value = "可视化方案ID")

@@ -1,14 +1,15 @@
 package com.cyberpeace.situation.dao.entity;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.service.context.ListContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @TableName("situation_publish_instance")
@@ -76,11 +77,11 @@ public class SituationPublishInstance extends BaseTable {
 
 	private String createUserId;
 
-	public void setEventList(List<String> events){
+	public void setEventList(List<ListContext> events) {
 		this.events = JsonUtil.toJsonString(events);
 	}
 
-	public List<String> getEventList(){
-		return JsonUtil.toJsonObjectArray(this.events, String.class);
+	public List<ListContext> getEventList() {
+		return JsonUtil.toJsonObjectArray(this.events, ListContext.class);
 	}
 }

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.BcContext;
-import com.cyberpeace.integratation.service.RemoteOperationService;
-import com.cyberpeace.situation.constant.SiteType;
 import com.cyberpeace.integratation.model.situation.ThirdDictContext;
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
+import com.cyberpeace.integratation.service.RemoteOperationService;
+import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.SiteType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
@@ -41,6 +43,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	@Autowired
 	private RemoteOperationService remoteOperationService;
 
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
 	private volatile Map<String, CenterContext> centerCache = Maps.newHashMap();
 
 	private volatile Map<String, RangeContext> rangeCache = Maps.newHashMap();
@@ -49,8 +54,11 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
+	private volatile Map<String, EventListRsp> typicalEventCache = Maps.newHashMap();
+
 	private synchronized <T extends SiteContext> void siteInit(String siteType, Class<T> siteClazz,
 			Map<String, T> cache) {
+
 		// 清空原有数据
 		cache.clear();
 
@@ -186,5 +194,46 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 			});
 			parentType.setSubTypes(list);
 		}
+	}
+
+	private synchronized void typicalEventsInit() {
+		// 清空原有数据
+		typicalEventCache.clear();
+
+		// 请求态势系统数据
+		List<EventListRsp> typicalEvents = remoteSituationService.getEvents();
+
+		// 写入缓存
+		typicalEvents.forEach(event -> {
+			typicalEventCache.put(event.getCode(), event);
+		});
+	}
+
+	@Override
+	public List<EventListRsp> getTypicalEvents() {
+
+		if (typicalEventCache.isEmpty()) {
+			typicalEventsInit();
+		}
+		List<EventListRsp> typicalEvents = new ArrayList<>();
+		typicalEventCache.forEach((key, value) -> typicalEvents.add(value));
+		return typicalEvents;
+	}
+
+	@Override
+	public Map<String, String> getTypicalEventsMap() {
+
+		if (typicalEventCache.isEmpty()) {
+			typicalEventsInit();
+		}
+
+		Map<String, String> typicalEventMap = Maps.newHashMap();
+		typicalEventCache.forEach((key, value) -> {
+			for (ThirdDictContext context : value.getEvents()) {
+				typicalEventMap.put(context.getCode(), context.getName());
+			}
+		});
+
+		return typicalEventMap;
 	}
 }

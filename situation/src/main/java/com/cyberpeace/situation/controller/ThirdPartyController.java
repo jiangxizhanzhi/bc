@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -23,6 +22,7 @@ import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
@@ -91,7 +91,7 @@ public class ThirdPartyController {
 	@ApiOperation("获取特定事件类型列表")
 	@GetMapping("/event/list/")
 	public BaseRsp<List<EventListRsp>> getEvents() {
-		return new BaseRsp<>(remoteSituationService.getEvents());
+		return new BaseRsp<>(thirdPartyService.getTypicalEvents());
 	}
 
 	@ApiOperation("获取分靶场详情")

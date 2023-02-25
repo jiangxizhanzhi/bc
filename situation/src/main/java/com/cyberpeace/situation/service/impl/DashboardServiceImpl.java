@@ -1,6 +1,8 @@
 package com.cyberpeace.situation.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.ThirdPartyService;
+import com.google.common.collect.Lists;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -30,6 +34,9 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private ThirdPartyService thirdPartyService;
 
 	@Override
 	public DashboardBasicAttributeRes getDashboardBasicAttribute(String dashboardId) {
@@ -49,7 +56,15 @@ public class DashboardServiceImpl implements DashboardService {
 			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
 			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
-			dashboardBasicAttributeRes.setEventList(situationPublishInstances.getEventList());
+
+			List<String> events = Lists.newArrayList();
+			Map<String, String> typicalEventMap = thirdPartyService.getTypicalEventsMap();
+			situationPublishInstances.getEventList().forEach(event -> {
+				String subEvent = event.getContext().get(1);
+				events.add(typicalEventMap.get(subEvent));
+			});
+
+			dashboardBasicAttributeRes.setEventList(events);
 			dashboardBasicAttributeRes.setSchemeId(situationPublishInstances.getSchemeId());
 			dashboardBasicAttributeRes.setDashboardId(situationPublishInstances.getResourceId());
 			dashboardBasicAttributeRes.setSubRangeId(situationPublishInstances.getSubRangeId());
@@ -98,7 +113,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	public DashboardAttribute getDashboardAttribute(String dashboardId){
+	public DashboardAttribute getDashboardAttribute(String dashboardId) {
 
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
 				.selectById(dashboardId);
@@ -107,8 +122,7 @@ public class DashboardServiceImpl implements DashboardService {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		return dashboardAttributeMapper
-				.getByResourceId(situationPublishInstances.getAttributeId());
+		return dashboardAttributeMapper.getByResourceId(situationPublishInstances.getAttributeId());
 	}
 
 	public DashboardIdRes getIdByInstance(SituationPublishInstance situationPublishInstances) {

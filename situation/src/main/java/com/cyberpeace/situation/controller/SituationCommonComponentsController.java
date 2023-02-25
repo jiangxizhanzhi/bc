@@ -1,13 +1,11 @@
 package com.cyberpeace.situation.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
-import com.cyberpeace.situation.controller.req.ColorThemeReq;
-import com.cyberpeace.situation.controller.req.CommonComponentsReq;
-import com.cyberpeace.situation.controller.req.SituationCommonComponentsPageReq;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes;
 import com.cyberpeace.situation.dao.entity.SituationCommonComponents;
 import com.cyberpeace.situation.service.SituationCommonComponentsService;
@@ -70,5 +68,17 @@ public class SituationCommonComponentsController {
     @GetMapping("/type/list")
     public BaseRsp<Map<Integer, String>> getComponentsType(){
         return new BaseRsp<>(getCommonComponentsType());
+    }
+
+    @ApiOperation("获取海康rtsp直播流")
+    @GetMapping("/hik/rtsp/channels")
+    public BaseRsp<JSONObject> getHikVisionRtsp(HikVisionReq hikVisionReq){
+        return new BaseRsp<>(situationCommonComponentsService.getHikVisionRtsp(hikVisionReq));
+    }
+
+    @ApiOperation("获取海康flv直播流")
+    @GetMapping("/hik/flv/channels")
+    public BaseRsp<JSONObject> getHikVisionFlv(@RequestParam("rtspUrl")String rtspUrl){
+        return new BaseRsp<>(situationCommonComponentsService.getHikVisionFLv(rtspUrl));
     }
 }

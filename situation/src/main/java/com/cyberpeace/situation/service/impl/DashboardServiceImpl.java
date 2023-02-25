@@ -49,7 +49,7 @@ public class DashboardServiceImpl implements DashboardService {
 			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
 			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
-
+			dashboardBasicAttributeRes.setEventList(situationPublishInstances.getEventList());
 			dashboardBasicAttributeRes.setSchemeId(situationPublishInstances.getSchemeId());
 			dashboardBasicAttributeRes.setDashboardId(situationPublishInstances.getResourceId());
 			dashboardBasicAttributeRes.setSubRangeId(situationPublishInstances.getSubRangeId());

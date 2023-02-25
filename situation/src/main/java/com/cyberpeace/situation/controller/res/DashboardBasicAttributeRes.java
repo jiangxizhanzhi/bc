@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.model.ViewAngle;
@@ -65,6 +66,9 @@ public class DashboardBasicAttributeRes implements Serializable {
 
 	@ApiModelProperty("地图数据源 1-谷歌 2-百度 3-高德")
 	private Integer mapSource = 1;
+
+	@ApiModelProperty("特定事件列表")
+	private List<String> eventList;
 
 	public DashboardBasicAttributeRes(String dashboardId, Integer level, String title,
 			String subTitle, String subRangeId, String taskId, Date startTime,

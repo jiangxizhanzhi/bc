@@ -170,4 +170,9 @@ public interface SituationErrorCode {
 	 * 可视化方案不允许为空
 	 */
 	String SCHEME_EMPTY_ERROR = "106010";
+
+	/**
+	 * 未找到默认靶场大屏信息
+	 */
+	String DEFAULT_BC_ERROR = "106011";
 }

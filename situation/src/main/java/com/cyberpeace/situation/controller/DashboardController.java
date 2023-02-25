@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
@@ -28,7 +28,6 @@ import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
-import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
@@ -137,7 +136,8 @@ public class DashboardController {
 			pushMapSourceChange(@RequestBody @Validated MapSourceChangeReq mapSourceChangeReq) {
 
 		// 依据大屏ID修改相应的地图源属性
-		DashboardAttribute dashboardAttribute = dashboardService.getDashboardAttribute(mapSourceChangeReq.getDashboardId());
+		DashboardAttribute dashboardAttribute = dashboardService
+				.getDashboardAttribute(mapSourceChangeReq.getDashboardId());
 		dashboardAttribute.setMapSource(mapSourceChangeReq.getCode());
 		dashboardAttributeMapper.updateById(dashboardAttribute);
 
@@ -155,15 +155,19 @@ public class DashboardController {
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
 
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
-				.getByResourceId("e5c71717f6b44152943ef28a15dd4040");
-		JSONObject data = JsonUtil.java2JsonObject(dashboardAttribute);
-		ViewAngle viewAngle = JsonUtil.toJsonObject(data.getString("viewAngle"), ViewAngle.class);
-		data.put("longitude", viewAngle.getLongitude());
-		data.put("latitude", viewAngle.getLatitude());
-		data.put("altitude", viewAngle.getAltitude());
+		// 获取默认的靶场信息
+		String bcCode = SystemPropUtil.getProp("BC_CODE");
 
-		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.BackToHome.getDesc(), data);
+		// 获取默认的大屏属性
+		DashboardBasicAttributeRes dashboardBasicAttributeRes = dashboardService
+				.getDashboardBasicAttribute(bcCode);
+		if (dashboardBasicAttributeRes == null) {
+			throw new BusinessException(SituationErrorCode.DEFAULT_BC_ERROR);
+		}
+
+		// 推送返回靶场大屏消息
+		WsMessage<DashboardBasicAttributeRes> wsMessage = new WsMessage<>(
+				MessageType.BackToHome.getDesc(), dashboardBasicAttributeRes);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
 				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);

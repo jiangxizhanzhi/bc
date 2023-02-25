@@ -7,6 +7,7 @@ import java.util.List;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.model.ViewAngle;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -68,7 +69,7 @@ public class DashboardBasicAttributeRes implements Serializable {
 	private Integer mapSource = 1;
 
 	@ApiModelProperty("特定事件列表")
-	private List<String> eventList;
+	private List<String> eventList = Lists.newArrayList();
 
 	public DashboardBasicAttributeRes(String dashboardId, Integer level, String title,
 			String subTitle, String subRangeId, String taskId, Date startTime,

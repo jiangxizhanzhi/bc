@@ -1,5 +1,20 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import com.cyberpeace.integratation.constant.BcType;
+import com.cyberpeace.integratation.model.situation.BcContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,20 +43,9 @@ import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
-import com.cyberpeace.situation.service.ThirdPartyService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import com.cyberpeace.situation.service.context.site.RangeContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
@@ -69,9 +73,6 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
     @Autowired
     private RemoteSituationService remoteSituationService;
-
-    @Autowired
-    private ThirdPartyService thirdPartyService;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
@@ -395,6 +396,62 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
 
         return dashboardAttribute.getEnvId();
+    }
+
+    @Override
+    public SituationPublishInstance createBcInstance(BcContext bcContext){
+
+        String bcId = bcContext.getGroupId();
+        String bcName = bcContext.getName();
+
+        SituationPublishInstance currentSituationPublishInstance = situationPublishInstanceMapper.selectById(bcId);
+
+        if (currentSituationPublishInstance != null){
+            return currentSituationPublishInstance;
+        }
+
+        SituationCategory situationCategory = situationCategoryMapper.selectByName("综合态势");
+        // 构建分靶场大屏实例
+        SituationPublishInstance situationPublishInstance = new SituationPublishInstance();
+        situationPublishInstance.setResourceId(bcId);
+        situationPublishInstance.setName(bcName + "综合态势");
+        situationPublishInstance.setDescription(bcName + "综合态势");
+        situationPublishInstance.setSubRangeId(bcId);
+        situationPublishInstance.setSubRangeName(bcName);
+        situationPublishInstance.setCategory(situationCategory.getResourceId());
+
+        // 构架分靶场大屏属性
+        DashboardAttribute dashboardAttribute = new DashboardAttribute();
+        dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
+        situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
+
+        // 模板不存在时获取默认模板
+        Integer level = BcType.LGZX.getCode().equals(bcContext.getBcType())? 1:2;
+        String defaultTemplateId = dashboardTemplateMapper.selectByLevel(level);
+        String templateId = dashboardTemplateRefService.createDashboardTemplate(defaultTemplateId).getResourceId();
+        situationPublishInstance.setTemplateId(templateId);
+
+        // 设置分靶场大屏参数
+        setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
+        dashboardAttribute.setMapSource(MapSource.GG.getCode());
+        dashboardAttribute.setDashboardType(1);
+        dashboardAttribute.setDashboardMode(3);
+        dashboardAttribute.setTitle(bcName + "综合态势");
+        dashboardAttribute.setViewAngle(JsonUtil.toJsonString(MapView.ZH.getViewAngle()));
+
+        // 写入数据库
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    situationPublishInstanceMapper.insert(situationPublishInstance);
+                    dashboardAttributeMapper.insert(dashboardAttribute);
+                } catch (DuplicateKeyException e) {
+                    throw new BusinessException(ErrorCode.FAIL_TO_WRITE_DB);
+                }
+            }
+        });
+        return situationPublishInstance;
     }
 
 }

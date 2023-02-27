@@ -62,19 +62,19 @@ public class SituationPublishInstance extends BaseTable {
 	private String thirdUrl;
 
 	@ApiModelProperty("是否为想定大屏")
-	private Boolean xd;
+	private Boolean xd = false;
 
 	@ApiModelProperty("类型")
 	private String category;
 
 	@ApiModelProperty("发布状态（草稿/发布）")
-	private String status;
+	private String status = "1";
 
 	@ApiModelProperty("下发状态（下发/未下发）")
-	private Integer publicStatus;
+	private Integer publicStatus = 2;
 
 	@ApiModelProperty("是否可编辑")
-	private Boolean edit;
+	private Boolean edit = false;
 
 	private String createUserId;
 

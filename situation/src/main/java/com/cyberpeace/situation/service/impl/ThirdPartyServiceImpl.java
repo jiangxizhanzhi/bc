@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.model.situation.BcContext;
 import com.cyberpeace.integratation.model.situation.ThirdDictContext;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
@@ -19,6 +23,7 @@ import com.cyberpeace.situation.constant.SiteType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -46,6 +51,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	@Autowired
 	private RemoteSituationService remoteSituationService;
 
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
 	private volatile Map<String, CenterContext> centerCache = Maps.newHashMap();
 
 	private volatile Map<String, RangeContext> rangeCache = Maps.newHashMap();
@@ -55,6 +63,42 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
 	private volatile Map<String, EventListRsp> typicalEventCache = Maps.newHashMap();
+
+	@PostConstruct
+	public void init() {
+		log.info("初始化靶场态势大屏");
+		try {
+			List<BcContext> bcList = remoteOperationService.getBcList(SiteType.RANGE.getCode());
+			String bcCode = SystemPropUtil.getProp("BC_CODE");
+			Map<String, BcContext> bcContextMap = Maps.newHashMap();
+
+			// 替换靶场列表中的联管中心为实际的联管中心
+			bcList.forEach(bc -> {
+				if (bc.getName().endsWith("中心")){
+					bc.setBcType(BcType.LGZX.getCode());
+				}
+			});
+
+			bcList.forEach(bc -> {bcContextMap.put(bc.getGroupId(), bc);});
+			List<BcContext> instances = Lists.newArrayList();
+			if (bcContextMap.get(bcCode) == null)
+			{
+				log.info("初始化靶场态势大屏失败");
+				return;
+			} else if (BcType.LGZX.getCode().equals(bcContextMap.get(bcCode).getBcType())){
+				instances = bcList;
+			} else {
+				instances.add(bcContextMap.get(bcCode));
+			}
+
+			instances.forEach(bc -> {
+				situationPublishInstanceService.createBcInstance(bc);
+			});
+		} catch (Exception exception) {
+			log.info("初始化靶场态势大屏失败");
+		}
+		log.info("初始化靶场态势大屏成功");
+	}
 
 	private synchronized <T extends SiteContext> void siteInit(String siteType, Class<T> siteClazz,
 			Map<String, T> cache) {

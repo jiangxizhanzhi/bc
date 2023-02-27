@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTitleUser;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo;
+import com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainByDepartmentBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,9 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                                    @Param("level_id") String levelId,
                                    @Param("title") String title);
 
+    IPage<CrTitleBo> listUserTitleByDepartment(@Param("page") Page page,
+                                   @Param("user_ids") List<String> userIds);
+
     CrTitleUser getUserTitle(@Param("user_id") String userId, @Param("title_id") String titleId);
 
     IPage<CrTitleStandardBo> listTitleStandard(@Param("page") Page page,
@@ -33,6 +37,13 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                                                @Param("title_id") String titleId);
 
     CrTitleDetailBo titleDetail(@Param("level_id") String levelId,
+                                @Param("title") String title);
+
+    IPage<CrTitleTrainByDepartmentBo> listTitleStandards(@Param("page") Page page,
+                                                         @Param("user_ids") List<String> userIds,
+                                                         @Param("title_id") String titleId);
+
+    List<CrTitleDetailBo> titleDetails(@Param("level_id") String levelId,
                                 @Param("title") String title);
 
     int insertScore(@Param("objects") List<CrTitleTrainProgress> objects);

@@ -41,6 +41,25 @@
         </where>
         order by T1.create_time desc
     </select>
+
+    <select id="listUserTitleByDepartment" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleBo">
+        select
+        T1.title_id as resource_id,
+        T2.level_id,
+        T2.create_user_id,
+        group_concat(concat(T3.name, ' ',T2.name) separator ';') as name
+        from cr_title_user T1
+        left join cr_title T2 on T1.title_id = T2.resource_id
+        left join cr_title_level T3 on T2.level_id = T3.resource_id
+        <where>
+            T1.user_id in
+            <foreach collection="user_ids" item="userId" separator="," open="(" close=")">
+                #{userId}
+            </foreach>
+        </where>
+        group by T1.user_id
+    </select>
+
     <select id="listTitleStandard" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleStandardBo">
         select
             T1.resource_id,
@@ -67,6 +86,55 @@
         left join cr_title_level T2 on T1.level_id = T2.resource_id
         where T1.level_id = #{level_id} and T1.name = #{title} limit 1
     </select>
+
+    <select id="listTitleStandards" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleTrainByDepartmentBo">
+        select T5.name as title_name,
+        T5.resource_id as title_id,
+            T1.name as train_name,
+            T2.user_id as create_user,
+            T1.resource_id,
+            T1.business_type,
+            count(T2.id) as train_count,
+            ifnull(max(score), 0) as max_score
+        from cr_business_template T1
+        left join cr_title_train_progress T2 on T1.resource_id = T2.business_template_id
+        left join (select T3.resource_id,T3.name,T4.business_template_id from cr_title T3 left join cr_title_business_template T4 on T3.resource_id = T4.title_id)
+            T5 on T5.business_template_id = T1.resource_id
+        <where>
+            1= 1
+            and T1.resource_id in (select business_template_id from cr_title_business_template
+            <if test="title_id != null and title_id != ''">
+                where title_id = #{title_id}
+            </if>
+            )
+            and T2.user_id in
+            <foreach collection="user_ids" item="user_id" separator="," open="(" close=")">
+                #{user_id}
+            </foreach>
+        </where>
+            group by T5.resource_id,T1.resource_id,T2.user_id
+    </select>
+
+    <select id="titleDetails" resultType="com.cyberpeace.cr.crbase.service.impl.bo.CrTitleDetailBo">
+        select T1.resource_id,
+               T1.name,
+               T1.create_user_id,
+               T1.score,
+               T2.resource_id as level_id,
+               T2.name as level
+        from cr_title T1
+        left join cr_title_level T2 on T1.level_id = T2.resource_id
+        <where>
+            1 = 1
+            <if test=" level_id != null and level_id != '' ">
+                and T1.level_id = #{level_id}
+            </if>
+             <if test="title != null and title != '' ">
+                 and T1.name = #{title}
+            </if>
+        </where>
+    </select>
+
     <select id="listUserTrainSkill" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTitleTrainProgress">
         select T1.*
         from cr_title_train_progress T1

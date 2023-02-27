@@ -23,7 +23,9 @@ public interface RemoteUserService {
 	// todo getList 未传入分页参数时, 会默认返回10条
 	List<UserInfo> getList();
 
-	JSONObject getList(Long page, Long perPage, String pattern, String organization);
+    List<UserInfo> getMemberList(String name);
+
+    JSONObject getList(Long page, Long perPage, String pattern, String organization);
 
 
 	List<UserInfo> getFuzzyQueryUserList(UserPageContext userPageContext);

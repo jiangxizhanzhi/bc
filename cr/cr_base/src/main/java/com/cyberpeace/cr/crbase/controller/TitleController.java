@@ -10,6 +10,8 @@ import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleDepartmentReq;
+import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTrainDepartmentReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrUserTitleReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitle;
 import com.cyberpeace.cr.crbase.dao.entity.CrTitleLevel;
@@ -145,5 +147,17 @@ public class TitleController {
                 }
             }
         }
+    }
+
+    @GetMapping("/level/department")
+    @ApiOperation("部门荣誉数据-荣誉记录")
+    public BaseRsp<ListRsp<CrTitleUserBo>> titleDepartment(CrTitleDepartmentReq queryParams) {
+        return new BaseRsp<>(PageUtil.getListResult(crTitleService.titleDepartment(queryParams.getName(), queryParams.toPageParam())));
+    }
+
+    @GetMapping("/train/department")
+    @ApiOperation("部门荣誉数据-训练记录")
+    public BaseRsp<ListRsp<CrTitleTrainByDepartmentBo>> trainDepartment(CrTrainDepartmentReq queryParams) {
+        return new BaseRsp<>(PageUtil.getListResult(crTitleService.trainDepartment(queryParams.getName(), queryParams.getTitle(), queryParams.getLevel(),queryParams.toPageParam())));
     }
 }

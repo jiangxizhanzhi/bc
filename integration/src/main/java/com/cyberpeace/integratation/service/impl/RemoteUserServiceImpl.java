@@ -36,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class RemoteUserServiceImpl implements RemoteUserService {
 
+	private String USERINFO_MEMBER_LIST_URL;
+
 	private String TOKEN_AUTHENTICATE_URL;
 
 	private String USERINFO_BY_ID_URL;
@@ -57,6 +59,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_BY_ID_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.by.id");
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("userinfo.list");
+		USERINFO_MEMBER_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 	}
@@ -92,6 +96,22 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		List jsonArray = (List) HttpClientUtil.rawGet(USERINFO_LIST_URL, JSONObject.class)
 				.get("list");
 
+		List<UserInfo> userInfoList = new ArrayList<>();
+		for (Object object : jsonArray) {
+			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+		}
+		return userInfoList;
+	}
+
+	@Override
+	public List<UserInfo> getMemberList(String name) {
+		List<String> queryParams = Lists.newArrayList();
+		String targetUrl = USERINFO_MEMBER_LIST_URL;
+		if (name != null) {
+			queryParams.add(String.format("username=%s", name));
+		}
+		targetUrl += String.join("&", queryParams);
+		List jsonArray = (List) HttpClientUtil.rawGet(targetUrl, JSONObject.class).get("list");
 		List<UserInfo> userInfoList = new ArrayList<>();
 		for (Object object : jsonArray) {
 			userInfoList.add(userInfoFromJsonObject((JSONObject) object));

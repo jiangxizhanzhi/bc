@@ -608,4 +608,66 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
 
         return result;
     }
+
+    @Override
+    public IPage<CrTitleUserBo> titleDepartment(String name, Page page) {
+        List<UserInfo> users;
+        users = remoteUserService.getMemberList(name);
+        if(users.isEmpty()){
+            return null;
+        }
+        Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
+        List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
+        IPage<CrTitleBo> crTitleBoIPage = this.baseMapper.listUserTitleByDepartment(page, userIds);
+        return crTitleBoIPage.convert(crTitleTmp -> {
+            CrTitleUserBo crTitleUserBo = new CrTitleUserBo();
+            BeanUtils.copyProperties(crTitleTmp, crTitleUserBo);
+            crTitleUserBo.setTitle(crTitleTmp.getName());
+            String createUserId = crTitleTmp.getCreateUserId();
+            UserInfo userInfo = userInfoMap.get(createUserId);
+            if (null != userInfo) {
+                if(StringUtils.isNotBlank(userInfo.getUserName())){
+                    crTitleUserBo.setName(userInfo.getUserName());
+                }
+                if(StringUtils.isNotBlank(userInfo.getOrganizationData())){
+                    crTitleUserBo.setDepartmentName(userInfo.getOrganizationData());
+                }
+            }
+            return crTitleUserBo;
+        });
+    }
+
+    @Override
+    public IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page) {
+        List<UserInfo> users;
+        users = remoteUserService.getMemberList(name);
+        if(users.isEmpty()){
+            return null;
+        }
+        Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
+        List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
+        CrTitleDetailBo titleDetailBo = this.getBaseMapper().titleDetail(level, title);
+        if(null == titleDetailBo){
+            return null;
+        }
+        IPage<CrTitleTrainByDepartmentBo> crTitleStandardBoIPage = this.baseMapper.listTitleStandards(page, userIds, titleDetailBo.getResourceId());
+        List<CrTitleDetailBo> crTitleDetailBos = this.baseMapper.titleDetails(level, title);
+        Map<String, CrTitleDetailBo> crTitleDetailBoMap = StreamApiUtils.toMap(crTitleDetailBos, CrTitleDetailBo::getResourceId, tmp -> tmp);
+        List<CrTitleTrainByDepartmentBo> records = new ArrayList<>();
+        crTitleStandardBoIPage.convert(crTitleStandardBo -> {
+            CrTitleDetailBo crTitleDetailBo = crTitleDetailBoMap.get(crTitleStandardBo.getTitleId());
+            UserInfo userInfo = userInfoMap.get(crTitleStandardBo.getCreateUser());
+            if(null != userInfo){
+                crTitleStandardBo.setCreateUser(userInfo.getUserName());
+            }
+            if(null != crTitleDetailBo){
+                crTitleStandardBo.setPassScore(crTitleDetailBo.getScore());
+                crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
+                records.add(crTitleStandardBo);
+            }
+            return crTitleStandardBo;
+        });
+        crTitleStandardBoIPage.setRecords(records);
+        return crTitleStandardBoIPage;
+    }
 }

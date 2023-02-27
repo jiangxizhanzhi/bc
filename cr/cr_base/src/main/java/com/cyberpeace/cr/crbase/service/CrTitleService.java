@@ -203,4 +203,7 @@ public interface CrTitleService {
      */
     boolean deleteTitleBusinessTemplate(List<String> businessTemplateIds);
 
+    IPage<CrTitleUserBo> titleDepartment(String name, Page page);
+
+    IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page);
 }

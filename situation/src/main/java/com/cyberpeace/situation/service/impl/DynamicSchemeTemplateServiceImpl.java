@@ -7,19 +7,23 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.situation.constant.Color;
+import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.constant.ws.DefenseType;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.req.AttackMessageTemplateReq;
 import com.cyberpeace.situation.controller.req.UpdateDynamicSchemeTemplateReq;
+import com.cyberpeace.situation.controller.res.OptionTemplateRes;
 import com.cyberpeace.situation.dao.entity.AttackMessageTemplate;
 import com.cyberpeace.situation.dao.entity.DynamicSchemeTemplate;
 import com.cyberpeace.situation.dao.mapper.AttackMessageTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicSchemeTemplateMapper;
-import com.cyberpeace.situation.model.DynamicStageBo;
-import com.cyberpeace.situation.model.DynamicTemplateStage;
-import com.cyberpeace.situation.model.SimpleDynamicSchemeTemplate;
+import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.AttackMessageTemplateService;
 import com.cyberpeace.situation.service.DynamicSchemeTemplateService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -155,6 +159,26 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	public List<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate() {
 		List<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll();
 		return dynamicSchemeTemplateList.stream().map(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate).collect(Collectors.toList());
+	}
+
+	@Override
+	public OptionTemplateRes getOptions() {
+		OptionTemplateRes optionTemplateRes = new OptionTemplateRes();
+		//获取动效类型
+		optionTemplateRes.setAttackTypeList(StreamApiUtils.map(Lists.newArrayList(AttackType.values()),
+				attackType -> new WebAttackType(attackType.getKeyWord(), attackType.getMsg(),
+						attackType.getActionType().getType(), attackType.getActionType().isSource(),
+						attackType.getActionType().isDurationTime())));
+		//获取线型
+		optionTemplateRes.setLineTypeList(StreamApiUtils.map(Lists.newArrayList(LineType.values()),
+				lineType -> new LocalType(lineType.getCode(), lineType.getMsg())));
+		//获取颜色
+		optionTemplateRes.setColorList(StreamApiUtils.map(Lists.newArrayList(Color.values()),
+				color -> new LocalType(color.getCode(), color.getMsg())));
+		//获取防御类型
+		optionTemplateRes.setDefenseList(StreamApiUtils.map(Lists.newArrayList(DefenseType.values()),
+				defenseType -> new LocalType(defenseType.getMsg(), defenseType.getKeyWord())));
+		return optionTemplateRes;
 	}
 
 	public void validDynamicSchemeTemplate(AddDynamicSchemeTemplateReq addDynamicSchemeTemplateReq) {

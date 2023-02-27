@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.req.SchemeIdListReq;
 import com.cyberpeace.situation.controller.req.UpdateDynamicSchemeTemplateReq;
+import com.cyberpeace.situation.controller.res.OptionTemplateRes;
 import com.cyberpeace.situation.model.SimpleDynamicSchemeTemplate;
 import com.cyberpeace.situation.service.DynamicSchemeTemplateService;
 import io.swagger.annotations.Api;
@@ -53,5 +54,11 @@ public class SituationDynamicSchemeTemplateController {
 	@GetMapping("/list")
 	public BaseRsp<List<SimpleDynamicSchemeTemplate>> getListDynamicSchemeTemplate() {
 		return new BaseRsp<>(dynamicSchemeTemplateService.getListDynamicSchemeTemplate());
+	}
+
+	@ApiOperation("获取选项")
+	@GetMapping("/option")
+	public BaseRsp<OptionTemplateRes> getOptionTemplate() {
+		return new BaseRsp<>(dynamicSchemeTemplateService.getOptions());
 	}
 }

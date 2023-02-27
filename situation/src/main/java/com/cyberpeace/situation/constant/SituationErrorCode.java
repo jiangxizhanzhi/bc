@@ -175,4 +175,14 @@ public interface SituationErrorCode {
 	 * 未找到默认靶场大屏信息
 	 */
 	String DEFAULT_BC_ERROR = "106011";
+	/**
+	 * 二维组件导出失败
+	 */
+	String COMPONENTS_EXPORT_FAILED = "106012";
+
+	/**
+	 * 二维组件导入失败
+	 */
+	String COMPONENTS_IMPORT_FAILED = "106013";
+
 }

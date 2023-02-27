@@ -48,7 +48,7 @@ public class UserTypeServiceImpl implements UserTypeService {
 		if (userTypeMapper.existByName(name, "")) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
-		UserType userType = reqToEntity(addBo.getName());
+		UserType userType = reqToEntity(name);
 		userTypeMapper.insert(userType);
 	}
 
@@ -59,7 +59,7 @@ public class UserTypeServiceImpl implements UserTypeService {
 		if (userTypeMapper.existByName(name, modifyBo.getResourceId())) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
-		UserType userType = reqToEntity(modifyBo.getName());
+		UserType userType = reqToEntity(name);
 		userType.setResourceId(modifyBo.getResourceId());
 		userTypeMapper.updateById(userType);
 	}

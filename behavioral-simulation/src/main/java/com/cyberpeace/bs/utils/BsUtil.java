@@ -306,6 +306,9 @@ public class BsUtil {
 	 * @return
 	 */
 	public static List<String> parseTags(String tagString) {
+		if (StringUtils.isBlank(tagString)) {
+			return Lists.newArrayList();
+		}
 		String[] tags = tagString.split(",");
 		List<String> res = Lists.newArrayList();
 		for (String tag : tags) {
@@ -314,5 +317,17 @@ public class BsUtil {
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * 特殊处理返回体 data 为字符串的情形
+	 * @param jsonString 
+	 * @return
+	 */
+	public static <T> String handleStringData(String jsonString, Class<T> resultType) {
+		if (String.class.equals(resultType)) {
+			return "\"" + jsonString + "\"";
+		}
+		return jsonString;
 	}
 }

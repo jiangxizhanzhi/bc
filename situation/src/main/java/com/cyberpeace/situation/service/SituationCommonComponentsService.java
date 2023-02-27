@@ -1,10 +1,12 @@
 package com.cyberpeace.situation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
 import com.cyberpeace.situation.controller.req.CommonComponentsReq;
+import com.cyberpeace.situation.controller.req.HikVisionReq;
 import com.cyberpeace.situation.controller.req.SituationCommonComponentsPageReq;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsRes;
@@ -55,4 +57,19 @@ public interface SituationCommonComponentsService {
      * @return
      */
     Integer deleteComponents(List<String> idList);
+
+    /**
+     * 获取直播rtsp流
+     * @param hikVisionReq
+     * @return
+     */
+    JSONObject getHikVisionRtsp(HikVisionReq hikVisionReq);
+
+    /**
+     * 获取flv流
+     * @param rtspUrl
+     * @param
+     * @return
+     */
+    JSONObject getHikVisionFLv(String rtspUrl);
 }

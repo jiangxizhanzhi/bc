@@ -1,5 +1,22 @@
 package com.cyberpeace.situation.controller;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Objects;
+
+import javax.validation.constraints.NotBlank;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -10,31 +27,24 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.integratation.model.manage.ServiceLogContext;
-import com.cyberpeace.integratation.service.RemoteManageService;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.integratation.service.RemoteManageService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.dao.mapper.*;
-import com.cyberpeace.situation.service.*;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
+import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsAddReq;
+import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsFilterReq;
+import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsUpdateReq;
+import com.cyberpeace.situation.dao.entity.TwoDimensionalComponents;
+import com.cyberpeace.situation.dao.entity.TwoDimensionalComponentsCategory;
+import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsCategoryMapper;
+import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
+import com.cyberpeace.situation.service.TwoDimensionalComponentsService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Example;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.NotBlank;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Objects;
 
 @Api(tags = "组件库-二维组件")
 @RestController

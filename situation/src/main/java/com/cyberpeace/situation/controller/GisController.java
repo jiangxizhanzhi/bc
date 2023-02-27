@@ -9,6 +9,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
+import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
+import com.cyberpeace.situation.controller.req.SituationGisReq;
+import com.cyberpeace.situation.dao.entity.SituationGis;
+import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
+import com.cyberpeace.situation.service.SituationGisService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -64,6 +74,12 @@ public class GisController {
 
 	@Autowired
 	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
+
+	@Autowired
+	private SituationGisMapper situationGisMapper;
+
+	@Autowired
+	private SituationGisService situationGisService;
 
 	@ApiOperation("新增标绘配置")
 	@PostMapping("/mark/")
@@ -195,4 +211,27 @@ public class GisController {
 		return new BaseRsp<>(templatePlatformRes);
 	}
 
+	@ApiOperation("获取Gis配置")
+	@GetMapping("/get/config")
+	public BaseRsp<SituationGis> getSituationGisConfig(@RequestParam("resource_id")String resourceId){
+		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
+	}
+
+	@ApiOperation("新增Gis配置")
+	@PostMapping("/create/config")
+	public BaseRsp<SituationGis> createSituationGisConfig(@RequestBody @Validated(Create.class)SituationGisReq situationGisReq){
+		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
+	}
+
+	@ApiOperation("修改Gis配置")
+	@PatchMapping("/update/config")
+	public BaseRsp<SituationGis> updateSituationGisConfig(@RequestBody @Validated(Update.class)SituationGisReq situationGisReq){
+		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
+	}
+
+	@ApiOperation("删除Gis配置")
+	@PatchMapping("/delete/config")
+	public BaseRsp<Integer> deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq){
+		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
+	}
 }

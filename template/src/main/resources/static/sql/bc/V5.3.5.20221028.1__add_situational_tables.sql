@@ -930,3 +930,33 @@ ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_type` INT(10) DEFA
 
 ALTER TABLE `situation_dashboard_template` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;
 ALTER TABLE `situation_dashboard_template_ref` ADD COLUMN `bg_template` TEXT CHARSET utf8 COLLATE utf8_general_ci NULL COMMENT '背景模板' AFTER `bg_img`;
+
+-- GIS配置
+-- ----------------------------
+-- Table structure for situation_gis
+-- ----------------------------
+CREATE TABLE `situation_gis` (
+    `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
+    `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+    `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+    `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
+    `create_time`         datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+    )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- Topo配置
+-- ----------------------------
+-- Table structure for situation_topo
+-- ----------------------------
+CREATE TABLE `situation_topo` (
+                                  `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
+                                  `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+                                  `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+                                  `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
+                                  `create_time`         DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_time`         DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE,
+                                  UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+)ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

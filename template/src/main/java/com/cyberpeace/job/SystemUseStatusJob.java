@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+//@Component
 public class SystemUseStatusJob {
 	@Autowired
 	private SystemUseStatusService systemUseStatusService;

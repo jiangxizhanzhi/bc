@@ -15,7 +15,7 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.google.common.collect.Lists;
 
-@Configuration
+//@Configuration
 public class RabbitMQConf {
 
 	/**

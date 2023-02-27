@@ -9,19 +9,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
+//@Component
 public class SystemJob {
 
-    @Autowired
-    private ConnectionFactory connectionFactory;
+//    @Autowired
+//    private ConnectionFactory connectionFactory;
 
-    @Autowired
-    private RabbitMQConf rabbitMQConf;
-
-    @Scheduled(initialDelay = 1000, fixedRate = Long.MAX_VALUE)
-    public void destroyQuery() {
-        log.info("destroyQuery start");
-        new RabbitAdmin(connectionFactory).deleteQueue(rabbitMQConf.getDeleteQueryName());
-        log.info("destroyQuery end");
-    }
+//    @Autowired
+//    private RabbitMQConf rabbitMQConf;
+//
+//    @Scheduled(initialDelay = 1000, fixedRate = Long.MAX_VALUE)
+//    public void destroyQuery() {
+//        log.info("destroyQuery start");
+//        new RabbitAdmin(connectionFactory).deleteQueue(rabbitMQConf.getDeleteQueryName());
+//        log.info("destroyQuery end");
+//    }
 }

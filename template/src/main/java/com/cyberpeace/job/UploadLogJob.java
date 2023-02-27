@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
-@Component
+//@Component
 public class UploadLogJob {
 
     @Autowired

@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  * 场景自动关闭定时任务
  */
 @Slf4j
-@Component
+//@Component
 public class SceneJob {
 
 	@Autowired

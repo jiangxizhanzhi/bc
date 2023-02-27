@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicSchemeTemplateMapper">
+
+    <select id="selectAll" resultType="com.cyberpeace.situation.dao.entity.DynamicSchemeTemplate">
+        select *
+        from situation_dynamic_scheme_template
+    </select>
+</mapper>

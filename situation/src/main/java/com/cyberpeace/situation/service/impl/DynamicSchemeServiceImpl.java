@@ -513,7 +513,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					}
 
 					// 动效序号
-					int number = 1;
+					int number = 0;
 
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {

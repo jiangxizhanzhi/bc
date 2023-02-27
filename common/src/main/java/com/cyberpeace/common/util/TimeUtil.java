@@ -520,6 +520,11 @@ public class TimeUtil {
         return day;
     }
 
+    /**
+     * yyyy-MM-dd HH:mm:ss格式转成Calendar
+     * @param time
+     * @return
+     */
     public static Calendar stringToCalendar(String time){
         SimpleDateFormat simp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();

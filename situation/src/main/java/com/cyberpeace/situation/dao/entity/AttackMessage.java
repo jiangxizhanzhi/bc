@@ -34,7 +34,7 @@ public class AttackMessage extends BaseTable {
 	//间隔时间
 	private Integer intervalTime;
 
-	//间隔时间
+	//持续时间
 	private Integer durationTime;
 
 	//是否聚焦

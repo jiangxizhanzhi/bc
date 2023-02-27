@@ -16,7 +16,7 @@ public enum OperationModule implements BaseI18n {
 	SCENE(5, "场景", "scene"),
 	RTKS(6, "职业体系", "rtks"),
 	EXAM(7, "考试", "exam"),
-	EXERCISE(8, "习题集管理", "exercise"),
+	EXERCISE(8, "习题集", "exercise"),
 	CAPTURE_FLAG(9, "夺旗解题", "practice"),
 	THEORY(10, "理论基础", "theory"),
 	PAPER(11, "试卷", "exam paper"),

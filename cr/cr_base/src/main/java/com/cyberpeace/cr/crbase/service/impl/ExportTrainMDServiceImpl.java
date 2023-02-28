@@ -229,7 +229,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 				multipleChoiceMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));
 				mdParser.write(multipleChoiceMD, new File(task.getPath() + File.separator + BASE_MD_FILE));
 				break;
-			case 7:
+			default:
 				//其他
 				FileMD fileMD = BeanUtils.copy(missionTemplate, FileMD.class);
 				fileMD.setTaskType(constantMap.get(missionTemplate.getCategoryId()));

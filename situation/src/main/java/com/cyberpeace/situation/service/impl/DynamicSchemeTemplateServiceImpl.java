@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.Color;
 import com.cyberpeace.situation.constant.LineType;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -165,10 +163,10 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	}
 
 	@Override
-	public IPage<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate(PageReqBase pageReqBase) {
+	public ListRsp<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
 		IPage<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll(page);
-		return dynamicSchemeTemplateList.convert(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate);
+		return PageUtil.getListResult(dynamicSchemeTemplateList.convert(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate));
 	}
 
 	@Override

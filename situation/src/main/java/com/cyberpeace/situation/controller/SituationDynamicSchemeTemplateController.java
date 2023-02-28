@@ -1,7 +1,8 @@
 package com.cyberpeace.situation.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.req.SchemeIdListReq;
@@ -52,8 +53,10 @@ public class SituationDynamicSchemeTemplateController {
 
 	@ApiOperation("列表查询攻防方案模板")
 	@GetMapping("/list")
-	public BaseRsp<IPage<SimpleDynamicSchemeTemplate>> getListDynamicSchemeTemplate(@Validated PageReqBase pageReqBase) {
-		pageReqBase.setSort("-update_time");
+	public BaseRsp<ListRsp<SimpleDynamicSchemeTemplate>> getListDynamicSchemeTemplate(@Validated PageReqBase pageReqBase) {
+		if (StringUtils.isBlank(pageReqBase.getSort())) {
+			pageReqBase.setSort("-update_time");
+		}
 		return new BaseRsp<>(dynamicSchemeTemplateService.getListDynamicSchemeTemplate(pageReqBase));
 	}
 

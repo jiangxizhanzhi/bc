@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
@@ -114,7 +115,7 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 		List<AttackMessageTemplateReq> addAttackMessageTemplateReqList = new ArrayList<>();
 		for (DynamicTemplateStage dynamicTemplateStage : updateDynamicSchemeTemplateReq.getSchemeData()) {
 			for (AttackMessageTemplateReq attackMessageTemplateReq : dynamicTemplateStage.getStageData()) {
-				if (attackMessageTemplateReq.getResourceId() == null) {
+				if (StringUtils.isBlank(attackMessageTemplateReq.getResourceId())) {
 					addAttackMessageTemplateReqList.add(attackMessageTemplateReq);
 				} else {
 					updateAttackMessageTemplateReqList.add(attackMessageTemplateReq);

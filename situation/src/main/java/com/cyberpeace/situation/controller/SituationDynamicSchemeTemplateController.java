@@ -34,14 +34,16 @@ public class SituationDynamicSchemeTemplateController {
 
 	@ApiOperation("删除攻防方案模板")
 	@DeleteMapping("/")
-	public void deleteDynamicSchemeTemplate(@RequestBody @Validated SchemeIdListReq schemeIdListReq) {
+	public BaseRsp deleteDynamicSchemeTemplate(@RequestBody @Validated SchemeIdListReq schemeIdListReq) {
 		dynamicSchemeTemplateService.bashDeleteDynamicSchemeTemplate(schemeIdListReq.getSchemeIds());
+		return new BaseRsp();
 	}
 
 	@ApiOperation("更新攻防方案模板")
 	@PatchMapping("/")
-	public void updateDynamicSchemeTemplate(@RequestBody @Validated UpdateDynamicSchemeTemplateReq updateDynamicSchemeTemplateReq) {
+	public BaseRsp updateDynamicSchemeTemplate(@RequestBody @Validated UpdateDynamicSchemeTemplateReq updateDynamicSchemeTemplateReq) {
 		dynamicSchemeTemplateService.updateDynamicSchemeTemplate(updateDynamicSchemeTemplateReq);
+		return new BaseRsp();
 	}
 
 	@ApiOperation("查询单个攻防方案模板")

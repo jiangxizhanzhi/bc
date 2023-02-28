@@ -1,9 +1,12 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.PageReqBase;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -162,9 +165,10 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	}
 
 	@Override
-	public List<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate() {
-		List<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll();
-		return dynamicSchemeTemplateList.stream().map(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate).collect(Collectors.toList());
+	public IPage<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate(PageReqBase pageReqBase) {
+		Page page = pageReqBase.toPageParam();
+		IPage<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll(page);
+		return dynamicSchemeTemplateList.convert(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate);
 	}
 
 	@Override

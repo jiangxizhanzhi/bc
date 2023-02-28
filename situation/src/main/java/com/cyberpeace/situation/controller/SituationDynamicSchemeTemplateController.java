@@ -1,6 +1,8 @@
 package com.cyberpeace.situation.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.req.SchemeIdListReq;
 import com.cyberpeace.situation.controller.req.UpdateDynamicSchemeTemplateReq;
@@ -13,8 +15,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "攻防方案模板管理")
 @RestController
@@ -52,8 +52,9 @@ public class SituationDynamicSchemeTemplateController {
 
 	@ApiOperation("列表查询攻防方案模板")
 	@GetMapping("/list")
-	public BaseRsp<List<SimpleDynamicSchemeTemplate>> getListDynamicSchemeTemplate() {
-		return new BaseRsp<>(dynamicSchemeTemplateService.getListDynamicSchemeTemplate());
+	public BaseRsp<IPage<SimpleDynamicSchemeTemplate>> getListDynamicSchemeTemplate(@Validated PageReqBase pageReqBase) {
+		pageReqBase.setSort("-update_time");
+		return new BaseRsp<>(dynamicSchemeTemplateService.getListDynamicSchemeTemplate(pageReqBase));
 	}
 
 	@ApiOperation("获取选项")

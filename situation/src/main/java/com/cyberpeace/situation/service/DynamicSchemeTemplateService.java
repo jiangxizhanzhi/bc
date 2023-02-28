@@ -1,5 +1,7 @@
 package com.cyberpeace.situation.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.req.UpdateDynamicSchemeTemplateReq;
 import com.cyberpeace.situation.controller.res.OptionTemplateRes;
@@ -17,7 +19,7 @@ public interface DynamicSchemeTemplateService {
 
 	UpdateDynamicSchemeTemplateReq getDynamicSchemeTemplate(String resourceId);
 
-	List<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate();
+	IPage<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate(PageReqBase pageReqBase);
 
 	OptionTemplateRes getOptions();
 

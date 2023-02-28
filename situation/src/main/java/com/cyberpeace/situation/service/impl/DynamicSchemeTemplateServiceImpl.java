@@ -121,8 +121,13 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 				}
 			}
 		}
-		attackMessageTemplateService.bashUpdateAttackMessageTemplate(updateAttackMessageTemplateReqList);
-		attackMessageTemplateService.bashAddAttackMessageTemplate(addAttackMessageTemplateReqList);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				attackMessageTemplateService.bashUpdateAttackMessageTemplate(updateAttackMessageTemplateReqList);
+				attackMessageTemplateService.bashAddAttackMessageTemplate(addAttackMessageTemplateReqList);
+			}
+		});
 	}
 
 	@Override

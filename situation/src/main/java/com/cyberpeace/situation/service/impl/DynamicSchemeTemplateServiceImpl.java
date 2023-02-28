@@ -112,8 +112,10 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	@Override
 	public void updateDynamicSchemeTemplate(UpdateDynamicSchemeTemplateReq updateDynamicSchemeTemplateReq) {
 		validDynamicSchemeTemplate(updateDynamicSchemeTemplateReq);
+		DynamicSchemeTemplate oldDynamicSchemeTemplate = dynamicSchemeTemplateMapper.selectById(updateDynamicSchemeTemplateReq.getResourceId());
 		List<AttackMessageTemplateReq> updateAttackMessageTemplateReqList = new ArrayList<>();
 		List<AttackMessageTemplateReq> addAttackMessageTemplateReqList = new ArrayList<>();
+		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();
 		for (DynamicTemplateStage dynamicTemplateStage : updateDynamicSchemeTemplateReq.getSchemeData()) {
 			for (AttackMessageTemplateReq attackMessageTemplateReq : dynamicTemplateStage.getStageData()) {
 				if (StringUtils.isBlank(attackMessageTemplateReq.getResourceId())) {
@@ -128,6 +130,27 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				attackMessageTemplateService.bashUpdateAttackMessageTemplate(updateAttackMessageTemplateReqList);
 				attackMessageTemplateService.bashAddAttackMessageTemplate(addAttackMessageTemplateReqList);
+				List<String> oldAttackMessageIds = new ArrayList<>();
+				List<String> newAttackMessageIds = new ArrayList<>();
+
+				List<DynamicStageBo> oldDynamicStageBoList = JsonUtil.toJsonObjectArray(oldDynamicSchemeTemplate.getSchemeData()
+						, DynamicStageBo.class);
+				oldDynamicStageBoList.forEach(dynamicStageBo ->  oldAttackMessageIds.addAll(dynamicStageBo.getAttackMessageIds()));
+				DynamicSchemeTemplate dynamicSchemeTemplate = BeanUtils.copy(updateDynamicSchemeTemplateReq, DynamicSchemeTemplate.class);
+				for (DynamicTemplateStage dynamicTemplateStage: updateDynamicSchemeTemplateReq.getSchemeData()) {
+					DynamicStageBo dynamicStageBo = new DynamicStageBo();
+					dynamicStageBo.setName(dynamicTemplateStage.getStageName());
+					List<String> attackMessageIds = StreamApiUtils.map(dynamicTemplateStage.getStageData(),AttackMessageTemplateReq::getResourceId);
+					newAttackMessageIds.addAll(attackMessageIds);
+					dynamicStageBo.setAttackMessageIds(attackMessageIds);
+					dynamicStageBoList.add(dynamicStageBo);
+				}
+				dynamicSchemeTemplate.setSchemeData(JSON.toJSONString(dynamicStageBoList));
+				dynamicSchemeTemplateMapper.updateById(dynamicSchemeTemplate);
+				oldAttackMessageIds.removeAll(newAttackMessageIds);
+				if (oldAttackMessageIds.size() > 0) {
+					attackMessageTemplateMapper.deleteBatchIds(oldAttackMessageIds);
+				}
 			}
 		});
 	}
@@ -139,6 +162,7 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 		List<DynamicStageBo> dynamicStageBoList = JsonUtil.toJsonObjectArray(dynamicSchemeTemplate.getSchemeData(),
 				DynamicStageBo.class);
 		updateDynamicSchemeTemplateReq.setSchemeName(dynamicSchemeTemplate.getName());
+		updateDynamicSchemeTemplateReq.setResourceId(resourceId);
 		List<String> resourceIds = new ArrayList<>();
 		dynamicStageBoList.forEach(dynamicStageBo -> resourceIds.addAll(dynamicStageBo.getAttackMessageIds()));
 		List<AttackMessageTemplate> attackMessageTemplateList =
@@ -197,6 +221,14 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 													 .collect(Collectors.toList());
 			if (new HashSet<>(names).size() < names.size()) {
 				throw new BusinessException(SituationErrorCode.DUPLICATED_DYNAMIC_DESCRIPTION);
+			}
+			if (StringUtils.isBlank(dynamicTemplateStage.getStageName())) {
+				throw new BusinessException(SituationErrorCode.EMPTY_STAGE_NAME);
+			}
+			for (AttackMessageTemplateReq attackMessageTemplateReq: dynamicTemplateStage.getStageData()) {
+				if (StringUtils.isBlank(attackMessageTemplateReq.getDescription())) {
+					throw new BusinessException(SituationErrorCode.EMPTY_SCHEME_NAME);
+				}
 			}
 		}
 	}

@@ -165,8 +165,10 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 		updateDynamicSchemeTemplateReq.setResourceId(resourceId);
 		List<String> resourceIds = new ArrayList<>();
 		dynamicStageBoList.forEach(dynamicStageBo -> resourceIds.addAll(dynamicStageBo.getAttackMessageIds()));
-		List<AttackMessageTemplate> attackMessageTemplateList =
-				attackMessageTemplateMapper.selectBatchIds(resourceIds);
+		List<AttackMessageTemplate> attackMessageTemplateList = new ArrayList<>();
+		if (resourceIds.size() > 0) {
+			attackMessageTemplateList = attackMessageTemplateMapper.selectBatchIds(resourceIds);
+		}
 		if (attackMessageTemplateList.size() < resourceIds.size()) {
 			throw new BusinessException(SituationErrorCode.CANNOT_FIND_DYNAMIC);
 		}

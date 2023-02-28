@@ -98,6 +98,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
     public String apiConnectTest(ApiConnectReq apiConnectReq) {
         String requestMethod = apiConnectReq.getRequestMethod();
         HttpHeaders headers = getHeaders(apiConnectReq.getRequestHeaders());
+        String oldRequestUrl = apiConnectReq.getRequestUrl();
         JSONObject body = getBody(apiConnectReq);
         HttpEntity httpEntity = new HttpEntity(body, headers);
         String requestUrl = apiConnectReq.getRequestUrl();
@@ -117,7 +118,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
             message = e.getMessage();
         } finally {
             if (StringUtils.isNotBlank(resourceId)) {
-                apiRequest.setRequestUrl(apiConnectReq.getRequestUrl());
+                apiRequest.setRequestUrl(oldRequestUrl);
                 apiRequestMapper.updateById(apiRequest);
             }
         }

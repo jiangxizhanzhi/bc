@@ -2,9 +2,11 @@ package com.cyberpeace.situation.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.dao.entity.SituationTime;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.SituationStatisticsService;
+import com.cyberpeace.situation.service.SituationTimeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +28,9 @@ public class SituationStatisticsController {
 
 	@Autowired
 	private AttackMessageHistoryService attackMessageHistoryService;
+
+	@Autowired
+	private SituationTimeService situationTimeService;
 
 	@ApiOperation("攻击趋势")
 	@GetMapping("/scene_trend")
@@ -107,6 +112,13 @@ public class SituationStatisticsController {
 	public void refreshNodeStatus(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
 		attackMessageHistoryService.pushParalysisNodeStatus(sceneId);
+	}
+
+	@ApiOperation("获取态势时间和状态")
+	@GetMapping("/getTime")
+	public BaseRsp<SituationTime> getTime(@ApiParam(name = "topo_id", value = "场景编号",
+			required = true) @RequestParam(value = "topo_id") String topoId) {
+		return new BaseRsp<>(situationTimeService.getTimeManagement(topoId));
 	}
 
 }

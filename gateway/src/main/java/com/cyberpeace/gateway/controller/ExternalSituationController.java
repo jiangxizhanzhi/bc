@@ -1,20 +1,22 @@
 package com.cyberpeace.gateway.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.model.DynamicSchemeProcess;
+import com.cyberpeace.situation.model.Instruction;
 import com.cyberpeace.situation.model.SceneData;
 import com.cyberpeace.situation.model.SituationTopo;
-import com.cyberpeace.situation.service.DynamicSchemeService;
-import com.cyberpeace.situation.service.SceneConfigService;
-import com.cyberpeace.situation.service.SituationHandlerService;
-import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "外部接口-态势相关api")
@@ -34,6 +36,12 @@ public class ExternalSituationController {
 
 	@Autowired
 	private DynamicSchemeService dynamicSchemeService;
+
+	@Autowired
+	private BusinessTemplateMapper businessTemplateMapper;
+
+	@Autowired
+	private SituationTimeService situationTimeService;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -74,6 +82,17 @@ public class ExternalSituationController {
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
 				dynamicSchemeProcess.getStageName(),dynamicSchemeProcess.getAttackMessageDescription());
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("接收指令")
+	@PostMapping("/receiveInstruction")
+	public BaseRsp	receiveInstruction(@RequestBody @Validated Instruction instruction) {
+		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(instruction.getResourceId());
+		if (businessTemplate == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		situationTimeService.executeInstruction(instruction, businessTemplate.getTopoId());
+		return new BaseRsp();
 	}
 
 }

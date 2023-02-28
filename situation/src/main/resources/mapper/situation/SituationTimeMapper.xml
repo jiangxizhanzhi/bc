@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationTimeMapper">
+
+
+    <select id="selectById" resultType="com.cyberpeace.situation.dao.entity.SituationTime">
+        select *
+        from situation_time
+        <where>
+            <if test="topoId != null and topoId != ''">
+                topo_id = #{topoId}
+            </if>
+        </where>
+    </select>
+</mapper>

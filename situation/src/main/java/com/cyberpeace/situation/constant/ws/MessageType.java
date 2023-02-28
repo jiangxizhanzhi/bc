@@ -17,7 +17,8 @@ public enum MessageType {
 	NodeStatus(7, "link_status"),
 	AttackSchedule(8,"attack_schedule"),
 	SceneConfig(9,"scene_config"),
-	RbNodeStatus(10,"rb_node_status");
+	RbNodeStatus(10,"rb_node_status"),
+	SituationTime(11, "situation_time");
 
 	@Getter
 	private Integer code;

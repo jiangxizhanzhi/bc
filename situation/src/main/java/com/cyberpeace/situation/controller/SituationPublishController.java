@@ -253,4 +253,11 @@ public class SituationPublishController {
         return copy;
     }
 
+    @ApiOperation("态势组件实例数据")
+    @PostMapping("data")
+    public BaseRsp<InstanceDataQueryRes> getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
+        // todo 依据前端传入的参数及大屏自带参数，替换接口配置中的动态参数，执行请求后返回数据，动态参数参见situation.constant.DynamicParameter
+        return new BaseRsp<>(new InstanceDataQueryRes());
+    }
+
 }

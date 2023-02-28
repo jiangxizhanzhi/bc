@@ -960,3 +960,21 @@ CREATE TABLE `situation_topo` (
                                   PRIMARY KEY (`id`) USING BTREE,
                                   UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 )ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- Topo配置
+-- ----------------------------
+-- Table structure for situation_decoration
+-- ----------------------------
+CREATE TABLE `situation_decoration`
+(
+    `id`             INT                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类名称',
+    `type`           VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '装饰类类型',
+    `decoration_url`    VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类URL',
+    `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

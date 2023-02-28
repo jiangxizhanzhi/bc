@@ -1,5 +1,6 @@
 package com.cyberpeace.config.auth;
 
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -64,7 +65,7 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
 			userInfo = remoteUserService.doAuthentication(token);
 			UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
-
+			CommonContext.setAuthorization(token);
 			if (null != roleInfo) {
 				userInfo.setRoleId(roleInfo.getRoleId());
 			}

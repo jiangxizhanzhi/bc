@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -61,7 +62,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		USERINFO_MEMBER_LIST_URL = mpEnvService.getMpHost()
-				+ ConfigUtil.getContextProperty("userinfo.list");
+				+ ConfigUtil.getContextProperty("userinfo.member.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 	}
 
@@ -107,14 +108,23 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public List<UserInfo> getMemberList(String name) {
 		List<String> queryParams = Lists.newArrayList();
 		String targetUrl = USERINFO_MEMBER_LIST_URL;
+		if (!targetUrl.endsWith("?")) {
+			targetUrl += "?";
+		}
 		if (name != null) {
 			queryParams.add(String.format("username=%s", name));
 		}
 		targetUrl += String.join("&", queryParams);
-		List jsonArray = (List) HttpClientUtil.rawGet(targetUrl, JSONObject.class).get("list");
+		JSONArray jsonArray = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 		List<UserInfo> userInfoList = new ArrayList<>();
+		JSONObject userJsons = getList(null, 0L, null, null);
+		List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
+		Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
 		for (Object object : jsonArray) {
-			userInfoList.add(userInfoFromJsonObject((JSONObject) object));
+			UserInfo userInfo = userInfoMap.get(object);
+			if(null != userInfo){
+				userInfoList.add(userInfo);
+			}
 		}
 		return userInfoList;
 	}

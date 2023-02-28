@@ -2,6 +2,8 @@ package com.cyberpeace.cr.crbase.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleLevelReq;
 import com.cyberpeace.cr.crbase.controller.req.crtitle.CrTitleReq;
@@ -203,7 +205,7 @@ public interface CrTitleService {
      */
     boolean deleteTitleBusinessTemplate(List<String> businessTemplateIds);
 
-    IPage<CrTitleUserBo> titleDepartment(String name, Page page);
+    BaseRsp<ListRsp<CrTitleUserBo>> titleDepartment(String name, Page page);
 
     IPage<CrTitleTrainByDepartmentBo> trainDepartment(String name, String title, String level, Page page);
 }

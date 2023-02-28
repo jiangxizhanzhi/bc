@@ -46,7 +46,7 @@
         select
         T1.title_id as resource_id,
         T2.level_id,
-        T2.create_user_id,
+        T1.user_id as create_user_id,
         group_concat(concat(T3.name, ' ',T2.name) separator ';') as name
         from cr_title_user T1
         left join cr_title T2 on T1.title_id = T2.resource_id
@@ -98,15 +98,19 @@
             ifnull(max(score), 0) as max_score
         from cr_business_template T1
         left join cr_title_train_progress T2 on T1.resource_id = T2.business_template_id
-        left join (select T3.resource_id,T3.name,T4.business_template_id from cr_title T3 left join cr_title_business_template T4 on T3.resource_id = T4.title_id)
+        left join (select T3.resource_id,T3.name,T4.business_template_id,T3.level_id from cr_title T3
+                                                                         left join cr_title_business_template T4 on T3.resource_id = T4.title_id
+                                                                         left join cr_title_level T6 on T3.level_id = T6.resource_id)
             T5 on T5.business_template_id = T1.resource_id
         <where>
             1= 1
-            and T1.resource_id in (select business_template_id from cr_title_business_template
-            <if test="title_id != null and title_id != ''">
-                where title_id = #{title_id}
+            and T1.resource_id in (select business_template_id from cr_title_business_template)
+            <if test="title != null and title != ''">
+                and T5.name = #{title}
             </if>
-            )
+            <if test=" level_id != null and level_id != '' ">
+                and T5.level_id = #{level_id}
+            </if>
             and T2.user_id in
             <foreach collection="user_ids" item="user_id" separator="," open="(" close=")">
                 #{user_id}

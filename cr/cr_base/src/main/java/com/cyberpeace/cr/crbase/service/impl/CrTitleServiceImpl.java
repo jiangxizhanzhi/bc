@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.DateUtil;
@@ -610,31 +612,61 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
     }
 
     @Override
-    public IPage<CrTitleUserBo> titleDepartment(String name, Page page) {
+    public BaseRsp<ListRsp<CrTitleUserBo>> titleDepartment(String name, Page page) {
         List<UserInfo> users;
+        List<CrTitleUserBo> res = new ArrayList<>();
+        ListRsp<CrTitleUserBo> rsp = new ListRsp();
         users = remoteUserService.getMemberList(name);
         if(users.isEmpty()){
-            return null;
+            return new BaseRsp(rsp);
         }
-        Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
         List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
-        IPage<CrTitleBo> crTitleBoIPage = this.baseMapper.listUserTitleByDepartment(page, userIds);
-        return crTitleBoIPage.convert(crTitleTmp -> {
+        List<CrTitleBo> crTitleBoIPage = this.baseMapper.listUserTitleByDepartment(userIds);
+        Map<String, CrTitleBo> crTitleBoMap = StreamApiUtils.toMap(crTitleBoIPage, CrTitleBo::getCreateUserId, record -> record);
+        users.forEach(userInfo -> {
             CrTitleUserBo crTitleUserBo = new CrTitleUserBo();
-            BeanUtils.copyProperties(crTitleTmp, crTitleUserBo);
-            crTitleUserBo.setTitle(crTitleTmp.getName());
-            String createUserId = crTitleTmp.getCreateUserId();
-            UserInfo userInfo = userInfoMap.get(createUserId);
-            if (null != userInfo) {
-                if(StringUtils.isNotBlank(userInfo.getUserName())){
-                    crTitleUserBo.setName(userInfo.getUserName());
-                }
-                if(StringUtils.isNotBlank(userInfo.getOrganizationData())){
-                    crTitleUserBo.setDepartmentName(userInfo.getOrganizationData());
+            if(StringUtils.isNotBlank(userInfo.getUserName())){
+                crTitleUserBo.setName(userInfo.getUserName());
+            }
+            if(StringUtils.isNotBlank(userInfo.getOrganizationData())){
+                String organizationData = userInfo.getOrganizationData();
+                String[] split = organizationData.split("/");
+                if(split.length > 0){
+                    crTitleUserBo.setDepartmentName(split[split.length -1]);
                 }
             }
-            return crTitleUserBo;
+            CrTitleBo crTitleBo = crTitleBoMap.get(userInfo.getUserId());
+            crTitleUserBo.setResourceId(userInfo.getUserId());
+            if(null != crTitleBo){
+                crTitleUserBo.setTitle(crTitleBo.getName());
+            }
+            res.add(crTitleUserBo);
+
         });
+        List<CrTitleUserBo> list = getCrTitleUserBosByPage(page, res);
+        rsp.setList(list);
+        rsp.setTotal(res.size());
+        rsp.setLastPage(page.getPages());
+        rsp.setCurrentPage(page.getCurrent());
+        return new BaseRsp(rsp);
+    }
+
+    private List<CrTitleUserBo> getCrTitleUserBosByPage(Page page, List<CrTitleUserBo> res) {
+        long current = page.getCurrent();
+        long start;
+        if (current <= 1L) {
+            start =  0L;
+        } else {
+            start = (current - 1) * page.getSize();
+        }
+        if(start > page.getSize()){
+            start = 0L;
+        }
+        long value = start + page.getSize();
+        int end = value > res.size() ? res.size() : Math.toIntExact(value);
+
+        List<CrTitleUserBo> list = res.subList(Math.toIntExact(start), end);
+        return list;
     }
 
     @Override
@@ -646,23 +678,19 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         }
         Map<String, UserInfo> userInfoMap = StreamApiUtils.toMap(users, UserInfo::getUserId, user -> user);
         List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
-        CrTitleDetailBo titleDetailBo = this.getBaseMapper().titleDetail(level, title);
-        if(null == titleDetailBo){
-            return null;
-        }
-        IPage<CrTitleTrainByDepartmentBo> crTitleStandardBoIPage = this.baseMapper.listTitleStandards(page, userIds, titleDetailBo.getResourceId());
+        IPage<CrTitleTrainByDepartmentBo> crTitleStandardBoIPage = this.baseMapper.listTitleStandards(page, userIds, title, level);
         List<CrTitleDetailBo> crTitleDetailBos = this.baseMapper.titleDetails(level, title);
         Map<String, CrTitleDetailBo> crTitleDetailBoMap = StreamApiUtils.toMap(crTitleDetailBos, CrTitleDetailBo::getResourceId, tmp -> tmp);
         List<CrTitleTrainByDepartmentBo> records = new ArrayList<>();
         crTitleStandardBoIPage.convert(crTitleStandardBo -> {
             CrTitleDetailBo crTitleDetailBo = crTitleDetailBoMap.get(crTitleStandardBo.getTitleId());
             UserInfo userInfo = userInfoMap.get(crTitleStandardBo.getCreateUser());
-            if(null != userInfo){
-                crTitleStandardBo.setCreateUser(userInfo.getUserName());
-            }
             if(null != crTitleDetailBo){
                 crTitleStandardBo.setPassScore(crTitleDetailBo.getScore());
                 crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
+            }
+            if(null != userInfo){
+                crTitleStandardBo.setCreateUser(userInfo.getUserName());
                 records.add(crTitleStandardBo);
             }
             return crTitleStandardBo;

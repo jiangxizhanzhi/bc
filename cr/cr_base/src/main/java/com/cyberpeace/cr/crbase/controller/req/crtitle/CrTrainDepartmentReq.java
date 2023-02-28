@@ -14,5 +14,9 @@ public class CrTrainDepartmentReq extends PageReqBase {
     private String title;
 
     @ApiModelProperty("级别")
-    private String level;
+    private String levelId;
+
+    public void setLevel_id(String levelId) {
+        this.levelId = levelId;
+    }
 }

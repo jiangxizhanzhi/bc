@@ -27,8 +27,7 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
                                    @Param("level_id") String levelId,
                                    @Param("title") String title);
 
-    IPage<CrTitleBo> listUserTitleByDepartment(@Param("page") Page page,
-                                   @Param("user_ids") List<String> userIds);
+    List<CrTitleBo> listUserTitleByDepartment(@Param("user_ids") List<String> userIds);
 
     CrTitleUser getUserTitle(@Param("user_id") String userId, @Param("title_id") String titleId);
 
@@ -41,7 +40,8 @@ public interface CrTitleMapper extends BaseMapper<CrTitle> {
 
     IPage<CrTitleTrainByDepartmentBo> listTitleStandards(@Param("page") Page page,
                                                          @Param("user_ids") List<String> userIds,
-                                                         @Param("title_id") String titleId);
+                                                         @Param("title") String title,
+                                                         @Param("level_id") String levelId);
 
     List<CrTitleDetailBo> titleDetails(@Param("level_id") String levelId,
                                 @Param("title") String title);

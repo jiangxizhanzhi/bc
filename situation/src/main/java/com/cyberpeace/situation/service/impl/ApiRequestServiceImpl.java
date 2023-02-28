@@ -117,6 +117,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
             message = e.getMessage();
         } finally {
             if (StringUtils.isNotBlank(resourceId)) {
+                apiRequest.setRequestUrl(apiConnectReq.getRequestUrl());
                 apiRequestMapper.updateById(apiRequest);
             }
         }

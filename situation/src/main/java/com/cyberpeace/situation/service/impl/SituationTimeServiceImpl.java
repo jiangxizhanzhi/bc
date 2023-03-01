@@ -1,7 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.dao.entity.SituationTime;
 import com.cyberpeace.situation.dao.mapper.SituationTimeMapper;
@@ -61,8 +59,9 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 			sceneConfigService.clearSceneCode(topoId);
 		} else if (instruction.getCode().equals(Instruction.InstructionType.CONTINUE.getCode())) {
 			DynamicSchemeProcess dynamicSchemeProcess = sceneConfigService.getDynamicSchemeCache(topoId);
-			if (dynamicSchemeProcess == null) {
-				throw new BusinessException(SituationErrorCode.CANNOT_FIND_STOP_DYNAMIC);
+			if (dynamicSchemeProcess != null) {
+				dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
+						dynamicSchemeProcess.getStageName(), dynamicSchemeProcess.getAttackMessageDescription());
 			}
 			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());
 			situationTimeMapper.updateById(situationTime);

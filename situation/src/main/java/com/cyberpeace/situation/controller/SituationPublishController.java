@@ -1,5 +1,19 @@
 package com.cyberpeace.situation.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -18,27 +32,15 @@ import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
+import com.cyberpeace.situation.service.context.DynamicParameterContext;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Api(tags = "组件库-态势发布大屏")
 @RestController
@@ -253,11 +255,21 @@ public class SituationPublishController {
         return copy;
     }
 
-    @ApiOperation("态势组件实例数据")
-    @PostMapping("data")
-    public BaseRsp<InstanceDataQueryRes> getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
-        // todo 依据前端传入的参数及大屏自带参数，替换接口配置中的动态参数，执行请求后返回数据，动态参数参见situation.constant.DynamicParameter
-        return new BaseRsp<>(new InstanceDataQueryRes());
-    }
+	@ApiOperation("态势组件实例数据")
+	@PostMapping("/query/")
+	public BaseRsp<InstanceDataQueryRes>
+			getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
+		// 提取动态参数实际取值
+		DynamicParameterContext context = BeanUtils.copy(query, DynamicParameterContext.class);
+		SituationPublishInstance instance = situationPublishInstanceMapper
+				.selectById(query.getDashboardId());
+		context.setTaskId(instance.getTaskId());
+		context.setSubjectId(instance.getSubjectId());
+		context.setSubRangeId(instance.getSubRangeId());
+
+		// todo 依据context中实际参数，替换接口配置中的动态参数，执行请求后返回组件及其数据，动态参数参见situation.constant.DynamicParameter
+
+		return new BaseRsp<>(new InstanceDataQueryRes());
+	}
 
 }

@@ -325,7 +325,8 @@ public class BsUtil {
 	 * @return
 	 */
 	public static <T> String handleStringData(String jsonString, Class<T> resultType) {
-		if (String.class.equals(resultType)) {
+		if (String.class.equals(resultType) && !jsonString.startsWith("{")
+				&& !jsonString.startsWith("[")) {
 			return "\"" + jsonString + "\"";
 		}
 		return jsonString;

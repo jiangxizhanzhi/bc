@@ -94,8 +94,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@PostConstruct
 	public void init() {
 		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
-		// 重启程序后恢复正在运行的仪表的定时任务
-		recoverTimerTask();
+		try {
+			// 重启程序后恢复正在运行的仪表的定时任务
+			recoverTimerTask();
+		} catch (Exception e) {
+			log.error("failed to recover timer task");
+		}
 	}
 
 	@Override

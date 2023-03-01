@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.util.ListUtil;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -117,6 +118,12 @@ public class DashboardController {
 	@GetMapping("/dynamic_parameter/")
 	public BaseRsp<List<JSONObject>> getDynamicParameter() {
 		return new BaseRsp<>(DynamicParameter.getTaskDynamicParameter());
+	}
+
+	@ApiOperation("获取大屏刷新时间选项")
+	@GetMapping("/refresh/list/")
+	public BaseRsp<List<Integer>> getRefreshList() {
+		return new BaseRsp<>(ListUtil.listRangeInt(1, 10));
 	}
 
 	@ApiOperation("推送大屏属性变更消息")

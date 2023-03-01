@@ -5,6 +5,12 @@ import java.util.Map;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
+import com.cyberpeace.situation.controller.req.SituationTopoReq;
+import com.cyberpeace.situation.dao.entity.SituationTopo;
+import com.cyberpeace.situation.service.SituationTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +51,9 @@ public class TopoController {
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
 
+	@Autowired
+	private SituationTopoService situationTopoService;
+
 	@ApiOperation("通过模板ID获取大屏ID")
 	@GetMapping("/template/dashboard/")
 	public BaseRsp<DashboardIdRes> getTopoByTemplateId(@RequestParam(value = "template_id",
@@ -80,5 +89,26 @@ public class TopoController {
 		topoConfigMapper.updateById(topoConfig);
 
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("获取Topo配置")
+	@GetMapping("/get/config")
+	public BaseRsp<SituationTopo> getSituationTopoConfig(@RequestParam("resource_id")String resourceId){
+		return new BaseRsp<>(situationTopoService.getSituationTopoConfig(resourceId));
+	}
+	@ApiOperation("新增Topo配置")
+	@PostMapping("/create/config")
+	public BaseRsp<SituationTopo> createSituationTopoConfig(@RequestBody @Validated(Create.class) SituationTopoReq situationTopoReq){
+		return new BaseRsp<>(situationTopoService.createSituationTopoConfig(situationTopoReq));
+	}
+	@ApiOperation("修改Topo配置")
+	@PatchMapping("/update/config")
+	public BaseRsp<SituationTopo> updateSituationTopoConfig(@RequestBody @Validated(Update.class)SituationTopoReq situationTopoReq){
+		return new BaseRsp<>(situationTopoService.updateSituationTopoConfig(situationTopoReq));
+	}
+	@ApiOperation("删除Topo配置")
+	@PatchMapping("/delete/config")
+	public BaseRsp<Integer> deleteSituationTopoConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq){
+		return new BaseRsp<>(situationTopoService.deleteSituationTopoConfig(batchDeleteReq.getIds()));
 	}
 }

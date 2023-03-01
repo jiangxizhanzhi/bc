@@ -929,3 +929,33 @@ INSERT INTO `situation_event_type`
 VALUES (111, '6', '攻击入侵', NULL, NULL, NULL, '2022-12-05 10:42:55', '2022-12-05 10:42:57');
 INSERT INTO `situation_event_type`
 VALUES (112, '7', '数据安全', NULL, NULL, NULL, '2022-12-06 02:44:54', '2022-12-06 02:44:56');
+
+-- GIS配置
+-- ----------------------------
+-- Table structure for situation_gis
+-- ----------------------------
+CREATE TABLE `situation_gis` (
+    `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
+    `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+    `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+    `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
+    `create_time`         datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`         datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+    )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- Topo配置
+-- ----------------------------
+-- Table structure for situation_topo
+-- ----------------------------
+CREATE TABLE `situation_topo` (
+                                  `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
+                                  `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+                                  `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+                                  `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
+                                  `create_time`         DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+                                  `update_time`         DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+                                  PRIMARY KEY (`id`) USING BTREE,
+                                  UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+)ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

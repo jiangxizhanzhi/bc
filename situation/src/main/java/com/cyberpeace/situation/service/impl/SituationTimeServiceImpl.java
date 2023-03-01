@@ -65,11 +65,8 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 			}
 			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());
 			situationTimeMapper.updateById(situationTime);
-			dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
-					dynamicSchemeProcess.getStageName(), dynamicSchemeProcess.getAttackMessageDescription());
 		} else if (instruction.getCode().equals(Instruction.InstructionType.RATE.getCode())) {
 			situationTime.setRate(instruction.getRate());
-			situationTime.setStatus(SituationTime.Status.PAUSE.getCode());
 			situationTimeMapper.updateById(situationTime);
 		} else if (instruction.getCode().equals(Instruction.InstructionType.ADJUST.getCode())) {
 			situationTime.setAstronomicalTime(instruction.getAstronomicalTime());

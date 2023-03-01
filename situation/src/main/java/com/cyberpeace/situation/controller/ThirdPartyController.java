@@ -42,7 +42,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "三方数据")
 @RestController
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/third/")
 public class ThirdPartyController {
 

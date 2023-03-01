@@ -59,7 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "GIS接口")
 @RestController
 @Slf4j
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class GisController {
 

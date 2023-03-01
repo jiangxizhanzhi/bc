@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势大屏")
 @RestController
-@RequiresAuthentication
+//@RequiresAuthentication
 @RequestMapping("/dashboard/")
 public class DashboardController {
 

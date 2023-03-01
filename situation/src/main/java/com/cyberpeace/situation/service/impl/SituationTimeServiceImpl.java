@@ -1,5 +1,7 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.dao.entity.SituationTime;
 import com.cyberpeace.situation.dao.mapper.SituationTimeMapper;
@@ -44,7 +46,7 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 		SituationTime situationTime = situationTimeMapper.selectById(topoId);
 		handleSituationTime(situationTime);
 		if (situationTime.getStatus().equals(SituationTime.Status.FINISH.getCode())) {
-			return;
+			throw new BusinessException(SituationErrorCode.THIS_SCENE_HAS_ENDED);
 		}
 		if (instruction.getCode().equals(Instruction.InstructionType.START.getCode())) {
 			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());

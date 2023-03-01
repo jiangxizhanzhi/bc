@@ -58,4 +58,7 @@ public interface SituationErrorCode {
 
 	/** 找不到对应的拓扑数据 */
 	String CANNOT_FIND_TOPO = "104019";
+
+	/** 当前场景已结束 */
+	String THIS_SCENE_HAS_ENDED = "104020";
 }

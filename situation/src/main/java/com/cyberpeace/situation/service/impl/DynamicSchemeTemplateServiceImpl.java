@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -113,6 +114,9 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	public void updateDynamicSchemeTemplate(UpdateDynamicSchemeTemplateReq updateDynamicSchemeTemplateReq) {
 		validDynamicSchemeTemplate(updateDynamicSchemeTemplateReq);
 		DynamicSchemeTemplate oldDynamicSchemeTemplate = dynamicSchemeTemplateMapper.selectById(updateDynamicSchemeTemplateReq.getResourceId());
+		if (oldDynamicSchemeTemplate == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 		List<AttackMessageTemplateReq> updateAttackMessageTemplateReqList = new ArrayList<>();
 		List<AttackMessageTemplateReq> addAttackMessageTemplateReqList = new ArrayList<>();
 		List<DynamicStageBo> dynamicStageBoList = new ArrayList<>();

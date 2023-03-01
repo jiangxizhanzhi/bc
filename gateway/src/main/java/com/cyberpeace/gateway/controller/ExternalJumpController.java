@@ -69,6 +69,14 @@ public class ExternalJumpController {
 		setResponse(response, "/page/mg/admin/topo-config?id=" + id + "&type=" + type + "&title=" + getURLEncoderString(name), isSameSite);
 	}
 
+	@ApiOperation("跳转到攻防方案管理页面")
+	@GetMapping("/scheme_template")
+	public void	jumpSchemeTmplate(HttpServletResponse response,
+									 @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
+		setResponse(response, "/page/mg/admin/program-template", isSameSite);
+	}
+
+
 	/**
 	 * 设置重定向返回体
 	 */

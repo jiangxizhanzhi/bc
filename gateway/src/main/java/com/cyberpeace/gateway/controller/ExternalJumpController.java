@@ -71,11 +71,25 @@ public class ExternalJumpController {
 
 	@ApiOperation("跳转到攻防方案管理页面")
 	@GetMapping("/scheme_template")
-	public void	jumpSchemeTmplate(HttpServletResponse response,
+	public void	jumpSchemeTemplate(HttpServletResponse response,
 									 @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
 		setResponse(response, "/page/mg/admin/program-template", isSameSite);
 	}
 
+	@ApiOperation("跳转到攻防方案新增页面")
+	@GetMapping("/scheme_template_create")
+	public void	jumpSchemeTemplateEdit(HttpServletResponse response,
+										  @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
+		setResponse(response, "/page/mg/admin/program-template/create", isSameSite);
+	}
+
+	@ApiOperation("跳转到攻防方案编辑页面")
+	@GetMapping("/scheme_template_edit")
+	public void	jumpSchemeTemplateEdit(HttpServletResponse response,
+										  @RequestParam(value = "template_id") String id,
+										  @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
+		setResponse(response, "/page/mg/admin/program-template/edit/" + id, isSameSite);
+	}
 
 	/**
 	 * 设置重定向返回体

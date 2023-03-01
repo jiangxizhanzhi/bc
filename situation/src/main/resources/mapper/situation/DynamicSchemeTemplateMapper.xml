@@ -7,5 +7,11 @@
     <select id="selectAll" resultType="com.cyberpeace.situation.dao.entity.DynamicSchemeTemplate">
         select *
         from situation_dynamic_scheme_template
+        <where>
+            <if test="null != pattern and pattern != ''">
+                <bind name="name" value="'%' + pattern + '%'"/>
+                and name like #{name}
+            </if>
+        </where>
     </select>
 </mapper>

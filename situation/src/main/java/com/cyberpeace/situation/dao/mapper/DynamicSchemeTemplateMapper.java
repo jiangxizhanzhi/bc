@@ -3,6 +3,7 @@ package com.cyberpeace.situation.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.situation.dao.entity.DynamicSchemeTemplate;
+import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,6 +12,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 @Repository
 public interface DynamicSchemeTemplateMapper extends BaseMapper<DynamicSchemeTemplate> {
 
-	IPage<DynamicSchemeTemplate> selectAll(Page page);
+	IPage<DynamicSchemeTemplate> selectAll(@Param("page")Page page, @Param("pattern") String pattern);
 
 }

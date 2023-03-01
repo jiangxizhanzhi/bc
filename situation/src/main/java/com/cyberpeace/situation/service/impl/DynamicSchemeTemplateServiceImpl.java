@@ -191,7 +191,7 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	@Override
 	public ListRsp<SimpleDynamicSchemeTemplate> getListDynamicSchemeTemplate(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
-		IPage<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll(page);
+		IPage<DynamicSchemeTemplate> dynamicSchemeTemplateList = dynamicSchemeTemplateMapper.selectAll(page, pageReqBase.getPattern());
 		return PageUtil.getListResult(dynamicSchemeTemplateList.convert(this::dynamicSchemeTemplateToSimpleDynamicSchemeTemplate));
 	}
 

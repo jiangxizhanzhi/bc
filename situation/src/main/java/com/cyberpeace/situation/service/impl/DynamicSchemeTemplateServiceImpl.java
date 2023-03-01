@@ -163,6 +163,9 @@ public class DynamicSchemeTemplateServiceImpl extends ServiceImpl<DynamicSchemeT
 	public UpdateDynamicSchemeTemplateReq getDynamicSchemeTemplate(String resourceId) {
 		UpdateDynamicSchemeTemplateReq updateDynamicSchemeTemplateReq = new UpdateDynamicSchemeTemplateReq();
 		DynamicSchemeTemplate dynamicSchemeTemplate = dynamicSchemeTemplateMapper.selectById(resourceId);
+		if (dynamicSchemeTemplate == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 		List<DynamicStageBo> dynamicStageBoList = JsonUtil.toJsonObjectArray(dynamicSchemeTemplate.getSchemeData(),
 				DynamicStageBo.class);
 		updateDynamicSchemeTemplateReq.setSchemeName(dynamicSchemeTemplate.getName());

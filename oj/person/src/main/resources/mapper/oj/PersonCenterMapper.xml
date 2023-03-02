@@ -103,6 +103,7 @@
                 #{businessId}
             </foreach>
         </if>
+        order by oj_note.create_time desc
     </select>
 
     <select id="selectLessonByAuth" resultType="java.lang.String">
@@ -202,6 +203,7 @@
                 #{businessId}
             </foreach>
         </if>
+        order by oj_resource_collection.create_time desc
     </select>
 
 

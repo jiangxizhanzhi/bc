@@ -43,6 +43,9 @@ public class ExternalSituationController {
 	@Autowired
 	private SituationTimeService situationTimeService;
 
+	@Autowired
+	private AttackMessageHistoryService attackMessageHistoryService;
+
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
 	@GetMapping("topology")
@@ -82,6 +85,30 @@ public class ExternalSituationController {
 		dynamicSchemeService.pushDynamicSchemeToRoom(dynamicSchemeProcess.getDynamicSchemeReq(),
 				dynamicSchemeProcess.getStageName(),dynamicSchemeProcess.getAttackMessageDescription());
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("恢复")
+	@PostMapping("/recovery")
+	public void recovery(
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId){
+		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
+		if (businessTemplate == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		//恢复场景下的节点状态
+		attackMessageHistoryService.recovery(businessTemplate.getTopoId());
+	}
+
+	@ApiOperation("情况回放")
+	@PostMapping("/playback")
+	public void playback(
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId){
+		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
+		if (businessTemplate == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		//回放当前场景动效
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(businessTemplate.getTopoId());
 	}
 
 	@ApiOperation("接收指令")

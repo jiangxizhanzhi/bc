@@ -99,13 +99,19 @@
         from cr_single_room
         where business_template_id = #{businessTemplateId}
     </select>
-    <select id="selectAllByUserId" resultType="com.cyberpeace.cr.singletrain.service.bo.SingleRoomData"
-            parameterType="java.lang.String">
-        select  T1.resource_id business_template_id,R1.start_time,T1.create_time
-        from cr_business_template T1
-        inner join cr_single_template T2 on T1.resource_id = T2.business_template_id
-        left join cr_single_room R1 on T1.resource_id = R1.business_template_id and R1.user_id = #{user_id}
-
+    <select id="selectAllByUserId" resultType="com.cyberpeace.cr.singletrain.dao.entity.SingleRoom">
+        select  T1.business_template_id, T1.start_time,T1.end_time
+        from cr_train_record T1, cr_business_template T2
+        where T1.business_template_id = T2.resource_id
+        and T1.user_id = #{userId}
+        <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
+            and T1.extra is not null
+        </if>
+        and T1.business_type = #{type}
+        union select business_template_id , start_time, end_time
+        from cr_single_room
+        where user_id = #{userId}
+        and end_time is null
     </select>
 
 </mapper>

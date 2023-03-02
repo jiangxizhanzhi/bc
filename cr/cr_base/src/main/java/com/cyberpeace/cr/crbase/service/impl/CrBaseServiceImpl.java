@@ -53,10 +53,24 @@ public class CrBaseServiceImpl implements CrBaseService {
 			trainingDataList.addAll(statistics.getRelatedTraining(userId));
 		}
 
-		// 4. sort
+		// 4. subType statistics。
+
+		Map<Integer, List<TrainingData>> trainingDataMap = StreamApiUtils.groupBy(trainingDataList,TrainingData::getSubType);
+		List<Integer> trainTypes = EnumUtils.getListCode(TrainTypeConvert.class);
+		Map<Integer, Integer> trainingMap = Maps.newHashMap();
+
+		for (Integer trainType : trainTypes) {
+			Integer num = trainingDataMap.getOrDefault(trainType,Lists.newArrayList()).size();
+			trainingMap.put(trainType,num);
+		}
+		//去掉已结束的单边训练类型统计
+		trainingDataList = StreamApiUtils.filter(trainingDataList,
+				s ->   !s.getAppId().equals(LocalScene.BusinessCode.SINGLE_TRAINING.getCode())  || !s.getState().equals(2) );
+
+		// 5. sort
 		trainingDataList.sort(new TrainingComparator(page.getSort()));
 
-		// 5.paginate
+		// 6.paginate
 		IPage<TrainingData> trainingDataPage = new Page<>(page.getPage(), page.getPerPage(),
 				trainingDataList.size());
 
@@ -65,15 +79,7 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 		ListRsp<TrainingData> trainingDataListRsp = PageUtil.getListResult(trainingDataPage);
 
-		// 6. subType statistics
-		Map<Integer, List<TrainingData>> trainingDataMap = StreamApiUtils.groupBy(trainingDataList,TrainingData::getSubType);
- 		List<Integer> trainTypes = EnumUtils.getListCode(TrainTypeConvert.class);
-		Map<Integer, Integer> trainingMap = Maps.newHashMap();
 
-		for (Integer trainType : trainTypes) {
-			Integer num = trainingDataMap.getOrDefault(trainType,Lists.newArrayList()).size();
-			trainingMap.put(trainType,num);
-		}
 
 
 		// 7. make rsp

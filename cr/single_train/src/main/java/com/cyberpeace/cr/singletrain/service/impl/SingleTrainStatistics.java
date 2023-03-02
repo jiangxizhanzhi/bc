@@ -57,7 +57,8 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	public List<TrainingData> getRelatedTraining(String userId) {
 
 		List<TrainingData> dataList = Lists.newArrayList();
-		List<SingleRoom> rooms = singleRoomMapper.selectUnfinishedByUserId(userId);
+		List<SingleRoom> rooms = singleRoomMapper.selectAllByUserId(userId,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
 
 		for (SingleRoom room : rooms) {
 			BusinessTemplate businessTemplate = businessTemplateMapper
@@ -66,7 +67,10 @@ public class SingleTrainStatistics extends CrEventStatistics {
 			data.setAppId(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
 			data.setAppName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());
 			data.setRoleGroup(CrCommonConstants.STUDENT_ROLE);
+			//StartTime存在说明已开始，不存在是未开始（不会查到）；EndTime存在说明已完成；
 			data.setState(room.getStartTime()==null ? 0 : 1);
+			data.setState(room.getEndTime()==null ? data.getState() : 2);
+
 			data.setStartTime(room.getStartTime()==null ? room.getCreateTime() : room.getStartTime());
 
 			SingleTemplate singleTemplate = singleTemplateMapper

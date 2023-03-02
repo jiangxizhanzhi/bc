@@ -2,7 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.ws.AttackType;
-import com.cyberpeace.situation.dao.entity.SituationTime;
+import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.SituationStatisticsService;
@@ -12,7 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -115,8 +118,8 @@ public class SituationStatisticsController {
 	}
 
 	@ApiOperation("获取态势时间和状态")
-	@GetMapping("/getTime")
-	public BaseRsp<SituationTime> getTime(@ApiParam(name = "topo_id", value = "场景编号",
+	@GetMapping("/get_time")
+	public BaseRsp<SituationTimeRes> getTime(@ApiParam(name = "topo_id", value = "场景编号",
 			required = true) @RequestParam(value = "topo_id") String topoId) {
 		return new BaseRsp<>(situationTimeService.getTimeManagement(topoId));
 	}

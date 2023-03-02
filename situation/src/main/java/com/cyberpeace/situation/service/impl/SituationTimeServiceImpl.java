@@ -1,8 +1,11 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.dao.entity.SituationTime;
 import com.cyberpeace.situation.dao.mapper.SituationTimeMapper;
 import com.cyberpeace.situation.model.DynamicSchemeProcess;
@@ -33,11 +36,14 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 	private DynamicSchemeService dynamicSchemeService;
 
 	@Override
-	public SituationTime getTimeManagement(String topoId) {
+	public SituationTimeRes getTimeManagement(String topoId) {
 		valid(topoId);
 		SituationTime situationTime =situationTimeMapper.selectById(topoId);
 		handleSituationTime(situationTime);
-		return situationTime;
+		SituationTimeRes situationTimeRes = BeanUtils.copy(situationTime, SituationTimeRes.class);
+		situationTimeRes.setCombatTime(TimeUtil.format1(situationTime.getCombatTime()));
+		situationTimeRes.setAstronomicalTime(TimeUtil.format1(situationTime.getAstronomicalTime()));
+		return situationTimeRes;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -250,8 +251,9 @@ public class SituationPublishController {
         DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, type, Boolean.TRUE);
         SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
         // TODO 大屏地址
+        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, new DynamicParameterContext());
+        dashboardTemplateInfo.setComponentsSetting(dashboardComponentsList);
         copy.setTemplateInfo(dashboardTemplateInfo);
-        dashboardTemplateRefService.exchangeOptionDataSet(copy);
         return copy;
     }
 
@@ -260,7 +262,8 @@ public class SituationPublishController {
 	public BaseRsp<InstanceDataQueryRes>
 			getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
 		// 提取动态参数实际取值
-		DynamicParameterContext context = BeanUtils.copy(query, DynamicParameterContext.class);
+        InstanceDataQueryRes instanceDataQueryRes = new InstanceDataQueryRes();
+        DynamicParameterContext context = BeanUtils.copy(query, DynamicParameterContext.class);
 		SituationPublishInstance instance = situationPublishInstanceMapper
 				.selectById(query.getDashboardId());
 		context.setTaskId(instance.getTaskId());
@@ -268,8 +271,14 @@ public class SituationPublishController {
 		context.setSubRangeId(instance.getSubRangeId());
 
 		// todo 依据context中实际参数，替换接口配置中的动态参数，执行请求后返回组件及其数据，动态参数参见situation.constant.DynamicParameter
-
-		return new BaseRsp<>(new InstanceDataQueryRes());
+        String templateId = instance.getTemplateId();
+        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, query.getType(), Boolean.TRUE);
+        SituationPublishInstanceReviewRes copy = BeanUtils.copy(instance, SituationPublishInstanceReviewRes.class);
+        // TODO 大屏地址
+        copy.setTemplateInfo(dashboardTemplateInfo);
+        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, new DynamicParameterContext());
+        instanceDataQueryRes.setComponentsSetting(dashboardComponentsList);
+		return new BaseRsp<>(instanceDataQueryRes);
 	}
 
 }

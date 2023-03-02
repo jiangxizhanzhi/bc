@@ -1,14 +1,18 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.controller.req.InstanceDataQueryReq;
 import com.cyberpeace.situation.controller.req.LayerShowReq;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.model.ViewAngle;
+import com.cyberpeace.situation.service.context.DynamicParameterContext;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +176,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     continue;
                 }
                 sourceDashboardComponents.add(dashboardComponent);
-                if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")){
+                if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")) {
                     commonDashboardComponentList.add(dashboardComponent);
                 }
             }
@@ -252,26 +256,20 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         return dashboardComponentsList;
     }
 
-    public void exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes) {
+    public List<DashboardComponents> exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes, DynamicParameterContext context) {
         DashboardTemplateRes dashboardTemplateRes = situationPublishInstanceReviewRes.getTemplateInfo();
         String taskId = situationPublishInstanceReviewRes.getTaskId();
         String subjectId = situationPublishInstanceReviewRes.getSubjectId();
-        JSONArray jsonArray = new JSONArray();
-        JSONObject taskJson = new JSONObject();
-        JSONObject subjectJson = new JSONObject();
-        taskJson.put("name", "taskId");
-        taskJson.put("value", taskId);
-        subjectJson.put("name", "subjectId");
-        subjectJson.put("value", subjectId);
-        jsonArray.add(taskJson);
-        jsonArray.add(subjectJson);
+        context.setSubjectId(subjectId);
+        context.setTaskId(taskId);
+        JSONArray jsonArray = parseParam(context);
         List<DashboardComponents> componentsSettingList = dashboardTemplateRes.getComponentsSetting();
         if (CollectionUtils.isNotEmpty(componentsSettingList)) {
             for (DashboardComponents dashboardComponent : componentsSettingList) {
                 String componentSetting = dashboardComponent.getComponentSetting();
                 JSONObject jsonObject = JSONObject.parseObject(componentSetting);
                 String componentType = jsonObject.getString("component_type");
-                if (componentType== null) {
+                if (componentType == null) {
                     JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
                     String option = jsonObject.getString("option");
                     JSONObject optionObject = JSONObject.parseObject(option);
@@ -281,6 +279,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                 }
             }
         }
+        return componentsSettingList;
     }
 
     @Override
@@ -293,5 +292,29 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
         DashboardAttribute dashboardAttribute = dashboardAttributeMapper
                 .getByResourceId(situationPublishInstance.getAttributeId());
         return new DashboardTemplateContext(situationPublishInstance, dashboardAttribute);
+    }
+
+    private JSONArray parseParam(DynamicParameterContext context) {
+        JSONArray jsonArray = new JSONArray();
+        try {
+            Field[] fields = context.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                //获取字段属性名称
+                String name = field.getName();
+                if (!StringUtils.equals(name, "dashboardId")) {
+                    Object value = field.get(context);
+                    if (value != null) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("name", name);
+                        jsonObject.put("value", value.toString());
+                        jsonArray.add(jsonObject);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return jsonArray;
     }
 }

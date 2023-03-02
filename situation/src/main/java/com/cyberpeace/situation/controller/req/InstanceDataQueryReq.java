@@ -10,6 +10,9 @@ import lombok.Data;
 @Data
 public class InstanceDataQueryReq {
 
+    @ApiModelProperty(value = "视角类型", required = false)
+    private String type;
+
     @ApiModelProperty(value = "大屏ID", required = true)
     private String dashboardId;
 

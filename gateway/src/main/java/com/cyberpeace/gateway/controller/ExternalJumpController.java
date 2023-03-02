@@ -91,6 +91,23 @@ public class ExternalJumpController {
 		setResponse(response, "/page/mg/admin/program-template/edit/" + id, isSameSite);
 	}
 
+	@ApiOperation("跳转到实景页面")
+	@GetMapping("/realistic_scene")
+	public void jumpRealisticScene(HttpServletResponse response,
+								   @RequestParam("resource_id") String resourceId,
+								   @RequestParam("type") Integer type,
+								   @RequestParam(value = "is_same_site", required = false) Boolean isSameSite ) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if (businessTemplate == null) {
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
+		}
+		if (type.equals(0)) {
+			setResponse(response, "/hy/?topo_id=" + businessTemplate.getTopoId() + "&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo0ODI0NTI1NzU4LCJrZXkiOiJiNWIyOGE5OWU0NzI0OTQzYWY1NGM0N2VkZGE4YzE5YiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.5U26euvxf0ACAUJSVKZGOQoBeappSgAL0SayOl5Nbks", isSameSite);
+		}else if (type.equals(1)) {
+			setResponse(response, "/dx/?topo_id=" + businessTemplate.getTopoId() + "&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo0ODI0NTI1NzU4LCJrZXkiOiJiNWIyOGE5OWU0NzI0OTQzYWY1NGM0N2VkZGE4YzE5YiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.5U26euvxf0ACAUJSVKZGOQoBeappSgAL0SayOl5Nbks", isSameSite);
+		}
+	}
+
 	/**
 	 * 设置重定向返回体
 	 */

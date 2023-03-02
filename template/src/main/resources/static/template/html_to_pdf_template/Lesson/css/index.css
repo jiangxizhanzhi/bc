@@ -114,6 +114,9 @@ p{
   margin-left: 14px;
   padding-right: 50px;
   color: rgba(255, 255, 255, 0.9);
+  -webkit-box-flex: 1;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 code,p,h1,h2,h3,h4,h5,h6,strong,a,li,del,input,th,tr{

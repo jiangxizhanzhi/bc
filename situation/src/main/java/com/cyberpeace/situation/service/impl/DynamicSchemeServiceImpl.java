@@ -26,10 +26,7 @@ import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.*;
-import com.cyberpeace.situation.model.ws.WsAttackEffectDynamic;
-import com.cyberpeace.situation.model.ws.WsAttackSchedule;
-import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
+import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.*;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
@@ -676,8 +673,12 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 				String type = attackMessageReq.getType();
 
-				if (attackMessageReq.getSourceId().equals("")) {
+				if (StringUtils.isEmpty(attackMessageReq.getSourceId())) {
 					throw new BusinessException(SituationErrorCode.EMPTY_SOURCE_NODE,
+							attackMessageReq.getDescription());
+				}
+				if (StringUtils.isEmpty(attackMessageReq.getTargetId())) {
+					throw new BusinessException(SituationErrorCode.EMPTY_TARGET_NODE,
 							attackMessageReq.getDescription());
 				}
 			}

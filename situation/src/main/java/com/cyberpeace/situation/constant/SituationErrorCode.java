@@ -61,4 +61,7 @@ public interface SituationErrorCode {
 
 	/** 当前场景已结束 */
 	String THIS_SCENE_HAS_ENDED = "104020";
+
+	/** 目标节点为空 */
+	String EMPTY_TARGET_NODE = "104021";
 }

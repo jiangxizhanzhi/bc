@@ -77,7 +77,7 @@ public interface MenuConstant {
     //Engage框架
     String CMS_ENGAGE_FRAME = "engage-frame";
 
-    //习题集管理
+    //习题集
     String CMS_EXERCISES = "exercises";
 
     //理论基础

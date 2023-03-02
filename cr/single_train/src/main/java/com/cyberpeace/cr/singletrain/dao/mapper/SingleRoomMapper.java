@@ -43,5 +43,5 @@ public interface SingleRoomMapper extends BaseMapper<SingleRoom> {
 
 	List<SingleRoom> selectByTemplateId(@Param("businessTemplateId") String businessTemplateId);
 
-	List<SingleRoomData> selectAllByUserId(String userId);
+	List<SingleRoom> selectAllByUserId(@Param("userId") String userId, @Param("type") Integer type);
 }

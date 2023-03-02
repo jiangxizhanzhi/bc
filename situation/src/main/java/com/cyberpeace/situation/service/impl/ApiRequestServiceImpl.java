@@ -208,7 +208,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
                 StringBuilder sb = new StringBuilder();
                 sb.append(requestUrl).append("?");
                 for (ApiRequestParams requestParam : requestParams) {
-                    String value = requestParam.getValue();
+                    String value = requestParam.getValue().toString();
                     if (StringUtils.isNotBlank(value)) {
                         sb.append(requestParam.getName()).append("=").append(value).append("&");
                     }else {

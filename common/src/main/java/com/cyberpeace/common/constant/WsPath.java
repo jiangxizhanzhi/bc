@@ -38,6 +38,8 @@ public class WsPath {
 
 	public static final String SITUATION = "/ws/situation/scene";
 
+	public static final String REALISTIC_SCENE = "/ws/realistic_scene";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -53,6 +55,7 @@ public class WsPath {
 		cache.add(CLASSROOM_CHAT);
 		cache.add(CLASSROOM_HELP);
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
+		cache.add(REALISTIC_SCENE);
 	}
 
 	public static boolean validPath(String path) {

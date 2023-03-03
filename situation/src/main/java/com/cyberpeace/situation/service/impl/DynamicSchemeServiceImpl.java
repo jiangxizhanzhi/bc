@@ -884,6 +884,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	}
 
+	@Override
+	public void pushDataToRealisticScene(String topoId, Integer step){
+		WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
+		wsRealisticSceneDynamic.setStep(step);
+		situationHandlerService.pushDataToRealisticScene(topoId, wsRealisticSceneDynamic);
+	}
+
 	/**
 	 * 推送进程消息
 	 */

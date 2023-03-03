@@ -157,4 +157,6 @@ public interface DynamicSchemeService {
 	 * @param sceneId 场景编号
 	 */
 	void playbackPushDynamicSchemeToRoom(String sceneId);
+
+	void pushDataToRealisticScene(String topoId, Integer step);
 }

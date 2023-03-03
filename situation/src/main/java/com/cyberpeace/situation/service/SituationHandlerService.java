@@ -164,4 +164,6 @@ public interface SituationHandlerService {
 	 */
 	Map<String, String> getAreaMap(String sceneId);
 
+	<T> void pushDataToRealisticScene(String topoId, T data);
+
 }

@@ -718,4 +718,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		return areaMap;
 	}
 
+	@Override
+	public <T> void pushDataToRealisticScene(String topoId, T data) {
+		RealistSceneWsMessageIdentifier identifier = new RealistSceneWsMessageIdentifier();
+		identifier.setPath(WsPath.REALISTIC_SCENE);
+		identifier.setTopoId(topoId);
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+																		.data(JsonUtil.toJsonString(data,
+																				PropertyNamingStrategy.SnakeCase))
+																		.messageIdentifier(identifier).build();
+		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
 }

@@ -258,4 +258,10 @@ public class SituationControlController {
 		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId);
 	}
 
+	@ApiOperation("实景demo")
+	@GetMapping("/demo")
+	public void demo(@RequestParam("topo_id") String topoId,@RequestParam("step") Integer step) {
+		dynamicSchemeService.pushDataToRealisticScene(topoId, step);
+	}
+
 }

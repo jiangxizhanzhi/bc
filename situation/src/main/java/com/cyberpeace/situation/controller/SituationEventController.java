@@ -149,11 +149,11 @@ public class SituationEventController {
 
 		if (TaskEvent.RWXF.getName().equals(taskEvent)) {
 			// 构造源节点数据
-			taskEventContext.setSourceType(SiteType.CENTER.getName());
+			taskEventContext.setSourceType(SiteType.CENTER.getCode());
 			taskEventContext.setSourceId(center.getCenterId());
 
 			// 构造目标节点数据
-			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getName(),
+			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getCode(),
 					range.getSubRangeId());
 			List<TargetSiteContext> targetSiteContexts = Lists.newArrayList(mainRange);
 			String bcList = range.getSubRangeName();
@@ -162,7 +162,7 @@ public class SituationEventController {
 				List<RangeContext> rangeContexts = thirdPartyService.getRanges();
 				RangeContext tmpRange = rangeContexts.get(random.nextInt(rangeContexts.size()));
 				if (!tmpRange.getSubRangeId().equals(range.getSubRangeId())) {
-					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getName(),
+					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getCode(),
 							tmpRange.getSubRangeId()));
 					bcList = bcList + "、" + tmpRange.getSubRangeName();
 				}

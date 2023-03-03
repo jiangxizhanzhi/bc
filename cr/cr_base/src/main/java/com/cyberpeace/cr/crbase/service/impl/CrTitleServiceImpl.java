@@ -659,7 +659,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         } else {
             start = (current - 1) * page.getSize();
         }
-        if(start > page.getSize()){
+        if(start > res.size()){
             start = 0L;
         }
         long value = start + page.getSize();

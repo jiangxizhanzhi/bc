@@ -94,10 +94,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 			instances.forEach(bc -> {
 				situationPublishInstanceService.createBcInstance(bc);
 			});
+			log.info("初始化靶场态势大屏成功");
 		} catch (Exception exception) {
 			log.info("初始化靶场态势大屏失败");
 		}
-		log.info("初始化靶场态势大屏成功");
 	}
 
 	private synchronized <T extends SiteContext> void siteInit(String siteType, Class<T> siteClazz,

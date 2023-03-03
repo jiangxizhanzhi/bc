@@ -398,36 +398,40 @@ CREATE TABLE `situation_dashboard_template`
 -- ----------------------------
 INSERT INTO `situation_dashboard_template`
 VALUES (1, 'c3765b250f704fcca9d34233399cf615', '定制态势-红蓝对抗', '05b739fc686a073756399f79c34039b5', 3,
-        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#66AF9E',
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
         NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
 INSERT INTO `situation_dashboard_template`
 VALUES (2, '7fe161bb8863435c9f04aa99d24ffa5f', '定制态势-作战试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', 0, NULL, NULL, '#66AF9E',
+        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
         NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
 INSERT INTO `situation_dashboard_template`
 VALUES (3, 'a67104c93b02486890148b55c12693f1', '定制态势-作战实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
+        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
 INSERT INTO `situation_dashboard_template`
 VALUES (4, 'a67104c93b02486890148b55c12693f2', '定制态势-专项比武', '2eec84346538e972a962b165e499f52d', 3,
-        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
+        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
 INSERT INTO `situation_dashboard_template`
 VALUES (5, 'a67104c93b02486890148b55c12693f3', '定制态势-夺旗竞赛', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
 VALUES (6, 'a67104c93b02486890148b55c12693f4', '定制态势-夺旗竞赛-题目', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
 VALUES (7, 'a67104c93b02486890148b55c12693f5', '定制态势-自主训练', 'c71399e5569b4c2dba78c0c1e1fbae91', 3,
-        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
-VALUES (8, 'a67104c93b02486890148b55c12693f6', '定制态势-分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
-        '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+VALUES (8, 'ffe23f5a8a1c42b9889d8fbc04dd6551', '定制态势-联管中心综合大屏', 'a4b3555767d14f01b88ee4f8ca471a3e', 1,
+        '/cpms/upload/images/f91e40adeccf48c99e619d765340e1ad.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (9, 'a67104c93b02486890148b55c12693f6', '定制态势-分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
+        '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 
 -- ----------------------------
 -- Table structure for situation_dashboard_template_ref
@@ -482,6 +486,7 @@ CREATE TABLE `situation_dashboard_attribute`
     `start_time`     datetime NULL DEFAULT NULL COMMENT '科目开始时间',
     `refresh`        int                                                     NOT NULL COMMENT '数据刷新时间',
     `view_angle`     text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角参数',
+    `map_source`     tinyint(1) NULL DEFAULT NULL COMMENT '地图源 1-谷歌 2-百度 3-谷歌',
     `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
     `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE

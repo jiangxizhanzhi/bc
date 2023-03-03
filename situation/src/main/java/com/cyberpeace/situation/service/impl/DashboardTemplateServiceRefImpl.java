@@ -258,24 +258,27 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
     public List<DashboardComponents> exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes, DynamicParameterContext context) {
         DashboardTemplateRes dashboardTemplateRes = situationPublishInstanceReviewRes.getTemplateInfo();
-        String taskId = situationPublishInstanceReviewRes.getTaskId();
-        String subjectId = situationPublishInstanceReviewRes.getSubjectId();
-        context.setSubjectId(subjectId);
-        context.setTaskId(taskId);
-        JSONArray jsonArray = parseParam(context);
-        List<DashboardComponents> componentsSettingList = dashboardTemplateRes.getComponentsSetting();
-        if (CollectionUtils.isNotEmpty(componentsSettingList)) {
-            for (DashboardComponents dashboardComponent : componentsSettingList) {
-                String componentSetting = dashboardComponent.getComponentSetting();
-                JSONObject jsonObject = JSONObject.parseObject(componentSetting);
-                String componentType = jsonObject.getString("component_type");
-                if (componentType == null) {
-                    JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
-                    String option = jsonObject.getString("option");
-                    JSONObject optionObject = JSONObject.parseObject(option);
-                    JSONObject dataSetObject = new JSONObject();
-                    dataSetObject.put("source", echartsOption);
-                    optionObject.replace("dataset", dataSetObject);
+        List<DashboardComponents> componentsSettingList = new ArrayList<>();
+        if (dashboardTemplateRes != null) {
+            String taskId = situationPublishInstanceReviewRes.getTaskId();
+            String subjectId = situationPublishInstanceReviewRes.getSubjectId();
+            context.setSubjectId(subjectId);
+            context.setTaskId(taskId);
+            JSONArray jsonArray = parseParam(context);
+            componentsSettingList = dashboardTemplateRes.getComponentsSetting();
+            if (CollectionUtils.isNotEmpty(componentsSettingList)) {
+                for (DashboardComponents dashboardComponent : componentsSettingList) {
+                    String componentSetting = dashboardComponent.getComponentSetting();
+                    JSONObject jsonObject = JSONObject.parseObject(componentSetting);
+                    String componentType = jsonObject.getString("component_type");
+                    if (componentType == null) {
+                        JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
+                        String option = jsonObject.getString("option");
+                        JSONObject optionObject = JSONObject.parseObject(option);
+                        JSONObject dataSetObject = new JSONObject();
+                        dataSetObject.put("source", echartsOption);
+                        optionObject.replace("dataset", dataSetObject);
+                    }
                 }
             }
         }

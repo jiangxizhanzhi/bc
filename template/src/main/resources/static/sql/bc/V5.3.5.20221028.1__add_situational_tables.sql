@@ -310,6 +310,23 @@ CREATE TABLE `situation_common_components`
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Table structure for situation_decoration
+-- ----------------------------
+CREATE TABLE `situation_decoration`
+(
+    `id`             INT                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类名称',
+    `type`           VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '装饰类类型',
+    `decoration_url` VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类URL',
+    `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time`    DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
 -- 模板管理
 -- ----------------------------
 -- Table structure for situation_components_layer
@@ -381,36 +398,36 @@ CREATE TABLE `situation_dashboard_template`
 -- ----------------------------
 INSERT INTO `situation_dashboard_template`
 VALUES (1, 'c3765b250f704fcca9d34233399cf615', '定制态势-红蓝对抗', '05b739fc686a073756399f79c34039b5', 3,
-        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', '#66AF9E', NULL, '{}', NULL,
-        0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#66AF9E',
+        NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
 INSERT INTO `situation_dashboard_template`
-VALUES (2, '7fe161bb8863435c9f04aa99d24ffa5f', '定制态势-ZZ试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', '#66AF9E', NULL, '{}', NULL,
-        0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
+VALUES (2, '7fe161bb8863435c9f04aa99d24ffa5f', '定制态势-作战试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', 0, NULL, NULL, '#66AF9E',
+        NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
 INSERT INTO `situation_dashboard_template`
-VALUES (3, 'a67104c93b02486890148b55c12693f1', '定制态势-ZZ实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
+VALUES (3, 'a67104c93b02486890148b55c12693f1', '定制态势-作战实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
 INSERT INTO `situation_dashboard_template`
 VALUES (4, 'a67104c93b02486890148b55c12693f2', '定制态势-专项比武', '2eec84346538e972a962b165e499f52d', 3,
-        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
+        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
 INSERT INTO `situation_dashboard_template`
 VALUES (5, 'a67104c93b02486890148b55c12693f3', '定制态势-夺旗竞赛', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
 VALUES (6, 'a67104c93b02486890148b55c12693f4', '定制态势-夺旗竞赛-题目', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
 VALUES (7, 'a67104c93b02486890148b55c12693f5', '定制态势-自主训练', 'c71399e5569b4c2dba78c0c1e1fbae91', 3,
-        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
-VALUES (8, 'a67104c93b02486890148b55c12693f6', '定制态势-JJFY分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
-        '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '1920', '[]', '#FFFFFF', NULL, '{}', NULL,
-        0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+VALUES (8, 'a67104c93b02486890148b55c12693f6', '定制态势-分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
+        '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '1920', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 0, 10, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 
 -- ----------------------------
 -- Table structure for situation_dashboard_template_ref
@@ -471,20 +488,6 @@ CREATE TABLE `situation_dashboard_attribute`
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of situation_dashboard_attribute
--- ----------------------------
-INSERT INTO `situation_dashboard_attribute`
-VALUES (1, 'e5c71717f6b44152943ef28a15dd4040', 1, 3, 1, 'LG中心综合态势', '', '', '', '', '', '', '0', '2001-11-08 22:11:08',
-        5,
-        '{\"altitude\":\"1000\",\"latitude\":\"30.45\",\"longitude\":\"112.3\",\"pitch\":41.232,\"roll\":3.1,\"yaw\":15.009}',
-        '2022-12-25 16:26:15', '2022-12-25 16:26:15');
-INSERT INTO `situation_dashboard_attribute`
-VALUES (2, '1df5d3df091f4bec9c1c6b05b625de7e', 1, 3, 2, 'ZH性分靶场综合态势', '', '', '', '', '', '', '0',
-        '2001-11-08 22:11:08', 5,
-        '{\"altitude\":\"1000\",\"latitude\":\"30.45\",\"longitude\":\"112.3\",\"pitch\":41.232,\"roll\":3.1,\"yaw\":15.009}',
-        '2022-12-25 16:26:52', '2022-12-25 16:26:52');
-
--- ----------------------------
 -- Table structure for situation_publish_instance
 -- ----------------------------
 CREATE TABLE `situation_publish_instance`
@@ -517,18 +520,6 @@ CREATE TABLE `situation_publish_instance`
     UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of situation_publish_instance
--- ----------------------------
-INSERT INTO `situation_publish_instance`
-VALUES (1, 'lgzx', 'LG中心综合大屏', '', 'e5c71717f6b44152943ef28a15dd4040', '', '', '', '', '', '', '', '',
-        '/cpms/upload/images/35a305bee7a443209e2f19d04c2fb09d.png', NULL, 2, 2, 0, 'a4b3555767d14f01b88ee4f8ca471a3e',
-        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-25 16:26:15', '2023-01-05 11:59:27');
-INSERT INTO `situation_publish_instance`
-VALUES (2, 'zhxfbc', 'ZH性分靶场综合大屏', '', '1df5d3df091f4bec9c1c6b05b625de7e', '', 'ZH性分靶场', 'zhxfbc', '', '', '', '', '',
-        '/cpms/upload/images/35a305bee7a443209e2f19d04c2fb09d.png', NULL, 2, 2, 0, 'a4b3555767d14f01b88ee4f8ca471a3e',
-        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-25 16:26:52', '2022-12-25 16:26:52');
 
 -- 拓扑管理
 -- ----------------------------
@@ -930,50 +921,36 @@ VALUES (111, '6', '攻击入侵', NULL, NULL, NULL, '2022-12-05 10:42:55', '2022
 INSERT INTO `situation_event_type`
 VALUES (112, '7', '数据安全', NULL, NULL, NULL, '2022-12-06 02:44:54', '2022-12-06 02:44:56');
 
--- GIS配置
+-- 配置管理
 -- ----------------------------
 -- Table structure for situation_gis
 -- ----------------------------
-CREATE TABLE `situation_gis` (
-    `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
-    `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
-    `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
-    `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
-    `create_time`         datetime NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`         datetime NULL DEFAULT NULL COMMENT '更新时间',
+CREATE TABLE `situation_gis`
+(
+    `id`          INT(10) NOT NULL AUTO_INCREMENT,
+    `resource_id` VARCHAR(64)                                             NOT NULL,
+    `config`      TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+    `thumbnail`   VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+    `template_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '关联模板',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-    )ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+)ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- Topo配置
 -- ----------------------------
 -- Table structure for situation_topo
 -- ----------------------------
-CREATE TABLE `situation_topo` (
-                                  `id`                  INT(10) NOT NULL AUTO_INCREMENT, `resource_id` VARCHAR(64) NOT NULL,
-                                  `config`              TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
-                                  `thumbnail`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
-                                  `template_id`         VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联模板',
-                                  `create_time`         DATETIME NULL DEFAULT NULL COMMENT '创建时间',
-                                  `update_time`         DATETIME NULL DEFAULT NULL COMMENT '更新时间',
-                                  PRIMARY KEY (`id`) USING BTREE,
-                                  UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-)ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
-
--- Topo配置
--- ----------------------------
--- Table structure for situation_decoration
--- ----------------------------
-CREATE TABLE `situation_decoration`
+CREATE TABLE `situation_topo`
 (
-    `id`             INT                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-    `resource_id`    VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
-    `name`           VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类名称',
-    `type`           VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '装饰类类型',
-    `decoration_url`    VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '装饰类URL',
-    `create_user_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
-    `create_time`    DATETIME NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time`    DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+    `id`          INT(10) NOT NULL AUTO_INCREMENT,
+    `resource_id` VARCHAR(64)                                             NOT NULL,
+    `config`      TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
+    `thumbnail`   VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+    `template_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '关联模板',
+    `create_time` DATETIME NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` DATETIME NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
-) ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+)ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

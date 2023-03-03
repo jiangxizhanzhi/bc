@@ -137,20 +137,24 @@ CREATE TABLE `situation_color_theme`
 -- Records of situation_color_theme
 -- ----------------------------
 INSERT INTO `situation_color_theme`
-VALUES (1, '5b45a9b2d3f643e39b1a94be012ad2c6', '主题一',
+VALUES (1, '5b45a9b2d3f643e39b1a94be012ad2c6', '强烈色系',
         '{\"color\":[\"#f37c0f\",\"#d81752\",\"#F4C947\",\"#DB335A\",\"#AA00E4\"]}', '3f655d87112f4ae094bbaf70830e20aa',
-        '2022-12-08 11:08:26', '2022-12-10 15:30:01');
+        '2022-12-08 11:08:26', '2023-02-07 17:09:58');
 INSERT INTO `situation_color_theme`
-VALUES (2, '6f635c642aef40a68ad6e1410db87c7f', '主题二', '{\"color\":[\"#0FC5F3\",\"#17D8A1\",\"#F4C947\"]}',
-        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-10 15:33:31', '2022-12-12 09:34:19');
+VALUES (2, '6f635c642aef40a68ad6e1410db87c7f', '三元色系', '{\"color\":[\"#0FC5F3\",\"#17D8A1\",\"#F4C947\"]}',
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-10 15:33:31', '2023-02-07 17:08:38');
 INSERT INTO `situation_color_theme`
-VALUES (3, '5b65947dc9114faeae7ee960a2a80d0a', '主题三',
+VALUES (3, '5b65947dc9114faeae7ee960a2a80d0a', '暗色系列',
         '{\"color\":[\"#754545\",\"#9B3838\",\"#996A6A\",\"#50971A\",\"#C22626\",\"#50E3C2\",\"#4A4A4A\",\"#D0021B\"]}',
-        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-12 11:37:14', '2022-12-30 11:38:42');
+        '3f655d87112f4ae094bbaf70830e20aa', '2022-12-12 11:37:14', '2023-02-07 17:08:20');
 INSERT INTO `situation_color_theme`
-VALUES (4, '47b46b30d7094ecfb87d7e0d4369567d', '主题四',
+VALUES (4, '47b46b30d7094ecfb87d7e0d4369567d', '绚丽色系',
         '{\"color\":[\"#3D7EEB\",\"#0FC5F3\",\"#17D8A1\",\"#F4C947\",\"#DB335A\",\"#AA00E4\",\"#F96C70\"]}',
-        '3f655d87112f4ae094bbaf70830e20aa', '2023-01-03 09:22:53', '2023-01-03 09:22:53');
+        '3f655d87112f4ae094bbaf70830e20aa', '2023-01-03 09:22:53', '2023-02-07 17:09:46');
+INSERT INTO `situation_color_theme`
+VALUES (5, '90ce54e25be344a8b5178816f0fa5c3d', '清淡色系',
+        '{\"color\":[\"#3D7EEB\",\"#0FC5F3\",\"#17D8A1\",\"#F4C947\",\"#FFFFFF\"]}', '3f655d87112f4ae094bbaf70830e20aa',
+        '2023-02-07 01:03:36', '2023-02-07 17:09:25');
 
 -- ----------------------------
 -- Table structure for situation_two_dimensional_components_category
@@ -274,6 +278,16 @@ CREATE TABLE `situation_drawing_category`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of situation_drawing_category
+-- ----------------------------
+INSERT INTO `situation_drawing_category`
+VALUES (1, '3d301075defc4b818783e1fb76afe411', '图标资源', '2023-01-04 13:56:47', '2023-01-04 13:56:49');
+INSERT INTO `situation_drawing_category`
+VALUES (2, '3d301075defc4b818783e1fb76afe412', '边框资源', '2023-01-04 13:57:02', '2023-01-04 13:57:03');
+INSERT INTO `situation_drawing_category`
+VALUES (3, '3d301075defc4b818783e1fb76afe413', '装饰线资源', '2023-01-04 13:57:18', '2023-01-04 13:57:19');
 
 -- ----------------------------
 -- Table structure for situation_drawing
@@ -425,7 +439,7 @@ VALUES (7, 'a67104c93b02486890148b55c12693f5', '定制态势-自主训练', 'c71
         '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
         NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
-VALUES (8, 'ffe23f5a8a1c42b9889d8fbc04dd6551', '定制态势-联管中心综合大屏', 'a4b3555767d14f01b88ee4f8ca471a3e', 1,
+VALUES (8, 'ffe23f5a8a1c42b9889d8fbc04dd6551', '定制态势-联管中心综合态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 1,
         '/cpms/upload/images/f91e40adeccf48c99e619d765340e1ad.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
         NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`

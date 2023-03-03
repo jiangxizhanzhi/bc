@@ -625,8 +625,8 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
         Map<String, CrTitleBo> crTitleBoMap = StreamApiUtils.toMap(crTitleBoIPage, CrTitleBo::getCreateUserId, record -> record);
         users.forEach(userInfo -> {
             CrTitleUserBo crTitleUserBo = new CrTitleUserBo();
-            if(StringUtils.isNotBlank(userInfo.getUserName())){
-                crTitleUserBo.setName(userInfo.getUserName());
+            if(StringUtils.isNotBlank(userInfo.getName())){
+                crTitleUserBo.setName(userInfo.getName());
             }
             if(StringUtils.isNotBlank(userInfo.getOrganizationData())){
                 String organizationData = userInfo.getOrganizationData();
@@ -690,7 +690,7 @@ public class CrTitleServiceImpl extends ServiceImpl<CrTitleMapper, CrTitle> impl
                 crTitleStandardBo.setLevel(crTitleDetailBo.getLevel());
             }
             if(null != userInfo){
-                crTitleStandardBo.setCreateUser(userInfo.getUserName());
+                crTitleStandardBo.setCreateUser(userInfo.getName());
                 records.add(crTitleStandardBo);
             }
             return crTitleStandardBo;

@@ -20,7 +20,10 @@ public enum DynamicParameter {
 	FBCID("FBCID", "sub_range_id", "分靶场ID"),
 	KSSJ("KSSJ", "start_time", "开始时间"),
 	JSSJ("JSSJ", "end_time", "结束时间"),
-	YHJS("YHJS", "role", "角色");
+	DPSJ("DPSJ", "current_time", "大屏时间"),
+	YHJS("YHJS", "role", "角色"),
+	DPID("DPID", "dashboard_id", "大屏ID"),
+	TZID("TZID", "feature_id", "特征ID");
 
 	@Getter
 	private String code;

@@ -180,6 +180,13 @@ public class DashboardController {
 		return new BaseRsp<>(true);
 	}
 
+	@ApiOperation("刷新大屏动态数据")
+	@PostMapping("/event/refresh/")
+	public BaseRsp<Boolean> refreshEvent(@RequestBody @Validated EventRefreshReq req) {
+		return new BaseRsp<>(true);
+
+	}
+
 	@ApiOperation("获取最新的任务事件")
 	@PostMapping("/event/task/")
 	public BaseRsp<Boolean> getTaskEvent(@RequestBody @Validated TaskEventMsgReq taskEventReq) {

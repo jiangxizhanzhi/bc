@@ -129,7 +129,7 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
             url = String.format(HIK_DEVICE_CHANNELS, deviceIp, devicePort, username, password);
         }
         jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
-        if (jsonObject == null || !(jsonObject.get("code").equals("0") && StringUtils.isBlank(jsonObject.getString("url")))) {
+        if (jsonObject == null) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_RESPONSE_JSON);
         }
         return jsonObject;
@@ -139,7 +139,7 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
     public JSONObject getHikVisionFLv(String rtspUrl) {
         String url = String.format(HIK_HTTP_FLV, rtspUrl);
         JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
-        if (jsonObject == null || !(jsonObject.get("code").equals("0") && StringUtils.isBlank(jsonObject.getString("url")))) {
+        if (jsonObject == null) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_RESPONSE_JSON);
         }
         return jsonObject;

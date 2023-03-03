@@ -19,6 +19,6 @@ public class ApiRequestParams implements Serializable {
     private String description;
 
     @ApiModelProperty("请求参数value")
-    private String value;
+    private Object value;
 
 }

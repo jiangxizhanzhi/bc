@@ -98,6 +98,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
     public String apiConnectTest(ApiConnectReq apiConnectReq) {
         String requestMethod = apiConnectReq.getRequestMethod();
         HttpHeaders headers = getHeaders(apiConnectReq.getRequestHeaders());
+        String oldRequestUrl = apiConnectReq.getRequestUrl();
         JSONObject body = getBody(apiConnectReq);
         HttpEntity httpEntity = new HttpEntity(body, headers);
         String requestUrl = apiConnectReq.getRequestUrl();
@@ -117,6 +118,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
             message = e.getMessage();
         } finally {
             if (StringUtils.isNotBlank(resourceId)) {
+                apiRequest.setRequestUrl(oldRequestUrl);
                 apiRequestMapper.updateById(apiRequest);
             }
         }
@@ -206,7 +208,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
                 StringBuilder sb = new StringBuilder();
                 sb.append(requestUrl).append("?");
                 for (ApiRequestParams requestParam : requestParams) {
-                    String value = requestParam.getValue();
+                    String value = requestParam.getValue().toString();
                     if (StringUtils.isNotBlank(value)) {
                         sb.append(requestParam.getName()).append("=").append(value).append("&");
                     }else {

@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SituationTimeServiceImpl implements SituationTimeService {
@@ -38,7 +40,7 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 	@Override
 	public SituationTimeRes getTimeManagement(String topoId) {
 		valid(topoId);
-		SituationTime situationTime =situationTimeMapper.selectById(topoId);
+		SituationTime situationTime =situationTimeMapper.selectByTopoId(topoId);
 		handleSituationTime(situationTime);
 		SituationTimeRes situationTimeRes = BeanUtils.copy(situationTime, SituationTimeRes.class);
 		situationTimeRes.setCombatTime(TimeUtil.format1(situationTime.getCombatTime()));
@@ -49,7 +51,7 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 	@Override
 	public void executeInstruction(Instruction instruction, String topoId) {
 		valid(topoId);
-		SituationTime situationTime = situationTimeMapper.selectById(topoId);
+		SituationTime situationTime = situationTimeMapper.selectByTopoId(topoId);
 		handleSituationTime(situationTime);
 		if (situationTime.getStatus().equals(SituationTime.Status.FINISH.getCode())) {
 			throw new BusinessException(SituationErrorCode.THIS_SCENE_HAS_ENDED);
@@ -87,12 +89,27 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 
 	@Override
 	public void valid(String topoId) {
-		SituationTime situationTime = situationTimeMapper.selectById(topoId);
+		SituationTime situationTime = situationTimeMapper.selectByTopoId(topoId);
 		if (situationTime == null) {
 			situationTime = new SituationTime();
 			situationTime.setTopoId(topoId);
 			situationTimeMapper.insert(situationTime);
 		}
+	}
+
+	@Override
+	public Map<String, Integer> getRunTime(String topoId) {
+		SituationTime situationTime = situationTimeMapper.selectByTopoId(topoId);
+		HashMap<String, Integer> map = new HashMap<>();
+		if (situationTime == null || situationTime.getStatus().equals(SituationTime.Status.UNOPENED.getCode())) {
+			map.put("minute", 0);
+			map.put("hour", 0);
+		}else {
+			Date nowTime = new Date();
+			map.put("minute", (int) (TimeUtil.getIntervalSeconds(situationTime.getStartTime(), nowTime) / 60 % 60));
+			map.put("hour", (int) (TimeUtil.getIntervalSeconds(situationTime.getStartTime(), nowTime) / (60 * 60)));
+		}
+		return map;
 	}
 
 	public void handleSituationTime(SituationTime situationTime) {

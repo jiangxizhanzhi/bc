@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SituationTimeMapper extends BaseMapper<SituationTime> {
 
-	SituationTime selectById(@Param("topoId") String topoId);
+	SituationTime selectByTopoId(@Param("topoId") String topoId);
 }

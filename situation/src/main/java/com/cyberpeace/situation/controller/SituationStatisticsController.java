@@ -93,7 +93,7 @@ public class SituationStatisticsController {
 	@GetMapping("/run_time")
 	public BaseRsp<Map<String, Integer>> getRunTime(
 			@ApiParam(name = "scene_id", value = "场景id", required = true) @RequestParam(name = "scene_id") String sceneId){
-		return new BaseRsp<>(attackMessageHistoryService.getIntervalTime(sceneId));
+		return new BaseRsp<>(situationTimeService.getRunTime(sceneId));
 	}
 
 	@ApiOperation("防御日志")

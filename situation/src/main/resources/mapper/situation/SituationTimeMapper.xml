@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationTimeMapper">
 
 
-    <select id="selectById" resultType="com.cyberpeace.situation.dao.entity.SituationTime">
+    <select id="selectByTopoId" resultType="com.cyberpeace.situation.dao.entity.SituationTime">
         select *
         from situation_time
         <where>

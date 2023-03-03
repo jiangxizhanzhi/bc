@@ -4,6 +4,8 @@ package com.cyberpeace.situation.service;
 import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.model.Instruction;
 
+import java.util.Map;
+
 public interface SituationTimeService {
 
 	SituationTimeRes getTimeManagement(String topoId);
@@ -15,4 +17,6 @@ public interface SituationTimeService {
 	void executeInstruction(Instruction instruction, String topoId);
 
 	void valid(String topoId);
+
+	Map<String, Integer> getRunTime(String topoId);
 }

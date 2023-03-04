@@ -18,9 +18,20 @@
         ORDER BY create_time DESC
     </select>
     <select id="selectByNameString" resultType="java.lang.String">
-        SELECT resource_id FROM situation_dashboard_template WHERE name = #{name}
+        SELECT resource_id
+        FROM situation_dashboard_template
+        WHERE name = #{name}
     </select>
     <select id="selectByType" resultType="java.lang.String">
-        SELECT resource_id FROM situation_dashboard_template WHERE type = #{type} and edit_status = 0
+        SELECT resource_id
+        FROM situation_dashboard_template
+        WHERE type = #{type}
+          and edit_status = 0
+    </select>
+    <select id="selectByLevel" resultType="java.lang.String">
+        SELECT resource_id
+        FROM situation_dashboard_template
+        WHERE level = #{level}
+          and edit_status = 0
     </select>
 </mapper>

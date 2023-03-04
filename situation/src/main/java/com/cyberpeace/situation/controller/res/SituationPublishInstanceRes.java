@@ -19,4 +19,7 @@ public class SituationPublishInstanceRes extends SituationPublishInstance implem
 	@ApiModelProperty(value = "任务类型")
 	private String taskType;
 
+	@ApiModelProperty("原始模板ID")
+	private String originTemplateId;
+
 }

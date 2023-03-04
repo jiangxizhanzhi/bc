@@ -8,6 +8,7 @@ public class CommonContext {
 
 	private static final ThreadLocal<String> languageContext = new ThreadLocal();
 	private static final ThreadLocal<String> ipContext = new ThreadLocal();
+	private static final ThreadLocal<String> urlContext = new ThreadLocal();
 	private static final ThreadLocal<String> authorizationContext = new ThreadLocal();
 
 	private CommonContext() {
@@ -23,6 +24,18 @@ public class CommonContext {
 
 	public static void removeIp() {
 		ipContext.remove();
+	}
+
+	public static String getUrl() {
+		return urlContext.get();
+	}
+
+	public static void setUrl(String url) {
+		urlContext.set(url);
+	}
+
+	public static void removeUrl() {
+		urlContext.remove();
 	}
 
 	public static String getLanguage() {

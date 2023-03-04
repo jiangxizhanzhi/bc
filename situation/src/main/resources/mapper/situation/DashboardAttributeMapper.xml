@@ -3,10 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper">
-    <select id="getById" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
-        select *
-        from situation_dashboard_attribute
-        where dashboard_id = #{dashboardId}
+    <select id="getByDashboardId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
+        select situation_dashboard_attribute.*
+        from situation_publish_instance
+                 left join situation_dashboard_attribute on
+                situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
+        where situation_publish_instance.resource_id = #{dashboardId}
     </select>
 
     <select id="getByResourceId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">

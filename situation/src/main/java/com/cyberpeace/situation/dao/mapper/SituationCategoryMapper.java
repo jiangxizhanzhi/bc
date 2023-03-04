@@ -11,4 +11,6 @@ public interface SituationCategoryMapper extends BaseMapper<SituationCategory> {
 
 	SituationCategory selectByTaskType(@Param("taskType") String taskType);
 
+	SituationCategory selectByName(@Param("name") String name);
+
 }

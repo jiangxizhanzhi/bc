@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import static com.cyberpeace.situation.dao.entity.SituationCommonComponents.getC
  */
 @Api(tags = "控件组件资源")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/components")
 public class SituationCommonComponentsController {
 

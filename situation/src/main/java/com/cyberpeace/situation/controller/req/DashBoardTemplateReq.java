@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller.req;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.situation.constant.MapView;
 import com.cyberpeace.situation.model.ViewAngle;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -63,7 +64,7 @@ public class DashBoardTemplateReq implements Serializable {
     private String topic;
 
     @ApiModelProperty("初始视角")
-    private ViewAngle viewAngle;
+    private ViewAngle viewAngle = MapView.BJ.getViewAngle();
 
     @ApiModelProperty("组件配置信息")
     private List<DashboardComponentsReq> componentsSetting;

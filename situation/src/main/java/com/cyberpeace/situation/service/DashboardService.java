@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service;
 
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 
 public interface DashboardService {
 
@@ -21,5 +22,7 @@ public interface DashboardService {
 	DashboardIdRes getAttributeByTaskId(String taskId, String subjectId);
 
 	DashboardIdRes getAttributeByDashboardId(String dashboardId);
+
+	DashboardAttribute getDashboardAttribute(String dashboardId);
 
 }

@@ -1,7 +1,9 @@
 package com.cyberpeace.situation.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -51,5 +53,17 @@ public interface ThirdPartyService {
 	 * @return List<EventTypeRes>
 	 */
 	List<EventTypeRes> getEventTypes();
+
+	/**
+	 * 获取特定事件类型列表
+	 * @return List<EventListRsp>
+	 */
+	List<EventListRsp> getTypicalEvents();
+
+	/**
+	 * 获取特定事件类型（子类型）映射
+	 * @return Map<String, String>
+	 */
+	Map<String, String> getTypicalEventsMap();
 
 }

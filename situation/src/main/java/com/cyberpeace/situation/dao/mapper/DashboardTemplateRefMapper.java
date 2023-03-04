@@ -3,6 +3,7 @@ package com.cyberpeace.situation.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,9 +14,11 @@ import java.util.List;
 @Mapper
 public interface DashboardTemplateRefMapper extends BaseMapper<DashboardTemplateRef> {
 
-    /**
-     * 获取未使用的模板数据
-     * @return
-     */
-    List<String> selectAllId();
+	/**
+	 * 获取未使用的模板数据
+	 * @return
+	 */
+	List<String> selectAllId();
+
+	String selectOriginTemplateId(@Param("resourceId") String resourceId);
 }

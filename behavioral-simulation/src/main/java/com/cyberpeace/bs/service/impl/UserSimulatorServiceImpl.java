@@ -604,6 +604,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		NodeBo nodeBo = BeanUtils.copy(modifyBo, NodeBo.class);
 		UserSimulator newSimulator = createSimulator(userInstanceList, nodeBo,
 				simulator.getSceneId(), simulator.getSceneName());
+		if (StringUtils.isBlank(newSimulator.getDeviceIp())) {
+			newSimulator.setDeviceIp(simulator.getDeviceIp());
+		}
 		// deviceId, deviceName, isEntity, lastExeId, lastExeDate,
 		// exeCount属性都是null
 		// 继承运行状态

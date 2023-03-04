@@ -5,6 +5,14 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper">
 
     <select id="selectAllId" resultType="java.lang.String">
-        SELECT resource_id FROM situation_dashboard_template_ref WHERE resource_id NOT IN (SELECT template_id FROM situation_publish_instance)
+        SELECT resource_id
+        FROM situation_dashboard_template_ref
+        WHERE resource_id NOT IN (SELECT template_id FROM situation_publish_instance)
+    </select>
+
+    <select id="selectOriginTemplateId" resultType="java.lang.String">
+        SELECT origin_template_id
+        FROM situation_dashboard_template_ref
+        WHERE resource_id = #{resourceId}
     </select>
 </mapper>

@@ -2,6 +2,8 @@ package com.cyberpeace.situation.controller;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "推送态势事件")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/simulation")
 public class SituationEventController {
 
@@ -122,7 +125,9 @@ public class SituationEventController {
 		TaskContext task = tasks.get(random.nextInt(tasks.size()));
 
 		// 获取靶场数据
-		RangeContext range = thirdPartyService.getRangeByName(task.getResponsibleRangeName());
+		String rangeName = StringUtils.isBlank(task.getResponsibleRangeName()) ? "综合性分靶场"
+				: task.getResponsibleRangeName();
+		RangeContext range = thirdPartyService.getRangeByName(rangeName);
 		CenterContext center = thirdPartyService.getCenters().get(0);
 
 		// 构造任务事件数据
@@ -144,11 +149,11 @@ public class SituationEventController {
 
 		if (TaskEvent.RWXF.getName().equals(taskEvent)) {
 			// 构造源节点数据
-			taskEventContext.setSourceType(SiteType.CENTER.getName());
+			taskEventContext.setSourceType(SiteType.CENTER.getCode());
 			taskEventContext.setSourceId(center.getCenterId());
 
 			// 构造目标节点数据
-			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getName(),
+			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getCode(),
 					range.getSubRangeId());
 			List<TargetSiteContext> targetSiteContexts = Lists.newArrayList(mainRange);
 			String bcList = range.getSubRangeName();
@@ -157,7 +162,7 @@ public class SituationEventController {
 				List<RangeContext> rangeContexts = thirdPartyService.getRanges();
 				RangeContext tmpRange = rangeContexts.get(random.nextInt(rangeContexts.size()));
 				if (!tmpRange.getSubRangeId().equals(range.getSubRangeId())) {
-					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getName(),
+					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getCode(),
 							tmpRange.getSubRangeId()));
 					bcList = bcList + "、" + tmpRange.getSubRangeName();
 				}

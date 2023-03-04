@@ -12,6 +12,7 @@ import com.cyberpeace.situation.service.SituationPlotPixelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "绘标图元管理")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/plot/pixel")
 public class SituationPlotPixelController {
 

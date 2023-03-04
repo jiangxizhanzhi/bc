@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -33,6 +34,7 @@ import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
@@ -46,197 +48,238 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "组件库-态势发布大屏")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/publish")
 public class SituationPublishController {
 
-    @Autowired
-    private SituationPublishInstanceMapper situationPublishInstanceMapper;
+	@Autowired
+	private SituationPublishInstanceMapper situationPublishInstanceMapper;
 
-    @Autowired
-    private SituationPublishInstanceService situationPublishInstanceService;
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
 
-    @Autowired
-    private DashboardTemplateRefService dashboardTemplateRefService;
+	@Autowired
+	private DashboardTemplateRefService dashboardTemplateRefService;
 
-    @Autowired
-    private DashboardAttributeMapper dashboardAttributeMapper;
+	@Autowired
+	private DashboardAttributeMapper dashboardAttributeMapper;
 
-    @Autowired
-    private SituationCategoryMapper situationCategoryMapper;
+	@Autowired
+	private SituationCategoryMapper situationCategoryMapper;
 
-    @Autowired
-    private RemoteSituationService remoteSituationService;
+	@Autowired
+	private RemoteSituationService remoteSituationService;
 
-    @Autowired
-    private TransactionTemplate transactionTemplate;
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
-    @ApiOperation("查询态势发布类型列表")
-    @GetMapping("/category/list")
-    public BaseRsp<List<SituationCategory>> getSituationPublishInstanceCategory() {
-        LambdaQueryWrapper<SituationCategory> queryWrapper = new LambdaQueryWrapper<>();
-        List<SituationCategory> res = situationCategoryMapper.selectList(queryWrapper);
-        return new BaseRsp<>(res);
-    }
+	@Autowired
+	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
-    @ApiOperation("查询态势发布状态列表")
-    @GetMapping("/status/list")
-    public BaseRsp<List<SituationInstanceStatusRes>> getSituationPublishInstanceStatus() {
-        List<SituationInstanceStatusRes> res = new ArrayList<>();
-        for (SituationInstanceStatus status : SituationInstanceStatus.values()) {
-            SituationInstanceStatusRes copy = BeanUtils.copy(status, SituationInstanceStatusRes.class);
-            res.add(copy);
-        }
-        return new BaseRsp<>(res);
-    }
+	@ApiOperation("查询态势发布类型列表")
+	@GetMapping("/category/list")
+	public BaseRsp<List<SituationCategory>> getSituationPublishInstanceCategory() {
+		LambdaQueryWrapper<SituationCategory> queryWrapper = new LambdaQueryWrapper<>();
+		List<SituationCategory> res = situationCategoryMapper.selectList(queryWrapper);
+		return new BaseRsp<>(res);
+	}
 
-    @ApiOperation("新增态势发布实例")
-    @PostMapping("")
-    public BaseRsp<SituationPublishInstance>
-    setSituationPublishInstance(@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
-        SituationPublishInstance situationPublishInstance = situationPublishInstanceService.insertOne(situationPublishInstanceAddReq);
+	@ApiOperation("查询态势发布状态列表")
+	@GetMapping("/status/list")
+	public BaseRsp<List<SituationInstanceStatusRes>> getSituationPublishInstanceStatus() {
+		List<SituationInstanceStatusRes> res = new ArrayList<>();
+		for (SituationInstanceStatus status : SituationInstanceStatus.values()) {
+			SituationInstanceStatusRes copy = BeanUtils.copy(status,
+					SituationInstanceStatusRes.class);
+			res.add(copy);
+		}
+		return new BaseRsp<>(res);
+	}
 
-        return new BaseRsp<>(situationPublishInstance);
-    }
+	@ApiOperation("新增态势发布实例")
+	@PostMapping("")
+	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
+			@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
+				.insertOne(situationPublishInstanceAddReq, false);
 
-    @ApiOperation("查询态势发布实例列表")
-    @GetMapping("list")
-    public BaseRsp<ListRsp<SituationPublishInstancePageRes>>
-    getSituationPublishInstance(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
+		return new BaseRsp<>(situationPublishInstance);
+	}
 
-        return new BaseRsp<>(situationPublishInstanceService.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
-    }
+	@ApiOperation("查询态势发布实例列表")
+	@GetMapping("list")
+	public BaseRsp<ListRsp<SituationPublishInstancePageRes>> getSituationPublishInstance(
+			SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
 
-    @ApiOperation("查询态势发布实例详情")
-    @GetMapping("")
-    public BaseRsp<SituationPublishInstanceRes>
-    getSituationPublishInstanceDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
+		return new BaseRsp<>(situationPublishInstanceService
+				.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
+	}
 
-        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectById(resourceId);
-        if (null == situationPublishInstance) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
+	@ApiOperation("查询态势发布实例详情")
+	@GetMapping("")
+	public BaseRsp<SituationPublishInstanceRes> getSituationPublishInstanceDetail(
+			@RequestParam("resourceId") @NotBlank String resourceId) {
 
-        DashboardAttribute dashboardAttribute = dashboardAttributeMapper.getByResourceId(situationPublishInstance.getAttributeId());
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectById(resourceId);
+		if (null == situationPublishInstance) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 
-        situationPublishInstanceRes.setSchemeName(dashboardAttribute.getSchemeName());
-        situationPublishInstanceRes.setSchemeDesc(dashboardAttribute.getSchemeDesc());
-        TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-                .filter(t -> t.getCode().equals(dashboardAttribute.getTaskType())).findFirst().orElse(TaskType.QB);
-        situationPublishInstanceRes.setTaskType(type.getDesc());
+		String originTemplateId = dashboardTemplateRefMapper
+				.selectOriginTemplateId(situationPublishInstance.getTemplateId());
+		SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils
+				.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
 
-        return new BaseRsp<>(situationPublishInstanceRes);
-    }
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstance.getAttributeId());
 
-    @ApiOperation("删除态势发布实例")
-    @DeleteMapping("")
-    public BaseRsp deleteSituationPublishInstance(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
-        List<String> resourceIds = batchDeleteReq.getIds();
-        List<SituationPublishInstance> situationPublishInstances = situationPublishInstanceMapper.selectBatchIds(resourceIds);
-        if (situationPublishInstances.isEmpty()) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        // 关联发布大屏不可删除
-        LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-        queryWrapper.in(SituationPublishInstance::getResourceId, resourceIds);
-        List<SituationPublishInstance> releaseInstances = situationPublishInstanceMapper.selectList(queryWrapper);
-        if (!releaseInstances.isEmpty()) {
-            throw new BusinessException(SituationErrorCode.RELEASE_SITUATION_INSTANCE_CANNOT_DELETE_ERROR);
-        }
+		situationPublishInstanceRes.setSchemeName(dashboardAttribute.getSchemeName());
+		situationPublishInstanceRes.setSchemeDesc(dashboardAttribute.getSchemeDesc());
+		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(dashboardAttribute.getTaskType())).findFirst()
+				.orElse(TaskType.QB);
+		situationPublishInstanceRes.setTaskType(type.getDesc());
+		situationPublishInstanceRes.setOriginTemplateId(originTemplateId);
 
-        // 获取关联模板
-        List<String> dashboardTemplateIdList = new ArrayList<>();
-        for (SituationPublishInstance releaseInstance : situationPublishInstances) {
-            String templateId = releaseInstance.getTemplateId();
-            if (StringUtils.isNotBlank(templateId)) {
-                dashboardTemplateIdList.add(templateId);
-            }
-        }
+		return new BaseRsp<>(situationPublishInstanceRes);
+	}
 
-        // 获取关联属性
-        List<String> attributeIds = situationPublishInstanceMapper.getAttributeIds(resourceIds);
+	@ApiOperation("删除态势发布实例")
+	@DeleteMapping("")
+	public BaseRsp
+			deleteSituationPublishInstance(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		List<String> resourceIds = batchDeleteReq.getIds();
+		List<SituationPublishInstance> situationPublishInstances = situationPublishInstanceMapper
+				.selectBatchIds(resourceIds);
+		if (situationPublishInstances.isEmpty()) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		// 关联发布大屏不可删除
+		LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(SituationPublishInstance::getStatus,
+				SituationInstanceStatus.RELEASE.getCode());
+		queryWrapper.in(SituationPublishInstance::getResourceId, resourceIds);
+		List<SituationPublishInstance> releaseInstances = situationPublishInstanceMapper
+				.selectList(queryWrapper);
+		if (!releaseInstances.isEmpty()) {
+			throw new BusinessException(
+					SituationErrorCode.RELEASE_SITUATION_INSTANCE_CANNOT_DELETE_ERROR);
+		}
 
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                situationPublishInstanceMapper.deleteBatchIds(resourceIds);
-                dashboardTemplateRefService.deleteDashboardTemplate(dashboardTemplateIdList);
-                dashboardAttributeMapper.deleteBatchIds(attributeIds);
-            }
-        });
-        return new BaseRsp<>();
-    }
+		// 获取关联模板
+		List<String> dashboardTemplateIdList = new ArrayList<>();
+		for (SituationPublishInstance releaseInstance : situationPublishInstances) {
+			String templateId = releaseInstance.getTemplateId();
+			if (StringUtils.isNotBlank(templateId)) {
+				dashboardTemplateIdList.add(templateId);
+			}
+		}
 
-    @ApiOperation("修改态势发布实例")
-    @PatchMapping("")
-    public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
+		// 获取关联属性
+		List<String> attributeIds = situationPublishInstanceMapper.getAttributeIds(resourceIds);
 
-        SituationPublishInstance situationPublishInstance = situationPublishInstanceService.updateOne(situationPublishInstanceUpdateReq);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-        return new BaseRsp<>(situationPublishInstance);
-    }
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				situationPublishInstanceMapper.deleteBatchIds(resourceIds);
+				dashboardTemplateRefService.deleteDashboardTemplate(dashboardTemplateIdList);
+				dashboardAttributeMapper.deleteBatchIds(attributeIds);
+			}
+		});
+		return new BaseRsp<>();
+	}
 
-    @ApiOperation("态势实例发布")
-    @PostMapping("release")
-    public BaseRsp releaseSituationPublishInstance(@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
+	@ApiOperation("修改态势发布实例")
+	@PatchMapping("")
+	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(
+			@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
 
-        // 获取大屏实例
-        String resourceId = situationInstanceReleaseReq.getResourceId();
-        SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
-        if (null == situationPublishInstances) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        situationPublishInstances.setStatus(SituationInstanceStatus.RELEASE.getCode());
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
+				.updateOne(situationPublishInstanceUpdateReq);
 
-        // 三级大屏没有科目ID时，抛出异常
-        String taskId = situationPublishInstances.getTaskId();
-        String subjectId = situationPublishInstances.getSubjectId();
-        if (StringUtils.isNotBlank(taskId) && StringUtils.isBlank(subjectId)) {
-            throw new BusinessException(SituationErrorCode.SUBJECT_EMPTY_ERROR);
-        }
+		return new BaseRsp<>(situationPublishInstance);
+	}
 
-        // 三级大屏同一科目下仅能有一个大屏发布
-        if (StringUtils.isNotBlank(taskId)) {
-            LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(SituationPublishInstance::getStatus, SituationInstanceStatus.RELEASE.getCode());
-            queryWrapper.eq(SituationPublishInstance::getSubjectId, situationPublishInstances.getSubjectId());
-            SituationPublishInstance one = situationPublishInstanceService.getOne(queryWrapper);
-            if (null != one) {
-                throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
-            }
-        }
+	@ApiOperation("态势实例发布")
+	@PostMapping("release")
+	public BaseRsp releaseSituationPublishInstance(
+			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
 
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		// 获取大屏实例
+		String resourceId = situationInstanceReleaseReq.getResourceId();
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(resourceId);
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		situationPublishInstances.setStatus(SituationInstanceStatus.RELEASE.getCode());
 
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                situationPublishInstanceMapper.updateById(situationPublishInstances);
-                if (StringUtils.isNotBlank(subjectId)) {
-                    Boolean result = remoteSituationService.releaseScreen(situationPublishInstances.getSchemeId(),
-                            situationPublishInstances.getResourceId());
-                    if (!result) {
-                        throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
-                    }
-                }
-            }
-        });
-        return new BaseRsp<>();
-    }
+		// 三级大屏没有科目ID时，抛出异常
+		String taskId = situationPublishInstances.getTaskId();
+		String subjectId = situationPublishInstances.getSubjectId();
+		if (StringUtils.isNotBlank(taskId) && StringUtils.isBlank(subjectId)) {
+			throw new BusinessException(SituationErrorCode.SUBJECT_EMPTY_ERROR);
+		}
 
-    @ApiOperation("态势实例取消发布")
-    @PostMapping("cancel_release")
-    public BaseRsp cancelReleaseSituationPublishInstance(@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
-        String resourceId = situationInstanceReleaseReq.getResourceId();
-        SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
-        if (null == situationPublishInstances) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        situationPublishInstances.setStatus(SituationInstanceStatus.DRAFT.getCode());
-        situationPublishInstanceMapper.updateById(situationPublishInstances);
-        return new BaseRsp<>();
+		// 三级大屏同一科目下仅能有一个大屏发布
+		// if (StringUtils.isNotBlank(taskId)) {
+		// LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new
+		// LambdaQueryWrapper<>();
+		// queryWrapper.eq(SituationPublishInstance::getStatus,
+		// SituationInstanceStatus.RELEASE.getCode());
+		// queryWrapper.eq(SituationPublishInstance::getSubjectId,
+		// situationPublishInstances.getSubjectId());
+		// SituationPublishInstance one =
+		// situationPublishInstanceService.getOne(queryWrapper);
+		// if (null != one) {
+		// throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
+		// }
+		// }
 
-    }
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 想定大屏发布后调用想定接口进行备案
+				if (StringUtils.isNotBlank(subjectId) && situationPublishInstances.getXd()) {
+					Boolean result = remoteSituationService.releaseScreen(
+							situationPublishInstances.getSchemeId(),
+							situationPublishInstances.getResourceId());
+					if (!result) {
+						throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
+					}
+					// 发布过的想定大屏不允许自行编辑
+					situationPublishInstances.setEdit(false);
+				}
+				situationPublishInstanceMapper.updateById(situationPublishInstances);
+			}
+		});
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("态势实例取消发布")
+	@PostMapping("cancel_release")
+	public BaseRsp cancelReleaseSituationPublishInstance(
+			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
+		String resourceId = situationInstanceReleaseReq.getResourceId();
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(resourceId);
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 想定大屏不允许主动取消发布
+		if (situationPublishInstances.getXd()) {
+			throw new BusinessException(SituationErrorCode.XD_DASHBOARD_CANCEL_ERROR);
+		}
+
+		situationPublishInstances.setStatus(SituationInstanceStatus.DRAFT.getCode());
+		situationPublishInstanceMapper.updateById(situationPublishInstances);
+		return new BaseRsp<>();
+
+	}
 
     @ApiOperation("态势实例预览")
     @PostMapping("preview")

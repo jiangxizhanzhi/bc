@@ -1,9 +1,14 @@
 package com.cyberpeace.situation.dao.entity;
 
+import java.util.List;
+
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.JsonUtil;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,6 +24,9 @@ public class SituationPublishInstance extends BaseTable {
 
 	@ApiModelProperty("大屏描述")
 	private String description;
+
+	@ApiModelProperty("特定事件")
+	private String events;
 
 	@ApiModelProperty("大屏属性ID")
 	private String attributeId;
@@ -53,17 +61,38 @@ public class SituationPublishInstance extends BaseTable {
 	@ApiModelProperty("三方靶标URL")
 	private String thirdUrl;
 
+	@ApiModelProperty("是否为想定大屏")
+	private Boolean xd = false;
+
 	@ApiModelProperty("类型")
 	private String category;
 
 	@ApiModelProperty("发布状态（草稿/发布）")
-	private String status;
+	private String status = "1";
 
 	@ApiModelProperty("下发状态（下发/未下发）")
-	private Integer publicStatus;
+	private Integer publicStatus = 2;
 
 	@ApiModelProperty("是否可编辑")
-	private Boolean edit;
+	private Boolean edit = false;
 
 	private String createUserId;
+
+	public void setEventList(List<List<String>> events) {
+		this.events = JsonUtil.toJsonString(events);
+	}
+
+	public List<List<String>> getEventList() {
+		List<List<String>> eventList = Lists.newArrayList();
+
+		if (this.events == null) {
+			return eventList;
+		}
+
+		JSONArray list = JSONArray.parseArray(this.events);
+		for (int i = 0; i < list.size(); i++) {
+			eventList.add(JsonUtil.toJsonObjectArray(list.getString(i), String.class));
+		}
+		return eventList;
+	}
 }

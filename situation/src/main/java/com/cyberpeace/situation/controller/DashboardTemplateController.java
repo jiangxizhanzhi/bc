@@ -24,6 +24,7 @@ import org.apache.commons.codec.binary.Base64;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import java.util.Map;
 
 @Api(tags = "态势模板")
 @RestController
+@RequiresAuthentication
 @RequestMapping("dashboard/template/")
 public class DashboardTemplateController {
 

@@ -3,6 +3,7 @@ package com.cyberpeace.situation.controller;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "态势自定义配置")
 @RestController
+@RequiresAuthentication
 @RequestMapping("/situation/config")
 public class SituationConfigController {
 

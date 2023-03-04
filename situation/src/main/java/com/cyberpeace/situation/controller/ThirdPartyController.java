@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
@@ -40,6 +42,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "三方数据")
 @RestController
+//@RequiresAuthentication
 @RequestMapping("/third/")
 public class ThirdPartyController {
 
@@ -83,6 +86,12 @@ public class ThirdPartyController {
 					required = true) @RequestParam(value = "sub_range_id") String subRangeId) {
 
 		return new BaseRsp<>(thirdPartyService.getStations(subRangeId));
+	}
+
+	@ApiOperation("获取特定事件类型列表")
+	@GetMapping("/event/list/")
+	public BaseRsp<List<EventListRsp>> getEvents() {
+		return new BaseRsp<>(thirdPartyService.getTypicalEvents());
 	}
 
 	@ApiOperation("获取分靶场详情")
@@ -273,13 +282,16 @@ public class ThirdPartyController {
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
 		// 直接返回样例拓扑
-		if ("demo".equals(topoReq.getEnvId())){
+		if ("demo".equals(topoReq.getEnvId())) {
 			InputStream inputStream = getClass().getResourceAsStream("/demoTopo.json");
-			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
-			return new BaseRsp<>(JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
+			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class)
+					.getJSONObject("data");
+			return new BaseRsp<>(
+					JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
 		}
 
 		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
+
 		// 处理编排后的拓扑坐标
 		if (StringUtils.isNotBlank(topoReq.getEnvId())) {
 			TopoConfig topoConfig = topoConfigMapper.selectByEnvId(topoReq.getEnvId());
@@ -289,7 +301,8 @@ public class ThirdPartyController {
 						json.toJSONString(),
 						new TypeReference<Map<String, ElementSlimContext>>() {});
 				topoContext.getElements().forEach((key, element) -> {
-					element.setPosition(elementSlimContextMap.get(key).getPosition());
+					element.setPosition(elementSlimContextMap
+							.getOrDefault(key, new ElementSlimContext()).getPosition());
 				});
 			}
 		}

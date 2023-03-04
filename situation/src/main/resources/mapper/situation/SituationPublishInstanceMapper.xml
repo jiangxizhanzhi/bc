@@ -6,7 +6,7 @@
     <select id="getSituationPublishInstancePage"
             resultType="com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes">
 
-        SELECT situation_publish_instance.*
+        SELECT situation_publish_instance.*, situation_dashboard_attribute.scheme_name as scheme_name
         FROM situation_publish_instance left join situation_dashboard_attribute on
         situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
         WHERE 1 = 1
@@ -51,6 +51,15 @@
             </if>
             <if test="subjectId != null and subjectId != ''">
                 and subject_id = #{subjectId}
+            </if>
+        </where>
+    </select>
+    <select id="selectXdInstanceBySchemeId" resultType="java.lang.String">
+        SELECT resource_id FROM situation_publish_instance
+        <where>
+            xd = 1
+            <if test="schemeId != null and schemeId != ''">
+                and scheme_id = #{schemeId}
             </if>
         </where>
     </select>

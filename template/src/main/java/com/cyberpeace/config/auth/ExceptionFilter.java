@@ -71,6 +71,7 @@ public class ExceptionFilter implements Filter {
 
 			CommonContext.removeLanguage();
 			CommonContext.removeIp();
+			CommonContext.removeUrl();
 			CommonContext.removeAuthorization();
 		}
 	}

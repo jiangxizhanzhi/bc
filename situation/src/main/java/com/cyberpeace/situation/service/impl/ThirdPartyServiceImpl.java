@@ -4,19 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.integratation.model.situation.ThirdDictContext;
+import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
+import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SiteType;
-import com.cyberpeace.situation.controller.res.EventTypeContextRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
+import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -41,6 +48,12 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	@Autowired
 	private RemoteOperationService remoteOperationService;
 
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private SituationPublishInstanceService situationPublishInstanceService;
+
 	private volatile Map<String, CenterContext> centerCache = Maps.newHashMap();
 
 	private volatile Map<String, RangeContext> rangeCache = Maps.newHashMap();
@@ -49,8 +62,47 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private volatile Map<String, EventTypeRes> eventTypeCache = Maps.newHashMap();
 
+	private volatile Map<String, EventListRsp> typicalEventCache = Maps.newHashMap();
+
+	@PostConstruct
+	public void init() {
+		log.info("初始化靶场态势大屏");
+		try {
+			List<BcContext> bcList = remoteOperationService.getBcList(SiteType.RANGE.getCode());
+			String bcCode = SystemPropUtil.getProp("BC_CODE");
+			Map<String, BcContext> bcContextMap = Maps.newHashMap();
+
+			// 替换靶场列表中的联管中心为实际的联管中心
+			bcList.forEach(bc -> {
+				if (bc.getName().endsWith("中心")){
+					bc.setBcType(BcType.LGZX.getCode());
+				}
+			});
+
+			bcList.forEach(bc -> {bcContextMap.put(bc.getGroupId(), bc);});
+			List<BcContext> instances = Lists.newArrayList();
+			if (bcContextMap.get(bcCode) == null)
+			{
+				log.info("初始化靶场态势大屏失败");
+				return;
+			} else if (BcType.LGZX.getCode().equals(bcContextMap.get(bcCode).getBcType())){
+				instances = bcList;
+			} else {
+				instances.add(bcContextMap.get(bcCode));
+			}
+
+			instances.forEach(bc -> {
+				situationPublishInstanceService.createBcInstance(bc);
+			});
+			log.info("初始化靶场态势大屏成功");
+		} catch (Exception exception) {
+			log.info("初始化靶场态势大屏失败");
+		}
+	}
+
 	private synchronized <T extends SiteContext> void siteInit(String siteType, Class<T> siteClazz,
 			Map<String, T> cache) {
+
 		// 清空原有数据
 		cache.clear();
 
@@ -178,13 +230,54 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private void traversalNode(String parentNode, EventTypeRes parentType,
 			List<EventType> eventTypeList) {
 		if (CollectionUtils.isNotEmpty(eventTypeList)) {
-			List<EventTypeContextRes> list = new ArrayList<>();
+			List<ThirdDictContext> list = new ArrayList<>();
 			eventTypeList.forEach(eventType -> {
 				if (eventType.getParentNode().equals(parentNode)) {
-					list.add(BeanUtils.copy(eventType, EventTypeContextRes.class));
+					list.add(BeanUtils.copy(eventType, ThirdDictContext.class));
 				}
 			});
 			parentType.setSubTypes(list);
 		}
+	}
+
+	private synchronized void typicalEventsInit() {
+		// 清空原有数据
+		typicalEventCache.clear();
+
+		// 请求态势系统数据
+		List<EventListRsp> typicalEvents = remoteSituationService.getEvents();
+
+		// 写入缓存
+		typicalEvents.forEach(event -> {
+			typicalEventCache.put(event.getCode(), event);
+		});
+	}
+
+	@Override
+	public List<EventListRsp> getTypicalEvents() {
+
+		if (typicalEventCache.isEmpty()) {
+			typicalEventsInit();
+		}
+		List<EventListRsp> typicalEvents = new ArrayList<>();
+		typicalEventCache.forEach((key, value) -> typicalEvents.add(value));
+		return typicalEvents;
+	}
+
+	@Override
+	public Map<String, String> getTypicalEventsMap() {
+
+		if (typicalEventCache.isEmpty()) {
+			typicalEventsInit();
+		}
+
+		Map<String, String> typicalEventMap = Maps.newHashMap();
+		typicalEventCache.forEach((key, value) -> {
+			for (ThirdDictContext context : value.getEvents()) {
+				typicalEventMap.put(context.getCode(), context.getName());
+			}
+		});
+
+		return typicalEventMap;
 	}
 }

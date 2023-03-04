@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,7 @@ import net.lingala.zip4j.exception.ZipException;
 @Api(tags = "态势编排")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/control")
 public class SituationControlController {
 

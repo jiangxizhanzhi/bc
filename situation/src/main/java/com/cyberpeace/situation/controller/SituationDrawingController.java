@@ -29,6 +29,7 @@ import java.util.List;
 @Api(tags = "图形管理-图形资源管理")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/drawing")
 public class SituationDrawingController {
 

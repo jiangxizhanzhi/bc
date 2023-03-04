@@ -157,13 +157,32 @@ public interface SituationErrorCode {
 	String LAYER_NUM_ERROR = "106007";
 
 	/**
-	 * 二维组件导出失败
+	 * 想定大屏不允许自行取消
 	 */
-	String COMPONENTS_EXPORT_FAILED = "106008";
+	String XD_DASHBOARD_CANCEL_ERROR = "106008";
 
+	/**
+	 * 态势模板未关联拓
+	 */
+	String UNRELATED_TO_TOPO = "106009";
+
+	/**
+	 * 可视化方案不允许为空
+	 */
+	String SCHEME_EMPTY_ERROR = "106010";
+
+	/**
+	 * 未找到默认靶场大屏信息
+	 */
+	String DEFAULT_BC_ERROR = "106011";
 	/**
 	 * 二维组件导出失败
 	 */
-	String COMPONENTS_IMPORT_FAILED = "106009";
+	String COMPONENTS_EXPORT_FAILED = "106012";
+
+	/**
+	 * 二维组件导入失败
+	 */
+	String COMPONENTS_IMPORT_FAILED = "106013";
 
 }

@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.model.situation.KshAuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -53,6 +55,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 	private String AUTH_PERMISSION_MENUS_URL;
 
+	private String TICKET_AUTHENTICATE_URL;
+
 	private final LoadingCache<String, List<UserInfo>> allUserCache = CacheBuilder.newBuilder()
 			.expireAfterWrite(15, TimeUnit.MINUTES)
 			.build(new CacheLoader<String, List<UserInfo>>() {
@@ -68,6 +72,9 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private MpEnvService mpEnvService;
 
 	@Autowired
+	private SituationEnvService situationEnvService;
+
+	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
 
 	@PostConstruct
@@ -81,20 +88,19 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
+		TICKET_AUTHENTICATE_URL = situationEnvService.getYhHost()
+				+ ConfigUtil.getContextProperty("ticket.authenticate");
 	}
 
 	@Override
 	@Cacheable(key = "#p0")
 	public UserInfo doAuthentication(String token) {
-		// 1、调用mp
-		String targetUrl = TOKEN_AUTHENTICATE_URL + token;
 
-		MpAuthenticatedUser mpAuthenticatedUser = HttpClientUtil.rawGet(targetUrl,
-				MpAuthenticatedUser.class);
-
-		// 2、转化mp的用户模型为本地模型
-		UserInfo userInfo = convertToLocal(mpAuthenticatedUser);
-
+		// 1、调用可视化系统用户接口，获取用户信息
+		KshAuthenticatedUser kshUser = HttpClientUtil.tokenGet(TICKET_AUTHENTICATE_URL,
+				KshAuthenticatedUser.class, "ticket", token);
+		// 2、转化用户模型为本地模型
+		UserInfo userInfo = convertToLocal(kshUser);
 		return userInfo;
 	}
 
@@ -189,14 +195,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Override
 	public Map<String, String> getIdNameMap(List<String> ids) {
 		Set<String> idsSet = Sets.newHashSet(ids);
-		List<UserInfo> userInfos = getByIdList(ids);
-		if (idsSet.size() != userInfos.size()) {
-			for (UserInfo info : userInfos) {
-				idsSet.remove(info.getUserId());
-			}
-			log.error("invalid user_id: " + idsSet);
-		}
-		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+		return StreamApiUtils.toMap(idsSet, id -> id, id -> "用户");
 	}
 
 	@Override
@@ -243,7 +242,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	}
 
 	/**
-	 * 获取用户可见的菜单
+	 * 获取用户可见的菜单 todo 30S权限校验
 	 *
 	 * @param userId
 	 * @return
@@ -358,6 +357,12 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setSuperuser(byId.isSuperuser());
 		userInfo.setAdmin(byId.isAdmin());
 
+		return userInfo;
+	}
+
+	private UserInfo convertToLocal(KshAuthenticatedUser kshUser) {
+		UserInfo userInfo = BeanUtils.copy(kshUser, UserInfo.class);
+		userInfo.setUserId(kshUser.getId());
 		return userInfo;
 	}
 

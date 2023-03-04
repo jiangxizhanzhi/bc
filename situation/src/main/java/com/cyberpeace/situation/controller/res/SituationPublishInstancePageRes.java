@@ -38,6 +38,9 @@ public class SituationPublishInstancePageRes implements Serializable {
     @ApiModelProperty(value = "科目id")
     private String subjectId;
 
+    @ApiModelProperty(value = "可视化方案名称")
+    private String schemeName;
+
     @ApiModelProperty(value = "模板id")
     private String templateId;
 

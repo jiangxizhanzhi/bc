@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiParam;
  */
 @Api(tags = "模板备份数据管理")
 @RestController
+@RequiresAuthentication
 @RequestMapping("dashboard/template/ref")
 public class DashboardTemplateRefController {
 

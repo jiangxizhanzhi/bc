@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -17,26 +18,30 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 
 	private String GL_REPORT_LOG;
 
+	@Autowired
+	private SituationEnvService situationEnvService;
+
 	@PostConstruct
 	public void init() {
-		String outerHostGl = "http://" + ConfigUtil.getContextProperty("outer.host.gl");
+		String outerHostGl = situationEnvService.getTsGlHost();
 		GL_REPORT_STATUS = outerHostGl + ConfigUtil.getContextProperty("gl.report.status");
 		GL_REPORT_LOG = outerHostGl + ConfigUtil.getContextProperty("gl.report.log");
 	}
 
 	@Override
 	public Boolean reportStatus() {
-		for (ServiceStatusContext.ServiceName serviceName : ServiceStatusContext.ServiceName
-				.values()) {
-			ServiceStatusContext serviceStatusContext = new ServiceStatusContext(
-					serviceName.getCode(), serviceName.getDesc());
+		for (ServiceStatusContext.Service service : ServiceStatusContext.Service.values()) {
+			ServiceStatusContext serviceStatusContext = new ServiceStatusContext(service.getCode(),
+					service.getDesc());
 			HttpClientUtil.post(GL_REPORT_STATUS, serviceStatusContext, String.class);
+
 		} ;
 		return true;
 	}
 
 	@Override
-	public Boolean writeLog(ServiceLogContext serviceLogContext) {
+	public Boolean writeLog(ServiceLogContext.SubModule subModule, ServiceLogContext.Type type) {
+		ServiceLogContext serviceLogContext = new ServiceLogContext(subModule, type);
 		String result = HttpClientUtil.post(GL_REPORT_LOG, serviceLogContext, String.class);
 		return true;
 	}

@@ -2,6 +2,9 @@ package com.cyberpeace.situation.controller;
 
 import java.util.Map;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
@@ -35,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "拓扑接口")
 @RestController
 @Slf4j
+@RequiresAuthentication
 @RequestMapping("/situation/topo")
 public class TopoController {
 
@@ -59,7 +63,7 @@ public class TopoController {
 				.getDashboardTemplateContext(templateId);
 
 		if (dashboardTemplateContext == null) {
-			return new BaseRsp<>(new DashboardIdRes());
+			throw new BusinessException(SituationErrorCode.UNRELATED_TO_TOPO);
 		}
 
 		DashboardIdRes dashboardIdRes = new DashboardIdRes();

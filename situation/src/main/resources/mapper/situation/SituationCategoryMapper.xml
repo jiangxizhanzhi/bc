@@ -8,4 +8,9 @@
         from situation_category
         where task_type = #{taskType}
     </select>
+    <select id="selectByName" resultType="com.cyberpeace.situation.dao.entity.SituationCategory">
+        select *
+        from situation_category
+        where name = #{name}
+    </select>
 </mapper>

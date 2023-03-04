@@ -174,4 +174,9 @@ public interface ErrorCode {
 	 * 任务id不可为空
 	 */
 	String EMPTY_TASK_ID = "100055";
+
+	/**
+	 * 写入数据库失败
+	 */
+	String FAIL_TO_WRITE_DB = "100056";
 }

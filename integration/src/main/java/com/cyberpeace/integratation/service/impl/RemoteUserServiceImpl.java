@@ -96,11 +96,14 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@Cacheable(key = "#p0")
 	public UserInfo doAuthentication(String token) {
 
-		// 1、调用可视化系统用户接口，获取用户信息
-		KshAuthenticatedUser kshUser = HttpClientUtil.tokenGet(TICKET_AUTHENTICATE_URL,
-				KshAuthenticatedUser.class, "ticket", token);
-		// 2、转化用户模型为本地模型
-		UserInfo userInfo = convertToLocal(kshUser);
+		// 1、调用mp
+		String targetUrl = TOKEN_AUTHENTICATE_URL + token;
+
+		MpAuthenticatedUser mpAuthenticatedUser = HttpClientUtil.rawGet(targetUrl,
+				MpAuthenticatedUser.class);
+
+		// 2、转化mp的用户模型为本地模型
+		UserInfo userInfo = convertToLocal(mpAuthenticatedUser);
 		return userInfo;
 	}
 

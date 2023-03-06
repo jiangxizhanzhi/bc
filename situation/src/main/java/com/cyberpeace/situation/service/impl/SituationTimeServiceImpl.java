@@ -59,6 +59,12 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 		if (instruction.getCode().equals(Instruction.InstructionType.START.getCode())) {
 			situationTime.setStatus(SituationTime.Status.RUNNING.getCode());
 			situationTime.setStartTime(new Date());
+			if (instruction.getCombatTime() != null) {
+				situationTime.setCombatTime(instruction.getCombatTime());
+			}
+			if (instruction.getAstronomicalTime() != null) {
+				situationTime.setAstronomicalTime(instruction.getAstronomicalTime());
+			}
 			situationTimeMapper.updateById(situationTime);
 		} else if (instruction.getCode().equals(Instruction.InstructionType.FINISH.getCode())) {
 			situationTime.setStatus(SituationTime.Status.FINISH.getCode());

@@ -49,6 +49,9 @@ public class AttackMessage extends BaseTable {
 	//线的宽度
 	private Integer lineWidth;
 
+	//关联步骤
+	private Integer step;
+
 	//多媒体数据
 	private String mediaAnimation;
 

@@ -460,6 +460,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 //		}
 		//将动效消息推送到场景
 		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
+		WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
+		wsRealisticSceneDynamic.setStep(attackMessageBo.getStep());
+		situationHandlerService.pushDataToRealisticScene(attackMessageBo.getSceneId(), wsRealisticSceneDynamic);
 		if(!playback){
 			//如果不是回放则会增加一条动效历史
 			attackMessageHistoryService.add(attackMessageBo);

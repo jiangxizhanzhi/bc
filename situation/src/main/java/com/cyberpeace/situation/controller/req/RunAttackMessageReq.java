@@ -55,6 +55,9 @@ public class RunAttackMessageReq implements Serializable {
 	@ApiModelProperty("防御事件")
 	private String defenseType;
 
+	@ApiModelProperty("关联实景步骤")
+	private Integer step;
+
 	@ApiModelProperty("媒体动效")
 	private List<MediaAnimation> mediaAnimationList;
 

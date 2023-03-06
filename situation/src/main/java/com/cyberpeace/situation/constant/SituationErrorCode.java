@@ -64,4 +64,10 @@ public interface SituationErrorCode {
 
 	/** 目标节点为空 */
 	String EMPTY_TARGET_NODE = "104021";
+
+	/** 获取最大步骤时类型不对 */
+	String WRONG_TYPE = "104022";
+
+	/** 获取最大步骤时没有输入类型 */
+	String NO_TYPE = "104023";
 }

@@ -52,6 +52,9 @@ public class AttackMessageReq implements Serializable {
 	@ApiModelProperty("防御等级")
 	private Integer defenseLevel;
 
+	@ApiModelProperty("关联实景步骤")
+	private Integer step;
+
 	@ApiModelProperty("媒体动效")
 	private List<MediaAnimation> mediaAnimationList;
 

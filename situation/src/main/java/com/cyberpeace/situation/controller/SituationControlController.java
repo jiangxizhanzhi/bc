@@ -258,6 +258,20 @@ public class SituationControlController {
 		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId);
 	}
 
+	@ApiOperation("获取实景最大步骤")
+	@GetMapping("/get_max_step")
+	public BaseRsp<Integer> getMaxStep(Integer type) {
+		if (type == null) {
+			throw new BusinessException(SituationErrorCode.NO_TYPE);
+		} else if (type.equals(0)) {
+			return new BaseRsp<>(12);
+		} else if (type.equals(1)) {
+			return new BaseRsp<>(13);
+		} else {
+			throw new BusinessException(SituationErrorCode.WRONG_TYPE);
+		}
+	}
+
 	@ApiOperation("实景demo")
 	@GetMapping("/demo")
 	public void demo(@RequestParam("topo_id") String topoId,@RequestParam("step") Integer step) {

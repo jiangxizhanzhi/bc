@@ -79,8 +79,12 @@ public class SituationTimeServiceImpl implements SituationTimeService {
 			situationTime.setRate(instruction.getRate());
 			situationTimeMapper.updateById(situationTime);
 		} else if (instruction.getCode().equals(Instruction.InstructionType.ADJUST.getCode())) {
-			situationTime.setAstronomicalTime(instruction.getAstronomicalTime());
-			situationTime.setCombatTime(instruction.getCombatTime());
+			if (instruction.getAstronomicalTime() != null) {
+				situationTime.setAstronomicalTime(instruction.getAstronomicalTime());
+			}
+			if (instruction.getCombatTime() != null) {
+				situationTime.setCombatTime(instruction.getCombatTime());
+			}
 			situationTimeMapper.updateById(situationTime);
 		}
 		WsMessage<SituationTime> wsMessage = new WsMessage<>(MessageType.SituationTime.getDesc(), situationTime);

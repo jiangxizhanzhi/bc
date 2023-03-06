@@ -9,7 +9,8 @@ public enum DashboardType {
 	 */
 
 	DZ(1, "定制"),
-	ZB(2, "自编");
+	ZB(2, "自编"),
+	SF(3, "三方靶标");
 
 	@Getter
 	private Integer code;

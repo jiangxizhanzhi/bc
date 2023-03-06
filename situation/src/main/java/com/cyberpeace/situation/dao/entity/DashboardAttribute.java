@@ -36,6 +36,7 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private String taskType;
 
+	// todo 拟定废弃
 	private String taskSubType = "0";
 
 	private Date startTime;

@@ -398,6 +398,7 @@ CREATE TABLE `situation_dashboard_template`
     `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
     `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
     `layer_show`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图层信息',
+    `custom_code`        tinyint                                                 NOT NULL DEFAULT 1 COMMENT '定制类型',
     `edit_status`        tinyint(1) NOT NULL DEFAULT 1 COMMENT '模板编辑权限',
     `refresh`            int NULL DEFAULT NULL COMMENT '刷新间隔',
     `create_user_id`     varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
@@ -411,41 +412,49 @@ CREATE TABLE `situation_dashboard_template`
 -- Records of situation_dashboard_template
 -- ----------------------------
 INSERT INTO `situation_dashboard_template`
-VALUES (1, 'c3765b250f704fcca9d34233399cf615', '定制态势-红蓝对抗', '05b739fc686a073756399f79c34039b5', 3,
-        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+VALUES (1, '2a60639ae3b740d1b04604d491f40cb8', '定制态势-联管中心综合态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 1,
+    '/cpms/upload/images/f91e40adeccf48c99e619d765340e1ad.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+    NULL, '{}', NULL, 2, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 INSERT INTO `situation_dashboard_template`
-VALUES (2, '7fe161bb8863435c9f04aa99d24ffa5f', '定制态势-作战试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
-INSERT INTO `situation_dashboard_template`
-VALUES (3, 'a67104c93b02486890148b55c12693f1', '定制态势-作战实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
-        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
-INSERT INTO `situation_dashboard_template`
-VALUES (4, 'a67104c93b02486890148b55c12693f2', '定制态势-专项比武', '2eec84346538e972a962b165e499f52d', 3,
-        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
-INSERT INTO `situation_dashboard_template`
-VALUES (5, 'a67104c93b02486890148b55c12693f3', '定制态势-夺旗竞赛', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
-INSERT INTO `situation_dashboard_template`
-VALUES (6, 'a67104c93b02486890148b55c12693f4', '定制态势-夺旗竞赛-题目', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
-        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
-INSERT INTO `situation_dashboard_template`
-VALUES (7, 'a67104c93b02486890148b55c12693f5', '定制态势-自主训练', 'c71399e5569b4c2dba78c0c1e1fbae91', 3,
-        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
-INSERT INTO `situation_dashboard_template`
-VALUES (8, 'ffe23f5a8a1c42b9889d8fbc04dd6551', '定制态势-联管中心综合态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 1,
-        '/cpms/upload/images/f91e40adeccf48c99e619d765340e1ad.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
-INSERT INTO `situation_dashboard_template`
-VALUES (9, 'a67104c93b02486890148b55c12693f6', '定制态势-分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
+VALUES (2, '52a37970689b45a091602eafc90abd6f', '定制态势-分靶场态势', 'a4b3555767d14f01b88ee4f8ca471a3e', 2,
         '/cpms/upload/images/38eda0a19e5a43b1a7fdbdfc1bbb760e.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
-        NULL, '{}', NULL, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+        NULL, '{}', NULL, 3, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (3, '6c326a5599ab4c79a5e3b6e438be23ee', '定制态势-红蓝对抗-白方', '05b739fc686a073756399f79c34039b5', 3,
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 4, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+INSERT INTO `situation_dashboard_template`
+VALUES (4, '541d31f7784446e0bd39f437c152ebd9', '定制态势-红蓝对抗-红方', '05b739fc686a073756399f79c34039b5', 3,
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 5, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+INSERT INTO `situation_dashboard_template`
+VALUES (5, 'a3a413eca3ed41bbb5eb80e6111dfb3a', '定制态势-红蓝对抗-蓝方', '05b739fc686a073756399f79c34039b5', 3,
+        '/cpms/upload/images/8ea6a5b484f34838b8d34d61d49bfd76.jpg', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 6, 0, 5, NULL, '2022-12-28 16:05:14', '2022-12-28 16:05:14');
+INSERT INTO `situation_dashboard_template`
+VALUES (6, '38b8330dfdf24211822699ffc8adfcf3', '定制态势-作战试验-攻击', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/13186af6814f460589e7000c836a4de9.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 7, 0, 5, NULL, '2022-12-28 16:04:53', '2022-12-28 16:04:53');
+INSERT INTO `situation_dashboard_template`
+VALUES (7, 'df7d7d4e853742d2acff9f161be3649e', '定制态势-作战实验-防御', '1102f907c7650ad541c381f59c700f5f', 3,
+        '/cpms/upload/images/66298022be8b447e8e470bbdd31d07fe.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 8, 0, 5, NULL, '2023-01-07 15:48:56', '2023-01-07 15:48:58');
+INSERT INTO `situation_dashboard_template`
+VALUES (8, '536b2bcfd1c44874935ee24a2b7cbbd2', '定制态势-专项比武', '2eec84346538e972a962b165e499f52d', 3,
+        '/cpms/upload/images/2318259ae6e04624a74e70eebdf09c90.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 9, 0, 5, NULL, '2023-01-07 15:52:13', '2023-01-07 15:52:15');
+INSERT INTO `situation_dashboard_template`
+VALUES (9, 'f06014630820444b9b920eb4154c5672', '定制态势-夺旗竞赛', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
+        '/cpms/upload/images/be76b93e739447079d33b12363fafab4.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 10, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (10, '6efe768e053f4b2cb00c14200cc60e07', '定制态势-夺旗竞赛-题目', 'f6842d1d76b14217abb9c118d9c5cbfd', 3,
+        '/cpms/upload/images/1c89df029dc04ed8b9200590c863a411.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 11, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
+INSERT INTO `situation_dashboard_template`
+VALUES (11, 'a2c7fb19871442aba80d65e4c5caa3be', '定制态势-自主训练', 'c71399e5569b4c2dba78c0c1e1fbae91', 3,
+        '/cpms/upload/images/01fcc6e34c574558bd25d6706c355d40.png', '1080', '3840', '[]', 0, NULL, NULL, '#FFFFFF',
+        NULL, '{}', NULL, 12, 0, 5, NULL, '2023-01-07 15:54:37', '2023-01-07 15:54:38');
 
 -- ----------------------------
 -- Table structure for situation_dashboard_template_ref
@@ -468,6 +477,7 @@ CREATE TABLE `situation_dashboard_template_ref`
     `topic`              varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '主题',
     `view_angle`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角配置',
     `layer_show`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '图层信息',
+    `custom_code`        tinyint                                                 NOT NULL DEFAULT 1 COMMENT '定制类型',
     `edit_status`        tinyint(1) NOT NULL DEFAULT 1 COMMENT '模板编辑权限',
     `refresh`            int NULL DEFAULT NULL COMMENT '刷新间隔',
     `origin_template_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '初始模板ID',

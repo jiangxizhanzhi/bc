@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
 	@Autowired
 	private ThirdPartyService thirdPartyService;
@@ -143,8 +148,12 @@ public class DashboardServiceImpl implements DashboardService {
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
 				.getByResourceId(situationPublishInstances.getAttributeId());
 
+		DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper
+				.selectById(situationPublishInstances.getTemplateId());
+
 		dashboardIdRes = BeanUtils.copy(dashboardAttribute, DashboardIdRes.class);
 		dashboardIdRes.setDashboardId(situationPublishInstances.getResourceId());
+		dashboardIdRes.setCustomCode(dashboardTemplateRef.getCustomCode());
 
 		return dashboardIdRes;
 

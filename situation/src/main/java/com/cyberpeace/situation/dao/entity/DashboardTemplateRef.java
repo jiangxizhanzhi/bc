@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.cyberpeace.situation.constant.DashboardType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -71,5 +72,8 @@ public class DashboardTemplateRef extends BaseTable {
 
     @ApiModelProperty("原始模板ID")
     private String originTemplateId;
+
+    @ApiModelProperty("定制类型")
+    private Integer customCode;
 
 }

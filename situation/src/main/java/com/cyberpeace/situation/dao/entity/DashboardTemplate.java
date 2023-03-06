@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.cyberpeace.situation.constant.CustomCode;
+import com.cyberpeace.situation.constant.DashboardType;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -52,11 +54,14 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("填充色")
     private String bgColor;
 
-    @ApiModelProperty("编辑状态")
-    private Boolean editStatus;
-
     @ApiModelProperty("颜色主题")
     private String topic;
+
+    @ApiModelProperty("组件配置")
+    private String componentsSetting;
+
+    @ApiModelProperty("图层信息")
+    private String layerShow;
 
     @ApiModelProperty("视角配置")
     private String viewAngle;
@@ -64,11 +69,11 @@ public class DashboardTemplate extends BaseTable {
     @ApiModelProperty("刷新频率")
     private Integer refresh;
 
-    @ApiModelProperty("组件配置")
-    private String componentsSetting;
+    @ApiModelProperty("定制类型")
+    private Integer customCode = CustomCode.ZB.getCode();
 
-    @ApiModelProperty("图层信息")
-    private String layerShow;
+    @ApiModelProperty("编辑状态")
+    private Boolean editStatus;
 
     public enum DashboardTemplateLevel{
 

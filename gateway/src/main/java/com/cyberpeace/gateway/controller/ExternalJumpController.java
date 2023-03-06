@@ -50,13 +50,14 @@ public class ExternalJumpController {
 	@GetMapping("/situation_control")
 	public void jumpSituationControl(HttpServletResponse response,
 									 @RequestParam(value = "resource_id") String resourceId,
+									 @RequestParam(value = "type") String type,
 									 @RequestParam(value = "is_same_site", required = false) Boolean isSameSite) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
 		if(businessTemplate == null){
 			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
 		}
 		setResponse(response,
-				"/page/mg/admin/screen-3/visual-screen-control?name=" + getURLEncoderString(businessTemplate.getName()) + "&topo_id=" + businessTemplate.getTopoId(), isSameSite);
+				"/page/mg/admin/screen-3/visual-screen-control?name=" + getURLEncoderString(businessTemplate.getName()) + "&topo_id=" + businessTemplate.getTopoId() + "&type=" + type, isSameSite);
 	}
 
 	@ApiOperation("跳转到后台场景编辑器页面")

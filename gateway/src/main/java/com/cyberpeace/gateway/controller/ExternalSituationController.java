@@ -112,7 +112,7 @@ public class ExternalSituationController {
 	}
 
 	@ApiOperation("接收指令")
-	@PostMapping("/receiveInstruction")
+	@PostMapping("/receive_instruction")
 	public BaseRsp	receiveInstruction(@RequestBody @Validated Instruction instruction) {
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(instruction.getResourceId());
 		if (businessTemplate == null) {

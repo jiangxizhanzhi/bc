@@ -65,4 +65,7 @@ public class DashboardTemplateRes implements Serializable {
 
     @ApiModelProperty("图层信息")
     private List<LayerShowReq> layerShow;
+
+    @ApiModelProperty("定制类型")
+    private Integer customCode;
 }

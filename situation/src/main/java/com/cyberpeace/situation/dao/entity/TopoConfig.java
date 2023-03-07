@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 import lombok.Data;
 
 @Data
-@TableName("situation_topo_config")
+@TableName("situation_topo_info")
 public class TopoConfig extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")

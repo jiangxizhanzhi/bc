@@ -5,10 +5,10 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper">
     <select id="getByDashboardId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">
         select situation_dashboard_attribute.*
-        from situation_publish_instance
+        from situation_dashboard_instance
                  left join situation_dashboard_attribute on
-                situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
-        where situation_publish_instance.resource_id = #{dashboardId}
+                situation_dashboard_instance.attribute_id = situation_dashboard_attribute.resource_id
+        where situation_dashboard_instance.resource_id = #{dashboardId}
     </select>
 
     <select id="getByResourceId" resultType="com.cyberpeace.situation.dao.entity.DashboardAttribute">

@@ -4,9 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.ApiRequestMapper">
     <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.ApiRequestRes">
-        select * from situation_api_request where 1 = 1
+        select * from situation_datasource_api where 1 = 1
         <if test="apiRequestPageReq.name != null and apiRequestPageReq.name != ''">
-           and name like concat('%', #{apiRequestPageReq.name} ,'%')
+            and name like concat('%', #{apiRequestPageReq.name} ,'%')
         </if>
         <if test="apiRequestPageReq.requestUrl != null and apiRequestPageReq.requestUrl != ''">
             and request_url like concat('%', #{apiRequestPageReq.requestUrl} ,'%')
@@ -20,12 +20,14 @@
         ORDER BY create_time DESC
     </select>
     <select id="selectByAuthContext" resultType="java.lang.String">
-        select resource_id  from situation_api_request where 1 = 1
+        select resource_id from situation_datasource_api where 1 = 1
         <if test="authContext != null">
             and create_user_id = #{authContext.userId}
         </if>
     </select>
     <select id="selectById" resultType="com.cyberpeace.situation.dao.entity.ApiRequest">
-        select * from situation_api_request where resource_id = #{resourceId}
+        select *
+        from situation_datasource_api
+        where resource_id = #{resourceId}
     </select>
 </mapper>

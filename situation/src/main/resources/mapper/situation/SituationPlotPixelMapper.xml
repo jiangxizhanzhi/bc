@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationPlotPixelMapper">
 
     <select id="selectPage" resultType="com.cyberpeace.situation.dao.entity.SituationPlotPixel">
-        SELECT * FROM situation_plot_pixel WHERE 1 = 1
+        SELECT * FROM situation_gis_mark_pixel WHERE 1 = 1
         <if test="situationPlotPixelPageReq.name != null and situationPlotPixelPageReq.name != ''">
             AND name LIKE concat("%", #{situationPlotPixelPageReq.name} ,"%")
         </if>

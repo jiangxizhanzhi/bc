@@ -6,9 +6,9 @@
     <select id="getSituationPublishInstancePage"
             resultType="com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes">
 
-        SELECT situation_publish_instance.*, situation_dashboard_attribute.scheme_name as scheme_name
-        FROM situation_publish_instance left join situation_dashboard_attribute on
-        situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
+        SELECT situation_dashboard_instance.*, situation_dashboard_attribute.scheme_name as scheme_name
+        FROM situation_dashboard_instance left join situation_dashboard_attribute on
+        situation_dashboard_instance.attribute_id = situation_dashboard_attribute.resource_id
         WHERE 1 = 1
         <if test="situationPublishInstanceFilterReq.name != null and situationPublishInstanceFilterReq.name != ''">
             AND name like concat("%", #{situationPublishInstanceFilterReq.name}, "%")
@@ -17,10 +17,10 @@
             AND category = #{situationPublishInstanceFilterReq.category}
         </if>
         <if test="situationPublishInstanceFilterReq.startTime != null">
-            AND situation_publish_instance.update_time &gt; #{situationPublishInstanceFilterReq.startTime}
+            AND situation_dashboard_instance.update_time &gt; #{situationPublishInstanceFilterReq.startTime}
         </if>
         <if test="situationPublishInstanceFilterReq.endTime != null">
-            AND situation_publish_instance.update_time &lt; #{situationPublishInstanceFilterReq.endTime}
+            AND situation_dashboard_instance.update_time &lt; #{situationPublishInstanceFilterReq.endTime}
         </if>
         <if test="situationPublishInstanceFilterReq.status != null and situationPublishInstanceFilterReq.status != ''">
             AND status = #{situationPublishInstanceFilterReq.status}
@@ -29,7 +29,7 @@
     </select>
 
     <select id="getAttributeIds" resultType="java.lang.String">
-        SELECT attribute_id FROM situation_publish_instance
+        SELECT attribute_id FROM situation_dashboard_instance
         <where>
             <if test="resourceIds != null and resourceIds.size() != 0">
                 resource_id in
@@ -43,7 +43,7 @@
     <select id="selectPublicedBySubjectId"
             resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
 
-        SELECT * FROM situation_publish_instance
+        SELECT * FROM situation_dashboard_instance
         <where>
             status = 2
             <if test="taskId != null and taskId != ''">
@@ -55,7 +55,7 @@
         </where>
     </select>
     <select id="selectXdInstanceBySchemeId" resultType="java.lang.String">
-        SELECT resource_id FROM situation_publish_instance
+        SELECT resource_id FROM situation_dashboard_instance
         <where>
             xd = 1
             <if test="schemeId != null and schemeId != ''">
@@ -65,7 +65,7 @@
     </select>
     <select id="selectByTemplateId"
             resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
-        SELECT * FROM situation_publish_instance
+        SELECT * FROM situation_dashboard_instance
         <where>
             template_id = #{templateId}
         </where>
@@ -73,9 +73,9 @@
 
     <select id="getDashboardLevel" resultType="java.lang.Integer">
         SELECT situation_dashboard_attribute.level as level
-        FROM situation_publish_instance
+        FROM situation_dashboard_instance
                  left join situation_dashboard_attribute on
-                situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
-        WHERE situation_publish_instance.resource_id = #{dashboardId}
+                situation_dashboard_instance.attribute_id = situation_dashboard_attribute.resource_id
+        WHERE situation_dashboard_instance.resource_id = #{dashboardId}
     </select>
 </mapper>

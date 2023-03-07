@@ -64,6 +64,9 @@ public class DashboardTemplateRef extends BaseTable {
 	@ApiModelProperty("刷新频率")
 	private Integer refresh;
 
+	@ApiModelProperty("模板配置")
+	private String config;
+
 	@ApiModelProperty("定制类型")
 	private Integer customCode;
 
@@ -72,5 +75,8 @@ public class DashboardTemplateRef extends BaseTable {
 
 	@ApiModelProperty("原始模板ID")
 	private String originTemplateId;
+
+	@ApiModelProperty("创建人")
+	private String createUserId;
 
 }

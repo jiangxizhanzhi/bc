@@ -5,15 +5,17 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationIconMapper">
 
     <select id="selectByName" resultType="java.lang.String">
-        SELECT resource_id FROM situation_icon WHERE `name` = #{name}
+        SELECT resource_id
+        FROM situation_components_icon
+        WHERE `name` = #{name}
     </select>
     <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.SituationIconRes">
-        SELECT * FROM situation_icon WHERE 1 = 1
+        SELECT * FROM situation_components_icon WHERE 1 = 1
         <if test="situationIconPageReq.name != null and situationIconPageReq.name != ''">
             AND name LIKE concat("%", #{situationIconPageReq.name} ,"%")
         </if>
         <if test="situationIconPageReq.type != null and situationIconPageReq != ''">
-            AND type =  #{situationIconPageReq.type}
+            AND type = #{situationIconPageReq.type}
         </if>
         ORDER BY create_time DESC
     </select>

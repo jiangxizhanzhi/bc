@@ -5,12 +5,12 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationCategoryMapper">
     <select id="selectByTaskType" resultType="com.cyberpeace.situation.dao.entity.SituationCategory">
         select *
-        from situation_category
+        from situation_common_category
         where task_type = #{taskType}
     </select>
     <select id="selectByName" resultType="com.cyberpeace.situation.dao.entity.SituationCategory">
         select *
-        from situation_category
+        from situation_common_category
         where name = #{name}
     </select>
 </mapper>

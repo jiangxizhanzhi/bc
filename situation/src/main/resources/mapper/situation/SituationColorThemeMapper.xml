@@ -4,7 +4,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationColorThemeMapper">
 
     <select id="selectPage" resultType="com.cyberpeace.situation.dao.entity.ColorTheme">
-        select * from situation_color_theme where 1 = 1
+        select * from situation_components_theme where 1 = 1
         <if test="colorThemePageReq.name != null and colorThemePageReq.name != ''">
             and name like concat('%', #{colorThemePageReq.name} ,'%')
         </if>

@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +11,14 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
@@ -159,4 +160,12 @@ public class DashboardServiceImpl implements DashboardService {
 
 	}
 
+	@Override
+	public Integer getDashboardLevel(String dashboardId) {
+		Integer level = situationPublishInstanceMapper.getDashboardLevel(dashboardId);
+		if (level == null) {
+			throw new BusinessException(SituationErrorCode.FAILED_TO_OBTAIN_DASHBOARD_INFO);
+		}
+		return level;
+	}
 }

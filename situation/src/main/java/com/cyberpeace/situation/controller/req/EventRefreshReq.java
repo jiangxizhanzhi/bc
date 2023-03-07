@@ -16,6 +16,9 @@ public class EventRefreshReq {
 	@ApiModelProperty(value = "特征ID", required = true)
 	private String featureId;
 
+	@ApiModelProperty(value = "分靶场ID", required = false)
+	private String subRangeId;
+
 	@ApiModelProperty(value = "模式 1-实时 2-回放", required = true)
 	private Integer mode;
 

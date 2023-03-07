@@ -15,4 +15,8 @@ public class TaskEventReq implements Serializable {
 	@ApiModelProperty("查询时间")
 	private Date queryTime;
 
+	public void setCurrentTime(Date currentTime) {
+		this.queryTime = currentTime;
+	}
+
 }

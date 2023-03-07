@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 
 import com.cyberpeace.integratation.model.situation.req.EventReq;
 
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,5 +20,10 @@ public class EventMsgReq extends EventReq implements Serializable {
 	@ApiModelProperty("特征ID")
 	@NotEmpty
 	private String featureId;
+
+	public void writeInfoFromInstance(SituationPublishInstance instance) {
+		this.setTaskId(instance.getTaskId());
+		this.setSubjectId(instance.getSubjectId());
+	}
 
 }

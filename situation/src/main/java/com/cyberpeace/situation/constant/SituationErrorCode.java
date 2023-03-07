@@ -175,6 +175,7 @@ public interface SituationErrorCode {
 	 * 未找到默认靶场大屏信息
 	 */
 	String DEFAULT_BC_ERROR = "106011";
+
 	/**
 	 * 二维组件导出失败
 	 */
@@ -184,5 +185,10 @@ public interface SituationErrorCode {
 	 * 二维组件导入失败
 	 */
 	String COMPONENTS_IMPORT_FAILED = "106013";
+
+	/**
+	 * 获取大屏信息失败
+	 */
+	String FAILED_TO_OBTAIN_DASHBOARD_INFO = "106014";
 
 }

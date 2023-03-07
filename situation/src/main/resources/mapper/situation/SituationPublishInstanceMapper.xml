@@ -70,4 +70,12 @@
             template_id = #{templateId}
         </where>
     </select>
+
+    <select id="getDashboardLevel" resultType="java.lang.Integer">
+        SELECT situation_dashboard_attribute.level as level
+        FROM situation_publish_instance
+                 left join situation_dashboard_attribute on
+                situation_publish_instance.attribute_id = situation_dashboard_attribute.resource_id
+        WHERE situation_publish_instance.resource_id = #{dashboardId}
+    </select>
 </mapper>

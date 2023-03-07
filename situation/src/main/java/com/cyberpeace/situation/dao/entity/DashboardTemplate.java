@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.situation.constant.CustomCode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,83 +20,86 @@ import lombok.Getter;
 @TableName("situation_dashboard_template")
 public class DashboardTemplate extends BaseTable {
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    @ApiModelProperty("模板名称")
-    private String name;
+	@ApiModelProperty("模板名称")
+	private String name;
 
-    @ApiModelProperty("模板类型")
-    private String type;
+	@ApiModelProperty("模板类型")
+	private String type;
 
-    @ApiModelProperty("模板级别")
-    private Integer level;
+	@ApiModelProperty("模板级别")
+	private Integer level;
 
-    @ApiModelProperty("缩略图")
-    private String thumbnail;
+	@ApiModelProperty("缩略图")
+	private String thumbnail;
 
-    @ApiModelProperty("画布高度")
-    private String height;
+	@ApiModelProperty("画布高度")
+	private String height;
 
-    @ApiModelProperty("画布宽度")
-    private String width;
+	@ApiModelProperty("画布宽度")
+	private String width;
 
-    @ApiModelProperty("背景类型")
-    private String bgType;
+	@ApiModelProperty("背景类型")
+	private String bgType;
 
-    @ApiModelProperty("背景类型")
-    private String bgTemplate;
+	@ApiModelProperty("背景类型")
+	private String bgTemplate;
 
-    @ApiModelProperty("背景图片")
-    private String bgImg;
+	@ApiModelProperty("背景图片")
+	private String bgImg;
 
-    @ApiModelProperty("填充色")
-    private String bgColor;
+	@ApiModelProperty("填充色")
+	private String bgColor;
 
-    @ApiModelProperty("编辑状态")
-    private Boolean editStatus;
+	@ApiModelProperty("颜色主题")
+	private String topic;
 
-    @ApiModelProperty("颜色主题")
-    private String topic;
+	@ApiModelProperty("组件配置")
+	private String componentsSetting;
 
-    @ApiModelProperty("视角配置")
-    private String viewAngle;
+	@ApiModelProperty("图层信息")
+	private String layerShow;
 
-    @ApiModelProperty("刷新频率")
-    private Integer refresh;
+	@ApiModelProperty("视角配置")
+	private String viewAngle;
 
-    @ApiModelProperty("组件配置")
-    private String componentsSetting;
+	@ApiModelProperty("刷新频率")
+	private Integer refresh;
 
-    @ApiModelProperty("图层信息")
-    private String layerShow;
+	@ApiModelProperty("定制类型")
+	private Integer customCode = CustomCode.ZB.getCode();
 
-    public enum DashboardTemplateLevel{
+	@ApiModelProperty("编辑状态")
+	private Boolean editStatus;
 
-        TOPOLOGY(2,"拓扑级"),
-        PARK (3,"园区级"),
-        GIS(1,"GIS级"),
-        BASIC_GIS(0,"基础模板");
+	public enum DashboardTemplateLevel {
 
-        @Getter
-        private Integer code;
+		TOPOLOGY(2, "拓扑级"),
+		PARK(3, "园区级"),
+		GIS(1, "GIS级"),
+		BASIC_GIS(0, "基础模板");
 
-        @Getter
-        private String desc;
+		@Getter
+		private Integer code;
 
-        DashboardTemplateLevel(int code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-    }
+		@Getter
+		private String desc;
 
-    public static HashMap<Integer, String> getDashboardTemplateLevel(){
-        HashMap<Integer, String> map = new HashMap();
-        map.put(DashboardTemplateLevel.GIS.code, DashboardTemplateLevel.GIS.desc);
-        map.put(DashboardTemplateLevel.PARK.code, DashboardTemplateLevel.PARK.desc);
-        map.put(DashboardTemplateLevel.TOPOLOGY.code, DashboardTemplateLevel.TOPOLOGY.desc);
-        map.put(DashboardTemplateLevel.BASIC_GIS.code, DashboardTemplateLevel.BASIC_GIS.desc);
-        return map;
-    }
+		DashboardTemplateLevel(int code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+	}
+
+	public static HashMap<Integer, String> getDashboardTemplateLevel() {
+		HashMap<Integer, String> map = new HashMap();
+		map.put(DashboardTemplateLevel.GIS.code, DashboardTemplateLevel.GIS.desc);
+		map.put(DashboardTemplateLevel.PARK.code, DashboardTemplateLevel.PARK.desc);
+		map.put(DashboardTemplateLevel.TOPOLOGY.code, DashboardTemplateLevel.TOPOLOGY.desc);
+		map.put(DashboardTemplateLevel.BASIC_GIS.code, DashboardTemplateLevel.BASIC_GIS.desc);
+		return map;
+	}
 
 }

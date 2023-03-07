@@ -25,4 +25,6 @@ public interface DashboardService {
 
 	DashboardAttribute getDashboardAttribute(String dashboardId);
 
+	Integer getDashboardLevel(String dashboardId);
+
 }

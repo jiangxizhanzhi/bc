@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
@@ -34,6 +37,9 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
 	@Autowired
 	private ThirdPartyService thirdPartyService;
@@ -143,11 +149,23 @@ public class DashboardServiceImpl implements DashboardService {
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
 				.getByResourceId(situationPublishInstances.getAttributeId());
 
+		DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper
+				.selectById(situationPublishInstances.getTemplateId());
+
 		dashboardIdRes = BeanUtils.copy(dashboardAttribute, DashboardIdRes.class);
 		dashboardIdRes.setDashboardId(situationPublishInstances.getResourceId());
+		dashboardIdRes.setCustomCode(dashboardTemplateRef.getCustomCode());
 
 		return dashboardIdRes;
 
 	}
 
+	@Override
+	public Integer getDashboardLevel(String dashboardId) {
+		Integer level = situationPublishInstanceMapper.getDashboardLevel(dashboardId);
+		if (level == null) {
+			throw new BusinessException(SituationErrorCode.FAILED_TO_OBTAIN_DASHBOARD_INFO);
+		}
+		return level;
+	}
 }

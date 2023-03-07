@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.util.ListUtil;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
@@ -21,6 +21,7 @@ import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.DashboardLevel;
 import com.cyberpeace.situation.constant.DynamicParameter;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
@@ -28,7 +29,9 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.DashboardService;
@@ -43,7 +46,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势大屏")
 @RestController
-//@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/dashboard/")
 public class DashboardController {
 
@@ -64,6 +67,9 @@ public class DashboardController {
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private SituationPublishInstanceMapper situationPublishInstanceMapper;
 
 	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
@@ -123,7 +129,7 @@ public class DashboardController {
 	@ApiOperation("获取大屏刷新时间选项")
 	@GetMapping("/refresh/list/")
 	public BaseRsp<List<Integer>> getRefreshList() {
-		return new BaseRsp<>(ListUtil.listRangeInt(1, 10));
+		return new BaseRsp<>(ListUtil.listRangeInt(5, 10));
 	}
 
 	@ApiOperation("推送大屏属性变更消息")
@@ -183,22 +189,34 @@ public class DashboardController {
 	@ApiOperation("刷新大屏动态数据")
 	@PostMapping("/event/refresh/")
 	public BaseRsp<Boolean> refreshEvent(@RequestBody @Validated EventRefreshReq req) {
+		Integer level = dashboardService.getDashboardLevel(req.getDashboardId());
+		if (DashboardLevel.RW.getCode().equals(level)) {
+			SituationPublishInstance instance = situationPublishInstanceMapper
+					.selectById(req.getDashboardId());
+			EventMsgReq eventMsgReq = BeanUtils.copy(req, EventMsgReq.class);
+			eventMsgReq.writeInfoFromInstance(instance);
+			getAdEvents(eventMsgReq);
+			getTaskNodeEvents(eventMsgReq);
+		} else {
+			TaskEventMsgReq taskEventMsgReq = BeanUtils.copy(req, TaskEventMsgReq.class);
+			getTaskEvents(taskEventMsgReq);
+		}
 		return new BaseRsp<>(true);
-
 	}
 
 	@ApiOperation("获取最新的任务事件")
 	@PostMapping("/event/task/")
 	public BaseRsp<Boolean> getTaskEvent(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
+		return new BaseRsp<>(getTaskEvents(taskEventReq));
+	}
 
+	private Boolean getTaskEvents(TaskEventMsgReq taskEventReq) {
 		List<TaskEventContext> taskEventContexts = remoteSituationService
 				.getTaskEventList(taskEventReq, taskEventReq.getFeatureId());
 		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEvent.getDesc(),
 				taskEventReq.getDashboardId(), taskEventReq.getFeatureId(), taskEventContexts, null,
 				null);
-
-		return new BaseRsp<>(true);
-
+		return true;
 	}
 
 	@ApiOperation("获取最新的任务解题事件")
@@ -218,6 +236,10 @@ public class DashboardController {
 	@PostMapping("/event/task/ad/")
 	public BaseRsp<Boolean> getTaskAdEvent(@RequestBody @Validated EventMsgReq eventReq) {
 
+		return new BaseRsp<>(getAdEvents(eventReq));
+	}
+
+	private Boolean getAdEvents(EventMsgReq eventReq) {
 		// 获取三方攻防事件数据
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());
@@ -236,19 +258,25 @@ public class DashboardController {
 		Boolean result = situationHandlerService.pushEventAds(eventAds, eventReq.getDashboardId(),
 				eventReq.getFeatureId());
 
-		return new BaseRsp<>(result);
+		return result;
 	}
 
 	@ApiOperation("获取最新的节点状态事件")
 	@PostMapping("/event/task/node/")
 	public BaseRsp<Boolean> getTaskNodeEvent(@RequestBody @Validated EventMsgReq eventReq) {
 
+		return new BaseRsp<>(getTaskNodeEvents(eventReq));
+	}
+
+	private Boolean getTaskNodeEvents(EventMsgReq eventReq) {
+
 		List<NodeEventContext> nodeEventContexts = remoteSituationService.getNodeEventList(eventReq,
 				eventReq.getFeatureId());
 		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventNode.getDesc(),
 				eventReq.getDashboardId(), eventReq.getFeatureId(), nodeEventContexts, null, null);
 
-		return new BaseRsp<>(true);
+		return true;
+
 	}
 
 }

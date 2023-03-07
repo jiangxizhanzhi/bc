@@ -42,7 +42,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "三方数据")
 @RestController
-//@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/third/")
 public class ThirdPartyController {
 
@@ -283,11 +283,13 @@ public class ThirdPartyController {
 
 		// 直接返回样例拓扑
 		if ("demo".equals(topoReq.getEnvId())) {
-			InputStream inputStream = getClass().getResourceAsStream("/demoTopo.json");
-			JSONObject data = JsonUtil.toJsonObject(inputStream, JSONObject.class)
-					.getJSONObject("data");
-			return new BaseRsp<>(
-					JsonUtil.toJsonObject(JsonUtil.toJsonString(data), TopoContext.class));
+			return new BaseRsp<>(JsonUtil.toJsonObject(
+					JsonUtil.toJsonString(getJsonByName("demoTopo")), TopoContext.class));
+		}
+
+		if ("test".equals(topoReq.getEnvId())) {
+			return new BaseRsp<>(JsonUtil.toJsonObject(
+					JsonUtil.toJsonString(getJsonByName("demo5000")), TopoContext.class));
 		}
 
 		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
@@ -308,6 +310,11 @@ public class ThirdPartyController {
 		}
 
 		return new BaseRsp<>(topoContext);
+	}
+
+	private JSONObject getJsonByName(String name) {
+		InputStream inputStream = getClass().getResourceAsStream("/" + name + ".json");
+		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
 	}
 
 	@ApiOperation("想定-获取任务下可视化方案列表")

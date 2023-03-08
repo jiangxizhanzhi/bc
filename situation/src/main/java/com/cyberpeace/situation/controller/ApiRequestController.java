@@ -1,5 +1,12 @@
 package com.cyberpeace.situation.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -11,17 +18,13 @@ import com.cyberpeace.situation.controller.req.ApiConnectReq;
 import com.cyberpeace.situation.controller.req.ApiRequestPageReq;
 import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
 import com.cyberpeace.situation.controller.res.ApiRequestRes;
+import com.cyberpeace.situation.dao.entity.ApiRequest;
 import com.cyberpeace.situation.service.ApiRequestService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @Author xuxz
@@ -66,6 +69,12 @@ public class ApiRequestController {
     @GetMapping("list")
     public BaseRsp<ListRsp<ApiRequestRes>> getApiConnectPage(ApiRequestPageReq apiRequestPageReq) {
         return new BaseRsp<>(apiRequestService.getApiConnectPage(apiRequestPageReq));
+    }
+
+    @ApiOperation("获取全量api列表")
+    @GetMapping("/list/all/")
+    public BaseRsp<List<ApiRequest>> getAllApi() {
+        return new BaseRsp<>(apiRequestService.getAllApi());
     }
 
     @ApiOperation("api连接测试")

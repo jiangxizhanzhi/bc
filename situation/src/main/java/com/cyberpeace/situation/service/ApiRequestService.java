@@ -1,12 +1,13 @@
 package com.cyberpeace.situation.service;
 
+import java.util.List;
+
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.ApiConnectReq;
 import com.cyberpeace.situation.controller.req.ApiRequestPageReq;
 import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
 import com.cyberpeace.situation.controller.res.ApiRequestRes;
-
-import java.util.List;
+import com.cyberpeace.situation.dao.entity.ApiRequest;
 
 /**
  * @Author xuxz
@@ -56,6 +57,8 @@ public interface ApiRequestService {
      * @return
      */
     ListRsp<ApiRequestRes> getApiConnectPage(ApiRequestPageReq apiRequestPageReq);
+
+    List<ApiRequest> getAllApi();
 
     /**
      * 根据resourceId测试连接

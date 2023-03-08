@@ -70,7 +70,7 @@ INSERT INTO `situation_datasource_drive`
 VALUES (4, 'SQLSERVER', 'com.microsoft.sqlserver.jdbc.SQLServerDriver', 'jdbc:sqlserver://%s:%s',
         'jdbc:sqlserver://%s:%s');
 INSERT INTO `situation_datasource_drive`
-VALUES (5, 'HIVE', 'org.apache.hadoop.hive.jdbc.HiveDriver', 'jdbc:hive2://%s:%s', 'jdbc:hive2://%s:%s/%s');
+VALUES (5, 'HIVE', 'org.apache.hive.jdbc.HiveDriver', 'jdbc:hive2://%s:%s', 'jdbc:hive2://%s:%s/%s');
 
 -- ----------------------------
 -- Table structure for situation_datasource_db

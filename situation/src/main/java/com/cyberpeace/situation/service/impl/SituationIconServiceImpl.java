@@ -87,7 +87,9 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
         //设置创建人名称
         String createUserId = situationIconRes.getCreateUserId();
         UserInfo userInfo = remoteUserService.getById(createUserId);
-        situationIconRes.setCreateUserName(userInfo.getUserName());
+        if (userInfo != null) {
+            situationIconRes.setCreateUserName(userInfo.getUserName());
+        }
         return situationIconRes;
     }
 

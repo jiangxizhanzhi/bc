@@ -133,7 +133,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         Page page = apiRequestPageReq.toPageParam();
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.FALSE);
-        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, authContext, apiRequestPageReq));
+        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, null, apiRequestPageReq));
     }
 
     @Override

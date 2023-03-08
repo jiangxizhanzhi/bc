@@ -162,6 +162,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         }
         DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
         Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), null);
+        String type = dataSourceRecord.getType();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<String> list = new ArrayList<>();
@@ -170,7 +171,13 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                String database = resultSet.getString("Database");
+                String dbName = null;
+                if (type.equals("HIVE")) {
+                    dbName = "database_name";
+                } else if (type.equals("MYSQL")){
+                    dbName = "Database";
+                }
+                String database = resultSet.getString(dbName);
                 if (StringUtils.isNotEmpty(database)) {
                     list.add(database);
                 }
@@ -224,6 +231,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 JSONObject jsonObject = new JSONObject();
                 for (String name : columnList) {
                     Object object = resultSet.getObject(name);
+                    if (name.contains(".")) {
+                        name = name.substring(name.indexOf(".") + 1);
+                    }
                     jsonObject.put(name, object);
                 }
                 dataList.add(jsonObject);

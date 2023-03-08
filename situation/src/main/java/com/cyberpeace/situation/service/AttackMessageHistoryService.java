@@ -97,4 +97,6 @@ public interface AttackMessageHistoryService {
 	 * @param sceneId 场景编号
 	 */
 	void clearIllegalData(String sceneId);
+
+	<T> void pushDataTo28S(String topoId, T data);
 }

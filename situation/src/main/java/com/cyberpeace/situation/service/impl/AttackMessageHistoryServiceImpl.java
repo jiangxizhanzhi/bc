@@ -1,7 +1,11 @@
 package com.cyberpeace.situation.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.DefenseType;
@@ -10,6 +14,7 @@ import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
 import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.RealistSceneWsMessageIdentifier;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsRbElementStatus;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
@@ -33,6 +38,9 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
+
+	@Autowired
+	private MyWebSocketHandler myWebSocketHandler;
 
 	@Override
 	public void add(AttackMessageReq attackMessageReq) {
@@ -218,6 +226,18 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		if (resourceIdList.size()>0){
 			attackMessageHistoryMapper.deleteBatchIds(resourceIdList);
 		}
+	}
+
+	@Override
+	public <T> void pushDataTo28S(String topoId, T data) {
+		RealistSceneWsMessageIdentifier identifier = new RealistSceneWsMessageIdentifier();
+		identifier.setPath(WsPath.OUTER_STATISTICS);
+		identifier.setTopoId(topoId);
+		WebSocketMessageContext messageContext = WebSocketMessageContext.builder()
+																		.data(JsonUtil.toJsonString(data,
+																				PropertyNamingStrategy.SnakeCase))
+																		.messageIdentifier(identifier).build();
+		myWebSocketHandler.pushMessage(messageContext, true);
 	}
 
 	public <E, T> List<HostCount> getHostTop(Predicate<? super AttackType> filterValue, String sceneId) {

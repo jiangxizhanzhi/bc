@@ -1,10 +1,9 @@
 package com.cyberpeace.common.constant;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 /**
  * 对外暴露的websocket路径
@@ -40,6 +39,8 @@ public class WsPath {
 
 	public static final String REALISTIC_SCENE = "/ws/realistic_scene";
 
+	public static final String OUTER_STATISTICS = "/ws/28s/statistics";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -56,6 +57,7 @@ public class WsPath {
 		cache.add(CLASSROOM_HELP);
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
 		cache.add(REALISTIC_SCENE);
+		cache.add(OUTER_STATISTICS);
 	}
 
 	public static boolean validPath(String path) {

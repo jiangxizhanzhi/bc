@@ -4,6 +4,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.res.SituationTimeRes;
 import com.cyberpeace.situation.model.*;
+import com.cyberpeace.situation.model.ws.WsRealisticSceneDynamic;
 import com.cyberpeace.situation.service.AttackMessageHistoryService;
 import com.cyberpeace.situation.service.SituationStatisticsService;
 import com.cyberpeace.situation.service.SituationTimeService;
@@ -122,6 +123,14 @@ public class SituationStatisticsController {
 	public BaseRsp<SituationTimeRes> getTime(@ApiParam(name = "topo_id", value = "场景编号",
 			required = true) @RequestParam(value = "topo_id") String topoId) {
 		return new BaseRsp<>(situationTimeService.getTimeManagement(topoId));
+	}
+
+	@ApiOperation("28所demo")
+	@GetMapping("/28s_demo")
+	public void outerDemo(@RequestParam("topo_id") String topoId, @RequestParam("step") Integer step) {
+		WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
+		wsRealisticSceneDynamic.setStep(step);
+		attackMessageHistoryService.pushDataTo28S(topoId, wsRealisticSceneDynamic);
 	}
 
 }

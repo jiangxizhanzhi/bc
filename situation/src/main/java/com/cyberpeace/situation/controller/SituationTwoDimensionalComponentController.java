@@ -1,13 +1,11 @@
 package com.cyberpeace.situation.controller;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -161,21 +159,26 @@ public class SituationTwoDimensionalComponentController {
 
 	@ApiOperation("二维组件导出")
 	@GetMapping("export")
-	public BaseRsp<String> exportTwoDimensionalComponents(@RequestParam("resourceId") @NotBlank String resourceId){
+	public void exportTwoDimensionalComponents(@RequestParam("resourceId") @NotBlank String resourceId, HttpServletResponse response){
 		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(resourceId);
 		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		String name = twoDimensionalComponents.getName();
-		String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
-		String jsonString = JsonUtil.toJsonString(twoDimensionalComponents);
-		try {
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path), StandardCharsets.UTF_8);
-			FileUtil.writeString(jsonString,osw);
-		} catch (IOException e) {
-			throw new BusinessException(SituationErrorCode.COMPONENTS_EXPORT_FAILED);
-		}
-		return new BaseRsp<>(path);
+        String name = twoDimensionalComponents.getName();
+        String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
+        try {
+            String jsonString = JsonUtil.toJsonString(twoDimensionalComponents);
+            FileUtil.writeToDestFile(jsonString, path);
+            FileUtil.setResponse(new File(path), true, response);
+
+        } catch (Exception e) {
+            log.error("failed to export pdf: {}", path);
+            throw e;
+        } finally {
+            if (!FileUtil.deleteDir(new File(path))) {
+                log.error("failed to delete dir: {}", path);
+            }
+        }
 	}
 	@ApiOperation("二维组件导入")
 	@PutMapping("import")

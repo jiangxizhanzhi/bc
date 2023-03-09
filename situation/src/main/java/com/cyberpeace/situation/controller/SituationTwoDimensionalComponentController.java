@@ -8,6 +8,9 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.util.ZipUtil;
+import lombok.SneakyThrows;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -157,20 +160,25 @@ public class SituationTwoDimensionalComponentController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("二维组件导出")
+	@SneakyThrows
+    @ApiOperation("二维组件导出")
 	@GetMapping("export")
 	public void exportTwoDimensionalComponents(@RequestParam("resourceId") @NotBlank String resourceId, HttpServletResponse response){
 		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper.selectById(resourceId);
 		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+        String tempDir = ZipUtil.generatePath();
         String name = twoDimensionalComponents.getName();
         String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
         try {
             String jsonString = JsonUtil.toJsonString(twoDimensionalComponents);
-            FileUtil.writeToDestFile(jsonString, path);
-            FileUtil.setResponse(new File(path), true, response);
-
+            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path),
+                    StandardCharsets.UTF_8);
+            FileUtil.writeString(jsonString, osw);
+            String zipPath = ZipUtil.toZip(tempDir);
+            File zip = new File(zipPath);
+            FileUtil.setResponse(zip, true, response);
         } catch (Exception e) {
             log.error("failed to export pdf: {}", path);
             throw e;
@@ -184,13 +192,18 @@ public class SituationTwoDimensionalComponentController {
 	@PutMapping("import")
 	public BaseRsp<TwoDimensionalComponents> importTwoDimensionalComponents(@RequestParam("file") MultipartFile file){
 		TwoDimensionalComponents twoDimensionalComponents = null;
+        FileUtil.validateSuffix(file, FileSunffixConstant.ZIP.getDesc());
 		try {
-			FileUtil.validateSuffix(file, FileSunffixConstant.JSON.getDesc());
-			InputStream inputStream = file.getInputStream();
-			twoDimensionalComponents = JsonUtil.toJsonObject(inputStream, TwoDimensionalComponents.class);
+            File localFile = FileUtil.saveFile(file, ZipUtil.generatePath());
+            String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+            String dataJson = FileUtil.getContent(
+                    new File(unZipPath + File.separator + "json"));
+            twoDimensionalComponents = JsonUtil.toJsonObject(dataJson, TwoDimensionalComponents.class);
 		} catch (IOException e) {
 			throw new BusinessException(SituationErrorCode.COMPONENTS_IMPORT_FAILED);
-		}
-		return new BaseRsp<>(twoDimensionalComponents);
+		} catch (ZipException e) {
+            throw new BusinessException(SituationErrorCode.COMPONENTS_IMPORT_FAILED);
+        }
+        return new BaseRsp<>(twoDimensionalComponents);
 	}
 }

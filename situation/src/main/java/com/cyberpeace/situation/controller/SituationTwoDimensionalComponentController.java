@@ -167,8 +167,7 @@ public class SituationTwoDimensionalComponentController {
 		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-        String name = twoDimensionalComponents.getName();
-        String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + name + ".json";
+        String path = "/cpms/" + CommonConstant.TWO_DIMENSIONAL_COMPONENTS + resourceId + ".json";
         try {
             String jsonString = JsonUtil.toJsonString(twoDimensionalComponents);
             OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(path),

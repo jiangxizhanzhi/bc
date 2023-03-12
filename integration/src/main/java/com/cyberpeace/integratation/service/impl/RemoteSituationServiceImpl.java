@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
 import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
 import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
 import com.cyberpeace.integratation.model.situation.layer.LayerTopoContext;
 import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
 import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
@@ -500,6 +501,13 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		LayerTopoContext rep = HttpClientUtil.post(TS_LAYER_TOPO, taskBaseReq,
 				LayerTopoContext.class);
 		return rep.convert();
+	}
+
+	@Override
+	public List<LayerEventContext> getCrossLayerEvent(TaskBaseReq taskBaseReq) {
+		EventLayerRsp eventLayerRsp = HttpClientUtil.post(TS_LAYER_EVENT, taskBaseReq,
+				EventLayerRsp.class);
+		return eventLayerRsp.getEvents();
 	}
 
 	@Override

@@ -27,7 +27,8 @@ public enum MessageType {
 	NodeMigration(17, "node_migration"),
 	TaskStatus(18, "status"),
 	Message(19, "message"),
-	MapSource(20, "map_source");
+	MapSource(20, "map_source"),
+	LayerEvent(21, "event_layer");
 
 	@Getter
 	private Integer code;

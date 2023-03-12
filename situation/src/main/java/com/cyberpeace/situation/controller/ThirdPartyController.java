@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
+import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,9 @@ public class ThirdPartyController {
 
 	@Autowired
 	private SituationGisService situationGisService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@ApiOperation("获取攻防事件类型列表")
 	@GetMapping("/event_type/list/")
@@ -370,6 +377,19 @@ public class ThirdPartyController {
 	@PostMapping("/topo/cross_layer/")
 	public BaseRsp<TopoContext> getCrossLayerTopo(@RequestBody @Validated TaskBaseReq taskBaseReq) {
 		TopoContext rsp = remoteSituationService.getCrossLayerTopo(taskBaseReq);
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("获取跨层分析事件")
+	@PostMapping("/event/cross_layer/")
+	public BaseRsp<List<LayerEventContext>>
+			getCrossLayerEvent(@RequestBody @Validated TaskDashboardReq taskBaseReq) {
+		List<LayerEventContext> rsp = remoteSituationService.getCrossLayerEvent(taskBaseReq);
+		// 推送WS消息
+		WsMessage<List<LayerEventContext>> wsMessage = new WsMessage<>(
+				MessageType.LayerEvent.getDesc(), rsp);
+		situationHandlerService.pushDataToDashboard(wsMessage, taskBaseReq.getDashboardId(),
+				taskBaseReq.getFeatureId());
 		return new BaseRsp<>(rsp);
 	}
 

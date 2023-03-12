@@ -7,6 +7,7 @@ import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
 import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
 import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
 import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
 import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
 import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
@@ -166,6 +167,8 @@ public interface RemoteSituationService {
 	List<NodeBasicInfoContext> getSimilarNodes(NodeIdApiReq nodeIdApiReq);
 
 	TopoContext getCrossLayerTopo(TaskBaseReq taskBaseReq);
+
+	List<LayerEventContext> getCrossLayerEvent(TaskBaseReq taskBaseReq);
 
 	EventAxisRsp getEventAxis(TaskBaseReq taskBaseReq);
 

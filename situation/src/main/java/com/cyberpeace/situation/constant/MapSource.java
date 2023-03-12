@@ -1,5 +1,11 @@
 package com.cyberpeace.situation.constant;
 
+import java.util.List;
+
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.situation.model.IntType;
+import com.google.common.collect.Lists;
+
 import lombok.Getter;
 
 public enum MapSource {
@@ -19,6 +25,11 @@ public enum MapSource {
 	MapSource(Integer code, String name) {
 		this.code = code;
 		this.name = name;
+	}
+
+	public static List<IntType> getList(){
+		return StreamApiUtils.map(Lists.newArrayList(MapSource.values()),
+				mapSource -> new IntType(mapSource.getCode(), mapSource.getName()));
 	}
 
 }

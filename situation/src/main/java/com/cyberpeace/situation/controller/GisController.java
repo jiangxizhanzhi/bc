@@ -9,6 +9,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.situation.constant.MapSource;
+import com.cyberpeace.situation.model.IntType;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
@@ -31,10 +34,6 @@ import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -267,5 +266,11 @@ public class GisController {
 					value = "维度") String latitude) {
 		return new BaseRsp<>(
 				situationGisService.getProvince(Float.valueOf(longitude), Float.valueOf(latitude)));
+	}
+
+	@ApiOperation("获取大屏地图源选项")
+	@GetMapping("/map/source/list/")
+	public BaseRsp<List<IntType>> getMapSourceList() {
+		return new BaseRsp<>(MapSource.getList());
 	}
 }

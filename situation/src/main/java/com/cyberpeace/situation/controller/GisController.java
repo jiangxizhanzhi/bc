@@ -59,7 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "GIS接口")
 @RestController
 @Slf4j
-//@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class GisController {
 
@@ -232,25 +232,40 @@ public class GisController {
 
 	@ApiOperation("获取Gis配置")
 	@GetMapping("/get/config")
-	public BaseRsp<SituationGis> getSituationGisConfig(@RequestParam("resource_id")String resourceId){
+	public BaseRsp<SituationGis>
+			getSituationGisConfig(@RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
 	}
 
 	@ApiOperation("新增Gis配置")
 	@PostMapping("/create/config")
-	public BaseRsp<SituationGis> createSituationGisConfig(@RequestBody @Validated(Create.class)SituationGisReq situationGisReq){
+	public BaseRsp<SituationGis> createSituationGisConfig(
+			@RequestBody @Validated(Create.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
 	}
 
 	@ApiOperation("修改Gis配置")
 	@PatchMapping("/update/config")
-	public BaseRsp<SituationGis> updateSituationGisConfig(@RequestBody @Validated(Update.class)SituationGisReq situationGisReq){
+	public BaseRsp<SituationGis> updateSituationGisConfig(
+			@RequestBody @Validated(Update.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
 	}
 
 	@ApiOperation("删除Gis配置")
 	@PatchMapping("/delete/config")
-	public BaseRsp<Integer> deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq){
+	public BaseRsp<Integer>
+			deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
+	}
+
+	@ApiOperation("获取经纬度所属省份")
+	@GetMapping("/province/")
+	public BaseRsp<String> getProvince(
+			@RequestParam("longitude") @ApiParam(required = true, name = "longitude",
+					value = "经度") String longitude,
+			@RequestParam("latitude") @ApiParam(required = true, name = "latitude",
+					value = "维度") String latitude) {
+		return new BaseRsp<>(
+				situationGisService.getProvince(Float.valueOf(longitude), Float.valueOf(latitude)));
 	}
 }

@@ -11,23 +11,25 @@ import java.io.Serializable;
  */
 @Data
 public class DashboardComponentsReq implements Serializable {
-    private String resourceId;
 
-    @ApiModelProperty("组件类型")
-    private String type;
+	@ApiModelProperty("组件类型")
+	private String resourceId;
 
-    @ApiModelProperty("数据源id")
-    private String datasourceId;
+	@ApiModelProperty("组件类型")
+	private String type;
 
-    @ApiModelProperty("数据源配置")
-    private Object datasourceSetting;
+	@ApiModelProperty("数据源id")
+	private String datasourceId;
 
-    @ApiModelProperty("组件id")
-    private String componentsId;
+	@ApiModelProperty("数据源配置")
+	private Object datasourceSetting;
 
-    @ApiModelProperty("组件配置")
-    private Object componentSetting;
+	@ApiModelProperty("组件id")
+	private String componentsId;
 
-    @ApiModelProperty("图层顺序")
-    private Integer componentIndex;
+	@ApiModelProperty("组件配置")
+	private Object componentSetting;
+
+	@ApiModelProperty("图层顺序")
+	private Integer componentIndex;
 }

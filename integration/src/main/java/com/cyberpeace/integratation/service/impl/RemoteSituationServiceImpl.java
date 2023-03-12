@@ -7,7 +7,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
+import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
+import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerTopoContext;
+import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
+import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
+import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
 import com.cyberpeace.integratation.model.situation.res.*;
+import com.cyberpeace.integratation.model.situation.user.UserActivityContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,7 +92,33 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String PG_GET_RUN_ID;
 
-	private String TS_GET_EVENT_LIST;
+	private String TS_EVENT_AXIS;
+
+	private String TS_FLOW_STATISTICS;
+
+	private String TS_FLOW_NODE_RANK;
+
+	private String TS_FLOW_TREND;
+
+	private String TS_LAYER_TOPO;
+
+	private String TS_LAYER_EVENT;
+
+	private String TS_NODE_RANK_ATTACK;
+
+	private String TS_NODE_SIMILAR;
+
+	private String TS_DISTRIBUTE_THREATENED;
+
+	private String TS_USER_ACTIVITY;
+
+	private String TS_NODE_STATISTICS_STATUS;
+
+	private String TS_NODE_CRITICAL_DEGREE;
+
+	private String TS_LINK_STATISTICS_STATUS;
+
+	private String TS_NODE_MIGRATION;
 
 	@Autowired
 	private RemoteOperationServiceImpl remoteOperationService;
@@ -121,7 +155,26 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_NODE_LIST = outerHostXd + ConfigUtil.getContextProperty("xd.node.list");
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 		PG_GET_RUN_ID = outerHostPg + ConfigUtil.getContextProperty("pg.run.get");
-		TS_GET_EVENT_LIST = outerHostTs + ConfigUtil.getContextProperty("event.list");
+
+		TS_EVENT_AXIS = outerHostPg + ConfigUtil.getContextProperty("event.axis");
+		TS_FLOW_STATISTICS = outerHostPg + ConfigUtil.getContextProperty("flow.statistics");
+		TS_FLOW_NODE_RANK = outerHostPg + ConfigUtil.getContextProperty("flow.node.rank");
+		TS_FLOW_TREND = outerHostPg + ConfigUtil.getContextProperty("flow.trend");
+		TS_LAYER_TOPO = outerHostPg + ConfigUtil.getContextProperty("layer.topo");
+		TS_LAYER_EVENT = outerHostPg + ConfigUtil.getContextProperty("layer.event");
+		TS_NODE_RANK_ATTACK = outerHostPg + ConfigUtil.getContextProperty("node.attack.rank");
+		TS_NODE_SIMILAR = outerHostPg + ConfigUtil.getContextProperty("node.similar");
+		TS_DISTRIBUTE_THREATENED = outerHostPg
+				+ ConfigUtil.getContextProperty("node.distribute.threatened");
+		TS_USER_ACTIVITY = outerHostPg + ConfigUtil.getContextProperty("user.activity");
+		TS_NODE_STATISTICS_STATUS = outerHostPg
+				+ ConfigUtil.getContextProperty("node.statistics.status");
+		TS_NODE_CRITICAL_DEGREE = outerHostPg
+				+ ConfigUtil.getContextProperty("node.critical.degree");
+		TS_LINK_STATISTICS_STATUS = outerHostPg
+				+ ConfigUtil.getContextProperty("link.statistics.status");
+		TS_NODE_MIGRATION = outerHostPg + ConfigUtil.getContextProperty("node.migration");
+
 	}
 
 	@Override
@@ -171,9 +224,26 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		List<String> nodeIdList = getNodeIdList(nodeListReq);
 		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(
 				XD_TOPO_URL + "?platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class);
+
+		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
+		nodeListApiReq.setNodeIds(nodeIdList);
+		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
+				nodeListApiReq, NetworkInfoContext.class);
+
+		if (networkInfoContext == null) {
+			networkInfoContext = new NetworkInfoContext();
+		}
+
+		networkInfoContext.setNodeCount(nodeIdList.size());
+		networkInfoContext.setNodeTypeStatistics(getNodeTypeStatistics(topoBo));
+		return networkInfoContext;
+	}
+
+	@Override
+	public List<NodeTypeStatisticsContext> getNodeTypeStatistics(ThirdPartyTopoBo topo) {
 		Map<String, Integer> nodeTypeStatistics = Maps.newHashMap();
 		List<NodeTypeStatisticsContext> nodeTypeStatisticsContexts = Lists.newArrayList();
-		topoBo.getNodes().forEach(elementContext -> {
+		topo.getNodes().forEach(elementContext -> {
 			if (nodeTypeStatistics.get(elementContext.getDeviceType()) == null) {
 				nodeTypeStatistics.put(elementContext.getDeviceType(), 1);
 			} else {
@@ -186,25 +256,31 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 				.getModelTypeListMap();
 
 		nodeTypeStatistics.forEach((key, value) -> {
-
 			if (modelTypeContextMap.get(key) != null) {
 				nodeTypeStatisticsContexts.add(new NodeTypeStatisticsContext(
 						modelTypeContextMap.get(key).getTypeName(), value));
 			}
 		});
 
-		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
-		nodeListApiReq.setNodeIds(nodeIdList);
-		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
-				nodeListApiReq, NetworkInfoContext.class);
+		return nodeTypeStatisticsContexts;
+	}
 
-		if (networkInfoContext == null) {
-			networkInfoContext = new NetworkInfoContext();
-		}
-
-		networkInfoContext.setNodeCount(nodeIdList.size());
-		networkInfoContext.setNodeTypeStatistics(nodeTypeStatisticsContexts);
-		return networkInfoContext;
+	@Override
+	public List<TypeStatisticsContext> getLinkTypeStatistics(ThirdPartyTopoBo topo) {
+		Map<String, Integer> typeStatistics = Maps.newHashMap();
+		List<TypeStatisticsContext> typeStatisticsContexts = Lists.newArrayList();
+		topo.getConnections().forEach(connection -> {
+			String type = connection.getConnectionType();
+			if (typeStatistics.containsKey(type)) {
+				typeStatistics.put(type, typeStatistics.get(type) + 1);
+			} else {
+				typeStatistics.put(type, 1);
+			}
+		});
+		typeStatistics.forEach((key, value) -> {
+			typeStatisticsContexts.add(new TypeStatisticsContext(key, value));
+		});
+		return typeStatisticsContexts;
 	}
 
 	@Override
@@ -330,6 +406,20 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public TopoContext getTopo(TopoReq topoReq, Boolean adjust) {
 
+		ThirdPartyTopoBo topoBo = getXdTopo(topoReq);
+
+		TopoContext topoContext = topoBo.convert(adjust,
+				remoteOperationService.getModelTypeListMap(),
+				remoteOperationService.getModelListMap());
+
+		// 二次处理区域数据
+		// topoBo.setAreas(topoContext);
+
+		return topoContext;
+	}
+
+	@Override
+	public ThirdPartyTopoBo getXdTopo(TopoReq topoReq) {
 		String query = "?envId=" + topoReq.getEnvId();
 
 		if (StringUtils.isNotBlank(topoReq.getNetworkId())) {
@@ -348,17 +438,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 			query = query + "&level=" + topoReq.getLevel();
 		} ;
 
-		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(XD_TOPO_URL + query,
-				ThirdPartyTopoBo.class);
+		return HttpClientUtil.rawGet(XD_TOPO_URL + query, ThirdPartyTopoBo.class);
 
-		TopoContext topoContext = topoBo.convert(adjust,
-				remoteOperationService.getModelTypeListMap(),
-				remoteOperationService.getModelListMap());
-
-		// 二次处理区域数据
-		// topoBo.setAreas(topoContext);
-
-		return topoContext;
 	}
 
 	@Override
@@ -409,9 +490,74 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<EventListRsp> getEvents(){
-		String rsp = HttpClientUtil.rawGet(TS_GET_EVENT_LIST, String.class);
-		return JsonUtil.toJsonObjectArray(rsp, EventListRsp.class);
+	public List<NodeBasicInfoContext> getSimilarNodes(NodeIdApiReq nodeIdApiReq) {
+		String rsp = HttpClientUtil.post(TS_NODE_SIMILAR, nodeIdApiReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeBasicInfoContext.class);
+	}
+
+	@Override
+	public TopoContext getCrossLayerTopo(TaskBaseReq taskBaseReq) {
+		LayerTopoContext rep = HttpClientUtil.post(TS_LAYER_TOPO, taskBaseReq,
+				LayerTopoContext.class);
+		return rep.convert();
+	}
+
+	@Override
+	public EventAxisRsp getEventAxis(TaskBaseReq taskBaseReq) {
+		return HttpClientUtil.post(TS_EVENT_AXIS, taskBaseReq, EventAxisRsp.class);
+	}
+
+	@Override
+	public List<NodeThreatenedDistributeContext>
+			getNodeThreatenedDistribute(TaskBaseReq taskBaseReq) {
+		String rsp = HttpClientUtil.post(TS_DISTRIBUTE_THREATENED, taskBaseReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeThreatenedDistributeContext.class);
+	}
+
+	@Override
+	public List<NodeAttackStatisticsContext> getNodeRankAttack(TaskSizeReq taskSizeReq) {
+		String rsp = HttpClientUtil.post(TS_NODE_RANK_ATTACK, taskSizeReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeAttackStatisticsContext.class);
+	}
+
+	@Override
+	public List<UserActivityContext> getUserActivity(TaskSizeReq taskSizeReq) {
+		String rsp = HttpClientUtil.post(TS_USER_ACTIVITY, taskSizeReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, UserActivityContext.class);
+	}
+
+	@Override
+	public FlowStatisticsContext getFlowStatistics(TaskBaseReq taskBaseReq) {
+		return HttpClientUtil.post(TS_FLOW_STATISTICS, taskBaseReq, FlowStatisticsContext.class);
+	}
+
+	@Override
+	public List<NodeFlowRankContext> getNodeFlowRank(TaskSizeReq taskSizeReq) {
+		String rsp = HttpClientUtil.post(TS_FLOW_NODE_RANK, taskSizeReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeFlowRankContext.class);
+	}
+
+	@Override
+	public FlowTrendContext getFlowTrend(TaskBaseReq taskBaseReq) {
+		return HttpClientUtil.post(TS_FLOW_TREND, taskBaseReq, FlowTrendContext.class);
+	}
+
+	@Override
+	public List<StatusStatisticsContext> getNodeStatusStatistics(TaskSizeReq taskSizeReq) {
+		String rsp = HttpClientUtil.post(TS_NODE_STATISTICS_STATUS, taskSizeReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, StatusStatisticsContext.class);
+	}
+
+	@Override
+	public List<NodeCriticalDegreeContext> getNodeCriticalDegree(TaskSizeReq taskSizeReq) {
+		String rsp = HttpClientUtil.post(TS_NODE_CRITICAL_DEGREE, taskSizeReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeCriticalDegreeContext.class);
+	}
+
+	@Override
+	public List<StatusStatisticsContext> getLinkStatusStatistics(TaskBaseReq taskBaseReq) {
+		String rsp = HttpClientUtil.post(TS_LINK_STATISTICS_STATUS, taskBaseReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, StatusStatisticsContext.class);
 	}
 
 }

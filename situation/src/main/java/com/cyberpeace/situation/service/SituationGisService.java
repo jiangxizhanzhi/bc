@@ -11,11 +11,13 @@ import java.util.List;
  */
 public interface SituationGisService {
 
-    SituationGis getSituationGisConfig(String resourceId);
+	SituationGis getSituationGisConfig(String resourceId);
 
-    SituationGis createSituationGisConfig(SituationGisReq situationGisReq);
+	SituationGis createSituationGisConfig(SituationGisReq situationGisReq);
 
-    SituationGis updateSituationGisConfig(SituationGisReq situationGisReq);
+	SituationGis updateSituationGisConfig(SituationGisReq situationGisReq);
 
-    Integer deleteSituationGisConfig(List<String> idList);
+	Integer deleteSituationGisConfig(List<String> idList);
+
+	String getProvince(Float longitude, Float latitude);
 }

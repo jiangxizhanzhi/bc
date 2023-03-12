@@ -44,6 +44,9 @@ public class ElementContext implements Serializable {
 	@ApiModelProperty("设备模型")
 	private String model;
 
+	@ApiModelProperty("设备模型ID")
+	private String modelId;
+
 	@ApiModelProperty("元素层级")
 	private Float hierarchy;
 

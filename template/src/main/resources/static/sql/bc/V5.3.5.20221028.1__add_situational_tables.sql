@@ -524,6 +524,7 @@ CREATE TABLE `situation_dashboard_attribute`
     `start_time`     datetime NULL DEFAULT NULL COMMENT '科目开始时间',
     `refresh`        int                                                     NOT NULL COMMENT '数据刷新时间',
     `view_angle`     text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '视角参数',
+    `config`         text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置参数',
     `map_source`     tinyint(1) NULL DEFAULT NULL COMMENT '地图源 1-谷歌 2-百度 3-谷歌',
     `create_time`    datetime NULL DEFAULT NULL COMMENT '创建时间',
     `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
@@ -936,11 +937,11 @@ VALUES (112, '7', '数据安全', NULL, NULL, NULL, '2022-12-06 02:44:54', '2022
 -- ----------------------------
 CREATE TABLE `situation_gis_config`
 (
-    `id`          INT(10) NOT NULL AUTO_INCREMENT,
-    `resource_id` VARCHAR(64)                                             NOT NULL,
-    `config`      TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
-    `thumbnail`   VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
-    `template_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '关联模板',
+    `id`          int                                                     NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '配置名称',
+    `config`      text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置信息',
+    `thumbnail`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
     `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
@@ -952,13 +953,13 @@ CREATE TABLE `situation_gis_config`
 -- ----------------------------
 CREATE TABLE `situation_topo_config`
 (
-    `id`          INT(10) NOT NULL AUTO_INCREMENT,
-    `resource_id` VARCHAR(64)                                             NOT NULL,
-    `config`      TEXT CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '配置信息',
-    `thumbnail`   VARCHAR(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
-    `template_id` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '关联模板',
-    `create_time` DATETIME NULL DEFAULT NULL COMMENT '创建时间',
-    `update_time` DATETIME NULL DEFAULT NULL COMMENT '更新时间',
+    `id`          int                                                     NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`        varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '配置名称',
+    `config`      text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '配置信息',
+    `thumbnail`   varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '预览图',
+    `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 )ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

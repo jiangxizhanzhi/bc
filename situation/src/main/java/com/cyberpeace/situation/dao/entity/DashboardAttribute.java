@@ -43,6 +43,8 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private Integer refresh;
 
+	private String config;
+
 	private String viewAngle;
 
 	private Integer mapSource;

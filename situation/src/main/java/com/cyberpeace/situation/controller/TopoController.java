@@ -1,31 +1,32 @@
 package com.cyberpeace.situation.controller;
 
+import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.SituationTopoReq;
-import com.cyberpeace.situation.dao.entity.SituationTopo;
-import com.cyberpeace.situation.service.SituationTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.NodePositionReq;
+import com.cyberpeace.situation.controller.req.SituationTopoReq;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.SituationTopoService;
+import com.cyberpeace.situation.service.context.ConfigContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 
 import io.swagger.annotations.Api;
@@ -92,23 +93,37 @@ public class TopoController {
 	}
 
 	@ApiOperation("获取Topo配置")
-	@GetMapping("/get/config")
-	public BaseRsp<SituationTopo> getSituationTopoConfig(@RequestParam("resource_id")String resourceId){
+	@GetMapping("/config/get/")
+	public BaseRsp<ConfigContext>
+			getSituationTopoConfig(@RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(situationTopoService.getSituationTopoConfig(resourceId));
 	}
+
 	@ApiOperation("新增Topo配置")
-	@PostMapping("/create/config")
-	public BaseRsp<SituationTopo> createSituationTopoConfig(@RequestBody @Validated(Create.class) SituationTopoReq situationTopoReq){
+	@PostMapping("/config/create/")
+	public BaseRsp<ConfigContext> createSituationTopoConfig(
+			@RequestBody @Validated(Create.class) SituationTopoReq situationTopoReq) {
 		return new BaseRsp<>(situationTopoService.createSituationTopoConfig(situationTopoReq));
 	}
+
 	@ApiOperation("修改Topo配置")
-	@PatchMapping("/update/config")
-	public BaseRsp<SituationTopo> updateSituationTopoConfig(@RequestBody @Validated(Update.class)SituationTopoReq situationTopoReq){
+	@PatchMapping("/config/update/")
+	public BaseRsp<ConfigContext> updateSituationTopoConfig(
+			@RequestBody @Validated(Update.class) SituationTopoReq situationTopoReq) {
 		return new BaseRsp<>(situationTopoService.updateSituationTopoConfig(situationTopoReq));
 	}
+
 	@ApiOperation("删除Topo配置")
-	@PatchMapping("/delete/config")
-	public BaseRsp<Integer> deleteSituationTopoConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq){
-		return new BaseRsp<>(situationTopoService.deleteSituationTopoConfig(batchDeleteReq.getIds()));
+	@PatchMapping("/config/delete/")
+	public BaseRsp<Integer>
+			deleteSituationTopoConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
+		return new BaseRsp<>(
+				situationTopoService.deleteSituationTopoConfig(batchDeleteReq.getIds()));
+	}
+
+	@ApiOperation("获取全量拓扑配置列表")
+	@GetMapping("/config/list/")
+	public BaseRsp<List<ConfigContext>> getAllConfig() {
+		return new BaseRsp<>(situationTopoService.getAllConfig());
 	}
 }

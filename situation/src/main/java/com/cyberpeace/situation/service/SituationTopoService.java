@@ -1,9 +1,9 @@
 package com.cyberpeace.situation.service;
 
-import com.cyberpeace.situation.controller.req.SituationTopoReq;
-import com.cyberpeace.situation.dao.entity.SituationTopo;
-
 import java.util.List;
+
+import com.cyberpeace.situation.controller.req.SituationTopoReq;
+import com.cyberpeace.situation.service.context.ConfigContext;
 
 /**
  * @Author xuxz
@@ -11,11 +11,13 @@ import java.util.List;
  */
 public interface SituationTopoService {
 
-    SituationTopo getSituationTopoConfig(String resourceId);
+	ConfigContext getSituationTopoConfig(String resourceId);
 
-    SituationTopo createSituationTopoConfig(SituationTopoReq situationTopoReq);
+	ConfigContext createSituationTopoConfig(SituationTopoReq situationTopoReq);
 
-    SituationTopo updateSituationTopoConfig(SituationTopoReq situationTopoReq);
+	ConfigContext updateSituationTopoConfig(SituationTopoReq situationTopoReq);
 
-    Integer deleteSituationTopoConfig(List<String> idList);
+	Integer deleteSituationTopoConfig(List<String> idList);
+
+	List<ConfigContext> getAllConfig();
 }

@@ -22,9 +22,9 @@ public class SituationTopo extends BaseTable implements Serializable {
 	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
 	private String resourceId;
 
-	private String config;
+	private String name;
 
-	private String templateId;
+	private String config;
 
 	private String thumbnail;
 

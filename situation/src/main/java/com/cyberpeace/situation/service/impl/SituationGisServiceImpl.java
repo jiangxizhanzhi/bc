@@ -1,9 +1,17 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.awt.*;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.service.context.BoundContext;
-import com.cyberpeace.situation.service.context.GeometryContext;
-import com.google.common.collect.Lists;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
@@ -14,15 +22,11 @@ import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.dao.entity.SituationGis;
 import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
 import com.cyberpeace.situation.service.SituationGisService;
+import com.cyberpeace.situation.service.context.BoundContext;
+import com.cyberpeace.situation.service.context.ConfigContext;
+import com.cyberpeace.situation.service.context.GeometryContext;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.awt.*;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author xuxz
@@ -60,24 +64,24 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 	}
 
 	@Override
-	public SituationGis getSituationGisConfig(String resourceId) {
+	public ConfigContext getSituationGisConfig(String resourceId) {
 		SituationGis situationGis = situationGisMapper.selectById(resourceId);
 		if (situationGis == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		return situationGis;
+		return BeanUtils.copy(situationGis, ConfigContext.class);
 	}
 
 	@Override
-	public SituationGis createSituationGisConfig(SituationGisReq situationGisReq) {
+	public ConfigContext createSituationGisConfig(SituationGisReq situationGisReq) {
 		SituationGis situationGis = BeanUtils.copy(situationGisReq, SituationGis.class);
 		situationGis.setResourceId(IDGeneratorUtil.getID());
 		situationGisMapper.insert(situationGis);
-		return situationGis;
+		return BeanUtils.copy(situationGis, ConfigContext.class);
 	}
 
 	@Override
-	public SituationGis updateSituationGisConfig(SituationGisReq situationGisReq) {
+	public ConfigContext updateSituationGisConfig(SituationGisReq situationGisReq) {
 		String resourceId = situationGisReq.getResourceId();
 		SituationGis situationGis = situationGisMapper.selectById(resourceId);
 		if (situationGis == null) {
@@ -85,7 +89,7 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 		}
 		SituationGis copy = BeanUtils.copy(situationGisReq, SituationGis.class);
 		situationGisMapper.updateById(copy);
-		return copy;
+		return BeanUtils.copy(copy, ConfigContext.class);
 	}
 
 	@Override
@@ -104,5 +108,11 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 			}
 		}
 		return "未知";
+	}
+
+	@Override
+	public List<ConfigContext> getAllConfig() {
+		List<SituationGis> configs = situationGisMapper.selectList(new LambdaQueryWrapper<>());
+		return JsonUtil.toJsonObjectArray(JsonUtil.toJsonString(configs), ConfigContext.class);
 	}
 }

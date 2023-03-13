@@ -963,3 +963,19 @@ CREATE TABLE `situation_topo_config`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
 )ENGINE = INNODB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `situation_components_animation`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '动画名称',
+    `chart_id`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '关联组件id',
+    `description`    varchar(2048) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '动画描述',
+    `config`         longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '动画配置内容',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

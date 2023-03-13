@@ -4,10 +4,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
+import com.cyberpeace.situation.constant.ws.MessageType;
+import com.cyberpeace.situation.model.ws.WsMessage;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +26,16 @@ import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.EventAxisRsp;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.cyberpeace.situation.controller.req.*;
-import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
-import com.cyberpeace.situation.controller.res.EventTypeRes;
+import com.cyberpeace.situation.controller.res.*;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
+import com.cyberpeace.situation.service.SituationGisService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -57,6 +62,12 @@ public class ThirdPartyController {
 
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
+
+	@Autowired
+	private SituationGisService situationGisService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@ApiOperation("获取攻防事件类型列表")
 	@GetMapping("/event_type/list/")
@@ -183,18 +194,8 @@ public class ThirdPartyController {
 	@PostMapping("/node/similar_nodes/")
 	public BaseRsp<List<NodeBasicInfoContext>>
 			getSimilarNodeList(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
-
-		NodeBasicInfoContext nodeBasicInfoContext = new NodeBasicInfoContext();
-		nodeBasicInfoContext.setNodeIp("127.0.0.1");
-		nodeBasicInfoContext.setNodeId("001");
-		nodeBasicInfoContext.setLocation("北京市");
-		nodeBasicInfoContext.setNodeType("路由器");
-		nodeBasicInfoContext.setNodeName("节点001");
-
-		List<NodeBasicInfoContext> nodeBasicInfoContexts = Lists.newArrayList();
-		nodeBasicInfoContexts.add(nodeBasicInfoContext);
-
-		return new BaseRsp<>(nodeBasicInfoContexts);
+		List<NodeBasicInfoContext> rsp = remoteSituationService.getSimilarNodes(nodeIdApiReq);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("获取节点行为数据")
@@ -370,5 +371,105 @@ public class ThirdPartyController {
 					required = true) String role) {
 		String runId = remoteSituationService.getRunId(subjectId);
 		return new BaseRsp<>(new EvaluateUrlRes(runId, role));
+	}
+
+	@ApiOperation("获取跨层分析拓扑")
+	@PostMapping("/topo/cross_layer/")
+	public BaseRsp<TopoContext> getCrossLayerTopo(@RequestBody @Validated TaskBaseReq taskBaseReq) {
+		TopoContext rsp = remoteSituationService.getCrossLayerTopo(taskBaseReq);
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("获取跨层分析事件")
+	@PostMapping("/event/cross_layer/")
+	public BaseRsp<List<LayerEventContext>>
+			getCrossLayerEvent(@RequestBody @Validated TaskDashboardReq taskBaseReq) {
+		List<LayerEventContext> rsp = remoteSituationService.getCrossLayerEvent(taskBaseReq);
+		// 推送WS消息
+		WsMessage<List<LayerEventContext>> wsMessage = new WsMessage<>(
+				MessageType.LayerEvent.getDesc(), rsp);
+		situationHandlerService.pushDataToDashboard(wsMessage, taskBaseReq.getDashboardId(),
+				taskBaseReq.getFeatureId());
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("获取事件轴")
+	@PostMapping("/event/axis/")
+	public BaseRsp<EventAxisRsp> getEventAxis(@RequestBody @Validated TaskBaseReq taskBaseReq) {
+		EventAxisRsp rsp = remoteSituationService.getEventAxis(taskBaseReq);
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("获取跨层分析应用层数据")
+	@PostMapping("/layer/data/app/")
+	public BaseRsp<LayerDataAppRes> getLayerDataApp(@RequestBody @Validated TaskOsiReq taskOsiReq) {
+
+		LayerDataAppRes layerDataAppRes = new LayerDataAppRes();
+		TaskSizeReq taskSizeReq = BeanUtils.deepCopy(taskOsiReq, TaskSizeReq.class);
+
+		taskSizeReq.setSize(10);
+		layerDataAppRes.setUserActivity(remoteSituationService.getUserActivity(taskSizeReq));
+		taskSizeReq.setSize(5);
+		layerDataAppRes
+				.setNodeAttackStatistics(remoteSituationService.getNodeRankAttack(taskSizeReq));
+		layerDataAppRes.setThreatenedDistribute(
+				remoteSituationService.getNodeThreatenedDistribute(taskOsiReq));
+		return new BaseRsp<>(layerDataAppRes);
+	}
+
+	@ApiOperation("获取跨层分析传输层数据")
+	@PostMapping("/layer/data/transport/")
+	public BaseRsp<LayerDataTransportRes>
+			getLayerDataTransport(@RequestBody @Validated TaskOsiReq taskOsiReq) {
+		LayerDataTransportRes layerDataTransportRes = new LayerDataTransportRes();
+		TaskSizeReq taskSizeReq = BeanUtils.deepCopy(taskOsiReq, TaskSizeReq.class);
+		taskSizeReq.setSize(5);
+		layerDataTransportRes.setNodeFlowRank(remoteSituationService.getNodeFlowRank(taskSizeReq));
+		layerDataTransportRes
+				.setFlowStatistics(remoteSituationService.getFlowStatistics(taskOsiReq));
+		layerDataTransportRes.setFlowTrend(remoteSituationService.getFlowTrend(taskOsiReq));
+		return new BaseRsp<>(layerDataTransportRes);
+	}
+
+	@ApiOperation("获取跨层分析网络层数据")
+	@PostMapping("/layer/data/net/")
+	public BaseRsp<LayerDataNetRes> getLayerDataNet(@RequestBody @Validated TaskOsiReq taskOsiReq) {
+		LayerDataNetRes layerDataNetRes = new LayerDataNetRes();
+		TaskSizeReq taskSizeReq = BeanUtils.deepCopy(taskOsiReq, TaskSizeReq.class);
+		taskSizeReq.setSize(5);
+		TopoReq topoReq = BeanUtils.deepCopy(taskOsiReq, TopoReq.class);
+		ThirdPartyTopoBo topo = remoteSituationService.getXdTopo(topoReq);
+		layerDataNetRes.setNetNum(topo.getNetworks().size());
+		layerDataNetRes.setNodeStatus(remoteSituationService.getNodeStatusStatistics(taskSizeReq));
+		layerDataNetRes
+				.setNodeCriticalDegree(remoteSituationService.getNodeCriticalDegree(taskSizeReq));
+		layerDataNetRes.setNodeTypeDistribute(remoteSituationService.getNodeTypeStatistics(topo));
+		return new BaseRsp<>(layerDataNetRes);
+	}
+
+	@ApiOperation("获取跨层分析物理层数据")
+	@PostMapping("/layer/data/physics/")
+	public BaseRsp<LayerDataPhysicsRes>
+			getLayerDataPhysics(@RequestBody @Validated TaskOsiReq taskOsiReq) {
+		LayerDataPhysicsRes layerDataPhysicsRes = new LayerDataPhysicsRes();
+		TopoReq topoReq = new TopoReq();
+		ThirdPartyTopoBo topo = remoteSituationService.getXdTopo(topoReq);
+		layerDataPhysicsRes
+				.setConnectionTypeDistribute(remoteSituationService.getLinkTypeStatistics(topo));
+		layerDataPhysicsRes
+				.setConnectionStatus(remoteSituationService.getLinkStatusStatistics(taskOsiReq));
+
+		// 获取节点地理分布
+		List<String> geo = Lists.newArrayList();
+		List<PlatformContext> platformList = remoteSituationService.getPlatformList(
+				taskOsiReq.getTaskId(), taskOsiReq.getSubjectId(), taskOsiReq.getSubRangeId(),
+				taskOsiReq.getSchemeId());
+		platformList.forEach(platformContext -> {
+			geo.add(situationGisService.getProvince(Float.valueOf(platformContext.getLongitude()),
+					Float.valueOf(platformContext.getLatitude())));
+		});
+		layerDataPhysicsRes
+				.setGeoDistribution(geo.stream().distinct().collect(Collectors.toList()));
+		return new BaseRsp<>(layerDataPhysicsRes);
 	}
 }

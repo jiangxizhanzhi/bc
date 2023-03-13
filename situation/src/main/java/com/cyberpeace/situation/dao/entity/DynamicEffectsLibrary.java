@@ -1,14 +1,14 @@
 package com.cyberpeace.situation.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_dynamic_effects_library")
+@TableName("situation_dynamic_effects")
 public class DynamicEffectsLibrary extends BaseTable {
 
 	@TableId(value = "resource_id")

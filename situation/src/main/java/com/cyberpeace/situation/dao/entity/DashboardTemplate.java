@@ -68,18 +68,21 @@ public class DashboardTemplate extends BaseTable {
 	@ApiModelProperty("刷新频率")
 	private Integer refresh;
 
+	@ApiModelProperty("模板配置")
+	private String config;
+
 	@ApiModelProperty("定制类型")
 	private Integer customCode = CustomCode.ZB.getCode();
 
 	@ApiModelProperty("编辑状态")
 	private Boolean editStatus;
 
+	@ApiModelProperty("创建人")
+	private String createUserId;
+
 	public enum DashboardTemplateLevel {
 
-		TOPOLOGY(2, "拓扑级"),
-		PARK(3, "园区级"),
-		GIS(1, "GIS级"),
-		BASIC_GIS(0, "基础模板");
+		TOPOLOGY(2, "拓扑级"), PARK(3, "园区级"), GIS(1, "GIS级"), BASIC_GIS(0, "基础模板");
 
 		@Getter
 		private Integer code;

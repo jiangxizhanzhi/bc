@@ -32,4 +32,16 @@ public class NodeConnectionContext implements Serializable {
 	@ApiModelProperty(value = "所属网络")
 	private String network;
 
+	@ApiModelProperty(value = "源节点接口名称")
+	private String sourceName;
+
+	@ApiModelProperty(value = "源节点名称")
+	private String sourceNodeName;
+
+	@ApiModelProperty(value = "目的节点接口名称")
+	private String targetName;
+
+	@ApiModelProperty(value = "目的节点名称")
+	private String targetNodeName;
+
 }

@@ -9,17 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
-import com.cyberpeace.situation.controller.req.SituationGisReq;
-import com.cyberpeace.situation.dao.entity.SituationGis;
-import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
-import com.cyberpeace.situation.service.SituationGisService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -29,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.baseinterface.Create;
+import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
@@ -37,17 +28,24 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.MapSource;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
+import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
+import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
+import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
+import com.cyberpeace.situation.service.SituationGisService;
+import com.cyberpeace.situation.service.context.ConfigContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 
@@ -59,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "GIS接口")
 @RestController
 @Slf4j
-//@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class GisController {
 
@@ -231,26 +229,53 @@ public class GisController {
 	}
 
 	@ApiOperation("获取Gis配置")
-	@GetMapping("/get/config")
-	public BaseRsp<SituationGis> getSituationGisConfig(@RequestParam("resource_id")String resourceId){
+	@GetMapping("/config/get/")
+	public BaseRsp<ConfigContext>
+			getSituationGisConfig(@RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
 	}
 
 	@ApiOperation("新增Gis配置")
-	@PostMapping("/create/config")
-	public BaseRsp<SituationGis> createSituationGisConfig(@RequestBody @Validated(Create.class)SituationGisReq situationGisReq){
+	@PostMapping("/config/create/")
+	public BaseRsp<ConfigContext> createSituationGisConfig(
+			@RequestBody @Validated(Create.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
 	}
 
 	@ApiOperation("修改Gis配置")
-	@PatchMapping("/update/config")
-	public BaseRsp<SituationGis> updateSituationGisConfig(@RequestBody @Validated(Update.class)SituationGisReq situationGisReq){
+	@PatchMapping("/config/update/")
+	public BaseRsp<ConfigContext> updateSituationGisConfig(
+			@RequestBody @Validated(Update.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
 	}
 
 	@ApiOperation("删除Gis配置")
-	@PatchMapping("/delete/config")
-	public BaseRsp<Integer> deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq){
+	@PatchMapping("/config/delete/")
+	public BaseRsp<Integer>
+			deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
+	}
+
+	@ApiOperation("获取全量GIS配置列表")
+	@GetMapping("/config/list/")
+	public BaseRsp<List<ConfigContext>> getAllConfig() {
+		return new BaseRsp<>(situationGisService.getAllConfig());
+	}
+
+	@ApiOperation("获取经纬度所属省份")
+	@GetMapping("/province/")
+	public BaseRsp<String> getProvince(
+			@RequestParam("longitude") @ApiParam(required = true, name = "longitude",
+					value = "经度") String longitude,
+			@RequestParam("latitude") @ApiParam(required = true, name = "latitude",
+					value = "维度") String latitude) {
+		return new BaseRsp<>(
+				situationGisService.getProvince(Float.valueOf(longitude), Float.valueOf(latitude)));
+	}
+
+	@ApiOperation("获取大屏地图源选项")
+	@GetMapping("/map/source/list/")
+	public BaseRsp<List<IntType>> getMapSourceList() {
+		return new BaseRsp<>(MapSource.getList());
 	}
 }

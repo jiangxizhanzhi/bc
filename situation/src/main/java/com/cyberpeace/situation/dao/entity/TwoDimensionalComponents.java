@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
 @Data
-@TableName("situation_two_dimensional_components")
+@TableName("situation_components_chart")
 public class TwoDimensionalComponents extends BaseTable {
 
 	@TableId(value = "resource_id")
@@ -35,9 +36,9 @@ public class TwoDimensionalComponents extends BaseTable {
 
 	public enum Type implements GenericEnum {
 
-		LINE_CHART(0, "折线图"), HISTOGRAM(1, "柱状图"), PIE_CHART(2, "饼图"),
-		SCATTER_HISTOGRAM(4, "散点图"), RADAR_MAP(5, "雷达图"), SANKEY_DIAGRAM(6, "桑基图"),
-		FUNNEL_FIGURE(7, "漏斗图"),SUN_FIGURE(8, "旭日图");
+		LINE_CHART(0, "折线图"), HISTOGRAM(1, "柱状图"), PIE_CHART(2, "饼图"), SCATTER_HISTOGRAM(4,
+				"散点图"), RADAR_MAP(5, "雷达图"), SANKEY_DIAGRAM(6,
+						"桑基图"), FUNNEL_FIGURE(7, "漏斗图"), SUN_FIGURE(8, "旭日图");
 
 		@Getter
 		private Integer code;

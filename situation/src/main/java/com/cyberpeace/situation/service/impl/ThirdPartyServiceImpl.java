@@ -17,6 +17,7 @@ import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.model.situation.BcContext;
 import com.cyberpeace.integratation.model.situation.ThirdDictContext;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
+import com.cyberpeace.integratation.service.RemoteCodeService;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SiteType;
@@ -52,6 +53,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	private RemoteSituationService remoteSituationService;
 
 	@Autowired
+	private RemoteCodeService remoteCodeService;
+
+	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
 
 	private volatile Map<String, CenterContext> centerCache = Maps.newHashMap();
@@ -74,18 +78,19 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 			// 替换靶场列表中的联管中心为实际的联管中心
 			bcList.forEach(bc -> {
-				if (bc.getName().endsWith("中心")){
+				if (bc.getName().endsWith("中心")) {
 					bc.setBcType(BcType.LGZX.getCode());
 				}
 			});
 
-			bcList.forEach(bc -> {bcContextMap.put(bc.getGroupId(), bc);});
+			bcList.forEach(bc -> {
+				bcContextMap.put(bc.getGroupId(), bc);
+			});
 			List<BcContext> instances = Lists.newArrayList();
-			if (bcContextMap.get(bcCode) == null)
-			{
+			if (bcContextMap.get(bcCode) == null) {
 				log.info("初始化靶场态势大屏失败");
 				return;
-			} else if (BcType.LGZX.getCode().equals(bcContextMap.get(bcCode).getBcType())){
+			} else if (BcType.LGZX.getCode().equals(bcContextMap.get(bcCode).getBcType())) {
 				instances = bcList;
 			} else {
 				instances.add(bcContextMap.get(bcCode));
@@ -245,7 +250,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 		typicalEventCache.clear();
 
 		// 请求态势系统数据
-		List<EventListRsp> typicalEvents = remoteSituationService.getEvents();
+		List<EventListRsp> typicalEvents = remoteCodeService.getEvents();
 
 		// 写入缓存
 		typicalEvents.forEach(event -> {

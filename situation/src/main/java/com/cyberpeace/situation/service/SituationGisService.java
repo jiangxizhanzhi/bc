@@ -1,9 +1,9 @@
 package com.cyberpeace.situation.service;
 
-import com.cyberpeace.situation.controller.req.SituationGisReq;
-import com.cyberpeace.situation.dao.entity.SituationGis;
-
 import java.util.List;
+
+import com.cyberpeace.situation.controller.req.SituationGisReq;
+import com.cyberpeace.situation.service.context.ConfigContext;
 
 /**
  * @Author xuxz
@@ -11,11 +11,15 @@ import java.util.List;
  */
 public interface SituationGisService {
 
-    SituationGis getSituationGisConfig(String resourceId);
+	ConfigContext getSituationGisConfig(String resourceId);
 
-    SituationGis createSituationGisConfig(SituationGisReq situationGisReq);
+	ConfigContext createSituationGisConfig(SituationGisReq situationGisReq);
 
-    SituationGis updateSituationGisConfig(SituationGisReq situationGisReq);
+	ConfigContext updateSituationGisConfig(SituationGisReq situationGisReq);
 
-    Integer deleteSituationGisConfig(List<String> idList);
+	Integer deleteSituationGisConfig(List<String> idList);
+
+	String getProvince(Float longitude, Float latitude);
+
+	List<ConfigContext> getAllConfig();
 }

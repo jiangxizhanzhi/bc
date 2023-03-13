@@ -7,7 +7,7 @@
     <select id="selectAllId" resultType="java.lang.String">
         SELECT resource_id
         FROM situation_dashboard_template_ref
-        WHERE resource_id NOT IN (SELECT template_id FROM situation_publish_instance)
+        WHERE resource_id NOT IN (SELECT template_id FROM situation_dashboard_instance)
     </select>
 
     <select id="selectOriginTemplateId" resultType="java.lang.String">

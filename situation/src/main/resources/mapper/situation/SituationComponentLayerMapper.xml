@@ -5,7 +5,7 @@
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationComponentLayerMapper">
 
     <insert id="batchInsert">
-        INSERT INTO situation_components_layer
+        INSERT INTO situation_dashboard_layer
         (resource_id, component_id, template_id, name,
         order, combination)
         VALUES
@@ -16,6 +16,8 @@
     </insert>
 
     <select id="selectByTemplateId" resultType="com.cyberpeace.situation.dao.entity.ComponentLayer">
-        SELECT * FROM situation_components_layer WHERE template_id = #{templateId}
+        SELECT *
+        FROM situation_dashboard_layer
+        WHERE template_id = #{templateId}
     </select>
 </mapper>

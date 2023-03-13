@@ -3,11 +3,12 @@ package com.cyberpeace.situation.dao.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_two_dimensional_components_category")
+@TableName("situation_components_chart_category")
 public class TwoDimensionalComponentsCategory extends BaseTable {
 
 	@TableId(value = "resource_id")
@@ -18,6 +19,5 @@ public class TwoDimensionalComponentsCategory extends BaseTable {
 
 	@ApiModelProperty()
 	private String createUserId;
-
 
 }

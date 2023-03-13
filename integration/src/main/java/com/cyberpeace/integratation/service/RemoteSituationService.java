@@ -4,8 +4,16 @@ import java.util.List;
 
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
+import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
+import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
+import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
+import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
+import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
 import com.cyberpeace.integratation.model.situation.req.*;
-import com.cyberpeace.integratation.model.situation.res.EventListRsp;
+import com.cyberpeace.integratation.model.situation.res.EventAxisRsp;
+import com.cyberpeace.integratation.model.situation.user.UserActivityContext;
 import com.cyberpeace.integratation.service.bo.situation.*;
 
 public interface RemoteSituationService {
@@ -35,6 +43,10 @@ public interface RemoteSituationService {
 	 * @param platformReq
 	 */
 	NetworkInfoContext getNetworkInfo(PlatformReq platformReq);
+
+	List<NodeTypeStatisticsContext> getNodeTypeStatistics(ThirdPartyTopoBo topo);
+
+	List<TypeStatisticsContext> getLinkTypeStatistics(ThirdPartyTopoBo topo);
 
 	/**
 	 * 获取任务列表
@@ -120,6 +132,8 @@ public interface RemoteSituationService {
 	 */
 	TopoContext getTopo(TopoReq topoReq, Boolean adjust);
 
+	ThirdPartyTopoBo getXdTopo(TopoReq topoReq);
+
 	/**
 	 * 想定-获取任务下可视化方案列表
 	 * @param req
@@ -150,6 +164,29 @@ public interface RemoteSituationService {
 
 	String getRunId(String subjectId);
 
-	List<EventListRsp> getEvents();
+	List<NodeBasicInfoContext> getSimilarNodes(NodeIdApiReq nodeIdApiReq);
 
+	TopoContext getCrossLayerTopo(TaskBaseReq taskBaseReq);
+
+	List<LayerEventContext> getCrossLayerEvent(TaskBaseReq taskBaseReq);
+
+	EventAxisRsp getEventAxis(TaskBaseReq taskBaseReq);
+
+	List<NodeThreatenedDistributeContext> getNodeThreatenedDistribute(TaskBaseReq taskBaseReq);
+
+	List<NodeAttackStatisticsContext> getNodeRankAttack(TaskSizeReq taskSizeReq);
+
+	List<UserActivityContext> getUserActivity(TaskSizeReq taskSizeReq);
+
+	FlowStatisticsContext getFlowStatistics(TaskBaseReq taskBaseReq);
+
+	List<NodeFlowRankContext> getNodeFlowRank(TaskSizeReq taskSizeReq);
+
+	FlowTrendContext getFlowTrend(TaskBaseReq taskBaseReq);
+
+	List<StatusStatisticsContext> getNodeStatusStatistics(TaskSizeReq taskSizeReq);
+
+	List<NodeCriticalDegreeContext> getNodeCriticalDegree(TaskSizeReq taskSizeReq);
+
+	List<StatusStatisticsContext> getLinkStatusStatistics(TaskBaseReq taskBaseReq);
 }

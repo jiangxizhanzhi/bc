@@ -7,13 +7,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_publish_instance")
+@TableName("situation_dashboard_instance")
 public class SituationPublishInstance extends BaseTable {
 
 	@TableId(value = "resource_id")

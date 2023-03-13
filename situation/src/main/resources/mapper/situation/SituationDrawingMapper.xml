@@ -4,10 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.situation.dao.mapper.SituationDrawingMapper">
     <select id="selectByName" resultType="java.lang.String">
-        SELECT resource_id FROM  situation_drawing WHERE `name` = #{name}
+        SELECT resource_id
+        FROM situation_components_drawing
+        WHERE `name` = #{name}
     </select>
     <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.SituationDrawingPageRes">
-        SELECT * FROM situation_drawing WHERE 1 = 1
+        SELECT * FROM situation_components_drawing WHERE 1 = 1
         <if test="situationDrawingPageReq.name != null and situationDrawingPageReq.name !=''">
             AND `name` LIKE concat("%",#{situationDrawingPageReq.name},"%")
         </if>

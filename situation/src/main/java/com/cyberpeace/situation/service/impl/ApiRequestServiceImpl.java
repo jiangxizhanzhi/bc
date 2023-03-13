@@ -1,6 +1,20 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -20,19 +34,8 @@ import com.cyberpeace.situation.dao.entity.ApiRequestParams;
 import com.cyberpeace.situation.dao.entity.ApiResponseParams;
 import com.cyberpeace.situation.dao.mapper.ApiRequestMapper;
 import com.cyberpeace.situation.service.ApiRequestService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -130,7 +133,13 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         Page page = apiRequestPageReq.toPageParam();
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 CommonConstant.FALSE);
-        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, authContext, apiRequestPageReq));
+        return PageUtil.getListResult(this.getBaseMapper().selectPage(page, null, apiRequestPageReq));
+    }
+
+    @Override
+    public List<ApiRequest> getAllApi(){
+
+        return apiRequestMapper.selectList(new LambdaQueryWrapper<>());
     }
 
     @Override

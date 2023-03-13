@@ -42,7 +42,7 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
     public String addComponentAnimation(SituationComponentsAnimationAddReq situationComponentsAnimationAddReq) {
         SituationComponentsAnimation situationComponentsAnimation = new SituationComponentsAnimation();
         BeanUtils.copyProperties(situationComponentsAnimationAddReq, situationComponentsAnimation);
-//        checkChartId(situationComponentsAnimation);
+        checkChartId(situationComponentsAnimation);
         try {
             situationComponentAnimationMapper.insert(situationComponentsAnimation);
         } catch (DuplicateKeyException e) {
@@ -66,7 +66,7 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
     public SituationComponentsAnimationRes updateComponentAnimation(SituationComponentsAnimationUpdateReq situationComponentsAnimationUpdateReq) {
         SituationComponentsAnimation situationComponentsAnimation = new SituationComponentsAnimation();
         BeanUtils.copyProperties(situationComponentsAnimationUpdateReq, situationComponentsAnimation);
-//        checkChartId(situationComponentsAnimation);
+        checkChartId(situationComponentsAnimation);
         Map<String, Object> filterMap = new HashMap<>();
         filterMap.put("name", situationComponentsAnimationUpdateReq.getName());
         List<SituationComponentsAnimation> situationComponentsAnimations = situationComponentAnimationMapper.selectByMap(filterMap);
@@ -118,10 +118,9 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
             queryWrapper.ge(SituationComponentsAnimation::getCreateTime, startTimeDate);
             queryWrapper.le(SituationComponentsAnimation::getCreateTime, endTimeDate);
         }
-//        LambdaQueryWrapper<TwoDimensionalComponents> query = new LambdaQueryWrapper<>();
-//        List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectList(query);
-//        Map<String, String> toMap = StreamApiUtils.toMap(twoDimensionalComponents, TwoDimensionalComponents::getResourceId, twoDimensionalComponent -> twoDimensionalComponent.getName());
-        Map<String, String> toMap = new HashMap<>();
+        LambdaQueryWrapper<TwoDimensionalComponents> query = new LambdaQueryWrapper<>();
+        List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectList(query);
+        Map<String, String> toMap = StreamApiUtils.toMap(twoDimensionalComponents, TwoDimensionalComponents::getResourceId, twoDimensionalComponent -> twoDimensionalComponent.getName());
         List<SituationComponentsAnimation> filterRes = situationComponentAnimationMapper.selectList(queryWrapper);
         List<SituationComponentsAnimationRes> res = new ArrayList<>();
         filterRes.forEach(tmp -> {

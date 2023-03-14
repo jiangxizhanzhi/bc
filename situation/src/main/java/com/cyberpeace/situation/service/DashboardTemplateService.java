@@ -85,4 +85,11 @@ public interface DashboardTemplateService {
      * @return
      */
     List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow);
+
+    /**
+     * 静态数据获取echarts数据
+     * @param jsonString
+     * @return
+     */
+    JSONArray getComponentsEchartsData(String jsonString);
 }

@@ -244,12 +244,20 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     @Override
     public JSONArray getComponentsEchartsData(ComponentsDataReq componentsDataReq) {
         String dataSourceComponent = componentsDataReq.getDataSourceComponent();
+        String jsonString = componentsDataReq.getJsonString();
         if (StringUtils.isEmpty(dataSourceComponent)) {
             throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
         }
-        JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
-        String dataSource = jsonObject.getString("dataSource");
-        JSONArray echartsData = getEchartsData(dataSource, componentsDataReq);
+        JSONArray echartsData = null;
+        if (jsonString == null) {
+            JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
+            String dataSource = jsonObject.getString("dataSource");
+            echartsData = getEchartsData(dataSource, componentsDataReq);
+
+        } else {
+            JSONArray jsonArray = JsonUtil.stringToArray(jsonString);
+            echartsData = getEchartsDataSet(jsonArray, componentsDataReq);
+        }
         return echartsData;
     }
 
@@ -644,5 +652,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
 
         return sortComponentsSettingList;
+    }
+
+    @Override
+    public JSONArray getComponentsEchartsData(String jsonString) {
+
+        return null;
     }
 }

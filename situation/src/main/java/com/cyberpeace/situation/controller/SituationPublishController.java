@@ -319,7 +319,7 @@ public class SituationPublishController {
         SituationPublishInstanceReviewRes copy = BeanUtils.copy(instance, SituationPublishInstanceReviewRes.class);
         // TODO 大屏地址
         copy.setTemplateInfo(dashboardTemplateInfo);
-        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, new DynamicParameterContext());
+        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, context);
         instanceDataQueryRes.setComponentsSetting(dashboardComponentsList);
 		return new BaseRsp<>(instanceDataQueryRes);
 	}

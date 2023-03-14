@@ -68,15 +68,19 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
     }
 
     @Override
-    public SituationComponentsAnimationRes updateComponentAnimation(SituationComponentsAnimationUpdateReq situationComponentsAnimationUpdateReq) {
+    public SituationComponentsAnimationRes updateComponentAnimation(SituationComponentsAnimationUpdateReq req) {
         SituationComponentsAnimation situationComponentsAnimation = new SituationComponentsAnimation();
-        BeanUtils.copyProperties(situationComponentsAnimationUpdateReq, situationComponentsAnimation);
+        BeanUtils.copyProperties(req, situationComponentsAnimation);
         checkChartId(situationComponentsAnimation);
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("name", situationComponentsAnimationUpdateReq.getName());
-        List<SituationComponentsAnimation> situationComponentsAnimations = situationComponentAnimationMapper.selectByMap(filterMap);
-        if(!situationComponentsAnimations.isEmpty()){
-            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+        SituationComponentsAnimation componentsAnimation = situationComponentAnimationMapper.selectById(req.getResourceId());
+        String name = req.getName();
+        if(name != componentsAnimation.getName()){
+            LambdaQueryWrapper<SituationComponentsAnimation> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SituationComponentsAnimation::getName, name);
+            SituationComponentsAnimation situationComponentsAnimations = situationComponentAnimationMapper.selectOne(queryWrapper);
+            if(null != situationComponentsAnimations){
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
         }
         int i = situationComponentAnimationMapper.updateById(situationComponentsAnimation);
         return null;

@@ -482,6 +482,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext));
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
+		courseList.forEach(course -> courseValidateHandler.validateBuiltin(course));
 
 		// 创建文件夹
 		String destPath = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();

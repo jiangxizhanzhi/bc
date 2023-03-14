@@ -160,7 +160,7 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
             SituationComponentsChartDetailsRes situationComponentsChartDetailsRes = new SituationComponentsChartDetailsRes();
             String chartName = twoDimensionalComponent.getName();
             chartName = StringUtils.isEmpty(chartName) ? "" : chartName;
-            situationComponentsChartDetailsRes.setChartName(chartName);
+//            situationComponentsChartDetailsRes.setChartName(chartName);
             String chartCategory = categoryMap.get(twoDimensionalComponent.getType());
             chartCategory = StringUtils.isEmpty(chartCategory) ? "" : chartCategory;
             situationComponentsChartDetailsRes.setChartCategoryName(chartCategory);

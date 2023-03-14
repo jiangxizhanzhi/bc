@@ -2,15 +2,19 @@ package com.cyberpeace.situation.controller;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
 import lombok.SneakyThrows;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,9 +31,6 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.manage.ServiceLogContext;
 import com.cyberpeace.integratation.service.RemoteManageService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -98,7 +99,7 @@ public class SituationTwoDimensionalComponentController {
 
 	@ApiOperation("查询二维组件")
 	@GetMapping("list")
-	public BaseRsp<List<TwoDimensionalComponents>>
+	public BaseRsp<List<SituationComponentsChartDetailsRes>>
 			getTwoDimensionalComponents(TwoDimensionalComponentsFilterReq twoDimensionalComponentsFilterReq) {
 		LambdaQueryWrapper<TwoDimensionalComponents> queryWrapper = new LambdaQueryWrapper<>();
 		if (null != twoDimensionalComponentsFilterReq.getName()){
@@ -110,8 +111,20 @@ public class SituationTwoDimensionalComponentController {
 		}
 		queryWrapper.orderByDesc(TwoDimensionalComponents::getCreateTime);
 		List<TwoDimensionalComponents> res = twoDimensionalComponentsMapper.selectList(queryWrapper);
+		List<SituationComponentsChartDetailsRes> result = new ArrayList<>();
+		List<TwoDimensionalComponentsCategory> twoDimensionalComponentsCategories = twoDimensionalComponentsCategoryMapper.selectList(null);
+		Map<String, String> categoryMap = StreamApiUtils.toMap(twoDimensionalComponentsCategories,
+				TwoDimensionalComponentsCategory::getResourceId, twoDimensionalComponentsCategory -> twoDimensionalComponentsCategory.getName());
+		res.forEach(twoDimensionalComponent -> {
+			SituationComponentsChartDetailsRes situationComponentsChartDetailsRes = new SituationComponentsChartDetailsRes();
+			BeanUtils.copyProperties(twoDimensionalComponent, situationComponentsChartDetailsRes);
+			String chartCategory = categoryMap.get(twoDimensionalComponent.getType());
+			chartCategory = StringUtils.isEmpty(chartCategory) ? "" : chartCategory;
+			situationComponentsChartDetailsRes.setChartCategoryName(chartCategory);
+			result.add(situationComponentsChartDetailsRes);
+		});
 		remoteManageService.writeLog(ServiceLogContext.SubModule.TJZJ, ServiceLogContext.Type.CX);
-		return new BaseRsp<>(res);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("查询二维组件类型详情")

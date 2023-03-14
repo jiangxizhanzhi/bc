@@ -12,7 +12,7 @@ public class SituationComponentsAnimationReq implements Serializable {
     private String startTime;
 
     @ApiModelProperty(value = "结束时间")
-    private String endtime;
+    private String endTime;
 
     @ApiModelProperty(value = "动画名称")
     private String name;

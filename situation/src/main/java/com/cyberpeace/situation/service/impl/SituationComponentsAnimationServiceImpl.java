@@ -111,13 +111,13 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
 
         }
         String startTime = req.getStartTime();
-        String endTime = req.getEndtime();
+        String endTime = req.getEndTime();
         Date startTimeDate;
         Date endTimeDate;
         if(StringUtils.isNotEmpty(startTime) && StringUtils.isNotEmpty(endTime)){
             endTimeDate = TimeUtil.toDate2(endTime);
             startTimeDate = TimeUtil.toDate2(startTime);
-            if(endTimeDate.after(startTimeDate)){
+            if(endTimeDate.before(startTimeDate)){
                 throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
             }
             queryWrapper.ge(SituationComponentsAnimation::getCreateTime, startTimeDate);

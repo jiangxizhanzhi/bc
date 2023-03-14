@@ -400,7 +400,7 @@ public class ThirdPartyController {
 		return new BaseRsp<>(rsp);
 	}
 
-	@ApiOperation("获取跨层分析应用层数据")
+	@ApiOperation("获取7层分析应用层数据")
 	@PostMapping("/layer/data/app/")
 	public BaseRsp<LayerDataAppRes> getLayerDataApp(@RequestBody @Validated TaskOsiReq taskOsiReq) {
 
@@ -417,7 +417,7 @@ public class ThirdPartyController {
 		return new BaseRsp<>(layerDataAppRes);
 	}
 
-	@ApiOperation("获取跨层分析传输层数据")
+	@ApiOperation("获取7层分析传输层数据")
 	@PostMapping("/layer/data/transport/")
 	public BaseRsp<LayerDataTransportRes>
 			getLayerDataTransport(@RequestBody @Validated TaskOsiReq taskOsiReq) {
@@ -431,7 +431,7 @@ public class ThirdPartyController {
 		return new BaseRsp<>(layerDataTransportRes);
 	}
 
-	@ApiOperation("获取跨层分析网络层数据")
+	@ApiOperation("获取7层分析网络层数据")
 	@PostMapping("/layer/data/net/")
 	public BaseRsp<LayerDataNetRes> getLayerDataNet(@RequestBody @Validated TaskOsiReq taskOsiReq) {
 		LayerDataNetRes layerDataNetRes = new LayerDataNetRes();
@@ -447,7 +447,7 @@ public class ThirdPartyController {
 		return new BaseRsp<>(layerDataNetRes);
 	}
 
-	@ApiOperation("获取跨层分析物理层数据")
+	@ApiOperation("获取7层分析物理层数据")
 	@PostMapping("/layer/data/physics/")
 	public BaseRsp<LayerDataPhysicsRes>
 			getLayerDataPhysics(@RequestBody @Validated TaskOsiReq taskOsiReq) {

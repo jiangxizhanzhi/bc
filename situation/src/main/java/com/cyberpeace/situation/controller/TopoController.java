@@ -22,6 +22,7 @@ import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.NodePositionReq;
 import com.cyberpeace.situation.controller.req.SituationTopoReq;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
+import com.cyberpeace.situation.controller.res.EditUrlRes;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
@@ -125,5 +126,12 @@ public class TopoController {
 	@GetMapping("/config/list/")
 	public BaseRsp<List<ConfigContext>> getAllConfig() {
 		return new BaseRsp<>(situationTopoService.getAllConfig());
+	}
+
+	@ApiOperation("获取跳转可视化编辑路径")
+	@GetMapping("/visualization/edit/url/")
+	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
+			required = false) @ApiParam(name = "model_id", value = "模型ID") String modelId) {
+		return new BaseRsp<>(new EditUrlRes(modelId));
 	}
 }

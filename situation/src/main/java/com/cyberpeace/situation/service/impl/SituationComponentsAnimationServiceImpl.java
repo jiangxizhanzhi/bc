@@ -74,7 +74,7 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
         checkChartId(situationComponentsAnimation);
         SituationComponentsAnimation componentsAnimation = situationComponentAnimationMapper.selectById(req.getResourceId());
         String name = req.getName();
-        if(name != componentsAnimation.getName()){
+        if(!Objects.equals(name, componentsAnimation.getName())){
             LambdaQueryWrapper<SituationComponentsAnimation> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(SituationComponentsAnimation::getName, name);
             SituationComponentsAnimation situationComponentsAnimations = situationComponentAnimationMapper.selectOne(queryWrapper);

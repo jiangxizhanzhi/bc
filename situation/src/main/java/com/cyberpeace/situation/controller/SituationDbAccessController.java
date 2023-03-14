@@ -36,7 +36,7 @@ public class SituationDbAccessController {
     private SituationDbAccessMapper situationDbAccessAuthorityMapper;
 
 
-    @ApiOperation("获取动画列表")
+    @ApiOperation("获取数据库访问列表")
     @GetMapping("/list")
     public BaseRsp<List<SituationDbAccess>> getDbAccess(@ApiParam @Validated SituationDbAccessReq req) {
         LambdaQueryWrapper<SituationDbAccess> queryWrapper = new LambdaQueryWrapper<>();

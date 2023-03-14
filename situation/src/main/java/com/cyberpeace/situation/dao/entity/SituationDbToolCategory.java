@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@TableName("situation_components_chart_category")
+@TableName("situation_db_tool_category")
 public class SituationDbToolCategory extends BaseTable {
 
 	@TableId(value = "resource_id")

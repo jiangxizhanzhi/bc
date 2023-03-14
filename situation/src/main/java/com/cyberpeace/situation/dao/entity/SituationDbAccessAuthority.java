@@ -6,7 +6,7 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("situation_db_tool")
+@TableName("situation_db_access_authority")
 public class SituationDbAccessAuthority extends BaseTable {
 
 	@TableId(value = "resource_id")

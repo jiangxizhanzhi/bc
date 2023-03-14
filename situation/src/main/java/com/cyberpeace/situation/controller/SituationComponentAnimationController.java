@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationAddReq;
 import com.cyberpeace.situation.controller.res.SituationComponentsAnimationRes;
+import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
 import com.cyberpeace.situation.dao.entity.SituationComponentsAnimation;
 import com.cyberpeace.situation.service.SituationComponentAnimationService;
 import io.swagger.annotations.Api;
@@ -44,7 +45,7 @@ public class SituationComponentAnimationController {
     @ApiOperation("删除动画")
     @DeleteMapping("")
     public BaseRsp<Integer> deleteComponentAnimation(@RequestBody @Validated SituationComponentsAnimationDeleteReq deleteReq) {
-        return new BaseRsp<>(situationComponentAnimationService.deleteComponentAnimation(deleteReq.getResourceId()));
+        return new BaseRsp<>(situationComponentAnimationService.deleteComponentAnimation(deleteReq.getResourceIds()));
     }
 
 
@@ -59,5 +60,11 @@ public class SituationComponentAnimationController {
     public BaseRsp<SituationComponentsAnimation> getComponentAnimation(@ApiParam(required = true, name = "resource_id", value = "资源id")
                                                               @RequestParam("resource_id") String resourceId) {
         return new BaseRsp<>(situationComponentAnimationService.getComponentAnimation(resourceId));
+    }
+
+    @ApiOperation("获取二维组件详情")
+    @GetMapping("chart/detail")
+    public BaseRsp<List<SituationComponentsChartDetailsRes>> getChartDetails() {
+        return new BaseRsp<>(situationComponentAnimationService.getChartDetails());
     }
 }

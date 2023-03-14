@@ -979,3 +979,68 @@ CREATE TABLE `situation_components_animation`
     UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
     UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `situation_db_access`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `db_name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '数据库名称',
+    `table_name`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '表名',
+    `operation_type`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作类型',
+    `operation_time`         datetime NULL DEFAULT NULL COMMENT '操作时间',
+    `operation_detail` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '操作详情',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+
+CREATE TABLE `situation_db_tool`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工具名称',
+    `description`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '工具描述',
+    `tool_type`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工具类型',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for situation_db_tool_category
+-- ----------------------------
+CREATE TABLE `situation_db_tool_category`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT,
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工具类型',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人ID',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name`) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+
+
+CREATE TABLE `situation_db_access_authority`
+(
+    `id`             int                                                     NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
+    `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '系统名称',
+    `db_type`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '数据类型',
+    `sys_ip`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '系统ip',
+    `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
+    `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',
+    `update_time`    datetime NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    UNIQUE INDEX `name_uniq`(`name` ASC) USING BTREE,
+    UNIQUE INDEX `resource_id`(`resource_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

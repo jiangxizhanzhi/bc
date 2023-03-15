@@ -202,4 +202,7 @@ public interface MenuConstant {
 
     //图形资源管理
     String CMS_SITUATION_DRAWING_RESOURCE = "drawing-resource-management";
+
+    //图形资源管理
+    String DATA_CONVERSION_TOOL_MANAGEMENT = "data-conversion-tool-management-folder";
 }

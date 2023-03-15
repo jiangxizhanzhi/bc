@@ -6,6 +6,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -42,9 +43,24 @@ public class SituationDbToolController {
 
 	@ApiOperation("查询数据转换工具类型列表")
 	@GetMapping("/category/list")
-	public BaseRsp<List<SituationDbToolCategory>> getSituationDbToolCategory() {
-		List<SituationDbToolCategory> res = situationDbToolCategoryMapper.selectList(null);
+	public BaseRsp<List<SituationDbToolCategory>> getSituationDbToolCategory(PageReqBase pageReqBase) {
+		LambdaQueryWrapper<SituationDbToolCategory> queryWrapper = new LambdaQueryWrapper<>();
+		String name = pageReqBase.getPattern();
+		if(StringUtils.isNotEmpty(name)){
+			queryWrapper.like(SituationDbToolCategory::getName, name);
+		}
+		List<SituationDbToolCategory> res = situationDbToolCategoryMapper.selectList(queryWrapper);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("查询数据转换工具类型详情")
+	@GetMapping("/category/")
+	public BaseRsp<SituationDbToolCategory> getSituationDbToolCategoryDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
+		SituationDbToolCategory situationDbToolCategory = situationDbToolCategoryMapper.selectById(resourceId);
+		if(null == situationDbToolCategory){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return new BaseRsp<>(situationDbToolCategory);
 	}
 
 	@ApiOperation("新增数据转换工具类型列表")

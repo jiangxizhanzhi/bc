@@ -11,10 +11,12 @@ import com.cyberpeace.situation.controller.req.SituationComponentsAnimationAddRe
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationReq;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationUpdateReq;
 import com.cyberpeace.situation.controller.res.SituationComponentsAnimationRes;
+import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
 import com.cyberpeace.situation.dao.entity.SituationComponentsAnimation;
 import com.cyberpeace.situation.dao.entity.TwoDimensionalComponents;
 import com.cyberpeace.situation.dao.entity.TwoDimensionalComponentsCategory;
 import com.cyberpeace.situation.dao.mapper.SituationComponentAnimationMapper;
+import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
 import com.cyberpeace.situation.service.SituationComponentAnimationService;
 import com.cyberpeace.situation.dao.entity.SituationComponentsAnimation;
@@ -37,6 +39,9 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
 
     @Autowired
     private TwoDimensionalComponentsMapper twoDimensionalComponentsMapper;
+
+    @Autowired
+    private TwoDimensionalComponentsCategoryMapper twoDimensionalComponentsCategoryMapper;
 
     @Override
     public String addComponentAnimation(SituationComponentsAnimationAddReq situationComponentsAnimationAddReq) {
@@ -63,15 +68,19 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
     }
 
     @Override
-    public SituationComponentsAnimationRes updateComponentAnimation(SituationComponentsAnimationUpdateReq situationComponentsAnimationUpdateReq) {
+    public SituationComponentsAnimationRes updateComponentAnimation(SituationComponentsAnimationUpdateReq req) {
         SituationComponentsAnimation situationComponentsAnimation = new SituationComponentsAnimation();
-        BeanUtils.copyProperties(situationComponentsAnimationUpdateReq, situationComponentsAnimation);
+        BeanUtils.copyProperties(req, situationComponentsAnimation);
         checkChartId(situationComponentsAnimation);
-        Map<String, Object> filterMap = new HashMap<>();
-        filterMap.put("name", situationComponentsAnimationUpdateReq.getName());
-        List<SituationComponentsAnimation> situationComponentsAnimations = situationComponentAnimationMapper.selectByMap(filterMap);
-        if(!situationComponentsAnimations.isEmpty()){
-            throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+        SituationComponentsAnimation componentsAnimation = situationComponentAnimationMapper.selectById(req.getResourceId());
+        String name = req.getName();
+        if(!Objects.equals(name, componentsAnimation.getName())){
+            LambdaQueryWrapper<SituationComponentsAnimation> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(SituationComponentsAnimation::getName, name);
+            SituationComponentsAnimation situationComponentsAnimations = situationComponentAnimationMapper.selectOne(queryWrapper);
+            if(null != situationComponentsAnimations){
+                throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+            }
         }
         int i = situationComponentAnimationMapper.updateById(situationComponentsAnimation);
         return null;
@@ -88,12 +97,12 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
     }
 
     @Override
-    public Integer deleteComponentAnimation(String resourceId) {
-        SituationComponentsAnimation situationComponentsAnimation = situationComponentAnimationMapper.selectById(resourceId);
-        if(null == situationComponentsAnimation){
+    public Integer deleteComponentAnimation(List<String> resourceIds) {
+        List<SituationComponentsAnimation> situationComponentsAnimations = situationComponentAnimationMapper.selectBatchIds(resourceIds);
+        if(situationComponentsAnimations.isEmpty()){
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        int i = situationComponentAnimationMapper.deleteById(resourceId);
+        int i = situationComponentAnimationMapper.deleteBatchIds(resourceIds);
         return i;
     }
 
@@ -106,30 +115,60 @@ public class SituationComponentsAnimationServiceImpl extends ServiceImpl<Situati
 
         }
         String startTime = req.getStartTime();
-        String endTime = req.getEndtime();
+        String endTime = req.getEndTime();
         Date startTimeDate;
         Date endTimeDate;
         if(StringUtils.isNotEmpty(startTime) && StringUtils.isNotEmpty(endTime)){
             endTimeDate = TimeUtil.toDate2(endTime);
             startTimeDate = TimeUtil.toDate2(startTime);
-            if(endTimeDate.after(startTimeDate)){
+            if(endTimeDate.before(startTimeDate)){
                 throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
             }
             queryWrapper.ge(SituationComponentsAnimation::getCreateTime, startTimeDate);
             queryWrapper.le(SituationComponentsAnimation::getCreateTime, endTimeDate);
         }
-        LambdaQueryWrapper<TwoDimensionalComponents> query = new LambdaQueryWrapper<>();
-        List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectList(query);
-        Map<String, String> toMap = StreamApiUtils.toMap(twoDimensionalComponents, TwoDimensionalComponents::getResourceId, twoDimensionalComponent -> twoDimensionalComponent.getName());
+        List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectList(null);
+        Map<String, TwoDimensionalComponents> toMap = StreamApiUtils.toMap(twoDimensionalComponents, TwoDimensionalComponents::getResourceId, twoDimensionalComponent -> twoDimensionalComponent);
         List<SituationComponentsAnimation> filterRes = situationComponentAnimationMapper.selectList(queryWrapper);
         List<SituationComponentsAnimationRes> res = new ArrayList<>();
+        List<TwoDimensionalComponentsCategory> twoDimensionalComponentsCategories = twoDimensionalComponentsCategoryMapper.selectList(null);
+        Map<String, String> categoryMap = StreamApiUtils.toMap(twoDimensionalComponentsCategories,
+                TwoDimensionalComponentsCategory::getResourceId, twoDimensionalComponentsCategory -> twoDimensionalComponentsCategory.getName());
+
         filterRes.forEach(tmp -> {
             SituationComponentsAnimationRes situationComponentsAnimationRes = new SituationComponentsAnimationRes();
             BeanUtils.copyProperties(tmp, situationComponentsAnimationRes);
-            String chartName = toMap.get(tmp.getChartId());
-            chartName = StringUtils.isEmpty(chartName) ? "" : chartName;
-            situationComponentsAnimationRes.setChartName(chartName);
+            TwoDimensionalComponents chart = toMap.get(tmp.getChartId());
+            if(null != chart){
+                String chartName = chart.getName();
+                String type = chart.getType();
+                String chartCategory = categoryMap.get(type);
+                chartCategory = StringUtils.isEmpty(chartCategory) ? "" : chartCategory;
+                situationComponentsAnimationRes.setChartCategoryName(chartCategory);
+                situationComponentsAnimationRes.setChartName(chartName);
+
+            }
             res.add(situationComponentsAnimationRes);
+        });
+        return res;
+    }
+
+    @Override
+    public List<SituationComponentsChartDetailsRes> getChartDetails() {
+        List<TwoDimensionalComponents> twoDimensionalComponents = twoDimensionalComponentsMapper.selectList(null);
+        List<TwoDimensionalComponentsCategory> twoDimensionalComponentsCategories = twoDimensionalComponentsCategoryMapper.selectList(null);
+        Map<String, String> categoryMap = StreamApiUtils.toMap(twoDimensionalComponentsCategories,
+                TwoDimensionalComponentsCategory::getResourceId, twoDimensionalComponentsCategory -> twoDimensionalComponentsCategory.getName());
+        List<SituationComponentsChartDetailsRes> res = new ArrayList<>();
+        twoDimensionalComponents.forEach(twoDimensionalComponent -> {
+            SituationComponentsChartDetailsRes situationComponentsChartDetailsRes = new SituationComponentsChartDetailsRes();
+            String chartName = twoDimensionalComponent.getName();
+            chartName = StringUtils.isEmpty(chartName) ? "" : chartName;
+//            situationComponentsChartDetailsRes.setChartName(chartName);
+            String chartCategory = categoryMap.get(twoDimensionalComponent.getType());
+            chartCategory = StringUtils.isEmpty(chartCategory) ? "" : chartCategory;
+            situationComponentsChartDetailsRes.setChartCategoryName(chartCategory);
+            res.add(situationComponentsChartDetailsRes);
         });
         return res;
     }

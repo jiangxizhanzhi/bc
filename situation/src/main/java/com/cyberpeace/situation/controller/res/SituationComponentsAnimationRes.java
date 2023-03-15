@@ -18,6 +18,9 @@ public class SituationComponentsAnimationRes extends SituationComponentsAnimatio
 	@ApiModelProperty("组件名称")
 	private String chartName;
 
+	@ApiModelProperty("组件类型名称")
+	private String chartCategoryName;
+
 	@ApiModelProperty("创建时间")
 	private String creatTime;
 

@@ -16,6 +16,9 @@ public class ComponentsDataReq implements Serializable {
     @ApiModelProperty("数据源配置")
     private String dataSourceComponent;
 
+    @ApiModelProperty("静态数据源")
+    private String jsonString;
+
     @ApiModelProperty("维度")
     private String dimension;
 

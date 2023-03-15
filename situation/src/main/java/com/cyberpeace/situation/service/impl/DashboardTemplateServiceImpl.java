@@ -244,12 +244,20 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
     @Override
     public JSONArray getComponentsEchartsData(ComponentsDataReq componentsDataReq) {
         String dataSourceComponent = componentsDataReq.getDataSourceComponent();
+        String jsonString = componentsDataReq.getJsonString();
         if (StringUtils.isEmpty(dataSourceComponent)) {
             throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
         }
-        JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
-        String dataSource = jsonObject.getString("dataSource");
-        JSONArray echartsData = getEchartsData(dataSource, componentsDataReq);
+        JSONArray echartsData = null;
+        if (jsonString == null) {
+            JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
+            String dataSource = jsonObject.getString("dataSource");
+            echartsData = getEchartsData(dataSource, componentsDataReq);
+
+        } else {
+            JSONArray jsonArray = JsonUtil.stringToArray(jsonString);
+            echartsData = getEchartsDataSet(jsonArray, componentsDataReq);
+        }
         return echartsData;
     }
 
@@ -333,16 +341,16 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
         try {
             //获取分组数据集和维度数据集
-            HashSet<String> groupsSet = new HashSet<>();
-            HashSet<String> dimensionSet = new HashSet<>();
+            HashSet<Object> groupsSet = new HashSet<>();
+            HashSet<Object> dimensionSet = new HashSet<>();
             List<JSONObject> dataJsonList = new ArrayList<>();
 
             for (Object datum : jsonArray) {
                 JSONObject datumObject = JsonUtil.java2JsonObject(datum);
-                String dimensionValue = datumObject.getString(dimension);
+                Object dimensionValue = datumObject.get(dimension);
                 dimensionSet.add(dimensionValue);
                 if (StringUtils.isNotBlank(groups)) {
-                    String groupValue = datumObject.getString(groups);
+                    Object groupValue = datumObject.get(groups);
                     groupsSet.add(groupValue);
                 }
                 dataJsonList.add(datumObject);
@@ -361,12 +369,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                 }
                 if (CollectionUtils.isNotEmpty(measureList)) {
                     measureList.forEach(measureKey -> {
-                        String string = jsonObject.getString(measureKey);
+                        Object string = jsonObject.get(measureKey);
                         finallyObject.put(measureKey, string);
                     });
                 }
                 if (StringUtils.isNotBlank(groups)) {
-                    String string = jsonObject.getString(groups);
+                    Object string = jsonObject.get(groups);
                     finallyObject.put(groups, string);
                 }
                 data.add(finallyObject);
@@ -375,7 +383,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
             //分组数据处理
             if (CollectionUtils.isNotEmpty(groupsSet)) {
                 JSONArray groupJsonArray = new JSONArray();
-                for (String dimensionKey : dimensionSet) {
+                for (Object dimensionKey : dimensionSet) {
                     //根据维度筛选分组数据
                     List<JSONObject> groupDataList = new ArrayList<>();
                     dataJsonList.forEach(dataObject -> {
@@ -389,14 +397,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
                     jsonObject.put(dimension, dimensionKey);
 
                     //处理当前维度的分组数据
-                    for (String groupKey : groupsSet) {
+                    for (Object groupKey : groupsSet) {
                         groupDataList.forEach(groupData -> {
-                            String groupValue = groupData.getString(groups);
+                            Object groupValue = groupData.get(groups);
                             if (Objects.equals(groupKey, groupValue)) {
                                 // 有分组情况，度量key只能存在一个值
                                 String measureKey = measureList.get(0);
-                                String measureVale = groupData.getString(measureKey);
-                                jsonObject.put(groupKey, measureVale);
+                                Object measureVale = groupData.get(measureKey);
+                                jsonObject.put(groupKey.toString(), measureVale);
                             }
                         });
                     }
@@ -644,5 +652,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
         }
 
         return sortComponentsSettingList;
+    }
+
+    @Override
+    public JSONArray getComponentsEchartsData(String jsonString) {
+
+        return null;
     }
 }

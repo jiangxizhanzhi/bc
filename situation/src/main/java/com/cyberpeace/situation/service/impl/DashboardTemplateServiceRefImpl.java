@@ -1,26 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.situation.controller.req.InstanceDataQueryReq;
-import com.cyberpeace.situation.controller.req.LayerShowReq;
-import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.model.ViewAngle;
-import com.cyberpeace.situation.service.context.DynamicParameterContext;
-import com.mysql.cj.xdevapi.JsonArray;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,15 +10,36 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
+import com.cyberpeace.situation.controller.req.LayerShowReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
+import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
+import com.cyberpeace.situation.service.context.DynamicParameterContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @Author xuxz
@@ -273,12 +273,23 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
                     JSONObject jsonObject = JSONObject.parseObject(componentSetting);
                     String componentType = jsonObject.getString("component_type");
                     if (componentType == null) {
-                        JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
                         String option = jsonObject.getString("option");
                         JSONObject optionObject = JSONObject.parseObject(option);
+                        JSONObject dataset = optionObject.getJSONObject("dataset");
+                        JSONArray echartsOption = dashboardTemplateService.getEchartsOption(componentSetting, jsonArray.toJSONString());
+                        Boolean dynamic = null;
+                        if (dataset != null) {
+                            dynamic = dataset.getBoolean("dynamic");
+                        }
                         JSONObject dataSetObject = new JSONObject();
-                        dataSetObject.put("source", echartsOption);
-                        optionObject.replace("dataset", dataSetObject);
+                        // dataset 数据模型
+                        if (dynamic == null || dynamic) {
+                            dataSetObject.put("source", echartsOption);
+                            optionObject.replace("dataset", dataSetObject);
+                        } else {
+                            parseUnDataSet(optionObject, echartsOption, componentSetting);
+                        }
+
                     }
                 }
             }
@@ -318,6 +329,97 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+        return jsonArray;
+    }
+
+    private void parseUnDataSet(JSONObject optionObject, JSONArray echartsOption, String componentsData) {
+        JSONObject xAxis = optionObject.getJSONObject("xAxis");
+        JSONObject yAxis = optionObject.getJSONObject("yAxis");
+        JSONArray series = optionObject.getJSONArray("series");
+        //TODO 其它坐标轴类型，如极坐标
+
+        JSONObject componentsDataJson = JSONObject.parseObject(componentsData);
+        String dimension = componentsDataJson.getString("dimension");
+        String measure = componentsDataJson.getString("measure");
+        String groups = componentsDataJson.getString("groups");
+
+        JSONArray dimensionOptionArray = getOptionValueArray(echartsOption, dimension);
+        JSONArray measureOptionArray = getOptionValueArray(echartsOption, measure);
+        JSONArray groupsOptionArray = getOptionValueArray(echartsOption, measure);
+        //xAxis 存在时，替换data数据
+        if (xAxis != null && xAxis.containsKey("data")) {
+            xAxis.replace("data", dimensionOptionArray);
+        }
+        // yAxis 存在时，替换data数据
+        if (yAxis != null && yAxis.containsKey("data")) {
+            yAxis.replace("data", measureOptionArray);
+        }
+        //series是否包含data
+        if ((xAxis == null && yAxis == null) && JsonUtil.java2JsonObject(series.get(0)).containsKey("data")) {
+            for (int i = 0; i < series.size(); i++) {
+                JSONObject datumObject = JsonUtil.java2JsonObject(series.get(i));
+                JSONArray dataArray = datumObject.getJSONArray("data");
+                // data 类型数据为对象类型[{"xxx":xxx,"xxx":"xxx"}]
+                try {
+                    JSONObject jsonObject = JsonUtil.java2JsonObject(dataArray.get(0));
+                    //维度度量衡存在时，需要替换series里面的name和value的值，仅在series里面能转成json时
+                    if ((dimension != null && measure != null) && (dimensionOptionArray.size() >= i && measureOptionArray.size() >= i)) {
+                        if (jsonObject.containsKey("name")) {
+                            jsonObject.replace("name", dimensionOptionArray.get(i));
+                        }
+                        if (jsonObject.containsKey("value")) {
+                            jsonObject.replace("value", measureOptionArray.get(i));
+                        }
+                    } else if ((dimension != null && measure == null) && (dimensionOptionArray.size() >= i && measureOptionArray.size() >= i)) {
+                        if (jsonObject.containsKey("name")) {
+                            jsonObject.replace("name", dimensionOptionArray.get(i));
+                        }
+                    }
+                } catch (Exception e) {
+                    // data 类型为[1，2，3，4]或者["a","b","c"]类型
+                    if (dataArray.get(0) instanceof String || dataArray.get(0) instanceof Integer) {
+                        datumObject.replace("data", getOptionValueArray(echartsOption, dimension));
+                    }
+                }
+                //存在分组时
+                if (groups != null) {
+                    if (datumObject.containsKey("links") && groupsOptionArray.size() >= i) {
+                        datumObject.replace("links", groupsOptionArray.get(i));
+                    }
+                    if (datumObject.containsKey("categories") && dimensionOptionArray.size() >= i) {
+                        JSONArray jsonArray = new JSONArray();
+                        for (Object o : dimensionOptionArray) {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("name", o);
+                            jsonArray.add(jsonObject);
+                        }
+                        datumObject.replace("categories", jsonArray);
+                    }
+                }
+            }
+        }
+    }
+
+    private JSONArray getOptionValueArray(JSONArray echartsOption, String value) {
+        JSONArray jsonArray = new JSONArray();
+        String[] split = value.split(",");
+        if (echartsOption != null) {
+            for (Object datum : echartsOption) {
+                JSONObject datumObject = JsonUtil.java2JsonObject(datum);
+                JSONArray dataArray = new JSONArray();
+                for (String splitValue : split) {
+                    if (datumObject.containsKey(splitValue)) {
+                        if (split.length == 1) {
+                            jsonArray.add(datumObject.get(splitValue));
+                        } else {
+                            dataArray.add(datumObject.get(splitValue));
+                            jsonArray.add(dataArray);
+                        }
+                    }
+
+                }
+            }
         }
         return jsonArray;
     }

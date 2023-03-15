@@ -14,7 +14,7 @@ public class SituationDbToolFilterReq implements Serializable {
     @ApiModelProperty(value = "结束时间")
     private String endTime;
 
-    @ApiModelProperty(value = "表名")
+    @ApiModelProperty(value = "工具名称")
     private String name;
 
     @ApiModelProperty(value = "工具类型")

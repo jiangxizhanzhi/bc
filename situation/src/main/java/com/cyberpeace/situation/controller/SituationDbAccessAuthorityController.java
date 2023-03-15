@@ -4,10 +4,13 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.situation.constant.DataType;
 import com.cyberpeace.situation.constant.SubSystem;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationDeleteReq;
 import com.cyberpeace.situation.controller.req.SituationDbAccessAuthorityAddReq;
+import com.cyberpeace.situation.controller.req.SituationDrawingPageReq;
 import com.cyberpeace.situation.controller.res.SituationEnumRes;
 import com.cyberpeace.situation.dao.entity.SituationDbAccessAuthority;
 import com.cyberpeace.situation.dao.mapper.SituationDbAccessAuthorityMapper;
@@ -35,19 +38,29 @@ public class SituationDbAccessAuthorityController {
 
     @ApiOperation("获取系统名称列表")
     @GetMapping("/sys/list")
-    public BaseRsp<List<SituationEnumRes>> getSubSystems() {
-        List<SituationEnumRes> res = new ArrayList<>();
+    public BaseRsp<ListRsp<SituationEnumRes>> getSubSystems(PageReqBase pageReqBase) {
+        ListRsp<SituationEnumRes> res = new ListRsp<>();
+        List<SituationEnumRes> data = new ArrayList<>();
         Arrays.asList(SubSystem.values())
-                .forEach(item -> res.add(new SituationEnumRes(item.getCode(), item.getName())));
+                .forEach(item -> data.add(new SituationEnumRes(item.getCode(), item.getName())));
+        res.setList(data);
+        res.setTotal(data.size());
+        res.setCurrentPage(pageReqBase.getPage());
+        res.setLastPage(res.getTotal() / pageReqBase.getPerPage() + 1);
         return new BaseRsp<>(res);
     }
 
     @ApiOperation("获取数据类型列表")
     @GetMapping("/data_type/list")
-    public BaseRsp<List<SituationEnumRes>> getDataTypes() {
-        List<SituationEnumRes> res = new ArrayList<>();
+    public BaseRsp<ListRsp<SituationEnumRes>> getDataTypes(PageReqBase pageReqBase) {
+        ListRsp<SituationEnumRes> res = new ListRsp<>();
+        List<SituationEnumRes> data = new ArrayList<>();
         Arrays.asList(DataType.values())
-                .forEach(item -> res.add(new SituationEnumRes(item.getCode(), item.getName())));
+                .forEach(item -> data.add(new SituationEnumRes(item.getCode(), item.getName())));
+        res.setList(data);
+        res.setTotal(data.size());
+        res.setCurrentPage(pageReqBase.getPage());
+        res.setLastPage(res.getTotal() / pageReqBase.getPerPage() + 1);
         return new BaseRsp<>(res);
     }
 

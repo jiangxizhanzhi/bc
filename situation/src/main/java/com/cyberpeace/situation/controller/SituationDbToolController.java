@@ -3,45 +3,27 @@ package com.cyberpeace.situation.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.integratation.model.manage.ServiceLogContext;
-import com.cyberpeace.integratation.service.RemoteManageService;
-import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.AddCategoryReq;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.SituationDbToolAddReq;
-import com.cyberpeace.situation.controller.req.SituationDbToolFilterReq;
-import com.cyberpeace.situation.controller.req.SituationDbToolUpdateReq;
-import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.SituationDbTool;
 import com.cyberpeace.situation.dao.entity.SituationDbToolCategory;
 import com.cyberpeace.situation.dao.mapper.SituationDbToolCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDbToolMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,9 +39,6 @@ public class SituationDbToolController {
 
 	@Autowired
 	private SituationDbToolCategoryMapper situationDbToolCategoryMapper;
-
-	@Autowired
-	private RemoteManageService remoteManageService;
 
 	@ApiOperation("查询数据转换工具类型列表")
 	@GetMapping("/category/list")
@@ -126,10 +105,11 @@ public class SituationDbToolController {
 	@ApiOperation("新增数据转换工具")
 	@PostMapping("")
 	public BaseRsp<SituationDbTool>
-			setSituationDbTool(@RequestBody @Validated(Create.class) SituationDbToolAddReq twoDimensionalComponentsAddReq) {
+			setSituationDbTool(@RequestBody @Validated(Create.class) SituationDbToolAddReq dbToolAddReq) {
 
-		SituationDbTool situationDbTool = BeanUtils.copy(twoDimensionalComponentsAddReq,
+		SituationDbTool situationDbTool = BeanUtils.copy(dbToolAddReq,
 				SituationDbTool.class);
+		situationDbTool.setToolType(dbToolAddReq.getToolCategory());
 		String type = situationDbTool.getToolType();
 		SituationDbToolCategory situationDbToolCategory = situationDbToolCategoryMapper.selectById(type);
 		if(null == situationDbToolCategory){
@@ -170,7 +150,6 @@ public class SituationDbToolController {
 			dbTool.setToolType(toolCategory);
 		});
 
-		remoteManageService.writeLog(ServiceLogContext.SubModule.TJZJ, ServiceLogContext.Type.CX);
 		return new BaseRsp<>(res);
 	}
 

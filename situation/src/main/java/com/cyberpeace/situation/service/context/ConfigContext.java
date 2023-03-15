@@ -2,7 +2,7 @@ package com.cyberpeace.situation.service.context;
 
 import java.io.Serializable;
 
-import org.eclipse.jetty.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.util.JsonUtil;
@@ -21,7 +21,7 @@ public class ConfigContext implements Serializable {
 	private String thumbnail;
 
 	public void setConfig(String config) {
-		this.config = StringUtil.isEmpty(config) ? null
+		this.config = StringUtils.isEmpty(config) ? null
 				: JsonUtil.toJsonObject(config, JSONObject.class);
 	}
 

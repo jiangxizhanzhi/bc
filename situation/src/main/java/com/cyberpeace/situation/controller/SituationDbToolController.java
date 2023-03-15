@@ -127,9 +127,11 @@ public class SituationDbToolController {
 				SituationDbTool.class);
 		situationDbTool.setToolType(dbToolAddReq.getToolCategory());
 		String type = situationDbTool.getToolType();
-		SituationDbToolCategory situationDbToolCategory = situationDbToolCategoryMapper.selectById(type);
-		if(null == situationDbToolCategory){
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		if (StringUtils.isNotEmpty(type)) {
+			SituationDbToolCategory situationDbToolCategory = situationDbToolCategoryMapper.selectById(type);
+			if (null == situationDbToolCategory) {
+				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+			}
 		}
 
 		String userId = UserInfoContext.getUserContext().getUserId();

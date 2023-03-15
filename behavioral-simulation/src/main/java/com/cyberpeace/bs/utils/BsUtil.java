@@ -331,4 +331,18 @@ public class BsUtil {
 		}
 		return jsonString;
 	}
+
+	/**
+	 * 若输入为null，返回默认，否则返回输入
+	 * @param input
+	 * @param <T>
+	 * @return
+	 */
+	public static  <T> T getOrDefault(T input, T defaultValue) {
+		if (null == input) {
+			return defaultValue;
+		} else {
+			return input;
+		}
+	}
 }

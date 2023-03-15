@@ -17,4 +17,15 @@ public class BehaviorPageReq extends PageReqBase {
 	@Getter
 	@Setter
 	private Integer networkType;
+
+	@ApiModelProperty(value = "客户端类型，type=45")
+	@Getter
+	@Setter
+	private Integer appType;
+
+	@ApiModelProperty(value = "是否实体设备")
+	@Getter
+	@Setter
+	private Integer isActual;
+
 }

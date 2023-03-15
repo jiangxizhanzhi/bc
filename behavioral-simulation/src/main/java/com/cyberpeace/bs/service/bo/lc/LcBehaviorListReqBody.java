@@ -16,4 +16,8 @@ public class LcBehaviorListReqBody implements Serializable {
 	private Integer netModel;
 
 	private Integer deviceType;
+
+	private Integer appType;
+
+	private Integer isActual;
 }

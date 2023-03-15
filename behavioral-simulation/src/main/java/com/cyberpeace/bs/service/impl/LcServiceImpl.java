@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
@@ -32,6 +31,7 @@ import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
+import com.cyberpeace.common.util.TimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -128,6 +128,8 @@ public class LcServiceImpl implements LcService {
 		body.setFlowChartName(pageReq.getPattern());
 		body.setNetModel(pageReq.getNetworkType());
 		body.setDeviceType(pageReq.getAccessOs());
+		body.setAppType(pageReq.getAppType());
+		body.setIsActual(pageReq.getIsActual());
 		LcBehaviorPageRes lcBehaviorPageRes = LcHttpClient.post(targetUrl, body,
 				LcBehaviorPageRes.class);
 		ListRsp<LcBehavior> res = new ListRsp<>();
@@ -169,6 +171,8 @@ public class LcServiceImpl implements LcService {
 		lcBehavior.setCreatorName(rspBo.getCreatorName());
 		lcBehavior.getApplication().add(rspBo.getApplication());
 		lcBehavior.setTag(BsUtil.parseTags(rspBo.getTag()));
+		lcBehavior.setAppType(rspBo.getAppType());
+		lcBehavior.setIsActual(rspBo.getIsActual());
 		return lcBehavior;
 	}
 
@@ -279,7 +283,8 @@ public class LcServiceImpl implements LcService {
 		req.setDeviceIp(deviceIp);
 		req.setIsUsingIp(!isEntity);
 		req.setStartTime(startTime);
-		log.info("monitor query param={}, date={}", JsonUtil.toJsonString(req), JsonUtil.toJsonString(TimeUtil.format1(new Date())));
+		log.info("monitor query param={}, date={}", JsonUtil.toJsonString(req),
+				JsonUtil.toJsonString(TimeUtil.format1(new Date())));
 		LcMonitorRsp rsp = LcHttpClient.post(targetUrl, req, LcMonitorRsp.class);
 		log.info("monitor rsp={}", JsonUtil.toJsonString(rsp));
 		return rsp;

@@ -14,4 +14,10 @@ public class LcBehavior extends Behavior implements Serializable {
 	@ApiModelProperty(value = "行为依赖")
 	private List<String> application = Lists.newArrayList();
 
+	@ApiModelProperty(value = "是否实体")
+	private Integer isActual;
+
+	@ApiModelProperty(value = "客户端类型，type=45")
+	private Integer appType;
+
 }

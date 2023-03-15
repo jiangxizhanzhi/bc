@@ -137,4 +137,15 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 9, 41, '监控', 'Monit
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 10, 41, '学习', 'Study');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 11, 41, '教学', 'Teach');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 12, 41, '数据库', 'Database');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 13, 41, '即时通信', 'Message');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 13, 41, '即时通讯', 'Message');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 14, 41, '购物', 'Shopping');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 15, 41, '新闻', 'News');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 16, 41, '社交网络', 'SNS');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 17, 41, '文件', 'File');
+-- 客户端类型 --
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, 45, 'Web客户端', 'Web');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, 45, '邮件客户端', 'Mail');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, 45, '视频客户端', 'Video');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, 45, '即时通讯客户端', 'Message');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 5, 45, '网络游戏客户端', 'Video Game');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 6, 45, 'FTP客户端', 'FTP');

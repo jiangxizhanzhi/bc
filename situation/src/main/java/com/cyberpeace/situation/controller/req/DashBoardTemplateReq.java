@@ -10,6 +10,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.situation.constant.MapView;
 import com.cyberpeace.situation.model.ViewAngle;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -75,4 +76,7 @@ public class DashBoardTemplateReq implements Serializable {
 
 	@ApiModelProperty("定制类型")
 	private Integer customCode;
+
+	@ApiModelProperty("大屏参数配置")
+	private DashboardConfigContext config;
 }

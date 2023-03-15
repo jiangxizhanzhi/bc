@@ -39,6 +39,7 @@ import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -118,6 +119,14 @@ public class DashboardController {
 			getDashboardBasicAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
 					name = "dashboard_id", value = "大屏ID") String dashboardId) {
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
+	}
+
+	@ApiOperation("获取大屏参数属性")
+	@GetMapping("/config/parameter/")
+	public BaseRsp<DashboardConfigContext>
+			getDashboardParameterConfig(@RequestParam("dashboard_id") @ApiParam(required = true,
+					name = "dashboard_id", value = "大屏ID") String dashboardId) {
+		return new BaseRsp<>(dashboardService.getParameterConfigByDashboardId(dashboardId));
 	}
 
 	@ApiOperation("获取动态字段列表")

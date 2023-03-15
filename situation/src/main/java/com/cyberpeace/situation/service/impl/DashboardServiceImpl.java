@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
@@ -24,6 +25,7 @@ import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 import com.google.common.collect.Lists;
 
 @Service
@@ -98,6 +100,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 		return data;
 
+	}
+
+	@Override
+	public DashboardConfigContext getParameterConfigByDashboardId(String dashboardId) {
+		return JsonUtil.toJsonObject(
+				situationPublishInstanceMapper.getParameterConfigByDashboardId(dashboardId),
+				DashboardConfigContext.class);
 	}
 
 	@Override

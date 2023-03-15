@@ -25,7 +25,7 @@ public interface ThirdPartyService {
 	 * 获取分靶场列表
 	 * @return List<RangeContext>
 	 */
-	List<RangeContext> getRanges();
+	List<RangeContext> getRanges(String type);
 
 	/**
 	 * 获取分靶场

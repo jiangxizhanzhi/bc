@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -150,9 +151,22 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	}
 
 	@Override
-	public List<RangeContext> getRanges() {
+	public List<RangeContext> getRanges(String type) {
 		checkRangeData();
-		return getSiteList(rangeCache);
+		List<RangeContext> rangeContexts = getSiteList(rangeCache);
+		List<RangeContext> result = Lists.newArrayList();
+
+		if (StringUtils.isNotBlank(type)) {
+			List<RangeContext> finalResult = result;
+			rangeContexts.forEach(range -> {
+				if (range.getSubRangeName().endsWith(type)) {
+					finalResult.add(range);
+				}
+			});
+		} else {
+			result = rangeContexts;
+		}
+		return result;
 	}
 
 	@Override

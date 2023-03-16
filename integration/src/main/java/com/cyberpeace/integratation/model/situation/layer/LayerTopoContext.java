@@ -30,7 +30,7 @@ public class LayerTopoContext implements Serializable {
 		// 处理节点坐标
 		int index = 1;
 		int count = 1;
-		int interval = 50;
+		int interval = 150;
 		for (int i = 0; i < this.elements.size(); i++) {
 			ElementContext element = this.elements.get(i);
 			context.getElements().put(element.getElementId(), element);
@@ -41,10 +41,10 @@ public class LayerTopoContext implements Serializable {
 				element.setPosition(new PositionContext((float) interval * count, (float) 0));
 				index += 1;
 			} else if (index == 3) {
-				element.setPosition(new PositionContext((float) 0, (float) -100 * interval));
+				element.setPosition(new PositionContext((float) 0, (float) -interval * count));
 				index += 1;
 			} else if (index == 4) {
-				element.setPosition(new PositionContext((float) -100 * interval, (float) 0));
+				element.setPosition(new PositionContext((float) -interval * count, (float) 0));
 				index = 1;
 				count += 1;
 			}

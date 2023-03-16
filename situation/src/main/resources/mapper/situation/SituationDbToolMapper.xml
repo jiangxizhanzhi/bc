@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.SituationDbToolMapper">
+
+    <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.DbToolRes">
+        SELECT situation_db_tool.*, attachment.file_name as file_name, attachment.file_path as file_path
+        FROM situation_db_tool
+        left join attachment on
+        situation_db_tool.attachment = attachment.resource_id
+        WHERE 1 = 1
+        <if test="situationDbToolFilterReq.pattern != null and situationDbToolFilterReq.pattern != ''">
+            AND situation_db_tool.name LIKE concat("%", #{situationDbToolFilterReq.pattern} ,"%")
+        </if>
+        <if test="situationDbToolFilterReq.category != null and situationDbToolFilterReq.category != ''">
+            AND situation_db_tool.tool_type = #{situationDbToolFilterReq.category}
+        </if>
+        <if test="situationDbToolFilterReq.startTime != null">
+            AND situation_db_tool.update_time &gt; #{situationDbToolFilterReq.startTime}
+        </if>
+        <if test="situationDbToolFilterReq.endTime != null">
+            AND situation_db_tool.update_time &lt; #{situationDbToolFilterReq.endTime}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

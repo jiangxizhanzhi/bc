@@ -80,7 +80,14 @@ public class SituationCommonComponentsController {
 
     @ApiOperation("获取海康flv直播流")
     @GetMapping("/hik/flv/channels")
-    public BaseRsp<JSONObject> getHikVisionFlv(@RequestParam("rtspUrl")String rtspUrl){
-        return new BaseRsp<>(situationCommonComponentsService.getHikVisionFLv(rtspUrl));
+    public BaseRsp<JSONObject> getHikVisionFlv(@RequestParam("rtspKey")String rtspKey,
+                                               @RequestParam("setpts")Double setpts){
+        return new BaseRsp<>(situationCommonComponentsService.getHikVisionFLv(rtspKey, setpts));
+    }
+
+    @ApiOperation("退出直播流")
+    @PostMapping("/hik/flv/exit")
+    public BaseRsp<JSONObject> exitHikVisionFlv(@RequestParam("rtspKey")String rtspKey){
+        return new BaseRsp<>(situationCommonComponentsService.exitHikVisionFLv(rtspKey));
     }
 }

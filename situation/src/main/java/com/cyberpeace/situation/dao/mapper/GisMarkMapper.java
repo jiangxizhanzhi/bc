@@ -17,4 +17,8 @@ public interface GisMarkMapper extends BaseMapper<GisMark> {
 
 	List<String> getMarkIdsByDashboardIds(@Param("dashboardIds") List<String> dashboardIds);
 
+	Boolean checkMark(@Param("dashboardId") String dashboardId, @Param("markId") String markId);
+
+	void insertBatch(@Param("marks") List<GisMark> marks);
+
 }

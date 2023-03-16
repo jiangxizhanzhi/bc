@@ -30,4 +30,20 @@
             </if>
         </where>
     </select>
+
+    <select id="checkMark" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_gis_mark
+        where dashboard_id = #{dashboardId}
+          and resource_id = #{markId}
+    </select>
+
+    <insert id="insertBatch">
+        insert into situation_gis_mark
+        (resource_id, config, dashboard_id, create_time, update_time)
+        values
+        <foreach collection="marks" item="mark" separator=",">
+            (#{mark.resourceId}, #{mark.config}, #{mark.dashboardId}, now(), now())
+        </foreach>
+    </insert>
 </mapper>

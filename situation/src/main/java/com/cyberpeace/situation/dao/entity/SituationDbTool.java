@@ -18,6 +18,8 @@ public class SituationDbTool extends BaseTable {
 
 	private String toolType;
 
+	private String attachment;
+
 	private String createUserId;
 
 }

@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -32,6 +33,7 @@ import com.cyberpeace.situation.constant.MapSource;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
+import com.cyberpeace.situation.controller.req.ImportMarkReq;
 import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
@@ -48,11 +50,13 @@ import com.cyberpeace.situation.service.SituationGisService;
 import com.cyberpeace.situation.service.context.ConfigContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.GisMarkContext;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 @Api(tags = "GIS接口")
 @RestController
@@ -179,6 +183,44 @@ public class GisController {
 				log.error("failed to remove temp dir :{}", tempDir);
 			}
 		}
+	}
+
+	@ApiOperation("导入大屏标绘数据")
+	@PostMapping("/mark/import")
+	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)
+			throws IOException, ZipException {
+		// 1. 临时存储导入文件
+		File localFile = FileUtil.saveFile(req.getFile(), ZipUtil.generatePath());
+		// 2. 解压文件
+		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		// 3. 导入标绘
+		String dataJson = FileUtil
+				.getContent(new File(unZipPath + File.separator + RESOURCE_FILE_NAME));
+		List<GisMarkContext> gisMarkContexts = JsonUtil.toJsonObjectArray(dataJson,
+				GisMarkContext.class);
+		List<GisMark> gisMarks = Lists.newArrayList();
+		for (GisMarkContext gisMarkContext : gisMarkContexts) {
+			if (!req.getDashboardId().equals(gisMarkContext.getDashboardId())
+					|| Boolean.TRUE.equals(gisMarkMapper.checkMark(req.getDashboardId(),
+							gisMarkContext.getMarkId()))) {
+				continue;
+			} else {
+				GisMark gisMark = new GisMark();
+				gisMark.setResourceId(gisMarkContext.getMarkId());
+				gisMark.setDashboardId(req.getDashboardId());
+				gisMark.setConfig(JsonUtil.toJsonString(gisMarkContext.getMarkConfig()));
+				gisMarks.add(gisMark);
+			}
+		}
+
+		if (!gisMarks.isEmpty()) {
+			gisMarkMapper.insertBatch(gisMarks);
+		}
+		// 4. 删除临时文件
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+		return new BaseRsp(true);
 	}
 
 	public GisMarkContext addGisMark(GisMarkContext gisMarkContext) {

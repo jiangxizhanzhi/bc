@@ -47,6 +47,8 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
 
     private String HIK_HTTP_FLV;
 
+    private String HIK_HTTP_FLV_EXIT;
+
     @PostConstruct
     public void init() {
         HIK_DEVICE_CHANNELS = hikEnvService.getHIKHost()
@@ -55,6 +57,8 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
                 + ConfigUtil.getContextProperty("hik.device.history.channels");
         HIK_HTTP_FLV = hikEnvService.getHIKHost()
                 + ConfigUtil.getContextProperty("hik.http.flv");
+        HIK_HTTP_FLV_EXIT = hikEnvService.getHIKHost() + ConfigUtil.getContextProperty("hik.http.flv.exit");
+
     }
 
     @Override
@@ -136,8 +140,18 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
     }
 
     @Override
-    public JSONObject getHikVisionFLv(String rtspUrl) {
-        String url = String.format(HIK_HTTP_FLV, rtspUrl);
+    public JSONObject getHikVisionFLv(String rtspKey, Double setpts) {
+        String url = String.format(HIK_HTTP_FLV, rtspKey, setpts);
+        JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
+        if (jsonObject == null) {
+            throw new BusinessException(ErrorCode.UNSUPPORTED_RESPONSE_JSON);
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject exitHikVisionFLv(String rtspKey) {
+        String url = String.format(HIK_HTTP_FLV_EXIT, rtspKey);
         JSONObject jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
         if (jsonObject == null) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_RESPONSE_JSON);

@@ -1004,6 +1004,7 @@ CREATE TABLE `situation_db_tool`
     `resource_id`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci  NOT NULL COMMENT '资源ID',
     `name`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '工具名称',
     `description`           varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '工具描述',
+    `attachment`           varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '工具附件',
     `tool_type`    varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '工具类型',
     `create_user_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建人',
     `create_time`    datetime NULL DEFAULT current_timestamp COMMENT '创建时间',

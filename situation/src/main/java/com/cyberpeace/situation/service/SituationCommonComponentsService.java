@@ -67,9 +67,17 @@ public interface SituationCommonComponentsService {
 
     /**
      * 获取flv流
-     * @param rtspUrl
+     * @param rtspKey
      * @param
      * @return
      */
-    JSONObject getHikVisionFLv(String rtspUrl);
+    JSONObject getHikVisionFLv(String rtspKey, Double setpts);
+
+    /**
+     * 退出flv流
+     * @param rtspKey
+     * @param
+     * @return
+     */
+    JSONObject exitHikVisionFLv(String rtspKey);
 }

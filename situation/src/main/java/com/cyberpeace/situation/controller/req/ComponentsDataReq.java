@@ -30,4 +30,7 @@ public class ComponentsDataReq implements Serializable {
 
     @ApiModelProperty("自定义参数列表")
     private String customParams;
+
+    @ApiModelProperty("常量参参数")
+    private InstanceDataQueryReq instanceDataQueryReq;
 }

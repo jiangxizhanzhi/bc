@@ -13,6 +13,7 @@ import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
 import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
 import com.cyberpeace.integratation.model.situation.layer.LayerTopoContext;
 import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
+import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
 import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
 import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
 import com.cyberpeace.integratation.model.situation.res.*;
@@ -566,6 +567,19 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public List<StatusStatisticsContext> getLinkStatusStatistics(TaskBaseReq taskBaseReq) {
 		String rsp = HttpClientUtil.post(TS_LINK_STATISTICS_STATUS, taskBaseReq, String.class);
 		return JsonUtil.toJsonObjectArray(rsp, StatusStatisticsContext.class);
+	}
+
+	@Override
+	public List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId){
+		eventReq.setQueryTime(getQueryTime(featureId));
+		String rsp = HttpClientUtil.post(TS_NODE_MIGRATION, eventReq, String.class);
+		List<NodeMigrationContext> res = JsonUtil.toJsonObjectArray(rsp, NodeMigrationContext.class);
+
+		// 更新查询时间缓存
+		if (res != null && !res.isEmpty()) {
+			queryTimeCache.put(featureId, res.get(res.size() - 1).getTime());
+		}
+		return res;
 	}
 
 }

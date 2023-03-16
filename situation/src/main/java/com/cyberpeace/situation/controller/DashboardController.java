@@ -20,6 +20,7 @@ import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.integratation.model.situation.NodeEventContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
+import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.DashboardLevel;
 import com.cyberpeace.situation.constant.DynamicParameter;
@@ -206,6 +207,7 @@ public class DashboardController {
 			eventMsgReq.writeInfoFromInstance(instance);
 			getAdEvents(eventMsgReq);
 			getTaskNodeEvents(eventMsgReq);
+			getNodeMigrationEvents(eventMsgReq);
 		} else {
 			TaskEventMsgReq taskEventMsgReq = BeanUtils.copy(req, TaskEventMsgReq.class);
 			getTaskEvents(taskEventMsgReq);
@@ -286,6 +288,18 @@ public class DashboardController {
 
 		return true;
 
+	}
+
+	private Boolean getNodeMigrationEvents(EventMsgReq eventReq) {
+		List<NodeMigrationContext> nodeEventContexts = remoteSituationService
+				.getNodeMigrations(eventReq, eventReq.getFeatureId());
+		situationHandlerService.batchPushDataToDashboard(MessageType.NodeMigration.getDesc(),
+				eventReq.getDashboardId(), eventReq.getFeatureId(), nodeEventContexts, null, null);
+		return true;
+	}
+
+	private Boolean getTopoChangeEvents(EventMsgReq eventReq) {
+		return true;
 	}
 
 }

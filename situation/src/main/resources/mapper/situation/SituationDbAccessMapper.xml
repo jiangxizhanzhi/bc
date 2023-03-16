@@ -6,8 +6,9 @@
 
     <select id="selectPage" resultType="com.cyberpeace.situation.dao.entity.SituationDbAccess">
         SELECT * FROM situation_db_access
+        WHERE 1 = 1
         <if test="situationDbAccessReq.tableName != null and situationDbAccessReq.tableName != ''">
-            WHERE situation_db_access.table_name LIKE concat("%", #{situationDbAccessReq.tableName} ,"%")
+            AND table_name LIKE concat("%", #{situationDbAccessReq.tableName} ,"%")
         </if>
         <if test="situationDbAccessReq.operationType != null and situationDbAccessReq.operationType != ''">
             AND operation_type LIKE concat("%", #{situationDbAccessReq.operationType} ,"%")

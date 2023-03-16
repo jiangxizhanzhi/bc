@@ -44,4 +44,10 @@ public class NodeConnectionContext implements Serializable {
 	@ApiModelProperty(value = "目的节点名称")
 	private String targetNodeName;
 
+	@ApiModelProperty(value = "实时流量（M/s）")
+	private Integer actualFlow;
+
+	@ApiModelProperty(value = "DDOS事件计数（件）")
+	private Integer ddosCount;
+
 }

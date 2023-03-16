@@ -33,5 +33,9 @@ public class LcBehaviorRspBo implements Serializable {
 
 	private String tag;
 
+	private Integer appType;
+
+	private Integer isActual;
+
 	private List<LcVariableRspBo> variables;
 }

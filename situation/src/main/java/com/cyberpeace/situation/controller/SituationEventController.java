@@ -159,7 +159,7 @@ public class SituationEventController {
 			String bcList = range.getSubRangeName();
 
 			if (!TaskMode.DL.getName().equals(task.getTaskMode())) {
-				List<RangeContext> rangeContexts = thirdPartyService.getRanges();
+				List<RangeContext> rangeContexts = thirdPartyService.getRanges(null);
 				RangeContext tmpRange = rangeContexts.get(random.nextInt(rangeContexts.size()));
 				if (!tmpRange.getSubRangeId().equals(range.getSubRangeId())) {
 					targetSiteContexts.add(new TargetSiteContext(SiteType.RANGE.getCode(),

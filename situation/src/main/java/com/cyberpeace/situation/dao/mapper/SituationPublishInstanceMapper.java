@@ -28,4 +28,6 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 	SituationPublishInstance selectByTemplateId(@Param("templateId") String templateId);
 
 	Integer getDashboardLevel(@Param("dashboardId") String dashboardId);
+
+	String getParameterConfigByDashboardId(@Param("dashboardId") String dashboardId);
 }

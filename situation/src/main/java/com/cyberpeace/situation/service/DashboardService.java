@@ -3,6 +3,7 @@ package com.cyberpeace.situation.service;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 public interface DashboardService {
 
@@ -12,6 +13,8 @@ public interface DashboardService {
 	 * @return
 	 */
 	DashboardBasicAttributeRes getDashboardBasicAttribute(String dashboardId);
+
+	DashboardConfigContext getParameterConfigByDashboardId(String dashboardId);
 
 	/**
 	 * 通过大屏ID获取大屏ID

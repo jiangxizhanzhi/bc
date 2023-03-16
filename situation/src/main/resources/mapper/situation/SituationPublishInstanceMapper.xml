@@ -78,4 +78,11 @@
                 situation_dashboard_instance.attribute_id = situation_dashboard_attribute.resource_id
         WHERE situation_dashboard_instance.resource_id = #{dashboardId}
     </select>
+    <select id="getParameterConfigByDashboardId" resultType="java.lang.String">
+        SELECT situation_dashboard_template_ref.config as config
+        FROM situation_dashboard_instance
+                 left join situation_dashboard_template_ref on
+                situation_dashboard_instance.template_id = situation_dashboard_template_ref.resource_id
+        WHERE situation_dashboard_instance.resource_id = #{dashboardId}
+    </select>
 </mapper>

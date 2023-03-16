@@ -78,7 +78,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
                 PageUtil.getListResult(this.getBaseMapper().selectPage(page, dynamicEffectMappingFilterReq));
         List<DynamicEffectsMapping> list = dynamicEffectsMappingListRsp.getList();
         List<EventType> eventTypeList = eventTypeMapper.getEventTypeContextList(null);
-        List<RangeContext> subRanges = thirdPartyService.getRanges();
+        List<RangeContext> subRanges = thirdPartyService.getRanges(null);
         if (CollectionUtils.isNotEmpty(list)) {
             for (DynamicEffectsMapping dynamicEffectsMapping : list) {
                 String colorCode = dynamicEffectsMapping.getColor();

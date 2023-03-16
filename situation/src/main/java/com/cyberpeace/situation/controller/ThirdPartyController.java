@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
-import com.cyberpeace.situation.constant.ws.MessageType;
-import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.service.SituationHandlerService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +21,21 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.constant.TaskStatus;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.model.situation.res.EventAxisRsp;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
+import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.*;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
+import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.SituationGisService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -85,9 +85,10 @@ public class ThirdPartyController {
 
 	@ApiOperation("获取分靶场列表")
 	@GetMapping("/range/list/")
-	public BaseRsp<List<RangeContext>> getSubRanges() {
+	public BaseRsp<List<RangeContext>> getSubRanges(@ApiParam(name = "type", value = "靶场类型",
+			required = false) @RequestParam(value = "type", required = false) String type) {
 
-		return new BaseRsp<>(thirdPartyService.getRanges());
+		return new BaseRsp<>(thirdPartyService.getRanges(type));
 	}
 
 	@ApiOperation("获取场站列表")

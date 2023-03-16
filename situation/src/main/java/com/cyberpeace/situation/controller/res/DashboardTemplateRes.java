@@ -3,9 +3,11 @@ package com.cyberpeace.situation.controller.res;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.controller.req.LayerShowReq;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.model.ViewAngle;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -70,4 +72,11 @@ public class DashboardTemplateRes implements Serializable {
 
 	@ApiModelProperty("编辑状态")
 	private Boolean editStatus;
+
+	@ApiModelProperty("大屏参数配置")
+	private DashboardConfigContext config;
+
+	public void setConfig(String config) {
+		this.config = JsonUtil.toJsonObject(config, DashboardConfigContext.class);
+	}
 }

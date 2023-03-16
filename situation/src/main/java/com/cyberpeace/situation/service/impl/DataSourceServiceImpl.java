@@ -174,7 +174,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 String dbName = null;
                 if (type.equals("HIVE")) {
                     dbName = "database_name";
-                } else if (type.equals("MYSQL")){
+                } else if (type.equals("MYSQL")) {
                     dbName = "Database";
                 }
                 String database = resultSet.getString(dbName);
@@ -277,7 +277,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
                 dataSourceRecordReq.setConnectStatus(Boolean.TRUE);
                 if (connectionCache.containsKey(url)) {
                     connectionCache.replace(url, conn);
-                }else {
+                } else {
                     connectionCache.put(url, conn);
                 }
             }
@@ -327,43 +327,32 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return matcher.find();
     }
 
-    private String parseSQL(String customParams, String sql){
-        String id = IDGeneratorUtil.getID();
-        String keyWord = " and ";
+    private String parseSQL(String customParams, String sql) {
         HashMap<String, String> map = new HashMap<>();
         //映射自定义参数列表
         if (StringUtils.isNotBlank(customParams)) {
             try {
-                StringBuilder stringBuilder = new StringBuilder();
                 JSONArray jsonArray = JsonUtil.stringToArray(customParams);
                 for (Object o : jsonArray) {
                     JSONObject datumObject = JsonUtil.java2JsonObject(o);
-                    String type = datumObject.getString("type");
-                        String value = datumObject.getString("value");
-                        String name = datumObject.getString("name");
-                        String key = datumObject.getString("symbol");
-                        if (StringUtils.isNotBlank(value) && Objects.equals(type, "constant")) {
-                            stringBuilder.append(key).append("'").append(value).append("'");
-                            map.put(name, stringBuilder.toString());
-                        }
+                    String value = datumObject.getString("value");
+                    String name = datumObject.getString("name");
+                    if (StringUtils.isNotBlank(value)) {
+                        map.put(name, value);
+                    }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
             }
         }
-        StringBuilder sqlSB = new StringBuilder();
-        sqlSB.append("select * from (").append(sql).append(") as ").append(id);
-       if (!map.isEmpty()) {
-           sqlSB.append(" where ");
-           int index = 0;
-           for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
-               sqlSB.append(stringStringEntry.getKey()).append(stringStringEntry.getValue());
-               if (index != map.size() - 1 ) {
-                   sqlSB.append(keyWord);
-               }
-               index ++;
-           }
-       }
-        return sqlSB.toString();
+        if (!map.isEmpty()) {
+            for (Map.Entry<String, String> stringStringEntry : map.entrySet()) {
+                String key = "${"+ stringStringEntry.getKey() + "}";
+                if (sql.contains(key)){
+                    sql = sql.replace(key, stringStringEntry.getValue());
+                }
+            }
+        }
+        return sql;
     }
 }

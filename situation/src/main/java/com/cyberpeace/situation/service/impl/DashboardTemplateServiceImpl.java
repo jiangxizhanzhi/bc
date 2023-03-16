@@ -1,8 +1,10 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.service.context.DynamicParameterContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -584,7 +586,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 						ApiRequestParams.class);
 				parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams(),
 						requestMapping);
-				apiConnectReq.setRequestParams(apiRequestParams);
+                InstanceDataQueryReq instanceDataQueryReq = componentsDataReq.getInstanceDataQueryReq();
+                if (instanceDataQueryReq != null) {
+                    parseParam(instanceDataQueryReq, apiRequestParams);
+                }
+                apiConnectReq.setRequestParams(apiRequestParams);
 			}
 		} catch (Exception e) {
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
@@ -610,7 +616,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		String tableName = jsonObject.getString("databaseTable");
 		String customParams = jsonObject.getString("condition");
 		String requestCustomParams = componentsDataReq.getCustomParams();
-		String newCustomParams = parseDbCustomParams(customParams, requestCustomParams);
+        InstanceDataQueryReq instanceDataQueryReq = componentsDataReq.getInstanceDataQueryReq();
+        String newCustomParams = parseDbCustomParams(customParams, requestCustomParams, instanceDataQueryReq);
 		DataSourceReq dataSourceReq = new DataSourceReq(sql, resourceId, dbName, tableName,
 				newCustomParams);
 		// 获取数据库数据
@@ -621,7 +628,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		return getEchartsDataSet(jsonArray, componentsDataReq);
 	}
 
-	private String parseDbCustomParams(String customParams, String requestCustomParams) {
+	private String parseDbCustomParams(String customParams, String requestCustomParams, InstanceDataQueryReq instanceDataQueryReq) {
 		List<CustomParamReq> customParamReqs = JsonUtil.toJsonObjectArray(requestCustomParams,
 				CustomParamReq.class);
 		try {
@@ -632,7 +639,6 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				JSONObject datumObject = JsonUtil.java2JsonObject(o);
 				String type = datumObject.getString("type");
 				String value = datumObject.getString("value");
-				String key = datumObject.getString("symbol");
 				String name = datumObject.getString("name");
 				if (!Objects.equals(type, "constant")) {
 					customParamReqs.forEach(customParamReq -> {
@@ -640,13 +646,14 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 							String paramReqValue = customParamReq.getValue();
 							customObject.put("name", name);
 							customObject.put("value", paramReqValue);
-							customObject.put("symbol", key);
-							customObject.put("type", type);
 						}
 					});
 				}
 				jsonArray.add(customObject);
 			}
+            if (instanceDataQueryReq != null) {
+                parseDbParams(instanceDataQueryReq, jsonArray);
+            }
 			return jsonArray.toString();
 		} catch (Exception e) {
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
@@ -702,6 +709,49 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 		return sortComponentsSettingList;
 	}
+
+    private void parseParam(InstanceDataQueryReq instanceDataQueryReq, List<ApiRequestParams> apiRequestParams) {
+        try {
+            Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                // 获取字段属性名称
+                String name = field.getName();
+                if (!StringUtils.equals(name, "dashboardId")) {
+                    Object value = field.get(instanceDataQueryReq);
+                    if (value != null) {
+                        ApiRequestParams requestParams = new ApiRequestParams();
+                        requestParams.setName(name);
+                        requestParams.setValue(value);
+                        apiRequestParams.add(requestParams);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+    private void parseDbParams(InstanceDataQueryReq instanceDataQueryReq, JSONArray jsonArray) {
+        try {
+            Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                // 获取字段属性名称
+                String name = field.getName();
+                if (!StringUtils.equals(name, "dashboardId")) {
+                    Object value = field.get(instanceDataQueryReq);
+                    if (value != null) {
+                        JSONObject customObject = new JSONObject();
+                        customObject.put("name", name);
+                        customObject.put("value", value);
+                        jsonArray.add(customObject);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
 
 	@Override
 	public JSONArray getComponentsEchartsData(String jsonString) {

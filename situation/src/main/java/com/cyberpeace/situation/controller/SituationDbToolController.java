@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
@@ -24,6 +25,7 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DbToolRes;
 import com.cyberpeace.situation.dao.entity.SituationDbTool;
@@ -162,7 +164,19 @@ public class SituationDbToolController {
 	public BaseRsp<ListRsp<DbToolRes>> getSituationDbTool(SituationDbToolFilterReq req) {
 		Page page = req.toPageParam();
 		IPage<DbToolRes> dbToolResIPage = situationDbToolMapper.selectPage(page, req);
-		return new BaseRsp<>(PageUtil.getListResult(dbToolResIPage));
+		ListRsp<DbToolRes> res = PageUtil.getListResult(dbToolResIPage);
+
+		List<SituationDbToolCategory> dbToolCategories = situationDbToolCategoryMapper
+				.selectList(null);
+		Map<String, String> categoryMap = StreamApiUtils.toMap(dbToolCategories,
+				SituationDbToolCategory::getResourceId, toolCategory -> toolCategory.getName());
+		res.getList().forEach(tool -> {
+			String toolCategory = categoryMap.get(tool.getToolType());
+			toolCategory = StringUtils.isEmpty(toolCategory) ? "" : toolCategory;
+			tool.setToolType(toolCategory);
+		});
+
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("删除数据转换工具")

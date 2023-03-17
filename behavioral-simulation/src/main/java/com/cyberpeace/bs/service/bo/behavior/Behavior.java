@@ -41,4 +41,10 @@ public class Behavior extends BehaviorSimple implements Serializable {
 
 	@ApiModelProperty(value = "创建者名称")
 	private String creatorName;
+
+	@ApiModelProperty(value = "客户端类型")
+	private Integer appType;
+
+	@ApiModelProperty(value = "是否实体")
+	private Integer isActual;
 }

@@ -209,6 +209,9 @@ public class LcServiceImpl implements LcService {
 		behavior.setTag(BsUtil.parseTags(rspBo.getTag()));
 		behavior.setId(rspBo.getId());
 		behavior.setTimeCost(BsUtil.s2Min(rspBo.getConsumeTime()));
+
+		behavior.setAppType(rspBo.getAppType());
+		behavior.setIsActual(rspBo.getIsActual());
 		return behavior;
 	}
 

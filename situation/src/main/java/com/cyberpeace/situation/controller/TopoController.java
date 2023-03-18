@@ -133,7 +133,6 @@ public class TopoController {
 	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
 			required = false) @ApiParam(name = "model_id", value = "模型ID") String modelId) {
 		EditUrlRes editUrlRes = new EditUrlRes(modelId);
-//		editUrlRes.setUrl(modelId);
 		return new BaseRsp<>(editUrlRes);
 	}
 }

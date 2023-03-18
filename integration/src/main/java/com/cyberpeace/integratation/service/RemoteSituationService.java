@@ -8,10 +8,7 @@ import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
 import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
 import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
 import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
-import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
-import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
-import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
-import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
+import com.cyberpeace.integratation.model.situation.node.*;
 import com.cyberpeace.integratation.model.situation.req.*;
 import com.cyberpeace.integratation.model.situation.res.EventAxisRsp;
 import com.cyberpeace.integratation.model.situation.user.UserActivityContext;
@@ -192,4 +189,6 @@ public interface RemoteSituationService {
 	List<StatusStatisticsContext> getLinkStatusStatistics(TaskBaseReq taskBaseReq);
 
 	List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId);
+
+	List<NodeProtocolContext> getNodeProtocols(TaskBaseReq taskBaseReq);
 }

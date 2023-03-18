@@ -35,8 +35,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-;
-
 @Api(tags = "拓扑接口")
 @RestController
 @Slf4j

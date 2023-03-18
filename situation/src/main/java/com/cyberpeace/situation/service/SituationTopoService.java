@@ -2,8 +2,10 @@ package com.cyberpeace.situation.service;
 
 import java.util.List;
 
+import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.SituationTopoReq;
 import com.cyberpeace.situation.service.context.ConfigContext;
+import com.cyberpeace.situation.service.context.TopoParaContext;
 
 /**
  * @Author xuxz
@@ -20,4 +22,6 @@ public interface SituationTopoService {
 	Integer deleteSituationTopoConfig(List<String> idList);
 
 	List<ConfigContext> getAllConfig();
+
+	TopoParaContext getCurrentTopo(EventMsgReq eventReq);
 }

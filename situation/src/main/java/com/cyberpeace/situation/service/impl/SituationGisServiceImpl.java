@@ -20,6 +20,7 @@ import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.dao.entity.SituationGis;
+import com.cyberpeace.situation.dao.mapper.SituationDbAccessAuthorityMapper;
 import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
 import com.cyberpeace.situation.service.SituationGisService;
 import com.cyberpeace.situation.service.context.BoundContext;
@@ -38,10 +39,18 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 	@Autowired
 	private SituationGisMapper situationGisMapper;
 
+	@Autowired
+	private SituationDbAccessAuthorityMapper situationDbAccessAuthorityMapper;
+
 	private volatile Map<String, List<Polygon>> provincePolygonMap = Maps.newHashMap();
+
+	private volatile List<String> AUTHORIZED_IPS = Lists.newArrayList();
 
 	@PostConstruct
 	public void init() {
+
+		// 初始化权限列表
+		AUTHORIZED_IPS = situationDbAccessAuthorityMapper.selectAllowedIps();
 
 		// 初始化省份边界数据
 		InputStream inputStream = getClass().getResourceAsStream("/100000_full.json");
@@ -114,5 +123,10 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 	public List<ConfigContext> getAllConfig() {
 		List<SituationGis> configs = situationGisMapper.selectList(new LambdaQueryWrapper<>());
 		return JsonUtil.toJsonObjectArray(JsonUtil.toJsonString(configs), ConfigContext.class);
+	}
+
+	@Override
+	public Boolean checkAuthorizationIp(String ip) {
+		return AUTHORIZED_IPS.contains(ip);
 	}
 }

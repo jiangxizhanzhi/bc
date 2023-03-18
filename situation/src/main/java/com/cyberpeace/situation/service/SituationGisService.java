@@ -22,4 +22,6 @@ public interface SituationGisService {
 	String getProvince(Float longitude, Float latitude);
 
 	List<ConfigContext> getAllConfig();
+
+	Boolean checkAuthorizationIp(String ip);
 }

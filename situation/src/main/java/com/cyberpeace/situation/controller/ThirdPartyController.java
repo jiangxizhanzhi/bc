@@ -459,7 +459,21 @@ public class ThirdPartyController {
 				.setConnectionTypeDistribute(remoteSituationService.getLinkTypeStatistics(topo));
 		layerDataPhysicsRes
 				.setConnectionStatus(remoteSituationService.getLinkStatusStatistics(taskOsiReq));
+		layerDataPhysicsRes.setGeoDistribution(getGeoDistribution(taskOsiReq));
+		return new BaseRsp<>(layerDataPhysicsRes);
+	}
 
+	@ApiOperation("获取7层分析通用数据")
+	@PostMapping("/layer/data/common/")
+	public BaseRsp<LayerDataCommonRes>
+			getLayerDataCommon(@RequestBody @Validated TaskOsiReq taskOsiReq) {
+		LayerDataCommonRes layerDataCommonRes = new LayerDataCommonRes();
+		layerDataCommonRes.setGeoDistribution(getGeoDistribution(taskOsiReq));
+		layerDataCommonRes.setProtocolStatus(remoteSituationService.getNodeProtocols(taskOsiReq));
+		return new BaseRsp<>(layerDataCommonRes);
+	}
+
+	private List<String> getGeoDistribution(TaskOsiReq taskOsiReq) {
 		// 获取节点地理分布
 		List<String> geo = Lists.newArrayList();
 		List<PlatformContext> platformList = remoteSituationService.getPlatformList(
@@ -469,8 +483,6 @@ public class ThirdPartyController {
 			geo.add(situationGisService.getProvince(Float.valueOf(platformContext.getLongitude()),
 					Float.valueOf(platformContext.getLatitude())));
 		});
-		layerDataPhysicsRes
-				.setGeoDistribution(geo.stream().distinct().collect(Collectors.toList()));
-		return new BaseRsp<>(layerDataPhysicsRes);
+		return geo.stream().distinct().collect(Collectors.toList());
 	}
 }

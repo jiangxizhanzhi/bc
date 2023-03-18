@@ -7,17 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
-import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
-import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
-import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
-import com.cyberpeace.integratation.model.situation.layer.LayerTopoContext;
-import com.cyberpeace.integratation.model.situation.node.NodeCriticalDegreeContext;
-import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
-import com.cyberpeace.integratation.model.situation.node.NodeThreatenedDistributeContext;
-import com.cyberpeace.integratation.model.situation.node.StatusStatisticsContext;
-import com.cyberpeace.integratation.model.situation.res.*;
-import com.cyberpeace.integratation.model.situation.user.UserActivityContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +21,15 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
+import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
+import com.cyberpeace.integratation.model.situation.flow.NodeFlowRankContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerEventContext;
+import com.cyberpeace.integratation.model.situation.layer.LayerTopoContext;
+import com.cyberpeace.integratation.model.situation.node.*;
 import com.cyberpeace.integratation.model.situation.req.*;
+import com.cyberpeace.integratation.model.situation.res.*;
+import com.cyberpeace.integratation.model.situation.user.UserActivityContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.*;
 import com.google.common.cache.Cache;
@@ -122,6 +119,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String TS_NODE_MIGRATION;
 
+	private String TS_NODE_PROTOCOL;
+
 	@Autowired
 	private RemoteOperationServiceImpl remoteOperationService;
 
@@ -176,6 +175,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		TS_LINK_STATISTICS_STATUS = outerHostPg
 				+ ConfigUtil.getContextProperty("link.statistics.status");
 		TS_NODE_MIGRATION = outerHostPg + ConfigUtil.getContextProperty("node.migration");
+		TS_NODE_PROTOCOL = outerHostPg
+				+ ConfigUtil.getContextProperty("protocol.statistics.status");
 
 	}
 
@@ -570,16 +571,23 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId){
+	public List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId) {
 		eventReq.setQueryTime(getQueryTime(featureId));
 		String rsp = HttpClientUtil.post(TS_NODE_MIGRATION, eventReq, String.class);
-		List<NodeMigrationContext> res = JsonUtil.toJsonObjectArray(rsp, NodeMigrationContext.class);
+		List<NodeMigrationContext> res = JsonUtil.toJsonObjectArray(rsp,
+				NodeMigrationContext.class);
 
 		// 更新查询时间缓存
 		if (res != null && !res.isEmpty()) {
 			queryTimeCache.put(featureId, res.get(res.size() - 1).getTime());
 		}
 		return res;
+	}
+
+	@Override
+	public List<NodeProtocolContext> getNodeProtocols(TaskBaseReq taskBaseReq) {
+		String rsp = HttpClientUtil.post(TS_NODE_PROTOCOL, taskBaseReq, String.class);
+		return JsonUtil.toJsonObjectArray(rsp, NodeProtocolContext.class);
 	}
 
 }

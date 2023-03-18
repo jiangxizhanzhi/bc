@@ -159,7 +159,7 @@ public class HttpClientUtil {
 		return doHttp(httpGet, resultType);
 	}
 
-	public static <T> T ywGet(String url, Class<T> resultType, String token) {
+	public static <T> T ywGet(String url, Class<T> resultType, String token, String errorMsg) {
 		// 1、设置请求线程数据
 		setContext(url);
 
@@ -168,8 +168,15 @@ public class HttpClientUtil {
 		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		httpGet.setHeader(WebConstant.TOKEN, token);
+
 		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(httpGet, resultType);
+		T rsp;
+		try {
+			rsp = doHttp(httpGet, resultType);
+		} catch (RemoteServiceException e) {
+			throw new RemoteServiceException(errorMsg);
+		}
+		return rsp;
 	}
 
 	/**

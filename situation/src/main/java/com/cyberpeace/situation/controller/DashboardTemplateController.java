@@ -1,12 +1,16 @@
 package com.cyberpeace.situation.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.controller.CommonController;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -16,6 +20,7 @@ import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
+import com.cyberpeace.situation.dao.entity.TwoDimensionalComponents;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.*;
@@ -172,5 +178,25 @@ public class DashboardTemplateController {
                 }
             }
         }
+    }
+    @ApiOperation("静态数据Json转换")
+    @PutMapping("import")
+    public BaseRsp<JSONObject> importTwoDimensionalComponents(@RequestParam("file") MultipartFile file){
+        JSONObject jsonObject;
+        InputStream inputStream = null;
+        try {
+            FileUtil.validateSuffix(file, FileSunffixConstant.JSON.getDesc());
+            inputStream = file.getInputStream();
+            jsonObject = JsonUtil.toJsonObject(inputStream, JSONObject.class);
+        } catch (IOException e) {
+            throw new BusinessException(SituationErrorCode.COMPONENTS_IMPORT_FAILED);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new BaseRsp<>(jsonObject);
     }
 }

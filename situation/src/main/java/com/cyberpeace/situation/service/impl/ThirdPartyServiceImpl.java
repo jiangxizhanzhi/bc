@@ -69,43 +69,6 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
 	private volatile Map<String, EventListRsp> typicalEventCache = Maps.newHashMap();
 
-	@PostConstruct
-	public void init() {
-		log.info("初始化靶场态势大屏");
-		try {
-			List<BcContext> bcList = remoteOperationService.getBcList(SiteType.RANGE.getCode());
-			String bcCode = SystemPropUtil.getProp("BC_CODE");
-			Map<String, BcContext> bcContextMap = Maps.newHashMap();
-
-			// 替换靶场列表中的联管中心为实际的联管中心
-			bcList.forEach(bc -> {
-				if (bc.getName().endsWith("中心")) {
-					bc.setBcType(BcType.LGZX.getCode());
-				}
-			});
-
-			bcList.forEach(bc -> {
-				bcContextMap.put(bc.getGroupId(), bc);
-			});
-			List<BcContext> instances = Lists.newArrayList();
-			if (bcContextMap.get(bcCode) == null) {
-				log.info("初始化靶场态势大屏失败");
-				return;
-			} else if (BcType.LGZX.getCode().equals(bcContextMap.get(bcCode).getBcType())) {
-				instances = bcList;
-			} else {
-				instances.add(bcContextMap.get(bcCode));
-			}
-
-			instances.forEach(bc -> {
-				situationPublishInstanceService.createBcInstance(bc);
-			});
-			log.info("初始化靶场态势大屏成功");
-		} catch (Exception exception) {
-			log.info("初始化靶场态势大屏失败");
-		}
-	}
-
 	private synchronized <T extends SiteContext> void siteInit(String siteType, Class<T> siteClazz,
 			Map<String, T> cache) {
 

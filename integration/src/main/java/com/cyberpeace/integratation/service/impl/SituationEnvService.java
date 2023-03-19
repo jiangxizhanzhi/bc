@@ -108,8 +108,8 @@ public class SituationEnvService {
 	}
 
 	private String initEnv(String serverCode, String serverName, String host, String port) {
-		host = SystemPropUtil.getProp(serverCode + "_HOST");
-		port = SystemPropUtil.getProp(serverCode + "_PORT");
+		host = SystemPropUtil.getProp( "OUTER_HOST");
+		port = SystemPropUtil.getProp("OUTER_PORT");
 		String msg = String.format("服务配置：host=[%s], port=[%s]", host, port);
 		log.info(serverName + msg);
 		return "http://" + host + ":" + port;

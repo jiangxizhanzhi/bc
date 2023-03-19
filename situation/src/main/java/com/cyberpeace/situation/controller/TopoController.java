@@ -35,8 +35,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-;
-
 @Api(tags = "拓扑接口")
 @RestController
 @Slf4j
@@ -133,7 +131,6 @@ public class TopoController {
 	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
 			required = false) @ApiParam(name = "model_id", value = "模型ID") String modelId) {
 		EditUrlRes editUrlRes = new EditUrlRes(modelId);
-//		editUrlRes.setUrl(modelId);
 		return new BaseRsp<>(editUrlRes);
 	}
 }

@@ -23,6 +23,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -319,5 +320,16 @@ public class GisController {
 	@GetMapping("/map/source/list/")
 	public BaseRsp<List<IntType>> getMapSourceList() {
 		return new BaseRsp<>(MapSource.getList());
+	}
+
+	@ApiOperation("地图静态资源鉴权")
+	@GetMapping("/map/resource/auth/")
+	public BaseRsp<Boolean> authMapResource(HttpServletResponse response) {
+		if (situationGisService.checkAuthorizationIp(CommonContext.getIp())) {
+			return new BaseRsp<>(true);
+		} else {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return new BaseRsp<>(false);
+		}
 	}
 }

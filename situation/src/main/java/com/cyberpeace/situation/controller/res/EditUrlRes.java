@@ -12,7 +12,7 @@ public class EditUrlRes implements Serializable {
 	private String url;
 
 	public EditUrlRes(String modelId) {
-		this.url = "http://www.baidu.com/";
+		this.url = "http://172.30.104.8:2020/";
 	}
 
 }

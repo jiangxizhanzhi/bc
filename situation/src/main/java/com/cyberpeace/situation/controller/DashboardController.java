@@ -35,11 +35,9 @@ import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.service.DashboardService;
-import com.cyberpeace.situation.service.SituationHandlerService;
-import com.cyberpeace.situation.service.SituationPublishInstanceService;
-import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.*;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
+import com.cyberpeace.situation.service.context.TopoParaContext;
 import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 import io.swagger.annotations.Api;
@@ -72,6 +70,9 @@ public class DashboardController {
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
+	@Autowired
+	private SituationTopoService situationTopoService;
 
 	@ApiOperation("获取大屏类型属性（前台）")
 	@GetMapping("/id/")
@@ -203,16 +204,21 @@ public class DashboardController {
 		if (DashboardLevel.RW.getCode().equals(level)) {
 			SituationPublishInstance instance = situationPublishInstanceMapper
 					.selectById(req.getDashboardId());
-			EventMsgReq eventMsgReq = BeanUtils.copy(req, EventMsgReq.class);
-			eventMsgReq.writeInfoFromInstance(instance);
-			getAdEvents(eventMsgReq);
-			getTaskNodeEvents(eventMsgReq);
-			getNodeMigrationEvents(eventMsgReq);
+			getAdEvents(getEventMsgReq(req, instance));
+			getTaskNodeEvents(getEventMsgReq(req, instance));
+			getNodeMigrationEvents(getEventMsgReq(req, instance));
+			getTopoChangeEvents(getEventMsgReq(req, instance));
 		} else {
 			TaskEventMsgReq taskEventMsgReq = BeanUtils.copy(req, TaskEventMsgReq.class);
 			getTaskEvents(taskEventMsgReq);
 		}
 		return new BaseRsp<>(true);
+	}
+
+	private EventMsgReq getEventMsgReq(EventRefreshReq req, SituationPublishInstance instance) {
+		EventMsgReq eventMsgReq = BeanUtils.copy(req, EventMsgReq.class);
+		eventMsgReq.writeInfoFromInstance(instance);
+		return eventMsgReq;
 	}
 
 	@ApiOperation("获取最新的任务事件")
@@ -246,7 +252,6 @@ public class DashboardController {
 	@ApiOperation("获取最新的任务攻防事件")
 	@PostMapping("/event/task/ad/")
 	public BaseRsp<Boolean> getTaskAdEvent(@RequestBody @Validated EventMsgReq eventReq) {
-
 		return new BaseRsp<>(getAdEvents(eventReq));
 	}
 
@@ -299,7 +304,13 @@ public class DashboardController {
 	}
 
 	private Boolean getTopoChangeEvents(EventMsgReq eventReq) {
+		TopoParaContext topoParaContext = situationTopoService.getCurrentTopo(eventReq);
+		if (topoParaContext != null) {
+			WsMessage<TopoParaContext> wsMessage = new WsMessage<>(MessageType.ChangeTopo.getDesc(),
+					topoParaContext);
+			situationHandlerService.pushDataToDashboard(wsMessage, eventReq.getDashboardId(),
+					eventReq.getFeatureId());
+		}
 		return true;
 	}
-
 }

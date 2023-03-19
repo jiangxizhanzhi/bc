@@ -28,7 +28,8 @@ public enum MessageType {
 	TaskStatus(18, "status"),
 	Message(19, "message"),
 	MapSource(20, "map_source"),
-	LayerEvent(21, "event_layer");
+	LayerEvent(21, "event_layer"),
+	ChangeTopo(22, "change_topo");
 
 	@Getter
 	private Integer code;

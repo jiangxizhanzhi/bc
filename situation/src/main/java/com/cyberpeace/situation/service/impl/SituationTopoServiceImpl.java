@@ -1,6 +1,8 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,11 +14,18 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.bo.situation.SituationTaskReq;
+import com.cyberpeace.integratation.service.bo.situation.TopoHistoryBo;
+import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.SituationTopoReq;
 import com.cyberpeace.situation.dao.entity.SituationTopo;
 import com.cyberpeace.situation.dao.mapper.SituationTopoMapper;
 import com.cyberpeace.situation.service.SituationTopoService;
 import com.cyberpeace.situation.service.context.ConfigContext;
+import com.cyberpeace.situation.service.context.TopoParaContext;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * @Author xuxz
@@ -27,6 +36,15 @@ public class SituationTopoServiceImpl extends ServiceImpl<SituationTopoMapper, S
 
 	@Autowired
 	private SituationTopoMapper situationTopoMapper;
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
+	Cache<String, String> featureCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
+
+	Cache<String, List<TopoHistoryBo>> topoCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.DAYS).build();
 
 	@Override
 	public ConfigContext getSituationTopoConfig(String resourceId) {
@@ -67,5 +85,40 @@ public class SituationTopoServiceImpl extends ServiceImpl<SituationTopoMapper, S
 		List<SituationTopo> topoConfigs = situationTopoMapper
 				.selectList(new LambdaQueryWrapper<>());
 		return JsonUtil.toJsonObjectArray(JsonUtil.toJsonString(topoConfigs), ConfigContext.class);
+	}
+
+	@Override
+	public TopoParaContext getCurrentTopo(EventMsgReq eventReq) {
+		String featureId = eventReq.getFeatureId();
+		String topoId = getCurrentTopoId(getTopoHistory(eventReq), eventReq.getQueryTime());
+		if (featureCache.getIfPresent(featureId) == null
+				|| featureCache.getIfPresent(featureId) != topoId) {
+			if (topoId != null) {
+				featureCache.put(featureId, topoId);
+				return new TopoParaContext(topoId);
+			}
+		}
+		return null;
+	}
+
+	private List<TopoHistoryBo> getTopoHistory(EventMsgReq eventReq) {
+
+		if (topoCache.getIfPresent(eventReq.getSubjectId()) == null) {
+			SituationTaskReq situationTaskReq = BeanUtils.copy(eventReq, SituationTaskReq.class);
+			List<TopoHistoryBo> topoHistoryBos = remoteSituationService
+					.getTopoHistory(situationTaskReq);
+			topoCache.put(eventReq.getSubjectId(), topoHistoryBos);
+		}
+		return topoCache.getIfPresent(eventReq.getSubjectId());
+	}
+
+	private String getCurrentTopoId(List<TopoHistoryBo> topoHistorys, Date currentTime) {
+		String topoId = null;
+		for (TopoHistoryBo history : topoHistorys) {
+			if (currentTime.after(history.getUpdateTime())) {
+				topoId = history.getUpdateId();
+			}
+		}
+		return topoId;
 	}
 }

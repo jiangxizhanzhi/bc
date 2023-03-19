@@ -10,7 +10,7 @@ public enum BcType {
 	LGZX("1", "LG中心"),
 	MY("2", "民"),
 	JY("3", "J"),
-	ZCZ("4", "主场战"),
+	ZCZ("4", "主场站"),
 	FCZ("5", "分场站");
 
 	@Getter

@@ -44,13 +44,17 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 
 	private volatile Map<String, List<Polygon>> provincePolygonMap = Maps.newHashMap();
 
-	private volatile List<String> AUTHORIZED_IPS = Lists.newArrayList();
+	private volatile List<String> AUTHORIZED_IPS;
 
 	@PostConstruct
 	public void init() {
 
 		// 初始化权限列表
-		AUTHORIZED_IPS = situationDbAccessAuthorityMapper.selectAllowedIps();
+		try {
+			AUTHORIZED_IPS = situationDbAccessAuthorityMapper.selectAllowedIps();
+		} catch (Exception e) {
+			AUTHORIZED_IPS = Lists.newArrayList();
+		}
 
 		// 初始化省份边界数据
 		InputStream inputStream = getClass().getResourceAsStream("/100000_full.json");

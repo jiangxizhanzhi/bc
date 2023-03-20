@@ -151,7 +151,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				componentsSetting);
 
 		// 更新大屏配置
-		dashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
+        toDashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
 
 		// 删除旧组件信息，插入新组件
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

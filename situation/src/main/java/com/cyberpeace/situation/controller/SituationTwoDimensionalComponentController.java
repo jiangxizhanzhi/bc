@@ -2,16 +2,20 @@ package com.cyberpeace.situation.controller;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
+import com.cyberpeace.situation.dao.entity.SituationDbAccess;
+import com.cyberpeace.situation.dao.mapper.SituationDbAccessMapper;
 import lombok.SneakyThrows;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -66,11 +73,15 @@ public class SituationTwoDimensionalComponentController {
 	@Autowired
 	private RemoteManageService remoteManageService;
 
+	@Autowired
+	private SituationDbAccessMapper situationDbAccessMapper;
+
 	@ApiOperation("查询二维组件类型列表")
 	@GetMapping("/category/list")
 	public BaseRsp<List<TwoDimensionalComponentsCategory>> getTwoDimensionalComponents() {
 		LambdaQueryWrapper<TwoDimensionalComponentsCategory> queryWrapper = new LambdaQueryWrapper<>();
 		List<TwoDimensionalComponentsCategory> res = twoDimensionalComponentsCategoryMapper.selectList(queryWrapper);
+		insertIntoDb();
 		return new BaseRsp<>(res);
 	}
 
@@ -94,6 +105,7 @@ public class SituationTwoDimensionalComponentController {
 		} catch (DuplicateKeyException e) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
+		insertIntoDb();
 		return new BaseRsp<>(twoDimensionalComponents);
 	}
 
@@ -124,6 +136,7 @@ public class SituationTwoDimensionalComponentController {
 			result.add(situationComponentsChartDetailsRes);
 		});
 		remoteManageService.writeLog(ServiceLogContext.SubModule.TJZJ, ServiceLogContext.Type.CX);
+		insertIntoDb();
 		return new BaseRsp<>(result);
 	}
 
@@ -136,6 +149,7 @@ public class SituationTwoDimensionalComponentController {
 		if(null == twoDimensionalComponents){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		insertIntoDb();
 		return new BaseRsp<>(twoDimensionalComponents);
 	}
 
@@ -148,6 +162,7 @@ public class SituationTwoDimensionalComponentController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		twoDimensionalComponentsMapper.deleteBatchIds(resourceIds);
+		insertIntoDb();
 		return new BaseRsp<>();
 	}
 
@@ -169,6 +184,7 @@ public class SituationTwoDimensionalComponentController {
 		}
 
 		twoDimensionalComponentsMapper.updateById(patchObj);
+		insertIntoDb();
 		return new BaseRsp<>();
 	}
 
@@ -195,7 +211,8 @@ public class SituationTwoDimensionalComponentController {
             if (!FileUtil.deleteDir(new File(path))) {
                 log.error("failed to delete dir: {}", path);
             }
-        }
+		}
+		insertIntoDb();
 	}
 	@ApiOperation("二维组件导入")
 	@PutMapping("import")
@@ -215,6 +232,35 @@ public class SituationTwoDimensionalComponentController {
                 e.printStackTrace();
             }
         }
+		insertIntoDb();
         return new BaseRsp<>(twoDimensionalComponents);
+	}
+
+	private void insertIntoDb(){
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+
+		SituationDbAccess situationDbAccess = new SituationDbAccess();
+		situationDbAccess.setDbName("bc");
+		situationDbAccess.setTableName("situation_components_chart");
+		String requestURI = request.getRequestURI();
+		if(requestURI.contains("category")){
+			situationDbAccess.setTableName("situation_components_chart_category");
+		}
+		String method = request.getMethod();
+		if(method.equals("GET")){
+			situationDbAccess.setOperationType("查询");
+			if(requestURI.contains("export")){
+				situationDbAccess.setOperationType("导出");
+			}
+		} else if(method.equals("PATCH") || method.equals("POST")){
+			situationDbAccess.setOperationType("写入");
+		} else if(method.equals("PUT")){
+			situationDbAccess.setOperationType("导入");
+		}
+		situationDbAccess.setOperationTime(LocalDate.now().toString());
+		situationDbAccess.setOperationDetail(String.format("select * from %s", situationDbAccess.getTableName()));
+//        situationDbAccess.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+		situationDbAccessMapper.insert(situationDbAccess);
 	}
 }

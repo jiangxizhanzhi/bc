@@ -2,8 +2,10 @@ package com.cyberpeace.integratation.model.situation.layer;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.integratation.model.situation.*;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.Data;
@@ -27,12 +29,30 @@ public class LayerTopoContext implements Serializable {
 			context.getAreas().put(area.getAreaId(), area);
 		});
 
+		Map<String, List<ElementContext>> layers = Maps.newHashMap();
+		this.elements.forEach(element -> {
+			if (layers.get(element.getParent()) == null) {
+				layers.put(element.getParent(), Lists.newArrayList(element));
+			} else {
+				layers.get(element.getParent()).add(element);
+			}
+		});
+
+		layers.forEach((key, elements) -> {
+			setPosition(elements, context);
+		});
+
+		return context;
+	}
+
+	private void setPosition(List<ElementContext> elements, TopoContext context) {
+
 		// 处理节点坐标
 		int index = 1;
 		int count = 1;
 		int interval = 150;
-		for (int i = 0; i < this.elements.size(); i++) {
-			ElementContext element = this.elements.get(i);
+		for (int i = 0; i < elements.size(); i++) {
+			ElementContext element = elements.get(i);
 			context.getElements().put(element.getElementId(), element);
 			if (index == 1) {
 				element.setPosition(new PositionContext((float) 0, (float) interval * count));
@@ -48,8 +68,6 @@ public class LayerTopoContext implements Serializable {
 				index = 1;
 				count += 1;
 			}
-
 		}
-		return context;
 	}
 }

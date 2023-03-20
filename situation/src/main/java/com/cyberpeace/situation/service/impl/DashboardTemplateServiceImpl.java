@@ -280,6 +280,10 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		if (jsonString == null) {
 			JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
 			String dataSource = jsonObject.getString("dataSource");
+            if(dataSource == null) {
+                JSONObject parseObject = JSONObject.parseObject(jsonObject.getString("data_source_component"));
+                dataSource = parseObject.getString("dataSource");
+            }
 			echartsData = getEchartsData(dataSource, componentsDataReq);
 
 		} else {

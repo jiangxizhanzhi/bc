@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.cs.controller.CommonController;
@@ -314,6 +315,7 @@ public class MissionController {
 
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_MISSION_SCHEME_DUMP)
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
 
@@ -338,6 +340,7 @@ public class MissionController {
 
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_MISSION_SCHEME_LOAD)
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {

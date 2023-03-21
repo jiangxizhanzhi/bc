@@ -3,11 +3,13 @@ package com.cyberpeace.oj.practice.controller.admin;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -185,6 +187,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 	@ApiOperation("批量公开/隐藏题解")
 	@PatchMapping("/writeup_public")
+	@PermissionOperation(TrialButtonConstant.CMS_WRITEUP_PUBLIC)
 	@RequiresPermissions(MenuConstant.CMS_PRACTICE_OPERATION)
 	public BaseRsp<Boolean> writeupPublic(@RequestBody @Validated ResourcePublicReq publicReq) {
 

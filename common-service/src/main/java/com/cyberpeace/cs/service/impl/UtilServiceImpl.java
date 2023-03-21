@@ -132,11 +132,15 @@ public class UtilServiceImpl implements UtilService {
 
 	@Override
 	public String handlerMarkdownFile(String content, String destFilePath) {
+
+		//获取过滤掉代码块的markdown内容
+		String filterCodeContent = MdUtil.filterCodeContent(content);
+
 		// 匹配src图片
-		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(content,
+		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
 
-		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
+		List<String> realPathList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
 //		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
 //				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));

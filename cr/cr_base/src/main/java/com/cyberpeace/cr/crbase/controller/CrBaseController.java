@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsAccGraphRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsGraphRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.TrainUserTreeRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
@@ -23,7 +21,6 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.controller.rsp.CurrentTimeRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -144,6 +141,12 @@ public class CrBaseController {
 	@ApiOperation("练习统计-战绩统计")
 	@GetMapping("/train_stats/standings")
 	public BaseRsp<TrainStatsGraphRsp> getTrainStatsStandings() {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("练习统计-练习概览")
+	@GetMapping("/train_stats/overview")
+	public BaseRsp<TrainStatsOverviewRsp> getTrainStatsOverview() {
 		return new BaseRsp<>();
 	}
 

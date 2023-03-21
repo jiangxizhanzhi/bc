@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.NoticeListRsp;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +32,13 @@ public class CrNoticeController {
 
     @ApiOperation("训练公告列表")
     @GetMapping("/list")
-    public BaseRsp<List<NoticeListRsp>> list(@ApiParam("训练业务ID") @RequestParam("business_id") String businessId) {
+    public BaseRsp<List<NoticeListRsp>> list(@ApiParam("训练业务ID") @RequestParam("room_id") String roomId) {
         return new BaseRsp<>();
     }
 
     @ApiOperation("训练公告详情")
     @GetMapping("")
-    public BaseRsp<CrNoticeDetailRsp> get(@ApiParam("公告ID") @RequestParam("resource_id") String resourceId) {
+    public BaseRsp<CrNoticeDetailRsp> get(@ApiParam("公告ID") @RequestParam("notice_id") String noticeId) {
         return new BaseRsp<>();
     }
 
@@ -56,6 +57,18 @@ public class CrNoticeController {
     @ApiOperation("训练公告批量删除")
     @DeleteMapping("")
     public BaseRsp<Boolean> update(BatchDeleteReq batchDeleteReq) {
+        return new BaseRsp<>();
+    }
+
+    @ApiModelProperty("训练公告置顶")
+    @PostMapping("/top")
+    public BaseRsp<Boolean> top(BatchDeleteReq batchReq) {
+        return new BaseRsp<>();
+    }
+
+    @ApiModelProperty("训练公告取消置顶")
+    @PostMapping("/top/cancel")
+    public BaseRsp<Boolean> topCancel(BatchDeleteReq batchReq) {
         return new BaseRsp<>();
     }
 

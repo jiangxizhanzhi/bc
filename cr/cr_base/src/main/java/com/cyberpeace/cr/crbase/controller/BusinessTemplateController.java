@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -154,6 +156,7 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_SETSHARE)
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {
@@ -355,6 +358,7 @@ public class BusinessTemplateController {
 
 	@ApiOperation("批量导出场景模板")
 	@PostMapping("/batchDump")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_DUMP)
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
@@ -380,6 +384,7 @@ public class BusinessTemplateController {
 
 	@ApiOperation("批量导入场景模板")
 	@PutMapping("/batchLoad")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_LOAD)
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)

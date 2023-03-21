@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -68,6 +70,7 @@ public class WebCommentController {
 
 	@PostMapping("")
 	@ApiOperation("留言新增")
+	@PermissionOperation(TrialButtonConstant.OJ_COMMENT)
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)

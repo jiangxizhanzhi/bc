@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.practice.controller.admin;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -75,6 +77,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("修改分类信息")
 	@PatchMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_PRACTICE_CATEGORY_UPDATE)
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> update(@Validated CategoryUpdateReq updateReq) {
 
@@ -92,6 +95,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("新增分类信息")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_PRACTICE_CATEGORY_ADD)
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> add(@Validated PracticeCategoryReq categoryReq) {
 
@@ -115,6 +119,7 @@ public class AdminPracticeCategoryController {
 
 	@ApiOperation("批量删除分类信息")
 	@DeleteMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_PRACTICE_CATEGORY_DELETE)
 	@RequiresPermissions(value = { MenuConstant.CMS_THEORY_PRACTICE, MenuConstant.CMS_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<Integer> delete(@RequestBody @Validated ResourceDelReq delReq) {
 

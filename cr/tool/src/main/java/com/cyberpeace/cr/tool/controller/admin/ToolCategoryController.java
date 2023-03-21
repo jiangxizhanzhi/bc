@@ -2,6 +2,8 @@ package com.cyberpeace.cr.tool.controller.admin;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,7 @@ public class ToolCategoryController {
 
 	@PostMapping()
 	@ApiOperation("工具分类创建")
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> create(@RequestBody @Validated CategoryAddReq categoryAddReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
@@ -64,6 +67,7 @@ public class ToolCategoryController {
 
 	@PatchMapping()
 	@ApiOperation("工具分类更新")
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated CategoryUpdateReq categoryUpdateReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryUpdateReq, ToolCategory.class);
@@ -73,6 +77,7 @@ public class ToolCategoryController {
 
 	@DeleteMapping()
 	@ApiOperation("工具分类批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 		toolCategoryService.batchDelete(deleteReq.getIds());

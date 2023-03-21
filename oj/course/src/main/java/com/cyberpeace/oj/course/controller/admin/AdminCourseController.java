@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.*;
@@ -28,7 +29,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseCategoryMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseService;
-import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseQueryBo;
 import com.cyberpeace.oj.course.service.bo.CourseWebBo;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
@@ -271,6 +271,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导出")
 	@GetMapping("/batch_dumps")
+	@PermissionOperation(TrialButtonConstant.CMS_COURSE_DUMP)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> exportCourse(
 			@ApiParam(name = "ids",
@@ -285,6 +286,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 	@ApiOperation("后台课程数据导入")
 	@PostMapping("/batch_loads")
+	@PermissionOperation(TrialButtonConstant.CMS_COURSE_LOAD)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> importCourse(@Validated LoadCourseReq loadCourseReq) {
 		FileUtil.validateSuffix(loadCourseReq.getFile(), FileSunffixConstant.ZIP.getDesc());

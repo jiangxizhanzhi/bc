@@ -5,7 +5,6 @@ import java.util.List;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
-import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -183,7 +182,7 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
-	@ApiModelProperty("节点流量全部启动")
+	@ApiOperation("节点流量全部启动")
 	@PostMapping("/all_start")
 	public BaseRsp<Boolean> allStartFlow(@RequestBody @Validated AllStartFlowRsp allStartFlowRsp) {
 		return new BaseRsp<>();

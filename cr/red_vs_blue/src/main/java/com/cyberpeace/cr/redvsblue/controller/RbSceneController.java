@@ -183,7 +183,7 @@ public class RbSceneController {
 		return new BaseRsp<>();
 	}
 
-	@ApiModelProperty("全部启动")
+	@ApiModelProperty("节点流量全部启动")
 	@PostMapping("/all_start")
 	public BaseRsp<Boolean> allStartFlow(@RequestBody @Validated AllStartFlowRsp allStartFlowRsp) {
 		return new BaseRsp<>();

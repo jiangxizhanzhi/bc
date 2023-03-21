@@ -1,9 +1,11 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -434,6 +436,27 @@ public class PracticeValidateHandler {
 			return;
 		} else {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
+		}
+	}
+
+	/**
+	 * 校验是否为内置资源
+	 * @param practiceSet
+	 */
+	public void validateBuiltin(PracticeSet practiceSet) {
+		if (practiceSet.isBuiltin()) {
+			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, practiceSet.getName());
+		}
+		if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.THEORY.getCode())) {
+			String practiceTheoryName = practiceTheoryMapper.searchBuiltinBySetIds(Arrays.asList(practiceSet.getResourceId()));
+			if (practiceTheoryName != null) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE, practiceSet.getName(), practiceTheoryName);
+			}
+		}else if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.OPERATION.getCode())) {
+			String practiceOperationName = practiceOperationMapper.searchBuiltinBySetIds(Arrays.asList(practiceSet.getResourceId()));
+			if (practiceOperationName != null) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE, practiceSet.getName(), practiceOperationName);
+			}
 		}
 	}
 }

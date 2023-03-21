@@ -11,9 +11,9 @@ public class CrTrainAction extends BaseTable {
     private String resourceId;
 
     /**
-     * 训练实例业务id
+     * 训练实例id
      */
-    private String businessId;
+    private String roomId;
 
     /**
      * 类型

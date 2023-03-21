@@ -4,16 +4,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-@ApiModel("训练公告创建数据")
-public class CrNoticeReq implements Serializable {
-    @ApiModelProperty("公告ID")
+@ApiModel("训练公告更新数据")
+public class CrNoticeUpdateReq {
+    @ApiModelProperty(value = "公告ID", required = true)
     private String resourceId;
 
-    @ApiModelProperty("训练业务ID")
-    private String businessId;
+    @ApiModelProperty("训练实例ID")
+    private String roomId;
 
     @ApiModelProperty(value = "训练业务类型")
     private Integer businessType;

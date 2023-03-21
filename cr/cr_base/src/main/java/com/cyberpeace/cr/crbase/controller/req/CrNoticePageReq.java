@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 @ApiModel("训练公告分页查询条件")
 public class CrNoticePageReq extends PageReqBase {
-    @ApiModelProperty("训练业务ID")
+    @ApiModelProperty(value = "训练业务ID", required = true)
     private String roomId;
 }

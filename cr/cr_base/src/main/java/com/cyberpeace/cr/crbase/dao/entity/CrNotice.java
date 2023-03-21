@@ -16,9 +16,9 @@ public class CrNotice extends BaseTable {
     private String resourceId;
 
     /**
-     * 训练业务id
+     * 训练实例id
      */
-    private String businessId;
+    private String roomId;
 
     /**
      * 训练类型

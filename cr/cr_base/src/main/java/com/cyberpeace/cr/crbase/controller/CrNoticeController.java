@@ -4,7 +4,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticePageReq;
-import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
+import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
+import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.NoticeListRsp;
 import io.swagger.annotations.Api;
@@ -43,13 +44,13 @@ public class CrNoticeController {
 
     @ApiOperation("训练公告新增")
     @PostMapping("")
-    public BaseRsp<CrNoticeDetailRsp> create(CrNoticeReq crNoticeReq) {
+    public BaseRsp<CrNoticeDetailRsp> create(CrNoticeCreateReq crNoticeReq) {
         return new BaseRsp<>();
     }
 
     @ApiOperation("训练公告更新")
     @PatchMapping("")
-    public BaseRsp<CrNoticeDetailRsp> update(CrNoticeReq crNoticeReq) {
+    public BaseRsp<CrNoticeDetailRsp> update(CrNoticeUpdateReq crNoticeReq) {
         return new BaseRsp<>();
     }
 

@@ -271,6 +271,7 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>();
 	}
 
+	// todo 调整数据结构，取消分页
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

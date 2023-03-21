@@ -19,6 +19,7 @@ import lombok.Getter;
 @TableName("cr_task")
 public class CrTask extends BaseTable {
 
+	// todo 如何审核状态标识
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 
@@ -97,7 +98,8 @@ public class CrTask extends BaseTable {
 		WAIT(0, "待评估"),
 		SUCCESS(1, "成功"),
 		FAIL(2, "失败"),
-		REJECT(3, "驳回");
+		REJECT(3, "驳回"),
+		CLOSE(4, "关闭");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));

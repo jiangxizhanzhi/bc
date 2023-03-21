@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsAccGraphRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsGraphRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainUserTreeRsp;
+import com.cyberpeace.cr.crbase.service.TrainUserService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -47,6 +51,9 @@ public class CrBaseController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private TrainUserService  trainUserService;
 
 	@ApiOperation("个人中心训练统计")
 	@GetMapping("/training_statistics")
@@ -109,5 +116,36 @@ public class CrBaseController {
 		}
 		return new BaseRsp<>(rsp);
 	}
+
+	@ApiOperation("获取训练用户数据结构数据")
+	@GetMapping("/train_user/tree")
+	public BaseRsp<List<TrainUserTreeRsp>> getTrainUser() {
+		return new BaseRsp<>(trainUserService.getOrgUsers());
+	}
+
+	@ApiOperation("练习统计-累计练习次数")
+	@GetMapping("/train_stats/acc")
+	public BaseRsp<TrainStatsAccGraphRsp> getTrainStatsAcc() {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("练习统计-训练资产")
+	@GetMapping("/train_stats/asset")
+	public BaseRsp<TrainStatsGraphRsp> getTrainStatsAsset() {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("练习统计-人员参与次数")
+	@GetMapping("/train_stats/part_in")
+	public BaseRsp<TrainStatsGraphRsp> getTrainStatsPartIn() {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("练习统计-战绩统计")
+	@GetMapping("/train_stats/standings")
+	public BaseRsp<TrainStatsGraphRsp> getTrainStatsStandings() {
+		return new BaseRsp<>();
+	}
+
 
 }

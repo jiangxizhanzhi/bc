@@ -18,6 +18,16 @@ public class Mission extends MissionBase {
 	@ApiModelProperty(value = "任务模板id")
 	private String missionTemplateId;
 
+	/**
+	 * 事件类型
+	 */
+	private Integer eventType;
+
+	/**
+	 * 事件设备id
+	 */
+	private Integer eventDeviceId;
+
 	public Boolean isObjective() {
 		Integer type = getType();
 		if (type == null) {

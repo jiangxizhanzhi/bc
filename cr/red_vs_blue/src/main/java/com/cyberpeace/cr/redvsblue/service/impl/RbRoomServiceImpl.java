@@ -653,6 +653,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 	}
 
+	// todo 读取模板用户顺序
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
@@ -662,6 +663,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		crRoleList.add(new CrRole(CrRole.RbRoleGroup.ADMIN));
 		crRoleList.add(new CrRole(CrRole.RbRoleGroup.DIRECTOR));
 		crRoleList.add(new CrRole(CrRole.RbRoleGroup.REFEREE));
+		// 副裁判添加
+		crRoleList.add(new CrRole(CrRole.RbRoleGroup.REFEREE2));
 
 		// 获取红队的角色任务
 		JSONObject rolejsonObject = JsonUtil.toJsonObject(roleString, JSONObject.class);

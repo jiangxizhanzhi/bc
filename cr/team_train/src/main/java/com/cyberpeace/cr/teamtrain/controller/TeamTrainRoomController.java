@@ -597,6 +597,13 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>();
 	}
 
+	@ApiOperation("任务关闭")
+	@PostMapping("/missions/close")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<String> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+		return new BaseRsp<>();
+	}
+
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息
 	private BaseRole getSelfRole(List<CrRole> crRoles, String userId) {
 		BaseRole baseRole = new BaseRole();

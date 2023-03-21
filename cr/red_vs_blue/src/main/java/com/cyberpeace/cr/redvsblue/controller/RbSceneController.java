@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -168,6 +169,15 @@ public class RbSceneController {
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("下载流量文件")
+	@PostMapping("/flow/download")
+	public BaseRsp<DownloadFlowFilePathRsp> downloadFlow(
+			@ApiParam(name = "flow_id", value = "流量id", required = true)
+			@RequestParam("flow_id") String flowId
+	) {
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("重启节点")

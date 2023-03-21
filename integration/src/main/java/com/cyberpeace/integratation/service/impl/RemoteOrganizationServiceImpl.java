@@ -243,4 +243,10 @@ public class RemoteOrganizationServiceImpl implements RemoteOrganizationService 
 	public JSONObject getById(String orgId) {
 		return HttpClientUtil.rawGet(MP_ORG_INFO + orgId, JSONObject.class);
 	}
+
+	@Override
+	public <T> List<T> getOrgTree(Class<T> clazz) {
+		JSONArray result = HttpClientUtil.rawGet(MP_ORG_TREE_URL, JSONArray.class);
+		return JSONObject.parseArray(result.toJSONString(), clazz);
+	}
 }

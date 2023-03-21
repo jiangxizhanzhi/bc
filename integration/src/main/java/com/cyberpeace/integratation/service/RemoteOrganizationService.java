@@ -63,4 +63,6 @@ public interface RemoteOrganizationService {
 	 */
 	JSONObject getById(String orgId);
 
+	<T> List<T> getOrgTree(Class<T> clazz);
+
 }

@@ -205,7 +205,8 @@ public class CrRole extends BaseTable {
 		REFEREE(3, "裁判", "Referee"),
 		RED(4, "红方", "Red"),
 		BLUE(5, "蓝方", "Blue"),
-		RED_BLUE(6, "红方蓝方", "RedBlue");
+		RED_BLUE(6, "红方蓝方", "RedBlue"),
+		REFEREE2(7, "副裁判", "Second Referee");
 
 		@Getter
 		private final Integer code;

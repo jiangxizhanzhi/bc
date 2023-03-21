@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.service.context.XYData;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,7 +21,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
-import com.cyberpeace.cr.redvsblue.controller.rsp.TimeDataRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.TimeData;
@@ -250,5 +250,65 @@ public class RbRoomStatisticsController {
 			log.error("user does not have RbRoom Permission！roomId=[{}], userId=[{}]", resource_id, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+	}
+
+	@ApiOperation("3D态势-队伍得分")
+	@GetMapping("/team_score")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<RbRoomTeamScoreRsp> teamScore(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("3D态势-任务状态")
+	@GetMapping("/team_task_status")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbRoomTeamMissionRsp>> teamTaskStatus(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("3D态势-攻击与防守事件")
+	@GetMapping("/team_defense_event")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbRoomTeamDefenseEventRsp>> teamDefenseEvent(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("3D态势-资产状态")
+	@GetMapping("/team_asset_status")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<RbRoomTeamAssetStatusRsp> teamAssetStatus(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("3D态势-队伍动态")
+	@GetMapping("/team_action")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbRoomTeamActionRsp>> teamAction(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiOperation("3D态势-平台动态")
+	@GetMapping("/team_platform_action")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbRoomTeamActionRsp>> teamPlatformAction(
+			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
+			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
+	) {
+		return new BaseRsp<>();
 	}
 }

@@ -16,4 +16,7 @@ public class FlowOpsReq implements Serializable {
 
 	@ApiModelProperty("流量id")
 	private String flowId;
+
+	@ApiModelProperty("启动类型")
+	private Integer runType;
 }

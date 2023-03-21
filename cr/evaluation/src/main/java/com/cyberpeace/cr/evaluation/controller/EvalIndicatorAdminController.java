@@ -2,6 +2,7 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorListReq;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -191,7 +192,7 @@ public class EvalIndicatorAdminController {
 	@GetMapping("/list")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM,
 			MenuConstant.CMS_CR_EVALUATION_INDICATOR }, logical = Logical.OR)
-	public BaseRsp<ListRsp<EvalIndicatorRsp>> list(EvalNameListReq listReq) {
+	public BaseRsp<ListRsp<EvalIndicatorRsp>> list(EvalIndicatorListReq listReq) {
 		EvalListQuery listQuery = BeanUtils.copy(listReq, EvalListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
 		listQuery.setName(listReq.getPattern());

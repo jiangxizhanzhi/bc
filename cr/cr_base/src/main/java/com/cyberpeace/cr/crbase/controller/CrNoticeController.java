@@ -8,7 +8,6 @@ import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.NoticeListRsp;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -60,13 +59,13 @@ public class CrNoticeController {
         return new BaseRsp<>();
     }
 
-    @ApiModelProperty("训练公告置顶")
+    @ApiOperation("训练公告置顶")
     @PostMapping("/top")
     public BaseRsp<Boolean> top(BatchDeleteReq batchReq) {
         return new BaseRsp<>();
     }
 
-    @ApiModelProperty("训练公告取消置顶")
+    @ApiOperation("训练公告取消置顶")
     @PostMapping("/top/cancel")
     public BaseRsp<Boolean> topCancel(BatchDeleteReq batchReq) {
         return new BaseRsp<>();

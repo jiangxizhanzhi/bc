@@ -335,13 +335,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		// 权限校验
 		practiceSetIds.forEach(practiceSetId -> practiceValidateHandler
 				.validatePracticeSetPermission(practiceSetId, authContext));
+		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+		if (!SystemPropUtil.getExportBuiltin()) {
+			practiceSets.forEach(practiceSet -> practiceValidateHandler.validateBuiltin(practiceSet));
+		}
 
 		// 设置数据存储
 		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
 		String destFilePath = destDir + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
-		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
 		List<PracticeSetDumpLoadBo> setDumpLoadBos = StreamApiUtils.map(practiceSets,
 				practiceSet -> {
 					Map<String, String> pathMap = Maps.newHashMap();

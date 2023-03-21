@@ -284,4 +284,20 @@ public interface OjBusinessErrorCode {
 
 	/** 课时类型不正确，当前类型为xxx*/
 	String ACCESS_LESSON_TYPE = "102093";
+
+	/** 重复导入相同名称课时*/
+	String REPEAT_IMPORT_SAME_LESSON_NAME = "102098";
+
+	/** xxx为内置资源，无法导出*/
+	String UNABLE_TO_EXPORT_BUILTIN_RESOURCE = "102099";
+
+	/** xxx习题集中的xxx习题为内置资源，无法导出 */
+	String PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE = "102100";
+
+	/** xxx课程中的xxx课时为内置资源，无法导出 */
+	String COURSE_CONTAIN_BUILTIN_LESSON = "102101";
+
+	/** xxx课程中的xxx课时中的xxx习题为内置资源，无法导出 */
+	String LESSON_CONTAIN_BUILTIN_PRACTICE = "102102";
+
 }

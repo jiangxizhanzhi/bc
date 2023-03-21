@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
 import org.apache.commons.compress.utils.Lists;
@@ -146,9 +147,8 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-练习概览")
 	@GetMapping("/train_stats/overview")
-	public BaseRsp<TrainStatsOverviewRsp> getTrainStatsOverview() {
+	public BaseRsp<ListRsp<TrainStatsOverviewRsp>> getTrainStatsOverview(PageReqBase pageReqBase) {
 		return new BaseRsp<>();
 	}
-
 
 }

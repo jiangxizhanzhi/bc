@@ -56,7 +56,7 @@ public class CrNoticeController {
 
     @ApiOperation("训练公告批量删除")
     @DeleteMapping("")
-    public BaseRsp<Boolean> update(BatchDeleteReq batchDeleteReq) {
+    public BaseRsp<Boolean> delete(BatchDeleteReq batchDeleteReq) {
         return new BaseRsp<>();
     }
 

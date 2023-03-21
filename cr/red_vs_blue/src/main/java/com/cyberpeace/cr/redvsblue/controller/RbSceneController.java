@@ -3,11 +3,14 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -177,6 +180,12 @@ public class RbSceneController {
 			@ApiParam(name = "flow_id", value = "流量id", required = true)
 			@RequestParam("flow_id") String flowId
 	) {
+		return new BaseRsp<>();
+	}
+
+	@ApiModelProperty("全部启动")
+	@PostMapping("/all_start")
+	public BaseRsp<Boolean> allStartFlow(@RequestBody @Validated AllStartFlowRsp allStartFlowRsp) {
 		return new BaseRsp<>();
 	}
 

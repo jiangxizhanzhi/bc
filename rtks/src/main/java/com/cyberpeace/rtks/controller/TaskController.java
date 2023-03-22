@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -55,6 +57,7 @@ public class TaskController {
 
 	@ApiOperation("新增单条任务")
 	@PostMapping("/task")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_TASK)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addTask(@RequestBody @Validated TaskAddReq taskAddReq) {
 		Task toAddTask = new Task();
@@ -71,6 +74,7 @@ public class TaskController {
 
 	@ApiOperation("修改单条任务")
 	@PutMapping("/task")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_TASK)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> modifyTask(@RequestBody @Validated TaskAddReq taskAddReq) {
 		Task toUpdateTask = new Task();
@@ -88,6 +92,7 @@ public class TaskController {
 
 	@ApiOperation("删除任务")
 	@DeleteMapping("/task")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_TASK)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteTask(@RequestBody @Validated DeleteReq deleteReq) {
 

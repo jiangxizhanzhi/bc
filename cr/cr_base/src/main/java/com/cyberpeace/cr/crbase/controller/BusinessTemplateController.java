@@ -156,7 +156,7 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
-	@PermissionOperation(TrialButtonConstant.CMS_CR_SETSHARE)
+	@PermissionOperation(TrialButtonConstant.CMS_CR_SET_SHARE)
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {

@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -62,6 +64,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			addKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryAddReq) {
@@ -97,6 +100,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated KnowledgeCategoryAddReq knowledgeCategoryOrSystemAddReq) {
@@ -116,6 +120,7 @@ public class KnowledgeCategoryController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteKnowledgeCategory(@RequestBody @Validated DeleteReq deleteReq) {
 		List<KnowledgeRes> skillList = knowledgeService.getAllKnowledge();

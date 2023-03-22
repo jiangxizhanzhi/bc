@@ -1,5 +1,6 @@
 package com.cyberpeace.config.aop;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -29,7 +30,27 @@ public class PermissionOperationAspect {
 
 		if (requirespermissionsFilter != null) {
 			// 权限校验,包含黑名单抛出异常
-			String loginUserPermission = "lesson edit lesson add cms_tool_category";
+			String loginUserPermission = "oj_comment\n" +
+					"cms_course_dump\n" +
+					"cms_course_load\n" +
+					"cms_exercises_dump\n" +
+					"cms_exercises_load\n" +
+					"cms_theory_import\n" +
+					"cms_practice_category_add\n" +
+					"cms_practice_category_update\n" +
+					"cms_practice_category_delete\n" +
+					"cms_writeup_public\n" +
+					"cms_cr_mission_scheme_dump\n" +
+					"cms_cr_mission_scheme_load\n" +
+					"cms_cr_set_share\n" +
+					"cms_cr_load\n" +
+					"cms_cr_dump\n" +
+					"cms_tool_category\n" +
+					"cms_rtks_frame\n" +
+					"cms_rtks_knowledge\n" +
+					"cms_rtks_skill\n" +
+					"cms_rtks_task\n" +
+					"cms_rtks_role";
 			if (loginUserPermission.contains(requirespermissionsFilter.value())) {
 				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 				// todo 抛出试用异常

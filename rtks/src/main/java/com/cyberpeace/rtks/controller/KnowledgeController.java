@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -71,6 +73,7 @@ public class KnowledgeController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
 
@@ -99,6 +102,7 @@ public class KnowledgeController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String>
 			modifyKnowledge(@RequestBody @Validated KnowledgeAddReq knowledgeAddReq) {
@@ -135,6 +139,7 @@ public class KnowledgeController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_KNOWLEDGE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteKnowledge(@RequestBody @Validated DeleteReq deleteReq) {
 

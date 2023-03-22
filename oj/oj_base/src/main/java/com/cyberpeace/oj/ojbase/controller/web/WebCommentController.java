@@ -70,7 +70,7 @@ public class WebCommentController {
 
 	@PostMapping("")
 	@ApiOperation("留言新增")
-	@PermissionOperation(TrialButtonConstant.OJ_COMMENT)
+	@PermissionOperation(TrialButtonConstant.OJ_COMMENT_ADD)
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_OJ_PRACTICE_OPERATION , MenuConstant.WEB_OJ_ALL_COURSE },
 			logical = Logical.OR)

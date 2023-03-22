@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -152,6 +154,7 @@ public class RoleController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_ROLE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
 		input.validate();
@@ -183,6 +186,7 @@ public class RoleController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_ROLE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
 		input.validate();
@@ -222,6 +226,7 @@ public class RoleController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_ROLE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 

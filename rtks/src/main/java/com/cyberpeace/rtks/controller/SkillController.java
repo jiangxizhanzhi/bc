@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -66,6 +68,7 @@ public class SkillController {
 
 	@ApiOperation("新增单条")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_SKILL)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> addSkill(@RequestBody @Validated SkillAddReq skillAddReq) {
 		skillAddReq.validate();
@@ -94,6 +97,7 @@ public class SkillController {
 
 	@ApiOperation("修改单条")
 	@PutMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_SKILL)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> modifySkill(@RequestBody @Validated SkillAddReq skillAddReq) {
 		skillAddReq.validate();
@@ -128,6 +132,7 @@ public class SkillController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_SKILL)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> deleteSkill(@RequestBody @Validated DeleteReq deleteReq) {
 		List<String> skillIds = deleteReq.getIds();

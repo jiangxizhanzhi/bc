@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,7 @@ public class CareerManagementController {
 
 	@ApiOperation("添加ATT&CK 关联")
 	@PostMapping("/attack")
+	@PermissionOperation(TrialButtonConstant.CMS_ATTACK_FRAME)
 	@RequiresPermissions(MenuConstant.CMS_ATTACK_FRAME)
 	public BaseRsp updateAttackTemplateRel(@Validated @RequestBody AttackUpdateReq updateReq) {
 		attackService.updateRelations(updateReq.getResourceId(),
@@ -128,6 +131,7 @@ public class CareerManagementController {
 
 	@ApiOperation("添加Engage 关联")
 	@PostMapping("/engage")
+	@PermissionOperation(TrialButtonConstant.CMS_ENGAGE_FRAME)
 	@RequiresPermissions(MenuConstant.CMS_ENGAGE_FRAME)
 	public BaseRsp updateEngageTemplateRel(@Validated @RequestBody EngageUpdateReq updateReq) {
 		engageService.updateRelations(updateReq.getResourceId(),

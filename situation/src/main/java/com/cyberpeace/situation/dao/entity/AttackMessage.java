@@ -55,4 +55,13 @@ public class AttackMessage extends BaseTable {
 	//多媒体数据
 	private String mediaAnimation;
 
+	//攻击或防御
+	private String attackOrDefense;
+
+	//防御节点
+	private String defenseTargetId;
+
+	//防御等级
+	private Integer defenseLevel;
+
 }

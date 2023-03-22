@@ -39,7 +39,10 @@ public class AttackMessageTemplate extends BaseTable {
 	//线的宽度
 	private Integer lineWidth;
 
-//	//关联实景步骤
-//	private Integer step;
+	//攻击或防御
+	private String attackOrDefense;
+
+	//防御等级
+	private Integer defenseLevel;
 
 }

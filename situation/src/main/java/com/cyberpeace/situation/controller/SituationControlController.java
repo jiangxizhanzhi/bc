@@ -152,7 +152,7 @@ public class SituationControlController {
 //			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code, false);
 //		} else {
 			//推送普通动效
-			dynamicSchemeService.pushAttackToRoom(attackMessageBo, elementIds, false);
+			dynamicSchemeService.pushDynamicToRoom(attackMessageBo, elementIds, false);
 //		}
 		return new BaseRsp<>();
 	}

@@ -10,7 +10,4 @@ public class AttackMessageHistory extends AttackMessage{
 	//是否已恢复
 	private Integer isHistory;
 
-	//防御等级
-	private Integer defenseLevel;
-
 }

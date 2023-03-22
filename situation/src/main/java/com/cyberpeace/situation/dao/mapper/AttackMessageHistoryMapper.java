@@ -67,4 +67,9 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	 */
 	List<DefenseLog> getDefenseLog(@Param("sceneId") String sceneId);
 
+	/**
+	 * 获取当前节点防御等级为高的防御动效历史
+	 */
+	List<AttackMessageHistory> getDynamicByNodeIdByHighDefenseLevel(@Param("defenseTargetId") String defenseTargetId);
+
 }

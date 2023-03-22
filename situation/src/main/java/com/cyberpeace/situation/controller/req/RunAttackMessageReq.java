@@ -64,4 +64,10 @@ public class RunAttackMessageReq implements Serializable {
 	@ApiModelProperty("是否为实例场景")
 	private Boolean isInstance;
 
+	@ApiModelProperty("攻击或防御")
+	private String attackOrDefense;
+
+	@ApiModelProperty("防御节点")
+	private String defenseTargetId;
+
 }

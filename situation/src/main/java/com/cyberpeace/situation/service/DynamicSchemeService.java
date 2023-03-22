@@ -68,12 +68,6 @@ public interface DynamicSchemeService {
 	 */
 	void pushMediaToRoom(AttackMessageReq attackMessageBo, String code, Boolean playback);
 
-	/**
-	 * 推送普通动效数据至房间
-	 * @param attackMessageBo 普通动效数据
-	 * @param elementIds 当前场景节点id列表
-	 */
-	void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback);
 
 	/**
 	 * 推送动效方案数据
@@ -159,4 +153,7 @@ public interface DynamicSchemeService {
 	void playbackPushDynamicSchemeToRoom(String sceneId);
 
 	void pushDataToRealisticScene(String topoId, Integer step);
+
+
+	void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback);
 }

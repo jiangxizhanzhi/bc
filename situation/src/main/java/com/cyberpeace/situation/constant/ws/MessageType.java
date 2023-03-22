@@ -18,7 +18,8 @@ public enum MessageType {
 	AttackSchedule(8,"attack_schedule"),
 	SceneConfig(9,"scene_config"),
 	RbNodeStatus(10,"rb_node_status"),
-	SituationTime(11, "situation_time");
+	SituationTime(11, "situation_time"),
+	DefenseDynamic(12,"defense_dynamic");
 
 	@Getter
 	private Integer code;

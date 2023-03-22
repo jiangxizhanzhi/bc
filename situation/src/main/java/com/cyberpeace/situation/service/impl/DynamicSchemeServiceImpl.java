@@ -210,7 +210,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					for (AttackMessageReq attackMessageReq : dynamicStage
 							.getAttackMessageReqList()) {
 						//设置动效防御等级
-						attackMessageReq.setDefenseLevel(defenseLevel);
+//						attackMessageReq.setDefenseLevel(defenseLevel);
 						// 设置多媒体的名称
 //						if (attackMessageReq.getType()
 //								.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
@@ -416,17 +416,19 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	/**
-	 * 推送其他消息
+	 * 推送普通动效数据至房间
+	 * @param attackMessageReq 普通动效数据
+	 * @param elementIds 当前场景节点id列表
+	 * @param playback 是否为回放
 	 */
-	@Override
-	public void pushAttackToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback) {
+	public void pushAttackToRoom(AttackMessageReq attackMessageReq, List<String> elementIds, Boolean playback) {
 		//构造消息数据
-		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageBo,
+		WsMultiNodeDynamic wsMultiNodeDynamic = BeanUtils.copy(attackMessageReq,
 				WsMultiNodeDynamic.class);
 		//设置消息类别
 		wsMultiNodeDynamic.setCategory("attack");
 		for (AttackType attackType : AttackType.values()) {
-			if (attackType.getKeyWord().equals(attackMessageBo.getType())) {
+			if (attackType.getKeyWord().equals(attackMessageReq.getType())) {
 				wsMultiNodeDynamic.setType(attackType.getActionType().getCode());
 			}
 		}
@@ -435,18 +437,18 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		}
 		wsMultiNodeDynamic.setName(null);
 		//设置线的格式
-		wsMultiNodeDynamic.setLineStyle(new LineStyle(attackMessageBo.getLineColor(),
-				attackMessageBo.getLineWidth(), attackMessageBo.getLineType()));
+		wsMultiNodeDynamic.setLineStyle(new LineStyle(attackMessageReq.getLineColor(),
+				attackMessageReq.getLineWidth(), attackMessageReq.getLineType()));
 		//设置持续时间
-		wsMultiNodeDynamic.setDuration(attackMessageBo.getDurationTime());
+		wsMultiNodeDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
-		String type = attackMessageBo.getType();
+//		String type = attackMessageReq.getType();
 		//判断是否是单节点
 //		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
 //				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
 
-		if (elementIds.contains(attackMessageBo.getTargetId())) {
+		if (elementIds.contains(attackMessageReq.getTargetId())) {
 			//设置类型为点对点
 			wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
 		} else {
@@ -458,17 +460,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 //			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
 //					wsMultiNodeDynamic);
 //		}
-		//将动效消息推送到场景
-		situationHandlerService.pushDataToRoom(wsMessage, wsMultiNodeDynamic.getSceneId());
-		if (attackMessageBo.getStep() != null) {
-			WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
-			wsRealisticSceneDynamic.setStep(attackMessageBo.getStep());
-			situationHandlerService.pushDataToRealisticScene(attackMessageBo.getSceneId(), wsRealisticSceneDynamic);
-		}
-		if(!playback){
-			//如果不是回放则会增加一条动效历史
-			attackMessageHistoryService.add(attackMessageBo);
-		}
+		pushDataToRoom(wsMessage, attackMessageReq, playback);
 	}
 
 	@Override
@@ -563,7 +555,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 //							pushMediaToRoom(attackMessageReq, code, false);
 //						} else {
 							//推送普通动效数据
-							pushAttackToRoom(attackMessageReq, elementIds, false);
+						pushDynamicToRoom(attackMessageReq, elementIds, false);
 //						}
 						if (attackMessageReq.getIntervalTime() != null) {
 							//进行等待
@@ -675,16 +667,20 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
 				validateNameLen(attackMessageReq.getDescription(),
 						SituationErrorCode.INVALID_DYNAMIC_DESCRIPTION);
-
-				String type = attackMessageReq.getType();
-
-				if (StringUtils.isEmpty(attackMessageReq.getSourceId())) {
-					throw new BusinessException(SituationErrorCode.EMPTY_SOURCE_NODE,
-							attackMessageReq.getDescription());
-				}
-				if (StringUtils.isEmpty(attackMessageReq.getTargetId())) {
-					throw new BusinessException(SituationErrorCode.EMPTY_TARGET_NODE,
-							attackMessageReq.getDescription());
+				if (attackMessageReq.getAttackOrDefense().equals("defense")) {
+					if (StringUtils.isEmpty(attackMessageReq.getDefenseTargetId())) {
+						throw new BusinessException(SituationErrorCode.EMPTY_DEFENSE_NODE,
+								attackMessageReq.getDescription());
+					}
+				}else {
+					if (StringUtils.isEmpty(attackMessageReq.getSourceId())) {
+						throw new BusinessException(SituationErrorCode.EMPTY_SOURCE_NODE,
+								attackMessageReq.getDescription());
+					}
+					if (StringUtils.isEmpty(attackMessageReq.getTargetId())) {
+						throw new BusinessException(SituationErrorCode.EMPTY_TARGET_NODE,
+								attackMessageReq.getDescription());
+					}
 				}
 			}
 
@@ -874,7 +870,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 //						pushMediaToRoom(attackMessageReq, code, true);
 //					} else {
 						//推送普通动效至场景
-						pushAttackToRoom(attackMessageReq, elementIds, true);
+					pushDynamicToRoom(attackMessageReq, elementIds, true);
 //					}
 					if (attackMessageReq.getIntervalTime() != null) {
 						//进行等待
@@ -894,6 +890,37 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
 		wsRealisticSceneDynamic.setStep(step);
 		situationHandlerService.pushDataToRealisticScene(topoId, wsRealisticSceneDynamic);
+	}
+
+	@Override
+	public void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback){
+		if ("attack".equals(attackMessageBo.getAttackOrDefense())) {
+			pushAttackToRoom(attackMessageBo, elementIds, playback);
+		} else if ("defense".equals(attackMessageBo.getAttackOrDefense())) {
+			pushDefenseToRoom(attackMessageBo, playback);
+		}
+	}
+
+	public void pushDefenseToRoom(AttackMessageReq attackMessageReq, Boolean playback) {
+		WsDefenseDynamic wsDefenseDynamic = BeanUtils.copy(attackMessageReq, WsDefenseDynamic.class);
+		wsDefenseDynamic.setDefenseType(
+				DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class)
+						   .getDefenseActionType().getCode());
+		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
+		pushDataToRoom(wsMessage, attackMessageReq, playback);
+	}
+
+	private <T> void pushDataToRoom(T data, AttackMessageReq attackMessageReq, Boolean playback) {
+		situationHandlerService.pushDataToRoom(data, attackMessageReq.getSceneId());
+		if (attackMessageReq.getStep() != null) {
+			WsRealisticSceneDynamic wsRealisticSceneDynamic = new WsRealisticSceneDynamic();
+			wsRealisticSceneDynamic.setStep(attackMessageReq.getStep());
+			situationHandlerService.pushDataToRealisticScene(attackMessageReq.getSceneId(), wsRealisticSceneDynamic);
+		}
+		if(!playback){
+			//如果不是回放则会增加一条动效历史
+			attackMessageHistoryService.add(attackMessageReq);
+		}
 	}
 
 	/**

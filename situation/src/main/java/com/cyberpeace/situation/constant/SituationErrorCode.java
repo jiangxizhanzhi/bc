@@ -70,4 +70,7 @@ public interface SituationErrorCode {
 
 	/** 获取最大步骤时没有输入类型 */
 	String NO_TYPE = "104023";
+
+	/** 防御目标节点为空 */
+	String EMPTY_DEFENSE_NODE = "104024";
 }

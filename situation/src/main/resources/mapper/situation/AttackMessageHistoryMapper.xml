@@ -17,7 +17,10 @@
         select type as attackType, count (*) as times
         from situation_attack_message_history
         <where>
-            scene_id = #{sceneId}
+            attack_or_defense = 'attack'
+            <if test="sceneId != null and sceneId != ''">
+                and scene_id = #{sceneId}
+            </if>
         </where>
         group by type
         order by times desc
@@ -27,6 +30,7 @@
         select defense_type, count (*) as times
         from situation_attack_message_history
         <where>
+            attack_or_defense = 'defense'
             scene_id = #{sceneId}
             and defense_type is not null
         </where>
@@ -40,6 +44,7 @@
             (defense_type is null
             or defense_level is null
             or defense_level != 3)
+            and attack_or_defense = 'attack'
             and is_history = 0
             <if test="sceneId != null and sceneId != ''">
                 and scene_id = #{sceneId}
@@ -59,8 +64,9 @@
         select resource_id, create_time as time, source_id ,target_id, type as attack_type
         from situation_attack_message_history
         <where>
+            attack_or_defense = 'attack'
             <if test="sceneId != null and sceneId != ''">
-                scene_id = #{sceneId}
+                and scene_id = #{sceneId}
             </if>
             and type != 'media-animation'
         </where>
@@ -94,12 +100,25 @@
         select create_time as time, target_id as hostId, defense_type
         from situation_attack_message_history
         <where>
-            defense_type is not null
+            attack_or_defense = 'defense'
+            and defense_type is not null
             <if test="sceneId != null and sceneId != ''">
                 and scene_id = #{sceneId}
             </if>
         </where>
     </select>
 
+    <select id="getDynamicByNodeIdByHighDefenseLevel"
+            resultType="com.cyberpeace.situation.dao.entity.AttackMessageHistory">
+        select *
+        from situation_attack_message_history
+        <where>
+            defense_level = 3
+            and attack_or_defense = 'defense'
+            <if test="defenseTargetId != null and defenseTargetId != ''">
+                and defense_target_id = #{defenseTargetId}
+            </if>
+        </where>
+    </select>
 
 </mapper>

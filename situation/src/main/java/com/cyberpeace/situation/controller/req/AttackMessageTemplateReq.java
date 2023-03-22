@@ -38,6 +38,12 @@ public class AttackMessageTemplateReq implements Serializable {
 	@ApiModelProperty("防御类型")
 	private String defenseType;
 
+	@ApiModelProperty("攻击或防御")
+	private String attackOrDefense;
+
+	@ApiModelProperty("防御等级")
+	private Integer defenseLevel;
+
 //	@ApiModelProperty("关联实景步骤")
 //	private Integer step;
 }

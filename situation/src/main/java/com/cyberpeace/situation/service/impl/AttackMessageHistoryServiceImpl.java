@@ -44,8 +44,16 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 
 	@Override
 	public void add(AttackMessageReq attackMessageReq) {
-		AttackMessageHistory attackMessageHistory = attackMessageBoToAttackMessageHistory(attackMessageReq);
-		attackMessageHistory.setResourceId(IDGeneratorUtil.getID());
+		if (attackMessageReq.getAttackOrDefense() == null || attackMessageReq.getAttackOrDefense().equals("attack")) {
+			List<AttackMessageHistory> attackMessageHistories = attackMessageHistoryMapper.getDynamicByNodeIdByHighDefenseLevel(attackMessageReq.getTargetId());
+			if (attackMessageHistories.size() > 0) {
+				AttackMessageHistory attackMessageHistory = attackMessageBoToAttackMessageHistory(attackMessageReq, false);
+				attackMessageHistoryMapper.insert(attackMessageHistory);
+				return;
+			}
+		}
+		AttackMessageHistory attackMessageHistory = attackMessageBoToAttackMessageHistory(attackMessageReq, true);
+//		attackMessageHistory.setResourceId(IDGeneratorUtil.getID());
 		attackMessageHistoryMapper.insert(attackMessageHistory);
 	}
 
@@ -249,7 +257,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		return attackMessageHistoryMapper.getHostTop(sceneId, attackTypeList);
 	}
 
-	public AttackMessageHistory attackMessageBoToAttackMessageHistory(AttackMessageReq attackMessageReq) {
+	public AttackMessageHistory attackMessageBoToAttackMessageHistory(AttackMessageReq attackMessageReq, Boolean attackSuccess) {
 		AttackMessageHistory attackMessageHistory = BeanUtils.copy(attackMessageReq, AttackMessageHistory.class);
 		attackMessageHistory
 				.setMediaAnimation(JSON.toJSONString(attackMessageReq.getMediaAnimationList()));
@@ -257,7 +265,11 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 //							 .equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 		attackMessageHistory.setMediaAnimation(null);
 //		}
-		attackMessageHistory.setIsHistory(0);
+		if (attackSuccess) {
+			attackMessageHistory.setIsHistory(0);
+		} else {
+			attackMessageHistory.setIsHistory(1);
+		}
 		return attackMessageHistory;
 	}
 

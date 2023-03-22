@@ -48,7 +48,7 @@ public class LayerTopoContext implements Serializable {
 	private void setPosition(List<ElementContext> elements, TopoContext context) {
 
 		// 默认节点间隔
-		int interval = 150;
+		int interval = 200;
 
 		// 节点个数
 		int n = elements.size();

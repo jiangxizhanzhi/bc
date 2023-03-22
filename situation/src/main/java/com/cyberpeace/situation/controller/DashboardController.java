@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.DashboardLevel;
 import com.cyberpeace.situation.constant.DynamicParameter;
+import com.cyberpeace.situation.constant.MapView;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
@@ -120,6 +122,10 @@ public class DashboardController {
 	public BaseRsp<DashboardBasicAttributeRes>
 			getDashboardBasicAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
 					name = "dashboard_id", value = "大屏ID") String dashboardId) {
+		if (dashboardId.equals("demo")) {
+			return new BaseRsp<>(new DashboardBasicAttributeRes(dashboardId, 1, "态势大屏", "大屏预览",
+					null, null, new Date(), MapView.ZH.getViewAngle()));
+		}
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
 	}
 

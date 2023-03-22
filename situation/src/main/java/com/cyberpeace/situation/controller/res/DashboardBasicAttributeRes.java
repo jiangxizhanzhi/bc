@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.model.ViewAngle;
-
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -82,6 +82,7 @@ public class DashboardBasicAttributeRes implements Serializable {
 		this.taskId = taskId;
 		this.startTime = startTime;
 		this.viewAngle = viewAngle;
+		this.envId = "demo";
 	}
 
 	public DashboardBasicAttributeRes() {}

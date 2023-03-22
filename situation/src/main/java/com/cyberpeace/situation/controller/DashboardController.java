@@ -262,6 +262,11 @@ public class DashboardController {
 	}
 
 	private Boolean getAdEvents(EventMsgReq eventReq) {
+
+		if (eventReq.getDashboardId().equals("demo")) {
+			return true;
+		}
+
 		// 获取三方攻防事件数据
 		List<AdEventContext> adEventContexts = remoteSituationService.getAdEventList(eventReq,
 				eventReq.getFeatureId());

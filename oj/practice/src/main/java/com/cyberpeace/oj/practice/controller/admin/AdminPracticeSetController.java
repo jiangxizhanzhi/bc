@@ -161,6 +161,11 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
 		List<PracticeSet> practiceSetList = practiceSetService.listByIds(delReq.getResourceIds());
 
+		// 试用账号校验
+		for (PracticeSet practiceSet : practiceSetList) {
+			AuthContextUtils.validateBuiltin(!practiceSet.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		}
+
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 
 		practiceSetList.forEach(practiceSet -> {

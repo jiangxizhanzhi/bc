@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
+import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,11 @@ public class TeamTrainTemplateController {
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(!businessTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
+
 		// update
 		String oldRoleConfig = teamTemplate.getRoleConfig();
 		reqToTeamTemplate(modifyReq, teamTemplate);

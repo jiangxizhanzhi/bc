@@ -17,6 +17,9 @@ public interface TrialButtonConstant {
     // 课程导入
     String CMS_COURSE_LOAD = "cms_course_load";
 
+    // 课时导入
+    String CMS_LESSON_IMPORT = "cms_lesson_import";
+
     // 习题集导出
     String CMS_EXERCISES_DUMP = "cms_exercises_dump";
 
@@ -77,4 +80,15 @@ public interface TrialButtonConstant {
     //Engage框架
     String CMS_ENGAGE_FRAME = "cms_engage_frame";
 
+    //评估算法管理
+    String CMS_CR_EVALUATION_ALGORITHM = "cms_cr_evaluation_algorithm";
+
+    //指标项管理
+    String CMS_CR_EVALUATION_INDICATOR = "cms_cr_evaluation_indicator";
+
+    //指标体系管理
+    String CMS_CR_EVALUATION_INDICATOR_SYSTEM = "cms_cr_evaluation_indicator_system";
+
+    //工具库
+    String CMS_TOOL = "cms_tool";
 }

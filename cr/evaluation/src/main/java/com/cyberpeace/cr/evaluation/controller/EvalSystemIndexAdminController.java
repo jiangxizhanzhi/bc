@@ -1,5 +1,21 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -29,19 +45,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(tags = "后台-测试靶场-指标体系")
 @RestController
@@ -64,6 +67,7 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
@@ -83,6 +87,7 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
@@ -234,6 +239,7 @@ public class EvalSystemIndexAdminController {
 
 	@DeleteMapping()
 	@ApiOperation("批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 

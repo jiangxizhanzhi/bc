@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -19,10 +20,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -309,6 +306,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
+	@PermissionOperation(TrialButtonConstant.CMS_LESSON_IMPORT)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),

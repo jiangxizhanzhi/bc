@@ -1,9 +1,11 @@
 package com.cyberpeace.oj.ojbase.controller;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import com.cyberpeace.common.util.ObjUtil;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.controller.req.ResourcePublicReq;
@@ -58,16 +61,40 @@ public abstract class PublicController<T extends IService<E>, E> {
 	 * 数据更新
 	 * @param collection
 	 * @param mapperValue
-	 * @param <U>
+	 * @param <String>
 	 * @param <V>
 	 * @return
 	 */
-	protected <U, V> Boolean updateData(Collection<U> collection, Function<U, V> mapperValue) {
+	protected <String, V> Boolean updateData(Collection<String> collection,
+			Function<String, V> mapperValue) {
 		List<V> publicDatas = StreamApiUtils.map(collection, mapperValue);
 		List<E> entityList = BeanUtils.deepCopyList(publicDatas, entityClass);
 		boolean result = true;
 		for (E entity : entityList) {
+			Field field = null;
+			Boolean builtin = null;
+			java.lang.String createUserId = "";
+			try {
+				java.lang.String resourceId = ObjUtil.getCertainFieldValue(entity, "resourceId");
+//				field = entity.getClass().getDeclaredField("resourceId");
+//				// 如果该属性是私有的，需要将其设为可访问状态
+//				field.setAccessible(true);
+//				java.lang.String resourceId = (java.lang.String) field.get(entity);
+				E entityData = baseService.getById(resourceId);
+				createUserId = ObjUtil.getCertainFieldValue(entityData, "createUserId");
+//				field = entity.getClass().getDeclaredField("builtin");
+				// 如果该属性是私有的，需要将其设为可访问状态
+//				field.setAccessible(true);
+//				builtin = (Boolean) field.get(entityData);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			// 判断资源是否内置，允许修改
+			AuthContextUtils.validateBuiltin(!createUserId.equals(UserInfoContext.getUserContext().getUserId()));
+
 			result &= baseService.updateById(entity);
+
 		}
 		return result;
 	}

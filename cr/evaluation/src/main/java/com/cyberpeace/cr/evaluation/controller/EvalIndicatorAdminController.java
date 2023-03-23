@@ -1,5 +1,19 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.util.List;
+
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -32,17 +46,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
@@ -74,6 +77,7 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("新增指标项")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
@@ -159,6 +163,7 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("编辑指标项")
 	@PutMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
@@ -265,6 +270,7 @@ public class EvalIndicatorAdminController {
 
 	@DeleteMapping()
 	@ApiOperation("批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 

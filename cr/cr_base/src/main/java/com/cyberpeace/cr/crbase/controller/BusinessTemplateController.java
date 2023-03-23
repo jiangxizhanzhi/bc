@@ -175,6 +175,12 @@ public class BusinessTemplateController {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
 
+		for (BusinessTemplate businessTemplate : businessTemplateList) {
+			// 试用账号校验
+			AuthContextUtils.validateBuiltin(!businessTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
+		}
+
 		Boolean flag = businessTemplateService.batchDelete(deleteReq.getIds());
 
 		businessTemplateList.forEach(businessTemplate -> {

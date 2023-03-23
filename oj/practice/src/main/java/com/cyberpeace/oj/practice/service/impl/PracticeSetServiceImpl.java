@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -214,6 +215,10 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 
 		PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(!existSet.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
 		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
 		// 名称校验
 		if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {

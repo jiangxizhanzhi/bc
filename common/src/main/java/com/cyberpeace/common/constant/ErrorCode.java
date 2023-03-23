@@ -186,4 +186,9 @@ public interface ErrorCode {
 
 	/** 笔记为空*/
 	String BLANK_NOTE = "100059";
+
+	/** 试用无操作权限*/
+	String TRAIL_UNAUTHORIZED = "100060";
+
+
 }

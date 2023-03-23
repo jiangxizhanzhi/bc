@@ -275,6 +275,11 @@ public class MissionController {
 		List<MissionSchemeTemplate> missionSchemeTemplateList = missionSchemeTemplateMapper
 				.selectBatchIds(deleteReq.getIds());
 
+		for (MissionSchemeTemplate missionSchemeTemplate : missionSchemeTemplateList) {
+			// 试用账号校验
+			AuthContextUtils.validateBuiltin(!missionSchemeTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
+		}
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
 		missionSchemeTemplateList.forEach(missionSchemeTemplate -> {
@@ -294,6 +299,10 @@ public class MissionController {
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		templateModifyReq.validate();
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(!toUpdateSchemeTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 
 		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper

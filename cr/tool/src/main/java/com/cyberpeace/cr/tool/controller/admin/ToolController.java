@@ -2,7 +2,9 @@ package com.cyberpeace.cr.tool.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
@@ -73,6 +75,7 @@ public class ToolController {
 
 	@ApiOperation("工具创建")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> create(@RequestBody @Validated ToolAddReq toolReq) {
 		Tool tool = BeanUtils.copy(toolReq, Tool.class);
@@ -89,6 +92,7 @@ public class ToolController {
 
 	@ApiOperation("工具更新")
 	@PatchMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> update(@RequestBody @Validated ToolUpdateReq toolupdateReq) {
 		Tool tool = BeanUtils.copy(toolupdateReq, Tool.class);
@@ -103,6 +107,7 @@ public class ToolController {
 
 	@ApiOperation("工具删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_TOOL)
 	@RequiresPermissions(MenuConstant.CMS_TOOL)
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 

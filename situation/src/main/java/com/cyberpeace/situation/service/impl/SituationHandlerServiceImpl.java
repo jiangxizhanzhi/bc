@@ -17,6 +17,7 @@ import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
+import com.cyberpeace.situation.dao.mapper.WHLrvbMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -46,6 +47,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
 	private MyWebSocketHandler myWebSocketHandler;
+
+	@Autowired
+	private WHLrvbMapper whLrvbMapper;
 
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
@@ -145,6 +149,18 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		Map<String, List<SituationConfig>> elementConfigMap = sceneData.getSituationConfigMap()
 				.getOrDefault(SituationConfig.NodeType.ELEMENT.getCode(), Maps.newHashMap());
 
+		// 构建资产归属标识数据
+		Map<String, String> rvbAssetMap = Maps.newHashMap();
+		RvbBusiness rvbBusiness = whLrvbMapper.getBusiness(sceneData.getSceneId());
+		if (rvbBusiness != null) {
+			List<RvbAsset> rvbAssets = whLrvbMapper.getRvbAsset(rvbBusiness.getBusinessInstanceId());
+			rvbAssets.stream().filter(
+					rvbAsset -> rvbAssets.stream().filter(
+							rvbAssetTmp -> rvbAssetTmp.getDeviceId().equals(rvbAsset.getDeviceId())
+					).count() > 1
+			).forEach(rvbAsset -> rvbAssetMap.put(rvbAsset.getDeviceId(), rvbAsset.getRoleType()));
+		}
+
 		for (int i = 0; i < elements.size(); i++) {
 
 			JSONObject element = elements.getJSONObject(i);
@@ -223,6 +239,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Map<Integer, String> elementConfig = getNodeConfig(elementConfigMap, elementId,
 					elementName);
 			elementInfo.setConfig(elementConfig);
+
+			// 设置资产归属
+			elementInfo.setRoleType(rvbAssetMap.get(elementId));
 
 			elementsInfo.put(elementId, elementInfo);
 		}

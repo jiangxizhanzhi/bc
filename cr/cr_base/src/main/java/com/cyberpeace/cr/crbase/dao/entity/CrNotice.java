@@ -31,7 +31,7 @@ public class CrNotice extends BaseTable {
     private String content;
 
     /**
-     * 公告对象
+     * 公告对象  由训练模块自行定义（如团队训练为各个角色、红蓝对抗为红方或蓝方）
      */
     private Integer group;
 
@@ -55,6 +55,9 @@ public class CrNotice extends BaseTable {
      */
     private String createUserId;
 
+    /**
+     * 默认公告目标组, 团队训练仅使用code=1
+     */
     public enum Group {
         ALL(1, "全局"),
         RED(2, "红队"),

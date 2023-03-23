@@ -54,6 +54,9 @@ public class ElementInfo implements Serializable {
 	@ApiModelProperty("节点颜色")
 	private String color;
 
+	@ApiModelProperty("资产所属")
+	private String roleType;
+
 	public ElementInfo(JSONObject element) {
 		this.setElementId(element.getString("id"));
 		this.setName(element.getString("name"));

@@ -23,7 +23,12 @@ public class CrTrainAction extends BaseTable {
     /**
      * 训练角色id
      */
-    private Integer roleId;
+    private String roleId;
+
+    /**
+     * 训练角色类型
+     */
+    private Integer roleType;
 
     /**
      * 事件内容

@@ -48,5 +48,8 @@ public class WsMultiNodeDynamic implements Serializable {
 
 	@ApiModelProperty("是否聚焦到目的节点")
 	private Boolean lookAtTarget;
+	
+	@ApiModelProperty("队伍资产归属")
+	private String roleType;
 
 }

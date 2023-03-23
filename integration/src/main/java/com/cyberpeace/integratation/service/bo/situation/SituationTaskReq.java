@@ -14,30 +14,30 @@ import lombok.Data;
 public class SituationTaskReq implements Serializable {
 
 	@ApiModelProperty(value = "分靶场id")
-	private String subRangeId;
+	private String sub_range_id;
 
 	@ApiModelProperty(value = "任务id")
-	private String taskId;
+	private String task_id;
 
 	@ApiModelProperty(value = "科目id")
-	private String subjectId;
+	private String subject_id;
 
 	public String toQuery() {
 		StringBuilder builder = new StringBuilder();
-		if (StringUtils.isBlank(this.taskId)) {
+		if (StringUtils.isBlank(this.task_id)) {
 			throw new BusinessException(ErrorCode.EMPTY_TASK_ID);
 		} else {
 			builder.append("?taskId=");
-			builder.append(this.taskId);
+			builder.append(this.task_id);
 		}
-		if (StringUtils.isNotBlank(this.subRangeId)) {
+		if (StringUtils.isNotBlank(this.sub_range_id)) {
 			builder.append("&subRangeId=");
-			builder.append(this.subRangeId);
+			builder.append(this.sub_range_id);
 		}
 
-		if (StringUtils.isNotBlank(this.subjectId)) {
+		if (StringUtils.isNotBlank(this.subject_id)) {
 			builder.append("&subjectId=");
-			builder.append(this.subjectId);
+			builder.append(this.subject_id);
 		}
 		return builder.toString();
 	}

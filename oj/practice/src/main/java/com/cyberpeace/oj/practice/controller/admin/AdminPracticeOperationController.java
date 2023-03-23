@@ -145,6 +145,11 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 				false);
 		List<PracticeOperation> practiceOperationList = practiceOperationService.listByIds(delReq.getResourceIds());
 
+		// 试用账号校验
+		for (PracticeOperation practiceOperation : practiceOperationList) {
+			AuthContextUtils.validateBuiltin(!practiceOperation.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		}
+
 		Integer result = practiceOperationService.batchDelete(delReq.getResourceIds(), authContext);
 
 		practiceOperationList.forEach(practiceOperation -> {

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -66,6 +68,7 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("新增体系指标")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> addEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
@@ -85,6 +88,7 @@ public class EvalSystemIndexAdminController {
 
 	@ApiOperation("编辑体系指标")
 	@PutMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<EvalSystem> editEvalIndex(@RequestBody @Validated EvalSystemReq evalSystemReq) {
 
@@ -235,6 +239,7 @@ public class EvalSystemIndexAdminController {
 
 	@DeleteMapping()
 	@ApiOperation("批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR_SYSTEM)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 

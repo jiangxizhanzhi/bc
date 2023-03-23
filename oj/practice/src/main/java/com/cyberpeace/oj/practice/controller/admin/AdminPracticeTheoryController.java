@@ -142,6 +142,11 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		List<PracticeTheory> practiceTheoryList = practiceTheoryService.listByIds(delReq.getResourceIds());
 
+		// 试用账号校验
+		for (PracticeTheory practiceTheory : practiceTheoryList) {
+			AuthContextUtils.validateBuiltin(!practiceTheory.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		}
+
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
 
 		practiceTheoryList.forEach(practiceTheory -> {

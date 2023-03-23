@@ -158,4 +158,7 @@ public interface ErrorCode {
 
 	/** 图片后缀不为jpg */
 	String ILLEGAL_PICTURE_SUFFIX = "100051";
+
+	/** 试用无操作权限*/
+	String TRAIL_UNAUTHORIZED = "100052";
 }

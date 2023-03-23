@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +131,11 @@ public class TeamTrainTemplateController {
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(!businessTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+
+
 		// update
 		String oldRoleConfig = teamTemplate.getRoleConfig();
 		reqToTeamTemplate(modifyReq, teamTemplate);

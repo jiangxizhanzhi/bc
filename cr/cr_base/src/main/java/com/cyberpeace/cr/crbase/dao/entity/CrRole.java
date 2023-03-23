@@ -202,7 +202,7 @@ public class CrRole extends BaseTable {
 		/***/
 		ADMIN(1, "管理员", "Administrator"),
 		DIRECTOR(2, "导演", "Director"),
-		REFEREE(3, "裁判", "Referee"),
+		REFEREE(3, "主裁判", "Referee"),
 		RED(4, "红方", "Red"),
 		BLUE(5, "蓝方", "Blue"),
 		RED_BLUE(6, "红方蓝方", "RedBlue"),

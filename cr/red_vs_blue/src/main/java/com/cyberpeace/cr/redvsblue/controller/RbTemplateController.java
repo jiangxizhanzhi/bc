@@ -93,6 +93,8 @@ public class RbTemplateController {
 
 		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(CrRole.RbRoleGroup.REFEREE));
 
+		rbTemplateRoleRsps.add(new RbTemplateRoleRsp(CrRole.RbRoleGroup.REFEREE2));
+
 		RbTemplateRoleRsp rbTemplateRoleRsp3 = new RbTemplateRoleRsp(CrRole.RbRoleGroup.RED);
 
 		JSONArray redRoles = (JSONArray) rolejsonObject.get("red_roles");

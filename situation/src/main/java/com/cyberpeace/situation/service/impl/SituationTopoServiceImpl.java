@@ -104,7 +104,10 @@ public class SituationTopoServiceImpl extends ServiceImpl<SituationTopoMapper, S
 	private List<TopoHistoryBo> getTopoHistory(EventMsgReq eventReq) {
 
 		if (topoCache.getIfPresent(eventReq.getSubjectId()) == null) {
-			SituationTaskReq situationTaskReq = BeanUtils.copy(eventReq, SituationTaskReq.class);
+			SituationTaskReq situationTaskReq = new SituationTaskReq();
+			situationTaskReq.setTask_id(eventReq.getTaskId());
+			situationTaskReq.setSub_range_id(eventReq.getSubRangeId());
+			situationTaskReq.setSubject_id(eventReq.getSubjectId());
 			List<TopoHistoryBo> topoHistoryBos = remoteSituationService
 					.getTopoHistory(situationTaskReq);
 			topoCache.put(eventReq.getSubjectId(), topoHistoryBos);

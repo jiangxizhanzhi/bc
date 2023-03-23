@@ -47,27 +47,37 @@ public class LayerTopoContext implements Serializable {
 
 	private void setPosition(List<ElementContext> elements, TopoContext context) {
 
-		// 处理节点坐标
-		int index = 1;
-		int count = 1;
-		int interval = 150;
-		for (int i = 0; i < elements.size(); i++) {
+		// 默认节点间隔
+		int interval = 200;
+
+		// 节点个数
+		int n = elements.size();
+
+		// 正方形区域边长
+		int m = (int) Math.ceil(Math.sqrt((double) n));
+
+		// 设置坐标池
+		List<PositionContext> positionContexts = Lists.newArrayList();
+
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < m; j++) {
+				int x = (i * interval) + (int) (Math.random() * interval);
+				int y = (j * interval) + (int) (Math.random() * interval);
+				positionContexts.add(new PositionContext((float) x, (float) y));
+			}
+		}
+
+		// 计算偏移值
+		float offset = m * interval / 2;
+
+		// 节点坐标赋值
+		for (int i = 0; i < n; i++) {
 			ElementContext element = elements.get(i);
 			context.getElements().put(element.getElementId(), element);
-			if (index == 1) {
-				element.setPosition(new PositionContext((float) 0, (float) interval * count));
-				index += 1;
-			} else if (index == 2) {
-				element.setPosition(new PositionContext((float) interval * count, (float) 0));
-				index += 1;
-			} else if (index == 3) {
-				element.setPosition(new PositionContext((float) 0, (float) -interval * count));
-				index += 1;
-			} else if (index == 4) {
-				element.setPosition(new PositionContext((float) -interval * count, (float) 0));
-				index = 1;
-				count += 1;
-			}
+			PositionContext positionContext = positionContexts.get(i);
+			positionContext.setX(positionContext.getX() - offset);
+			positionContext.setY(positionContext.getY() - offset);
+			element.setPosition(positionContext);
 		}
 	}
 }

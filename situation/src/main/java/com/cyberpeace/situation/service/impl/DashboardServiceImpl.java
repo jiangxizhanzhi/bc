@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,6 @@ import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
-import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
@@ -83,23 +81,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 		}
 
-		DashboardBasicAttributeRes data = new DashboardBasicAttributeRes();
-
-		if ("lgzx".equals(dashboardId)) {
-			data = new DashboardBasicAttributeRes(dashboardId, 1, "LG中心综合态势", null, null, null,
-					new Date(),
-					new ViewAngle("117.2591507", "31.7956434", 10000, 1.0f, 1.0f, 1.0f));
-		} else if ("zhxfbc".equals(dashboardId)) {
-			data = new DashboardBasicAttributeRes(dashboardId, 2, "XXX分靶场综合态势", null, "zhxfbc",
-					null, new Date(), new ViewAngle());
-		} else {
-			data = new DashboardBasicAttributeRes(dashboardId, 3, "ZH性分靶场任务态势", "XXXX红蓝对抗任务", null,
-					dashboardId, new Date(),
-					new ViewAngle("117.2591507", "31.7956434", 10000, 1.0f, 1.0f, 1.0f));
-		}
-
-		return data;
-
+		return null;
 	}
 
 	@Override

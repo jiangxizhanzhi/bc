@@ -260,24 +260,50 @@ class Border {
 
 }
 
+/**
+ * 表示作为一个整体的由若干个同层级节点组成的节点群组，其内部节点的相对位置是固定的，只能整体平移
+ * */
 class Block {
 
+	/**
+	 * 内部节点及其相对位置的列表
+	 * */
 	@Getter
 	private final List<ElementPosition> elementPositions = Lists.newArrayList();
 
+
+	/**
+	 * Block的绝对位置坐标
+	 * */
 	@Getter
 	@NonNull
 	private Position position;
 
+	/**
+	 * Block所在的垂直层级
+	 * */
 	@Getter
 	@NonNull
 	private final Integer level;
 
+
+	/**
+	 * Block整体的上下左右绝对坐标；
+	 * border由position和height width计算得到，它是一个懒加载的缓存属性
+	 * 当Block整体移动时，border被置null，position发生改变，等到下次需要用到border信息时再行计算
+	 * */
 	private Border border;
 
+
+	/**
+	 * 高度
+	 * */
 	@NonNull
 	private final Float height;
 
+	/**
+	 * 宽度
+	 * */
 	@NonNull
 	private final Float width;
 
@@ -309,6 +335,10 @@ class Block {
 		});
 	}
 
+	/**
+	 * 给定的Block如果同当前Block无重叠 则返回null
+	 * 如果由重叠，则返回一个平移向量建议，给定Block依此平移后可避免同当前Block重叠
+	 * */
 	@Nullable
 	public Position conflict(Block block) {
 		if (this == block) {
@@ -348,11 +378,17 @@ class Block {
 		return ret;
 	}
 
+	/**
+	 * Block整体平移
+	 * */
 	public void move(Position delta) {
 		this.position = this.position.add(delta);
 		this.border = null;
 	}
 
+	/**
+	 * 获取当前（平移后）Block的四至坐标
+	 * */
 	public Border getBorder() {
 		if (this.border == null) {
 			float minStep = 100;
@@ -365,11 +401,17 @@ class Block {
 
 }
 
+/**
+ * 用于盛放Block的容器 可以认为是一块画布
+ * */
 class Board {
 
 	@Getter
 	private final List<Block> blocks = Lists.newArrayList();
 
+	/**
+	 * @param initialElements 最顶层的元素 它们可以有子元素 但是不能有父元素 最顶层的元素的level应当一致
+	 * */
 	public Board(List<Element> initialElements) {
 		Integer level = null;
 		for (Element element : initialElements) {
@@ -377,7 +419,7 @@ class Board {
 				level = element.getLevel();
 			} else {
 				if (!level.equals(element.getLevel())) {
-					throw new RuntimeException();
+					throw new RuntimeException(); // 保证initialElements的level一致
 				}
 			}
 		}
@@ -388,6 +430,7 @@ class Board {
 		blockList.add(new Block(new Position(0.0f, 0.0f), level, initialElements));
 
 		while (!blockList.isEmpty()) {
+			// blockList中的所有的Block依次加入画布
 			for (Block block : blockList) {
 				blocks.add(block);
 				List<Block> blockList2 = new ArrayList<>();
@@ -395,6 +438,7 @@ class Board {
 				handlerConflict(blockList2);
 			}
 
+			// 获取blockList中所有的Block中的所有的元素，如果该元素有子节点，则把这些子节点作为一个Block添加到新的blockList中去
 			List<Block> blockList1 = new ArrayList<>();
 			for (Block block : blockList) {
 				for (ElementPosition elementPosition : block.getElementPositions()) {
@@ -409,6 +453,10 @@ class Board {
 		}
 	}
 
+	/**
+	 * 给定一个Block列表
+	 * 逐个放入画布Board 如果和画布中既有的Block位置冲突 则平移既有的Block
+	 * */
 	private void handlerConflict(List<Block> blockList) {
 		while (!blockList.isEmpty()) {
 			Block current = blockList.remove(0);

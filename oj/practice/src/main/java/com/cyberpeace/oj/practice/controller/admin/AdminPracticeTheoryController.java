@@ -144,7 +144,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		// 试用账号校验
 		for (PracticeTheory practiceTheory : practiceTheoryList) {
-			AuthContextUtils.validateBuiltin(!practiceTheory.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(practiceTheory.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 		}
 
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());

@@ -222,7 +222,7 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 
 		// 试用账号校验
 		for (Course course : courseList) {
-			AuthContextUtils.validateBuiltin(!course.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 		}
 
 		Boolean result = courseService.batchDelete(batchDeleteReq.getResourceIds(), authContext);

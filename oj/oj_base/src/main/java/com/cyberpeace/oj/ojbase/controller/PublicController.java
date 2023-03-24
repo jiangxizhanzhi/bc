@@ -91,7 +91,7 @@ public abstract class PublicController<T extends IService<E>, E> {
 			}
 
 			// 判断资源是否内置，允许修改
-			AuthContextUtils.validateBuiltin(!createUserId.equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(createUserId,UserInfoContext.getUserContext().getUserId()));
 
 			result &= baseService.updateById(entity);
 

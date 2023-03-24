@@ -147,7 +147,7 @@ public class AdminPracticeOperationController extends PublicController<PracticeO
 
 		// 试用账号校验
 		for (PracticeOperation practiceOperation : practiceOperationList) {
-			AuthContextUtils.validateBuiltin(!practiceOperation.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(practiceOperation.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 		}
 
 		Integer result = practiceOperationService.batchDelete(delReq.getResourceIds(), authContext);

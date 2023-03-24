@@ -144,7 +144,7 @@ public class TeamTrainTemplateController {
 		}
 
 		// 试用账号校验
-		AuthContextUtils.validateBuiltin(!businessTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(businessTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 
 
 		// update

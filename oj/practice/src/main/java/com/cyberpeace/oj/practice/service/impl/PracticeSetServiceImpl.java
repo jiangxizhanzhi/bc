@@ -217,7 +217,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		PracticeSet existSet = practiceSetMapper.selectById(practiceSet.getResourceId());
 
 		// 试用账号校验
-		AuthContextUtils.validateBuiltin(!existSet.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(existSet.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 
 		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
 		// 名称校验

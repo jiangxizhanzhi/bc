@@ -379,7 +379,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		PracticeTheory existPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
 
 		// 试用账号校验
-		AuthContextUtils.validateBuiltin(!existPractice.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(existPractice.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 
 		// 数据校验
 		practiceValidateHandler.validateTheoryContentExistExcludeItself(practiceTheory.getPracticeSetId(),

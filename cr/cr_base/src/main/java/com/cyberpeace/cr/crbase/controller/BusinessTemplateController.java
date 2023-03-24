@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.TrialButtonConstant;
+import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -156,10 +157,14 @@ public class BusinessTemplateController {
 	 */
 	@ApiOperation("批量修改操作权限")
 	@PostMapping("/batchSetShares")
-	@PermissionOperation(TrialButtonConstant.CMS_CR_SET_SHARE)
+//	@PermissionOperation(TrialButtonConstant.CMS_CR_SET_SHARE)
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN,
 			MenuConstant.CMS_CR_SINGLE_TRAIN }, logical = Logical.OR)
 	public BaseRsp<String> batchSetShares(@RequestBody @Validated ShareReq shareReq) {
+
+		// 试用账号配置授权所有权限校验，会抛出试用异常
+		AuthContextUtils.validateBuiltin(shareReq.getShareMode().equals(AuthTable.AuthType.ALL_SHARE_MODE.getCode()));
+
 		ShareContext shareContext = BeanUtils.copy(shareReq, ShareContext.class);
 
 		businessTemplateService.batchSetShares(shareContext);
@@ -177,7 +182,7 @@ public class BusinessTemplateController {
 
 		for (BusinessTemplate businessTemplate : businessTemplateList) {
 			// 试用账号校验
-			AuthContextUtils.validateBuiltin(!businessTemplate.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(businessTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 
 		}
 

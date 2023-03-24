@@ -261,7 +261,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.validateOperationExist(updateOperation.getResourceId());
 
 		// 试用账号校验
-		AuthContextUtils.validateBuiltin(!operation.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(operation.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 
 		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
 				.getCode().intValue()) {

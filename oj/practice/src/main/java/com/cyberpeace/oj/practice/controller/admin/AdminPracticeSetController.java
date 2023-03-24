@@ -163,7 +163,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		// 试用账号校验
 		for (PracticeSet practiceSet : practiceSetList) {
-			AuthContextUtils.validateBuiltin(!practiceSet.getCreateUserId().equals(UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(practiceSet.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
 		}
 
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());

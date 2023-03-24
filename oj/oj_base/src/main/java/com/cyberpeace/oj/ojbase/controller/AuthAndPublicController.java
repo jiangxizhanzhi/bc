@@ -35,10 +35,13 @@ import io.swagger.annotations.ApiParam;
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
 
 	@PatchMapping("/batch-auth")
-	@ApiOperation("资源授权访问")
+	@ApiOperation("资源授权操作")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
 			logical = Logical.OR)
 	public BaseRsp<Boolean> batchAuth(@RequestBody @Validated ResourceAuthReq requestData) {
+
+		// 试用账号配置授权所有权限校验，会抛出试用异常
+		AuthContextUtils.validateBuiltin(requestData.getReadAuthType().equals(AuthTable.AuthType.ALL_SHARE_MODE.getCode()));
 
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {
 			AuthAndPublicData data = new AuthAndPublicData();
@@ -54,7 +57,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	}
 
 	@GetMapping("/get_auth")
-	@ApiOperation("获取资源的授权访问信息")
+	@ApiOperation("获取资源的授权操作信息")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
 			logical = Logical.OR)
 	public BaseRsp<ReadAuthInfo> getAuth(@ApiParam(name = "resource_id",
@@ -72,7 +75,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	}
 
 	@GetMapping("/get_share")
-	@ApiOperation("获取资源的权限操作信息")
+	@ApiOperation("获取资源的权限访问信息")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
 			logical = Logical.OR)
 	public BaseRsp<OperationAuthInfo> getOperation(@ApiParam(name = "resource_id",
@@ -108,10 +111,14 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 	}
 
 	@PatchMapping("/batch-share")
-	@ApiOperation("资源授权操作")
+	@ApiOperation("资源访问操作")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_EXERCISES },
 			logical = Logical.OR)
 	public BaseRsp<Boolean> batchShare(@RequestBody @Validated ResourceShareReq requestData) {
+
+		// 试用账号配置授权所有权限校验，会抛出试用异常
+		AuthContextUtils.validateBuiltin(requestData.getOperationAuthType().equals(AuthTable.AuthType.ALL_SHARE_MODE.getCode()));
+
 
 		List<Integer> listCode = EnumUtils.getListCode(AuthTable.AuthType.class);
 		if (!listCode.contains(requestData.getOperationAuthType())) {

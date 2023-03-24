@@ -371,16 +371,15 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		WsMessage<WsMultiNodeDynamic> wsMessage;
 
 		String type = attackMessageBo.getType();
-//		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
-//				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
+		Boolean isSingleNode = type.equals(AttackType.HIGHLIGHT_AREA.getKeyWord())
+				|| type.equals(AttackType.HIGHLIGHT_ELEMENT.getKeyWord());
 
-		Boolean isSingleNode = true;
 		if (elementIds.contains(attackMessageBo.getTargetId())) {
 			wsMessage = new WsMessage<>(MessageType.AttackEventEE.getDesc(), wsMultiNodeDynamic);
 		} else {
 			wsMessage = new WsMessage<>(MessageType.AttackEventEA.getDesc(), wsMultiNodeDynamic);
 		}
-		wsMultiNodeDynamic.setRoleType("red");
+
 		if (isSingleNode) {
 			wsMessage = new WsMessage<>(MessageType.SingleNodeDynamic.getDesc(),
 					wsMultiNodeDynamic);

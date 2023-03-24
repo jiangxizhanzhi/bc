@@ -9,11 +9,13 @@ import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeGroupRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.NoticeListRsp;
+import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,10 +27,13 @@ import java.util.List;
 @RequiresAuthentication
 public class CrNoticeController {
 
+    @Autowired
+    private CrNoticeService crNoticeService;
+
     @ApiOperation("训练公告管理公告对象查询")
     @GetMapping("/group")
     public BaseRsp<List<CrNoticeGroupRsp>> group(@ApiParam("训练实例ID") @RequestParam("room_id") String roomId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(crNoticeService.noticeGroup(roomId));
     }
 
     @ApiOperation("训练公告管理分页列表")

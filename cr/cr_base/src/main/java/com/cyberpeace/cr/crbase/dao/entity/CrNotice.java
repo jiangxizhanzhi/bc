@@ -59,17 +59,17 @@ public class CrNotice extends BaseTable {
      * 默认公告目标组, 团队训练仅使用code=1
      */
     public enum Group {
-        ALL(1, "全局"),
-        RED(2, "红队"),
-        BLUE(3, "蓝队");
+        ALL("1", "全局"),
+        RED("2", "红队"),
+        BLUE("3", "蓝队");
 
         @Getter
-        private final Integer code;
+        private final String code;
 
         @Getter
         private final String desc;
 
-        Group(Integer code, String desc) {
+        Group(String code, String desc) {
             this.code = code;
             this.desc = desc;
         }

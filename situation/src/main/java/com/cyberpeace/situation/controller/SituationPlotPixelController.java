@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "绘标图元管理")
 @RestController
+@CrossOrigin("*")
 @RequiresAuthentication
 @RequestMapping("/situation/plot/pixel")
 public class SituationPlotPixelController {

@@ -43,7 +43,6 @@ import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
-import com.cyberpeace.situation.service.context.site.RangeContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,16 +82,18 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     @Autowired
     private TopoConfigMapper topoConfigMapper;
 
-    @Override
-    public SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId) {
+	@Override
+	public SituationPublishInstance selectReleasedXdDashboardBySubjectId(String taskId,
+			String subjectId) {
 
-        SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper.selectPublicedBySubjectId(taskId, subjectId);
-        if (null == situationPublishInstance) {
-            throw new BusinessException(SituationErrorCode.NO_RELEASED_DASHBOARD);
-        }
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectXdDashboardBySubjectId(taskId, subjectId);
+		if (null == situationPublishInstance) {
+			throw new BusinessException(SituationErrorCode.NO_RELEASED_DASHBOARD);
+		}
 
-        return situationPublishInstance;
-    }
+		return situationPublishInstance;
+	}
 
     @Override
     public SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd) {

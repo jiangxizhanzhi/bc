@@ -196,4 +196,9 @@ public interface SituationErrorCode {
 	 */
 	String DYNAMIC_EFFECT_MAPPING_EXIST = "106015";
 
+	/**
+	 * 科目信息异常
+	 */
+	String SUBJECT_INFO_ERROR = "106016";
+
 }

@@ -75,7 +75,7 @@ public class ExternalSituationController {
 				.orElse(OrderType.QT);
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
-				.selectPublicedBySubjectId(controlCommandReq.getTaskId(),
+				.selectXdDashboardBySubjectId(controlCommandReq.getTaskId(),
 						controlCommandReq.getSubjectId());
 
 		if (situationPublishInstance == null || orderType.getAction() == null) {
@@ -152,7 +152,7 @@ public class ExternalSituationController {
 		res.setResult(true);
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
-				.selectPublicedBySubjectId(req.getTaskId(), req.getSubjectId());
+				.selectXdDashboardBySubjectId(req.getTaskId(), req.getSubjectId());
 
 		if (situationPublishInstance == null) {
 			return new BaseRsp<>(res);

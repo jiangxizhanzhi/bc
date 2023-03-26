@@ -17,8 +17,13 @@ import java.util.List;
  */
 @Mapper
 public interface SituationDynamicEffectMappingMapper extends BaseMapper<DynamicEffectsMapping> {
-    IPage<DynamicEffectsMapping> selectPage(@Param("page") Page page,
-                                            @Param("dynamicEffectMappingPageReq") DynamicEffectMappingPageReq dynamicEffectMappingPageReq);
 
-    List<DynamicEffectsMapping> selectBatchByType(@Param("types") Collection<String> types);
+	IPage<DynamicEffectsMapping> selectPage(@Param("page") Page page,
+			@Param("dynamicEffectMappingPageReq") DynamicEffectMappingPageReq dynamicEffectMappingPageReq);
+
+	List<DynamicEffectsMapping> selectBatchByType(@Param("types") Collection<String> types,
+			@Param("subRangeId") String subRangeId);
+
+	Boolean checkEffectsMapExist(@Param("attackType") String attackType,
+			@Param("subRangeId") String subRangeId, @Param("resourceId") String resourceId);
 }

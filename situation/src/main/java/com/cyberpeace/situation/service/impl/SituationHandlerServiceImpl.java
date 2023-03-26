@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.constant.*;
@@ -750,7 +747,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				EventType::getCode, context -> context);
 		// 查找映射动效
 		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
-				.selectBatchByType(codeTypeMap.keySet());
+				.selectBatchByType(codeTypeMap.keySet(), SystemPropUtil.getProp("BC_CODE"));
 		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
 				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
 

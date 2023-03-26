@@ -15,7 +15,7 @@ public enum TaskType {
 
 	QB("", "全部", "全部",false, true),
 	XNJD("SY01", "性能鉴定", "性能鉴定试验",false, true),
-	XNRZ("SY02", "性能认证", "性能验证试验",false, true),
+	XNRZ("SY02", "性能验证", "性能验证试验",false, true),
 	SYZZ("SY03", "作战试验", "作战试验",false, true),
 	QTSY("SY99", "其它试验", "其它试验",false, false),
 	HLDK("XL03", "红蓝对抗", "红蓝对抗",true, true),

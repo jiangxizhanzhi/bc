@@ -1,6 +1,5 @@
 package com.cyberpeace.situation.controller;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +15,9 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.integratation.constant.TaskStatus;
-import com.cyberpeace.integratation.constant.TaskType;
-import com.cyberpeace.integratation.model.situation.AdEventContext;
-import com.cyberpeace.integratation.model.situation.ElementSlimContext;
-import com.cyberpeace.integratation.model.situation.NodeEventContext;
-import com.cyberpeace.integratation.model.situation.TaskEventContext;
+import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
+import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.DashboardLevel;
 import com.cyberpeace.situation.constant.DynamicParameter;
@@ -84,27 +80,22 @@ public class DashboardController {
 			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
 					value = "subject_id", required = false) String subjectId,
 			@ApiParam(name = "sub_range_id", value = "分靶场ID", required = false) @RequestParam(
-					value = "sub_range_id", required = false) String subRangeId,
-			@ApiParam(name = "task_status", value = "任务状态",
-					required = true) @RequestParam(value = "task_status") String taskStatus,
-			@ApiParam(name = "task_type", value = "任务类型",
-					required = true) @RequestParam(value = "task_type") String taskType) {
+					value = "sub_range_id", required = false) String subRangeId) {
+
+		SubjectListReq subjectListReq = new SubjectListReq(subRangeId, taskId, subjectId);
+		List<SubjectContext> subjectContexts = remoteSituationService.getSubjectList(subjectListReq);
+		if (subjectContexts.size() != 1){
+			throw new BusinessException(SituationErrorCode.SUBJECT_INFO_ERROR);
+		}
+
+		SubjectContext subject = subjectContexts.get(0);
 
 		// 校验状态
-		if (!TaskStatus.RWZX.getName().equals(taskStatus)) {
+		if (!TaskStatus.RWZX.getName().equals(subject.getTaskStatus())) {
 			throw new BusinessException(SituationErrorCode.TASK_NOT_RUNNING);
 		}
 
-		// 校验类型
-		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
-				.filter(t -> t.getDesc().equals(taskType)).findFirst().orElse(TaskType.QB);
-
-		if (!type.getSupport()) {
-			throw new BusinessException(SituationErrorCode.TASK_TYPE_NOT_SUPPORTED, taskType);
-		}
-
 		DashboardIdRes dashboardId = dashboardService.getAttributeByTaskId(taskId, subjectId);
-
 		return new BaseRsp<>(dashboardId);
 
 	}

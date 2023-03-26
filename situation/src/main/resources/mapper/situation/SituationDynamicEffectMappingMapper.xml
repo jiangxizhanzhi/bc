@@ -20,5 +20,15 @@
         <foreach collection="types" open="(" close=")" separator="," item="type">
             #{type}
         </foreach>
+        and category = #{subRangeId}
+    </select>
+    <select id="checkEffectsMapExist" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects_mapping
+        where attack_type = #{attackType}
+        and category = #{subRangeId}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
     </select>
 </mapper>

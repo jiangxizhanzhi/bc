@@ -95,7 +95,7 @@ public class DashboardServiceImpl implements DashboardService {
 	public DashboardIdRes getAttributeByTaskId(String taskId, String subjectId) {
 
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceService
-				.selectReleasedBySubjectId(taskId, subjectId);
+				.selectReleasedXdDashboardBySubjectId(taskId, subjectId);
 
 		return getIdByInstance(situationPublishInstances);
 	}

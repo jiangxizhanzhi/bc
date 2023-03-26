@@ -48,6 +48,13 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
 
     @Autowired
     private ThirdPartyService thirdPartyService;
+    
+    private void checkEffectsMapExist(String attackType, String subRangeId, String resourceId){
+        
+        if (situationDynamicEffectMappingMapper.checkEffectsMapExist(attackType, subRangeId, resourceId)){
+            throw new BusinessException(SituationErrorCode.DYNAMIC_EFFECT_MAPPING_EXIST);
+        }
+    }
 
     @Override
     public String setDynamicEffectsMapping(DynamicEffectMappingReq dynamicEffectMappingReq) {
@@ -62,6 +69,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
+
+		checkEffectsMapExist(dynamicEffectMappingReq.getAttackType(),
+				dynamicEffectsMapping.getCategory(), null);
 
         try {
             situationDynamicEffectMappingMapper.insert(dynamicEffectsMapping);
@@ -154,6 +164,9 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
         if (null == subRange) {
             throw new BusinessException(SituationErrorCode.TYPE_INVALID_ERROR);
         }
+
+		checkEffectsMapExist(dynamicEffectMappingUpdateReq.getAttackType(),
+				dynamicEffectMappingUpdateReq.getCategory(), mapping.getResourceId());
 
         LambdaQueryWrapper<DynamicEffectsMapping> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(DynamicEffectsMapping::getName, dynamicEffectMappingUpdateReq.getName());

@@ -36,4 +36,12 @@ public class SubjectListReq implements Serializable {
 		this.taskType = taskType;
 	}
 
+	public SubjectListReq() {};
+
+	public SubjectListReq(String subRangeId, String taskId, String subjectId) {
+		this.subjectId = subjectId;
+		this.subRangeId = subRangeId;
+		this.taskId = taskId;
+	};
+
 }

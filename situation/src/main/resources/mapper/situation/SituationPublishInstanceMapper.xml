@@ -40,12 +40,12 @@
         </where>
     </select>
 
-    <select id="selectPublicedBySubjectId"
+    <select id="selectXdDashboardBySubjectId"
             resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
-
         SELECT * FROM situation_dashboard_instance
         <where>
             status = 2
+            and xd = 1
             <if test="taskId != null and taskId != ''">
                 and task_id = #{taskId}
             </if>

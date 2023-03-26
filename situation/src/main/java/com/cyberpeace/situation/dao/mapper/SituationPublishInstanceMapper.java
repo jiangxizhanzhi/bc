@@ -20,7 +20,7 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 
 	List<String> getAttributeIds(@Param("resourceIds") List<String> resourceIds);
 
-	SituationPublishInstance selectPublicedBySubjectId(@Param("taskId") String taskId,
+	SituationPublishInstance selectXdDashboardBySubjectId(@Param("taskId") String taskId,
 			@Param("subjectId") String subjectId);
 
 	String selectXdInstanceBySchemeId(@Param("schemeId") String schemeId);

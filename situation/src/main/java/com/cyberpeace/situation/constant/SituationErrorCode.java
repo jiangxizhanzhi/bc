@@ -191,4 +191,14 @@ public interface SituationErrorCode {
 	 */
 	String FAILED_TO_OBTAIN_DASHBOARD_INFO = "106014";
 
+	/**
+	 * 靶场下已存在该类型事件的动效映射
+	 */
+	String DYNAMIC_EFFECT_MAPPING_EXIST = "106015";
+
+	/**
+	 * 科目信息异常
+	 */
+	String SUBJECT_INFO_ERROR = "106016";
+
 }

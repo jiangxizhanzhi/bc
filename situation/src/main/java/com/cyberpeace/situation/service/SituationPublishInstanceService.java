@@ -13,7 +13,7 @@ import com.cyberpeace.situation.service.context.site.RangeContext;
 
 public interface SituationPublishInstanceService extends IService<SituationPublishInstance> {
 
-    SituationPublishInstance selectReleasedBySubjectId(String taskId, String subjectId);
+    SituationPublishInstance selectReleasedXdDashboardBySubjectId(String taskId, String subjectId);
 
     SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd);
 

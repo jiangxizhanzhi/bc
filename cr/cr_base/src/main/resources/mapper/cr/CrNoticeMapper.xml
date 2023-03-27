@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper">
+
+    <select id="pageAdmin" resultType="com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp">
+        select * from cr_notice
+        where room_id = #{room_id}
+        order by status desc, release_time desc
+    </select>
+
+    <select id="page" resultType="com.cyberpeace.cr.crbase.dao.entity.CrNotice">
+        select * from cr_notice
+        where room_id = #{room_id}
+        and (`group` = ${@com.cyberpeace.cr.crbase.dao.entity.CrNotice$Group@ALL.code} or `group` = #{group})
+        order by status desc, release_time desc
+    </select>
+</mapper>

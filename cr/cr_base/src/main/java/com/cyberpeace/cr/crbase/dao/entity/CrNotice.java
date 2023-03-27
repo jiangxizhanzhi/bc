@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
@@ -33,7 +34,8 @@ public class CrNotice extends BaseTable {
     /**
      * 公告对象  由训练模块自行定义（如团队训练为各个角色、红蓝对抗为红方或蓝方）
      */
-    private Integer group;
+    @TableField("`group`")
+    private String group;
 
     /**
      * 状态
@@ -59,19 +61,23 @@ public class CrNotice extends BaseTable {
      * 默认公告目标组, 团队训练仅使用code=1
      */
     public enum Group {
-        ALL("1", "全局"),
-        RED("2", "红队"),
-        BLUE("3", "蓝队");
+        ALL("1", "全局公告", "Public notice"),
+        RED("2", "红队公告", "Red team notice"),
+        BLUE("3", "蓝队公告", "Blue team notice");
 
         @Getter
         private final String code;
 
         @Getter
-        private final String desc;
+        private final String cnDesc;
 
-        Group(String code, String desc) {
+        @Getter
+        private final String enDesc;
+
+        Group(String code, String cnDesc, String enDesc) {
             this.code = code;
-            this.desc = desc;
+            this.cnDesc = cnDesc;
+            this.enDesc = enDesc;
         }
     }
 

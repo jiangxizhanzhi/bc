@@ -43,7 +43,7 @@ CREATE TABLE `cr_notice` (
   `room_id` varchar(64) NOT NULL COMMENT '训练实例id',
   `business_type` int(11) NOT NULL COMMENT '业务类型',
   `content` varchar(2048) NOT NULL COMMENT '公告内容',
-  `group` int(11) NOT NULL COMMENT '公告目标对象',
+  `group` varchar(64) NOT NULL COMMENT '公告目标对象',
   `status` int(11) NOT NULL COMMENT '状态',
   `attachment_id` varchar(64) NULL COMMENT '附件id',
   `release_time` datetime NOT NULL COMMENT '原归属角色id',

@@ -85,4 +85,26 @@
                 situation_dashboard_instance.template_id = situation_dashboard_template_ref.resource_id
         WHERE situation_dashboard_instance.resource_id = #{dashboardId}
     </select>
+    <select id="selectDashboardBySubjectId"
+            resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
+        SELECT * FROM situation_dashboard_instance
+        <where>
+            status = 2
+            <if test="taskId != null and taskId != ''">
+                and task_id = #{taskId}
+            </if>
+            <if test="subjectId != null and subjectId != ''">
+                and subject_id = #{subjectId}
+            </if>
+        </where>
+    </select>
+    <select id="selectSynthesizeDashboard"
+            resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
+        SELECT * FROM situation_dashboard_instance left join situation_dashboard_attribute on
+        situation_dashboard_instance.attribute_id = situation_dashboard_attribute.resource_id
+        <where>
+            situation_dashboard_instance.status = 2
+            and situation_dashboard_attribute.level != 3
+        </where>
+    </select>
 </mapper>

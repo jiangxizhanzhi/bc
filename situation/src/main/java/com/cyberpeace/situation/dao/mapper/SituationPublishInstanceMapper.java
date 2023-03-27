@@ -30,4 +30,9 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 	Integer getDashboardLevel(@Param("dashboardId") String dashboardId);
 
 	String getParameterConfigByDashboardId(@Param("dashboardId") String dashboardId);
+
+	List<SituationPublishInstance> selectDashboardBySubjectId(@Param("taskId") String taskId,
+			@Param("subjectId") String subjectId);
+
+	List<SituationPublishInstance> selectSynthesizeDashboard();
 }

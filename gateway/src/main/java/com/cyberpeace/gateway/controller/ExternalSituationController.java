@@ -1,6 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import com.cyberpeace.gateway.controller.req.*;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.constant.OrderType;
+import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
@@ -30,7 +32,6 @@ import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.DashboardMessage;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsTaskStatus;
-import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 
@@ -45,22 +46,19 @@ import lombok.extern.slf4j.Slf4j;
 public class ExternalSituationController {
 
 	@Autowired
-	private SituationPublishInstanceMapper situationPublishInstanceMapper;
-
-	@Autowired
-	private SituationHandlerService situationHandlerService;
+	private UtilService utilService;
 
 	@Autowired
 	private AttachmentService attachmentService;
 
 	@Autowired
-	private UtilService utilService;
-
-	@Autowired
-	private DashboardTemplateService dashboardTemplateService;
+	private SituationHandlerService situationHandlerService;
 
 	@Autowired
 	private SituationPublishInstanceService situationPublishInstanceService;
+
+	@Autowired
+	private SituationPublishInstanceMapper situationPublishInstanceMapper;
 
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
@@ -74,29 +72,32 @@ public class ExternalSituationController {
 				.filter(t -> t.getCode().equals(controlCommandReq.getOrderType())).findFirst()
 				.orElse(OrderType.QT);
 
-		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
-				.selectXdDashboardBySubjectId(controlCommandReq.getTaskId(),
+		List<SituationPublishInstance> situationPublishInstances = situationPublishInstanceMapper
+				.selectDashboardBySubjectId(controlCommandReq.getTaskId(),
 						controlCommandReq.getSubjectId());
-
-		if (situationPublishInstance == null || orderType.getAction() == null) {
+		if (situationPublishInstances.isEmpty() || orderType.getAction() == null) {
 			return new BaseRsp<>(new ControlRes("1", "0"));
 		}
+		situationPublishInstances.forEach(situationPublishInstance -> {
+			sendMessage(orderType, situationPublishInstance);
+		});
+		return new BaseRsp<>(new ControlRes("1", "0"));
+	}
 
+	private void sendMessage(OrderType orderType,
+			SituationPublishInstance situationPublishInstance) {
 		if (orderType.getAction().equals("message")) {
 			WsMessage<DashboardMessage> message = new WsMessage<>(MessageType.Message.getDesc(),
 					new DashboardMessage(
 							situationPublishInstance.getTaskName() + orderType.getName(), 5));
 			situationHandlerService.pushDataToDashboard(message,
 					situationPublishInstance.getResourceId());
-			return new BaseRsp<>(new ControlRes("1", "0"));
+			return;
 		}
-
 		WsMessage<WsTaskStatus> wsMessage = new WsMessage<>(MessageType.TaskStatus.getDesc(),
 				new WsTaskStatus(orderType.getAction()));
 		situationHandlerService.pushDataToDashboard(wsMessage,
 				situationPublishInstance.getResourceId());
-
-		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
 	@CrossOrigin("*")
@@ -193,5 +194,21 @@ public class ExternalSituationController {
 		BooleanRes res = new BooleanRes();
 		res.setResult(true);
 		return new BaseRsp<>(res);
+	}
+
+	@CrossOrigin("*")
+	@ApiOperation("接收任务实时动效")
+	@PostMapping("/event/task/")
+	public BaseRsp<Boolean> eventTask(@RequestBody @Validated TaskEventContext context) {
+		log.info(String.format("成功接收任务事件：%s", JsonUtil.toJsonString(context)));
+		List<SituationPublishInstance> situationPublishInstances = situationPublishInstanceMapper
+				.selectSynthesizeDashboard();
+		situationPublishInstances.forEach(situationPublishInstance -> {
+			WsMessage<TaskEventContext> wsMessage = new WsMessage<>(MessageType.TaskEvent.getDesc(),
+					context);
+			situationHandlerService.pushDataToDashboard(wsMessage,
+					situationPublishInstance.getResourceId());
+		});
+		return new BaseRsp<>(true);
 	}
 }

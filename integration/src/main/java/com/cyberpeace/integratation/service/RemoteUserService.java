@@ -54,4 +54,6 @@ public interface RemoteUserService {
 
 	Map<String, UserInfo> allUsers();
 
+	String getCurrentUserId();
+
 }

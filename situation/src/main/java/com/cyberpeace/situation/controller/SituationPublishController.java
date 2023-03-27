@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,10 @@ import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.*;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
-import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
-import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
@@ -76,11 +74,25 @@ public class SituationPublishController {
 	@Autowired
 	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
 
+	@Autowired
+	private DashboardTemplateMapper dashboardTemplateMapper;
+
 	@ApiOperation("查询态势发布类型列表")
 	@GetMapping("/category/list")
-	public BaseRsp<List<SituationCategory>> getSituationPublishInstanceCategory() {
+	public BaseRsp<List<SituationCategoryRes>> getSituationPublishInstanceCategory() {
 		LambdaQueryWrapper<SituationCategory> queryWrapper = new LambdaQueryWrapper<>();
-		List<SituationCategory> res = situationCategoryMapper.selectList(queryWrapper);
+		List<SituationCategory> situationCategories = situationCategoryMapper
+				.selectList(queryWrapper);
+		List<String> types = dashboardTemplateMapper.selectCustomTypes();
+		List<SituationCategoryRes> res = Lists.newArrayList();
+		situationCategories.forEach(situationCategory -> {
+			SituationCategoryRes situationCategoryRes = BeanUtils.copy(situationCategory,
+					SituationCategoryRes.class);
+			if (types.contains(situationCategory.getResourceId())) {
+				situationCategoryRes.setTemplate(true);
+			}
+			res.add(situationCategoryRes);
+		});
 		return new BaseRsp<>(res);
 	}
 

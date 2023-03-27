@@ -10,6 +10,8 @@ import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 
+import java.util.List;
+
 /**
  * @Author xuxz
  * @Date 11/11/2022 下午4:22
@@ -17,12 +19,14 @@ import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 @Mapper
 public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
 
-    IPage<DashboardTemplatePageRes> selectPage(@Param("page") Page page,
-                                               @Param("dashboardTemplatePageReq") DashboardTemplatePageReq dashboardTemplatePageReq);
+	IPage<DashboardTemplatePageRes> selectPage(@Param("page") Page page,
+			@Param("dashboardTemplatePageReq") DashboardTemplatePageReq dashboardTemplatePageReq);
 
-    String selectByNameString(@Param("name")String name);
+	String selectByNameString(@Param("name") String name);
 
-    String selectByType(@Param("type")String type);
+	List<String> selectByType(@Param("type") String type);
 
-    String selectByLevel(@Param("level")Integer level);
+	String selectByLevel(@Param("level") Integer level);
+
+	List<String> selectCustomTypes();
 }

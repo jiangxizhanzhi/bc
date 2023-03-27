@@ -3,11 +3,13 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +57,9 @@ public class RbSceneController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -179,13 +184,32 @@ public class RbSceneController {
 			@ApiParam(name = "flow_id", value = "流量id", required = true)
 			@RequestParam("flow_id") String flowId
 	) {
-		return new BaseRsp<>();
+		DownloadFlowFilePathRsp downloadFlowFilePathRsp = new DownloadFlowFilePathRsp();
+		downloadFlowFilePathRsp.setFilePath(crSceneService.getFlowFilePath(flowId));
+
+		return new BaseRsp<>(downloadFlowFilePathRsp);
 	}
 
 	@ApiOperation("节点流量全部启动")
 	@PostMapping("/all_start")
 	public BaseRsp<Boolean> allStartFlow(@RequestBody @Validated AllStartFlowRsp allStartFlowRsp) {
-		return new BaseRsp<>();
+		RbRoom rbRoom = rbRoomService.getById(allStartFlowRsp.getRoomId());
+		if (rbRoom == null) {
+			throw new BusinessException("非法请求");
+		}
+
+		LocalScene localScene = localSceneService.getById(rbRoom.getLocalSceneId());
+		if (localScene == null) {
+			throw new BusinessException("非法请求");
+		}
+
+		Boolean result = crSceneService.startAllFlows(
+				localScene.getMpSceneId(),
+				allStartFlowRsp.getNodeId(),
+				allStartFlowRsp.getRunType(),
+				allStartFlowRsp.getRoomId()
+		);
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("重启节点")

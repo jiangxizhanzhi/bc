@@ -61,7 +61,6 @@ import net.lingala.zip4j.exception.ZipException;
 
 @Api(tags = "GIS接口")
 @RestController
-@CrossOrigin("*")
 @Slf4j
 // @RequiresAuthentication
 @RequestMapping("/situation/gis")

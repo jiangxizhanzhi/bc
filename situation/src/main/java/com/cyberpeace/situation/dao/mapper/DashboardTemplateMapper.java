@@ -10,6 +10,8 @@ import com.cyberpeace.situation.controller.req.DashboardTemplatePageReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 
+import java.util.List;
+
 /**
  * @Author xuxz
  * @Date 11/11/2022 下午4:22
@@ -25,4 +27,6 @@ public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
     String selectByType(@Param("type")String type);
 
     String selectByLevel(@Param("level")Integer level);
+
+    List<String> selectCustomTypes();
 }

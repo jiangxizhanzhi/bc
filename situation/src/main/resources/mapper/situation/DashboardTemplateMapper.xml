@@ -34,4 +34,9 @@
         WHERE level = #{level}
           and edit_status = 0
     </select>
+    <select id="selectCustomTypes" resultType="java.lang.String">
+        SELECT type
+        FROM situation_dashboard_template
+        WHERE edit_status = 0
+    </select>
 </mapper>

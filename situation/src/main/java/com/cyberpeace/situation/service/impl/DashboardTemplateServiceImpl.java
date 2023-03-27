@@ -677,8 +677,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	@Override
 	public String getDefaultTemplateId(String taskType) {
 		SituationCategory situationCategory = situationCategoryMapper.selectByTaskType(taskType);
-
-		return dashboardTemplateMapper.selectByType(situationCategory.getResourceId());
+		List<String> templates = dashboardTemplateMapper
+				.selectByType(situationCategory.getResourceId());
+		if (templates.isEmpty()) {
+			return null;
+		} else {
+			return templates.get(0);
+		}
 	}
 
 	@Override

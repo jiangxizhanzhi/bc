@@ -19,14 +19,14 @@ import java.util.List;
 @Mapper
 public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
 
-    IPage<DashboardTemplatePageRes> selectPage(@Param("page") Page page,
-                                               @Param("dashboardTemplatePageReq") DashboardTemplatePageReq dashboardTemplatePageReq);
+	IPage<DashboardTemplatePageRes> selectPage(@Param("page") Page page,
+			@Param("dashboardTemplatePageReq") DashboardTemplatePageReq dashboardTemplatePageReq);
 
-    String selectByNameString(@Param("name")String name);
+	String selectByNameString(@Param("name") String name);
 
-    String selectByType(@Param("type")String type);
+	List<String> selectByType(@Param("type") String type);
 
-    String selectByLevel(@Param("level")Integer level);
+	String selectByLevel(@Param("level") Integer level);
 
-    List<String> selectCustomTypes();
+	List<String> selectCustomTypes();
 }

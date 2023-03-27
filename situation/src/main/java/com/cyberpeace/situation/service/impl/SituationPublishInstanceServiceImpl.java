@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     @Autowired
     private TopoConfigMapper topoConfigMapper;
 
+    @Autowired
+    private RemoteUserService remoteUserService;
+
 	@Override
 	public SituationPublishInstance selectReleasedXdDashboardBySubjectId(String taskId,
 			String subjectId) {
@@ -106,7 +110,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         checkParams(situationPublishInstanceAddReq);
 
         // 写入基本信息
-        String userId = UserInfoContext.getUserContext().getUserId();
+        String userId = remoteUserService.getCurrentUserId();
         situationPublishInstance.setCreateUserId(userId);
 
         // 大屏新增后默认为草稿
@@ -173,7 +177,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
 		// 所有大屏初始默认可编辑
         situationPublishInstance.setEdit(true);
-		
+
 		// 标记大屏来源是否为想定跳转
         situationPublishInstance.setXd(isXd);
 
@@ -261,6 +265,11 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
     }
 
     private void checkTemplate(SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
+
+        // 如果没有模板ID，直接跳过校验，主要用于想定接入
+        if (situationPublishInstanceAddReq.getTemplateId() == null){
+            return;
+        }
 
         DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectById(situationPublishInstanceAddReq.getTemplateId());
         if (null == dashboardTemplateRef) {

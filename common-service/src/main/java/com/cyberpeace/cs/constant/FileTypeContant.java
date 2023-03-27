@@ -33,4 +33,7 @@ public interface FileTypeContant {
 	 */
 	String HANDOUT_ATTACHMENT_TYPE = "PDF,ZIP,DOC,DOCX,PPT,PPTX";
 
+	/** 训练公告附件上传*/
+	String TRAIN_NOTICE_ATTACHMENT = "ZIP";
+
 }

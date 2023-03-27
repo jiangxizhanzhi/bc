@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
+import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,6 +32,6 @@ public class NoticeListRsp implements Serializable {
     private Date releaseTime;
 
     @ApiModelProperty("附件")
-    private AttachmentBo attachmentBo;
+    private Attachment attachmentBo;
 
 }

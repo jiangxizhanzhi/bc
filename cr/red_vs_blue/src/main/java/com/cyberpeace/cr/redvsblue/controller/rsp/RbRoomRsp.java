@@ -89,4 +89,7 @@ public class RbRoomRsp implements Serializable {
 
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
+
+	@ApiModelProperty("用户头像")
+	private String userAvatar;
 }

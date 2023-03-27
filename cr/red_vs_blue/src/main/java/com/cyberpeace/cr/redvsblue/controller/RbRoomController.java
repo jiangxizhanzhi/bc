@@ -237,6 +237,9 @@ public class RbRoomController {
 			rbRoomRsp.setIsEngageRelated(
 					engageRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
 
+			// 用户头像
+			rbRoomRsp.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
+
 			return rbRoomRsp;
 		});
 

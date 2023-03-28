@@ -161,10 +161,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 		stationCache.clear();
 
 		// 获取所有场站数据
+		List<RangeContext> rangeContexts = getRanges("中心");
 		List<BcContext> sites = remoteOperationService.getBcList(SiteType.STATION.getCode());
 		List<StationContext> stations = JsonUtil.toJsonObjectArray(JsonUtil.arrayToString(sites),
 				StationContext.class);
-		List<StationContext> bcStations = Lists.newArrayList();
 		stations.forEach(station -> {
 			String rangeId = station.getSubRangeId();
 			if (stationCache.get(rangeId) == null) {
@@ -172,6 +172,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 			} else {
 				stationCache.get(rangeId).add(station);
 			}
+		});
+		rangeContexts.forEach(rangeContext -> {
+			stationCache.put(rangeContext.getSubRangeId(), stations);
 		});
 	}
 

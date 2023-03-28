@@ -21,5 +21,8 @@ public interface SituationCommonComponentsMapper extends BaseMapper<SituationCom
     IPage<SituationCommonComponentsPageRes> selectPage(@Param("page") Page page,
                                  @Param("situationCommonComponentsPageReq") SituationCommonComponentsPageReq situationCommonComponentsPageReq);
 
+    List<SituationCommonComponentsPageRes> selectPages(@Param("situationCommonComponentsPageReq") SituationCommonComponentsPageReq situationCommonComponentsPageReq);
+
+
     List<SituationCommonComponents> selectByName(@Param("name")String name);
 }

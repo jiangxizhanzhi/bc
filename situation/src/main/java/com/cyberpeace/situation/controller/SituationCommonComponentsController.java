@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.cyberpeace.situation.dao.entity.SituationCommonComponents.getCommonComponentsType;
@@ -39,6 +40,12 @@ public class SituationCommonComponentsController {
     @GetMapping
     public BaseRsp<ListRsp<SituationCommonComponentsPageRes>> getComponentsPage(SituationCommonComponentsPageReq situationCommonComponentsPageReq) {
         return new BaseRsp<>(situationCommonComponentsService.getComponentsPage(situationCommonComponentsPageReq));
+    }
+
+    @ApiOperation("获取控件组件资源全量列表")
+    @GetMapping("/list")
+    public BaseRsp<List<SituationCommonComponentsPageRes>> getComponentsPages(SituationCommonComponentsPageReq situationCommonComponentsPageReq) {
+        return new BaseRsp<>(situationCommonComponentsService.getComponentsPages(situationCommonComponentsPageReq));
     }
 
     @ApiOperation("获取组件详情")

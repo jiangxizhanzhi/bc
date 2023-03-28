@@ -1,5 +1,7 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -84,6 +86,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类批量删除")
 	@DeleteMapping("/batch")
+	@PermissionOperation(TrialButtonConstant.CMS_COURSES_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Integer> delete(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
@@ -93,6 +96,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类新增")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_COURSES_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CategoryRes>
 			add(@RequestBody @Validated(Create.class) SaveCourseCategoryReq categoryReq) {
@@ -114,6 +118,7 @@ public class AdminCourseCategoryController {
 
 	@ApiOperation("课程分类修改")
 	@PatchMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_COURSES_CATEGORY)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CategoryRes>
 			patch(@RequestBody @Validated(Update.class) UpdateCategoryReq updateCategoryReq) {

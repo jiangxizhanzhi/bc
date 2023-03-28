@@ -52,7 +52,7 @@ public class CrNoticeController {
     @ApiOperation("训练公告详情")
     @GetMapping("")
     public BaseRsp<CrNoticeDetailRsp> get(@ApiParam("公告ID") @RequestParam("notice_id") String noticeId) {
-        return new BaseRsp<>();
+        return new BaseRsp<>(crNoticeService.get(noticeId));
     }
 
     @ApiOperation("训练公告新增")

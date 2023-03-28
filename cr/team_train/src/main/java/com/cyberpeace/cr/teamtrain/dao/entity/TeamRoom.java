@@ -58,6 +58,8 @@ public class TeamRoom extends BaseTable {
 
 	private String logo;
 
+	private Integer trainCategory;
+
 	public TeamRoom() {}
 
 	public TeamRoom(TeamTrainRoomContext input, TeamTemplate template) {
@@ -101,6 +103,25 @@ public class TeamRoom extends BaseTable {
 		private String desc;
 
 		private TrainingStatusCode(Integer code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+	}
+
+	/**
+	 * 区分红队训练/蓝队训练
+	 */
+	public enum TrainCategory {
+		RED(1, "红队"), BLUE(2, "蓝队");
+
+		@Getter
+		private final Integer code;
+
+		@Getter
+		private final String desc;
+
+		TrainCategory(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}

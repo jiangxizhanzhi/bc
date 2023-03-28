@@ -27,4 +27,7 @@ public class TeamRoomListReq extends PageReqBase {
 	@ApiModelProperty(value = "id列表")
 	private List<String> ids;
 
+	@ApiModelProperty(value = "训练分类")
+	private Integer trainCategory;
+
 }

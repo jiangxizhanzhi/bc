@@ -41,4 +41,6 @@ public class ListQuery extends PageReqBase {
 
 		this.search = newPattern;
 	}
+
+	private Integer trainCategory;
 }

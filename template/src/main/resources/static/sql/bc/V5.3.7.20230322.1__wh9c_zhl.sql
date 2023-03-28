@@ -71,3 +71,6 @@ CREATE TABLE `cr_train_action` (
   UNIQUE KEY `resource_id` (`resource_id`),
   KEY `room_id` (`room_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+-- 团队训练区分红队/蓝队训练
+alter table cr_team_room add train_category int null comment '训练分类';

@@ -112,6 +112,9 @@
             <if test="listQuery.category != null and listQuery.category != ''">
                 and cr_team_room.sub_type = #{listQuery.category}
             </if>
+            <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
+                and cr_team_room.train_category = #{listQuery.trainCategory}
+            </if>
         </where>
         ORDER BY
         order_status

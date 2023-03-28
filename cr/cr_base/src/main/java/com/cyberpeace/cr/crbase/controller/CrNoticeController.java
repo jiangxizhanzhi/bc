@@ -57,31 +57,31 @@ public class CrNoticeController {
 
     @ApiOperation("训练公告新增")
     @PostMapping("")
-    public BaseRsp<CrNoticeDetailRsp> create(CrNoticeCreateReq crNoticeReq) {
+    public BaseRsp<CrNoticeDetailRsp> create(@RequestBody CrNoticeCreateReq crNoticeReq) {
         return new BaseRsp<>(crNoticeService.create(crNoticeReq));
     }
 
     @ApiOperation("训练公告更新")
     @PatchMapping("")
-    public BaseRsp<CrNoticeDetailRsp> update(CrNoticeUpdateReq crNoticeReq) {
+    public BaseRsp<CrNoticeDetailRsp> update(@RequestBody CrNoticeUpdateReq crNoticeReq) {
         return new BaseRsp<>(crNoticeService.update(crNoticeReq));
     }
 
     @ApiOperation("训练公告批量删除")
     @DeleteMapping("")
-    public BaseRsp<Boolean> delete(BatchDeleteReq batchDeleteReq) {
+    public BaseRsp<Boolean> delete(@RequestBody BatchDeleteReq batchDeleteReq) {
         return new BaseRsp<>(crNoticeService.removeByIds(batchDeleteReq.getIds()));
     }
 
     @ApiOperation("训练公告置顶")
     @PostMapping("/top")
-    public BaseRsp<Boolean> top(BatchDeleteReq batchReq) {
+    public BaseRsp<Boolean> top(@RequestBody BatchDeleteReq batchReq) {
         return new BaseRsp<>(crNoticeService.updateStatus(batchReq.getIds(), CrNotice.Status.TOP.getCode()));
     }
 
     @ApiOperation("训练公告取消置顶")
     @PostMapping("/top/cancel")
-    public BaseRsp<Boolean> topCancel(BatchDeleteReq batchReq) {
+    public BaseRsp<Boolean> topCancel(@RequestBody BatchDeleteReq batchReq) {
         return new BaseRsp<>(crNoticeService.updateStatus(batchReq.getIds(), CrNotice.Status.NORMAL.getCode()));
     }
 

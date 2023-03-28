@@ -4,12 +4,14 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
+import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
@@ -253,9 +255,11 @@ public class SituationControlController {
 	@ApiOperation("情况回放")
 	@PostMapping("/playback")
 	public void playback(
-			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId){
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId,
+			@ApiParam(value = "开始时间") @RequestParam(value = "start_time", required = false) String startTime,
+			@ApiParam(value = "截止时间") @RequestParam(value = "end_time", required = false) String endTime) {
 		//回放当前场景动效
-		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId);
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId, TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
 	}
 
 	@ApiOperation("获取实景最大步骤")
@@ -276,6 +280,15 @@ public class SituationControlController {
 	@GetMapping("/demo")
 	public void demo(@RequestParam("topo_id") String topoId,@RequestParam("step") Integer step) {
 		dynamicSchemeService.pushDataToRealisticScene(topoId, step);
+	}
+
+	@ApiOperation("查看回放列表")
+	@GetMapping("/playback/list")
+	public BaseRsp<List<AttackMessageHistoryRes>> getAttackMessageHistoryList(
+			@ApiParam(value = "场景编号") @RequestParam("scene_id") String sceneId,
+			@ApiParam(value = "开始时间") @RequestParam(value = "start_time", required = false) String startTime,
+			@ApiParam(value = "截止时间") @RequestParam(value = "end_time", required = false) String endTime) {
+		return new BaseRsp(attackMessageHistoryService.getAttackMessageHistoryRes(sceneId, TimeUtil.toDate1(startTime),TimeUtil.toDate1(endTime)));
 	}
 
 }

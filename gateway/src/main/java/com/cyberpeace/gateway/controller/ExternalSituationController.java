@@ -3,6 +3,7 @@ package com.cyberpeace.gateway.controller;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -102,13 +103,15 @@ public class ExternalSituationController {
 	@ApiOperation("情况回放")
 	@PostMapping("/playback")
 	public void playback(
-			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId){
+			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId,
+			@ApiParam(value = "开始时间") @RequestParam(value = "start_time", required = false) String startTime,
+			@ApiParam(value = "截止时间") @RequestParam(value = "end_time", required = false) String endTime){
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
 		if (businessTemplate == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		//回放当前场景动效
-		dynamicSchemeService.playbackPushDynamicSchemeToRoom(businessTemplate.getTopoId());
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(businessTemplate.getTopoId(), TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
 	}
 
 	@ApiOperation("接收指令")

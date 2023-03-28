@@ -6,6 +6,7 @@ import com.cyberpeace.situation.model.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -58,7 +59,7 @@ public interface AttackMessageHistoryMapper extends BaseMapper<AttackMessageHist
 	 * @param sceneId 场景编号
 	 * @return 动效历史列表
 	 */
-	List<AttackMessageHistory> getAllAttackHistory(@Param("sceneId") String sceneId);
+	List<AttackMessageHistory> getAttackHistoryByTime(@Param("sceneId") String sceneId, @Param("startTime") Date startTime, @Param("endTime") Date endTime);
 
 	/**
 	 * 获取防御历史

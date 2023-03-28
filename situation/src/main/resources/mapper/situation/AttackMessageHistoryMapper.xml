@@ -84,14 +84,19 @@
         order by create_time
     </select>
 
-    <select id="getAllAttackHistory" resultType="com.cyberpeace.situation.dao.entity.AttackMessageHistory">
+    <select id="getAttackHistoryByTime" resultType="com.cyberpeace.situation.dao.entity.AttackMessageHistory">
         select *
         from situation_attack_message_history
         <where>
             <if test="sceneId != null and sceneId != ''">
                 scene_id = #{sceneId}
             </if>
-            and is_history = 0
+            <if test="startTime != null">
+                and create_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt; #{endTime}
+            </if>
         </where>
         order by create_time
     </select>

@@ -9,6 +9,7 @@ import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public interface DynamicSchemeService {
@@ -150,7 +151,7 @@ public interface DynamicSchemeService {
 	 * 回放
 	 * @param sceneId 场景编号
 	 */
-	void playbackPushDynamicSchemeToRoom(String sceneId);
+	void playbackPushDynamicSchemeToRoom(String sceneId, Date startTime, Date endTime);
 
 	void pushDataToRealisticScene(String topoId, Integer step);
 

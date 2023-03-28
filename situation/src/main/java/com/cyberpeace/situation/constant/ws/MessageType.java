@@ -19,7 +19,8 @@ public enum MessageType {
 	SceneConfig(9,"scene_config"),
 	RbNodeStatus(10,"rb_node_status"),
 	SituationTime(11, "situation_time"),
-	DefenseDynamic(12,"defense_dynamic");
+	DefenseDynamic(12,"defense_dynamic"),
+	PlaybackSchedule(13, "playback_schedule");
 
 	@Getter
 	private Integer code;

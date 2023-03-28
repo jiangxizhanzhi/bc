@@ -6,11 +6,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.constant.ws.DefenseType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
+import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
 import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
 import com.cyberpeace.situation.model.*;
@@ -162,14 +166,6 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 	}
 
 	@Override
-	public List<AttackMessageReq> getAttackHistory(String sceneId) {
-		List<AttackMessageHistory> attackMessageHistoryList = attackMessageHistoryMapper.getAllAttackHistory(sceneId);
-		return attackMessageHistoryList.stream()
-									   .map(this::attackMessageHistoryToAttackMessageReq)
-									   .collect(Collectors.toList());
-	}
-
-	@Override
 	public List<DefenseLog> getDefenseLog(String sceneId) {
 		List<DefenseLog> defenseLogList = attackMessageHistoryMapper.getDefenseLog(sceneId);
 		//设置名称
@@ -246,6 +242,15 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 																				PropertyNamingStrategy.SnakeCase))
 																		.messageIdentifier(identifier).build();
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+	@Override
+	public List<AttackMessageHistoryRes> getAttackMessageHistoryRes(String sceneId, Date startTime, Date endTime){
+		List<AttackMessageHistory> attackMessageHistoryList = attackMessageHistoryMapper.getAttackHistoryByTime(sceneId, startTime, endTime);
+		return StreamApiUtils.map(attackMessageHistoryList, attackMessageHistory ->
+				new AttackMessageHistoryRes(TimeUtil.format1(attackMessageHistory.getCreateTime()),
+						attackMessageHistory.getDescription(), attackMessageHistory.getAttackOrDefense())
+		);
 	}
 
 	public <E, T> List<HostCount> getHostTop(Predicate<? super AttackType> filterValue, String sceneId) {

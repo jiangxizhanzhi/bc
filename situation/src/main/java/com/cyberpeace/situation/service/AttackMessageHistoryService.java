@@ -2,8 +2,10 @@ package com.cyberpeace.situation.service;
 
 import com.cyberpeace.situation.constant.ws.AttackType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
+import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.model.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -66,13 +68,6 @@ public interface AttackMessageHistoryService {
 	Map<String, Integer> getIntervalTime(String sceneId);
 
 	/**
-	 * 获取攻击历史
-	 * @param sceneId 场景编号
-	 * @return 攻击历史
-	 */
-	List<AttackMessageReq> getAttackHistory(String sceneId);
-
-	/**
 	 * 获取防御历史
 	 * @param sceneId 场景编号
 	 * @return 防御历史
@@ -99,4 +94,6 @@ public interface AttackMessageHistoryService {
 	void clearIllegalData(String sceneId);
 
 	<T> void pushDataTo28S(String topoId, T data);
+
+	List<AttackMessageHistoryRes> getAttackMessageHistoryRes (String sceneId, Date startTime, Date endTime);
 }

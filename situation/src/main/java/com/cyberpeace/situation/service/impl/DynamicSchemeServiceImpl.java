@@ -17,11 +17,14 @@ import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.AddDynamicSchemeReq;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.controller.req.DynamicSchemeReq;
+import com.cyberpeace.situation.controller.res.AttackMessageHistoryRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
+import com.cyberpeace.situation.dao.entity.AttackMessageHistory;
 import com.cyberpeace.situation.dao.entity.DynamicScheme;
+import com.cyberpeace.situation.dao.mapper.AttackMessageHistoryMapper;
 import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
@@ -73,6 +76,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Autowired
 	private AttackMessageHistoryService attackMessageHistoryService;
+
+	@Autowired
+	private AttackMessageHistoryMapper attackMessageHistoryMapper;
 
 	//允许上传的图片格式
 	public static String PICTURE_TYPE = "PNG,JPG,JPEG,GIF,SVG";
@@ -845,9 +851,9 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	}
 
 	@Override
-	public void playbackPushDynamicSchemeToRoom(String sceneId){
+	public void playbackPushDynamicSchemeToRoom(String sceneId, Date startTime, Date endTime){
 		//获取动效历史
-		List<AttackMessageReq> attackMessageHistoryList = attackMessageHistoryService.getAttackHistory(sceneId);
+		List<AttackMessageHistory> attackMessageHistoryList = attackMessageHistoryMapper.getAttackHistoryByTime(sceneId, startTime, endTime);
 		//更新场景编号
 		String code = sceneConfigService.updateSceneCode(sceneId);
 		//获取节点id列表
@@ -858,25 +864,23 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			@SneakyThrows
 			@Override
 			public void run() {
-				for(AttackMessageReq attackMessageReq: attackMessageHistoryList){
+				for(AttackMessageHistory attackMessageHistory: attackMessageHistoryList){
 					//如果当前场景有其他动效方案正在运行，回放终止
 					if(!sceneConfigService.isCurrentScheme(sceneId, code)){
 						break;
 					}
-					//判断当前动效是多媒体动效还是普通动效
-//					if (attackMessageReq.getType()
-//										.equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
-						//推送多媒体动效至场景
-//						pushMediaToRoom(attackMessageReq, code, true);
-//					} else {
-						//推送普通动效至场景
-					pushDynamicToRoom(attackMessageReq, elementIds, true);
-//					}
-					if (attackMessageReq.getIntervalTime() != null) {
+					pushDynamicToRoom(BeanUtils.copy(attackMessageHistory, AttackMessageReq.class), elementIds, true);
+					pushPlaybackScheduleToRoom(new AttackMessageHistoryRes(
+							TimeUtil.format1(attackMessageHistory.getCreateTime()), attackMessageHistory.getDescription(), attackMessageHistory.getAttackOrDefense()),
+							attackMessageHistory.getSceneId());
+					if (attackMessageHistory.getIntervalTime() != null) {
 						//进行等待
-						Thread.sleep(attackMessageReq.getIntervalTime() * 1000);
+						Thread.sleep(attackMessageHistory.getIntervalTime() * 1000);
 					}
 
+				}
+				if (!sceneConfigService.isCurrentScheme(sceneId, code)){
+					pushPlaybackScheduleToRoom(null, sceneId);
 				}
 
 			}
@@ -930,6 +934,18 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			String sceneId) {
 		WsMessage<List<WsAttackSchedule>> wsMessage = new WsMessage<>(
 				MessageType.AttackSchedule.getDesc(), wsAttackScheduleList);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+	}
+
+	/**
+	 * 推送回放进信息
+	 * @param attackMessageHistoryRes 回放进程信息
+	 * @param sceneId 场景id
+	 */
+	public void pushPlaybackScheduleToRoom(AttackMessageHistoryRes attackMessageHistoryRes,
+			String sceneId){
+		WsMessage<AttackMessageHistoryRes> wsMessage = new WsMessage<>(
+				MessageType.PlaybackSchedule.getDesc(), attackMessageHistoryRes);
 		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 

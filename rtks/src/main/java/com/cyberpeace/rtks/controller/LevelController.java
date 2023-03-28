@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -59,6 +61,7 @@ public class LevelController {
 
 	@ApiOperation("新增")
 	@PostMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_FRAME)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> create(@RequestBody @Validated LevelAddInput input) {
 		CrCommonValidator.validateNameLen(input.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
@@ -75,6 +78,7 @@ public class LevelController {
 
 	@ApiOperation("修改")
 	@PutMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_FRAME)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<LevelOutput> update(@RequestBody @Validated LevelModifyInput input) {
 		String resourceId = ObjUtil.getCertainFieldValue(input, "resourceId");
@@ -102,6 +106,7 @@ public class LevelController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_FRAME)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 

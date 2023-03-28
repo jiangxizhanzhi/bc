@@ -380,6 +380,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 		// 数据存在性校验
 		Course courseExist = courseValidateHandler.validateCourseExist(course.getResourceId());
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(courseExist.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 		courseValidateHandler.validateCourseUpdateNameExist(courseExist.getResourceId(),
 				course.getName());
 		if (StringUtils.isNotBlank(course.getCourseNum())

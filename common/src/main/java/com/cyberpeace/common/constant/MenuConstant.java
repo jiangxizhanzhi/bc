@@ -1,7 +1,7 @@
 package com.cyberpeace.common.constant;
 
 /**
- * 菜单对应值，由前端指定, 不能轻易变更
+ * 试用禁止按钮对应值，不能轻易变更
  */
 public interface MenuConstant {
 

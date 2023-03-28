@@ -252,6 +252,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 数据校验
 		PracticeOperation operation = practiceValidateHandler
 				.validateOperationExist(updateOperation.getResourceId());
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(operation.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 		if (updateOperation.getDynamicFlag().intValue() != PracticeOperation.DynamicFlag.DYNAMIC
 				.getCode().intValue()) {
 			practiceValidateHandler.validateFlagLength(updateOperation.getAnswer());

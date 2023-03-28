@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -67,6 +69,7 @@ public class EvalAlgorithmAdminController {
 	 */
 	@PostMapping("")
 	@ApiOperation("新增算法")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_ALGORITHM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithm> addAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
@@ -122,6 +125,7 @@ public class EvalAlgorithmAdminController {
 	 */
 	@PutMapping("")
 	@ApiOperation("编辑算法")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_ALGORITHM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
@@ -167,6 +171,7 @@ public class EvalAlgorithmAdminController {
 
 	@DeleteMapping("")
 	@ApiOperation("批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_ALGORITHM)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 

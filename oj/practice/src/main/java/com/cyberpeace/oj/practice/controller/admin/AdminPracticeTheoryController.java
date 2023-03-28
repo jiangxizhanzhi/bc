@@ -2,12 +2,10 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -144,6 +142,11 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 		List<PracticeTheory> practiceTheoryList = practiceTheoryService.listByIds(delReq.getResourceIds());
 
+		// 试用账号校验
+		for (PracticeTheory practiceTheory : practiceTheoryList) {
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(practiceTheory.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+		}
+
 		Integer result = practiceTheoryService.batchDelete(delReq.getResourceIds());
 
 		practiceTheoryList.forEach(practiceTheory -> {
@@ -183,6 +186,7 @@ public class AdminPracticeTheoryController extends PublicController<PracticeTheo
 
 	@ApiOperation("理论习题资源导入")
 	@PostMapping("/import")
+	@PermissionOperation(TrialButtonConstant.CMS_THEORY_IMPORT)
 	@RequiresPermissions(MenuConstant.CMS_THEORY_PRACTICE)
 	public BaseRsp<Boolean> importTheory(@Validated TheoryImportReq theoryImportReq) {
 

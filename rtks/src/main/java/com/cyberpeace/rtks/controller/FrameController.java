@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -237,6 +239,7 @@ public class FrameController {
 	}
 
 	@ApiOperation("清空默认框架，仅单框架模式下有效")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_FRAME)
 	@PostMapping("/clear")
 	public BaseRsp<FrameOutput> clearFrame() {
 		singleFrameOnly();
@@ -265,6 +268,7 @@ public class FrameController {
 	}
 
 	@ApiOperation("重置默认框架，仅单框架模式下有效")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_FRAME)
 	@PostMapping("/reset")
 	public BaseRsp<FrameOutput> resetFrame() {
 		singleFrameOnly();

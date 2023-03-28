@@ -2,6 +2,8 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -68,6 +70,7 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("新增指标项")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			addEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
@@ -114,6 +117,7 @@ public class EvalIndicatorAdminController {
 
 	@ApiOperation("编辑指标项")
 	@PutMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<String>
 			editEvalIndicator(@RequestBody @Validated EvalIndicatorReq evalIndicatorReq) {
@@ -218,6 +222,7 @@ public class EvalIndicatorAdminController {
 
 	@DeleteMapping()
 	@ApiOperation("批量删除")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_EVALUATION_INDICATOR)
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated BatchDeleteReq deleteReq) {
 

@@ -2,12 +2,10 @@ package com.cyberpeace.oj.practice.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
@@ -153,6 +151,11 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSetService.enableDelete(delReq.getResourceIds(), authContext);
 		List<PracticeSet> practiceSetList = practiceSetService.listByIds(delReq.getResourceIds());
 
+		// 试用账号校验
+		for (PracticeSet practiceSet : practiceSetList) {
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(practiceSet.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+		}
+
 		int result = practiceSetMapper.deleteBatchIds(delReq.getResourceIds());
 
 		practiceSetList.forEach(practiceSet -> {
@@ -204,6 +207,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集资源数据导出")
 	@GetMapping("/batch_dumps")
+	@PermissionOperation(TrialButtonConstant.CMS_EXERCISES_DUMP)
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<Boolean> exportPracticeSet(
 			@ApiParam(name = "ids",
@@ -220,6 +224,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 	@ApiOperation("习题集资源数据导入")
 	@PostMapping("/batch_loads")
+	@PermissionOperation(TrialButtonConstant.CMS_EXERCISES_LOAD)
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
 	public BaseRsp<Boolean> importPracticeSet(@Validated LoadResourceReq loadReq) {
 

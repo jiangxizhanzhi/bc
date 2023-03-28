@@ -1,14 +1,25 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import com.cyberpeace.common.annoations.PermissionOperation;
+import com.cyberpeace.common.constant.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -44,19 +55,9 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.SceneMonitorBo;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;
+
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Api(tags = "oj-后台课时相关api")
 @RestController
@@ -91,6 +92,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("分页查询课时列表")
 	@GetMapping("/list")
+	@PermissionOperation("lesson list")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<ListRsp<AdminLessonListBo>> getLessonList(ListLessonReq lessonReq) {
 
@@ -173,6 +175,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时信息修改")
 	@PatchMapping("")
+	@PermissionOperation("lesson edit")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
 
@@ -303,6 +306,7 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 	@ApiOperation("课时导入")
 	@PostMapping("/import")
+	@PermissionOperation(TrialButtonConstant.CMS_LESSON_IMPORT)
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<Boolean> importLesson(@RequestBody @Valid ImportLessonReq importLessonReq) {
 		Boolean result = courseLessonService.importLessons(importLessonReq.getCourseId(),

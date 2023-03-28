@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.cs.controller.CommonController;
@@ -254,6 +255,11 @@ public class MissionController {
 		List<MissionSchemeTemplate> missionSchemeTemplateList = missionSchemeTemplateMapper
 				.selectBatchIds(deleteReq.getIds());
 
+		for (MissionSchemeTemplate missionSchemeTemplate : missionSchemeTemplateList) {
+			// 试用账号校验
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(missionSchemeTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
+		}
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
 
 		missionSchemeTemplateList.forEach(missionSchemeTemplate -> {
@@ -273,6 +279,10 @@ public class MissionController {
 			@RequestBody @Validated MissionSchemeTemplateModifyReq templateModifyReq) {
 		templateModifyReq.validate();
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(toUpdateSchemeTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 
 		MissionSchemeTemplate missionSchemeTemplate = missionSchemeTemplateMapper
@@ -314,6 +324,7 @@ public class MissionController {
 
 	@ApiOperation("批量导出任务方案")
 	@PostMapping("/combat_techs/dump")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_MISSION_SCHEME_DUMP)
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public void batchDump(HttpServletResponse response, @RequestBody BatchDumpReq dumpReq) {
 
@@ -338,6 +349,7 @@ public class MissionController {
 
 	@ApiOperation("批量导入任务方案")
 	@PutMapping("/combat_tech/load")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_MISSION_SCHEME_LOAD)
 	@RequiresPermissions(MenuConstant.CMS_CR_MISSION_SCHEME)
 	public BaseRsp batchLoad(@RequestParam("file") MultipartFile file)
 			throws IOException, ZipException {

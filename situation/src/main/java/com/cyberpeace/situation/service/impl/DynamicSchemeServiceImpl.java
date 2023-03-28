@@ -667,7 +667,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
 				validateNameLen(attackMessageReq.getDescription(),
 						SituationErrorCode.INVALID_DYNAMIC_DESCRIPTION);
-				if (attackMessageReq.getAttackOrDefense().equals("defense")) {
+				if ("defense".equals(attackMessageReq.getAttackOrDefense())) {
 					if (StringUtils.isEmpty(attackMessageReq.getDefenseTargetId())) {
 						throw new BusinessException(SituationErrorCode.EMPTY_DEFENSE_NODE,
 								attackMessageReq.getDescription());
@@ -894,10 +894,10 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 
 	@Override
 	public void pushDynamicToRoom(AttackMessageReq attackMessageBo, List<String> elementIds, Boolean playback){
-		if ("attack".equals(attackMessageBo.getAttackOrDefense())) {
-			pushAttackToRoom(attackMessageBo, elementIds, playback);
-		} else if ("defense".equals(attackMessageBo.getAttackOrDefense())) {
+		if ("defense".equals(attackMessageBo.getAttackOrDefense())) {
 			pushDefenseToRoom(attackMessageBo, playback);
+		} else {
+			pushAttackToRoom(attackMessageBo, elementIds, playback);
 		}
 	}
 

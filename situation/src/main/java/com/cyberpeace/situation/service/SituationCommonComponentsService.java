@@ -80,4 +80,6 @@ public interface SituationCommonComponentsService {
      * @return
      */
     JSONObject exitHikVisionFLv(String rtspKey);
+
+    List<SituationCommonComponentsPageRes> getComponentsPages(SituationCommonComponentsPageReq situationCommonComponentsPageReq);
 }

@@ -158,4 +158,10 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
         }
         return jsonObject;
     }
+
+    @Override
+    public List<SituationCommonComponentsPageRes> getComponentsPages(SituationCommonComponentsPageReq situationCommonComponentsPageReq) {
+
+        return this.getBaseMapper().selectPages(situationCommonComponentsPageReq);
+    }
 }

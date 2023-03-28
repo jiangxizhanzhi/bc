@@ -1,26 +1,34 @@
 package com.cyberpeace.situation.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.SituationDrawingPageRes;
 import com.cyberpeace.situation.dao.entity.SituationDrawing;
 import com.cyberpeace.situation.dao.entity.SituationDrawingCategory;
 import com.cyberpeace.situation.dao.entity.SituationPlotPixel;
+import com.cyberpeace.situation.dao.mapper.SituationDrawingCategoryMapper;
+import com.cyberpeace.situation.dao.mapper.SituationDrawingMapper;
 import com.cyberpeace.situation.service.SituationDrawingService;
 import com.cyberpeace.situation.service.SituationPlotPixelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author xuxz
@@ -35,6 +43,12 @@ public class SituationDrawingController {
 
     @Autowired
     private SituationDrawingService situationDrawingService;
+
+    @Autowired
+    private SituationDrawingMapper situationDrawingMapper;
+
+    @Autowired
+    private SituationDrawingCategoryMapper situationDrawingCategoryMapper;
 
     @ApiOperation("新增图形资源")
     @PostMapping()
@@ -65,6 +79,25 @@ public class SituationDrawingController {
     @GetMapping("/list")
     public BaseRsp<ListRsp<SituationDrawingPageRes>> getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
         return new BaseRsp<>(situationDrawingService.getSituationDrawingPage(situationDrawingPageReq));
+    }
+
+    @ApiOperation("图形资源全量查询")
+    @GetMapping("/all")
+    public BaseRsp<List<SituationDrawingPageRes>> getSituationDrawing(SituationDrawingPageReq situationDrawingPageReq) {
+        List<SituationDrawing> situationDrawing = situationDrawingMapper.selectList(null);
+
+        List<SituationDrawingCategory> situationDrawingCategories = situationDrawingCategoryMapper.selectList(null);
+
+        Map<String, String> categoryNameMap = StreamApiUtils.toMap(situationDrawingCategories, SituationDrawingCategory::getResourceId, situationDrawingCategory -> situationDrawingCategory.getName());
+        situationDrawing.forEach(tmp ->{
+            SituationDrawingPageRes situationDrawingPageRes = new SituationDrawingPageRes();
+            BeanUtils.copyProperties(tmp, situationDrawingPageRes);
+            String category = categoryNameMap.get(tmp.getType());
+            if(StringUtils.isNotBlank(category)){
+                situationDrawingPageRes.setType(category);
+            }
+        });
+        return new BaseRsp(situationDrawing);
     }
 
     @ApiOperation("图形类型查询")

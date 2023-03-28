@@ -28,7 +28,7 @@ public class PermissionOperationAspect {
 
 		if (requirespermissionsFilter != null) {
 			// 权限校验,包含黑名单抛出异常
-			String loginUserPermission = "oj-comment-add\n" + "cms_course_dump\n"
+			String loginUserPermission = "oj-comment-add\n" + "cms_course_dump\n cms_courses_category"
 					+ "cms_course_load\n" + "cms_exercises_dump\n" + "cms_exercises_load\n"
 					+ "cms_theory_import\n" + "cms_practice_category_add\n"
 					+ "cms_practice_category_update\n" + "cms_practice_category_delete\n"

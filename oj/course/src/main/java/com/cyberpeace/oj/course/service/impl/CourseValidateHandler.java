@@ -1,9 +1,16 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
+import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
+import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +54,15 @@ public class CourseValidateHandler {
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private PaperMapper paperMapper;
+
+	@Autowired
+	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeOperationRefService practiceOperationRefService;
 
 	/**
 	 * 校验课时更新时 名称是否已存在
@@ -287,5 +303,35 @@ public class CourseValidateHandler {
 			throw new BusinessException(OjBusinessErrorCode.ACCESS_LESSON_TYPE,
 					EnumUtils.getEnumDescByCode(lessonType, CourseLesson.LessonType.class));
 		}
+	}
+
+	/**
+	 * 校验是否为内置资源
+	 * @param course
+	 */
+	public void validateBuiltin(Course course) {
+		if (course.getBuiltin()) {
+			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, course.getName());
+		}
+		List<CourseLesson> courseLessonList = courseLessonMapper.listByCourses(Arrays.asList(course.getResourceId()), null);
+		courseLessonList.forEach(courseLesson -> {
+			if (courseLesson.getBuiltin()) {
+				throw new BusinessException(OjBusinessErrorCode.COURSE_CONTAIN_BUILTIN_LESSON, course.getName(), courseLesson.getName());
+			}
+			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
+			List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService.selectByPaper(paper.getResourceId(), true);
+			theoryLessonBos.forEach(theoryLessonBo -> {
+				if (theoryLessonBo.getBuiltin()) {
+					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), theoryLessonBo.getTitle());
+				}
+			});
+			List<OperationLessonBo> operationLessonBos = practiceOperationRefService
+					.selectByPaperId(courseLesson.getResourceId(), paper.getResourceId(), true, true, null);
+			operationLessonBos.forEach(operationLessonBo -> {
+				if (operationLessonBo.getBuiltin()) {
+					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), operationLessonBo.getTitle());
+				}
+			});
+		});
 	}
 }

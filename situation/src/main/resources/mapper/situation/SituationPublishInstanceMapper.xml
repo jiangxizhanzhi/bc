@@ -25,6 +25,12 @@
         <if test="situationPublishInstanceFilterReq.status != null and situationPublishInstanceFilterReq.status != ''">
             AND status = #{situationPublishInstanceFilterReq.status}
         </if>
+        <if test="situationPublishInstanceFilterReq.replay">
+            AND replay_mode != 0
+        </if>
+        <if test="!situationPublishInstanceFilterReq.replay">
+            AND replay_mode = 0
+        </if>
         ORDER BY create_time DESC
     </select>
 

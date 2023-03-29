@@ -41,6 +41,8 @@ public class DashboardAttribute extends BaseTable implements Serializable {
 
 	private Date startTime;
 
+	private Date endTime;
+
 	private Integer refresh;
 
 	private String config;

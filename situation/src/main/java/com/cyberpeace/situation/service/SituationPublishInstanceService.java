@@ -1,37 +1,43 @@
 package com.cyberpeace.situation.service;
 
-
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.situation.controller.req.ReplayInstanceReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.service.context.site.RangeContext;
 
 public interface SituationPublishInstanceService extends IService<SituationPublishInstance> {
 
-    SituationPublishInstance selectReleasedXdDashboardBySubjectId(String taskId, String subjectId);
+	SituationPublishInstance selectReleasedXdDashboardBySubjectId(String taskId, String subjectId);
 
-    SituationPublishInstance insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd);
+	SituationPublishInstance addReplayInstance(ReplayInstanceReq replayInstanceReq);
 
-    SituationPublishInstance updateOne(SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq);
+	SituationPublishInstance updateReplayInstance(ReplayInstanceReq replayInstanceReq);
 
-    /**
-     * 清除未使用的态势
-     */
-    void deleteUnusedSituation();
+	SituationPublishInstance
+			insertOne(SituationPublishInstanceAddReq situationPublishInstanceAddReq, Boolean isXd);
 
-    /**
-     * 分页查询
-     *
-     * @return
-     */
-    ListRsp<SituationPublishInstancePageRes> getSituationPublishInstancePage(SituationPublishInstanceFilterReq situationPublishInstanceFilterReq);
+	SituationPublishInstance
+			updateOne(SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq);
 
-    String getEnvIdByDashboardId(String dashboardId);
+	/**
+	 * 清除未使用的态势
+	 */
+	void deleteUnusedSituation();
 
-    SituationPublishInstance createBcInstance(BcContext bcContext);
+	/**
+	 * 分页查询
+	 *
+	 * @return
+	 */
+	ListRsp<SituationPublishInstancePageRes> getSituationPublishInstancePage(
+			SituationPublishInstanceFilterReq situationPublishInstanceFilterReq);
+
+	String getEnvIdByDashboardId(String dashboardId);
+
+	SituationPublishInstance createBcInstance(BcContext bcContext);
 }

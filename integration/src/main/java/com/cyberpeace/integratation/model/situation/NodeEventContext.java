@@ -1,9 +1,11 @@
 package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.integratation.constant.NodeWorkStatus;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +18,9 @@ public class NodeEventContext implements Serializable {
 
 	@ApiModelProperty("工作状态 0-工作中 1-离线")
 	private Integer workStatus;
+
+	@ApiModelProperty("连线状态")
+	private List<LinkEventContext> connectionStatus = Lists.newArrayList();
 
 	public NodeEventContext() {}
 

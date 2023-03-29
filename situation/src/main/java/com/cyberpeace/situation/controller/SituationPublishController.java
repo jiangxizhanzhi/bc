@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -26,6 +25,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.ReplayMode;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.*;
@@ -35,6 +35,7 @@ import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.SituationCategory;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
@@ -46,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "组件库-态势发布大屏")
 @RestController
 @Slf4j
-@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/situation/publish")
 public class SituationPublishController {
 
@@ -108,13 +109,36 @@ public class SituationPublishController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("查询重演态势类型列表")
+	@GetMapping("/replay/code/")
+	public BaseRsp<List<IntType>> getReplayMode() {
+		return new BaseRsp<>(ReplayMode.getList());
+	}
+
+	@ApiOperation("新增重演态势实例")
+	@PostMapping("/replay/")
+	public BaseRsp<SituationPublishInstance> addReplayInstance(
+			@RequestBody @Validated(Create.class) ReplayInstanceReq replayInstanceReq) {
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
+				.addReplayInstance(replayInstanceReq);
+		return new BaseRsp<>(situationPublishInstance);
+	}
+
+	@ApiOperation("编辑重演态势实例")
+	@PatchMapping("/replay/")
+	public BaseRsp<SituationPublishInstance> updateReplayInstance(
+			@RequestBody @Validated(Update.class) ReplayInstanceReq replayInstanceReq) {
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
+				.updateReplayInstance(replayInstanceReq);
+		return new BaseRsp<>(situationPublishInstance);
+	}
+
 	@ApiOperation("新增态势发布实例")
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
 			@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
 				.insertOne(situationPublishInstanceAddReq, false);
-
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
@@ -293,46 +317,55 @@ public class SituationPublishController {
 
 	}
 
-    @ApiOperation("态势实例预览")
-    @PostMapping("preview")
-    public SituationPublishInstanceReviewRes previewSituationPublishInstance(@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
-        String resourceId = situationInstanceReleaseReq.getResourceId();
-        String type = situationInstanceReleaseReq.getType();
-        SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper.selectById(resourceId);
-        if (null == situationPublishInstances) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-        }
-        String templateId = situationPublishInstances.getTemplateId();
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, type, Boolean.TRUE);
-        SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances, SituationPublishInstanceReviewRes.class);
-        // TODO 大屏地址
-        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, new DynamicParameterContext());
-        dashboardTemplateInfo.setComponentsSetting(dashboardComponentsList);
-        copy.setTemplateInfo(dashboardTemplateInfo);
-        return copy;
-    }
+	@ApiOperation("态势实例预览")
+	@PostMapping("preview")
+	public SituationPublishInstanceReviewRes previewSituationPublishInstance(
+			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
+		String resourceId = situationInstanceReleaseReq.getResourceId();
+		String type = situationInstanceReleaseReq.getType();
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(resourceId);
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		String templateId = situationPublishInstances.getTemplateId();
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService
+				.getDashboardTemplateInfo(templateId, type, Boolean.TRUE);
+		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances,
+				SituationPublishInstanceReviewRes.class);
+		// TODO 大屏地址
+		List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService
+				.exchangeOptionDataSet(copy, new DynamicParameterContext());
+		dashboardTemplateInfo.setComponentsSetting(dashboardComponentsList);
+		copy.setTemplateInfo(dashboardTemplateInfo);
+		return copy;
+	}
 
 	@ApiOperation("态势组件实例数据")
 	@PostMapping("/query/")
 	public BaseRsp<InstanceDataQueryRes>
 			getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
 		// 提取动态参数实际取值
-        InstanceDataQueryRes instanceDataQueryRes = new InstanceDataQueryRes();
-        DynamicParameterContext context = BeanUtils.copy(query, DynamicParameterContext.class);
+		InstanceDataQueryRes instanceDataQueryRes = new InstanceDataQueryRes();
+		DynamicParameterContext context = BeanUtils.copy(query, DynamicParameterContext.class);
 		SituationPublishInstance instance = situationPublishInstanceMapper
 				.selectById(query.getDashboardId());
 		context.setTaskId(instance.getTaskId());
 		context.setSubjectId(instance.getSubjectId());
 		context.setSubRangeId(instance.getSubRangeId());
 
-		// todo 依据context中实际参数，替换接口配置中的动态参数，执行请求后返回组件及其数据，动态参数参见situation.constant.DynamicParameter
-        String templateId = instance.getTemplateId();
-        DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService.getDashboardTemplateInfo(templateId, query.getType(), Boolean.TRUE);
-        SituationPublishInstanceReviewRes copy = BeanUtils.copy(instance, SituationPublishInstanceReviewRes.class);
-        // TODO 大屏地址
-        copy.setTemplateInfo(dashboardTemplateInfo);
-        List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService.exchangeOptionDataSet(copy, context);
-        instanceDataQueryRes.setComponentsSetting(dashboardComponentsList);
+		// todo
+		// 依据context中实际参数，替换接口配置中的动态参数，执行请求后返回组件及其数据，动态参数参见situation.constant.DynamicParameter
+		String templateId = instance.getTemplateId();
+		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService
+				.getDashboardTemplateInfo(templateId, query.getType(), Boolean.TRUE);
+		SituationPublishInstanceReviewRes copy = BeanUtils.copy(instance,
+				SituationPublishInstanceReviewRes.class);
+		// TODO 大屏地址
+		copy.setTemplateInfo(dashboardTemplateInfo);
+		List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService
+				.exchangeOptionDataSet(copy, context);
+		instanceDataQueryRes.setComponentsSetting(dashboardComponentsList);
 		return new BaseRsp<>(instanceDataQueryRes);
 	}
 

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.constant.ReplayMode;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -60,6 +61,12 @@ public class SituationPublishInstance extends BaseTable {
 
 	@ApiModelProperty("三方靶标URL")
 	private String thirdUrl;
+
+	@ApiModelProperty("重演模式")
+	private Integer replayMode = ReplayMode.NONE.getCode();
+
+	@ApiModelProperty("重演状态 0-无状态 1-开始 2-终止")
+	private Integer replayStatus = 0;
 
 	@ApiModelProperty("是否为想定大屏")
 	private Boolean xd = false;

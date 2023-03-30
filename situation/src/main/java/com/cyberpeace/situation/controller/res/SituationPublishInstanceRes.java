@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 
@@ -21,5 +22,11 @@ public class SituationPublishInstanceRes extends SituationPublishInstance implem
 
 	@ApiModelProperty("原始模板ID")
 	private String originTemplateId;
+
+	@ApiModelProperty(value = "重演开始时间")
+	private Date startTime;
+
+	@ApiModelProperty(value = "重演结束时间")
+	private Date endTime;
 
 }

@@ -9,7 +9,7 @@ public enum NodeWorkStatus implements GenericEnum {
 	/**
 	 * 节点工作状态
 	 */
-	RUNNING(0, "工作中"), OFFSET(1, "离线");
+	RUNNING(0, "工作中"), OFFSET(1, "离线中");
 
 	@Getter
 	private Integer code;

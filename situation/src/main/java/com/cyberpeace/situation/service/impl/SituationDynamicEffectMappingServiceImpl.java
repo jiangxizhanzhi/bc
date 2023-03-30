@@ -60,6 +60,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     public String setDynamicEffectsMapping(DynamicEffectMappingReq dynamicEffectMappingReq) {
         DynamicEffectsMapping dynamicEffectsMapping = BeanUtils.copy(dynamicEffectMappingReq,
                 DynamicEffectsMapping.class);
+        dynamicEffectsMapping.setFocus(Boolean.parseBoolean(dynamicEffectMappingReq.getFocus()));
         String userId = UserInfoContext.getUserContext().getUserId();
         dynamicEffectsMapping.setCreateUserId(userId);
         String resourceId = IDGeneratorUtil.getID();
@@ -154,6 +155,7 @@ public class SituationDynamicEffectMappingServiceImpl extends ServiceImpl<Situat
     @Override
     public String patchDynamicEffectsMapping(DynamicEffectMappingUpdateReq dynamicEffectMappingUpdateReq) {
         DynamicEffectsMapping dynamicEffectsMapping = BeanUtils.copy(dynamicEffectMappingUpdateReq, DynamicEffectsMapping.class);
+        dynamicEffectsMapping.setFocus(Boolean.parseBoolean(dynamicEffectMappingUpdateReq.getFocus()));
         DynamicEffectsMapping mapping = situationDynamicEffectMappingMapper.selectById(dynamicEffectMappingUpdateReq.getResourceId());
         if (null == mapping) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);

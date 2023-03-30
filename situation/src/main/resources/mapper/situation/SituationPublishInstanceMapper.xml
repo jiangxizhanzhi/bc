@@ -26,7 +26,14 @@
             AND status = #{situationPublishInstanceFilterReq.status}
         </if>
         <if test="situationPublishInstanceFilterReq.replay">
-            AND replay_mode != 0
+            <choose>
+                <when test="situationPublishInstanceFilterReq.replayMode != null and situationPublishInstanceFilterReq.replayMode != ''">
+                    AND replay_mode = #{situationPublishInstanceFilterReq.replayMode}
+                </when>
+                <otherwise>
+                    AND replay_mode != 0
+                </otherwise>
+            </choose>
         </if>
         <if test="!situationPublishInstanceFilterReq.replay">
             AND replay_mode = 0

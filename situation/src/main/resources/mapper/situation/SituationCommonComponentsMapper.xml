@@ -16,6 +16,21 @@
         </if>
         ORDER BY type
     </select>
+
+    <select id="selectPages" resultType="com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes">
+        select * from situation_components_common where 1 = 1
+        <if test="situationCommonComponentsPageReq.name != null and situationCommonComponentsPageReq.name != ''">
+            and name like concat('%', #{situationCommonComponentsPageReq.name} ,'%')
+        </if>
+        <if test="situationCommonComponentsPageReq.componentType != null">
+            and component_type = #{situationCommonComponentsPageReq.componentType}
+        </if>
+        <if test="situationCommonComponentsPageReq.type != null">
+            and type = #{situationCommonComponentsPageReq.type}
+        </if>
+        ORDER BY type
+    </select>
+
     <select id="selectByName" resultType="com.cyberpeace.situation.dao.entity.SituationCommonComponents">
         select *
         from situation_components_common

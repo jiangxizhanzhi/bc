@@ -290,8 +290,23 @@ public class DashboardController {
 
 		List<NodeEventContext> nodeEventContexts = remoteSituationService.getNodeEventList(eventReq,
 				eventReq.getFeatureId());
-		situationHandlerService.batchPushDataToDashboard(MessageType.TaskEventNode.getDesc(),
-				eventReq.getDashboardId(), eventReq.getFeatureId(), nodeEventContexts, null, null);
+
+		nodeEventContexts.forEach(nodeEventContext -> {
+
+			// 推送节点状态消息
+			WsMessage<NodeEventContext> wsMessage = new WsMessage<>(
+					MessageType.TaskEventNode.getDesc(), nodeEventContext);
+			situationHandlerService.pushDataToDashboard(wsMessage, eventReq.getFeatureId(),
+					eventReq.getFeatureId());
+
+			// 推送链路状态消息
+			nodeEventContext.getConnectionStatus().forEach(linkEventContext -> {
+				WsMessage<LinkEventContext> linkMessage = new WsMessage<>(
+						MessageType.LinkStatus.getDesc(), linkEventContext);
+				situationHandlerService.pushDataToDashboard(linkMessage, eventReq.getFeatureId(),
+						eventReq.getFeatureId());
+			});
+		});
 
 		return true;
 

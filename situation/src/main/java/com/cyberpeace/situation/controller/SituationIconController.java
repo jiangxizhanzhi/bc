@@ -1,22 +1,32 @@
 package com.cyberpeace.situation.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.controller.req.SituationIconDelReq;
 import com.cyberpeace.situation.controller.req.SituationIconPageReq;
 import com.cyberpeace.situation.controller.req.SituationIconReq;
 import com.cyberpeace.situation.controller.res.SituationIconRes;
 import com.cyberpeace.situation.dao.entity.SituationIcon;
+import com.cyberpeace.situation.dao.entity.SituationIconCategory;
+import com.cyberpeace.situation.dao.mapper.SituationIconCategoryMapper;
+import com.cyberpeace.situation.dao.mapper.SituationIconMapper;
 import com.cyberpeace.situation.service.SituationIconService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author xuxz
@@ -30,6 +40,12 @@ public class SituationIconController {
 
     @Autowired
     private SituationIconService situationIconService;
+
+    @Autowired
+    private SituationIconMapper situationIconMapper;
+
+    @Autowired
+    private SituationIconCategoryMapper situationIconCategoryMapper;
 
     @ApiOperation("新增图标")
     @PostMapping()
@@ -60,5 +76,25 @@ public class SituationIconController {
     @GetMapping("list")
     public BaseRsp<ListRsp<SituationIconRes>> getSituationIconPage(SituationIconPageReq situationIconPageReq) {
         return new BaseRsp<>(situationIconService.getSituationIconPage(situationIconPageReq));
+    }
+
+    @ApiOperation("图标全量查询")
+    @GetMapping("all")
+    public BaseRsp<List<SituationIconRes>> getSituationIcon(SituationIconPageReq situationIconPageReq) {
+
+        List<SituationIcon> situationIcons = situationIconMapper.selectList(null);
+
+        List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper.selectList(null);
+        Map<String, String> toMap = StreamApiUtils.toMap(situationIconCategories, SituationIconCategory::getResourceId, situationIconCategory -> situationIconCategory.getName());
+
+        situationIcons.forEach(situationIcon -> {
+            SituationIconRes situationIconRes = new SituationIconRes();
+            BeanUtils.copyProperties(situationIcon, situationIconRes);
+            String categoryName = toMap.get(situationIcon.getResourceId());
+            if(StringUtils.isNotBlank(categoryName)){
+                situationIconRes.setTypeName(categoryName);
+            }
+        });
+        return new BaseRsp(situationIcons);
     }
 }

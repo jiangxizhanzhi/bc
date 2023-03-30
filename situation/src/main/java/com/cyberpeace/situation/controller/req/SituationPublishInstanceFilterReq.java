@@ -27,6 +27,9 @@ public class SituationPublishInstanceFilterReq extends PageReqBase implements Se
 	@ApiModelProperty(name = "end_time", value = "过滤条件-结束时间")
 	private Date endTime;
 
+	@ApiModelProperty(value = "是否重演大屏")
+	private Boolean replay = false;
+
 	public void setStart_time(String startTime) {
 		this.startTime = TimeUtil.toDate1(startTime);
 	}

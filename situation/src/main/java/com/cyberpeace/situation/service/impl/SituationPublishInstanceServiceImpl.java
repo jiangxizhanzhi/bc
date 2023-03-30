@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.cyberpeace.integratation.constant.BcType;
-import com.cyberpeace.integratation.model.situation.BcContext;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +20,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.constant.TaskType;
+import com.cyberpeace.integratation.model.situation.BcContext;
 import com.cyberpeace.integratation.model.situation.SubjectContext;
 import com.cyberpeace.integratation.model.situation.TopoContext;
 import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
 import com.cyberpeace.integratation.model.situation.req.TopoReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.bo.situation.SchemeVisualizationBo;
 import com.cyberpeace.situation.constant.*;
+import com.cyberpeace.situation.controller.req.ReplayInstanceReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
@@ -96,6 +96,95 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 			throw new BusinessException(SituationErrorCode.NO_RELEASED_DASHBOARD);
 		}
 
+		return situationPublishInstance;
+	}
+
+	@Override
+	public SituationPublishInstance addReplayInstance(ReplayInstanceReq replayInstanceReq) {
+
+		// 复制大屏属性
+		SituationPublishInstance situationPublishInstance = BeanUtils.copy(replayInstanceReq,
+				SituationPublishInstance.class);
+
+		// 设置用户信息
+		situationPublishInstance.setCreateUserId(remoteUserService.getCurrentUserId());
+
+		// 设置基础信息
+		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+
+		DashboardAttribute dashboardAttribute = BeanUtils.copy(replayInstanceReq,
+				DashboardAttribute.class);
+		dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
+		dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
+		dashboardAttribute.setTitle(replayInstanceReq.getName());
+		dashboardAttribute.setMapSource(MapSource.GG.getCode());
+		situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
+
+		// 设置类型
+		String taskType = Arrays.stream(TaskType.class.getEnumConstants())
+				.filter(t -> t.getDesc().equals(replayInstanceReq.getTaskType())).findFirst()
+				.orElse(TaskType.QB).getCode();
+
+		dashboardAttribute.setTaskType(taskType);
+
+		situationPublishInstance.setCategory(getCategoryByTaskType(taskType));
+
+		// 从大屏模板中拷贝属性
+		String templateId = replayInstanceReq.getTemplateId();
+
+		// 处理模板数据
+		setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
+
+		// 写入数据库
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				try {
+					situationPublishInstanceMapper.insert(situationPublishInstance);
+					dashboardAttributeMapper.insert(dashboardAttribute);
+				} catch (DuplicateKeyException e) {
+					throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+				}
+			}
+		});
+		return situationPublishInstance;
+	}
+
+	@Override
+	public SituationPublishInstance updateReplayInstance(ReplayInstanceReq replayInstanceReq) {
+
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectById(replayInstanceReq.getResourceId());
+
+		// 获取旧模板id
+		String oldTemplateId = situationPublishInstance.getTemplateId();
+
+		// 只允许修改名称、描述和缩略图、模板、特定事件
+		situationPublishInstance.setName(replayInstanceReq.getName());
+		situationPublishInstance.setDescription(replayInstanceReq.getDescription());
+		situationPublishInstance.setThumbnail(replayInstanceReq.getThumbnail());
+		situationPublishInstance.setEventList(replayInstanceReq.getEventList());
+
+		String templateId = replayInstanceReq.getTemplateId();
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstance.getAttributeId());
+		setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				// 如果模板发生了变化，删除旧模板数据
+				if (!oldTemplateId.equals(templateId)) {
+					dashboardTemplateRefMapper.deleteById(oldTemplateId);
+				}
+
+				// 更新态势实例数据
+				situationPublishInstanceMapper.updateById(situationPublishInstance);
+				dashboardAttributeMapper.updateById(dashboardAttribute);
+			}
+		});
 		return situationPublishInstance;
 	}
 

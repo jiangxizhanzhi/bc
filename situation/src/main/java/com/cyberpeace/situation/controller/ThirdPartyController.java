@@ -469,7 +469,7 @@ public class ThirdPartyController {
 	public BaseRsp<LayerDataPhysicsRes>
 			getLayerDataPhysics(@RequestBody @Validated TaskOsiReq taskOsiReq) {
 		LayerDataPhysicsRes layerDataPhysicsRes = new LayerDataPhysicsRes();
-		TopoReq topoReq = new TopoReq();
+		TopoReq topoReq = BeanUtils.deepCopy(taskOsiReq, TopoReq.class);
 		ThirdPartyTopoBo topo = remoteSituationService.getXdTopo(topoReq);
 		layerDataPhysicsRes
 				.setConnectionTypeDistribute(remoteSituationService.getLinkTypeStatistics(topo));

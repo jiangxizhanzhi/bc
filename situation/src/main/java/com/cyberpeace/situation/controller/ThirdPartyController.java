@@ -144,6 +144,22 @@ public class ThirdPartyController {
 		return new BaseRsp<>(platformList);
 	}
 
+	@ApiOperation("获取平台连线列表")
+	@GetMapping("/platform/link/list/")
+	public BaseRsp<List<PlatformLinkContext>> getPlatformLinks(
+			@ApiParam(name = "task_id", value = "任务ID",
+					required = true) @RequestParam(value = "task_id") String taskId,
+			@ApiParam(name = "subject_id", value = "科目ID", required = false) @RequestParam(
+					value = "subject_id", required = false) String subjectId,
+			@ApiParam(name = "sub_range_id", value = "分靶场ID", required = false) @RequestParam(
+					value = "sub_range_id", required = false) String subRangeId,
+			@ApiParam(name = "scheme_id", value = "可视化方案ID", required = false) @RequestParam(
+					value = "scheme_id", required = false) String schemeId) {
+		List<PlatformLinkContext> platformLinkList = remoteSituationService.getPlatformLinkList(taskId,
+				subjectId, subRangeId, schemeId);
+		return new BaseRsp<>(platformLinkList);
+	}
+
 	@ApiOperation("获取任务类型字典")
 	@GetMapping("/task_type/list/")
 	public BaseRsp<List<HashMap<String, String>>>

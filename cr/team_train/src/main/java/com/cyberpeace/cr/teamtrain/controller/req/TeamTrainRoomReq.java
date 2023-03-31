@@ -61,9 +61,6 @@ public class TeamTrainRoomReq {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
-	@ApiModelProperty(value = "区分红队或蓝队, 1=红;2=蓝", required = true)
-	private Integer trainCategory;
-
 	public void validate() {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
 		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);

@@ -39,4 +39,6 @@ public class BusinessTemplateQuery extends PageReqBase {
 
 		this.search = newPattern;
 	}
+
+	private Integer trainCategory;
 }

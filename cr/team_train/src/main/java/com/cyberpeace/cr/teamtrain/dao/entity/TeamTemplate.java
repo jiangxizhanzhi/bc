@@ -61,4 +61,6 @@ public class TeamTemplate extends BaseTable {
 	 */
 	private Integer peopleNumber;
 
+	private Integer trainCategory;
+
 }

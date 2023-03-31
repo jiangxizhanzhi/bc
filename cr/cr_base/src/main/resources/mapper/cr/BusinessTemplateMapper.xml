@@ -35,6 +35,10 @@
             <if test="listQuery.type != null and listQuery.type != ''">
                 and cr_business_template.business_type = #{listQuery.type}
             </if>
+            <if test="listQuery.trainCategory != null and listQuery.trainCategory != ''">
+                and resource_id
+                in (select business_template_id from cr_team_template where cr_team_template.train_category = #{listQuery.trainCategory})
+            </if>
         </where>
 
     </select>

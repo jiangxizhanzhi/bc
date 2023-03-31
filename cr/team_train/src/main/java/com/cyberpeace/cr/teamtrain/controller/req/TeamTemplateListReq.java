@@ -22,4 +22,7 @@ public class TeamTemplateListReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
+	@ApiModelProperty(value = "红蓝训练区分, 1=红;2=蓝")
+	private Integer trainCategory;
+
 }

@@ -61,7 +61,7 @@ public class TeamTrainRoomReq {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
-	@ApiModelProperty(value = "区分红队或蓝队", required = true)
+	@ApiModelProperty(value = "区分红队或蓝队, 1=红;2=蓝", required = true)
 	private Integer trainCategory;
 
 	public void validate() {

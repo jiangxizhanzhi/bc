@@ -69,6 +69,9 @@ public class BasicValidationRealm extends AuthorizingRealm {
             Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
             userInfo.setPermissions(userPermission);
 
+            Set<String> permissionOperations = remoteUserService.getPermissionOperation();
+            userInfo.setPermissionOperations(permissionOperations);
+
             // rtks相关角色
             UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
 

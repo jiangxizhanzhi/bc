@@ -81,4 +81,14 @@ public class UserInfo implements Serializable {
      */
     private Set<String> permissions;
 
+    /**
+     * 禁止操作集合
+     */
+    private Set<String> permissionOperations;
+
+    /**
+     * 是否是试用账号
+     */
+    private Boolean isTrialAccount;
+
 }

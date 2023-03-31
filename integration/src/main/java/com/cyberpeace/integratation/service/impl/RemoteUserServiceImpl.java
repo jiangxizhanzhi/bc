@@ -29,6 +29,7 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.model.mp.MpAuthPermission;
 import com.cyberpeace.integratation.model.mp.MpAuthenticatedUser;
+import com.cyberpeace.integratation.model.mp.MpOperationPermission;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.cache.CacheBuilder;
@@ -53,6 +54,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	private String ORG_INFO_LIST_URL;
 
 	private String AUTH_PERMISSION_MENUS_URL;
+
+	private String AUTH_PERMISSION_OPERATION_URL;
 
 	private String USERINFO_IDS_URL;
 
@@ -82,6 +85,8 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		USERINFO_LIST_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("userinfo.list");
 		ORG_INFO_LIST_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("mp.org.user");
+		AUTH_PERMISSION_OPERATION_URL = mpEnvService.getMpHost()
+				+ ConfigUtil.getContextProperty("mp.agg.operate");
 		AUTH_PERMISSION_MENUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("mp.auth.permission.menus");
 		USERINFO_IDS_URL = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("userinfo.ids");
@@ -273,7 +278,26 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	@CacheEvict(allEntries = true)
 	public void clearCache() {
 
- 	}
+	}
+
+	/**
+	 * 获取用户可见的菜单
+	 *
+	 * @param
+	 * @return
+	 */
+	@Override
+	@Cacheable()
+	public Set<String> getPermissionOperation() {
+		String targetUrl = AUTH_PERMISSION_OPERATION_URL;
+		// 获取bc模块试用角色禁用按钮的合集
+		JSONArray objects = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+		List<MpOperationPermission> mpAuthPermissions = objects
+				.toJavaList(MpOperationPermission.class);
+
+		return mpAuthPermissions.stream().map(MpOperationPermission::getKey)
+				.collect(Collectors.toSet());
+	}
 
 	@Override
 	public UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos) {
@@ -399,6 +423,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		userInfo.setName(mpAuthenticatedUser.getName());
 		userInfo.setUserName(mpAuthenticatedUser.getUsername());
 		userInfo.setUserId(mpAuthenticatedUser.getId());
+		userInfo.setIsTrialAccount(mpAuthenticatedUser.getIsTrialAccount());
 
 		UserInfo byId = getById(mpAuthenticatedUser.getId());
 		userInfo.setOrganizationId(byId.getOrganizationId());

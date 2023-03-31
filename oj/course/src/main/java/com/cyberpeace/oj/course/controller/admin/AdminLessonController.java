@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.*;
+import com.cyberpeace.oj.course.dao.entity.Course;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -152,6 +153,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> add(@Validated(Create.class) LessonAddReq lessonAddReq) {
+		Course course = courseMapper.selectById(lessonAddReq.getCourseId());
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(), UserInfoContext.getUserContext().getUserId()));
 
 		// 数据转换
 		CourseLesson courseLesson = addReqToEntity(lessonAddReq);
@@ -178,6 +182,9 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 	@PermissionOperation("lesson edit")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<CourseLesson> patch(@Validated(Update.class) LessonUpdateReq lessonUpdateReq) {
+		Course course = courseMapper.selectById(lessonUpdateReq.getCourseId());
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(), UserInfoContext.getUserContext().getUserId()));
 
 		// 修改数据转换 进行视频和讲义地址是否修改判断
 		CourseLesson courseLesson = updateReqToEntity(lessonUpdateReq);
@@ -214,6 +221,10 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 
 		String lessonId = batchDeleteReq.getResourceIds().get(CommonConstant.ZERO);
 		CourseLesson lesson = courseLessonMapper.selectById(lessonId);
+
+		Course course = courseMapper.selectById(lesson.getCourseId());
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(), UserInfoContext.getUserContext().getUserId()));
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);

@@ -54,6 +54,8 @@ public interface RemoteUserService {
 	 */
 	List<String> idsByOrgId(String orgId);
 
+	Set<String> getPermissionOperation();
+
 	Set<String> getUserPermission(String userId);
 
 	/**

@@ -918,6 +918,10 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 	public Boolean addLessonPractice(String lessonId, List<PaperPracticeContext> practiceList) {
 		CourseLesson courseLesson = courseValidateHandler.validateLessonExist(lessonId, false);
 
+		Course course = courseMapper.selectById(courseLesson.getCourseId());
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(), UserInfoContext.getUserContext().getUserId()));
+
 		PaperContext paperContext = packagePaperContext(courseLesson, practiceList);
 		Paper paper = paperService.update(paperContext);
 		return null != paper;

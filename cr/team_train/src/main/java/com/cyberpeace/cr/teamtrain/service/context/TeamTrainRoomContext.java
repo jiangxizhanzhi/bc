@@ -63,4 +63,6 @@ public class TeamTrainRoomContext implements Serializable {
 	private Boolean enableRecording;
 
 	private String logo;
+
+	private Integer trainCategory;
 }

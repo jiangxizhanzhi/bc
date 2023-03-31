@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -97,6 +98,15 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
             String createUserId = colorTheme.getCreateUserId();
             userIds.add(createUserId);
         }
+        ColorThemeList.forEach(colorTheme -> {
+            String option = colorTheme.getOption();
+            JSONObject jsonObject = JSONObject.parseObject(option);
+            Object color = jsonObject.get("color");
+            JSONArray objects = JsonUtil.stringToArray(color.toString());
+            JSONObject object = new JSONObject();
+            object.put("color", objects);
+            colorTheme.setOption(object.toJSONString());
+        });
         Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 
         //设置用户名

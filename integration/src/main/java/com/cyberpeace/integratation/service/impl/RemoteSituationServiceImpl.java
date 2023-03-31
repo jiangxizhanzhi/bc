@@ -121,6 +121,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String TS_NODE_PROTOCOL;
 
+	private String PLATFORM_LINK_LIST_URL;
+
 	@Autowired
 	private RemoteOperationServiceImpl remoteOperationService;
 
@@ -135,6 +137,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		RANGE_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("range.info");
 		CENTER_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("center.info");
 		PLATFORM_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.list");
+		PLATFORM_LINK_LIST_URL = outerHostXd + ConfigUtil.getContextProperty("platform.link.list");
 		TASK_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("task.list.all");
 		SUBJECT_LIST_URL = outerHostTs + ConfigUtil.getContextProperty("subject.list.all");
 		NETWORK_INFO_URL = outerHostTs + ConfigUtil.getContextProperty("network.info");
@@ -213,6 +216,15 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 			}
 		});
 		return platformContexts;
+	}
+
+	@Override
+	public List<PlatformLinkContext> getPlatformLinkList(String taskId, String subjectId, String subRangeId,
+												 String schemeId) {
+		String result = HttpClientUtil.rawGet(PLATFORM_LINK_LIST_URL + "?taskId=" + taskId
+						+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId, String.class);
+		List<PlatformLinkContext> platformLinkContexts = JSONArray.parseArray(result, PlatformLinkContext.class);
+		return platformLinkContexts;
 	}
 
 	private String getModelThreeDimensionPic(Map<String, ModelContext> modelContextMap,

@@ -7,7 +7,7 @@ import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticePageReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeGroupRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
@@ -33,7 +33,7 @@ public class CrNoticeController {
 
     @ApiOperation("训练公告管理公告对象查询")
     @GetMapping("/group")
-    public BaseRsp<List<CrNoticeGroupRsp>> group(@ApiParam("训练实例ID") @RequestParam("room_id") String roomId) {
+    public BaseRsp<List<CrLabelGroup>> group(@ApiParam("训练实例ID") @RequestParam("room_id") String roomId) {
         return new BaseRsp<>(crNoticeService.noticeGroup(roomId));
     }
 

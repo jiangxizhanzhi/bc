@@ -8,10 +8,10 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class CrNoticeGroupRsp implements Serializable {
-    @ApiModelProperty("公告目标标识")
+public class CrLabelGroup implements Serializable {
+    @ApiModelProperty("值")
     private String value;
 
-    @ApiModelProperty("公告目标名称")
+    @ApiModelProperty("名称")
     private String label;
 }

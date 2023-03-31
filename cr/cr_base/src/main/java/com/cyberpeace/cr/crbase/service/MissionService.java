@@ -8,8 +8,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
@@ -259,4 +261,21 @@ public interface MissionService extends IService<Mission> {
 	 * @param title 任务名称
 	 */
 	void updateMissionValidate(String missionId, String roomId, String title);
+
+	/**
+	 * 获取任务动效配置
+	 * @param missionId 任务id
+	 * @return SetMissionEvent
+	 */
+	SetMissionEvent getMissionEvent(String missionId);
+
+	/**
+	 * 设置任务动效事件
+	 * @param missionId 任务id
+	 * @param eventTypeId 事件id
+	 * @param deviceIds 设备id列表
+	 */
+	Boolean setMissionEvent(String missionId, Integer eventTypeId, List<String> deviceIds);
+
+	Boolean missionEventTest(String missionId, Integer eventTypeId, List<String> deviceIds);
 }

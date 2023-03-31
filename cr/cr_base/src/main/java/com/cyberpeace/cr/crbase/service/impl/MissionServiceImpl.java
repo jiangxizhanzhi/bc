@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -79,6 +83,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private MissionEventDeviceService missionEventDeviceService;
 
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
@@ -713,5 +720,59 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				}
 			}
 		}
+	}
+
+	@Override
+	public SetMissionEvent getMissionEvent(String missionId) {
+		Mission mission = getById(missionId);
+		if (mission == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<MissionEventDevice> missionEventDeviceList = missionEventDeviceService
+				.lambdaQuery()
+				.eq(MissionEventDevice::getMissionId, mission.getResourceId())
+				.list();
+
+
+		SetMissionEvent setMissionEvent = new SetMissionEvent();
+
+		setMissionEvent.setMissionId(mission.getResourceId());
+		setMissionEvent.setEventTypeId(mission.getEventType());
+		setMissionEvent.setDeviceIds(missionEventDeviceList.stream().map(MissionEventDevice::getDeviceId).collect(Collectors.toList()));
+
+		return setMissionEvent;
+	}
+
+	@Override
+	public Boolean setMissionEvent(String missionId, Integer eventTypeId, List<String> deviceIds) {
+		Mission mission = getById(missionId);
+		if (mission == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		List<MissionEventDevice> missionEventDeviceList = Lists.newArrayList();
+		deviceIds.forEach(deviceId -> {
+			MissionEventDevice missionEventDevice = new MissionEventDevice();
+			missionEventDevice.setMissionId(mission.getResourceId());
+			missionEventDevice.setDeviceId(deviceId);
+
+			missionEventDeviceList.add(missionEventDevice);
+		});
+		mission.setEventType(eventTypeId);
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				updateById(mission);
+				missionEventDeviceService.saveBatch(missionEventDeviceList);
+			}
+		});
+
+		return true;
+	}
+
+	@Override
+	public Boolean missionEventTest(String missionId, Integer eventTypeId, List<String> deviceIds) {
+		return null;
 	}
 }

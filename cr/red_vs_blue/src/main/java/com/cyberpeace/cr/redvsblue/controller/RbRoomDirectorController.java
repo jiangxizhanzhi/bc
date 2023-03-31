@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.crbase.controller.req.SetMissionEventReq;
+import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -173,24 +175,52 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("任务态势事件")
+	@ApiOperation("任务态势事件枚举")
+	@GetMapping("/missions/event/enum/type")
+	public BaseRsp<List<CodeNameRsp>> eventMissionType(
+			@ApiParam(value = "任务id", required = true) @RequestParam("mission_id") String missionId) {
+		return new BaseRsp<>(rbRoomService.missionEventType(missionId));
+	}
+
+	@ApiOperation("任务态势设备枚举")
+	@GetMapping("/missions/event/enum/device")
+	public BaseRsp<List<CrLabelGroup>> eventMissionDevice(
+			@ApiParam(value = "训练实例id", required = true) @RequestParam("room_id") String roomId) {
+		return new BaseRsp<>(rbRoomService.missionEventDevice(roomId));
+	}
+
+	@ApiOperation("任务态势事件详情")
+	@GetMapping("/missions/event")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<SetMissionEvent> eventMissions(
+			@ApiParam(value = "任务id", required = true) @RequestParam("mission_id") String missionId) {
+		return new BaseRsp<>(missionService.getMissionEvent(missionId));
+	}
+
+	@ApiOperation("任务态势事件设置")
 	@PostMapping("/missions/event")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<String> eventMissions(@RequestBody @Validated SetMissionEventReq setMissionEventReq) {
-		return new BaseRsp<>();
+	public BaseRsp<Boolean> eventMissions(@RequestBody @Validated SetMissionEvent setMissionEvent) {
+		return new BaseRsp<>(missionService.setMissionEvent(
+				setMissionEvent.getMissionId(),
+				setMissionEvent.getEventTypeId(),
+				setMissionEvent.getDeviceIds()));
 	}
 
 	@ApiOperation("任务态势事件-测试效果")
 	@PostMapping("/missions/event/test")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<String> testEventMissions(@RequestBody @Validated SetMissionEventReq setMissionEventReq) {
-		return new BaseRsp<>();
+	public BaseRsp<Boolean> testEventMissions(@RequestBody @Validated SetMissionEvent setMissionEvent) {
+		return new BaseRsp<>(missionService.missionEventTest(
+				setMissionEvent.getMissionId(),
+				setMissionEvent.getEventTypeId(),
+				setMissionEvent.getDeviceIds()));
 	}
 
 	@ApiOperation("任务关闭")
 	@PostMapping("/missions/close")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<String> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+	public BaseRsp<Boolean> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		return new BaseRsp<>();
 	}
 

@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,20 +39,9 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -92,6 +87,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -757,5 +755,88 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		if (roomExist > 0) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
+	}
+
+	@Override
+	public List<CodeNameRsp> missionEventType(String missionId) {
+		Mission mission = missionService.getById(missionId);
+		if (mission == null) {
+			throw new BusinessException("非法请求，无效任务。");
+		}
+
+		RbRoom rbRoom = getById(mission.getRoomId());
+		if (rbRoom == null) {
+			throw new BusinessException("非法请求，无效红蓝对抗。");
+		}
+
+		// 获取红/蓝队伍任务
+		List<String> redTeamMissionIds = collectionRoleMissionId(
+				crRoleService.getRoles(rbRoom.getResourceId(), CrRole.RbRoleGroup.RED)
+		);
+		List<String> blueTeamMissionIds = collectionRoleMissionId(
+				crRoleService.getRoles(rbRoom.getResourceId(), CrRole.RbRoleGroup.BLUE)
+		);
+
+		// 检查任务属于红/蓝队伍
+		List<CrConstantsConfig> crConstantsConfigList;
+		if (redTeamMissionIds.contains(missionId)) {
+			crConstantsConfigList = crConstantsService.getByType(-1);
+		} else if (blueTeamMissionIds.contains(missionId)) {
+			crConstantsConfigList = crConstantsService.getByType(-2);
+		} else {
+			throw new BusinessException();
+		}
+
+		return StreamApiUtils.map(
+				crConstantsConfigList, constant -> new CodeNameRsp(constant.getCode(), constant.selectI18nName())
+		);
+	}
+
+	/**
+	 * 收集队伍下所有角色所有任务id集合
+	 * @param crRoleContext 队伍角色信息
+	 * @return 任务resource_id列表
+	 */
+	private List<String> collectionRoleMissionId(CrRoleContext<MissionContext> crRoleContext) {
+		List<String> missionIds = Lists.newArrayList();
+
+		crRoleContext.getRoles().forEach(
+				missionContextRoleData -> missionContextRoleData.getMissionsList().forEach(
+						missionContextMissionSchemeObject -> missionContextMissionSchemeObject.getMissions().forEach(
+								missionContext -> missionIds.add(missionContext.getResourceId())
+						)
+				)
+		);
+
+		return missionIds;
+	}
+
+	@Override
+	public List<CrLabelGroup> missionEventDevice(String roomId) {
+		RbRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		JSONObject jsonObject = remoteTopoService.getTopoById(rbRoom.getCopyedTopoId());
+
+		if (jsonObject == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+
+		}
+
+		JSONArray elements = jsonObject.getJSONObject("scene_config").getJSONObject("topology").getJSONArray("elements");
+
+		List<CrLabelGroup> results = Lists.newArrayList();
+		elements.forEach(item -> {
+			JSONObject element = (JSONObject) item;
+			CrLabelGroup.builder().label(element.getString("name")).value(element.getString("id")).build();
+			results.add(CrLabelGroup.builder()
+							.label(element.getString("name"))
+							.value(element.getString("id"))
+							.build());
+		});
+
+		return results;
 	}
 }

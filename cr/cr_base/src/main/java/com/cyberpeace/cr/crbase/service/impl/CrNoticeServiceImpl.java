@@ -11,7 +11,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeGroupRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
@@ -44,7 +44,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
     private AttachmentService attachmentService;
 
     @Override
-    public List<CrNoticeGroupRsp> noticeGroup(String roomId) {
+    public List<CrLabelGroup> noticeGroup(String roomId) {
         // 判断角色组
         CrRole oneCrRole = crRoleService.getCrRoleByRoomIdAndUserId(
                 roomId, UserInfoContext.getUserContext().getUserId()
@@ -53,18 +53,18 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
             throw new BusinessException();
         }
 
-        List<CrNoticeGroupRsp> crNoticeGroupRspList = Lists.newArrayList();
+        List<CrLabelGroup> crLabelGroupList = Lists.newArrayList();
 
         if (oneCrRole.isRvbRole()) {
             for (CrNotice.Group value : CrNotice.Group.values()) {
-                crNoticeGroupRspList.add(CrNoticeGroupRsp.builder()
+                crLabelGroupList.add(CrLabelGroup.builder()
                         .value(value.getCode())
                         .label(CommonContext.isChinese() ? value.getCnDesc() : value.getEnDesc())
                         .build());
             }
 
         } else if (oneCrRole.isTeamRole()) {
-            crNoticeGroupRspList.add(CrNoticeGroupRsp.builder()
+            crLabelGroupList.add(CrLabelGroup.builder()
                     .value(CrNotice.Group.ALL.getCode())
                     .label(CommonContext.isChinese() ? CrNotice.Group.ALL.getCnDesc() : CrNotice.Group.ALL.getEnDesc())
                     .build());
@@ -74,13 +74,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
                     BusinessTemplate.BusinessType.TRAINING_TEAM.getCode()
             ).stream()
                     .filter(CrRole::isTeamStudent)
-                    .forEach(crRole -> crNoticeGroupRspList.add(CrNoticeGroupRsp.builder()
+                    .forEach(crRole -> crLabelGroupList.add(CrLabelGroup.builder()
                             .value(crRole.getResourceId())
                             .label(crRole.getName())
                             .build()));
         }
 
-        return crNoticeGroupRspList;
+        return crLabelGroupList;
     }
 
     @Override

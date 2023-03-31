@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -147,4 +149,19 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @param roomId 红蓝对抗实例id
 	 */
     void checkRoomUnclosed(String roomId);
+
+	/**
+	 * 获取任务可用动效事件类型
+	 * @param missionId 任务id
+	 * @return 动效事件类型
+	 */
+	List<CodeNameRsp> missionEventType(String missionId);
+
+	/**
+	 * 获取任务动效可用靶标
+	 * @param roomId 任务id
+	 * @return 动效目标设备列表
+	 */
+	List<CrLabelGroup> missionEventDevice(String roomId);
+
 }

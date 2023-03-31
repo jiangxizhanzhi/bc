@@ -6,14 +6,14 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeGroupRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 
 import java.util.List;
 
 public interface CrNoticeService extends IService<CrNotice> {
-    List<CrNoticeGroupRsp> noticeGroup(String roomId);
+    List<CrLabelGroup> noticeGroup(String roomId);
 
     ListRsp<CrNoticeListRsp> pageAdmin(String roomId, Page page);
 

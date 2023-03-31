@@ -345,6 +345,9 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		List<BusinessTemplate> businessTemplateList = listByIds(shareContext.getIds());
 
 		businessTemplateList.forEach(businessTemplate -> {
+
+			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(businessTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 			businessTemplate.setOperationAuthType(shareContext.getShareMode());
 			businessTemplate.setOperationAuthIds(shareTeachers);
 		});

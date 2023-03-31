@@ -8,8 +8,8 @@ public interface TrialButtonConstant {
 	/**
 	 * 前台页面
 	 */
-	// 课程评论
-	String OJ_COMMENT_ADD = "oj-comment-add";
+	// 实训评论新增
+	String OJ_COMMENT_ADD = "oj_comment_add";
 
 	// 课程导出
 	String CMS_COURSE_DUMP = "cms_course_dump";
@@ -20,7 +20,7 @@ public interface TrialButtonConstant {
 	// 课时导入
 	String CMS_LESSON_IMPORT = "cms_lesson_import";
 
-	// 课时分类
+	// 课时分类管理
 	String CMS_COURSES_CATEGORY = "cms_courses_category";
 
 	// 习题集导出
@@ -59,7 +59,7 @@ public interface TrialButtonConstant {
 	// cr批量导出
 	String CMS_CR_DUMP = "cms_cr_dump";
 
-	// 工具库分类增删改
+	// 工具库分类管理
 	String CMS_TOOL_CATEGORY = "cms_tool_category";
 
 	// RTKS框架修改
@@ -77,10 +77,10 @@ public interface TrialButtonConstant {
 	// RTKS职业修改
 	String CMS_RTKS_ROLE = "cms_rtks_role";
 
-	// ATT&CK框架
+	// ATT&CK框架管理
 	String CMS_ATTACK_FRAME = "cms_attack_frame";
 
-	// Engage框架
+	// Engage框架管理
 	String CMS_ENGAGE_FRAME = "cms_engage_frame";
 
 	// 评估算法管理
@@ -92,6 +92,6 @@ public interface TrialButtonConstant {
 	// 指标体系管理
 	String CMS_CR_EVALUATION_INDICATOR_SYSTEM = "cms_cr_evaluation_indicator_system";
 
-	// 工具库
+	// 工具库管理
 	String CMS_TOOL = "cms_tool";
 }

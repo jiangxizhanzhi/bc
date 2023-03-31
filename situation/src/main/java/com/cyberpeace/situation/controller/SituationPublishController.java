@@ -151,6 +151,13 @@ public class SituationPublishController {
 				.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
 	}
 
+	private SituationPublishInstanceRes getSituationPublishInstancePreviewRes(SituationPublishInstanceRes situationPublishInstance) {
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.selectById(situationPublishInstance.getAttributeId());
+		situationPublishInstance.setStartTime(dashboardAttribute.getStartTime());
+		situationPublishInstance.setEndTime(dashboardAttribute.getEndTime());
+		return situationPublishInstance;
+	}
+
 	@ApiOperation("查询态势发布实例详情")
 	@GetMapping("")
 	public BaseRsp<SituationPublishInstanceRes> getSituationPublishInstanceDetail(
@@ -177,7 +184,7 @@ public class SituationPublishController {
 				.orElse(TaskType.QB);
 		situationPublishInstanceRes.setTaskType(type.getDesc());
 		situationPublishInstanceRes.setOriginTemplateId(originTemplateId);
-
+		getSituationPublishInstancePreviewRes(situationPublishInstanceRes);
 		return new BaseRsp<>(situationPublishInstanceRes);
 	}
 

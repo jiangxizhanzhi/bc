@@ -296,14 +296,14 @@ public class DashboardController {
 			// 推送节点状态消息
 			WsMessage<NodeEventContext> wsMessage = new WsMessage<>(
 					MessageType.TaskEventNode.getDesc(), nodeEventContext);
-			situationHandlerService.pushDataToDashboard(wsMessage, eventReq.getFeatureId(),
+			situationHandlerService.pushDataToDashboard(wsMessage, eventReq.getDashboardId(),
 					eventReq.getFeatureId());
 
 			// 推送链路状态消息
 			nodeEventContext.getConnectionStatus().forEach(linkEventContext -> {
 				WsMessage<LinkEventContext> linkMessage = new WsMessage<>(
 						MessageType.LinkStatus.getDesc(), linkEventContext);
-				situationHandlerService.pushDataToDashboard(linkMessage, eventReq.getFeatureId(),
+				situationHandlerService.pushDataToDashboard(linkMessage, eventReq.getDashboardId(),
 						eventReq.getFeatureId());
 			});
 		});

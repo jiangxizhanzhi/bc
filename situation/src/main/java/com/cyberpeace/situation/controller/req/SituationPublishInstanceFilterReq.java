@@ -27,6 +27,9 @@ public class SituationPublishInstanceFilterReq extends PageReqBase implements Se
 	@ApiModelProperty(name = "end_time", value = "过滤条件-结束时间")
 	private Date endTime;
 
+	@ApiModelProperty(value = "模式 1-实时 2-回放", required = true)
+	private Integer replayMode;
+
 	@ApiModelProperty(value = "是否重演大屏")
 	private Boolean replay = false;
 

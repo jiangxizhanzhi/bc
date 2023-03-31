@@ -75,6 +75,14 @@ CREATE TABLE `cr_train_action` (
 -- 团队训练区分红队/蓝队训练
 alter table cr_team_room add train_category int null comment '训练分类';
 
--- 训练任务完成动效相关字段
+-- 训练任务完成动效相关
 alter table cr_mission add event_type int null comment '任务完成事件类型';
-alter table cr_mission add event_device_id int null comment '任务完成事件关联场景节点';
+CREATE TABLE `cr_mission_event_device` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mission_id` varchar(64) NOT NULL COMMENT '任务id',
+  `device_id` varchar(64) NOT NULL COMMENT '场景节点id',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `mission_id` (`mission_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC

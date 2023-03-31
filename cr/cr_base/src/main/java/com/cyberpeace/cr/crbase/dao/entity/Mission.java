@@ -23,11 +23,6 @@ public class Mission extends MissionBase {
 	 */
 	private Integer eventType;
 
-	/**
-	 * 事件设备id
-	 */
-	private Integer eventDeviceId;
-
 	public Boolean isObjective() {
 		Integer type = getType();
 		if (type == null) {

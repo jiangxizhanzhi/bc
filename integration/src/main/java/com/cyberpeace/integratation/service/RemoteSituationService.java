@@ -35,6 +35,9 @@ public interface RemoteSituationService {
 	List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId,
 			String schemeId);
 
+	List<PlatformLinkContext> getPlatformLinkList(String taskId, String subjectId, String subRangeId,
+												  String schemeId);
+
 	/**
 	 * 获取网络信息
 	 * @return NetworkInfoContext

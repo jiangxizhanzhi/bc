@@ -3,6 +3,7 @@ package com.cyberpeace.situation.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -18,7 +19,7 @@ public class EventInfo implements Serializable {
 	private String eventName;
 
 	@ApiModelProperty("事件时间")
-	private Date eventTime;
+	private String eventTime;
 
 	@ApiModelProperty("事件类型")
 	private String eventType;
@@ -48,7 +49,7 @@ public class EventInfo implements Serializable {
 		this.eventId = context.getEventId();
 		this.eventName = context.getEventName();
 		this.eventSeverity = context.getEventSeverity();
-		this.eventTime = context.getEventTime();
+		this.eventTime = TimeUtil.format1(context.getEventTime());
 		this.eventType = context.getEventType();
 		this.eventSubType = context.getEventSubType();
 		this.description = context.getDescription();

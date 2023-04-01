@@ -8,10 +8,7 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -122,6 +119,10 @@ public class RbTemplateAdminController {
 		if (businessTemplate == null) {
 			throw new ResourceNotFoundException(resourceId);
 		}
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(businessTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 		String oldRoleConfig = rbTemplate.getRoleConfig();
 		// update
 		reqToRbTemplate(modifyReq, rbTemplate);

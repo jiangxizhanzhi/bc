@@ -31,7 +31,7 @@ public class AuthContextUtils {
 	}
 
 	public static void validateBuiltin(Boolean builtin) {
-		Boolean trail = !UserInfoContext.getUserContext().isSuperuser();
+		Boolean trail = UserInfoContext.getUserContext().getIsTrialAccount();
 		if (trail && builtin.equals(true)) {
 			throw new BusinessException(ErrorCode.TRAIL_UNAUTHORIZED);
 		}

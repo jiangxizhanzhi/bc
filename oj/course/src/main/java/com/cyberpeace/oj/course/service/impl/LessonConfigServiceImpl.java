@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +80,11 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	@Override
 	public LessonConfigBo updateLessonConfig(LessonConfigBo configBo) {
+
+		Course course = courseMapper.selectById(configBo.getCourseId());
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(course.getCreateUserId(), UserInfoContext.getUserContext().getUserId()));
 
 		// 重新编排数据
 		resetLessonConfigBo(configBo);

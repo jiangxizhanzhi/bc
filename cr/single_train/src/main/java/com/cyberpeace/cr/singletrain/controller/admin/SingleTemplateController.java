@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -121,6 +122,10 @@ public class SingleTemplateController {
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 
 		}
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(businessTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+
 		// update single template
 		String oldMissionScheme = singleTemplate.getMissionsScheme();
 		reqToSingleTemplate(requestData, singleTemplate);

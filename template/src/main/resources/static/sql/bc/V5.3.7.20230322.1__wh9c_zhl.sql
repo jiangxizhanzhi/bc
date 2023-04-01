@@ -7,12 +7,12 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 5, -1, '内网入侵', 
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 6, -1, '痕迹清除', 'Trace removal');
 
 -- 蓝队防守动效
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, -2, '日志分析', 'log analysis');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, -2, '流量分析', 'flow analysis');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, -2, '磁盘内存分析', 'Disk memory analysis');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, -2, '木马查杀与分析', 'Trojan horse killing and analysis');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 5, -2, '漏洞修复', 'Bug repair');
-INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 6, -2, '安全配置与加固', 'Security configuration and hardening');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 7, -2, '日志分析', 'log analysis');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 8, -2, '流量分析', 'flow analysis');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 9, -2, '磁盘内存分析', 'Disk memory analysis');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 10, -2, '木马查杀与分析', 'Trojan horse killing and analysis');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 11, -2, '漏洞修复', 'Bug repair');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 12, -2, '安全配置与加固', 'Security configuration and hardening');
 
 -- 公告目标类型
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, -3, '红队训练', 'Red Team');

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.situation.service.context.NewPageContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -180,15 +181,16 @@ public class DashboardController {
 		String bcCode = SystemPropUtil.getProp("BC_CODE");
 
 		// 获取默认的大屏属性
-		DashboardBasicAttributeRes dashboardBasicAttributeRes = dashboardService
-				.getDashboardBasicAttribute(bcCode);
-		if (dashboardBasicAttributeRes == null) {
-			throw new BusinessException(SituationErrorCode.DEFAULT_BC_ERROR);
-		}
+		//DashboardBasicAttributeRes dashboardBasicAttributeRes = dashboardService
+		//		.getDashboardBasicAttribute(bcCode);
+		//if (dashboardBasicAttributeRes == null) {
+		//	throw new BusinessException(SituationErrorCode.DEFAULT_BC_ERROR);
+		//}
 
 		// 推送返回靶场大屏消息
-		WsMessage<DashboardBasicAttributeRes> wsMessage = new WsMessage<>(
-				MessageType.BackToHome.getDesc(), dashboardBasicAttributeRes);
+		NewPageContext message = new NewPageContext("00");
+		WsMessage<NewPageContext> wsMessage = new WsMessage<>(
+				MessageType.JumpPage.getDesc(), message);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
 				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);

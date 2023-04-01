@@ -74,6 +74,7 @@ CREATE TABLE `cr_train_action` (
 
 -- 团队训练区分红队/蓝队训练
 alter table cr_team_room add train_category int not null comment '训练分类';
+alter table cr_team_template add train_category int null;
 
 -- 训练任务完成动效相关
 alter table cr_mission add event_type int null comment '任务完成事件类型';

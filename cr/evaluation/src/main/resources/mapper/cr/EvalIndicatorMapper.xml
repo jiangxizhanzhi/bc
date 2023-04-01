@@ -22,7 +22,7 @@
             </if>
             <if test="listQuery.attribute != null and listQuery.attribute != ''">
                 <bind name="attribute" value="'%' + listQuery.attribute + '%'"/>
-                name LIKE #{attribute}
+                and `attribute` = #{attribute}
             </if>
         </where>
     </select>

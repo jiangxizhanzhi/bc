@@ -360,6 +360,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
+		// 验证是否未结束状态，无法提交
+		if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSE.getCode()) {
+			throw new BusinessException(CrBusinessErrorCode.TASK_IS_CLOSED);
+		}
+
 		// 校验该task是否可提交
 		CrTaskSubmit lastSubmit = crTaskSubmitMapper.selectLastByTaskId(task.getResourceId());
 		if (lastSubmit != null && !lastSubmit.getEvaluateStatus()

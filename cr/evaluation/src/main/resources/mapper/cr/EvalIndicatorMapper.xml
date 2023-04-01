@@ -20,6 +20,10 @@
                 <bind name="name" value="'%' + listQuery.name + '%'"/>
                 name LIKE #{name}
             </if>
+            <if test="listQuery.attribute != null and listQuery.attribute != ''">
+                <bind name="attribute" value="'%' + listQuery.attribute + '%'"/>
+                name LIKE #{attribute}
+            </if>
         </where>
     </select>
     <select id="existByName" resultType="java.lang.Boolean">

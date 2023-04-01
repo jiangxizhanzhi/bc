@@ -23,4 +23,6 @@ public class EvalListQuery extends PageReqBase {
 
 	private List<String> ids;
 
+	private Integer attribute;
+
 }

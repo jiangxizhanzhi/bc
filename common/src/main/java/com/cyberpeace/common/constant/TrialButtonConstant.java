@@ -2,6 +2,7 @@ package com.cyberpeace.common.constant;
 
 /**
  * 菜单对应值，由前端指定, 不能轻易变更
+ * @author dell
  */
 public interface TrialButtonConstant {
 
@@ -94,4 +95,7 @@ public interface TrialButtonConstant {
 
 	// 工具库管理
 	String CMS_TOOL = "cms_tool";
+
+	//留言管理
+	String CMS_CR_COMMENT = "cms_cr_comment";
 }

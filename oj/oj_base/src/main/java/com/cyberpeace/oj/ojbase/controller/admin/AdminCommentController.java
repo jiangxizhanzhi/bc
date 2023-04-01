@@ -1,8 +1,10 @@
 package com.cyberpeace.oj.ojbase.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.OrderNameConstant;
+import com.cyberpeace.common.constant.TrialButtonConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
@@ -36,6 +38,7 @@ public class AdminCommentController {
 
 	@ApiOperation("留言新增")
 	@PostMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_COMMENT)
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
 	public BaseRsp<Integer> addComment(@RequestBody @Validated CommentReq commentReq) {
 
@@ -49,6 +52,7 @@ public class AdminCommentController {
 
 	@ApiOperation("留言删除")
 	@DeleteMapping("")
+	@PermissionOperation(TrialButtonConstant.CMS_CR_COMMENT)
 	@RequiresPermissions(MenuConstant.CMS_COMMENT_MANAGE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 

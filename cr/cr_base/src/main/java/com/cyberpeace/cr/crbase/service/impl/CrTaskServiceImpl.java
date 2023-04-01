@@ -617,6 +617,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
+		crTaskList.forEach(crTask -> crTask.setStatus(CrTask.TaskStatus.CLOSE.getCode()));
+
 		return updateBatchById(crTaskList);
 	}
 }

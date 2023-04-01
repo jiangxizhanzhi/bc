@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
@@ -313,4 +314,6 @@ public interface CrTaskService {
 	 * @return 任务个数
 	 */
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	Boolean missionClose(String missionId, CrRole crRole);
 }

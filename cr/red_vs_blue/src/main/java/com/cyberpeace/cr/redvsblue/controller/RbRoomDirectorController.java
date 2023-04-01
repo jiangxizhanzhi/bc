@@ -221,7 +221,22 @@ public class RbRoomDirectorController {
 	@PostMapping("/missions/close")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
-		return new BaseRsp<>();
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		rbRoomService.checkDirectorPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		rbRoomService.checkRoomOpening(crRole.getRoomId());
+
+		Boolean result = crTaskService.missionClose(releaseMissionReq.getMissionResourceId(), crRole);
+		if (result) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+		}
+
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("动态任务新增")

@@ -14,6 +14,7 @@ import com.cyberpeace.constant.BaseI18n;
 
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.compress.utils.Lists;
 
 @Data
 @TableName("cr_task")
@@ -99,7 +100,8 @@ public class CrTask extends BaseTable {
 		SUCCESS(1, "成功"),
 		FAIL(2, "失败"),
 		REJECT(3, "驳回"),
-		CLOSE(4, "关闭");
+		PAUSE(4, "暂停"), // 未使用
+		CLOSE(5, "关闭");
 
 		public static List<Integer> FINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(SUCCESS.getCode(), FAIL.getCode()));
@@ -109,6 +111,9 @@ public class CrTask extends BaseTable {
 
 		public static List<Integer> UNFINISHED_STATUS_LIST = new ArrayList<>(
 				Arrays.asList(WAIT.getCode(), REJECT.getCode()));
+
+		public static List<Integer> ONGOING_STATUS_LIST = new ArrayList<>(
+				Arrays.asList(RELEASED.getCode(), STARTED.getCode(), WAIT.getCode(), REJECT.getCode()));
 
 		@Getter
 		private Integer code;

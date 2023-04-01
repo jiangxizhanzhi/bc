@@ -417,4 +417,8 @@ public interface CrBusinessErrorCode {
 
 	// 创建启动节点失败
 	String FAILED_TO_CREATE_NODE = "101126";
+
+	/** 任务不可关闭 */
+	String CANNOT_END_FINISHED_TASK = "101127";
+
 }

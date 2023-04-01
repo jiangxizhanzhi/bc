@@ -600,8 +600,23 @@ public class TeamTrainRoomController {
 	@ApiOperation("任务关闭")
 	@PostMapping("/missions/close")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<String> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
-		return new BaseRsp<>();
+	public BaseRsp<Boolean> closeMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+		Boolean result = crTaskService.missionClose(releaseMissionReq.getMissionResourceId(), crRole);
+
+		if (result) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		}
+
+		return new BaseRsp<>(result);
 	}
 
 	// 获取单个实例中自己的角色信息，只包括自己角色的基本信息

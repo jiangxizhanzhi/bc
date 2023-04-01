@@ -583,4 +583,35 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);
 	}
 
+	@Override
+	public Boolean missionClose(String missionId, CrRole crRole) {
+		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		List<CrTask> crTaskList = lambdaQuery()
+				.eq(CrTask::getRoomId, mission.getRoomId())
+				.eq(CrTask::getRoleId, crRole.getResourceId())
+				.eq(CrTask::getMissionId, mission.getResourceId())
+				.in(CrTask::getStatus, CrTask.TaskStatus.ONGOING_STATUS_LIST)
+				.list();
+
+		// 任务未下发
+		if (crTaskList.isEmpty()) {
+			crTaskList = lambdaQuery()
+					.eq(CrTask::getRoomId, mission.getRoomId())
+					.eq(CrTask::getRoleId, crRole.getResourceId())
+					.eq(CrTask::getMissionId, mission.getResourceId())
+					.list();
+			crTaskList.forEach(crTask -> {
+				if (crTask.isFinished()) {
+					throw new BusinessException(CrBusinessErrorCode.CANNOT_END_FINISHED_TASK);
+				}
+			});
+			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
+		}
+
+		return updateBatchById(crTaskList);
+	}
 }

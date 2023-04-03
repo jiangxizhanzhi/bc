@@ -28,7 +28,7 @@ public interface TeamRoomMapper extends BaseMapper<TeamRoom> {
 	TeamRoom selectByLocalSceneId(String localSceneId);
 
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
-			@Param("completedStatus") Integer completedStatus);
+			@Param("completedStatus") Integer completedStatus, @Param("trainCategory") Integer trainCategory);
 
 	List<TeamRoom> selectUnfinishedByIds(@Param("roomIds") List<String> roomIds,
 			@Param("endCode") Integer endCode);

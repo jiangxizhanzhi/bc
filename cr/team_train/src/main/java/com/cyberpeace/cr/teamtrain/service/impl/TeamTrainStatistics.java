@@ -41,7 +41,7 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			return new TrainingCount();
 		}
 		return teamRoomMapper.getTrainingCount(roomIds,
-				TeamRoom.TrainingStatusCode.ENDED.getCode());
+				TeamRoom.TrainingStatusCode.ENDED.getCode(), null);
 	}
 
 	@Override

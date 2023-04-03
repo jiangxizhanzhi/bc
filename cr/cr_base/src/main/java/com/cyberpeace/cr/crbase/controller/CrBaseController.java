@@ -7,6 +7,7 @@ import java.util.Set;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.*;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -123,8 +124,9 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-累计练习次数")
 	@GetMapping("/train_stats/acc")
-	public BaseRsp<TrainStatsAccGraphRsp> getTrainStatsAcc() {
-		return new BaseRsp<>();
+	public BaseRsp<TrainingStatisticsAccount> getTrainStatsAcc() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(crBaseService.getTrainingStatisticsAccount(userId));
 	}
 
 	@ApiOperation("练习统计-训练资产")

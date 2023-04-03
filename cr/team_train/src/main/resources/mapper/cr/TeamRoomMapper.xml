@@ -136,6 +136,9 @@
         <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
             #{roomId}
         </foreach>
+        <if test="trainCategory != null and trainCategory">
+            and train_category = #{trainCategory}
+        </if>
     </select>
 
     <select id="selectUnfinishedByIds" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom">

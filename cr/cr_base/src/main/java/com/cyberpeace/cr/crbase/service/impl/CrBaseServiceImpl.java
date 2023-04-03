@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,32 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 
 		return rsp;
+	}
+
+	@Override
+	public TrainingStatisticsAccount getTrainingStatisticsAccount(String userId) {
+		List<TrainingCountRsp> completeList = Lists.newArrayList();
+		List<TrainingCountRsp> incompleteList = Lists.newArrayList();
+		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.SINGLE_TRAINING
+				, LocalScene.BusinessCode.RED_TRAINING, LocalScene.BusinessCode.BLUE_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
+		Integer sum = 0;
+		for (LocalScene.BusinessCode businessCode: codeList ) {
+			CrEventStatistics statistics = register.get(businessCode);
+			TrainingCount trainingCount = statistics.getTrainingCount(userId);
+			if (trainingCount == null){
+				trainingCount = new TrainingCount();
+			}
+			completeList.add(new TrainingCountRsp(businessCode.getCode(), businessCode.getDesc(),
+					trainingCount.getCompleted()));
+			incompleteList.add(new TrainingCountRsp(businessCode.getCode(), businessCode.getDesc(),
+					trainingCount.getUncompleted()));
+			sum += trainingCount.getCompleted() + trainingCount.getUncompleted();
+		}
+		TrainingStatisticsAccount trainingStatisticsAccount = new TrainingStatisticsAccount();
+		trainingStatisticsAccount.setCompleted(completeList);
+		trainingStatisticsAccount.setIncomplete(incompleteList);
+		trainingStatisticsAccount.setCount(sum);
+		return trainingStatisticsAccount;
 	}
 
 }

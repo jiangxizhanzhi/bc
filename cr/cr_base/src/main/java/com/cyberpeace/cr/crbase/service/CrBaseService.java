@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
 
@@ -12,5 +13,7 @@ public interface CrBaseService {
 	 * @return 统计结果
 	 */
 	TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page);
+
+	TrainingStatisticsAccount getTrainingStatisticsAccount(String userId);
 
 }

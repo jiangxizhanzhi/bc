@@ -3,9 +3,12 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
+import com.cyberpeace.cr.redvsblue.controller.req.FlowListQuery;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
+import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -134,6 +137,22 @@ public class RbSceneController {
 		ret.setData(flows);
 
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("分页查询节点流量")
+	@GetMapping("flow/node")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<ListRsp<ElementFlow>> getNodeFlowList(FlowListQuery flowListQuery) {
+
+		RbRoom rbRoom = rbRoomService.getById(flowListQuery.getRoomId());
+		LocalScene localScene = localSceneService.getById(rbRoom.getLocalSceneId());
+
+		return new BaseRsp<>(crSceneService.getCrFlowList(
+				localScene != null ? localScene.getMpSceneId() : null,
+				rbRoom.getCopyedTopoId(),
+				flowListQuery.getNodeId(),
+				flowListQuery.toPageParam()
+		));
 	}
 
 	@ApiOperation("启动流量")

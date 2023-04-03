@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
@@ -44,6 +45,16 @@ public interface CrSceneService {
 	 * @return 节点流量列表
 	 */
 	ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext elementFlowListContext);
+
+	/**
+	 * 获取靶场场景节点下流量列表
+	 * @param mpSceneId
+	 * @param topoId
+	 * @param nodeId
+	 * @param page
+	 * @return 节点流量列表
+	 */
+	ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Page page);
 
 	/** 更新流量参数
 	 * @param flowOpsContext 流量操作上下文

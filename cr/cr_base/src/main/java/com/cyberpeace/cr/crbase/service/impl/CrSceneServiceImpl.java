@@ -219,6 +219,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
+	public ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Page page) {
+		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
+
+		// 按照条件过滤并分页
+		return filterFlowList(elementFlowList, null, page);
+	}
+
+	@Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 
 		CrCommonValidator.validateIp(flowOpsContext.getSourceIp());

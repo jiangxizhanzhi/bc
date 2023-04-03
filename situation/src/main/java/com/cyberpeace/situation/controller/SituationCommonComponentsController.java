@@ -11,6 +11,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.UploadAttachmentPermission;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes;
@@ -44,8 +45,12 @@ public class SituationCommonComponentsController {
 
     @Autowired
     private SituationCommonComponentsService situationCommonComponentsService;
+
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private UtilService utilService;
 
     @ApiOperation("获取控件组件资源列表")
     @GetMapping
@@ -130,7 +135,7 @@ public class SituationCommonComponentsController {
                 AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());
 
         String data= FileUtil
-                .getContent(new File(attachmentBo.getFilePath()));
+                .getContent(new File( utilService.getRealPath(attachmentBo.getFilePath())));
 
         return new BaseRsp(data);
     }

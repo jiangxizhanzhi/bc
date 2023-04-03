@@ -5,6 +5,13 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.UploadAttachmentPermission;
+import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes;
 import com.cyberpeace.situation.dao.entity.SituationCommonComponents;
@@ -13,11 +20,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +44,8 @@ public class SituationCommonComponentsController {
 
     @Autowired
     private SituationCommonComponentsService situationCommonComponentsService;
+    @Autowired
+    private AttachmentService attachmentService;
 
     @ApiOperation("获取控件组件资源列表")
     @GetMapping
@@ -96,5 +107,31 @@ public class SituationCommonComponentsController {
     @PostMapping("/hik/flv/exit")
     public BaseRsp<JSONObject> exitHikVisionFlv(@RequestParam("rtspKey")String rtspKey){
         return new BaseRsp<>(situationCommonComponentsService.exitHikVisionFLv(rtspKey));
+    }
+
+    @ApiOperation("附件txt上传解析内容")
+    @PostMapping("/text_upload")
+    public BaseRsp<String> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
+
+        // 获取需要校验的数据
+        UploadAttachmentPermission filePermission = EnumUtils
+                .getEnumByCode(fileCommonUploadReq.getType(), UploadAttachmentPermission.class);
+        if (null == filePermission) {
+            throw new UnauthorizedException();
+        }
+
+        // 校验权限和文件
+        // filePermission.validatePermission(false);
+        String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
+        filePermission.validateFileSuffix(fileName);
+
+        // 文件上传
+        AttachmentBo attachmentBo = attachmentService.uploadDest(
+                AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());
+
+        String data= FileUtil
+                .getContent(new File(attachmentBo.getFilePath()));
+
+        return new BaseRsp(data);
     }
 }

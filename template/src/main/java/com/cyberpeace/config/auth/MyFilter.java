@@ -28,6 +28,10 @@ public class MyFilter implements Filter {
 
 		long startTime = System.currentTimeMillis();
 		String url = ((HttpServletRequest) request).getServletPath();
+		if (((HttpServletRequest) request).getMethod().equals("OPTIONS")) {
+			response.getWriter().println("ok");
+			return;
+		}
 		chain.doFilter(request, response);
 		log.debug("{}|{}", url, (System.currentTimeMillis() - startTime));
 	}

@@ -2,10 +2,12 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.google.common.collect.Maps;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
+@Service
 public class CrTaskSituationHandler {
 
 	private static Map<BusinessTemplate.BusinessType, CrTaskSituationHandler> register = Maps.newHashMap();

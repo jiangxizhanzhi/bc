@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.MissionEventDeviceMapper">
+
+
+    <select id="getDeviceIdsByMissionId" resultType="java.lang.String">
+        select device_id
+        from cr_mission_event_device
+        <where>
+            <if test="missionId != null and missionId != ''">
+                mission_id = #{missionId}
+            </if>
+        </where>
+    </select>
+</mapper>

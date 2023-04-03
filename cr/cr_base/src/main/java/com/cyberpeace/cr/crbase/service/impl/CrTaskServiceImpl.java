@@ -3,6 +3,9 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
+import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -25,10 +28,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -68,6 +67,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	private CrTaskLogMapper crTaskLogMapper;
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
+	@Autowired
+	private CrTaskSituationHandler crTaskSituationHandler;
 
 	@Override
 	public CrTask getById(String taskId) {
@@ -397,6 +398,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				task.setScore(mission.getScore());
 				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
 				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
+				crTaskSituationHandler.choseTypeAndPushMissionToSituation(missionId, mission.getScore());
 			} else {
 				task.setScore(0);
 				task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());

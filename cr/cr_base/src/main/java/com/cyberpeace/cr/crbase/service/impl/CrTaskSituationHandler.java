@@ -1,0 +1,30 @@
+package com.cyberpeace.cr.crbase.service.impl;
+
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.google.common.collect.Maps;
+
+import javax.annotation.PostConstruct;
+import java.util.Map;
+
+public class CrTaskSituationHandler {
+
+	private static Map<BusinessTemplate.BusinessType, CrTaskSituationHandler> register = Maps.newHashMap();
+
+	@PostConstruct
+	public void init() {
+		register.put(getBusinessType(), this);
+	}
+
+	public BusinessTemplate.BusinessType getBusinessType() {
+		return null;
+	}
+
+	public void choseTypeAndPushMissionToSituation(String missionId, Integer score) {
+		CrTaskSituationHandler crTaskSituationHandler = register.get(BusinessTemplate.BusinessType.RED_VS_BLUE);
+		crTaskSituationHandler.pushMissionToSituation(missionId, score);
+	}
+
+	public void pushMissionToSituation(String missionId, Integer score) {
+		return;
+	}
+}

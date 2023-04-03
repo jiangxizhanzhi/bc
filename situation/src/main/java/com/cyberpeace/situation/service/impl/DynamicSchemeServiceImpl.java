@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.model.ws.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,10 +41,6 @@ import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicSchemeMapper;
 import com.cyberpeace.situation.dao.mapper.SceneConfigMapper;
 import com.cyberpeace.situation.model.*;
-import com.cyberpeace.situation.model.ws.WsAttackEffectDynamic;
-import com.cyberpeace.situation.model.ws.WsAttackSchedule;
-import com.cyberpeace.situation.model.ws.WsMessage;
-import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
 import com.cyberpeace.situation.service.*;
 import com.google.common.collect.Lists;
 
@@ -713,6 +710,13 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		List<ElementInfo> elementInfoList = Lists
 				.newArrayList(situationTopo.getElements().values());
 		return elementInfoList.stream().map(ElementInfo::getElementId).collect(Collectors.toList());
+	}
+
+	@Override
+	public void pushMissionDynamicToRoom(List<WsMissionDynamic> wsMissionDynamicList, String sceneId) {
+		WsMessage<List<WsMissionDynamic>> wsMessage = new WsMessage<>(
+				MessageType.MissionSingleNodeEvent.getDesc(), wsMissionDynamicList);
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
 	}
 
 	/**

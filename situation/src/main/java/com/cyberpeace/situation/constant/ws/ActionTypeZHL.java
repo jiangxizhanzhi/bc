@@ -1,8 +1,9 @@
 package com.cyberpeace.situation.constant.ws;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;
 
-public enum ActionTypeZHL {
+public enum ActionTypeZHL implements GenericEnum {
 
     ZHL_ATTACK1(1, "信息收集"),
     ZHL_ATTACK2(2, "漏洞探测与挖掘"),

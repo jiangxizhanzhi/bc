@@ -10,6 +10,7 @@ import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.model.ws.WsAttackSchedule;
+import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 
 public interface DynamicSchemeService {
 
@@ -52,4 +53,6 @@ public interface DynamicSchemeService {
 	void validMedia(DynamicSchemeReq dynamicSchemeReq);
 
 	List<String> getElementIds(String sceneId, Boolean isInstance);
+
+	void pushMissionDynamicToRoom(List<WsMissionDynamic> wsMissionDynamicList, String sceneId);
 }

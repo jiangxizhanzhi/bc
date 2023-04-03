@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -55,6 +56,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@Autowired
+	private CrTaskSituationHandler crTaskSituationHandler;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -187,6 +191,10 @@ public class RbRoomRefereeController {
 				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
+
+		if (submitEvaluationReq.getEvaluateStatus().equals(1)) {
+			crTaskSituationHandler.choseTypeAndPushMissionToSituation(submitEvaluationReq.getSubmitId(), submitEvaluationReq.getScore());
+		}
 
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);

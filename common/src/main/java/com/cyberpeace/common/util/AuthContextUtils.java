@@ -37,8 +37,14 @@ public class AuthContextUtils {
 		}
 	}
 
-	//需要禁止试用时返回true
+	//需要禁止试用时返回true,不允许修改admin的资源
 	public static Boolean checkBuiltin(String createUserId, String userId) {
 		return createUserId.equals(CommonConstant.ADMIN_ID);
+	}
+
+	//需要禁止试用时返回true,不允许修改其他人的资源
+	public static Boolean checkSelf(String createUserId, String userId) {
+		return !createUserId.equals(userId);
+
 	}
 }

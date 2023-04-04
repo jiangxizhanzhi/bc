@@ -13,7 +13,6 @@ import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.cs.controller.CommonController;
-import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
@@ -28,10 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -56,10 +53,6 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionDetail;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.controller.CommonController;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -276,8 +269,16 @@ public class MissionController {
 				.selectBatchIds(deleteReq.getIds());
 
 		for (MissionSchemeTemplate missionSchemeTemplate : missionSchemeTemplateList) {
+
 			// 试用账号校验
-			AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(missionSchemeTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+			AuthContextUtils.validateBuiltin(
+					AuthContextUtils.checkBuiltin(missionSchemeTemplate.getCreateUserId(),
+							UserInfoContext.getUserContext().getUserId()));
+
+			// 试用账号校验
+			AuthContextUtils.validateBuiltin(
+					AuthContextUtils.checkSelf(missionSchemeTemplate.getCreateUserId(),
+							UserInfoContext.getUserContext().getUserId()));
 
 		}
 		missionService.batchDeleteSchemeTemplate(deleteReq.getIds());
@@ -301,7 +302,14 @@ public class MissionController {
 		MissionSchemeTemplate toUpdateSchemeTemplate = requestToSchemeTemplate(templateModifyReq);
 
 		// 试用账号校验
-		AuthContextUtils.validateBuiltin(AuthContextUtils.checkBuiltin(toUpdateSchemeTemplate.getCreateUserId(),UserInfoContext.getUserContext().getUserId()));
+		AuthContextUtils.validateBuiltin(
+				AuthContextUtils.checkBuiltin(toUpdateSchemeTemplate.getCreateUserId(),
+						UserInfoContext.getUserContext().getUserId()));
+
+		// 试用账号校验
+		AuthContextUtils.validateBuiltin(
+				AuthContextUtils.checkSelf(toUpdateSchemeTemplate.getCreateUserId(),
+						UserInfoContext.getUserContext().getUserId()));
 
 		missionService.updateMissionSchemeTemplateById(toUpdateSchemeTemplate);
 

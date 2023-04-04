@@ -306,6 +306,7 @@ public class RoleController {
 
 	@ApiOperation("编排课程列表")
 	@PostMapping("/courses")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_ROLE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillCourses(@RequestBody @Validated CourseLayoutInput courseLayoutInput) {
@@ -375,6 +376,7 @@ public class RoleController {
 
 	@ApiOperation("编排任务列表")
 	@PostMapping("/missions")
+	@PermissionOperation(TrialButtonConstant.CMS_RTKS_ROLE)
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>>
 			setSkillMissions(@RequestBody @Validated MissionLayout layout) {

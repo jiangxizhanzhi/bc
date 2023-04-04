@@ -2,11 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -258,7 +254,8 @@ public class SituationTwoDimensionalComponentController {
 		} else if(method.equals("PUT")){
 			situationDbAccess.setOperationType("导入");
 		}
-		situationDbAccess.setOperationTime(LocalDate.now().toString());
+		String now = DateUtil.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss");
+		situationDbAccess.setOperationTime(now);
 		situationDbAccess.setOperationDetail(String.format("select * from %s", situationDbAccess.getTableName()));
 //        situationDbAccess.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		situationDbAccessMapper.insert(situationDbAccess);

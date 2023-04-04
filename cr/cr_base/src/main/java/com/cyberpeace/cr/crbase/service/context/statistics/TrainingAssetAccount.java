@@ -20,4 +20,7 @@ public class TrainingAssetAccount implements Serializable {
 	@ApiModelProperty("安全节点数量")
 	private Integer securityNodeCount;
 
+	@ApiModelProperty("训练资产总数")
+	private Integer count;
+
 }

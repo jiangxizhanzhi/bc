@@ -130,14 +130,19 @@ public class CrBaseServiceImpl implements CrBaseService {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
 			crRoleNodeList.addAll(crEventStatistics.getCrRoleNodeList(userId));
 		}
-		trainAssetAccount.setOperatingSystemCount(Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.OPERATING_SYSTEM.getCode())).count())));
-		trainAssetAccount.setBusinessNodesCount(Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.BUSINESS_NODES.getCode())).count())));
-		trainAssetAccount.setNetworkNodeCount(Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.NETWORK_NODE.getCode())).count())));
-		trainAssetAccount.setSecurityNodeCount(Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.SECURITY_NODE.getCode())).count())));
+		Integer operatingSystemCount = Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.OPERATING_SYSTEM.getCode())).count()));
+		Integer businessNodesCount = Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.BUSINESS_NODES.getCode())).count()));
+		Integer networkNodeCount = Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.NETWORK_NODE.getCode())).count()));
+		Integer securityNodeCount = Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.SECURITY_NODE.getCode())).count()));
+		trainAssetAccount.setOperatingSystemCount(operatingSystemCount);
+		trainAssetAccount.setBusinessNodesCount(businessNodesCount);
+		trainAssetAccount.setNetworkNodeCount(networkNodeCount);
+		trainAssetAccount.setSecurityNodeCount(securityNodeCount);
+		trainAssetAccount.setCount(operatingSystemCount + businessNodesCount + networkNodeCount + securityNodeCount);
 		return trainAssetAccount;
 	}
 

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
@@ -758,6 +759,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
+		// 检查是否有已关联设备事件
+		List<Integer> usingEventDeviceList = mission.getEventType() != null
+				? missionEventDeviceService.lambdaQuery()
+				.eq(MissionEventDevice::getMissionId, mission.getResourceId())
+				.list()
+				.stream().map(MissionEventDevice::getId).collect(Collectors.toList())
+				: Lists.newArrayList();
+
 		List<MissionEventDevice> missionEventDeviceList = Lists.newArrayList();
 		deviceIds.forEach(deviceId -> {
 			MissionEventDevice missionEventDevice = new MissionEventDevice();
@@ -772,6 +781,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				updateById(mission);
+				if (!usingEventDeviceList.isEmpty()) {
+					missionEventDeviceService.removeByIds(usingEventDeviceList);
+				}
 				missionEventDeviceService.saveBatch(missionEventDeviceList);
 			}
 		});

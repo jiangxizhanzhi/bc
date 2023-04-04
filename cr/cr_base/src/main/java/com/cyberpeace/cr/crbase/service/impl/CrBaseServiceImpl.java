@@ -14,11 +14,9 @@ import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,9 +24,6 @@ import java.util.*;
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
-
-	@Autowired
-	RemoteTopoService remoteTopoService;
 
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
@@ -144,6 +139,18 @@ public class CrBaseServiceImpl implements CrBaseService {
 		trainAssetAccount.setSecurityNodeCount(securityNodeCount);
 		trainAssetAccount.setCount(operatingSystemCount + businessNodesCount + networkNodeCount + securityNodeCount);
 		return trainAssetAccount;
+	}
+
+	@Override
+	public TrainingPeopleStatistics getTrainingPeopleStatistics(String userId) {
+		TrainingPeopleStatistics trainingPeopleStatistics = new TrainingPeopleStatistics();
+		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.RED_TRAINING, LocalScene.BusinessCode.BLUE_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
+		for (LocalScene.BusinessCode businessCode: codeList) {
+			CrEventStatistics crEventStatistics = register.get(businessCode);
+			crEventStatistics.getPeopleCount(userId, trainingPeopleStatistics);
+		}
+		trainingPeopleStatistics.setCount(trainingPeopleStatistics.getBlueCount() + trainingPeopleStatistics.getRedCount() + trainingPeopleStatistics.getRvbCount());
+		return trainingPeopleStatistics;
 	}
 
 }

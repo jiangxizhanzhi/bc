@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -89,6 +90,18 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			}
 		});
 		return crRoleNodeList;
+	}
+
+	@Override
+	public void getPeopleCount(String userId, TrainingPeopleStatistics trainingPeopleStatistics) {
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
+		Integer count = 0;
+		for (CrRole crRole : crRoleList) {
+			count += crRole.getUserIdList().size();
+		}
+		trainingPeopleStatistics.setRvbCount(count);
 	}
 
 	private Integer getState(Integer trainingStatus) {

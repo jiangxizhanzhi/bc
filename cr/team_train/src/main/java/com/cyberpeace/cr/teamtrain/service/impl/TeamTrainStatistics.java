@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamTrainStatistics extends CrEventStatistics {
@@ -89,5 +91,25 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			}
 		});
 		return crRoleNodeList;
+	}
+
+	public void getPeopleCountByCode(String userId, TrainingPeopleStatistics trainingPeopleStatistics, Integer code) {
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
+		roomIds = teamRoomList.stream()
+							  .filter(teamRoom -> teamRoom.getTrainCategory().equals(code))
+							  .map(TeamRoom::getResourceId)
+							  .collect(Collectors.toList());
+		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
+		Integer count = 0;
+		for (CrRole crRole : crRoleList) {
+			count += crRole.getUserIdList().size();
+		}
+		if (code.equals(TeamRoom.TrainCategory.BLUE.getCode())) {
+			trainingPeopleStatistics.setBlueCount(count);
+		} else {
+			trainingPeopleStatistics.setRedCount(count);
+		}
 	}
 }

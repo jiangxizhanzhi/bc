@@ -1,11 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingAssetAccount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
-
-import java.util.HashMap;
+import com.cyberpeace.cr.crbase.service.context.statistics.*;
 
 public interface CrBaseService {
 
@@ -20,4 +15,6 @@ public interface CrBaseService {
 	TrainingStatisticsAccount getTrainingStatisticsAccount(String userId);
 
 	TrainingAssetAccount getTrainingAssetAccount(String userId);
+
+	TrainingPeopleStatistics getTrainingPeopleStatistics(String userId);
 }

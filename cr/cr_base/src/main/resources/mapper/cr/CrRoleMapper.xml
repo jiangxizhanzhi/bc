@@ -119,6 +119,11 @@
         where business_type = #{code}
         and user_ids like #{user_id}
     </select>
+    <select id="getByRoomIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select *
+        from cr_role
+        where room_id in <foreach collection="roomIds" separator="," open="(" close=")" item="roomId">#{roomId}</foreach>
+    </select>
 
 
 </mapper>

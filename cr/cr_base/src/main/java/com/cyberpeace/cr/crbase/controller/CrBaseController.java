@@ -17,10 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingAssetAccount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -140,8 +137,9 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-人员参与次数")
 	@GetMapping("/train_stats/part_in")
-	public BaseRsp<TrainStatsGraphRsp> getTrainStatsPartIn() {
-		return new BaseRsp<>();
+	public BaseRsp<TrainingPeopleStatistics> getTrainStatsPartIn() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(crBaseService.getTrainingPeopleStatistics(userId));
 	}
 
 	@ApiOperation("练习统计-战绩统计")

@@ -5,6 +5,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,10 @@ public class CrEventStatistics {
 	}
 
 	public List<CrRoleNode> getCrRoleNodeList(String userId) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public void getPeopleCount(String userId, TrainingPeopleStatistics trainingPeopleStatistics){
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

@@ -135,7 +135,6 @@ public class CrBaseServiceImpl implements CrBaseService {
 		}
 		for (String topoId: topoIds) {
 			JSONObject elements = remoteTopoService.getTopoById(topoId).getJSONObject("scene_config").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
-			System.out.println(123);
 			elements.values().forEach(element -> {
 				JSONObject elementJson = (JSONObject)JSONObject.toJSON(element);
 				Integer category = elementJson.getInteger("category");

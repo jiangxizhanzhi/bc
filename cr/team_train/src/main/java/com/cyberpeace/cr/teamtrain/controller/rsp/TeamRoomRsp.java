@@ -86,4 +86,7 @@ public class TeamRoomRsp implements Serializable {
 
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
+
+	@ApiModelProperty("角色头像")
+	private String userAvatar;
 }

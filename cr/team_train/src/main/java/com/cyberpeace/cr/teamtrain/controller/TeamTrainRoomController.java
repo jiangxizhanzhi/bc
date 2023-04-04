@@ -461,6 +461,7 @@ public class TeamTrainRoomController {
 			teamRoomRsp.setIsEngageRelated(
 					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
 
+			teamRoomRsp.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
 			teamRoomRspList.add(teamRoomRsp);
 		}
 

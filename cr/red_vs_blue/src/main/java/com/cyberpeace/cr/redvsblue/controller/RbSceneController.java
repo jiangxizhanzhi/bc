@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.FlowListQuery;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
 import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -143,6 +145,10 @@ public class RbSceneController {
 	@GetMapping("flow/node")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<ListRsp<ElementFlow>> getNodeFlowList(FlowListQuery flowListQuery) {
+		// 无效入参返回
+		if (StringUtils.isEmpty(flowListQuery.getRoomId()) || StringUtils.isEmpty(flowListQuery.getNodeId())) {
+			return new BaseRsp<>(PageUtil.getListResult(Lists.newArrayList(), flowListQuery.toPageParam(), 0));
+		}
 
 		RbRoom rbRoom = rbRoomService.getById(flowListQuery.getRoomId());
 		LocalScene localScene = localSceneService.getById(rbRoom.getLocalSceneId());

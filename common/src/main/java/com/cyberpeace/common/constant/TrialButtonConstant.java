@@ -98,4 +98,7 @@ public interface TrialButtonConstant {
 
 	//留言管理
 	String CMS_CR_COMMENT = "cms_cr_comment";
+
+	//运行日志
+	String CMS_SYSTEM_LOG = "cms_system_log";
 }

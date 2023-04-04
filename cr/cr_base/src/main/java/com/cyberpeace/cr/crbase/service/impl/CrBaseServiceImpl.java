@@ -1,30 +1,27 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.*;
-
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.AssetType;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.CrBaseService;
+import com.cyberpeace.cr.crbase.service.CrEventStatistics;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.statistics.*;
+import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.service.CrBaseService;
-import com.cyberpeace.cr.crbase.service.CrEventStatistics;
-import com.cyberpeace.cr.crbase.service.context.statistics.*;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.google.common.collect.Maps;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -125,28 +122,22 @@ public class CrBaseServiceImpl implements CrBaseService {
 	}
 
 	@Override
-	public HashMap<String, Integer> getTrainingAssetAccount(String userId) {
-		HashMap<String, Integer> trainAssetAccount = new HashMap<>();
+	public TrainingAssetAccount getTrainingAssetAccount(String userId) {
+		TrainingAssetAccount trainAssetAccount = new TrainingAssetAccount();
 		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
-		List<String> topoIds = new ArrayList<>();
+		List<CrRoleNode> crRoleNodeList = new ArrayList<>();
 		for (LocalScene.BusinessCode businessCode: codeList) {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
-			topoIds.addAll(crEventStatistics.getTopoIds(userId));
+			crRoleNodeList.addAll(crEventStatistics.getCrRoleNodeList(userId));
 		}
-		for (String topoId: topoIds) {
-			JSONObject elements = remoteTopoService.getTopoById(topoId).getJSONObject("scene_config").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
-			elements.values().forEach(element -> {
-				JSONObject elementJson = (JSONObject)JSONObject.toJSON(element);
-				Integer category = elementJson.getInteger("category");
-				String type = EnumUtils.getEnumDescByCode(category, AssetType.class);
-				Integer count = trainAssetAccount.get(type);
-				if (count == null){
-					trainAssetAccount.put(type, 1);
-				}else {
-					trainAssetAccount.put(type, ++count);
-				}
-			});
-		}
+		trainAssetAccount.setOperatingSystemCount(Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.OPERATING_SYSTEM.getCode())).count())));
+		trainAssetAccount.setBusinessNodesCount(Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.BUSINESS_NODES.getCode())).count())));
+		trainAssetAccount.setNetworkNodeCount(Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.NETWORK_NODE.getCode())).count())));
+		trainAssetAccount.setSecurityNodeCount(Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.SECURITY_NODE.getCode())).count())));
 		return trainAssetAccount;
 	}
 

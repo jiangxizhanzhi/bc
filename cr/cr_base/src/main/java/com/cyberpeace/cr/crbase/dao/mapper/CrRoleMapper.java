@@ -49,4 +49,7 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 
 	CrRole selectByRoomIdAndMissionId(@Param("roomId") String roomId,
 			@Param("missionId") String missionId);
+
+	List<CrRole> getByUserIdAndCode(@Param("userId") String userId,
+									@Param("code") Integer code);
 }

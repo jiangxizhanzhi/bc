@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingAssetAccount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
@@ -18,5 +19,5 @@ public interface CrBaseService {
 
 	TrainingStatisticsAccount getTrainingStatisticsAccount(String userId);
 
-	HashMap<String, Integer> getTrainingAssetAccount(String userId);
+	TrainingAssetAccount getTrainingAssetAccount(String userId);
 }

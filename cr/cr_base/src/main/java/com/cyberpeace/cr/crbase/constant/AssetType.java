@@ -4,6 +4,7 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;
 
 public enum AssetType implements GenericEnum {
+
 	OPERATING_SYSTEM(1,"操作系统"),
 	BUSINESS_NODES(2, "业务节点"),
 	NETWORK_NODE(3,"网络节点"),

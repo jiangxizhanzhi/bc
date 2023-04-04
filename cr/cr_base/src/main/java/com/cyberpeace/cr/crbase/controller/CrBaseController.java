@@ -1,14 +1,31 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.*;
+import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.controller.rsp.CurrentTimeRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsGraphRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainUserTreeRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrBaseService;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingAssetAccount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAccount;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -19,25 +36,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.PageReqBase;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.MissionCategoryRsp;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-import com.cyberpeace.cr.crbase.service.CrBaseService;
-import com.cyberpeace.cr.crbase.service.CrConstantsService;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Api(tags = "靶场公用接口")
 @RestController
@@ -132,7 +133,7 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-训练资产")
 	@GetMapping("/train_stats/asset")
-	public BaseRsp<HashMap<String, Integer>> getTrainStatsAsset() {
+	public BaseRsp<TrainingAssetAccount> getTrainStatsAsset() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(crBaseService.getTrainingAssetAccount(userId));
 	}

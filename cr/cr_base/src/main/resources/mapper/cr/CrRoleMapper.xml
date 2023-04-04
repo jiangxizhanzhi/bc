@@ -112,6 +112,13 @@
         where room_id = #{roomId}
         and mission_scheme like #{mission_id}
     </select>
+    <select id="getByUserIdAndCode" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        <bind name="user_id" value="'%' + userId + '%'"/>
+        select *
+        from cr_role
+        where business_type = #{code}
+        and user_ids like #{user_id}
+    </select>
 
 
 </mapper>

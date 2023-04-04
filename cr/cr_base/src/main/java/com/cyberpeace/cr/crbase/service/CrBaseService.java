@@ -4,6 +4,8 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsAcc
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsPage;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatisticsRsp;
 
+import java.util.HashMap;
+
 public interface CrBaseService {
 
 	/**
@@ -16,4 +18,5 @@ public interface CrBaseService {
 
 	TrainingStatisticsAccount getTrainingStatisticsAccount(String userId);
 
+	HashMap<String, Integer> getTrainingAssetAccount(String userId);
 }

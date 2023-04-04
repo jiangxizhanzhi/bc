@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -131,8 +132,9 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-训练资产")
 	@GetMapping("/train_stats/asset")
-	public BaseRsp<TrainStatsGraphRsp> getTrainStatsAsset() {
-		return new BaseRsp<>();
+	public BaseRsp<HashMap<String, Integer>> getTrainStatsAsset() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(crBaseService.getTrainingAssetAccount(userId));
 	}
 
 	@ApiOperation("练习统计-人员参与次数")

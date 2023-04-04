@@ -1,8 +1,14 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +80,21 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			related.add(data);
 		}
 		return related;
+	}
+
+	@Override
+	public List<String> getTopoIds(String userId) {
+		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		List<String> roomIds = roomRoleContexts.stream()
+											   .filter(roomRoleContext -> roomRoleContext.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())
+													   || roomRoleContext.getRoleGroup().equals(CrRole.RbRoleGroup.BLUE.getCode()))
+											   .map(RoomRoleContext::getRoomId)
+											   .collect(Collectors.toList());
+		if (roomIds.size() ==0) {
+			return new ArrayList<>();
+		}
+		List<RbRoom> rooms = rbRoomMapper.selectBatchIds(roomIds);
+		return StreamApiUtils.map(rooms,RbRoom::getCopyedTopoId);
 	}
 
 	private Integer getState(Integer trainingStatus) {

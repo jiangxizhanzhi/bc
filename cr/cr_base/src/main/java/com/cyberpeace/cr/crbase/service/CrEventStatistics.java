@@ -2,10 +2,14 @@ package com.cyberpeace.cr.crbase.service;
 
 import static com.cyberpeace.cr.crbase.service.impl.CrBaseServiceImpl.register;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -33,6 +37,10 @@ public class CrEventStatistics {
 	}
 
 	public List<TrainingData> getRelatedTraining(String userId) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public List<String> getTopoIds(String userId) {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

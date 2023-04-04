@@ -1,8 +1,14 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +81,19 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			related.add(data);
 		}
 		return related;
+	}
+
+	@Override
+	public List<String> getTopoIds(String userId) {
+		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(userId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		List<String> roomIds = roomRoleContexts.stream()
+											   .filter(roomRoleContext -> roomRoleContext.getRoleGroup().equals(CrRole.TeamRoleGroup.STUDENT.getCode()))
+											   .map(RoomRoleContext::getRoomId)
+											   .collect(Collectors.toList());
+		if (roomIds.size() ==0) {
+			return new ArrayList<>();
+		}
+		List<TeamRoom> rooms = teamRoomMapper.selectBatchIds(roomIds);
+		return StreamApiUtils.map(rooms,TeamRoom::getCopyedTopoId);
 	}
 }

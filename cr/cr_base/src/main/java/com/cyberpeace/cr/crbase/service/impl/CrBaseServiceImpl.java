@@ -1,15 +1,16 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.AssetType;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -28,6 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
+
+	@Autowired
+	RemoteTopoService remoteTopoService;
 
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
@@ -118,6 +122,33 @@ public class CrBaseServiceImpl implements CrBaseService {
 		trainingStatisticsAccount.setIncomplete(incompleteList);
 		trainingStatisticsAccount.setCount(sum);
 		return trainingStatisticsAccount;
+	}
+
+	@Override
+	public HashMap<String, Integer> getTrainingAssetAccount(String userId) {
+		HashMap<String, Integer> trainAssetAccount = new HashMap<>();
+		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
+		List<String> topoIds = new ArrayList<>();
+		for (LocalScene.BusinessCode businessCode: codeList) {
+			CrEventStatistics crEventStatistics = register.get(businessCode);
+			topoIds.addAll(crEventStatistics.getTopoIds(userId));
+		}
+		for (String topoId: topoIds) {
+			JSONObject elements = remoteTopoService.getTopoById(topoId).getJSONObject("scene_config").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+			System.out.println(123);
+			elements.values().forEach(element -> {
+				JSONObject elementJson = (JSONObject)JSONObject.toJSON(element);
+				Integer category = elementJson.getInteger("category");
+				String type = EnumUtils.getEnumDescByCode(category, AssetType.class);
+				Integer count = trainAssetAccount.get(type);
+				if (count == null){
+					trainAssetAccount.put(type, 1);
+				}else {
+					trainAssetAccount.put(type, ++count);
+				}
+			});
+		}
+		return trainAssetAccount;
 	}
 
 }

@@ -204,7 +204,7 @@ public class RbSceneController {
 	}
 
 	@ApiOperation("下载流量文件")
-	@PostMapping("/flow/download")
+	@GetMapping("/flow/download")
 	public BaseRsp<DownloadFlowFilePathRsp> downloadFlow(
 			@ApiParam(name = "flow_id", value = "流量id", required = true)
 			@RequestParam("flow_id") String flowId

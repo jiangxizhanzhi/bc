@@ -219,11 +219,11 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Page page) {
+	public ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Integer type, Page page) {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
 
 		// 按照条件过滤并分页
-		return filterFlowList(elementFlowList, null, page);
+		return filterFlowList(elementFlowList, type, page);
 	}
 
 	@Override

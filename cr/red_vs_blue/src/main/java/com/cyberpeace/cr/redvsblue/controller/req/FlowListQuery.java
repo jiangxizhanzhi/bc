@@ -14,4 +14,7 @@ public class FlowListQuery extends PageReqBase implements Serializable{
     @ApiModelProperty("场景节点id")
     private String nodeId;
 
+    @ApiModelProperty("交互类型, 背景流量=0;攻击流量=1")
+    private Integer interactiveType;
+
 }

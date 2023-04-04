@@ -157,6 +157,7 @@ public class RbSceneController {
 				localScene != null ? localScene.getMpSceneId() : null,
 				rbRoom.getCopyedTopoId(),
 				flowListQuery.getNodeId(),
+				flowListQuery.getInteractiveType(),
 				flowListQuery.toPageParam()
 		));
 	}

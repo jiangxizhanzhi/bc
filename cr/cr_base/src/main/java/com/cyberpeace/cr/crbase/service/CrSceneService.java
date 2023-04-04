@@ -54,7 +54,7 @@ public interface CrSceneService {
 	 * @param page
 	 * @return 节点流量列表
 	 */
-	ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Page page);
+	ListRsp<ElementFlow> getCrFlowList(String mpSceneId, String topoId, String nodeId, Integer type, Page page);
 
 	/** 更新流量参数
 	 * @param flowOpsContext 流量操作上下文

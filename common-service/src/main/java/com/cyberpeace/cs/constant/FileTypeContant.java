@@ -40,4 +40,7 @@ public interface FileTypeContant {
 
 	/** 后台图形上传 */
 	String DRAWING = "JPEG,PNG,JPG,SVG";
+
+	/** 文本允许上传类型*/
+	String TEXT_TYPE = "TXT";
 }

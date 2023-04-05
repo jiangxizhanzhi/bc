@@ -2871,6 +2871,7 @@
       "74625bf1-6728-448f-8ecb-dbfbca1253fc": {
         "area_id": "74625bf1-6728-448f-8ecb-dbfbca1253fc",
         "name": "DMZ区",
+        "role": "red",
         "scope": [
           {
             "x": -138.0,
@@ -2894,6 +2895,7 @@
       "082eef40-fa95-4c7c-b928-b69de50fe9b2": {
         "area_id": "082eef40-fa95-4c7c-b928-b69de50fe9b2",
         "name": "金融交易子网(核心子网)",
+        "role": "red",
         "scope": [
           {
             "x": 680.0,
@@ -2917,6 +2919,7 @@
       "330eaf9d-625f-4d54-8410-69b05085883b": {
         "area_id": "330eaf9d-625f-4d54-8410-69b05085883b",
         "name": null,
+        "role": "red",
         "scope": [
           {
             "x": 1300.0,
@@ -2940,6 +2943,7 @@
       "4e7f3ecb-02cb-4d02-b891-de8e1ed80812": {
         "area_id": "4e7f3ecb-02cb-4d02-b891-de8e1ed80812",
         "name": "内网办公区",
+        "role": "red",
         "scope": [
           {
             "x": -96.0,
@@ -2963,6 +2967,7 @@
       "8c17fffa-5cc4-427f-a1fd-52027223fc56": {
         "area_id": "8c17fffa-5cc4-427f-a1fd-52027223fc56",
         "name": "内部数据子网",
+        "role": "blue",
         "scope": [
           {
             "x": 882.0,
@@ -2986,6 +2991,7 @@
       "2d15ffdb-d073-441d-b7ff-1c288e134c89": {
         "area_id": "2d15ffdb-d073-441d-b7ff-1c288e134c89",
         "name": "交易所分封网络",
+        "role": "blue",
         "scope": [
           {
             "x": 1800.0,
@@ -3009,6 +3015,7 @@
       "f64dca39-75b0-476b-a38a-196551b50c72": {
         "area_id": "f64dca39-75b0-476b-a38a-196551b50c72",
         "name": "金融交易子网",
+        "role": "blue",
         "scope": [
           {
             "x": 560.0,
@@ -3032,6 +3039,7 @@
       "71670358-f6fc-4fba-996b-e56d2417dfcf": {
         "area_id": "71670358-f6fc-4fba-996b-e56d2417dfcf",
         "name": "金融交易子网",
+        "role": "blue",
         "scope": [
           {
             "x": 1920.0,
@@ -3055,6 +3063,7 @@
       "fb5560a1-28c0-4393-b40c-f38a7aa49a56": {
         "area_id": "fb5560a1-28c0-4393-b40c-f38a7aa49a56",
         "name": "DMZ区",
+        "role": "blue",
         "scope": [
           {
             "x": 102.0,

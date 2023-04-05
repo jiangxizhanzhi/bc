@@ -147,8 +147,12 @@ public class DashboardController {
 			pushDashboardChange(@RequestBody @Validated DashboardChangeReq dashboardChangeReq) {
 		WsMessage<JSONObject> wsMessage = new WsMessage<>(dashboardChangeReq.getCode(),
 				dashboardChangeReq.getData());
-		situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
-				dashboardChangeReq.getFeatureId());
+		if (dashboardChangeReq.getFeatureId() == null){
+			situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId());
+		} else {
+			situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
+					dashboardChangeReq.getFeatureId());
+		}
 		return new BaseRsp<>(true);
 	}
 

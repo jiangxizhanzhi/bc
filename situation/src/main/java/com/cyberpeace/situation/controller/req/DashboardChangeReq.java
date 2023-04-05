@@ -19,7 +19,6 @@ public class DashboardChangeReq implements Serializable {
 	private String dashboardId;
 
 	@ApiModelProperty("特征ID")
-	@NotEmpty
 	private String featureId;
 
 	@ApiModelProperty("消息编码")

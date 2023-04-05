@@ -15,6 +15,9 @@ public class AreaContext implements Serializable {
 	@ApiModelProperty("区域名称")
 	private String name;
 
+	@ApiModelProperty("角色")
+	private String role;
+
 	@ApiModelProperty("区域范围")
 	private List<PositionContext> scope;
 

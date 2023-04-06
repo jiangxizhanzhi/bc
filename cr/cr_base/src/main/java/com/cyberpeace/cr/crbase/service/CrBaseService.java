@@ -1,5 +1,8 @@
 package com.cyberpeace.cr.crbase.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 
 public interface CrBaseService {
@@ -19,4 +22,6 @@ public interface CrBaseService {
 	TrainingPeopleStatistics getTrainingPeopleStatistics(String userId);
 
 	TrainingStatsScore getTrainingScore(String userId);
+
+	ListRsp<TrainStatsOverviewRsp> getTrainingOverview(String userId, Page page);
 }

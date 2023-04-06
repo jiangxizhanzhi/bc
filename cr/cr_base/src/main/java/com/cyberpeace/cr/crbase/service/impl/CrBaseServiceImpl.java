@@ -9,6 +9,7 @@ import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.AssetType;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
@@ -164,6 +165,18 @@ public class CrBaseServiceImpl implements CrBaseService {
 		trainingStatsScore.setScore(trainingStatsScore.getSingleScore() + trainingStatsScore.getBlueScore()
 				+ trainingStatsScore.getRedScore() + trainingStatsScore.getRbScore());
 		return trainingStatsScore;
+	}
+
+	@Override
+	public ListRsp<TrainStatsOverviewRsp> getTrainingOverview(String userId, Page page) {
+		List<TrainStatsOverviewRsp> trainStatsOverviewRspList = new ArrayList<>();
+		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.SINGLE_TRAINING, LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
+		for (LocalScene.BusinessCode businessCode: codeList) {
+			CrEventStatistics crEventStatistics = register.get(businessCode);
+			trainStatsOverviewRspList.addAll(crEventStatistics.getTrainingOverview(userId));
+		}
+		ListRsp<TrainStatsOverviewRsp> trainStatsOverviewRspListRsp = PageUtil.getListResult(trainStatsOverviewRspList, page, trainStatsOverviewRspList.size());
+		return trainStatsOverviewRspListRsp;
 	}
 
 }

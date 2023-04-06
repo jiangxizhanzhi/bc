@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
@@ -46,6 +47,10 @@ public class CrEventStatistics {
 	}
 
 	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public List<TrainStatsOverviewRsp> getTrainingOverview(String userId) {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

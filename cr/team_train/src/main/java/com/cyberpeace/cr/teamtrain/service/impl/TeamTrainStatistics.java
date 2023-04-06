@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -137,5 +138,50 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		}
 		trainingStatsScore.setBlueScore(blueScore);
 		trainingStatsScore.setRedScore(redScore);
+	}
+
+	@Override
+	public List<TrainStatsOverviewRsp> getTrainingOverview(String userId) {
+		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(
+				userId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (roomRoleContexts.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		List<String> roomIds = StreamApiUtils.map(roomRoleContexts, RoomRoleContext::getRoomId);
+		List<TrainStatsOverviewRsp> related = Lists.newArrayList();
+		// 查询全部
+		List<TeamRoom> rooms = teamRoomMapper.selectBatchIds(roomIds);
+		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
+		for (TeamRoom room : rooms) {
+			TrainStatsOverviewRsp data = BeanUtils.copy(room, TrainStatsOverviewRsp.class);
+			data.setRoomId(room.getResourceId());
+			data.setBusinessType(room.getTrainCategory());
+			if (room.getTrainCategory() == 1) {
+				data.setBusinessTypeName(LocalScene.BusinessCode.RED_TRAINING.getDesc());
+			} else {
+				data.setBusinessTypeName(LocalScene.BusinessCode.BLUE_TRAINING.getDesc());
+			}
+			// 计算持续时长
+			Integer durationTime = (int) ((room.getEndTime().getTime()
+					- room.getStartTime().getTime()) / (60 * 60 * 1000));
+			data.setDurationTime(durationTime);
+			data.setStatus(room.getTrainingStatus());
+			Integer score = 0;
+			List<CrTask> crTaskList = crTaskMapper.selectByRoomIdAndUserId(room.getResourceId(), userId);
+			for (CrTask crTask: crTaskList) {
+				score += crTask.getScore() == null ? 0 : crTask.getScore();
+			}
+			data.setScore(score);
+
+			Integer peopleCount = 0;
+			List<CrRole> crRoles = StreamApiUtils.filter(crRoleList, crRole -> crRole.getRoomId().equals(room.getResourceId()));
+			for (CrRole crRole : crRoles) {
+				peopleCount += crRole.getUserIdList().size();
+			}
+			data.setUserCount(peopleCount);
+
+			related.add(data);
+		}
+		return related;
 	}
 }

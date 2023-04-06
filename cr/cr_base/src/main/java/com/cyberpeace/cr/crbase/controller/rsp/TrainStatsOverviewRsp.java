@@ -11,20 +11,20 @@ public class TrainStatsOverviewRsp implements Serializable {
     @ApiModelProperty("训练实例id")
     private String roomId;
 
-    @ApiModelProperty("训练模板id")
-    private String businessTemplateId;
-
     @ApiModelProperty("训练名称")
     private String name;
 
     @ApiModelProperty("训练业务类型")
-    private String businessType;
+    private Integer businessType;
+
+    @ApiModelProperty("训练业务类型名称")
+    private String businessTypeName;
 
     @ApiModelProperty("状态")
     private Integer status;
 
     @ApiModelProperty("时长")
-    private Integer duration;
+    private Integer durationTime;
 
     @ApiModelProperty("开始事件")
     private Date startTime;
@@ -34,8 +34,5 @@ public class TrainStatsOverviewRsp implements Serializable {
 
     @ApiModelProperty("得分")
     private Integer score;
-
-    @ApiModelProperty("场景实例id")
-    private String sceneId;
 
 }

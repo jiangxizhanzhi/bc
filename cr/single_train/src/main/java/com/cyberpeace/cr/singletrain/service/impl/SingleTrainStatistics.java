@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
@@ -100,6 +101,49 @@ public class SingleTrainStatistics extends CrEventStatistics {
 			}
 		}
 		trainingStatsScore.setSingleScore(sum);
+	}
+
+	@Override
+	public List<TrainStatsOverviewRsp> getTrainingOverview(String userId) {
+		List<TrainStatsOverviewRsp> dataList = Lists.newArrayList();
+		List<SingleRoom> rooms = singleRoomMapper.selectAllByUserId(userId,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+
+		for (SingleRoom room : rooms) {
+			if (room.getEndTime() != null) {
+				continue;
+			}
+			BusinessTemplate businessTemplate = businessTemplateMapper
+					.selectById(room.getBusinessTemplateId());
+			TrainStatsOverviewRsp data = BeanUtils.copy(businessTemplate, TrainStatsOverviewRsp.class);
+			data.setRoomId(room.getBusinessTemplateId());
+			data.setBusinessType(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
+			data.setBusinessTypeName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());
+			//StartTime存在说明已开始，不存在是未开始（不会查到）；EndTime存在说明已完成；
+			data.setStatus(room.getStartTime()==null ? 0 : 1);
+			data.setStatus(room.getEndTime()==null ? data.getStatus() : 2);
+
+			data.setStartTime(room.getStartTime()==null ? room.getCreateTime() : room.getStartTime());
+
+			SingleTemplate singleTemplate = singleTemplateMapper
+					.getByBusinessId(businessTemplate.getResourceId());
+			data.setDurationTime(singleTemplate.getDurationTime());
+			data.setUserCount(null);
+			LambdaQueryWrapper<TrainRecord> trainRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			trainRecordLambdaQueryWrapper.eq(TrainRecord::getBusinessTemplateId, room.getBusinessTemplateId());
+			trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);
+			List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
+			Integer score = 0;
+			for (TrainRecord trainRecord: trainRecordList) {
+				JSONObject trainExtraData = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
+				if (trainExtraData != null && trainExtraData.getInteger("score") != null) {
+					score = trainExtraData.getInteger("score") > score ? trainExtraData.getInteger("score") : score;
+				}
+			}
+			data.setScore(score);
+			dataList.add(data);
+		}
+		return dataList;
 	}
 
 }

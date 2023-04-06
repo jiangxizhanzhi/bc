@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -115,6 +117,47 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			sum += score;
 		}
 		trainingStatsScore.setRbScore(sum);
+	}
+
+	@Override
+	public List<TrainStatsOverviewRsp> getTrainingOverview(String userId) {
+		List<RoomRoleContext> roomRoleContexts = crRoleMapper.getRoomIdsAndRoleGroupByUserIdAndType(
+				userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		if (roomRoleContexts.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		List<String> roomIds = StreamApiUtils.map(roomRoleContexts, RoomRoleContext::getRoomId);
+		List<TrainStatsOverviewRsp> related = Lists.newArrayList();
+		// 获取未结束的
+		List<RbRoom> rooms = rbRoomMapper.selectBatchIds(roomIds);
+		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
+		for (RbRoom room : rooms) {
+
+			TrainStatsOverviewRsp data = BeanUtils.copy(room, TrainStatsOverviewRsp.class);
+			data.setRoomId(room.getResourceId());
+			data.setBusinessType(LocalScene.BusinessCode.RED_VS_BLUE.getCode());
+			data.setBusinessTypeName(LocalScene.BusinessCode.RED_VS_BLUE.getDesc());
+			// 计算持续时长
+			Integer durationTime = (int) ((room.getEndTime().getTime()
+					- room.getStartTime().getTime()) / (60 * 60 * 1000));
+			data.setDurationTime(durationTime);
+			data.setStatus(getState(room.getTrainingStatus()));
+			List<CrRole> crRoles = StreamApiUtils.filter(crRoleList, crRole -> crRole.getRoomId().equals(room.getResourceId()));
+			Integer peopleCount = 0;
+			for (CrRole crRole : crRoles) {
+				peopleCount += crRole.getUserIdList().size();
+			}
+			data.setUserCount(peopleCount);
+
+			Integer score = 0;
+			List<CrTask> crTaskList = crTaskMapper.selectByRoomIdAndUserId(room.getResourceId(), userId);
+			for (CrTask crTask: crTaskList) {
+				score += crTask.getScore() == null ? 0 : crTask.getScore();
+			}
+			data.setScore(score);
+			related.add(data);
+		}
+		return related;
 	}
 
 	private Integer getState(Integer trainingStatus) {

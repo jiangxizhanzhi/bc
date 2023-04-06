@@ -151,7 +151,8 @@ public class CrBaseController {
 	@ApiOperation("练习统计-练习概览")
 	@GetMapping("/train_stats/overview")
 	public BaseRsp<ListRsp<TrainStatsOverviewRsp>> getTrainStatsOverview(PageReqBase pageReqBase) {
-		return new BaseRsp<>();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(crBaseService.getTrainingOverview(userId, pageReqBase.toPageParam()));
 	}
 
 }

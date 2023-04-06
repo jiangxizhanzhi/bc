@@ -19,6 +19,12 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, -3, '红队训练', 
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, -3, '蓝队训练', 'Blue Team');
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, -3, '红蓝对抗', 'Cyber Wargame');
 
+-- 实装设备申请/占用状态
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 1, -4, '申请中', 'Applying');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 2, -4, '已同意', 'Have agreed');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, -4, '已拒绝', 'Rejected');
+INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, -4, '已回收', 'Recycled');
+
 -- 角色资产归属记录表
 CREATE TABLE `cr_role_node` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -87,3 +93,25 @@ CREATE TABLE `cr_mission_event_device` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `mission_id` (`mission_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+
+-- 实装设备申请分配
+CREATE TABLE `cr_room_device_apply` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `resource_id` varchar(64) NOT NULL COMMENT 'uuid',
+  `room_id` varchar(64) NOT NULL COMMENT '训练实例id',
+  `room_name` varchar(255) NOT NULL COMMENT '训练实例名称',
+  `device_id` varchar(64) NOT NULL COMMENT '场景节点id',
+  `status` int(11) NOT NULL COMMENT '申请状态',
+  `apply_user_id` varchar(64) NOT NULL COMMENT '申请用户id',
+  `apply_role_id` varchar(64) NOT NULL COMMENT '申请用户角色id',
+  `apply_time` datetime DEFAULT NULL COMMENT '申请时间',
+  `allow_user_id` varchar(64) DEFAULT NULL COMMENT '申请通过操作用户id',
+  `allow_time` datetime DEFAULT NULL COMMENT '申请通过时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `resource_id` (`resource_id`) USING BTREE,
+  KEY `room_id` (`room_id`) USING BTREE,
+  KEY `device_id` (`device_id`) USING BTREE,
+  KEY `apply_role_id` (`apply_role_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC

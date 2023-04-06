@@ -426,6 +426,21 @@ public interface CrBusinessErrorCode {
 	/** 任务不可关闭 */
 	String CANNOT_END_FINISHED_TASK = "101128";
 
+	/** 设备已被占用 */
 	String DEVICE_OCCUPIED = "101129";
+
+	String RECEIVE_TASK = "101130";
+
+	String SUBMIT_TASK = "101131";
+
+	String FINISH_TASK = "101132";
+
+	String ACCESS_TERMINAL = "101133";
+
+	String CLOSE_TASK = "101134";
+
+	String RELEASE_TASK = "101135";
+
+	String RELEASE_NOTICE = "101136";
 
 }

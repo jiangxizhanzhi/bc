@@ -7,6 +7,8 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.Date;
+
 @Data
 @TableName("cr_train_action")
 public class CrTrainAction extends BaseTable {
@@ -24,12 +26,17 @@ public class CrTrainAction extends BaseTable {
     private Integer type;
 
     /**
+     * 训练用户id
+     */
+    private String userId;
+
+    /**
      * 训练角色id
      */
     private String roleId;
 
     /**
-     * 训练角色类型
+     * 训练角色类型（区分红蓝队伍）
      */
     private Integer roleType;
 
@@ -42,6 +49,16 @@ public class CrTrainAction extends BaseTable {
      * 模块
      */
     private Integer module;
+
+    /**
+     * 模块事件类型
+     */
+    private Integer moduleEvent;
+
+    /**
+     * 动态时间
+     */
+    private Date actionTime;
 
     public enum Type {
         NORMAL(1, "普通"), FINISH(2, "完成");
@@ -68,6 +85,40 @@ public class CrTrainAction extends BaseTable {
         private final String desc;
 
         Module(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
+    public enum TeamEvent {
+        RECEIVE_TASK(1, "查看任务"),
+        SUBMIT_TASK(2, "队伍动态"),
+        SUCCESS_TASK(3, "完成任务"),
+        ACCESS_TERMINAL(4, "接入靶标");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        TeamEvent(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+    }
+
+    public enum PlatformEvent {
+        CLOSE_TASK(1, "关闭任务"),
+        RELEASE_TASK(2, "下发任务"),
+        RELEASE_NOTICE(3, "发布公告");
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        PlatformEvent(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
         }

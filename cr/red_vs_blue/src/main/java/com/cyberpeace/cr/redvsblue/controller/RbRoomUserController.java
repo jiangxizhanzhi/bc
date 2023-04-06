@@ -6,7 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cr.crbase.service.CrTrainActionService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -69,6 +74,12 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrRoomDeviceApplyService crRoomDeviceApplyService;
+
+	@Autowired
+	private MissionService missionService;
+
+	@Autowired
+	private CrTrainActionService crTrainActionService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -260,15 +271,32 @@ public class RbRoomUserController {
 	@ApiOperation("实装分配-设备审批申请")
 	@PostMapping("/device/apply")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Boolean> deviceApply(
-			@ApiParam(value = "训练实例ID", required = true) @RequestParam("room_id") String roomId,
-			@ApiParam(value = "实装设备ID", required = true) @RequestParam("device_id") String deviceId) {
-		RbRoom rbRoom = rbRoomService.getById(roomId);
+	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
+		RbRoom rbRoom = rbRoomService.getById(roomDeviceApplyReq.getRoomId());
 		if (rbRoom == null) {
 			throw new BusinessException();
 		}
 
-		return new BaseRsp<>(crRoomDeviceApplyService.apply(rbRoom.getResourceId(), rbRoom.getName(), deviceId));
+		return new BaseRsp<>(crRoomDeviceApplyService.apply(
+				rbRoom.getResourceId(),
+				rbRoom.getName(),
+				roomDeviceApplyReq.getDeviceId()));
+	}
+
+	@ApiOperation("队伍动态-任务预览")
+	@PostMapping("/mission/receive")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<Boolean> receiveMission(
+			@ApiParam(value = "下发任务ID", required = true) @RequestParam("task_id") String taskId) {
+		CrTask crTask = crTaskService.getById(taskId);
+		Mission mission = missionService.getById(crTask.getMissionId());
+
+		return new BaseRsp<>(
+				crTrainActionService.saveTeamAction(
+						crTask.getRoomId(),
+						String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.RECEIVE_TASK), mission.getTitle()),
+						CrTrainAction.TeamEvent.RECEIVE_TASK.getCode()
+				));
 	}
 
 }

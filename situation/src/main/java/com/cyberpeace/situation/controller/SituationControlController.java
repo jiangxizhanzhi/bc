@@ -254,9 +254,10 @@ public class SituationControlController {
 
 	@ApiOperation("情况回放")
 	@PostMapping("/playback")
-	public void playback(@RequestBody @Validated PlaybackReq playbackReq) {
+	public BaseRsp<Boolean> playback(@RequestBody @Validated PlaybackReq playbackReq) {
 		//回放当前场景动效
 		dynamicSchemeService.playbackPushDynamicSchemeToRoom(playbackReq.getSceneId(), TimeUtil.toDate1(playbackReq.getStartTime()), TimeUtil.toDate1(playbackReq.getEndTime()));
+		return new BaseRsp<>(true);
 	}
 
 	@ApiOperation("获取实景最大步骤")

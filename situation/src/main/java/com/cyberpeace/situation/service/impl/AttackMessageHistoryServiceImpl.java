@@ -249,7 +249,7 @@ public class AttackMessageHistoryServiceImpl extends ServiceImpl<AttackMessageHi
 		List<AttackMessageHistory> attackMessageHistoryList = attackMessageHistoryMapper.getAttackHistoryByTime(sceneId, startTime, endTime);
 		return StreamApiUtils.map(attackMessageHistoryList, attackMessageHistory ->
 				new AttackMessageHistoryRes(TimeUtil.format1(attackMessageHistory.getCreateTime()),
-						attackMessageHistory.getDescription(), attackMessageHistory.getAttackOrDefense())
+						attackMessageHistory.getDescription(), attackMessageHistory.getAttackOrDefense() == null ? "attack" : attackMessageHistory.getAttackOrDefense())
 		);
 	}
 

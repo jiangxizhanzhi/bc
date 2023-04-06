@@ -106,6 +106,8 @@ public class ExternalJumpController {
 			setResponse(response, "/hy/?topo_id=" + businessTemplate.getTopoId() + "&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo0ODI0NTI1NzU4LCJrZXkiOiJiNWIyOGE5OWU0NzI0OTQzYWY1NGM0N2VkZGE4YzE5YiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.5U26euvxf0ACAUJSVKZGOQoBeappSgAL0SayOl5Nbks", isSameSite);
 		}else if (type.equals(1)) {
 			setResponse(response, "/dx/?topo_id=" + businessTemplate.getTopoId() + "&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo0ODI0NTI1NzU4LCJrZXkiOiJiNWIyOGE5OWU0NzI0OTQzYWY1NGM0N2VkZGE4YzE5YiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.5U26euvxf0ACAUJSVKZGOQoBeappSgAL0SayOl5Nbks", isSameSite);
+		} else if (type.equals(2)) {
+			setResponse(response, "/dt/?topo_id=" + businessTemplate.getTopoId() + "&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNmNjU1ZDg3MTEyZjRhZTA5NGJiYWY3MDgzMGUyMGFhIiwiZXhwIjo0ODI0NTI1NzU4LCJrZXkiOiJiNWIyOGE5OWU0NzI0OTQzYWY1NGM0N2VkZGE4YzE5YiIsInVzZXJuYW1lIjoiYWRtaW4ifQ.5U26euvxf0ACAUJSVKZGOQoBeappSgAL0SayOl5Nbks", isSameSite);
 		}
 	}
 

@@ -3,13 +3,12 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
+import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -30,6 +29,9 @@ public class RbTrainingStatistics extends CrEventStatistics {
 
 	@Autowired
 	RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	CrTaskMapper crTaskMapper;
 
 	@Override
 	public LocalScene.BusinessCode getCode() {
@@ -102,6 +104,17 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			count += crRole.getUserIdList().size();
 		}
 		trainingPeopleStatistics.setRvbCount(count);
+	}
+
+	@Override
+	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		Integer sum = 0;
+		for (CrTask crTask: crTaskList) {
+			Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
+			sum += score;
+		}
+		trainingStatsScore.setRbScore(sum);
 	}
 
 	private Integer getState(Integer trainingStatus) {

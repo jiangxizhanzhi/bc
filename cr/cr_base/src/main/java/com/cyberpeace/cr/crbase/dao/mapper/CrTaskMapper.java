@@ -1,17 +1,16 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
-import java.util.List;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
+import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.service.context.mission.CompletionStatus;
-import com.cyberpeace.cr.crbase.service.context.mission.CrTaskScore;
+import java.util.List;
+import java.util.Set;
 
 @Mapper
 @Repository
@@ -88,4 +87,6 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 	List<TrainingPersonalStatistics> selectPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, List<String> user_ids);
 
 	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit);
+
+	List<CrTask> selectByUserIdAndBusinessType(String userId, Integer businessType);
 }

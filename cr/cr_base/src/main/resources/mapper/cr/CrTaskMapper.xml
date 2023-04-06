@@ -265,5 +265,17 @@
             limit #{limit}
         </if>
     </select>
+    <select id="selectByUserIdAndBusinessType" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTask">
+        select *
+        from cr_task
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and business_type = #{businessType}
+            </if>
+        </where>
+    </select>
 
 </mapper>

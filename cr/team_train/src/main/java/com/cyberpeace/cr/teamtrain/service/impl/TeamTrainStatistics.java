@@ -1,15 +1,15 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
+import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -31,6 +31,9 @@ public class TeamTrainStatistics extends CrEventStatistics {
 
 	@Autowired
 	CrRoleMapper crRoleMapper;
+
+	@Autowired
+	CrTaskMapper crTaskMapper;
 
 	@Override
 	public LocalScene.BusinessCode getCode() {
@@ -111,5 +114,28 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		} else {
 			trainingPeopleStatistics.setRedCount(count);
 		}
+	}
+
+	@Override
+	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		List<String> roomIds = StreamApiUtils.map(crTaskList, CrTask::getRoomId);
+		if (roomIds.size() == 0) {
+			return;
+		}
+		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
+		Map<String, Integer> teamRoomHashMap = StreamApiUtils.toMap(teamRoomList, TeamRoom::getResourceId, TeamRoom::getTrainingStatus);
+		Integer redScore = 0;
+		Integer blueScore = 0;
+		for (CrTask crTask: crTaskList) {
+			Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
+			if (teamRoomHashMap.get(crTask.getRoomId()).equals(TeamRoom.TrainCategory.RED.getCode())) {
+				redScore += score;
+			} else {
+				blueScore += score;
+			}
+		}
+		trainingStatsScore.setBlueScore(blueScore);
+		trainingStatsScore.setRedScore(redScore);
 	}
 }

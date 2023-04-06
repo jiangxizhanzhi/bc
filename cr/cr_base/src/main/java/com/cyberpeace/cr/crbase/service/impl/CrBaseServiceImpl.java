@@ -153,6 +153,19 @@ public class CrBaseServiceImpl implements CrBaseService {
 		return trainingPeopleStatistics;
 	}
 
+	@Override
+	public TrainingStatsScore getTrainingScore(String userId) {
+		TrainingStatsScore trainingStatsScore = new TrainingStatsScore();
+		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.SINGLE_TRAINING, LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
+		for (LocalScene.BusinessCode businessCode: codeList) {
+			CrEventStatistics crEventStatistics = register.get(businessCode);
+			crEventStatistics.getTrainingScore(userId, trainingStatsScore);
+		}
+		trainingStatsScore.setScore(trainingStatsScore.getSingleScore() + trainingStatsScore.getBlueScore()
+				+ trainingStatsScore.getRedScore() + trainingStatsScore.getRbScore());
+		return trainingStatsScore;
+	}
+
 }
 
 class TrainingComparator implements Comparator<TrainingData> {

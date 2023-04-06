@@ -17,4 +17,6 @@ public interface CrBaseService {
 	TrainingAssetAccount getTrainingAssetAccount(String userId);
 
 	TrainingPeopleStatistics getTrainingPeopleStatistics(String userId);
+
+	TrainingStatsScore getTrainingScore(String userId);
 }

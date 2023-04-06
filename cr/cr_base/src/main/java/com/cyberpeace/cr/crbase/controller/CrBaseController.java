@@ -7,7 +7,6 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CurrentTimeRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsGraphRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainUserTreeRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
@@ -144,8 +143,9 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-战绩统计")
 	@GetMapping("/train_stats/standings")
-	public BaseRsp<TrainStatsGraphRsp> getTrainStatsStandings() {
-		return new BaseRsp<>();
+	public BaseRsp<TrainingStatsScore> getTrainStatsStandings() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(crBaseService.getTrainingScore(userId));
 	}
 
 	@ApiOperation("练习统计-练习概览")

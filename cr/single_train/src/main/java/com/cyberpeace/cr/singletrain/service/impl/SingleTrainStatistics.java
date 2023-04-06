@@ -1,25 +1,28 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
-import java.util.List;
-
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatsScore;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SingleTrainStatistics extends CrEventStatistics {
@@ -82,6 +85,21 @@ public class SingleTrainStatistics extends CrEventStatistics {
 		}
 
 		return dataList;
+	}
+
+	@Override
+	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+		LambdaQueryWrapper<TrainRecord> trainRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);
+		List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
+		Integer sum = 0;
+		for (TrainRecord trainRecord: trainRecordList) {
+			JSONObject trainExtraData = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
+			if (trainExtraData != null && trainExtraData.getInteger("score") != null) {
+				sum += trainExtraData.getInteger("score");
+			}
+		}
+		trainingStatsScore.setSingleScore(sum);
 	}
 
 }

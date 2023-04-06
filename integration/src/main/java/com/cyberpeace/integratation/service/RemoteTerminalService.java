@@ -12,4 +12,11 @@ public interface RemoteTerminalService {
 
 	JSONObject getAllCategorie();
 
+	Boolean apply(String deviceId);
+
+	Boolean refuse(String deviceId);
+
+	Boolean allot(String deviceId);
+
+	Boolean recycle(String deviceId);
 }

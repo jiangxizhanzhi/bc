@@ -1,0 +1,54 @@
+package com.cyberpeace.cr.crbase.dao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.cyberpeace.common.model.BaseTable;
+import lombok.Data;
+import lombok.Getter;
+
+import java.util.Date;
+
+@Data
+public class CrRoomDeviceApply extends BaseTable {
+
+    @TableId(type = IdType.UUID, value = "resource_id")
+    private String resourceId;
+
+    private String roomId;
+
+    private String roomName;
+
+    private String deviceId;
+
+    private Integer status;
+
+    private String applyUserId;
+
+    private String applyRoleId;
+
+    private Date applyTime;
+
+    private String allowUserId;
+
+    private Date allowTime;
+
+    public enum Status {
+        APPLYING(1, "申请中"),
+        AGREE(2, "同意"),
+        REFUSE(3, "拒绝"),
+        RECYCLED(4, "已回收");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+        Status(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+    }
+
+}

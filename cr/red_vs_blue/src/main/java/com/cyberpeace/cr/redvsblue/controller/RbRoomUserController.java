@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -250,6 +255,20 @@ public class RbRoomUserController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Boolean ret = rbDeviceService.removeByRoomIdAndUserIdAndDeviceId(roomId, userId, deviceId);
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("实装分配-设备审批申请")
+	@DeleteMapping("/device/apply")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<Boolean> deviceApply(
+			@ApiParam(value = "训练实例ID", required = true) @RequestParam("room_id") String roomId,
+			@ApiParam(value = "实装设备ID", required = true) @RequestParam("device_id") String deviceId) {
+		RbRoom rbRoom = rbRoomService.getById(roomId);
+		if (rbRoom == null) {
+			throw new BusinessException();
+		}
+
+		return new BaseRsp<>(crRoomDeviceApplyService.apply(rbRoom.getResourceId(), rbRoom.getName(), deviceId));
 	}
 
 }

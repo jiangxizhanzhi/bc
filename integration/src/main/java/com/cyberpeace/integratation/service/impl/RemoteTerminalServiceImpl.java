@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.constant.RealDeviceApplyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,18 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 
 	private String DEVICE_INFO;
 
+	private String DEVICE_REAL_APPLY;
+
+	private String DEVICE_REAL_APPLY_RECYCLE;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
 	@PostConstruct
 	public void init() {
 		DEVICE_INFO = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.info");
+		DEVICE_REAL_APPLY = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.real.apply");
+		DEVICE_REAL_APPLY_RECYCLE = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("device.real.apply.recycle");
 	}
 
 	@Override
@@ -48,5 +55,45 @@ public class RemoteTerminalServiceImpl implements RemoteTerminalService {
 		String targetUrl = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("device.categorie") + "?isAll=true";
 		return HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public Boolean apply(String deviceId) {
+		JSONObject payload = new JSONObject();
+		payload.put("operate", RealDeviceApplyType.Apply.ADD.getCode());
+		payload.put("uuid", deviceId);
+
+		Boolean result = HttpClientUtil.post(DEVICE_REAL_APPLY, payload, Boolean.class);
+		return true;
+	}
+
+	@Override
+	public Boolean refuse(String deviceId) {
+		JSONObject payload = new JSONObject();
+		payload.put("operate", RealDeviceApplyType.Apply.DELETE.getCode());
+		payload.put("uuid", deviceId);
+
+		Boolean result = HttpClientUtil.post(DEVICE_REAL_APPLY, payload, Boolean.class);
+		return true;
+	}
+
+	@Override
+	public Boolean allot(String deviceId) {
+		JSONObject payload = new JSONObject();
+		payload.put("operate", RealDeviceApplyType.Allot.ALLOT.getCode());
+		payload.put("uuid", deviceId);
+
+		Boolean result = HttpClientUtil.post(DEVICE_REAL_APPLY_RECYCLE, payload, Boolean.class);
+		return true;
+	}
+
+	@Override
+	public Boolean recycle(String deviceId) {
+		JSONObject payload = new JSONObject();
+		payload.put("operate", RealDeviceApplyType.Allot.RECYCLE.getCode());
+		payload.put("uuid", deviceId);
+
+		Boolean result = HttpClientUtil.post(DEVICE_REAL_APPLY_RECYCLE, payload, Boolean.class);
+		return true;
 	}
 }

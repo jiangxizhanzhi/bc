@@ -426,4 +426,6 @@ public interface CrBusinessErrorCode {
 	/** 任务不可关闭 */
 	String CANNOT_END_FINISHED_TASK = "101128";
 
+	String DEVICE_OCCUPIED = "101129";
+
 }

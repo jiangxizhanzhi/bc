@@ -24,4 +24,7 @@ public class RoomDeviceOccupyRsp implements Serializable {
 
     @ApiModelProperty("审批时间")
     private Date allowTime;
+
+    @ApiModelProperty("训练实例id")
+    private String roomId;
 }

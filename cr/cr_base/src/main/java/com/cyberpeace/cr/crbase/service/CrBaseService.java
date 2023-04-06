@@ -5,6 +5,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 
+import java.util.HashMap;
+
 public interface CrBaseService {
 
 	/**
@@ -24,4 +26,6 @@ public interface CrBaseService {
 	TrainingStatsScore getTrainingScore(String userId);
 
 	ListRsp<TrainStatsOverviewRsp> getTrainingOverview(String userId, Page page);
+
+	HashMap<String, Integer> getScoreByAttackType(Integer businessType, String roomId);
 }

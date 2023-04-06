@@ -30,9 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -153,6 +155,13 @@ public class CrBaseController {
 	public BaseRsp<ListRsp<TrainStatsOverviewRsp>> getTrainStatsOverview(PageReqBase pageReqBase) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(crBaseService.getTrainingOverview(userId, pageReqBase.toPageParam()));
+	}
+
+	@ApiOperation("练习统计-攻击方式评分")
+	@GetMapping("/train_stats/attack_type_score")
+	public BaseRsp<HashMap<String, Integer>> getScoreByAttackType(@ApiParam("场景id") @RequestParam("room_id") String roomId,
+																  @ApiParam("训练类型") @RequestParam("business_type") Integer businessType) {
+		return new BaseRsp<>(crBaseService.getScoreByAttackType(businessType, roomId));
 	}
 
 }

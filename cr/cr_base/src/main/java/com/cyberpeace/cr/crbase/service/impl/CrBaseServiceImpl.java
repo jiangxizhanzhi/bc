@@ -1,16 +1,25 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.ListUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.constant.SelectI18nName;
 import com.cyberpeace.cr.crbase.constant.AssetType;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
@@ -18,13 +27,27 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
+
+	@Autowired
+	private MissionMapper missionMapper;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private TrainRecordMapper trainRecordMapper;
 
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
@@ -177,6 +200,68 @@ public class CrBaseServiceImpl implements CrBaseService {
 		}
 		ListRsp<TrainStatsOverviewRsp> trainStatsOverviewRspListRsp = PageUtil.getListResult(trainStatsOverviewRspList, page, trainStatsOverviewRspList.size());
 		return trainStatsOverviewRspListRsp;
+	}
+
+	@Override
+	public HashMap<String, Integer> getScoreByAttackType(Integer businessType, String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		HashMap<String, Integer> map = new HashMap<>();
+		List<String> missionIdList = new ArrayList<>();
+		if (businessType.equals(LocalScene.BusinessCode.SINGLE_TRAINING.getCode())) {
+			LambdaQueryWrapper<TrainRecord> trainRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			trainRecordLambdaQueryWrapper.eq(TrainRecord::getBusinessTemplateId, roomId);
+			trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);
+			List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
+			if (trainRecordList.size() == 0) {
+				return map;
+			}
+			Integer score = 0;
+			JSONObject maxTrainExtraData = null;
+			for (TrainRecord trainRecord: trainRecordList) {
+				JSONObject trainExtraData = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
+				if (trainExtraData != null && trainExtraData.getInteger("score") != null && trainExtraData.getInteger("score") > score) {
+					score = trainExtraData.getInteger("score");
+					maxTrainExtraData = trainExtraData;
+				}
+			}
+			missionIdList = new ArrayList<>(maxTrainExtraData.getJSONObject("missions_record").keySet());
+			List<Mission> missionList = missionMapper.selectBatchIds(missionIdList);
+			Map<String, String> missionCategoryMap = StreamApiUtils.toMap(missionList, Mission::getResourceId, Mission::getCategoryId);
+			List<CrConstantsConfig> constants = crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+			Map<String, String> categoryMap = StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId, SelectI18nName::selectI18nName);
+			for (Mission mission: missionList) {
+				String type = categoryMap.get(missionCategoryMap.get(mission.getResourceId()));
+				if (map.containsKey(type)) {
+					map.put(type, map.get(type) + mission.getScore());
+				} else {
+					map.put(type, score);
+				}
+			}
+		}else {
+			LambdaQueryWrapper<CrTask> crTaskLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			crTaskLambdaQueryWrapper.eq(CrTask::getUserId, userId);
+			crTaskLambdaQueryWrapper.eq(CrTask::getRoomId, roomId);
+			List<CrTask> crTaskList = crTaskMapper.selectList(crTaskLambdaQueryWrapper);
+			if (crTaskList.size() == 0) {
+				return map;
+			}
+			missionIdList = StreamApiUtils.map(crTaskList, CrTask::getMissionId)
+													   .stream().distinct().collect(Collectors.toList());
+			List<Mission> missionList = missionMapper.selectBatchIds(missionIdList);
+			Map<String, String> missionCategoryMap = StreamApiUtils.toMap(missionList, Mission::getResourceId, Mission::getCategoryId);
+			List<CrConstantsConfig> constants = crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+			Map<String, String> categoryMap = StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId, SelectI18nName::selectI18nName);
+			for (CrTask crTask: crTaskList) {
+				Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
+				String type = categoryMap.get(missionCategoryMap.get(crTask.getMissionId()));
+				if (map.containsKey(type)) {
+					map.put(type, map.get(type) + score);
+				} else {
+					map.put(type, score);
+				}
+			}
+		}
+		return map;
 	}
 
 }

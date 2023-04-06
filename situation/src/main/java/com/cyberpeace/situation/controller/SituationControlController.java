@@ -254,12 +254,9 @@ public class SituationControlController {
 
 	@ApiOperation("情况回放")
 	@PostMapping("/playback")
-	public void playback(
-			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "scene_id") String sceneId,
-			@ApiParam(value = "开始时间") @RequestParam(value = "start_time", required = false) String startTime,
-			@ApiParam(value = "截止时间") @RequestParam(value = "end_time", required = false) String endTime) {
+	public void playback(@RequestBody @Validated PlaybackReq playbackReq) {
 		//回放当前场景动效
-		dynamicSchemeService.playbackPushDynamicSchemeToRoom(sceneId, TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(playbackReq.getSceneId(), TimeUtil.toDate1(playbackReq.getStartTime()), TimeUtil.toDate1(playbackReq.getEndTime()));
 	}
 
 	@ApiOperation("获取实景最大步骤")

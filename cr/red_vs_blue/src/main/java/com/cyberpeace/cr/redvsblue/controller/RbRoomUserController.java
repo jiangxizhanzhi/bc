@@ -258,7 +258,7 @@ public class RbRoomUserController {
 	}
 
 	@ApiOperation("实装分配-设备审批申请")
-	@DeleteMapping("/device/apply")
+	@PostMapping("/device/apply")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> deviceApply(
 			@ApiParam(value = "训练实例ID", required = true) @RequestParam("room_id") String roomId,

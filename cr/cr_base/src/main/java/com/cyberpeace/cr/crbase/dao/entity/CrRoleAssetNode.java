@@ -23,8 +23,8 @@ public class CrRoleAssetNode extends BaseTable {
      */
     private Integer roleType;
 
-    // todo 如果node_id有不同role_type，不发送事件
-    private String nodeId;
+    // todo 如果device_id有不同role_type，不发送事件
+    private String deviceId;
 
     // 中台存储数据，为操作系统、网络终端等
     private Integer nodeCategory;

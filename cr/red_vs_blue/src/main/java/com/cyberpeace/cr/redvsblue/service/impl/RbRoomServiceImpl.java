@@ -189,7 +189,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 							CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
 
 							crRoleAssetNode.setRoomId(rbRoom.getResourceId());
-							crRoleAssetNode.setNodeId(crRoleNode.getId());
+							crRoleAssetNode.setDeviceId(crRoleNode.getId());
 							crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
 
 							crRoleAssetNode.setRoleId(crRole.getResourceId());

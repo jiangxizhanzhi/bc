@@ -1,17 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.cr.crbase.dao.mapper.*;
-import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
-import com.cyberpeace.situation.model.ws.WsMissionDynamic;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -28,6 +16,10 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -39,8 +31,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author SN
@@ -398,7 +397,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 				task.setScore(mission.getScore());
 				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
 				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
-				crTaskSituationHandler.choseTypeAndPushMissionToSituation(missionId, mission.getScore());
+				judgeTaskAndPushMissionToSituation(missionId, mission.getScore());
 			} else {
 				task.setScore(0);
 				task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
@@ -622,5 +621,21 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskList.forEach(crTask -> crTask.setStatus(CrTask.TaskStatus.CLOSE.getCode()));
 
 		return updateBatchById(crTaskList);
+	}
+
+	@Override
+	public void judgeTaskAndPushMissionToSituation(String missionId, Integer score) {
+		//判断该任务有没有被同角色下的其他用户提交过或曾经成功过
+		List<CrTaskLog> crTaskLogList = crTaskLogMapper.getByMissionIdAndUserId(missionId);
+		Boolean success = false;
+		for (CrTaskLog crTaskLog: crTaskLogList) {
+			if (crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.MAN_SUCCESS.getCode()) ||
+					crTaskLog.getActionCode().equals(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode())) {
+				success = true;
+			}
+		}
+		if (!success) {
+			crTaskSituationHandler.chooseTypeAndPushMissionToSituation(missionId, score);
+		}
 	}
 }

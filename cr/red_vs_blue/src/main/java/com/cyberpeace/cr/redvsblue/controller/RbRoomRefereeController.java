@@ -1,21 +1,8 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -30,14 +17,25 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
+import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗裁判")
 @RestController
@@ -193,7 +191,7 @@ public class RbRoomRefereeController {
 				UserInfoContext.getUserContext().getUserId());
 
 		if (submitEvaluationReq.getEvaluateStatus().equals(1)) {
-			crTaskSituationHandler.choseTypeAndPushMissionToSituation(submitEvaluationReq.getSubmitId(), submitEvaluationReq.getScore());
+			crTaskService.judgeTaskAndPushMissionToSituation(submitEvaluationReq.getSubmitId(), submitEvaluationReq.getScore());
 		}
 
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,10 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 
 	@Override
 	public void pushMissionToSituation(String missionId, Integer score) {
+		List<Integer> redRoleType = Arrays.asList(ActionTypeZHL.ZHL_ATTACK3.getCode(), ActionTypeZHL.ZHL_ATTACK4.getCode(),
+				ActionTypeZHL.ZHL_ATTACK5.getCode(), ActionTypeZHL.ZHL_ATTACK6.getCode());
+		List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
+				ActionTypeZHL.ZHL_DEFENSE6.getCode());
 		Mission mission = missionMapper.selectById(missionId);
 		RbRoom rbRoom = rbRoomService.getById(mission.getRoomId());
 		if (rbRoom == null){
@@ -65,9 +70,9 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		List<String> targetIds = missionEventDeviceMapper.getDeviceIdsByMissionId(missionId);
 		String userName = UserInfoContext.getUserContext().getUserName();
 		String roleType = "";
-		if (mission.getEventType() > 2 && mission.getEventType() < 7) {
+		if (redRoleType.contains(mission.getEventType())) {
 			roleType = "red";
-		} else if (mission.getEventType() > 9 && mission.getEventType() < 13) {
+		} else if (blueRoleType.contains(mission.getEventType())) {
 			roleType = "blue";
 		}
 		List<CrLabelGroup> crLabelGroupList = rbRoomService.missionEventDevice(mission.getRoomId());

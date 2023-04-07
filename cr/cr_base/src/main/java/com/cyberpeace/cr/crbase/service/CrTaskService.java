@@ -1,8 +1,5 @@
 package com.cyberpeace.cr.crbase.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -10,6 +7,9 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+
+import java.util.List;
+import java.util.Map;
 
 public interface CrTaskService {
 
@@ -316,4 +316,6 @@ public interface CrTaskService {
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
 
 	Boolean missionClose(String missionId, CrRole crRole);
+
+	void judgeTaskAndPushMissionToSituation(String missionId, Integer score);
 }

@@ -41,4 +41,10 @@
         and cr_task_log.action_code = ${RELEASE}
     </select>
 
+    <select id="getByMissionIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
+        select *
+        from cr_task_log
+        where mission_id = #{missionId}
+    </select>
+
 </mapper>

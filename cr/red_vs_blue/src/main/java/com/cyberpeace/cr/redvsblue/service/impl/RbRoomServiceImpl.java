@@ -91,6 +91,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	@Autowired
+	private CrRoleAssetNodeService crRoleAssetNodeService;
+
 	@Override
 	public Integer getTrainingStatus(String roomId) {
 		RbRoomData teamRoomdata = getRbRoomDataByRoomId(roomId);
@@ -162,6 +165,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				List<RoomRole> users = rbRoomContext.getRoleConfig();
 				int index = 0;
 
+				List<CrRoleAssetNode> crRoleAssetNodeList = Lists.newArrayList();
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
 						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
@@ -178,7 +182,24 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 					crRoleService.save(crRole);
 
+					// 收集
+					CrRoleNodesData crRoleNodesData = crRole.getNodeData();
+					crRoleNodesData.getAssetNodes().forEach(crRoleNode -> {
+						CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
+
+						crRoleAssetNode.setRoomId(rbRoom.getResourceId());
+						crRoleAssetNode.setNodeId(crRoleNode.getId());
+						crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
+
+						crRoleAssetNode.setRoleId(crRole.getResourceId());
+						crRoleAssetNode.setRoleType(crRole.getRoleGroup());
+						crRoleAssetNode.setOriginalRoleId(crRole.getResourceId());
+						crRoleAssetNode.setOriginalRoleType(crRole.getRoleGroup());
+
+						crRoleAssetNodeList.add(crRoleAssetNode);
+					});
 				}
+				crRoleAssetNodeService.saveBatch(crRoleAssetNodeList);
 
 			}
 
@@ -655,7 +676,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 	}
 
-	// todo 读取模板用户顺序
 	private List<CrRole> getCrRoleByRbTemplate(RbTemplate rbTemplateData, String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 

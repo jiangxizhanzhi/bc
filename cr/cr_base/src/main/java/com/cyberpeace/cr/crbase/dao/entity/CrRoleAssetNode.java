@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-@TableName("cr_role_node")
-public class CrRoleNode extends BaseTable {
+@TableName("cr_role_asset_node")
+public class CrRoleAssetNode extends BaseTable {
     @TableId(type = IdType.UUID, value = "resource_id")
     private String resourceId;
 
@@ -18,6 +18,9 @@ public class CrRoleNode extends BaseTable {
     private String roleId;
 
     // todo 如果role_type一致，跳过事件； 不一致更新发送事件
+    /**
+     * 目前仅支持4/5
+     */
     private Integer roleType;
 
     // todo 如果node_id有不同role_type，不发送事件
@@ -27,6 +30,8 @@ public class CrRoleNode extends BaseTable {
     private Integer nodeCategory;
 
     private String originalRoleId;
+
+    private Integer originalRoleType;
 
     public enum RoleType {
         RED(1, "红队"),

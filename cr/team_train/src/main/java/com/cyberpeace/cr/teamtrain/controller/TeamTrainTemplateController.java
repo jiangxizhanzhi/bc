@@ -96,6 +96,7 @@ public class TeamTrainTemplateController {
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		// create team template
 		TeamTemplate teamTemplate = reqToTeamTemplate(addReq, new TeamTemplate());
+		teamTemplate.setTrainCategory(addReq.getTrainCategory());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -289,7 +290,6 @@ public class TeamTrainTemplateController {
 		teamTemplate.setDurationTime(baseInfo.getDurationTime());
 		teamTemplate.setRoleConfig(CrCommonUtil.roleConfig2DbJson(roleConfigs));
 		teamTemplate.setTimeLineConfig(JsonUtil.toJsonString(req.getTimeLineConfig()));
-		teamTemplate.setTrainCategory(((TeamTrainTemplateAddReq) req).getTrainCategory());
 
 		return teamTemplate;
 	}

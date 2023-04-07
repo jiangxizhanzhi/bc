@@ -1,28 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
-import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
-import com.cyberpeace.cr.crbase.service.CrTrainActionService;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -32,14 +11,20 @@ import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
+import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
+import com.cyberpeace.cr.crbase.controller.req.TestMissionEventReq;
 import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.RoleMissionRsp;
+import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
@@ -58,12 +43,27 @@ import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
+import com.cyberpeace.cr.redvsblue.service.impl.RbTaskSituationHandler;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -95,6 +95,9 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private CrTrainActionService crTrainActionService;
+
+	@Autowired
+	private RbTaskSituationHandler rbTaskSituationHandler;
 
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
@@ -222,11 +225,11 @@ public class RbRoomDirectorController {
 	@ApiOperation("任务态势事件-测试效果")
 	@PostMapping("/missions/event/test")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Boolean> testEventMissions(@RequestBody @Validated SetMissionEvent setMissionEvent) {
+	public BaseRsp<Boolean> testEventMissions(@RequestBody @Validated TestMissionEventReq testMissionEventReq) {
 		return new BaseRsp<>(missionService.missionEventTest(
-				setMissionEvent.getMissionId(),
-				setMissionEvent.getEventTypeId(),
-				setMissionEvent.getDeviceIds()));
+				testMissionEventReq.getRoomId(),
+				testMissionEventReq.getEventTypeId(),
+				testMissionEventReq.getDeviceIds()));
 	}
 
 	@ApiOperation("任务关闭")

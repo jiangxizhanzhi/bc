@@ -5,10 +5,7 @@ import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.MissionEventDevice;
-import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionEventDeviceMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
 import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
@@ -16,7 +13,6 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 import com.cyberpeace.situation.service.DynamicSchemeService;
@@ -25,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +72,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		}
 		List<CrLabelGroup> crLabelGroupList = rbRoomService.missionEventDevice(mission.getRoomId());
 		Map<String, String> elementMap = StreamApiUtils.toMap(crLabelGroupList, CrLabelGroup::getValue, CrLabelGroup::getLabel);
-		List<String> targetName = StreamApiUtils.map(targetIds,nodeId -> elementMap.get(nodeId));
+		List<String> targetName = StreamApiUtils.map(targetIds, elementMap::get);
 		for (String targetId: targetIds) {
 			if (wsMissionDynamicList.size() < 1 && mission.getEventType() < 7){
 				//首个攻击

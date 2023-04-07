@@ -1,26 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
-import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -35,21 +14,42 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
+import com.cyberpeace.cr.crbase.service.MissionEventDeviceService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.situation.model.ws.WsMissionDynamic;
+import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author yinqingrong
@@ -87,6 +87,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private MissionEventDeviceService missionEventDeviceService;
+
+	@Autowired
+	private DynamicSchemeService dynamicSchemeService;
+
+	@Autowired
+	private LocalSceneMapper localSceneMapper;
 
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
@@ -792,7 +798,25 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public Boolean missionEventTest(String missionId, Integer eventTypeId, List<String> deviceIds) {
-		return null;
+	public Boolean missionEventTest(String roomId, Integer eventType, List<String> targetIds) {
+		List<WsMissionDynamic> wsMissionDynamicList = new ArrayList<>();
+		LocalScene localScene = localSceneMapper.getByBusinessInstanceId(roomId);
+		String sceneId = null;
+		if (localScene == null) {
+			sceneId = roomId;
+		} else {
+			sceneId = localScene.getMpSceneId();
+		}
+		String roleType = "";
+		if (eventType > 2 && eventType < 7) {
+			roleType = "red";
+		} else if (eventType > 9 && eventType < 13) {
+			roleType = "blue";
+		}
+		for (String targetId: targetIds) {
+			wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, eventType));
+		}
+		dynamicSchemeService.pushMissionDynamicToRoom(wsMissionDynamicList, sceneId);
+		return true;
 	}
 }

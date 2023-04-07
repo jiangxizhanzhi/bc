@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
@@ -16,9 +17,11 @@ import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
 import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.google.common.collect.Lists;
@@ -42,6 +45,9 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private CrTrainActionService crTrainActionService;
 
     @Override
     public List<CrLabelGroup> noticeGroup(String roomId) {
@@ -178,6 +184,25 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
         crNotice.setStatus(crNoticeReq.getIsTop() ? CrNotice.Status.TOP.getCode() : CrNotice.Status.NORMAL.getCode());
 
         save(crNotice);
+
+        // 平台动态-发布公告
+        if (crNotice.getBusinessType().intValue() == BusinessTemplate.BusinessType.RED_VS_BLUE.getCode()) {
+            String content;
+            Integer type;
+            if (crNotice.getGroup().equals(CrNotice.Group.RED.getCode())) {
+                content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.RED_NOTICE);
+                type = CrTrainAction.PlatformEvent.RED_NOTICE.getCode();
+            } else if (crNotice.getGroup().equals(CrNotice.Group.BLUE.getCode())) {
+                content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.BLUE_NOTICE);
+                type = CrTrainAction.PlatformEvent.BLUE_NOTICE.getCode();
+            } else {
+                content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.RELEASE_NOTICE);
+                type = CrTrainAction.PlatformEvent.RELEASE_NOTICE.getCode();
+            }
+            content = String.format(content, crNotice.getContent());
+
+            crTrainActionService.savePlatformAction(crNotice.getRoomId(), content, type);
+        }
 
         return get(crNotice.getResourceId());
     }

@@ -8,6 +8,8 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
+import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -91,6 +93,9 @@ public class RbRoomDirectorController {
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private CrTrainActionService crTrainActionService;
+
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -170,6 +175,13 @@ public class RbRoomDirectorController {
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
 
+		Mission mission = missionService.getById(releaseMissionReq.getMissionResourceId());
+		crTrainActionService.savePlatformAction(
+				mission.getRoomId(),
+				String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.RELEASE_TASK), mission.getTitle()),
+				CrTrainAction.PlatformEvent.RELEASE_TASK.getCode()
+		);
+
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
 
 		return new BaseRsp<>();
@@ -234,6 +246,13 @@ public class RbRoomDirectorController {
 		Boolean result = crTaskService.missionClose(releaseMissionReq.getMissionResourceId(), crRole);
 		if (result) {
 			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+
+			Mission mission = missionService.getById(releaseMissionReq.getMissionResourceId());
+			crTrainActionService.savePlatformAction(
+					mission.getRoomId(),
+					String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.CLOSE_TASK), mission.getTitle()),
+					CrTrainAction.PlatformEvent.CLOSE_TASK.getCode()
+			);
 		}
 
 		return new BaseRsp<>(result);

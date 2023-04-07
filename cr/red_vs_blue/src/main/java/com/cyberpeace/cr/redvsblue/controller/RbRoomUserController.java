@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
@@ -225,6 +226,23 @@ public class RbRoomUserController {
 		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
 				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
 
+		TaskContext taskContext = crTaskService.getByMissionAndUser(
+				submitMissionsReq.getMissionHash(),
+				UserInfoContext.getUserContext().getUserId()
+		);
+		crTrainActionService.saveTeamAction(
+				taskContext.getRoomId(),
+				String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.SUBMIT_TASK), taskContext.getMission().getTitle()),
+				CrTrainAction.TeamEvent.SUBMIT_TASK.getCode()
+		);
+		if (taskContext.getStatus().intValue() == CrTask.TaskStatus.SUCCESS.getCode()) {
+			crTrainActionService.saveTeamAction(
+					taskContext.getRoomId(),
+					String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FINISH_TASK), taskContext.getMission().getTitle()),
+					CrTrainAction.TeamEvent.FINISH_TASK.getCode()
+			);
+		}
+
 		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
 				MissionWsCode.RVB_MISSION_CODE);
 
@@ -284,7 +302,7 @@ public class RbRoomUserController {
 	}
 
 	@ApiOperation("队伍动态-任务预览")
-	@PostMapping("/mission/receive")
+	@GetMapping("/action/receive_mission")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> receiveMission(
 			@ApiParam(value = "下发任务ID", required = true) @RequestParam("task_id") String taskId) {
@@ -295,6 +313,23 @@ public class RbRoomUserController {
 				crTrainActionService.saveTeamAction(
 						crTask.getRoomId(),
 						String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.RECEIVE_TASK), mission.getTitle()),
+						CrTrainAction.TeamEvent.RECEIVE_TASK.getCode()
+				));
+	}
+
+	@ApiOperation("队伍动态-接入靶机")
+	@GetMapping("/action/access_terminal")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<Boolean> accessTerminal(
+			@ApiParam(value = "训练实例id", required = true) @RequestParam("room_id") String roomId,
+			@ApiParam(value = "场景节点id", required = true) @RequestParam("device_id") String deviceId) {
+
+		Map<String, String> nodeMap = rbRoomService.missionEventDevice(roomId).stream().collect(Collectors.toMap(CrLabelGroup::getLabel, CrLabelGroup::getValue));
+
+		return new BaseRsp<>(
+				crTrainActionService.saveTeamAction(
+						roomId,
+						String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.ACCESS_TERMINAL), nodeMap.get(deviceId)),
 						CrTrainAction.TeamEvent.RECEIVE_TASK.getCode()
 				));
 	}

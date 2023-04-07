@@ -93,7 +93,7 @@ public class CrTrainAction extends BaseTable {
     public enum TeamEvent {
         RECEIVE_TASK(1, "查看任务"),
         SUBMIT_TASK(2, "队伍动态"),
-        SUCCESS_TASK(3, "完成任务"),
+        FINISH_TASK(3, "完成任务"),
         ACCESS_TERMINAL(4, "接入靶标");
 
         @Getter
@@ -111,7 +111,9 @@ public class CrTrainAction extends BaseTable {
     public enum PlatformEvent {
         CLOSE_TASK(1, "关闭任务"),
         RELEASE_TASK(2, "下发任务"),
-        RELEASE_NOTICE(3, "发布公告");
+        RED_NOTICE(3, "发布红队任务"),
+        BLUE_NOTICE(4, "发布蓝队公告"),
+        RELEASE_NOTICE(5, "发布全局公告");
         @Getter
         private final Integer code;
 

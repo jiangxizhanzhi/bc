@@ -441,6 +441,10 @@ public interface CrBusinessErrorCode {
 
 	String RELEASE_TASK = "101135";
 
-	String RELEASE_NOTICE = "101136";
+	String RED_NOTICE = "101136";
+
+	String BLUE_NOTICE = "101137";
+
+	String RELEASE_NOTICE = "101138";
 
 }

@@ -41,4 +41,16 @@ public class RbSituationController {
 		return rbSituationService.getRbServerByResourceId(resourceId);
 	}
 
+	// todo 队伍得分
+
+	// todo 任务状态
+
+	// todo 攻击事件
+
+	// todo 资产状态
+
+	// todo 队伍动态
+
+	// todo 平台动态
+
 }

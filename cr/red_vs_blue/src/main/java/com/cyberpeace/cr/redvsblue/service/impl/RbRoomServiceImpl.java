@@ -183,23 +183,27 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					crRoleService.save(crRole);
 
 					// 收集
-					CrRoleNodesData crRoleNodesData = crRole.getNodeData();
-					crRoleNodesData.getAssetNodes().forEach(crRoleNode -> {
-						CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
+					if (crRole.getNodes() != null) {
+						CrRoleNodesData crRoleNodesData = crRole.getNodeData();
+						crRoleNodesData.getAssetNodes().forEach(crRoleNode -> {
+							CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
 
-						crRoleAssetNode.setRoomId(rbRoom.getResourceId());
-						crRoleAssetNode.setNodeId(crRoleNode.getId());
-						crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
+							crRoleAssetNode.setRoomId(rbRoom.getResourceId());
+							crRoleAssetNode.setNodeId(crRoleNode.getId());
+							crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
 
-						crRoleAssetNode.setRoleId(crRole.getResourceId());
-						crRoleAssetNode.setRoleType(crRole.getRoleGroup());
-						crRoleAssetNode.setOriginalRoleId(crRole.getResourceId());
-						crRoleAssetNode.setOriginalRoleType(crRole.getRoleGroup());
+							crRoleAssetNode.setRoleId(crRole.getResourceId());
+							crRoleAssetNode.setRoleType(crRole.getRoleGroup());
+							crRoleAssetNode.setOriginalRoleId(crRole.getResourceId());
+							crRoleAssetNode.setOriginalRoleType(crRole.getRoleGroup());
 
-						crRoleAssetNodeList.add(crRoleAssetNode);
-					});
+							crRoleAssetNodeList.add(crRoleAssetNode);
+						});
+					}
 				}
-				crRoleAssetNodeService.saveBatch(crRoleAssetNodeList);
+				if (!crRoleAssetNodeList.isEmpty()) {
+					crRoleAssetNodeService.saveBatch(crRoleAssetNodeList);
+				}
 
 			}
 

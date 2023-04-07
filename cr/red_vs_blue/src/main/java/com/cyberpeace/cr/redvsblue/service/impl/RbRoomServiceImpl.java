@@ -459,7 +459,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Override
 	public void checkRefereePermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.RbRoleGroup.REFEREE);
+		try {
+			permissionCheck(roomId, userId, CrRole.RbRoleGroup.REFEREE);
+		} catch (BusinessException e) {
+			permissionCheck(roomId, userId, CrRole.RbRoleGroup.REFEREE2);
+		}
 	}
 
 	@Override

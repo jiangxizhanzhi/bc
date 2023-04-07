@@ -17,6 +17,9 @@ public class AttackMessageHistoryRes implements Serializable {
 	@ApiModelProperty("攻击还是防御")
 	private String attackOrDefense;
 
+	public AttackMessageHistoryRes() {
+	}
+
 	public AttackMessageHistoryRes(String time, String description, String attackOrDefense) {
 		this.time = time;
 		this.description = description;

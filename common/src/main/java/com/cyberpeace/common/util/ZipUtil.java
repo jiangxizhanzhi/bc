@@ -31,6 +31,17 @@ public class ZipUtil {
 		return file.getPath();
 	}
 
+	public static String generatePath(String fileName) {
+		String tmpPath;
+		if (System.getProperty("os.name").toLowerCase().contains("win")) {
+			tmpPath = ConfigUtil.getContextProperty("win.tmp.path");
+		} else {
+			tmpPath = ConfigUtil.getContextProperty("linux.tmp.path");
+		}
+		File file = FileUtil.mkdirs(tmpPath + fileName);
+		return file.getPath();
+	}
+
 	public static String unZipToTmpPath(String zipPath) throws ZipException {
 		ZipFile zipFile = new ZipFile(zipPath);
 		String tmpPath = generatePath();

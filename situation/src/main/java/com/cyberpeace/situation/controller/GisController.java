@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.situation.dao.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -24,10 +26,6 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.MapSource;
@@ -39,10 +37,6 @@ import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.dao.entity.GisMark;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
-import com.cyberpeace.situation.dao.mapper.DashboardTemplateRefMapper;
-import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
-import com.cyberpeace.situation.dao.mapper.SituationGisMapper;
 import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
@@ -77,6 +71,9 @@ public class GisController {
 
 	@Autowired
 	private DashboardTemplateMapper dashboardTemplateMapper;
+
+	@Autowired
+	private SituationPublishInstanceMapper situationPublishInstanceMapper;
 
 	@Autowired
 	private DashboardTemplateService dashboardTemplateService;
@@ -165,7 +162,9 @@ public class GisController {
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
 					value = "大屏ID") String dashboardId) {
 		List<GisMarkContext> gisMarkList = gisMarkMapper.getGisMarkList(dashboardId, null);
-		String tempDir = ZipUtil.generatePath();
+		String dashboardName = situationPublishInstanceMapper.selectById(dashboardId).getName();
+		String fileName = dashboardName + "_标绘数据_" + TimeUtil.format5(new Date());
+		String tempDir = ZipUtil.generatePath(fileName);
 		try {
 			FileUtil.mkdirs(tempDir);
 			String data = JSONObject.toJSONString(gisMarkList);

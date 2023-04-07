@@ -9,6 +9,6 @@
     </select>
 
     <select id="getRvbAsset" resultType="com.cyberpeace.situation.model.RvbAsset">
-        select * from cr_role_node where room_id = #{business_id};
+        select * from cr_role_asset_node where room_id = #{business_id};
     </select>
 </mapper>

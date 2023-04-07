@@ -879,6 +879,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 					}
 
 				}
+				Thread.sleep(5000);
 				if (!sceneConfigService.isCurrentScheme(sceneId, code)){
 					pushPlaybackScheduleToRoom(null, sceneId);
 				}

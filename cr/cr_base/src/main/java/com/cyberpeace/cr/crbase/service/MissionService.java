@@ -1,9 +1,5 @@
 package com.cyberpeace.cr.crbase.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
@@ -11,11 +7,14 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.cr.crbase.controller.req.SetMissionEvent;
 import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.constants.CodeNameRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public interface MissionService extends IService<Mission> {
 
@@ -277,5 +276,5 @@ public interface MissionService extends IService<Mission> {
 	 */
 	Boolean setMissionEvent(String missionId, Integer eventTypeId, List<String> deviceIds);
 
-	Boolean missionEventTest(String missionId, Integer eventTypeId, List<String> deviceIds);
+	Boolean missionEventTest(String roomId, Integer eventTypeId, List<String> deviceIds);
 }

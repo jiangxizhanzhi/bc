@@ -20,7 +20,6 @@ import org.apache.commons.compress.utils.Lists;
 @TableName("cr_task")
 public class CrTask extends BaseTable {
 
-	// todo 如何审核状态标识
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;
 

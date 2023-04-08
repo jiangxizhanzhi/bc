@@ -3,9 +3,11 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -15,13 +17,15 @@ import com.cyberpeace.cr.redvsblue.service.context.RbSituationServer;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RbSituationServiceImpl implements RbSituationService {
@@ -40,6 +44,18 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private CrTaskService crTaskService;
+
+	@Autowired
+	private MissionService missionService;
+
+	@Autowired
+	private MissionEventDeviceService missionEventDeviceService;
+
+	@Autowired
+	private CrTrainActionService crTrainActionService;
 
 	@Override
 	public List<RbSituation> getAllRbSituation() {
@@ -121,5 +137,155 @@ public class RbSituationServiceImpl implements RbSituationService {
 	@Override
 	public String getMpSceneId(){
 		return mpSceneId;
+	}
+
+	private void checkRole(Integer roleGroup) {
+		if (!CrRole.RbRoleGroup.isRvbStudentRole(roleGroup)) {
+			throw new BusinessException();
+		}
+	}
+
+	@Override
+	public RbSituationScoreRsp getTeamScore(String roomId, Integer roleType) {
+		checkRole(roleType);
+
+		Map<String, Mission> missionMap = missionService.batchGetByRoom(roomId).stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+
+		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
+		List<CrTask> crTaskList = crTaskService.getByRoles(crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList()));
+
+		Map<String, RbSituationScoreRsp.RoleScoreInfo> roleScoreInfoMap = crRoleList.stream().collect(Collectors.toMap(CrRole::getResourceId, crRole -> {
+			RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = new RbSituationScoreRsp.RoleScoreInfo();
+			roleScoreInfo.setRoleId(crRole.getResourceId());
+			roleScoreInfo.setRoleName(crRole.getName());
+			roleScoreInfo.setScore(0);
+
+			return roleScoreInfo;
+		}));
+
+		Integer score = 0;
+		Integer residualScore = 0;
+		for (CrTask crTask: crTaskList) {
+			if (crTask.getStatus().intValue() == CrTask.TaskStatus.SUCCESS.getCode()) {
+				score += crTask.getScore();
+				RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = roleScoreInfoMap.get(crTask.getRoleId());
+				roleScoreInfo.setScore(roleScoreInfo.getScore() + crTask.getScore());
+
+			} else {
+				residualScore += missionMap.get(crTask.getMissionId()).getScore();
+			}
+		}
+
+		RbSituationScoreRsp rbSituationScoreRsp = new RbSituationScoreRsp();
+		rbSituationScoreRsp.setScore(score);
+		rbSituationScoreRsp.setResidualScore(residualScore);
+
+		rbSituationScoreRsp.setRoleScoreInfoList(
+				roleScoreInfoMap.values().stream().peek(
+						roleScoreInfo -> roleScoreInfo.setPercentage((double) roleScoreInfo.getScore() / (double) rbSituationScoreRsp.getScore() * 100)
+				).collect(Collectors.toList())
+		);
+
+		return rbSituationScoreRsp;
+	}
+
+	@Override
+	public List<RbSituationMissionStatusRsp> getMissionStatus(String roomId, Integer roleType) {
+		checkRole(roleType);
+		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
+		Map<String, CrRole> crRoleMap = crRoleList.stream().collect(Collectors.toMap(CrRole::getResourceId, crRole -> crRole));
+		Map<String, Mission> missionMap = missionService.batchGetByRoom(roomId).stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+		List<CrTask> crTaskList = crTaskService.getByRoles(crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList()));
+
+		// todo 数据统计错误，待修改
+		List<RbSituationMissionStatusRsp> result = Lists.newArrayList();
+		crTaskList.forEach(crTask -> {
+			Mission mission = missionMap.get(crTask.getMissionId());
+
+			RbSituationMissionStatusRsp rbSituationMissionStatusRsp = new RbSituationMissionStatusRsp();
+			rbSituationMissionStatusRsp.setMissionTitle(mission.getTitle());
+			rbSituationMissionStatusRsp.setRoleId(crTask.getRoleId());
+			rbSituationMissionStatusRsp.setRoleName(crRoleMap.get(crTask.getRoleId()).getName());
+			rbSituationMissionStatusRsp.setStatus(crTask.getStatus());
+
+			result.add(rbSituationMissionStatusRsp);
+		});
+
+		return result;
+	}
+
+	@Override
+	public List<RbSituationAdEventRsp> getAdEvent(String roomId, Integer roleType) {
+		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
+		Map<String, Mission> missionMap = missionService.batchGetByRoom(roomId).stream().collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+
+		List<CrTask> crTaskList = crTaskService.getByRoles(crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList()))
+				.stream()
+				.filter(crTask -> crTask.getStatus().intValue() == CrTask.TaskStatus.SUCCESS.getCode())
+				.collect(Collectors.toList());
+
+		Map<String, Date> taskFinishTimeMap = crTaskList.stream().collect(Collectors.toMap(CrTask::getMissionId, CrTask::getLastSubmitTime));
+
+		Map<String, String> deviceMap = rbRoomService.missionEventDevice(roomId).stream().collect(Collectors.toMap(CrLabelGroup::getValue, CrLabelGroup::getLabel));
+
+		// todo 数据条件错误，待完善
+		List<RbSituationAdEventRsp> result = Lists.newArrayList();
+		missionEventDeviceService.lambdaQuery()
+				.in(MissionEventDevice::getMissionId, crTaskList.stream().map(CrTask::getMissionId).collect(Collectors.toList()))
+				.list().forEach(missionEventDevice -> {
+			Mission mission = missionMap.get(missionEventDevice.getMissionId());
+
+			RbSituationAdEventRsp rbSituationAdEventRsp = new RbSituationAdEventRsp();
+
+			rbSituationAdEventRsp.setDeviceId(missionEventDevice.getDeviceId());
+			rbSituationAdEventRsp.setDeviceName(deviceMap.get(missionEventDevice.getDeviceId()));
+			// todo EventName 待定
+//			ActionTypeZHL.valueOf(mission.getEventType());
+			rbSituationAdEventRsp.setEventName(null);
+			rbSituationAdEventRsp.setEventTime(taskFinishTimeMap.get(mission.getResourceId()));
+
+			result.add(rbSituationAdEventRsp);
+		});
+
+		return result;
+	}
+
+	@Override
+	public List<RbSituationActionRsp> getTeamAction(String roomId, Integer roleType) {
+		List<CrTrainAction> crTrainActionList = crTrainActionService.lambdaQuery()
+				.eq(CrTrainAction::getRoomId, roomId)
+				.eq(CrTrainAction::getRoleType, roleType)
+				.eq(CrTrainAction::getModule, CrTrainAction.Module.TEAM.getCode())
+				.list();
+
+		return toRbSituationActionRsp(crTrainActionList);
+	}
+
+	@Override
+	public RbSituationAssetStatusRsp getAssetStatus(String roomId, Integer roleType) {
+		return null;
+	}
+
+	@Override
+	public List<RbSituationActionRsp> getPlatformScore(String roomId, Integer roleType) {
+		List<CrTrainAction> crTrainActionList = crTrainActionService.lambdaQuery()
+				.eq(CrTrainAction::getRoomId, roomId)
+				.eq(CrTrainAction::getRoleType, roleType)
+				.eq(CrTrainAction::getModule, CrTrainAction.Module.PLATFORM.getCode())
+				.list();
+
+		return toRbSituationActionRsp(crTrainActionList);
+	}
+
+	private List<RbSituationActionRsp> toRbSituationActionRsp(List<CrTrainAction> crTrainActionList) {
+		List<RbSituationActionRsp> result = Lists.newArrayList();
+		crTrainActionList.forEach(crTrainAction -> {
+			RbSituationActionRsp rbSituationActionRsp = new RbSituationActionRsp();
+			BeanUtils.copyProperties(crTrainAction, rbSituationActionRsp);
+
+			result.add(rbSituationActionRsp);
+		});
+
+		return result;
 	}
 }

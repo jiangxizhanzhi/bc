@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.cr.redvsblue.controller.rsp.*;
 import com.cyberpeace.cr.redvsblue.service.RbSituationService;
 import com.cyberpeace.cr.redvsblue.service.context.RbSituation;
 import com.cyberpeace.cr.redvsblue.service.context.RbSituationServer;
@@ -41,16 +43,52 @@ public class RbSituationController {
 		return rbSituationService.getRbServerByResourceId(resourceId);
 	}
 
-	// todo 队伍得分
+	@ApiOperation("获取红蓝对抗队伍得分")
+	@GetMapping("/score")
+	public BaseRsp<RbSituationScoreRsp> score(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getTeamScore(roomId, roleType));
+	}
 
-	// todo 任务状态
+	@ApiOperation("获取红蓝对抗任务状态")
+	@GetMapping("/mission_status")
+	public BaseRsp<List<RbSituationMissionStatusRsp>> missionStatus(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getMissionStatus(roomId, roleType));
+	}
 
-	// todo 攻击事件
+	@ApiOperation("获取红蓝对抗攻击与防守事件")
+	@GetMapping("/ad_event")
+	public BaseRsp<List<RbSituationAdEventRsp>> adEvent(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getAdEvent(roomId, roleType));
+	}
 
-	// todo 资产状态
+	@ApiOperation("获取红蓝对抗资产状态")
+	@GetMapping("/asset_status")
+	public BaseRsp<RbSituationAssetStatusRsp> assetStatus(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getAssetStatus(roomId, roleType));
+	}
 
-	// todo 队伍动态
+	@ApiOperation("获取红蓝对抗队伍动态")
+	@GetMapping("/team_action")
+	public BaseRsp<List<RbSituationActionRsp>> teamAction(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getTeamAction(roomId, roleType));
+	}
 
-	// todo 平台动态
+	@ApiOperation("获取红蓝对抗平台动态")
+	@GetMapping("/platform_action")
+	public BaseRsp<List<RbSituationActionRsp>> platformAction(
+			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
+			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
+		return new BaseRsp<>(rbSituationService.getPlatformScore(roomId, roleType));
+	}
 
 }

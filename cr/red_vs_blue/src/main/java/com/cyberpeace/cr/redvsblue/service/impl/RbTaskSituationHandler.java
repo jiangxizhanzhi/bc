@@ -1,13 +1,20 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoleAssetNode;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.mapper.CrRoleAssetNodeMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionEventDeviceMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionMapper;
+import com.cyberpeace.cr.crbase.service.CrRoleAssetNodeService;
 import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -43,6 +50,12 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
 
+	@Autowired
+	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
+
+	@Autowired
+	private CrRoleAssetNodeService crRoleAssetNodeService;
+
 	@Override
 	public BusinessTemplate.BusinessType getBusinessType() {
 		return BusinessTemplate.BusinessType.RED_VS_BLUE;
@@ -55,6 +68,9 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
 				ActionTypeZHL.ZHL_DEFENSE6.getCode());
 		Mission mission = missionMapper.selectById(missionId);
+		if (mission == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
 		RbRoom rbRoom = rbRoomService.getById(mission.getRoomId());
 		if (rbRoom == null){
 			return;
@@ -70,17 +86,30 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		List<String> targetIds = missionEventDeviceMapper.getDeviceIdsByMissionId(missionId);
 		String userName = UserInfoContext.getUserContext().getUserName();
 		String roleType = "";
-		if (redRoleType.contains(mission.getEventType())) {
-			roleType = "red";
-		} else if (blueRoleType.contains(mission.getEventType())) {
-			roleType = "blue";
-		}
 		List<CrLabelGroup> crLabelGroupList = rbRoomService.missionEventDevice(mission.getRoomId());
 		Map<String, String> elementMap = StreamApiUtils.toMap(crLabelGroupList, CrLabelGroup::getValue, CrLabelGroup::getLabel);
 		List<String> targetName = StreamApiUtils.map(targetIds, elementMap::get);
+		List<CrRoleAssetNode> crRoleAssetNodeEditList = new ArrayList<>();
 		for (String targetId: targetIds) {
+			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getDeviceId, targetId);
+			List<CrRoleAssetNode> crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
+			if (crRoleAssetNodeList.size() != 1) {
+				roleType = "";
+			} else if (redRoleType.contains(mission.getEventType())) {
+				roleType = "red";
+			} else if (blueRoleType.contains(mission.getEventType())) {
+				roleType = "blue";
+			}
+			CrRoleAssetNode crRoleAssetNode = crRoleAssetNodeList.get(0);
+			if ("red".equals(roleType)) {
+				crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.RED.getCode());
+			} else if ("blue".equals(roleType)) {
+				crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
+			}
+			crRoleAssetNodeEditList.add(crRoleAssetNode);
 			if (wsMissionDynamicList.size() < 1 && mission.getEventType() < 7){
-				//首个攻击
+				//仅首个攻击有战报
 				StringBuilder description = new StringBuilder("红队队员【" + userName + "】对【")
 						.append(StringUtils.join(targetName, ","))
 						.append("】发起【")
@@ -88,9 +117,9 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 						.append("】攻击，成功获得")
 						.append(score)
 						.append("分。");
-				wsMissionDynamicList.add(new WsMissionDynamic(description.toString(), roleType, sceneId, targetId, mission.getEventType()));
+				wsMissionDynamicList.add(new WsMissionDynamic(description.toString(), roleType, sceneId, targetId, mission.getEventType(), false));
 			} else if (wsMissionDynamicList.size() < 1 && mission.getEventType() > 6){
-				//首个防御
+				//仅首个防御有战报
 				StringBuilder description = new StringBuilder("蓝队队员【" + userName + "】对【")
 						.append(StringUtils.join(targetName, ","))
 						.append("】进行【")
@@ -98,11 +127,12 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 						.append("】防护，成功获得")
 						.append(score)
 						.append("分。");
-				wsMissionDynamicList.add(new WsMissionDynamic(description.toString(), roleType, sceneId, targetId, mission.getEventType()));
+				wsMissionDynamicList.add(new WsMissionDynamic(description.toString(), roleType, sceneId, targetId, mission.getEventType(), false));
 			}else {
-				wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, mission.getEventType()));
+				wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, mission.getEventType(), false));
 			}
 		}
+		crRoleAssetNodeService.updateBatchById(crRoleAssetNodeEditList);
 		dynamicSchemeService.pushMissionDynamicToRoom(wsMissionDynamicList, sceneId);
 	}
 }

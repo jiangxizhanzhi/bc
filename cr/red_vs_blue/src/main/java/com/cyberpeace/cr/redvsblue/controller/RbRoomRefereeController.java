@@ -10,14 +10,16 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
-import com.cyberpeace.cr.crbase.service.impl.CrTaskSituationHandler;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -56,7 +58,10 @@ public class RbRoomRefereeController {
 	private CrCommonService crCommonService;
 
 	@Autowired
-	private CrTaskSituationHandler crTaskSituationHandler;
+	private CrTaskSubmitMapper crTaskSubmitMapper;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
@@ -190,8 +195,11 @@ public class RbRoomRefereeController {
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
 
+		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
+		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
+
 		if (submitEvaluationReq.getEvaluateStatus().equals(1)) {
-			crTaskService.judgeTaskAndPushMissionToSituation(submitEvaluationReq.getSubmitId(), submitEvaluationReq.getScore());
+			crTaskService.judgeTaskAndPushMissionToSituation(task.getMissionId(), submitEvaluationReq.getScore());
 		}
 
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),

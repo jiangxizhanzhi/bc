@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -29,6 +30,7 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.google.common.collect.Lists;
@@ -45,10 +47,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -93,6 +92,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private LocalSceneMapper localSceneMapper;
+
+	@Autowired
+	private CrRoleAssetNodeMapper crRoleAssetNodeMapper;
 
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
@@ -801,6 +803,10 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public Boolean missionEventTest(String roomId, Integer eventType, List<String> targetIds) {
 		List<WsMissionDynamic> wsMissionDynamicList = new ArrayList<>();
 		LocalScene localScene = localSceneMapper.getByBusinessInstanceId(roomId);
+		List<Integer> redRoleType = Arrays.asList(ActionTypeZHL.ZHL_ATTACK3.getCode(), ActionTypeZHL.ZHL_ATTACK4.getCode(),
+				ActionTypeZHL.ZHL_ATTACK5.getCode(), ActionTypeZHL.ZHL_ATTACK6.getCode());
+		List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
+				ActionTypeZHL.ZHL_DEFENSE6.getCode());
 		String sceneId = null;
 		if (localScene == null) {
 			sceneId = roomId;
@@ -808,13 +814,19 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			sceneId = localScene.getMpSceneId();
 		}
 		String roleType = "";
-		if (eventType > 2 && eventType < 7) {
-			roleType = "red";
-		} else if (eventType > 9 && eventType < 13) {
-			roleType = "blue";
-		}
+
 		for (String targetId: targetIds) {
-			wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, eventType));
+			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getDeviceId, targetId);
+			List<CrRoleAssetNode> crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
+			if (crRoleAssetNodeList.size() != 1) {
+				roleType = "";
+			} else if (redRoleType.contains(eventType)) {
+				roleType = "red";
+			} else if (blueRoleType.contains(eventType)) {
+				roleType = "blue";
+			}
+			wsMissionDynamicList.add(new WsMissionDynamic("", roleType, sceneId, targetId, eventType, true));
 		}
 		dynamicSchemeService.pushMissionDynamicToRoom(wsMissionDynamicList, sceneId);
 		return true;

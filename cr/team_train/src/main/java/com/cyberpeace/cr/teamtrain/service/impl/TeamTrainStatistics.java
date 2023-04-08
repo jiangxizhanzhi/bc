@@ -100,6 +100,11 @@ public class TeamTrainStatistics extends CrEventStatistics {
 	public void getPeopleCountByCode(String userId, TrainingPeopleStatistics trainingPeopleStatistics, Integer code) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (roomIds.size() == 0) {
+			trainingPeopleStatistics.setBlueCount(0);
+			trainingPeopleStatistics.setRedCount(0);
+			return;
+		}
 		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
 		roomIds = teamRoomList.stream()
 							  .filter(teamRoom -> teamRoom.getTrainCategory().equals(code))

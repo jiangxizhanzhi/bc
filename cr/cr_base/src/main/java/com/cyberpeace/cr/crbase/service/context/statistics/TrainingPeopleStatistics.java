@@ -19,4 +19,11 @@ public class TrainingPeopleStatistics implements Serializable {
 
 	@ApiModelProperty("人员参与总数")
 	private Integer count;
+
+	public TrainingPeopleStatistics() {
+		this.redCount = 0;
+		this.blueCount = 0;
+		this.rvbCount = 0;
+		this.count = 0;
+	}
 }

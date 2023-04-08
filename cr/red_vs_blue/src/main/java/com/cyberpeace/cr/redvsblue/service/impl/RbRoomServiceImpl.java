@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
@@ -12,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -165,6 +163,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				List<RoomRole> users = rbRoomContext.getRoleConfig();
 				int index = 0;
 
+				Set<String> filterRoleAssetNode = Sets.newHashSet();
 				List<CrRoleAssetNode> crRoleAssetNodeList = Lists.newArrayList();
 				for (CrRole crRole : crRoles) {
 					if (index >= users.size()) {
@@ -186,18 +185,24 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					if (crRole.getNodes() != null) {
 						CrRoleNodesData crRoleNodesData = crRole.getNodeData();
 						crRoleNodesData.getAssetNodes().forEach(crRoleNode -> {
-							CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
+							String ignoreKey = crRole.getRoleGroup() + "_" + crRoleNode.getId();
+							if (!filterRoleAssetNode.contains(ignoreKey)) {
 
-							crRoleAssetNode.setRoomId(rbRoom.getResourceId());
-							crRoleAssetNode.setDeviceId(crRoleNode.getId());
-							crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
+								CrRoleAssetNode crRoleAssetNode = new CrRoleAssetNode();
 
-							crRoleAssetNode.setRoleId(crRole.getResourceId());
-							crRoleAssetNode.setRoleType(crRole.getRoleGroup());
-							crRoleAssetNode.setOriginalRoleId(crRole.getResourceId());
-							crRoleAssetNode.setOriginalRoleType(crRole.getRoleGroup());
+								crRoleAssetNode.setRoomId(rbRoom.getResourceId());
+								crRoleAssetNode.setDeviceId(crRoleNode.getId());
+								crRoleAssetNode.setNodeCategory(crRoleNode.getCategory());
 
-							crRoleAssetNodeList.add(crRoleAssetNode);
+//								crRoleAssetNode.setRoleId(crRole.getResourceId());
+								crRoleAssetNode.setRoleType(crRole.getRoleGroup());
+//								crRoleAssetNode.setOriginalRoleId(crRole.getResourceId());
+								crRoleAssetNode.setOriginalRoleType(crRole.getRoleGroup());
+
+
+								crRoleAssetNodeList.add(crRoleAssetNode);
+								filterRoleAssetNode.add(ignoreKey);
+							}
 						});
 					}
 				}

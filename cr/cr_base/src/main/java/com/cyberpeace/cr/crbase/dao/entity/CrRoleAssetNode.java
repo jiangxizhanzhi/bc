@@ -18,7 +18,7 @@ public class CrRoleAssetNode extends BaseTable {
     /**
      * 目前归属角色id
      */
-    private String roleId;
+//    private String roleId;
 
     // todo 如果role_type一致，跳过事件； 不一致更新发送事件
     /**
@@ -40,7 +40,7 @@ public class CrRoleAssetNode extends BaseTable {
     /**
      * 资产原归属角色id
      */
-    private String originalRoleId;
+//    private String originalRoleId;
 
     /**
      * 资产原归属角色组类型

@@ -15,37 +15,36 @@ public class CrRoleAssetNode extends BaseTable {
 
     private String roomId;
 
+    /**
+     * 目前归属角色id
+     */
     private String roleId;
 
     // todo 如果role_type一致，跳过事件； 不一致更新发送事件
     /**
-     * 目前仅支持4/5
+     * 目前归属角色组类型, 目前仅支持4/5
      */
     private Integer roleType;
 
     // todo 如果device_id有不同role_type，不发送事件
+    /**
+     * 设备id
+     */
     private String deviceId;
 
-    // 中台存储数据，为操作系统、网络终端等
+    /**
+     * 中台存储数据，为操作系统、网络终端等
+     */
     private Integer nodeCategory;
 
+    /**
+     * 资产原归属角色id
+     */
     private String originalRoleId;
 
+    /**
+     * 资产原归属角色组类型
+     */
     private Integer originalRoleType;
 
-    public enum RoleType {
-        RED(1, "红队"),
-        BLUE(2, "蓝队");
-
-        @Getter
-        private final Integer code;
-
-        @Getter
-        private final String desc;
-
-        RoleType(Integer code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-    }
 }

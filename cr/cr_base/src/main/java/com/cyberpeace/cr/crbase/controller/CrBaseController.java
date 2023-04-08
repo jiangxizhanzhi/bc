@@ -16,6 +16,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
+import com.cyberpeace.cr.crbase.service.context.AttackTypeScore;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import io.swagger.annotations.Api;
@@ -33,10 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Api(tags = "靶场公用接口")
 @RestController
@@ -159,9 +157,14 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-攻击方式评分")
 	@GetMapping("/train_stats/attack_type_score")
-	public BaseRsp<HashMap<String, Integer>> getScoreByAttackType(@ApiParam("场景id") @RequestParam("room_id") String roomId,
-																  @ApiParam("训练类型") @RequestParam("business_type") Integer businessType) {
-		return new BaseRsp<>(crBaseService.getScoreByAttackType(businessType, roomId));
+	public BaseRsp<List<AttackTypeScore>> getScoreByAttackType(@ApiParam("场景id") @RequestParam("room_id") String roomId,
+															   @ApiParam("训练类型") @RequestParam("business_type") Integer businessType) {
+		HashMap<String, Integer> attackTypeScoreMap = crBaseService.getScoreByAttackType(businessType, roomId);
+		List<AttackTypeScore> attackTypeScoreList = new ArrayList<>();
+		for (String attackType: attackTypeScoreMap.keySet()) {
+			attackTypeScoreList.add(new AttackTypeScore(attackType, attackTypeScoreMap.get(attackType)));
+		}
+		return new BaseRsp<>(attackTypeScoreList);
 	}
 
 }

@@ -57,6 +57,9 @@ public class RbSituationServiceImpl implements RbSituationService {
 	@Autowired
 	private CrTrainActionService crTrainActionService;
 
+	@Autowired
+	private CrRoleAssetNodeService crRoleAssetNodeService;
+
 	@Override
 	public List<RbSituation> getAllRbSituation() {
 		return rbRoomMapper.selectAllRunning();
@@ -145,6 +148,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 		}
 	}
 
+	// todo in 目前没有任务会报错
 	@Override
 	public RbSituationScoreRsp getTeamScore(String roomId, Integer roleType) {
 		checkRole(roleType);
@@ -230,6 +234,9 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 		// todo 数据条件错误，待完善
 		List<RbSituationAdEventRsp> result = Lists.newArrayList();
+		if (crTaskList.isEmpty()) {
+			return result;
+		}
 		missionEventDeviceService.lambdaQuery()
 				.in(MissionEventDevice::getMissionId, crTaskList.stream().map(CrTask::getMissionId).collect(Collectors.toList()))
 				.list().forEach(missionEventDevice -> {
@@ -263,7 +270,53 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 	@Override
 	public RbSituationAssetStatusRsp getAssetStatus(String roomId, Integer roleType) {
-		return null;
+		RbSituationAssetStatusRsp rbSituationAssetStatusRsp = new RbSituationAssetStatusRsp();
+		List<CrRoleAssetNode> crRoleAssetNodeList =  crRoleAssetNodeService.lambdaQuery()
+				.eq(CrRoleAssetNode::getRoomId, roomId)
+				.eq(CrRoleAssetNode::getOriginalRoleType, roleType)
+				.list();
+
+		int networkOriginalCount = 0;
+		int networkChangedCount = 0;
+		int operationOriginalCount = 0;
+		int operationChangedCount = 0;
+		int applicationOriginalCount = 0;
+		int applicationChangedCount = 0;
+		int securityOriginalCount = 0;
+		int securityChangedCount = 0;
+		for (CrRoleAssetNode crRoleAssetNode: crRoleAssetNodeList) {
+			if (!crRoleAssetNode.getOriginalRoleType().equals(crRoleAssetNode.getRoleType())) {
+				if (crRoleAssetNode.getNodeCategory() == 3) {
+					networkChangedCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 1) {
+					operationChangedCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 2) {
+					applicationChangedCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 4) {
+					securityChangedCount += 1;
+				}
+			}
+			if (crRoleAssetNode.getNodeCategory() == 3) {
+				networkOriginalCount += 1;
+			} else if (crRoleAssetNode.getNodeCategory() == 1) {
+				operationOriginalCount += 1;
+			} else if (crRoleAssetNode.getNodeCategory() == 2) {
+				applicationOriginalCount += 1;
+			} else if (crRoleAssetNode.getNodeCategory() == 4) {
+				securityOriginalCount += 1;
+			}
+		}
+
+		rbSituationAssetStatusRsp.setNetwork(RbSituationAssetStatusRsp.AssetCount.builder()
+				.originalCount(networkOriginalCount).changedCount(networkChangedCount).build());
+		rbSituationAssetStatusRsp.setOperation(RbSituationAssetStatusRsp.AssetCount.builder()
+				.originalCount(operationOriginalCount).changedCount(operationChangedCount).build());
+		rbSituationAssetStatusRsp.setApplication(RbSituationAssetStatusRsp.AssetCount.builder()
+				.originalCount(applicationOriginalCount).changedCount(applicationChangedCount).build());
+		rbSituationAssetStatusRsp.setSecurity(RbSituationAssetStatusRsp.AssetCount.builder()
+				.originalCount(securityOriginalCount).changedCount(securityChangedCount).build());
+
+		return rbSituationAssetStatusRsp;
 	}
 
 	@Override

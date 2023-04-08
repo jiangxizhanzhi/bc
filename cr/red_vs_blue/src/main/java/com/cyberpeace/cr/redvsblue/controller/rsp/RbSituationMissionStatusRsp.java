@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -18,4 +19,9 @@ public class RbSituationMissionStatusRsp implements Serializable {
 
     @ApiModelProperty("任务状态")
     private Integer status;
+
+    @ApiModelProperty("是否完成")
+    public Boolean getIsFinished() {
+        return status != null && status.equals(CrTask.TaskStatus.SUCCESS.getCode()) ? Boolean.TRUE : Boolean.FALSE;
+    }
 }

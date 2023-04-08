@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller.rsp;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,6 +21,7 @@ public class RbSituationAssetStatusRsp implements Serializable {
     private AssetCount security;
 
     @Data
+    @Builder
     public static class AssetCount {
         @ApiModelProperty("原始数")
         private Integer originalCount;

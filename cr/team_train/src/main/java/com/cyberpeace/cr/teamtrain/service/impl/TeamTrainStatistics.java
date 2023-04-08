@@ -152,7 +152,12 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		if (roomRoleContexts.isEmpty()) {
 			return Lists.newArrayList();
 		}
-		List<String> roomIds = StreamApiUtils.map(roomRoleContexts, RoomRoleContext::getRoomId);
+		List<String> roomIds = new ArrayList<>();
+		Map<String, Integer> roleGroupMap = Maps.newHashMap();
+		for (RoomRoleContext roomRoleContext : roomRoleContexts) {
+			roomIds.add(roomRoleContext.getRoomId());
+			roleGroupMap.put(roomRoleContext.getRoomId(), roomRoleContext.getRoleGroup());
+		}
 		List<TrainStatsOverviewRsp> related = Lists.newArrayList();
 		// 查询全部
 		List<TeamRoom> rooms = teamRoomMapper.selectBatchIds(roomIds);
@@ -184,7 +189,7 @@ public class TeamTrainStatistics extends CrEventStatistics {
 				peopleCount += crRole.getUserIdList().size();
 			}
 			data.setUserCount(peopleCount);
-
+			data.setRoleGroup(roleGroupMap.get(room.getResourceId()));
 			related.add(data);
 		}
 		return related;

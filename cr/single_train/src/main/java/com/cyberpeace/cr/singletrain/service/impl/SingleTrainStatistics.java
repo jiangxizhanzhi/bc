@@ -129,6 +129,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 					.getByBusinessId(businessTemplate.getResourceId());
 			data.setDurationTime(singleTemplate.getDurationTime());
 			data.setUserCount(null);
+			data.setRoleGroup(CrCommonConstants.STUDENT_ROLE);
 			LambdaQueryWrapper<TrainRecord> trainRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
 			trainRecordLambdaQueryWrapper.eq(TrainRecord::getBusinessTemplateId, room.getBusinessTemplateId());
 			trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);

@@ -198,8 +198,7 @@ public class CrBaseServiceImpl implements CrBaseService {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
 			trainStatsOverviewRspList.addAll(crEventStatistics.getTrainingOverview(userId));
 		}
-		ListRsp<TrainStatsOverviewRsp> trainStatsOverviewRspListRsp = PageUtil.getListResult(trainStatsOverviewRspList, page, trainStatsOverviewRspList.size());
-		return trainStatsOverviewRspListRsp;
+		return PageUtil.getListResult(trainStatsOverviewRspList, page, trainStatsOverviewRspList.size());
 	}
 
 	@Override

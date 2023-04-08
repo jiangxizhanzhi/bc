@@ -126,7 +126,12 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		if (roomRoleContexts.isEmpty()) {
 			return Lists.newArrayList();
 		}
-		List<String> roomIds = StreamApiUtils.map(roomRoleContexts, RoomRoleContext::getRoomId);
+		List<String> roomIds = new ArrayList<>();
+		Map<String, Integer> roleGroupMap = Maps.newHashMap();
+		for (RoomRoleContext roomRoleContext : roomRoleContexts) {
+			roomIds.add(roomRoleContext.getRoomId());
+			roleGroupMap.put(roomRoleContext.getRoomId(), roomRoleContext.getRoleGroup());
+		}
 		List<TrainStatsOverviewRsp> related = Lists.newArrayList();
 		// 获取未结束的
 		List<RbRoom> rooms = rbRoomMapper.selectBatchIds(roomIds);
@@ -155,6 +160,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 				score += crTask.getScore() == null ? 0 : crTask.getScore();
 			}
 			data.setScore(score);
+			data.setRoleGroup(roleGroupMap.get(room.getResourceId()));
 			related.add(data);
 		}
 		return related;

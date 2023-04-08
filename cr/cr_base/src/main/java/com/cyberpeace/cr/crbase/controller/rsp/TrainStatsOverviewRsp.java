@@ -35,4 +35,7 @@ public class TrainStatsOverviewRsp implements Serializable {
     @ApiModelProperty("得分")
     private Integer score;
 
+    @ApiModelProperty("用户角色")
+    private Integer roleGroup;
+
 }

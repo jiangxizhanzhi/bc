@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -97,7 +98,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	}
 
 	@Override
-	public void getPeopleCount(String userId, TrainingPeopleStatistics trainingPeopleStatistics) {
+	public void getPeopleCount(String userId, List<BarChartUnit> trainingPeopleStatistics) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
@@ -105,18 +106,18 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		for (CrRole crRole : crRoleList) {
 			count += crRole.getUserIdList().size();
 		}
-		trainingPeopleStatistics.setRvbCount(count);
+		trainingPeopleStatistics.add(new BarChartUnit("红蓝对抗", count));
 	}
 
 	@Override
-	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+	public void getTrainingScore(String userId, List<BarChartUnit> trainingStatsScore) {
 		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		Integer sum = 0;
 		for (CrTask crTask: crTaskList) {
 			Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
 			sum += score;
 		}
-		trainingStatsScore.setRbScore(sum);
+		trainingStatsScore.add(new BarChartUnit("红蓝对抗", sum));
 	}
 
 	@Override

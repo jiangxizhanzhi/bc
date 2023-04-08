@@ -21,6 +21,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -141,52 +142,44 @@ public class CrBaseServiceImpl implements CrBaseService {
 	}
 
 	@Override
-	public TrainingAssetAccount getTrainingAssetAccount(String userId) {
-		TrainingAssetAccount trainAssetAccount = new TrainingAssetAccount();
+	public List<BarChartUnit> getTrainingAssetAccount(String userId) {
 		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
 		List<CrRoleNode> crRoleNodeList = new ArrayList<>();
 		for (LocalScene.BusinessCode businessCode: codeList) {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
 			crRoleNodeList.addAll(crEventStatistics.getCrRoleNodeList(userId));
 		}
-		Integer operatingSystemCount = Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.OPERATING_SYSTEM.getCode())).count()));
-		Integer businessNodesCount = Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.BUSINESS_NODES.getCode())).count()));
-		Integer networkNodeCount = Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.NETWORK_NODE.getCode())).count()));
-		Integer securityNodeCount = Integer.parseInt(String.valueOf(
-				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.SECURITY_NODE.getCode())).count()));
-		trainAssetAccount.setOperatingSystemCount(operatingSystemCount);
-		trainAssetAccount.setBusinessNodesCount(businessNodesCount);
-		trainAssetAccount.setNetworkNodeCount(networkNodeCount);
-		trainAssetAccount.setSecurityNodeCount(securityNodeCount);
-		trainAssetAccount.setCount(operatingSystemCount + businessNodesCount + networkNodeCount + securityNodeCount);
+		List<BarChartUnit> trainAssetAccount = new ArrayList<>();
+		trainAssetAccount.add(new BarChartUnit("操作系统", Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.OPERATING_SYSTEM.getCode())).count()))));
+		trainAssetAccount.add(new BarChartUnit("网络节点", Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.NETWORK_NODE.getCode())).count()))));
+		trainAssetAccount.add(new BarChartUnit("业务节点", Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.BUSINESS_NODES.getCode())).count()))));
+		trainAssetAccount.add(new BarChartUnit("安全节点", Integer.parseInt(String.valueOf(
+				crRoleNodeList.stream().filter(crRoleNode -> crRoleNode.getCategory().equals(AssetType.SECURITY_NODE.getCode())).count()))));
 		return trainAssetAccount;
 	}
 
 	@Override
-	public TrainingPeopleStatistics getTrainingPeopleStatistics(String userId) {
-		TrainingPeopleStatistics trainingPeopleStatistics = new TrainingPeopleStatistics();
+	public List<BarChartUnit> getTrainingPeopleStatistics(String userId) {
+		List<BarChartUnit> trainingPeopleStatistics = new ArrayList<>();
 		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.RED_TRAINING, LocalScene.BusinessCode.BLUE_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
 		for (LocalScene.BusinessCode businessCode: codeList) {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
 			crEventStatistics.getPeopleCount(userId, trainingPeopleStatistics);
 		}
-		trainingPeopleStatistics.setCount(trainingPeopleStatistics.getBlueCount() + trainingPeopleStatistics.getRedCount() + trainingPeopleStatistics.getRvbCount());
 		return trainingPeopleStatistics;
 	}
 
 	@Override
-	public TrainingStatsScore getTrainingScore(String userId) {
-		TrainingStatsScore trainingStatsScore = new TrainingStatsScore();
+	public List<BarChartUnit> getTrainingScore(String userId) {
+		List<BarChartUnit> trainingStatsScore = new ArrayList<>();
 		List<LocalScene.BusinessCode> codeList = Arrays.asList(LocalScene.BusinessCode.SINGLE_TRAINING, LocalScene.BusinessCode.TEAM_TRAINING, LocalScene.BusinessCode.RED_VS_BLUE);
 		for (LocalScene.BusinessCode businessCode: codeList) {
 			CrEventStatistics crEventStatistics = register.get(businessCode);
 			crEventStatistics.getTrainingScore(userId, trainingStatsScore);
 		}
-		trainingStatsScore.setScore(trainingStatsScore.getSingleScore() + trainingStatsScore.getBlueScore()
-				+ trainingStatsScore.getRedScore() + trainingStatsScore.getRbScore());
 		return trainingStatsScore;
 	}
 

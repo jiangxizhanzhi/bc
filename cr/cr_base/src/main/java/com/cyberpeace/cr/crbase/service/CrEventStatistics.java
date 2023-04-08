@@ -6,11 +6,10 @@ import com.cyberpeace.constant.SelectI18nName;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatsScore;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,11 +50,11 @@ public class CrEventStatistics {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
-	public void getPeopleCount(String userId, TrainingPeopleStatistics trainingPeopleStatistics){
+	public void getPeopleCount(String userId, List<BarChartUnit> trainingPeopleStatistics){
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
-	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+	public void getTrainingScore(String userId, List<BarChartUnit> trainingStatsScore) {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 

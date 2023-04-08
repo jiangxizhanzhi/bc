@@ -2,8 +2,8 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPeopleStatistics;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -38,7 +38,7 @@ public class BlueTrainStatistics extends TeamTrainStatistics {
 	}
 
 	@Override
-	public void getPeopleCount(String userId, TrainingPeopleStatistics trainingPeopleStatistics) {
+	public void getPeopleCount(String userId, List<BarChartUnit> trainingPeopleStatistics) {
 		getPeopleCountByCode(userId, trainingPeopleStatistics, TeamRoom.TrainCategory.BLUE.getCode());
 	}
 }

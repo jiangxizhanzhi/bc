@@ -16,7 +16,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.TrainUserService;
-import com.cyberpeace.cr.crbase.service.context.AttackTypeScore;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import io.swagger.annotations.Api;
@@ -129,21 +129,21 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-训练资产")
 	@GetMapping("/train_stats/asset")
-	public BaseRsp<TrainingAssetAccount> getTrainStatsAsset() {
+	public BaseRsp<List<BarChartUnit>> getTrainStatsAsset() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(crBaseService.getTrainingAssetAccount(userId));
 	}
 
 	@ApiOperation("练习统计-人员参与次数")
 	@GetMapping("/train_stats/part_in")
-	public BaseRsp<TrainingPeopleStatistics> getTrainStatsPartIn() {
+	public BaseRsp<List<BarChartUnit>> getTrainStatsPartIn() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(crBaseService.getTrainingPeopleStatistics(userId));
 	}
 
 	@ApiOperation("练习统计-战绩统计")
 	@GetMapping("/train_stats/standings")
-	public BaseRsp<TrainingStatsScore> getTrainStatsStandings() {
+	public BaseRsp<List<BarChartUnit>> getTrainStatsStandings() {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		return new BaseRsp<>(crBaseService.getTrainingScore(userId));
 	}
@@ -157,12 +157,12 @@ public class CrBaseController {
 
 	@ApiOperation("练习统计-攻击方式评分")
 	@GetMapping("/train_stats/attack_type_score")
-	public BaseRsp<List<AttackTypeScore>> getScoreByAttackType(@ApiParam("场景id") @RequestParam("room_id") String roomId,
+	public BaseRsp<List<BarChartUnit>> getScoreByAttackType(@ApiParam("场景id") @RequestParam("room_id") String roomId,
 															   @ApiParam("训练类型") @RequestParam("business_type") Integer businessType) {
 		HashMap<String, Integer> attackTypeScoreMap = crBaseService.getScoreByAttackType(businessType, roomId);
-		List<AttackTypeScore> attackTypeScoreList = new ArrayList<>();
+		List<BarChartUnit> attackTypeScoreList = new ArrayList<>();
 		for (String attackType: attackTypeScoreMap.keySet()) {
-			attackTypeScoreList.add(new AttackTypeScore(attackType, attackTypeScoreMap.get(attackType)));
+			attackTypeScoreList.add(new BarChartUnit(attackType, attackTypeScoreMap.get(attackType)));
 		}
 		return new BaseRsp<>(attackTypeScoreList);
 	}

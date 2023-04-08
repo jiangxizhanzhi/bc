@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
@@ -97,12 +98,12 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		return crRoleNodeList;
 	}
 
-	public void getPeopleCountByCode(String userId, TrainingPeopleStatistics trainingPeopleStatistics, Integer code) {
+	public void getPeopleCountByCode(String userId, List<BarChartUnit> trainingPeopleStatistics, Integer code) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		if (roomIds.size() == 0) {
-			trainingPeopleStatistics.setBlueCount(0);
-			trainingPeopleStatistics.setRedCount(0);
+			trainingPeopleStatistics.add(new BarChartUnit("红队训练", 0));
+			trainingPeopleStatistics.add(new BarChartUnit("蓝队训练", 0));
 			return;
 		}
 		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
@@ -116,14 +117,14 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			count += crRole.getUserIdList().size();
 		}
 		if (code.equals(TeamRoom.TrainCategory.BLUE.getCode())) {
-			trainingPeopleStatistics.setBlueCount(count);
+			trainingPeopleStatistics.add(new BarChartUnit("蓝队训练", count));
 		} else {
-			trainingPeopleStatistics.setRedCount(count);
+			trainingPeopleStatistics.add(new BarChartUnit("红队训练", count));
 		}
 	}
 
 	@Override
-	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+	public void getTrainingScore(String userId, List<BarChartUnit> trainingStatsScore) {
 		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		List<String> roomIds = StreamApiUtils.map(crTaskList, CrTask::getRoomId);
 		if (roomIds.size() == 0) {
@@ -141,8 +142,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 				blueScore += score;
 			}
 		}
-		trainingStatsScore.setBlueScore(blueScore);
-		trainingStatsScore.setRedScore(redScore);
+		trainingStatsScore.add(new BarChartUnit("蓝队训练", blueScore));
+		trainingStatsScore.add(new BarChartUnit("红队训练", redScore));
 	}
 
 	@Override

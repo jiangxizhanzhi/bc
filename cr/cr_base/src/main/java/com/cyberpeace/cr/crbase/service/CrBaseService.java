@@ -3,9 +3,11 @@ package com.cyberpeace.cr.crbase.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface CrBaseService {
 
@@ -19,11 +21,11 @@ public interface CrBaseService {
 
 	TrainingStatisticsAccount getTrainingStatisticsAccount(String userId);
 
-	TrainingAssetAccount getTrainingAssetAccount(String userId);
+	List<BarChartUnit> getTrainingAssetAccount(String userId);
 
-	TrainingPeopleStatistics getTrainingPeopleStatistics(String userId);
+	List<BarChartUnit> getTrainingPeopleStatistics(String userId);
 
-	TrainingStatsScore getTrainingScore(String userId);
+	List<BarChartUnit> getTrainingScore(String userId);
 
 	ListRsp<TrainStatsOverviewRsp> getTrainingOverview(String userId, Page page);
 

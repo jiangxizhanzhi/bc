@@ -11,9 +11,9 @@ import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
+import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.crbase.service.context.statistics.TrainingStatsScore;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
@@ -89,7 +89,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	}
 
 	@Override
-	public void getTrainingScore(String userId, TrainingStatsScore trainingStatsScore) {
+	public void getTrainingScore(String userId, List<BarChartUnit> trainingStatsScore) {
 		LambdaQueryWrapper<TrainRecord> trainRecordLambdaQueryWrapper = new LambdaQueryWrapper<>();
 		trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);
 		List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
@@ -100,7 +100,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 				sum += trainExtraData.getInteger("score");
 			}
 		}
-		trainingStatsScore.setSingleScore(sum);
+		trainingStatsScore.add(new BarChartUnit("单兵训练", sum));
 	}
 
 	@Override

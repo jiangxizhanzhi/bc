@@ -513,6 +513,22 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
 
+		//管理员用户增加admin用户在自己创建的计划中的创建的计划
+		if (authContext.getIsAdmin()) {
+			roomListQuery.setUserId(null);
+			List<Classroom> superAdminClassrooms = classroomMapper.selectList(roomListQuery);
+			superAdminClassrooms = superAdminClassrooms.stream().filter(classroom -> {
+				if (classroom.getTrainPlanId() != null) {
+					TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
+					if (trainPlan != null && trainPlan.getCreateUserId().equals(authContext.getUserId())) {
+						return true;
+					}
+				}
+				return false;
+			}).collect(Collectors.toList());
+			classrooms.addAll(superAdminClassrooms);
+		}
+
 		// 过滤已删除组织关联数据
 		List<String> orgs = remoteOrganizationService.childrenList("", true);
 		classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
@@ -1039,8 +1055,9 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public IPage<ClassroomBo> selectPage(ClassRoomPageQuery roomListQuery,
 										 AuthContext authContext) {
 		Page page = roomListQuery.toPageParam();
+		List<String> courseIds = courseMapper.selectByAuth(authContext);
 		IPage<Classroom> result = classroomMapper.page(page, roomListQuery.getUserId(),
-				roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg());
+				roomListQuery.getTrainPlanId(), roomListQuery.getChildrenOrg(), authContext.getIsAdmin(), courseIds);
 
 		return result.convert(classroom -> entityToBo(classroom));
 

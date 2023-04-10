@@ -2,7 +2,10 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,9 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private CourseMapper courseMapper;
+
 	@Override
 	public List<TrainPlanBo> trainPlanList(UserInfo userInfo) {
 		List<TrainPlan> trainPlans = userInfo.isSuperuser() ? trainPlanMapper.all()
@@ -45,8 +51,10 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 	public IPage<TrainPlanRsp> page(TrainPlanReq trainPlanReq, UserInfo userInfo) {
 
 		Page page = trainPlanReq.toPageParam();
+		List<String> courseIds = courseMapper.selectByAuth(AuthContextUtils.constructAuth(userInfo,
+				false));
 		IPage<TrainPlanRsp> result = trainPlanMapper.listTrainPlan(page, trainPlanReq.getPattern(), trainPlanReq.getOrganizationId(),
-				userInfo.getUserId(), userInfo.isSuperuser());
+				userInfo.getUserId(), userInfo.isSuperuser(), userInfo.isAdmin(), courseIds);
 
 		for (TrainPlanRsp trainPlanRsp : result.getRecords()) {
 			UserInfo user = remoteUserService.getById(trainPlanRsp.getCreateUserId());

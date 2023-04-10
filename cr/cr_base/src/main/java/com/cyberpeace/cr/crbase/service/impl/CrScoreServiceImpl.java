@@ -65,6 +65,8 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				crTaskService.countUnfinishedByRoomIdAndRoleIds(roomId, crRoleIds));
 		missionsStatistics.setFinishProportion(
 				crTaskService.countFinishedByRoomIdAndRoleIds(roomId, crRoleIds));
+		missionsStatistics.setEndedProportion(
+				crTaskService.countEndedByRoomIdAndRoleIds(roomId, crRoleIds));
 		return missionsStatistics;
 	}
 

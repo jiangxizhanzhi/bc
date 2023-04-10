@@ -2,6 +2,7 @@ package com.cyberpeace.situation.service.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -433,6 +434,9 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         //任务科目列表
         List<SubjectContext> subjectList = remoteSituationService.getSubjectList(new SubjectListReq());
 
+
+        List<DashboardAttribute> dashboardAttributes = dashboardAttributeMapper.selectList(null);
+        Map<String, DashboardAttribute> stringDashboardAttributeMap = StreamApiUtils.toMap(dashboardAttributes, DashboardAttribute::getResourceId, dashboardAttribute -> dashboardAttribute);
         //填充相关名称
         if (CollectionUtils.isNotEmpty(situationPublishInstancePageResList)) {
             for (SituationPublishInstancePageRes situationPublishInstancePageRes : situationPublishInstancePageResList) {
@@ -479,6 +483,14 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                             }
                         }
                     });
+                }
+                if(situationPublishInstanceFilterReq.getReplay()){
+                    String attributeId = situationPublishInstancePageRes.getAttributeId();
+                    DashboardAttribute dashboardAttribute = stringDashboardAttributeMap.get(attributeId);
+                    if(null != dashboardAttribute){
+                        situationPublishInstancePageRes.setStartTime(DateUtil.DateToString(dashboardAttribute.getStartTime(), "yyyy-MM-dd HH:mm:ss"));
+                        situationPublishInstancePageRes.setEndTime(DateUtil.DateToString(dashboardAttribute.getEndTime(), "yyyy-MM-dd HH:mm:ss"));
+                    }
                 }
             }
         }

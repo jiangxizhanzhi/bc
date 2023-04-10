@@ -45,7 +45,7 @@ public class EvaluateUrlRes implements Serializable {
 		if (runId != null) {
 			Integer type = EnumUtils.getEnumCodeByDesc(role, Role.class);
 			this.url = situationEnvService.getPgPageHost()
-					+ ConfigUtil.getContextProperty("pg.run.page") + "?runId=" + runId + "&type="
+					+ ConfigUtil.getContextProperty("pg.run.page") + "&runId=" + runId + "&type="
 					+ type;
 		}
 	}

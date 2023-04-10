@@ -15,9 +15,12 @@ public class TaskCounter {
 
 	private Integer notReleased;
 
+	private Integer closed;
+
 	public enum TaskType {
 
-		FINISHED(0, "已完成"), RELEASED(1, "进行中"), NOTRELEASED(2, "未下发");
+		FINISHED(0, "已完成"), RELEASED(1, "进行中"), NOTRELEASED(2, "未下发"),
+		CLOSED(3, "已关闭");
 
 		@Getter
 		private Integer code;

@@ -306,22 +306,26 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		CrRole crRole = getCrRoleByRoomIdAndUserId(roomId, studentId);
 		Integer finished = 0;
 		Integer released = 0;
+		Integer closed = 0;
 		List<TaskContext> taskContextList = crTaskService.getByRoomIdAndUser(roomId, studentId);
 
 		for (TaskContext taskContext : taskContextList) {
 			if (taskContext.isFinished()) {
 				finished++;
+			} else if (taskContext.getStatus().intValue() == CrTask.TaskStatus.CLOSE.getCode()) {
+				closed++;
 			} else {
 				released++;
 			}
 		}
 		taskCounter.setFinished(finished);
 		taskCounter.setReleased(released);
+		taskCounter.setClosed(closed);
 		int countMissions = 0;
 		for (MissionStageScheme missionStageScheme : crRole.getMissionStageSchemes()) {
 			countMissions += missionStageScheme.getMissions().size();
 		}
-		taskCounter.setNotReleased(countMissions - finished - released);
+		taskCounter.setNotReleased(countMissions - finished - released - closed);
 
 		return taskCounter;
 	}

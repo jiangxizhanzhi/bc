@@ -233,6 +233,20 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.setRunningTime(TimeUtil.getIntervalSeconds(singleRoom.getStartTime(), new Date()));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);
 
+		SingleTrainListReq req = new SingleTrainListReq();
+		req.setPattern(singleRoomBo.getEventData().getName());
+		req.setPerPage(1000);
+		ListRsp<SingleRoomListBo> singleTrainPageList = getSingleTrainPageList(req);
+		if (!singleTrainPageList.getList().isEmpty()) {
+			for (SingleRoomListBo singleRoomListBo: singleTrainPageList.getList()) {
+				if (singleRoomListBo.getResourceId().equals(singleRoomBo.getResourceId())) {
+					singleRoomBo.setLastSevenDays(singleRoomListBo.getLastSevenDays());
+					singleRoomBo.setTemplateUseCount(singleRoomListBo.getTemplateUseCount());
+					break;
+				}
+			}
+		}
+
 		return singleRoomBo;
 	}
 

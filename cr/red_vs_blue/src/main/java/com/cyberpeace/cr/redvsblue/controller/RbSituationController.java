@@ -88,7 +88,7 @@ public class RbSituationController {
 	public BaseRsp<List<RbSituationActionRsp>> platformAction(
 			@ApiParam(value = "红蓝对抗实例Id", required = true) @RequestParam(value = "room_id") String roomId,
 			@ApiParam(value = "角色类型, 红=4;蓝=5", required = true) @RequestParam(value = "role_type") Integer roleType) {
-		return new BaseRsp<>(rbSituationService.getPlatformScore(roomId, roleType));
+		return new BaseRsp<>(rbSituationService.getPlatformAction(roomId, roleType));
 	}
 
 }

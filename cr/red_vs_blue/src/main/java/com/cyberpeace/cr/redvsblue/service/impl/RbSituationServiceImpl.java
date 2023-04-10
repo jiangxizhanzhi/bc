@@ -258,17 +258,6 @@ public class RbSituationServiceImpl implements RbSituationService {
 	}
 
 	@Override
-	public List<RbSituationActionRsp> getTeamAction(String roomId, Integer roleType) {
-		List<CrTrainAction> crTrainActionList = crTrainActionService.lambdaQuery()
-				.eq(CrTrainAction::getRoomId, roomId)
-				.eq(CrTrainAction::getRoleType, roleType)
-				.eq(CrTrainAction::getModule, CrTrainAction.Module.TEAM.getCode())
-				.list();
-
-		return toRbSituationActionRsp(crTrainActionList);
-	}
-
-	@Override
 	public RbSituationAssetStatusRsp getAssetStatus(String roomId, Integer roleType) {
 		RbSituationAssetStatusRsp rbSituationAssetStatusRsp = new RbSituationAssetStatusRsp();
 		List<CrRoleAssetNode> crRoleAssetNodeList =  crRoleAssetNodeService.lambdaQuery()
@@ -320,11 +309,25 @@ public class RbSituationServiceImpl implements RbSituationService {
 	}
 
 	@Override
-	public List<RbSituationActionRsp> getPlatformScore(String roomId, Integer roleType) {
+	public List<RbSituationActionRsp> getTeamAction(String roomId, Integer roleType) {
 		List<CrTrainAction> crTrainActionList = crTrainActionService.lambdaQuery()
 				.eq(CrTrainAction::getRoomId, roomId)
 				.eq(CrTrainAction::getRoleType, roleType)
+				.eq(CrTrainAction::getModule, CrTrainAction.Module.TEAM.getCode())
+				.list();
+
+		return toRbSituationActionRsp(crTrainActionList);
+	}
+
+	@Override
+	public List<RbSituationActionRsp> getPlatformAction(String roomId, Integer roleType) {
+		List<CrTrainAction> crTrainActionList = crTrainActionService.lambdaQuery()
+				.eq(CrTrainAction::getRoomId, roomId)
 				.eq(CrTrainAction::getModule, CrTrainAction.Module.PLATFORM.getCode())
+				.in(CrTrainAction::getModuleEvent, roleType.equals(
+						CrRole.RbRoleGroup.RED.getCode())
+						? CrTrainAction.PlatformEvent.RED_PLATFORM_ACTION
+						: CrTrainAction.PlatformEvent.BLUE_PLATFORM_ACTION)
 				.list();
 
 		return toRbSituationActionRsp(crTrainActionList);

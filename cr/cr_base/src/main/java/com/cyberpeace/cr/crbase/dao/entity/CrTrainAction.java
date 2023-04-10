@@ -7,7 +7,10 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("cr_train_action")
@@ -109,11 +112,28 @@ public class CrTrainAction extends BaseTable {
     }
 
     public enum PlatformEvent {
-        CLOSE_TASK(1, "关闭任务"),
-        RELEASE_TASK(2, "下发任务"),
-        RED_NOTICE(3, "发布红队任务"),
-        BLUE_NOTICE(4, "发布蓝队公告"),
-        RELEASE_NOTICE(5, "发布全局公告");
+        CLOSE_RED_TASK(1, "关闭任务"),
+        CLOSE_BLUE_TASK(2, "关闭任务"),
+        RELEASE_RED_TASK(3, "下发任务"),
+        RELEASE_BLUE_TASK(4, "下发任务"),
+        RED_NOTICE(5, "发布红队任务"),
+        BLUE_NOTICE(6, "发布蓝队公告"),
+        RELEASE_NOTICE(7, "发布全局公告");
+
+        public static List<Integer> RED_PLATFORM_ACTION = Arrays.asList(
+                CLOSE_RED_TASK.getCode(),
+                RELEASE_RED_TASK.getCode(),
+                RED_NOTICE.getCode(),
+                RELEASE_NOTICE.getCode()
+        );
+
+        public static List<Integer> BLUE_PLATFORM_ACTION = Arrays.asList(
+                CLOSE_BLUE_TASK.getCode(),
+                RELEASE_BLUE_TASK.getCode(),
+                BLUE_NOTICE.getCode(),
+                RELEASE_NOTICE.getCode()
+        );
+
         @Getter
         private final Integer code;
 

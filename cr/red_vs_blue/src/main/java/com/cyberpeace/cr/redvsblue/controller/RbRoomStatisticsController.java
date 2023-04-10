@@ -305,7 +305,7 @@ public class RbRoomStatisticsController {
 	@ApiOperation("3D态势-平台动态")
 	@GetMapping("/team_platform_action")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<List<RbRoomTeamActionRsp>> teamPlatformAction(
+	public BaseRsp<List<RbRoomTeamActionRsp>> platformAction(
 			@ApiParam(name = "room_id", value = "训练id", required = true) String roomId,
 			@ApiParam(name = "type", value = "队伍类型 4-红;5-蓝", required = true) String type
 	) {

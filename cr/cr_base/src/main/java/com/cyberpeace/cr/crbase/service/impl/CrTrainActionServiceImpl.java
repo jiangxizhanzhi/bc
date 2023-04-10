@@ -21,16 +21,21 @@ public class CrTrainActionServiceImpl extends ServiceImpl<CrTrainActionMapper, C
     private CrRoleService crRoleService;
 
     @Override
-    public Boolean saveTeamAction(String roomId, String content, Integer type) {
-        return saveAction(roomId, content, type, CrTrainAction.Module.TEAM.getCode());
+    public Boolean saveTeamAction(String roomId, String content, Integer moduleEvent) {
+        return saveAction(roomId, content, null, moduleEvent, CrTrainAction.Module.TEAM.getCode());
     }
 
     @Override
-    public Boolean savePlatformAction(String roomId, String content, Integer type) {
-        return saveAction(roomId, content, type, CrTrainAction.Module.PLATFORM.getCode());
+    public Boolean saveTeamAction(String roomId, String content, Integer moduleEvent, Integer type) {
+        return saveAction(roomId, content, type, moduleEvent, CrTrainAction.Module.TEAM.getCode());
     }
 
-    private Boolean saveAction(String roomId, String content, Integer type, Integer module) {
+    @Override
+    public Boolean savePlatformAction(String roomId, String content, Integer moduleEvent) {
+        return saveAction(roomId, content, null, moduleEvent, CrTrainAction.Module.PLATFORM.getCode());
+    }
+
+    private Boolean saveAction(String roomId, String content, Integer type, Integer moduleEvent, Integer module) {
         String userId = UserInfoContext.getUserContext().getUserId();
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 
@@ -39,12 +44,16 @@ public class CrTrainActionServiceImpl extends ServiceImpl<CrTrainActionMapper, C
         CrTrainAction crTrainAction = new CrTrainAction();
 
         crTrainAction.setRoomId(roomId);
-        crTrainAction.setType(type);
         crTrainAction.setUserId(userId);
+        if (type == null) {
+            type = CrTrainAction.Type.NORMAL.getCode();
+        }
+        crTrainAction.setType(type);
         crTrainAction.setRoleId(crRole.getResourceId());
         crTrainAction.setRoleType(crRole.getRoleGroup());
         crTrainAction.setContent(content);
         crTrainAction.setModule(module);
+        crTrainAction.setModuleEvent(moduleEvent);
         crTrainAction.setActionTime(new Date());
 
         return save(crTrainAction);

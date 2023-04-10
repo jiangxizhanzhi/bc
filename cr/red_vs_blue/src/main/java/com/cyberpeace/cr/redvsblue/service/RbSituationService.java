@@ -29,5 +29,5 @@ public interface RbSituationService {
 
 	List<RbSituationActionRsp> getTeamAction(String roomId, Integer roleType);
 
-	List<RbSituationActionRsp> getPlatformScore(String roomId, Integer roleType);
+	List<RbSituationActionRsp> getPlatformAction(String roomId, Integer roleType);
 }

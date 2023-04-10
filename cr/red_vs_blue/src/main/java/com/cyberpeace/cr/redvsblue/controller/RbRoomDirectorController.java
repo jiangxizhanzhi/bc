@@ -182,7 +182,9 @@ public class RbRoomDirectorController {
 		crTrainActionService.savePlatformAction(
 				mission.getRoomId(),
 				String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.RELEASE_TASK), mission.getTitle()),
-				CrTrainAction.PlatformEvent.RELEASE_TASK.getCode()
+				crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())
+						? CrTrainAction.PlatformEvent.RELEASE_RED_TASK.getCode()
+						: CrTrainAction.PlatformEvent.RELEASE_BLUE_TASK.getCode()
 		);
 
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
@@ -254,7 +256,9 @@ public class RbRoomDirectorController {
 			crTrainActionService.savePlatformAction(
 					mission.getRoomId(),
 					String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.CLOSE_TASK), mission.getTitle()),
-					CrTrainAction.PlatformEvent.CLOSE_TASK.getCode()
+					crRole.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())
+							? CrTrainAction.PlatformEvent.CLOSE_RED_TASK.getCode()
+							: CrTrainAction.PlatformEvent.CLOSE_BLUE_TASK.getCode()
 			);
 		}
 

@@ -239,7 +239,8 @@ public class RbRoomUserController {
 			crTrainActionService.saveTeamAction(
 					taskContext.getRoomId(),
 					String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.FINISH_TASK), taskContext.getMission().getTitle()),
-					CrTrainAction.TeamEvent.FINISH_TASK.getCode()
+					CrTrainAction.TeamEvent.FINISH_TASK.getCode(),
+					CrTrainAction.Type.FINISH.getCode()
 			);
 		}
 

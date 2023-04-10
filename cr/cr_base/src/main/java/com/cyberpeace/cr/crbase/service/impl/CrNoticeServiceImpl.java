@@ -188,20 +188,20 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
         // 平台动态-发布公告
         if (crNotice.getBusinessType().intValue() == BusinessTemplate.BusinessType.RED_VS_BLUE.getCode()) {
             String content;
-            Integer type;
+            Integer moduleEvent;
             if (crNotice.getGroup().equals(CrNotice.Group.RED.getCode())) {
                 content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.RED_NOTICE);
-                type = CrTrainAction.PlatformEvent.RED_NOTICE.getCode();
+                moduleEvent = CrTrainAction.PlatformEvent.RED_NOTICE.getCode();
             } else if (crNotice.getGroup().equals(CrNotice.Group.BLUE.getCode())) {
                 content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.BLUE_NOTICE);
-                type = CrTrainAction.PlatformEvent.BLUE_NOTICE.getCode();
+                moduleEvent = CrTrainAction.PlatformEvent.BLUE_NOTICE.getCode();
             } else {
                 content = BusinessException.getMessageByLanguage(CrBusinessErrorCode.RELEASE_NOTICE);
-                type = CrTrainAction.PlatformEvent.RELEASE_NOTICE.getCode();
+                moduleEvent = CrTrainAction.PlatformEvent.RELEASE_NOTICE.getCode();
             }
             content = String.format(content, crNotice.getContent());
 
-            crTrainActionService.savePlatformAction(crNotice.getRoomId(), content, type);
+            crTrainActionService.savePlatformAction(crNotice.getRoomId(), content, moduleEvent);
         }
 
         return get(crNotice.getResourceId());

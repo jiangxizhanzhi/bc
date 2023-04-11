@@ -182,6 +182,10 @@ public interface MenuConstant {
     //团队训练统计
     String CMS_CR_TEAM_TRAIN_STATISTICS = "team-training-statistics";
 
+    // 红队/蓝队团队训练统计
+    String CMS_CR_RED_TEAM_TRAIN_STATISTICS = "red-team-training-statistics";
+    String CMS_CR_BLUE_TEAM_TRAIN_STATISTICS = "blue-team-training-statistics";
+
     //红蓝对抗统计
     String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
 }

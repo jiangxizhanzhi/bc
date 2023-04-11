@@ -13,6 +13,7 @@ import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class TeamTrainStatisticsController {
 
     @GetMapping("/personal_rank")
     @ApiOperation("团队训练个人排名TOP5")
-    @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
+    @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
     public BaseRsp<List<TeamPersonalStatisticsBo>> getAllPersonalRank() {
         List<TeamPersonalStatisticsBo> rsp = TeamTrainStatistics.getAllPersonalRankStatistics();
         return new BaseRsp<>(rsp);
@@ -43,7 +44,7 @@ public class TeamTrainStatisticsController {
 
     @GetMapping("/organization_rank")
     @ApiOperation("团队训练组织排名TOP5")
-    @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
+    @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
     public BaseRsp<List<TeamOrganizationStatisticsBo>> getOrganizationRank() {
         List<TeamOrganizationStatisticsBo> rsp = TeamTrainStatistics.getOrganizationRankStatistics();
         return new BaseRsp<>(rsp);
@@ -52,7 +53,7 @@ public class TeamTrainStatisticsController {
 
     @GetMapping("/detail")
     @ApiOperation("团队训练统计详情")
-    @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
+    @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
     public BaseRsp<ListRsp<TeamStatisticsDetailBo>> getAllDetail(TeamTrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
         ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);

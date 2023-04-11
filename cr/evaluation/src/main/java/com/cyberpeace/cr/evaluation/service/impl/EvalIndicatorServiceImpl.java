@@ -176,6 +176,8 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 			evalIndicatorLoadBoList = JsonUtil.toJsonObjectArray(new String(file.getBytes(), StandardCharsets.UTF_8), EvalIndicatorLoadBo.class);
 		} catch (IOException e) {
 			throw new BusinessException();
+		} catch (Exception e) {
+			throw new BusinessException(CrBusinessErrorCode.FILE_FORMAT_ERROR);
 		}
 		if (!lambdaQuery()
 				.in(EvalIndicator::getName,

@@ -101,7 +101,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 			} else if (blueRoleType.contains(mission.getEventType())) {
 				roleType = "blue";
 			}
-			if (crLabelGroupList.size() > 0) {
+			if (crRoleAssetNodeList.size() > 0) {
 				CrRoleAssetNode crRoleAssetNode = crRoleAssetNodeList.get(0);
 				if ("red".equals(roleType)) {
 					crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.RED.getCode());

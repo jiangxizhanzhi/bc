@@ -138,4 +138,9 @@ public interface ResourceImportConstant {
 	String WRITEUP_MD = "writeup.md";
 
 	List<String> PRACTICE_SET_LOGO = Arrays.asList("/cpms/built_in/SetLogo1.png", "/cpms/built_in/SetLogo2.png", "/cpms/built_in/SetLogo3.png", "/cpms/built_in/SetLogo4.png", "/cpms/built_in/SetLogo5.png");
+
+	/**
+	 * 资源导入导出文件存放目录
+	 */
+	String RESOURCE_CRYPTO_PATH = "/cpms/crypto";
 }

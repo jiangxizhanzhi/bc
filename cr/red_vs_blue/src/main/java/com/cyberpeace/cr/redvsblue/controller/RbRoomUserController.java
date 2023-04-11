@@ -306,8 +306,8 @@ public class RbRoomUserController {
 	@GetMapping("/action/receive_mission")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> receiveMission(
-			@ApiParam(value = "下发任务ID", required = true) @RequestParam("task_id") String taskId) {
-		CrTask crTask = crTaskService.getById(taskId);
+			@ApiParam(value = "下发任务ID", required = true) @RequestParam("mission_id") String missionId) {
+		TaskContext crTask = crTaskService.getByMissionAndUser(missionId, UserInfoContext.getUserContext().getUserId());
 		Mission mission = missionService.getById(crTask.getMissionId());
 
 		return new BaseRsp<>(

@@ -190,17 +190,16 @@ public class RbRoomRefereeController {
 		rbRoomService.checkRefereePermission(submitEvaluationReq.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
 
+		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
+		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
+		if (submitEvaluationReq.getEvaluateStatus().equals(1)) {
+			crTaskService.judgeTaskAndPushMissionToSituation(task.getMissionId(), submitEvaluationReq.getScore());
+		}
+
 		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
 				submitEvaluationReq.getScore(), submitEvaluationReq.getDetail(),
 				submitEvaluationReq.getReason(), submitEvaluationReq.getEvaluateStatus(),
 				UserInfoContext.getUserContext().getUserId());
-
-		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(submitEvaluationReq.getSubmitId());
-		CrTask task = crTaskMapper.selectById(taskSubmit.getTaskId());
-
-		if (submitEvaluationReq.getEvaluateStatus().equals(1)) {
-			crTaskService.judgeTaskAndPushMissionToSituation(task.getMissionId(), submitEvaluationReq.getScore());
-		}
 
 		crTaskService.pushMissionWS(submitEvaluationReq.getRoomId(),
 				MissionWsCode.RVB_MISSION_CODE);

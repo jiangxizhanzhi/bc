@@ -3,7 +3,10 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +77,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Autowired
 	private RbDeviceService rbDeviceService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -163,6 +169,32 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData != null) {
+
+			CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+			if (CrRole.RbRoleGroup.isRvbStudentRole(role.getRoleGroup())) {
+				Map<String, CrRoomDeviceApply> crRoomDeviceApplyMap = crRoomDeviceApplyService.lambdaQuery()
+						.eq(CrRoomDeviceApply::getRoomId, roomId)
+						.eq(CrRoomDeviceApply::getApplyUserId, userId)
+						.eq(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.AGREE.getCode())
+						.list()
+						.stream().collect(Collectors.toMap(
+								CrRoomDeviceApply::getDeviceId,
+								crRoomDeviceApply -> crRoomDeviceApply
+						));
+
+				JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+				for (String imageId: elements.keySet()) {
+					JSONObject elementData = elements.getJSONObject(imageId);
+
+					if (elementData.get("image_type").equals("entity")) {
+						CrRoomDeviceApply crRoomDeviceApply = crRoomDeviceApplyMap.get(elementData.getString("image_uuid"));
+						sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements")
+								.getJSONObject(imageId)
+								.put("apply_status", crRoomDeviceApply == null ? null : crRoomDeviceApply.getStatus());
+					}
+				}
+			}
+
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());

@@ -821,7 +821,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	public Boolean pushEventAds(List<WsEventAd> eventAds, String dashboardId, String featureId) {
 
 		// 推送攻防事件消息弹窗
-		// pushDashboardMessage(eventAds, dashboardId, featureId);
+		pushDashboardMsg(eventAds, dashboardId, featureId);
 
 		// 推送攻防事件数据
 		batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(), dashboardId, featureId,

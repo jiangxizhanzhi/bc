@@ -28,16 +28,17 @@ public class ResourceAddWaterMarkingJob {
     @Autowired
     private CourseLessonMapper courseLessonMapper;
 
-    @Scheduled(cron="0 0/1 * * * ?")
+    // TODO 时间间隔恢复
+    @Scheduled(cron="0 0/5 * * * ?")
     public void videoAdd() {
-        if(!Boolean.parseBoolean(System.getProperty("ojj.isCrypto"))){
+        if(!Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.isCrypto"))){
             return;
         }
         String path = "/cpms/crypto";
         FileUtil.mkdirs(path);
         List<String> attachmentVideoList = FileUtil.listDirs(
                 new File(ResourceImportConstant.RESOURCE_CRYPTO_PATH).getAbsolutePath(), true);
-        List<String> cryptoVideo = getCryptoList(attachmentVideoList);
+        List<String> cryptoVideo = getCryptoVideoList(attachmentVideoList);
         LambdaQueryWrapper<CourseLesson> filterQueryVideo = new LambdaQueryWrapper<>();
         if(cryptoVideo.size() > 0){
             filterQueryVideo.notIn(CourseLesson::getResourceId,cryptoVideo);
@@ -66,7 +67,7 @@ public class ResourceAddWaterMarkingJob {
                 return;
             }
             String videoName = split1[0];
-            FileUtil.copyFile(new File(video), new File(path + File.separator + videoPath));
+            FileUtil.copyFile(new File(video), new File(path + File.separator + courseLesson.getResourceId() + "_" + videoPath));
             String replaceVideo = video.replace(videoName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, videoName));
             dto.put("video_converted_path", replaceVideo);//必填
             System.out.printf("start to add %s water marking!!%n", video);
@@ -75,6 +76,7 @@ public class ResourceAddWaterMarkingJob {
             courseLesson.setVideoUrl(replaceVideo);
             courseLessonMapper.updateById(courseLesson);
         });
+        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 
 
@@ -82,9 +84,9 @@ public class ResourceAddWaterMarkingJob {
         List<String> cryptoVideo = new ArrayList<>();
         attachmentVideoList.forEach(attachment->{
             String[] split = attachment.split("_");
-            if(split.length >= 2 && (attachment.contains(".mp4") || attachment.contains(".m4v"))){
-                String[] split1 = split[0].split("\\\\");
-                if(split1.length > 2){
+            if(split.length >= 2 && !(attachment.contains(".mp4") || attachment.contains(".m4v"))){
+                String[] split1 = split[0].split("/");
+                if(split1.length > 2 && !cryptoVideo.contains(split1[split1.length - 1])){
                     cryptoVideo.add(split1[split1.length - 1]);
                 }
             }
@@ -92,9 +94,23 @@ public class ResourceAddWaterMarkingJob {
         return cryptoVideo;
     }
 
+    private List<String> getCryptoVideoList(List<String> attachmentVideoList) {
+        List<String> cryptoVideo = new ArrayList<>();
+        attachmentVideoList.forEach(attachment->{
+            String[] split = attachment.split("_");
+            if(split.length >= 2 && (attachment.contains(".mp4") || attachment.contains(".m4v"))){
+                String[] split1 = split[0].split("/");
+                if(split1.length > 2 && !cryptoVideo.contains(split1[split1.length - 1])){
+                    cryptoVideo.add(split1[split1.length - 1]);
+                }
+            }
+        });
+        return cryptoVideo;
+    }
+    // TODO 时间间隔恢复
     @Scheduled(cron="0 0/1 * * * ?")
     public void officeResourceAdd() {
-        if(!Boolean.parseBoolean(System.getProperty("ojj.isCrypto"))){
+        if(!Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.isCrypto"))){
             return;
         }
         String path = "/cpms/crypto";
@@ -137,9 +153,9 @@ public class ResourceAddWaterMarkingJob {
                     System.out.printf("start to add %s water marking!!%n", handout);
                     try {
                         if (handoutType.equals(CourseLesson.HandoutType.PPT.getCode())) {
-                            WaterMarkingUtils.addPPTWatermark(handout, replacehandout, markStr, null, "pptx");
+                            WaterMarkingUtils.addPPTWatermark(handout.split("\\.")[0].replace(handoutName, ""), handoutName, markStr, null, replacehandout);
                         } else if (handoutType.equals(CourseLesson.HandoutType.DOC.getCode())) {
-                            WaterMarkingUtils.addWordWaterMark(handout, replacehandout, markStr);
+                            WaterMarkingUtils.addWordWaterMark(handout, markStr,null,replacehandout);
 
                         } else if (handoutType.equals(CourseLesson.HandoutType.PDF.getCode())) {
                             WaterMarkingUtils.setPdfWatermark(handout, replacehandout, markStr);
@@ -153,5 +169,6 @@ public class ResourceAddWaterMarkingJob {
                     courseLessonMapper.updateById(courseLesson);
                 }
         );
+        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 }

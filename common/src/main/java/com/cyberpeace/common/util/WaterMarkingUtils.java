@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import cn.hutool.core.io.FileUtil;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.*;
@@ -12,14 +13,19 @@ import com.spire.doc.fields.ShapeObject;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -27,10 +33,19 @@ import java.awt.Font;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.regex.Pattern.compile;
 
 public class WaterMarkingUtils {
 
     private static final Color DEFAULTCOLOR = new Color(Integer.parseInt("#D3D3D3".substring(1), 16));
+
+//    public static final File FONT_HEI = new File("/cpms/built_in/simhei.ttf");
+    public static final File FONT_HEI = new File("C:\\Windows\\Fonts\\simhei.ttf");
 
     public static void main(String[] args) {
 //        String markText = "南京赛宁";
@@ -38,11 +53,12 @@ public class WaterMarkingUtils {
 //
 //        setExcelWaterMark("D:/cpms/app1.xls","D:/cpms/app2.xls",markText);
 //		// 原图位置, 输出图片位置, 水印文字颜色, 水印文字 支持doc docx
-//        try {
-//            addWordWaterMark("D:/cpms/app1.docx", String.format("D:/cpms/app2_%s.docx",-10),"南京赛宁", -10);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+//            addWordWaterMark1("D:/cpms/app.docx", String.format("D:/cpms/app2_%s.docx",-10),"南京赛宁");
+            addWordWaterMark("D:/cpms/app1.docx", "南京赛宁",null,"D:/cpms/oj");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             addPPTWatermark("D:/cpms/","app1.pptx", "南京赛宁", null, "D:/cpms");
@@ -51,14 +67,14 @@ public class WaterMarkingUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            setPdfWatermark("D:/cpms/app1.pdf", "D:/cpms/app2.pdf", "南京赛宁");
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//
+//        try {
+//            setPdfWatermark("D:/cpms/app1.pdf", "D:/cpms/app2.pdf", "南京赛宁");
+//        } catch (DocumentException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
     }
@@ -201,7 +217,7 @@ public class WaterMarkingUtils {
      * @param outPath
      * @param markStr
      */
-    public static void addWordWaterMark(String inputPath, String outPath, String markStr) {
+    public static void addWordWaterMark1(String inputPath, String outPath, String markStr) {
         //加载示例文档
         Document doc = new Document();
         doc.loadFromFile(inputPath);
@@ -450,6 +466,185 @@ public class WaterMarkingUtils {
             bufferOut.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 添加word水印
+     * @param filePath 文件路径
+     * @param watermark 水印
+     * @param cipher 自定义属性
+     * @param outPath 输出路径
+     * @throws IOException
+     * @throws XmlException
+     */
+    public static boolean addWordWaterMark(String filePath, String watermark, String cipher, String outPath) throws IOException, InvalidFormatException, FontFormatException {
+        File file = new File(filePath);
+        InputStream in = new FileInputStream(file);
+        XWPFDocument document = new XWPFDocument(in);
+        POIXMLProperties.CustomProperties cp = document.getProperties().getCustomProperties();
+        OutputStream out = new FileOutputStream(file);
+        //添加自定义属性
+        if (cp.getProperty("cipher")!=null) {
+            cp.addProperty("cipher",cipher);
+        }
+//        没有header.xml添加xml
+        if (document.getHeaderFooterPolicy().getHeader(STHdrFtr.DEFAULT)==null
+                && document.getHeaderFooterPolicy().getHeader(STHdrFtr.FIRST)==null
+                && document.getHeaderFooterPolicy().getHeader(STHdrFtr.EVEN)==null) {
+            document.createHeader(HeaderFooterType.DEFAULT);
+        }
+//        生成图片水印
+        Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(FONT_HEI)).deriveFont(Font.BOLD,50);
+        BufferedImage bufferedImage = waterMarkByText(1200,1600,watermark,DEFAULTCOLOR,font,315.0,0.5f);
+        File watermarkPic = new File("/cpms","wordWatermark.png");
+        ImageIO.write(bufferedImage, "png", watermarkPic);
+        document.addPictureData(new FileInputStream(watermarkPic), XWPFDocument.PICTURE_TYPE_PNG);
+        document.write(out);
+        out.flush();
+        File outFile = new File(outPath+File.separator+file.getName());
+        FileUtils.copyFile(file, outFile);
+        editWordHeader(outFile);//添加水印
+        System.out.println("明水印增加完成：{}"+file.getName());
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (document != null) {
+            document.close();
+        }
+        if (out != null) {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 为word添加图片水印
+     * 对文档以压缩包文件打开，编辑下行目录中header.xml文件，header文件管理水印的生成，并将生成的水印图片添加到资源目录
+     * @param file 输出的文件
+     * @throws IOException
+     */
+    public static void editWordHeader(File file) throws IOException {
+        List<File> headers,rels,picts;
+        File outPath = new File(file.getParent()+"\\"+file.getName().split("\\.")[0]);
+        ZipUtils.unZip(file,outPath.getAbsolutePath());
+        File wordDirectory = new File(outPath.getAbsolutePath()+File.separator+"word");
+        File _relsDirectory = new File(outPath.getAbsolutePath()+File.separator+"word"+File.separator+"_rels");
+        File mediaDirectory = new File(outPath.getAbsolutePath()+File.separator+"word"+File.separator+"media");
+        //编辑header.xml文件
+        if (!wordDirectory.exists()) {
+            wordDirectory.mkdirs();
+        }
+        headers = Arrays.asList(Objects.requireNonNull(wordDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().matches("header[0-9]*\\.xml");
+            }
+        })));
+        if (headers.size()==0) {//没有header文件则创建
+            File newHeader = createHeader(wordDirectory.getAbsolutePath());
+            headers.add(newHeader);
+        }
+        editHeader(headers);
+        //确认新增的水印图片ID
+        picts = Arrays.asList(Objects.requireNonNull(mediaDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().matches("image[0-9]*\\.png");
+            }
+        })));
+        int pictId = 0;
+        for (File pict : picts){
+            int nav = Integer.parseInt(pict.getName().replace("image","").split("\\.")[0]);
+            if (nav > pictId) {
+                pictId  = nav;
+            }
+        }
+        String pictName = "image"+pictId+".png";
+        //编辑header.xml.rels文件
+        if (!_relsDirectory.exists()) {
+            _relsDirectory.mkdirs();
+        }
+        rels = Arrays.asList(Objects.requireNonNull(_relsDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().matches("header[0-9]*\\.xml\\.rels");
+            }
+        })));
+        if (rels.size()==0 || rels.size()!=headers.size()) {
+            rels = createRels(_relsDirectory.getAbsolutePath(),headers.size());
+        }
+        editRels(rels,pictName);
+
+        ZipUtils.zip(outPath,new File(file.getAbsolutePath()));
+        if (outPath.exists()) {
+            FileUtil.del(outPath);
+        }
+    }
+
+
+    private static List<File> createRels(String path,int fileCount){
+        List<File> files= new ArrayList<File>();
+        for (int i = 1; i <= fileCount; i++) {
+            File file = new File(path+File.separator+"header"+i+".xml.rels");
+            try {
+                file.createNewFile();
+                files.add(file);
+//                FileUtils.writeStringToFile(file,watermarkRels.replace("r_id","rId1"));
+            }catch (IOException e) {
+                System.out.println("文件创建失败:{}"+file.getName());
+            }
+        }
+        return files;
+    }
+
+    private static final String watermarkRels = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"media/PICTNAME\"/></Relationships>";
+    private static final String watermarkXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+            "<w:hdr xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:cx=\"http://schemas.microsoft.com/office/drawing/2014/chartex\" xmlns:cx1=\"http://schemas.microsoft.com/office/drawing/2015/9/8/chartex\" xmlns:cx2=\"http://schemas.microsoft.com/office/drawing/2015/10/21/chartex\" xmlns:cx3=\"http://schemas.microsoft.com/office/drawing/2016/5/9/chartex\" xmlns:cx4=\"http://schemas.microsoft.com/office/drawing/2016/5/10/chartex\" xmlns:cx5=\"http://schemas.microsoft.com/office/drawing/2016/5/11/chartex\" xmlns:cx6=\"http://schemas.microsoft.com/office/drawing/2016/5/12/chartex\" xmlns:cx7=\"http://schemas.microsoft.com/office/drawing/2016/5/13/chartex\" xmlns:cx8=\"http://schemas.microsoft.com/office/drawing/2016/5/14/chartex\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:aink=\"http://schemas.microsoft.com/office/drawing/2016/ink\" xmlns:am3d=\"http://schemas.microsoft.com/office/drawing/2017/model3d\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:w16cex=\"http://schemas.microsoft.com/office/word/2018/wordml/cex\" xmlns:w16cid=\"http://schemas.microsoft.com/office/word/2016/wordml/cid\" xmlns:w16=\"http://schemas.microsoft.com/office/word/2018/wordml\" xmlns:w16sdtdh=\"http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash\" xmlns:w16se=\"http://schemas.microsoft.com/office/word/2015/wordml/symex\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" mc:Ignorable=\"w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14\"><w:p w14:paraId=\"2FD6A8B5\" w14:textId=\"7B4DEC51\" w:rsidR=\"007C48C4\" w:rsidRDefault=\"003B2BB3\">WPHEADER<w:r><w:rPr><w:noProof/></w:rPr><w:pict w14:anchorId=\"776FC76C\"><v:shapetype id=\"_x0000_t75\" coordsize=\"21600,21600\" o:spt=\"75\" o:preferrelative=\"t\" path=\"m@4@5l@4@11@9@11@9@5xe\" filled=\"f\" stroked=\"f\"><v:stroke joinstyle=\"miter\"/><v:formulas><v:f eqn=\"if lineDrawn pixelLineWidth 0\"/><v:f eqn=\"sum @0 1 0\"/><v:f eqn=\"sum 0 0 @1\"/><v:f eqn=\"prod @2 1 2\"/><v:f eqn=\"prod @3 21600 pixelWidth\"/><v:f eqn=\"prod @3 21600 pixelHeight\"/><v:f eqn=\"sum @0 0 1\"/><v:f eqn=\"prod @6 1 2\"/><v:f eqn=\"prod @7 21600 pixelWidth\"/><v:f eqn=\"sum @8 21600 0\"/><v:f eqn=\"prod @7 21600 pixelHeight\"/><v:f eqn=\"sum @10 21600 0\"/></v:formulas><v:path o:extrusionok=\"f\" gradientshapeok=\"t\" o:connecttype=\"rect\"/><o:lock v:ext=\"edit\" aspectratio=\"t\"/></v:shapetype><v:shape id=\"WordPictureWatermark\" o:spid=\"_x0000_s1032\" type=\"#_x0000_t75\" style=\"position:absolute;left:0;text-align:left;margin-left:0;margin-top:0;width:600pt;height:850pt;z-index:-251657216;mso-position-horizontal:center;mso-position-horizontal-relative:margin;mso-position-vertical:center;mso-position-vertical-relative:margin\" o:allowincell=\"f\"><v:imagedata r:id=\"r_id\" o:title=\"background\" gain=\"19661f\" blacklevel=\"22938f\"/></v:shape></w:pict></w:r><w:r w:rsidR=\"00995F1F\"><w:rPr><w:noProof/></w:rPr><w:pict w14:anchorId=\"51BBCB7B\"><v:shapetype id=\"_x0000_t136\" coordsize=\"21600,21600\" o:spt=\"136\" adj=\"10800\" path=\"m@7,l@8,m@5,21600l@6,21600e\"><v:formulas><v:f eqn=\"sum #0 0 10800\"/><v:f eqn=\"prod #0 2 1\"/><v:f eqn=\"sum 21600 0 @1\"/><v:f eqn=\"sum 0 0 @2\"/><v:f eqn=\"sum 21600 0 @3\"/><v:f eqn=\"if @0 @3 0\"/><v:f eqn=\"if @0 21600 @1\"/><v:f eqn=\"if @0 0 @2\"/><v:f eqn=\"if @0 @4 21600\"/><v:f eqn=\"mid @5 @6\"/><v:f eqn=\"mid @8 @5\"/><v:f eqn=\"mid @7 @8\"/><v:f eqn=\"mid @6 @7\"/><v:f eqn=\"sum @6 0 @5\"/></v:formulas><v:path textpathok=\"t\" o:connecttype=\"custom\" o:connectlocs=\"@9,0;@10,10800;@11,21600;@12,10800\" o:connectangles=\"270,180,90,0\"/><v:textpath on=\"t\" fitshape=\"t\"/><v:handles><v:h position=\"#0,bottomRight\" xrange=\"6629,14971\"/></v:handles><o:lock v:ext=\"edit\" text=\"t\" shapetype=\"t\"/></v:shapetype><v:shape id=\"_x0000_s1030\" type=\"#_x0000_t136\" style=\"position:absolute;left:0;text-align:left;margin-left:0;margin-top:0;width:50pt;height:50pt;z-index:251655168;visibility:hidden\"><o:lock v:ext=\"edit\" selection=\"t\" text=\"f\" shapetype=\"f\"/></v:shape></w:pict></w:r></w:p></w:hdr>";
+
+
+    private static void editRels(List<File> files,String pictName) throws IOException {
+        for (File rels : files){
+            FileUtils.writeStringToFile(rels,watermarkRels.replace("r_id","rId1").replace("PICTNAME",pictName));
+        }
+    }
+
+    private static File createHeader(String path){
+        File file = new File(path+File.separator+"header1.xml");
+        try {
+            file.createNewFile();
+//            FileUtils.writeStringToFile(file,watermarkXml.replace("WordPictureWatermark","WordPictureWatermark"+new Date().getTime()%10000000)
+//                    .replace("r_id","rId1"));
+        }catch (IOException e) {
+            System.out.println("文件创建失败:{}"+file.getName());
+        }
+        return file;
+    }
+
+
+    private static void editHeader(List<File> files) throws IOException {
+        //保留原文档页眉部分，w:pPr记录页眉样式，w:r记录页眉文本
+        Pattern pattern = compile("<w:pPr[\\s>].*</w:r>");
+        Matcher matcher;
+        for (File header : files){
+            String headerContent="";
+            String str = FileUtils.readFileToString(header, "UTF-8");
+            matcher = pattern.matcher(str);
+            while (matcher.find()){
+                headerContent+=matcher.group();
+            }
+            //直接覆盖header文件，不对存在的页眉做处理
+            FileUtils.writeStringToFile(header,watermarkXml.replace("WordPictureWatermark","WordPictureWatermark"+new Date().getTime()%10000000)
+                    .replace("r_id","rId1").replace("WPHEADER",headerContent));
         }
     }
 

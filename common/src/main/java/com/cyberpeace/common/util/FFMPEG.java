@@ -21,7 +21,8 @@ public class FFMPEG {
      * @return
      */
     public static boolean isNumeric(String str){
-        Pattern pattern = Pattern.compile("[0-9]*");
+        String regex = "[0-9]*";
+        Pattern pattern = Pattern.compile(regex);
         Matcher isNum = pattern.matcher(str);
         if( !isNum.matches() ){
             return false;
@@ -92,9 +93,10 @@ public class FFMPEG {
             // String logoString="movie="+logo+"[logo],[in][logo]overlay=x="+xaxis+":y="+yaxis+"[out]";
             // 本地测试用
             // String logoString="drawtext=fontfile=C\\\\:Users/dell/Downloads/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
-            String logoString="drawtext=fontfile=/cpms/built_in/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
-            cmd.add(logoString);
         }
+        cmd.add("-vf");
+        String logoString="drawtext=fontfile=/cpms/built_in/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
+        cmd.add(logoString);
         cmd.add("-strict");
         cmd.add("-2");
         if (null!=dto.get("vb")&&!dto.get("vb").equals("")) {

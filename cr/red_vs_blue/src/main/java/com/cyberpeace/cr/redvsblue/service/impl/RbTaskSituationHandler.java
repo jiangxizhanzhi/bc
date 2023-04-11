@@ -101,13 +101,15 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 			} else if (blueRoleType.contains(mission.getEventType())) {
 				roleType = "blue";
 			}
-			CrRoleAssetNode crRoleAssetNode = crRoleAssetNodeList.get(0);
-			if ("red".equals(roleType)) {
-				crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.RED.getCode());
-			} else if ("blue".equals(roleType)) {
-				crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
+			if (crLabelGroupList.size() > 0) {
+				CrRoleAssetNode crRoleAssetNode = crRoleAssetNodeList.get(0);
+				if ("red".equals(roleType)) {
+					crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.RED.getCode());
+				} else if ("blue".equals(roleType)) {
+					crRoleAssetNode.setRoleType(CrRole.RbRoleGroup.BLUE.getCode());
+				}
+				crRoleAssetNodeEditList.add(crRoleAssetNode);
 			}
-			crRoleAssetNodeEditList.add(crRoleAssetNode);
 			if (wsMissionDynamicList.size() < 1 && mission.getEventType() < 7){
 				//仅首个攻击有战报
 				StringBuilder description = new StringBuilder("红队队员【" + userName + "】对【")

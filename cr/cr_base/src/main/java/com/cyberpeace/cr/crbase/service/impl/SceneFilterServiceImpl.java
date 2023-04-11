@@ -55,6 +55,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 			JSONObject element = elements.getJSONObject(i);
 			String elementId = element.getString("id");
 			Integer elementType = element.getInteger("type");
+			// todo 识别节点是否为实装设备，为前端增加标识
 			if (!visibleNodeIds.contains(elementId)) {
 				// remove invisible element
 				elements.remove(i);
@@ -76,6 +77,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 								Lists.newArrayList());
 					}
 				}
+				// todo 未申请实装设备去除网络配置相关属性
 				i++;
 			}
 		}

@@ -447,4 +447,6 @@ public interface CrBusinessErrorCode {
 
 	String RELEASE_NOTICE = "101138";
 
+	String INDEX_LOAD_NAME_EXISTS = "101139";
+
 }

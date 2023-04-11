@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service;
 
+import java.io.File;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,6 +9,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -53,4 +55,8 @@ public interface EvalIndicatorService extends IService<EvalIndicator> {
 	 * @return
 	 */
 	Integer selectIndexUsedNum(List<String> ids);
+
+	Boolean loadEvalIndicator(MultipartFile file);
+
+	String dumpEvalIndicator(List<String> resourceIds);
 }

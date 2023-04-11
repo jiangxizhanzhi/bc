@@ -36,4 +36,7 @@ public interface FileTypeContant {
 	/** 训练公告附件上传*/
 	String TRAIN_NOTICE_ATTACHMENT = "ZIP";
 
+	/** 后台评估指标项文件上传 */
+	String CR_EVAL_INDICATOR_ATTACHMENT = "JSON";
+
 }

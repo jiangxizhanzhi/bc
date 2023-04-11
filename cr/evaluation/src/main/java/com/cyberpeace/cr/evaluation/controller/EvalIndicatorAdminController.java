@@ -1,8 +1,13 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import java.io.File;
 import java.util.List;
 
-import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorListReq;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cs.constant.FileTypeContant;
+import com.cyberpeace.cs.constant.UploadAttachmentPermission;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,16 +25,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
-import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
@@ -44,6 +43,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
@@ -233,5 +234,38 @@ public class EvalIndicatorAdminController {
 
 		return new BaseRsp<>(result);
 
+	}
+
+	@PostMapping("/load_data")
+	@ApiOperation("导入指标项")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
+	public BaseRsp<Boolean> loadData(EvalIndicatorLoadReq evalIndicatorLoadReq) {
+		UploadAttachmentPermission filePermission = EnumUtils.getEnumByCode(
+				UploadAttachmentPermission.CR_EVAL_INDICATOR_LOAD_ATTACHMENT.getCode(),
+				UploadAttachmentPermission.class
+		);
+		if (null == filePermission) {
+			throw new UnauthorizedException();
+		}
+
+		return new BaseRsp<>(evalIndicatorService.loadEvalIndicator(evalIndicatorLoadReq.getFile()));
+	}
+
+	@PostMapping("/dump_data")
+	@ApiOperation("导出指标项")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
+	public void dumpData(HttpServletResponse httpServletResponse,
+			@RequestBody @Validated EvalIndicatorDumpReq evalIndicatorDumpReq) {
+		String result = evalIndicatorService.dumpEvalIndicator(evalIndicatorDumpReq.getIds());
+
+		String tmpWorkdir = ZipUtil.generatePath();
+		String filepath = FileUtil.mkdirs(tmpWorkdir) + File.separator + CrCommonConstants.RESOURCE_FILE_NAME;
+
+		FileUtil.writeToDestFile(result, filepath);
+		FileUtil.setResponse(new File(filepath), false, httpServletResponse);
+
+		if (!FileUtil.deleteDir(new File(tmpWorkdir))) {
+			log.error("failed to remove temp dir :{}", filepath);
+		}
 	}
 }

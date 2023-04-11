@@ -205,7 +205,9 @@ public class RbSituationServiceImpl implements RbSituationService {
 		checkRole(roleType);
 		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
 		Map<String, CrRole> crRoleMap = crRoleList.stream().collect(Collectors.toMap(CrRole::getResourceId, crRole -> crRole));
-		List<Mission> missionList = missionService.batchGetByRoom(roomId);
+		Map<String, Mission> missionMap = missionService.batchGetByRoom(roomId).stream().collect(
+				Collectors.toMap(MissionBase::getResourceId, mission -> mission)
+		);
 
 		List<CrTask> crTaskList = crTaskService.getByRoles(
 				crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList())
@@ -225,10 +227,10 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 		List<RbSituationMissionStatusRsp> result = Lists.newArrayList();
 
-		missionList.forEach(mission -> {
+		crTaskMap.values().forEach(crTask -> {
 			RbSituationMissionStatusRsp rbSituationMissionStatusRsp = new RbSituationMissionStatusRsp();
 
-			CrTask crTask = crTaskMap.get(mission.getResourceId());
+			Mission mission = missionMap.get(crTask.getMissionId());
 
 			rbSituationMissionStatusRsp.setMissionTitle(mission.getTitle());
 			rbSituationMissionStatusRsp.setRoleId(crTask.getRoleId());

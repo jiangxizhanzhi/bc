@@ -61,4 +61,6 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 
 	List<TheorySimpleBo> selectSimple(@Param("query") TheoryListQuery theoryListQuery,
 			@Param("isPublic") Boolean isPublic);
+
+	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 }

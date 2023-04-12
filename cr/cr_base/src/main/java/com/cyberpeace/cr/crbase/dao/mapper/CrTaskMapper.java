@@ -82,11 +82,11 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 			@Param("userId") String userId,
 			@Param("missionTemplateIds") Set<String> missionTemplateIds);
 
-	List<CrTask> selectByStatusListAndType(List<Integer> statusList, Integer businessType);
+	List<CrTask> selectByStatusListAndType(List<Integer> statusList, Integer businessType, Integer teamCategory);
 
 	List<TrainingPersonalStatistics> selectPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, List<String> user_ids);
 
-	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit);
+	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, Integer teamCategory);
 
 	List<CrTask> selectByUserIdAndBusinessType(String userId, Integer businessType);
 }

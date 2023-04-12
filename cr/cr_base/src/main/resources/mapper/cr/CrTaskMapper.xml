@@ -231,6 +231,9 @@
         select *
         from cr_task
         where business_type = #{businessType} and
+        <if test="teamCategory != null and teamCategory != ''">
+            room_id in (select resource_id from cr_team_room where train_category = #{teamCategory}) and
+        </if>
         status in
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}
@@ -256,6 +259,9 @@
         select user_id, sum(score) as total_score
         from cr_task
         where business_type = #{businessType} and
+        <if test="teamCategory != null and teamCategory != ''">
+            room_id in (select resource_id from cr_team_room where train_category = #{teamCategory}) and
+        </if>
         status in
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}

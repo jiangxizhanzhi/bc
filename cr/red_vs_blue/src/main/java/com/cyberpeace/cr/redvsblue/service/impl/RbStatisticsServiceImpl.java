@@ -83,7 +83,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
+                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null
         );
 
         if (null != personalStatistics) {
@@ -137,7 +137,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
+                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null
         );
 
         if (null != personalStatistics) {
@@ -191,7 +191,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         statusList.add(failCode);
 
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode()
+                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
         );
         //时间过滤
         if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {

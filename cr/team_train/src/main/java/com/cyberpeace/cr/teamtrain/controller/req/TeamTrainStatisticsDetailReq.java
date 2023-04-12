@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.controller.req;
 import com.cyberpeace.common.model.PageReqBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Data
 public class TeamTrainStatisticsDetailReq extends PageReqBase {
@@ -17,4 +18,7 @@ public class TeamTrainStatisticsDetailReq extends PageReqBase {
 
     @ApiModelProperty(value = "模糊查询筛选参数")
     private String pattern;
+
+    @ApiModelProperty("队伍训练类型, 1=红;2=蓝")
+    private Integer teamCategory;
 }

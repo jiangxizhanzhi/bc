@@ -15,13 +15,13 @@ public interface TeamTrainStatisticsService {
 	 * 获取团队训练个人排名TOP5
 	 * @return 团队训练个人排名
 	 */
-	List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics();
+	List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics(Integer teamCategory);
 
 	/**
 	 * 获取团队训练组织排名TOP5
 	 * @return 团队训练组织排名
 	 */
-	List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics();
+	List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics(Integer teamCategory);
 
 	/**
 	 * 获取团队训练统计详情
@@ -29,6 +29,6 @@ public interface TeamTrainStatisticsService {
 	 * @param page 分页
 	 * @return 团队训练统计详情
 	 */
-	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page);
+	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page, Integer teamCategory);
 
 }

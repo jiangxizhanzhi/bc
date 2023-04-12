@@ -12,6 +12,7 @@ import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -19,6 +20,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,16 +39,20 @@ public class TeamTrainStatisticsController {
     @GetMapping("/personal_rank")
     @ApiOperation("团队训练个人排名TOP5")
     @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
-    public BaseRsp<List<TeamPersonalStatisticsBo>> getAllPersonalRank() {
-        List<TeamPersonalStatisticsBo> rsp = TeamTrainStatistics.getAllPersonalRankStatistics();
+    public BaseRsp<List<TeamPersonalStatisticsBo>> getAllPersonalRank(
+            @ApiParam(name = "team_category", value = "队伍训练类型, 1=红;2=蓝")
+            @RequestParam("team_category") Integer teamCategory) {
+        List<TeamPersonalStatisticsBo> rsp = TeamTrainStatistics.getAllPersonalRankStatistics(teamCategory);
         return new BaseRsp<>(rsp);
     }
 
     @GetMapping("/organization_rank")
     @ApiOperation("团队训练组织排名TOP5")
     @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
-    public BaseRsp<List<TeamOrganizationStatisticsBo>> getOrganizationRank() {
-        List<TeamOrganizationStatisticsBo> rsp = TeamTrainStatistics.getOrganizationRankStatistics();
+    public BaseRsp<List<TeamOrganizationStatisticsBo>> getOrganizationRank(
+            @ApiParam(name = "team_category", value = "队伍训练类型, 1=红;2=蓝")
+            @RequestParam("team_category") Integer teamCategory) {
+        List<TeamOrganizationStatisticsBo> rsp = TeamTrainStatistics.getOrganizationRankStatistics(teamCategory);
         return new BaseRsp<>(rsp);
     }
 
@@ -56,7 +62,7 @@ public class TeamTrainStatisticsController {
     @RequiresPermissions(value = {MenuConstant.CMS_CR_RED_TEAM_TRAIN_STATISTICS, MenuConstant.CMS_CR_BLUE_TEAM_TRAIN_STATISTICS}, logical = Logical.OR)
     public BaseRsp<ListRsp<TeamStatisticsDetailBo>> getAllDetail(TeamTrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
-        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);
+        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page, detailReq.getTeamCategory());
         return new BaseRsp<>(rsp);
     }
 

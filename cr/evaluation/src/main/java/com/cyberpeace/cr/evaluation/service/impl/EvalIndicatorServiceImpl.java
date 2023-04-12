@@ -284,7 +284,7 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		List<EvalIndicator> evalIndicatorList = lambdaQuery().in(EvalIndicator::getResourceId, resourceIds).list();
 
 		if (evalIndicatorList.isEmpty()) {
-			throw new BusinessException();
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		Set<String> algorithmIds = Sets.newHashSet();
 

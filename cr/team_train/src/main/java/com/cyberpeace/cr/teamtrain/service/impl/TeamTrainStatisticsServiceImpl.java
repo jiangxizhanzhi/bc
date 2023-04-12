@@ -44,7 +44,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
 
     @Override
-    public List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics() {
+    public List<TeamOrganizationStatisticsBo> getOrganizationRankStatistics(Integer teamCategory) {
         List<TeamOrganizationStatisticsBo> rsp = Lists.newArrayList();
 
 		List<UserInfo> userInfos = remoteUserService.getAllUsers();
@@ -81,7 +81,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null
+                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory
         );
 
         if (null != personalStatistics) {
@@ -127,7 +127,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
 
 
     @Override
-    public List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics() {
+    public List<TeamPersonalStatisticsBo> getAllPersonalRankStatistics(Integer teamCategory) {
         List<TeamPersonalStatisticsBo> rsp = Lists.newArrayList();
 
         List<Integer> statusList = Lists.newArrayList();
@@ -136,7 +136,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null
+                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory
         );
 
         if (null != personalStatistics) {
@@ -173,7 +173,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
     }
 
     @Override
-    public ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page) {
+    public ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page, Integer teamCategory) {
         List<TeamStatisticsDetailBo> rsp = Lists.newArrayList();
 
         String userName = detailReq.getPattern();
@@ -190,7 +190,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         statusList.add(failCode);
 
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
-                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode()
+                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), teamCategory
         );
         //时间过滤
         if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {

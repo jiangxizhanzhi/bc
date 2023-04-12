@@ -85,7 +85,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null
+                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null
         );
 
         if (null != personalStatistics) {
@@ -139,7 +139,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null
+                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null
         );
 
         if (null != personalStatistics) {
@@ -192,7 +192,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(failCode);
 
         List<CrTask> personalTotalStatistics = crTaskMapper.selectByStatusListAndType(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode()
+                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null
         );
         //时间过滤
         if (StringUtils.isNotEmpty(detailReq.getStartTime()) && StringUtils.isNotEmpty(detailReq.getEndTime())) {

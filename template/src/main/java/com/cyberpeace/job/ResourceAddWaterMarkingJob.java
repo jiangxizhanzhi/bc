@@ -1,6 +1,7 @@
 package com.cyberpeace.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
@@ -70,13 +71,13 @@ public class ResourceAddWaterMarkingJob {
             FileUtil.copyFile(new File(video), new File(path + File.separator + courseLesson.getResourceId() + "_" + videoPath));
             String replaceVideo = video.replace(videoName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, videoName));
             dto.put("video_converted_path", replaceVideo);//必填
-            System.out.printf("start to add %s water marking!!%n", video);
+            log.info(String.format("start to add %s water marking!!", video));
             String secondsString=  new FFMPEG().videoTransfer(dto);
-            System.out.println("转换共用:"+secondsString+"秒");
+            log.info("转换共用:"+secondsString+"秒");
             courseLesson.setVideoUrl(replaceVideo);
             courseLessonMapper.updateById(courseLesson);
         });
-        ShellUtils.execShell("rm -rf /cpms/waterImage*");
+//        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 
 
@@ -108,7 +109,7 @@ public class ResourceAddWaterMarkingJob {
         return cryptoVideo;
     }
     // TODO 时间间隔恢复
-    @Scheduled(cron="0 0/1 * * * ?")
+    @Scheduled(cron="0 0/5 * * * ?")
     public void officeResourceAdd() {
         if(!Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.isCrypto"))){
             return;
@@ -147,28 +148,41 @@ public class ResourceAddWaterMarkingJob {
                         return;
                     }
                     String handoutName = split1[0];
-                    String replacehandout = handout.replace(handoutName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, handoutName));
-                    FileUtil.copyFile(new File(handout), new File(path + File.separator + courseLesson.getResourceId() + "_" +handoutPath));
+                    String replacehandout = handout.replace(handoutName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, courseLesson.getResourceId()));
+                    log.info(String.format("replacehandout is %s", replacehandout));
+                    File file = new File(handout);
+                    File destFile = new File(path + File.separator + courseLesson.getResourceId() + "_" + handoutPath);
+                    if(!file.exists() || destFile.exists()){
+                        return;
+                    }
+                    FileUtil.copyFile(file, destFile);
                     // TODO
-                    System.out.printf("start to add %s water marking!!%n", handout);
+                    log.info(String.format("start to add %s water marking!!", handout));
+                    String inputPath = handout.split("\\.")[0].replace(handoutName, "");
                     try {
                         if (handoutType.equals(CourseLesson.HandoutType.PPT.getCode())) {
-                            WaterMarkingUtils.addPPTWatermark(handout.split("\\.")[0].replace(handoutName, ""), handoutName, markStr, null, replacehandout);
+                            log.info(String.format("inputpath is %s", inputPath));
+                            log.info(String.format("handoutName is %s", handoutName));
+//                            WaterMarkingUtils.addPPTWatermark(handout, markStr, null, replacehandout);
+                            WaterMarkingUtils.setPPTWaterMark(handout, replacehandout, markStr);
                         } else if (handoutType.equals(CourseLesson.HandoutType.DOC.getCode())) {
-                            WaterMarkingUtils.addWordWaterMark(handout, markStr,null,replacehandout);
+//                            WaterMarkingUtils.addWordWaterMark(handout, markStr,null,inputPath, replacehandout);
+                            WaterMarkingUtils.addWordWaterMark1(handout, markStr,null ,replacehandout);
 
                         } else if (handoutType.equals(CourseLesson.HandoutType.PDF.getCode())) {
                             WaterMarkingUtils.setPdfWatermark(handout, replacehandout, markStr);
                         } else if (handoutType.equals(CourseLesson.HandoutType.XLS.getCode())) {
                             WaterMarkingUtils.setExcelWaterMark(handout, replacehandout, markStr);
                         }
+                        courseLesson.setHandoutUrl(replacehandout);
+                        courseLessonMapper.updateById(courseLesson);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        throw new BusinessException("water marking failed!!");
+
                     }
-                    courseLesson.setHandoutUrl(replacehandout);
-                    courseLessonMapper.updateById(courseLesson);
                 }
         );
-        ShellUtils.execShell("rm -rf /cpms/waterImage*");
+//        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 }

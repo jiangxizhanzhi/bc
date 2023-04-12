@@ -86,8 +86,8 @@ public class FFMPEG {
             cmd.add("-vf");
             String xaxis=dto.get("xaxis");
             String yaxis=dto.get("yaxis");
-            xaxis=xaxis!=null&&!xaxis.equals("")?xaxis:"0";
-            yaxis=yaxis!=null&&!yaxis.equals("")?yaxis:"0";
+            xaxis=xaxis!=null&&!"".equals(xaxis)?xaxis:"0";
+            yaxis=yaxis!=null&&!"".equals(yaxis)?yaxis:"0";
 
             // 图片水印
             // String logoString="movie="+logo+"[logo],[in][logo]overlay=x="+xaxis+":y="+yaxis+"[out]";
@@ -95,11 +95,11 @@ public class FFMPEG {
             // String logoString="drawtext=fontfile=C\\\\:Users/dell/Downloads/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
         }
         cmd.add("-vf");
-        String logoString="drawtext=fontfile=/cpms/built_in/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
+        String logoString="drawtext=fontfile=/usr/share/fonts/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
         cmd.add(logoString);
         cmd.add("-strict");
         cmd.add("-2");
-        if (null!=dto.get("vb")&&!dto.get("vb").equals("")) {
+        if (null!=dto.get("vb")&&!"".equals(dto.get("vb"))) {
             cmd.add("-vb");
             cmd.add(dto.get("vb")+"k");
         }

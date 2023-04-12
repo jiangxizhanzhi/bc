@@ -57,9 +57,6 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     @Autowired
     private LocalSceneService localSceneService;
 
-    @Autowired
-    private RemoteSceneService remoteSceneService;
-
     private CrRoomDeviceApply getObject(String resourceId) {
         CrRoomDeviceApply crRoomDeviceApply = getById(resourceId);
         if (crRoomDeviceApply == null) {
@@ -111,7 +108,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         // 获取场景中实装设备id
         LocalScene localScene = localSceneService.getById(localSceneId);
-        JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(), userId);
+        JSONObject sceneData = localSceneService.getSceneData(localScene.getMpSceneId(), userId);
 
         JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
         for (String imageId: elements.keySet()) {

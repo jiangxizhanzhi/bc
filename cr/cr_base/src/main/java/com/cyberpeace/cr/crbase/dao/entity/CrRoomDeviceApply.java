@@ -22,6 +22,8 @@ public class CrRoomDeviceApply extends BaseTable {
 
     private String deviceId;
 
+    private String sceneDeviceId;
+
     private Integer status;
 
     private String applyUserId;

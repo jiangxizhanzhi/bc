@@ -19,7 +19,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoomDeviceApplyMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.WsMessageBO;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -51,6 +54,11 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     @Autowired
     private CrEventListenerHelper crEventListenerHelper;
 
+    @Autowired
+    private LocalSceneService localSceneService;
+
+    @Autowired
+    private RemoteSceneService remoteSceneService;
 
     private CrRoomDeviceApply getObject(String resourceId) {
         CrRoomDeviceApply crRoomDeviceApply = getById(resourceId);
@@ -62,7 +70,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
     private void pushSceneData(CrRoomDeviceApply crRoomDeviceApply) {
         JSONObject data = new JSONObject();
-        data.put("device_id", crRoomDeviceApply.getDeviceId());
+        data.put("device_id", crRoomDeviceApply.getSceneDeviceId());
+        data.put("device_origin_id", crRoomDeviceApply.getDeviceId());
         data.put("status", crRoomDeviceApply.getStatus());
         WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 
@@ -99,6 +108,18 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         crRoomDeviceApply.setApplyUserId(userId);
         crRoomDeviceApply.setApplyRoleId(crRole.getResourceId());
         crRoomDeviceApply.setApplyTime(new Date());
+
+        // 获取场景中实装设备id
+        LocalScene localScene = localSceneService.getById(roomId);
+        JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(), userId);
+
+        JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+        for (String imageId: elements.keySet()) {
+            JSONObject elementData = elements.getJSONObject(imageId);
+            if (elementData.getString("image_uuid").equals(crRoomDeviceApply.getDeviceId())) {
+                crRoomDeviceApply.setSceneDeviceId(imageId);
+            }
+        }
 
         Boolean result = save(crRoomDeviceApply);
         if (result) {

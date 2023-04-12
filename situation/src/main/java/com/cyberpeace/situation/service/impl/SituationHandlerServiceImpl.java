@@ -821,7 +821,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	public Boolean pushEventAds(List<WsEventAd> eventAds, String dashboardId, String featureId) {
 
 		// 推送攻防事件消息弹窗
-		// pushDashboardMessage(eventAds, dashboardId, featureId);
+		pushDashboardMsg(eventAds, dashboardId, featureId);
 
 		// 推送攻防事件数据
 		batchPushDataToDashboard(MessageType.TaskEventAd.getDesc(), dashboardId, featureId,
@@ -833,7 +833,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	private void pushDashboardMsg(List<WsEventAd> eventAds, String dashboardId, String featureId) {
 		List<DashboardMessage> messages = org.apache.commons.compress.utils.Lists.newArrayList();
 		eventAds.forEach(wsEventAd -> {
-			messages.add(new DashboardMessage(wsEventAd.getEventInfo().getDescription(), 5));
+			if (StringUtils.isNotBlank(wsEventAd.getEventInfo().getDescription())) {
+				messages.add(new DashboardMessage(wsEventAd.getEventInfo().getDescription(), 5));
+			}
 		});
 		batchPushDataToDashboard(MessageType.Message.getDesc(), dashboardId, featureId, messages,
 				null, null);

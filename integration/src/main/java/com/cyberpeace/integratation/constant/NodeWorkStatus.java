@@ -9,7 +9,14 @@ public enum NodeWorkStatus implements GenericEnum {
 	/**
 	 * 节点工作状态
 	 */
-	RUNNING(0, "工作中"), OFFSET(1, "离线中");
+	RUNNING(0, "运行中"),
+	OFFSET(1, "已离线"),
+	DAMAGED(2, "已破坏"),
+	DESTROY(3, "摧毁"),
+	OPERATE(4, "操纵"),
+	HIGH_CRITICALITY(5, "关键度高"),
+	CAPTURED(6, "被攻陷");
+
 
 	@Getter
 	private Integer code;

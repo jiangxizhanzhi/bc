@@ -100,6 +100,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private CrRoleService crRoleService;
 
+	@Autowired
+	private SceneFilterService sceneFilterService;
+
 	/**
 	 * 创建单兵训练
 	 *
@@ -744,6 +747,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 1、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData != null) {
+			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(room.getResourceId(), userId);
+			if (crRole != null) {
+				sceneFilterService.filterApplyDevice(sceneData, crRole);
+			}
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(MP_SCENE_ID_KEY));

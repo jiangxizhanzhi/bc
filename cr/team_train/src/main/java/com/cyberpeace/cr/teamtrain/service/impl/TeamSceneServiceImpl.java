@@ -123,6 +123,10 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData != null) {
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);
+			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+			if (crRole.isTeamStudent()) {
+				sceneFilterService.filterApplyDevice(sceneData, crRole);
+			}
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));

@@ -1,10 +1,17 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
@@ -20,6 +27,9 @@ import lombok.Data;
 
 @Service
 public class SceneFilterServiceImpl implements SceneFilterService {
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
@@ -42,8 +52,33 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		filterAreas(areas, pieces, elements);
 	}
 
+	@Override
+	public void filterApplyDevice(JSONObject sceneData, CrRole crRole) {
+		Map<String, CrRoomDeviceApply> crRoomDeviceApplyMap = crRoomDeviceApplyService.lambdaQuery()
+				.eq(CrRoomDeviceApply::getRoomId, crRole.getRoomId())
+				.eq(CrRoomDeviceApply::getApplyRoleId, crRole.getResourceId())
+				.in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
+				.list()
+				.stream().collect(Collectors.toMap(
+						CrRoomDeviceApply::getDeviceId,
+						crRoomDeviceApply -> crRoomDeviceApply
+				));
+
+		JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+		for (String imageId: elements.keySet()) {
+			JSONObject elementData = elements.getJSONObject(imageId);
+
+			if (elementData.get("image_type").equals("entity")) {
+				CrRoomDeviceApply crRoomDeviceApply = crRoomDeviceApplyMap.get(elementData.getString("image_uuid"));
+				sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements")
+						.getJSONObject(imageId)
+						.put("apply_status", crRoomDeviceApply == null ? null : crRoomDeviceApply.getStatus());
+			}
+		}
+	}
+
 	private void filterElements(JSONObject topoData, JSONArray elements,
-			List<String> visibleNodeIds, List<String> assetNodeIds) {
+								List<String> visibleNodeIds, List<String> assetNodeIds) {
 		// empty topo
 		if (elements.isEmpty()) {
 			return;

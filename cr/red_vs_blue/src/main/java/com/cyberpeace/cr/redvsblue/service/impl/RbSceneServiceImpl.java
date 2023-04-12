@@ -172,27 +172,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 			CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 			if (CrRole.RbRoleGroup.isRvbStudentRole(role.getRoleGroup())) {
-				Map<String, CrRoomDeviceApply> crRoomDeviceApplyMap = crRoomDeviceApplyService.lambdaQuery()
-						.eq(CrRoomDeviceApply::getRoomId, roomId)
-						.eq(CrRoomDeviceApply::getApplyUserId, userId)
-						.in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
-						.list()
-						.stream().collect(Collectors.toMap(
-								CrRoomDeviceApply::getDeviceId,
-								crRoomDeviceApply -> crRoomDeviceApply
-						));
-
-				JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
-				for (String imageId: elements.keySet()) {
-					JSONObject elementData = elements.getJSONObject(imageId);
-
-					if (elementData.get("image_type").equals("entity")) {
-						CrRoomDeviceApply crRoomDeviceApply = crRoomDeviceApplyMap.get(elementData.getString("image_uuid"));
-						sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements")
-								.getJSONObject(imageId)
-								.put("apply_status", crRoomDeviceApply == null ? null : crRoomDeviceApply.getStatus());
-					}
-				}
+				sceneFilterService.filterApplyDevice(sceneData, role);
 			}
 
 			sceneFilterService.filterVisibleTopo(sceneData, nodes);

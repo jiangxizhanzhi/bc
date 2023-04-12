@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 
 public interface SceneFilterService {
@@ -11,4 +12,6 @@ public interface SceneFilterService {
 	 * @param nodes 角色节点数据
 	 */
 	void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes);
+
+	void filterApplyDevice(JSONObject sceneData, CrRole crRole);
 }

@@ -327,7 +327,8 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(crRoomDeviceApplyService.apply(
 				teamRoom.getResourceId(),
 				teamRoom.getName(),
-				roomDeviceApplyReq.getDeviceId()));
+				roomDeviceApplyReq.getDeviceId(),
+				teamRoom.getLocalSceneId()));
 	}
 
 }

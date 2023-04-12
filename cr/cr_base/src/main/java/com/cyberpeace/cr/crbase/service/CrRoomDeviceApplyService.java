@@ -8,7 +8,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.RoomDeviceOccupyRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 
 public interface CrRoomDeviceApplyService extends IService<CrRoomDeviceApply> {
-    Boolean apply(String roomId, String roomName, String deviceId);
+    Boolean apply(String roomId, String roomName, String deviceId, String localSceneId);
 
     RoomDeviceOccupyRsp occupy(String deviceId);
 

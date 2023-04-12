@@ -82,7 +82,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     }
 
     @Override
-    public Boolean apply(String roomId, String roomName, String deviceId) {
+    public Boolean apply(String roomId, String roomName, String deviceId, String localSceneId) {
 
         String userId = UserInfoContext.getUserContext().getUserId();
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
@@ -110,7 +110,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         crRoomDeviceApply.setApplyTime(new Date());
 
         // 获取场景中实装设备id
-        LocalScene localScene = localSceneService.getById(roomId);
+        LocalScene localScene = localSceneService.getById(localSceneId);
         JSONObject sceneData = remoteSceneService.getById(localScene.getMpSceneId(), userId);
 
         JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
@@ -118,6 +118,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
             JSONObject elementData = elements.getJSONObject(imageId);
             if (elementData.getString("image_uuid").equals(crRoomDeviceApply.getDeviceId())) {
                 crRoomDeviceApply.setSceneDeviceId(imageId);
+                break;
             }
         }
 

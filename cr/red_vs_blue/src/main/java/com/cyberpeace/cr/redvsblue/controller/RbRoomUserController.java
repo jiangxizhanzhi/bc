@@ -299,7 +299,8 @@ public class RbRoomUserController {
 		return new BaseRsp<>(crRoomDeviceApplyService.apply(
 				rbRoom.getResourceId(),
 				rbRoom.getName(),
-				roomDeviceApplyReq.getDeviceId()));
+				roomDeviceApplyReq.getDeviceId(),
+				rbRoom.getLocalSceneId()));
 	}
 
 	@ApiOperation("队伍动态-任务预览")

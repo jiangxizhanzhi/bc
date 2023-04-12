@@ -220,7 +220,8 @@ public class SingleRoomController {
 		return new BaseRsp<>(crRoomDeviceApplyService.apply(
 				singleRoomBo.getResourceId(),
 				singleRoomBo.getEventData().getName(),
-				roomDeviceApplyReq.getDeviceId()));
+				roomDeviceApplyReq.getDeviceId(),
+				singleRoomBo.getLocalSceneId()));
 	}
 
 }

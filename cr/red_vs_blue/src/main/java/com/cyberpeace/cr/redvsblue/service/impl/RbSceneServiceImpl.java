@@ -175,7 +175,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 				Map<String, CrRoomDeviceApply> crRoomDeviceApplyMap = crRoomDeviceApplyService.lambdaQuery()
 						.eq(CrRoomDeviceApply::getRoomId, roomId)
 						.eq(CrRoomDeviceApply::getApplyUserId, userId)
-						.eq(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.AGREE.getCode())
+						.in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
 						.list()
 						.stream().collect(Collectors.toMap(
 								CrRoomDeviceApply::getDeviceId,

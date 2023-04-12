@@ -64,7 +64,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         JSONObject data = new JSONObject();
         data.put("device_id", crRoomDeviceApply.getDeviceId());
         data.put("status", crRoomDeviceApply.getStatus());
-        WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply", data);
+        WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 
         webSocketHandler.pushMessageToUsers(
                 crEventListenerHelper.makeContext(JsonUtil.toJsonString(payload), crRoomDeviceApply.getRoomId()),

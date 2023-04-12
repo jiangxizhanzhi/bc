@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +27,6 @@ import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -73,6 +73,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -310,6 +313,21 @@ public class TeamTrainStudentsController {
 		baseRole.setRoleDataList(roleUsersList);
 
 		return baseRole;
+	}
+
+	@ApiOperation("实装分配-设备审批申请")
+	@GetMapping("/device/apply")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
+		TeamRoom teamRoom = teamRoomService.getById(roomDeviceApplyReq.getRoomId());
+		if (teamRoom == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		return new BaseRsp<>(crRoomDeviceApplyService.apply(
+				teamRoom.getResourceId(),
+				teamRoom.getName(),
+				roomDeviceApplyReq.getDeviceId()));
 	}
 
 }

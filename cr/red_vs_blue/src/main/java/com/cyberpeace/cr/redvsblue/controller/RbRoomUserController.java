@@ -293,7 +293,7 @@ public class RbRoomUserController {
 	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
 		RbRoom rbRoom = rbRoomService.getById(roomDeviceApplyReq.getRoomId());
 		if (rbRoom == null) {
-			throw new BusinessException();
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		return new BaseRsp<>(crRoomDeviceApplyService.apply(

@@ -68,7 +68,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         webSocketHandler.pushMessageToUsers(
                 crEventListenerHelper.makeContext(JsonUtil.toJsonString(payload), crRoomDeviceApply.getRoomId()),
-                Lists.newArrayList(crRoomDeviceApply.getApplyRoleId())
+                Lists.newArrayList(crRoomDeviceApply.getApplyUserId())
         );
     }
 

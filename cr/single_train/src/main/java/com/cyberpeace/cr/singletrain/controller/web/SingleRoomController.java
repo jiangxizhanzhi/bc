@@ -3,6 +3,8 @@ package com.cyberpeace.cr.singletrain.controller.web;
 import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class SingleRoomController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@PostMapping
 	@ApiOperation("创建")
@@ -201,6 +206,21 @@ public class SingleRoomController {
 	public BaseRsp<String>
 			submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
+	}
+
+	@ApiOperation("实装分配-设备审批申请")
+	@GetMapping("/device/apply")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
+		SingleRoomBo singleRoomBo = singleRoomService.getRoomInfo(roomDeviceApplyReq.getRoomId());
+		if (singleRoomBo == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		return new BaseRsp<>(crRoomDeviceApplyService.apply(
+				singleRoomBo.getResourceId(),
+				singleRoomBo.getEventData().getName(),
+				roomDeviceApplyReq.getDeviceId()));
 	}
 
 }

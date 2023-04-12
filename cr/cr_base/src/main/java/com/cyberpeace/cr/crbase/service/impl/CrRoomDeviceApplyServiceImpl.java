@@ -78,7 +78,16 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         String userId = UserInfoContext.getUserContext().getUserId();
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
         if (crRole == null) {
-            throw new BusinessException();
+            throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+        }
+
+        if (!lambdaQuery()
+                .eq(CrRoomDeviceApply::getRoomId, roomId)
+                .eq(CrRoomDeviceApply::getDeviceId, deviceId)
+                .eq(CrRoomDeviceApply::getApplyUserId, userId)
+                .in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
+                .list().isEmpty()) {
+            throw new BusinessException(CrBusinessErrorCode.HAVE_APPLIED);
         }
 
         CrRoomDeviceApply crRoomDeviceApply = new CrRoomDeviceApply();
@@ -143,13 +152,15 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         CrRoomDeviceApply crRoomDeviceApply = getObject(applyId);
 
         String deviceId = crRoomDeviceApply.getDeviceId();
-        List<CrRoomDeviceApply> crRoomDeviceApplyList = lambdaQuery().eq(CrRoomDeviceApply::getDeviceId, deviceId).list();
-        crRoomDeviceApplyList.forEach(crRoomDeviceApplyItem -> {
-            // 单个设备仅供一个角色使用
-            if (crRoomDeviceApplyItem.getStatus().intValue() == CrRoomDeviceApply.Status.AGREE.getCode()) {
-                throw new BusinessException(CrBusinessErrorCode.DEVICE_OCCUPIED);
-            }
-        });
+        List<CrRoomDeviceApply> crRoomDeviceApplyList = lambdaQuery()
+                .eq(CrRoomDeviceApply::getDeviceId, deviceId)
+                .eq(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.AGREE.getCode())
+                .list();
+
+        // 单个设备仅供一个角色使用
+        if (!crRoomDeviceApplyList.isEmpty()) {
+            throw new BusinessException(CrBusinessErrorCode.DEVICE_OCCUPIED);
+        }
 
         crRoomDeviceApply.setStatus(CrRoomDeviceApply.Status.AGREE.getCode());
         crRoomDeviceApply.setAllowUserId(UserInfoContext.getUserContext().getUserId());

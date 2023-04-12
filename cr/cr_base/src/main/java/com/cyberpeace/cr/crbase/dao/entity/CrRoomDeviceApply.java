@@ -3,10 +3,12 @@ package com.cyberpeace.cr.crbase.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.BaseTable;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class CrRoomDeviceApply extends BaseTable {
@@ -37,6 +39,8 @@ public class CrRoomDeviceApply extends BaseTable {
         AGREE(2, "同意"),
         REFUSE(3, "拒绝"),
         RECYCLED(4, "已回收");
+
+        public static List<Integer> APPLIED_LIST = Lists.newArrayList(APPLYING.getCode(), AGREE.getCode());
 
         @Getter
         private final Integer code;

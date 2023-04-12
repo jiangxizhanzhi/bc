@@ -449,4 +449,6 @@ public interface CrBusinessErrorCode {
 
 	String INDEX_LOAD_NAME_EXISTS = "101139";
 
+	String HAVE_APPLIED = "101140";
+
 }

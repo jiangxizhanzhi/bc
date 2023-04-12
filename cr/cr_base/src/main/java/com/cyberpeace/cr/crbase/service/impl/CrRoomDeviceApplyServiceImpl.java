@@ -1,12 +1,15 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.RoomDeviceApplyListRsp;
@@ -16,8 +19,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoomDeviceApplyMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cs.service.context.WsMessageBO;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +45,31 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     @Autowired
     private RemoteTerminalService remoteTerminalService;
 
+    @Autowired
+    private MyWebSocketHandler webSocketHandler;
+
+    @Autowired
+    private CrEventListenerHelper crEventListenerHelper;
+
+
     private CrRoomDeviceApply getObject(String resourceId) {
         CrRoomDeviceApply crRoomDeviceApply = getById(resourceId);
         if (crRoomDeviceApply == null) {
             throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
         }
         return crRoomDeviceApply;
+    }
+
+    private void pushSceneData(CrRoomDeviceApply crRoomDeviceApply) {
+        JSONObject data = new JSONObject();
+        data.put("device_id", crRoomDeviceApply.getDeviceId());
+        data.put("status", crRoomDeviceApply.getStatus());
+        WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply", data);
+
+        webSocketHandler.pushMessageToUsers(
+                crEventListenerHelper.makeContext(JsonUtil.toJsonString(payload), crRoomDeviceApply.getRoomId()),
+                Lists.newArrayList(crRoomDeviceApply.getApplyRoleId())
+        );
     }
 
     @Override
@@ -70,6 +94,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = save(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.apply(crRoomDeviceApply.getDeviceId());
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -133,6 +158,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.allot(crRoomDeviceApply.getDeviceId());
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -145,6 +171,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.refuse(crRoomDeviceApply.getDeviceId());
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -165,6 +192,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.recycle(crRoomDeviceApply.getDeviceId());
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }

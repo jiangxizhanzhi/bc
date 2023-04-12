@@ -209,7 +209,7 @@ public class SingleRoomController {
 	}
 
 	@ApiOperation("实装分配-设备审批申请")
-	@GetMapping("/device/apply")
+	@PostMapping("/device/apply")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
 		SingleRoomBo singleRoomBo = singleRoomService.getRoomInfo(roomDeviceApplyReq.getRoomId());

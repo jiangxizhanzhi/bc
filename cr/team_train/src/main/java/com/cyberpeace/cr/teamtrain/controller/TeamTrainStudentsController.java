@@ -316,7 +316,7 @@ public class TeamTrainStudentsController {
 	}
 
 	@ApiOperation("实装分配-设备审批申请")
-	@GetMapping("/device/apply")
+	@PostMapping("/device/apply")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
 		TeamRoom teamRoom = teamRoomService.getById(roomDeviceApplyReq.getRoomId());

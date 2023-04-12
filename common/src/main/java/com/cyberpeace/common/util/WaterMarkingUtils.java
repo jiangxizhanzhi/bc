@@ -1,15 +1,11 @@
 package com.cyberpeace.common.util;
 
 import cn.hutool.core.io.FileUtil;
+import com.cyberpeace.common.exception.BusinessException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.pdf.*;
-import com.spire.doc.Document;
-import com.spire.doc.FileFormat;
-import com.spire.doc.Section;
-import com.spire.doc.documents.Paragraph;
-import com.spire.doc.documents.ShapeType;
-import com.spire.doc.fields.ShapeObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ooxml.POIXMLProperties;
@@ -18,10 +14,7 @@ import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
-import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
@@ -31,6 +24,8 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -38,43 +33,65 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.cyberpeace.common.util.CryptoUtils.DEFAULT_SECRET_KEY2;
 import static java.util.regex.Pattern.compile;
 
+@Slf4j
 public class WaterMarkingUtils {
 
-    private static final Color DEFAULTCOLOR = new Color(Integer.parseInt("#D3D3D3".substring(1), 16));
+    private static final Color DEFAULTCOLOR = new Color(Integer.parseInt("#000000".substring(1), 16));
 
-//    public static final File FONT_HEI = new File("/cpms/built_in/simhei.ttf");
-    public static final File FONT_HEI = new File("C:\\Windows\\Fonts\\simhei.ttf");
+    public static final File FONT_SIMHEI = new File("/usr/share/fonts/simhei.ttf");
+//    public static final File FONT_SIMHEI = new File("C:\\Windows\\Fonts\\simhei.ttf");
 
     public static void main(String[] args) {
-//        String markText = "南京赛宁";
-//        setExcelWaterMark("D:/cpms/app1.xlsx","D:/cpms/app2.xlsx",markText);
+        String markText = "南京赛宁";
+
 //
 //        setExcelWaterMark("D:/cpms/app1.xls","D:/cpms/app2.xls",markText);
 //		// 原图位置, 输出图片位置, 水印文字颜色, 水印文字 支持doc docx
-        try {
-//            addWordWaterMark1("D:/cpms/app.docx", String.format("D:/cpms/app2_%s.docx",-10),"南京赛宁");
-            addWordWaterMark("D:/cpms/app1.docx", "南京赛宁",null,"D:/cpms/oj");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            addPPTWatermark("D:/cpms/","app1.pptx", "南京赛宁", null, "D:/cpms");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//
 //        try {
-//            setPdfWatermark("D:/cpms/app1.pdf", "D:/cpms/app2.pdf", "南京赛宁");
-//        } catch (DocumentException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
+//            addWordWaterMark1("D:/cpms/app.docx", String.format("D:/cpms/app2_%s.docx",-10),"南京赛宁");
+//        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
+//        String handout = "D:/cpms/upload/attachment/1313.pptx";
+//        String handout = "D:/cpms/upload/attachment/5af65c046dc14e8db7e2ddcc40bee49e.pdf";
+//        String handout = "D:/cpms/upload/attachment/6fd547d072ff439eb40e08495769f89c.pptx";
+        String handout = "D:/cpms/upload/attachment/e8c5a111e74c43339c6ffc467d6e159f.docx";
+//        String handout = "D:/cpms/upload/attachment/29f5a7dd5cf04f0082a3042ea46642d2.xlsx";
+        String[] split = handout.split("/");
+        if(split.length < 1){
+            return;
+        }
+//        if(!handout.startsWith("/cpms")){
+        if(!handout.startsWith("D:/cpms")){
+//            handout = ConfigUtil.getContextProperty("cr.local.file.prefix") + handout;
+            handout = "D:/cpms" + handout;
+        }
+        String handoutPath = split[split.length - 1];
+//                    handout = "D:" + handout;
+        String[] split1 = handoutPath.split("\\.");
+        if(split1.length < 1){
+            return;
+        }
+        String handoutName = split1[0];
+        String replacehandout = handout.replace(handoutName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, handoutName));
+//        addWordWaterMark(handout, replacehandout, markText);
+//        WaterMarkUtils.setWordWaterMark(new File(handout), markText, "pptx");
+//        restWord(handout);
+//        addWordWaterMark1(handout, markText,null,replacehandout);
+        setExcelWaterMark(handout,replacehandout,markText);
+        try {
+//            addPPTWatermark(handout, markText, null, replacehandout);
+            setPPTWaterMark(handout, replacehandout, markText);
+//            addWordWaterMark1(handout, markText,null,replacehandout);
+//            setPdfWatermark(handout, replacehandout, markText);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -129,7 +146,7 @@ public class WaterMarkingUtils {
                 e.printStackTrace();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -211,113 +228,84 @@ public class WaterMarkingUtils {
     }
 
     /**
-     * word文字水印
+     * 获取水印文字图片流
      *
-     * @param inputPath
-     * @param outPath
-     * @param markStr
+     * @param text
+     * @return
      */
-    public static void addWordWaterMark1(String inputPath, String outPath, String markStr) {
-        //加载示例文档
-        Document doc = new Document();
-        doc.loadFromFile(inputPath);
-        //添加艺术字并设置大小
-        ShapeObject shape = new ShapeObject(doc, ShapeType.Text_Plain_Text);
-        shape.setWidth(50);
-        shape.setHeight(15);
-        //设置艺术字文本内容、位置及样式
-        shape.setVerticalPosition(30);
-        shape.setHorizontalPosition(20);
-        shape.setRotation(-10);
-        shape.getWordArt().setSize(10);
-//        shape.getWordArt().setSmallCaps();
-        shape.getWordArt().setFontFamily("STSong-Light");
-        shape.getWordArt().setText(markStr);
-        int rgb = Integer.parseInt("#F5F5F5".substring(1), 16);
-        shape.setFillColor(new Color(rgb));
-//        shape.setFillColor(new Color(Integer.parseInt("#DCDCDC".substring(1), 16)));
-//        shape.setLineStyle(ShapeLineStyle.Single);
-        shape.setStrokeColor(new Color(rgb));
-        shape.setStrokeWeight(1);
-
-
-        Section section;
-
-        com.spire.doc.HeaderFooter header;
-        for (int n = 0; n < doc.getSections().getCount(); n++) {
-            section = doc.getSections().get(n);
-            //获取section的页眉
-            header = section.getHeadersFooters().getHeader();
-            Paragraph paragraph;
-
-            if (header.getParagraphs().getCount() > 0) {
-                //如果页眉有段落，取它第一个段落
-                paragraph = header.getParagraphs().get(0);
-            } else {
-                //否则新增加一个段落到页眉
-                paragraph = header.addParagraph();
-            }
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 3; j++) {
-                    //复制艺术字并设置多行多列位置
-                    shape = (ShapeObject) shape.deepClone();
-                    shape.setVerticalPosition(50 + 150 * i);
-                    shape.setHorizontalPosition(20 + 160 * j);
-                    paragraph.getChildObjects().add(shape);
-                }
-            }
+    private static ByteArrayOutputStream getImage(String text) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            // 导出到字节流B
+            log.info("save water marking font!");
+            Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(FONT_SIMHEI)).deriveFont(Font.BOLD,35);
+            BufferedImage image = waterMarkByText(1920,1080,text,DEFAULTCOLOR,font,-10.0,0.1f);
+            ImageIO.write(image, "png", os);
+            log.info("save water marking pic!!");
+        } catch (IOException | FontFormatException e) {
+            log.error("getImage fail: 创建水印图片IO异常", e);
+            throw new BusinessException("getImage fail: 创建水印图片IO异常");
         }
-        //保存文档
-        doc.saveToFile(outPath, FileFormat.Docx_2013);
+        return os;
     }
 
     /**
-     * 给幻灯片母版添加文本达成水印效果
+     * PPT设置水印
+     *
      * @param path
-     * @param fileName
-     * @param watermark
-     * @param cipher
-     * @param outPath 输出路径
-     * @throws Exception
+     * @param targetpath
+     * @param markStr
+     * @throws IOException
      */
-    public static boolean addPPTWatermark(String path, String fileName, String watermark, String cipher,String outPath) throws Exception{
-        File file = new File(path + fileName);
-
-        XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(file));
-        POIXMLProperties.CustomProperties cp = slideShow.getProperties().getCustomProperties();
-        Dimension dimension = slideShow.getPageSize();
-//        Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream("STSong-Light")).deriveFont(Font.BOLD,50);
-        Font font = new Font("STSong-Light", Font.PLAIN, 35);
-        BufferedImage bufferedImage = waterMarkByText(1920,1080,watermark,DEFAULTCOLOR,font,-10.0,0.1f);
-        File outputfile = new File(outPath+File.separator+"pptWatermark.png");
-        ImageIO.write(bufferedImage, "png", outputfile);
-        byte[] pictureData = IOUtils.toByteArray(new FileInputStream(outputfile));
-        XSLFPictureData pd = slideShow.addPicture(pictureData, PictureData.PictureType.PNG);
-
-        //不判断，直接给所有母版添加水印
-        for (XSLFSlideMaster master : slideShow.getSlideMasters()) {
-            XSLFPictureShape pictShape = master.createPicture(pd);
-            java.awt.Rectangle rect = new Rectangle(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
-            pictShape.setAnchor(rect);
+    public static void setPPTWaterMark(String path, String targetpath, String markStr) {
+        XMLSlideShow slideShow;
+        try {
+            slideShow = new XMLSlideShow(new FileInputStream(path));
+        } catch (IOException e) {
+            log.error("setPPTWaterMark fail:", e);
+            throw new BusinessException("setPPTWaterMark fail:获取PPT文件失败");
         }
-        //添加自定义属性
-        if (cp.getProperty("cipher")!=null) {
-            cp.addProperty("cipher",cipher);
-        }
-        FileOutputStream out = new FileOutputStream(file);
-        slideShow.write(out);
-        out.flush();
-        FileUtils.copyFile(file, new File(outPath+file.getName()));
-        if (out != null) {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        ByteArrayOutputStream os = null;
+        FileOutputStream out = null;
+        try {
+            //获取水印
+            log.info("start to get water marking");
+            os = getImage(markStr);
+            PictureData pictureData1 = slideShow.addPicture(os.toByteArray(), PictureData.PictureType.PNG);
+            for (XSLFSlide slide : slideShow.getSlides()) {
+                XSLFPictureShape pictureShape = slide.createPicture(pictureData1);
+//                pictureShape.setAnchor(new java.awt.Rectangle(250, 0, 500, 500));
+                pictureShape.setAnchor(pictureShape.getAnchor());
+            }
+            log.info("water marking add success!!");
+            out = new FileOutputStream(targetpath);
+            slideShow.write(out);
+        } catch (IOException e) {
+            log.error("setPPTWaterMark fail:" + e);
+            throw new BusinessException("setPPTWaterMark fail：生成ppt文件失败");
+        } finally {
+            if (slideShow != null) {
+                try {
+                    slideShow.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        slideShow.close();
-        System.out.println("明水印增加完成：{}"+file.getName());
-        return true;
     }
 
     /**
@@ -474,12 +462,13 @@ public class WaterMarkingUtils {
      * @param filePath 文件路径
      * @param watermark 水印
      * @param cipher 自定义属性
-     * @param outPath 输出路径
      * @throws IOException
      * @throws XmlException
      */
-    public static boolean addWordWaterMark(String filePath, String watermark, String cipher, String outPath) throws IOException, InvalidFormatException, FontFormatException {
+    public static boolean addWordWaterMark1(String filePath, String watermark, String cipher, String outFileName) throws IOException, InvalidFormatException, FontFormatException {
         File file = new File(filePath);
+        log.info(String.format("current word filepath:%s", filePath));
+        log.info(String.format("current outfile %s", outFileName));
         InputStream in = new FileInputStream(file);
         XWPFDocument document = new XWPFDocument(in);
         POIXMLProperties.CustomProperties cp = document.getProperties().getCustomProperties();
@@ -495,17 +484,17 @@ public class WaterMarkingUtils {
             document.createHeader(HeaderFooterType.DEFAULT);
         }
 //        生成图片水印
-        Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(FONT_HEI)).deriveFont(Font.BOLD,50);
+        Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(FONT_SIMHEI)).deriveFont(Font.BOLD,16);
         BufferedImage bufferedImage = waterMarkByText(1200,1600,watermark,DEFAULTCOLOR,font,315.0,0.5f);
         File watermarkPic = new File("/cpms","wordWatermark.png");
         ImageIO.write(bufferedImage, "png", watermarkPic);
         document.addPictureData(new FileInputStream(watermarkPic), XWPFDocument.PICTURE_TYPE_PNG);
         document.write(out);
         out.flush();
-        File outFile = new File(outPath+File.separator+file.getName());
+        File outFile = new File(outFileName);
         FileUtils.copyFile(file, outFile);
         editWordHeader(outFile);//添加水印
-        System.out.println("明水印增加完成：{}"+file.getName());
+        log.info("明水印增加完成：{}"+file.getName());
         if (in != null) {
             try {
                 in.close();
@@ -600,7 +589,7 @@ public class WaterMarkingUtils {
                 files.add(file);
 //                FileUtils.writeStringToFile(file,watermarkRels.replace("r_id","rId1"));
             }catch (IOException e) {
-                System.out.println("文件创建失败:{}"+file.getName());
+                log.info("文件创建失败:{}"+file.getName());
             }
         }
         return files;
@@ -625,7 +614,7 @@ public class WaterMarkingUtils {
 //            FileUtils.writeStringToFile(file,watermarkXml.replace("WordPictureWatermark","WordPictureWatermark"+new Date().getTime()%10000000)
 //                    .replace("r_id","rId1"));
         }catch (IOException e) {
-            System.out.println("文件创建失败:{}"+file.getName());
+            log.info("文件创建失败:{}"+file.getName());
         }
         return file;
     }

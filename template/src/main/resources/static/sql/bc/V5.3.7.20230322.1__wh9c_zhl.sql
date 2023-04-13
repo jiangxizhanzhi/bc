@@ -26,15 +26,14 @@ INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 3, -4, '已拒绝', 'Re
 INSERT INTO `cr_constants_config` VALUES (DEFAULT, NULL, 4, -4, '已回收', 'Recycled');
 
 -- 角色资产归属记录表
-CREATE TABLE `cr_role_node` (
+CREATE TABLE `cr_role_asset_node` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(64) NOT NULL COMMENT 'uuid',
   `room_id` varchar(64) NOT NULL COMMENT '训练实例id',
-  `role_id` varchar(64) NOT NULL COMMENT '角色id',
   `role_type` int(11) NOT NULL COMMENT '角色类型',
-  `node_id` varchar(64) NOT NULL COMMENT '节点id',
+  `device_id` varchar(64) NOT NULL COMMENT '节点id',
   `node_category` int(11) NOT NULL COMMENT '节点类型',
-  `original_role_id` varchar(64) NOT NULL COMMENT '原归属角色id',
+  `original_role_type` int(11) NOT NULL COMMENT '原归属角色类型',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
@@ -51,7 +50,7 @@ CREATE TABLE `cr_notice` (
   `content` varchar(2048) NOT NULL COMMENT '公告内容',
   `group` varchar(64) NOT NULL COMMENT '公告目标对象',
   `status` int(11) NOT NULL COMMENT '状态',
-  `attachment_id` varchar(64) NULL COMMENT '附件id',
+  `attachment_id` varchar(64) DEFAULT NULL COMMENT '附件id',
   `release_time` datetime NOT NULL COMMENT '原归属角色id',
   `create_user_id` varchar(64) NOT NULL COMMENT '角色id',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
@@ -73,6 +72,9 @@ CREATE TABLE `cr_train_action` (
   `module` int(11) NOT NULL COMMENT '模块',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `user_id` varchar(64) NOT NULL COMMENT '事件操作用户id',
+  `action_time` datetime NOT NULL COMMENT '事件时间',
+  `module_event` int(11) DEFAULT COMMENT '模块事件类型',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `resource_id` (`resource_id`),
   KEY `room_id` (`room_id`) USING BTREE
@@ -100,7 +102,8 @@ CREATE TABLE `cr_room_device_apply` (
   `resource_id` varchar(64) NOT NULL COMMENT 'uuid',
   `room_id` varchar(64) NOT NULL COMMENT '训练实例id',
   `room_name` varchar(255) NOT NULL COMMENT '训练实例名称',
-  `device_id` varchar(64) NOT NULL COMMENT '场景节点id',
+  `device_id` varchar(64) NOT NULL COMMENT '靶标管理id',
+  `scene_device_id` varchar(64) DEFAULT NULL COMMENT '场景靶标id',
   `status` int(11) NOT NULL COMMENT '申请状态',
   `apply_user_id` varchar(64) NOT NULL COMMENT '申请用户id',
   `apply_role_id` varchar(64) NOT NULL COMMENT '申请用户角色id',
@@ -114,4 +117,4 @@ CREATE TABLE `cr_room_device_apply` (
   KEY `room_id` (`room_id`) USING BTREE,
   KEY `device_id` (`device_id`) USING BTREE,
   KEY `apply_role_id` (`apply_role_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC

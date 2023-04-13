@@ -27,6 +27,7 @@ public class CrRoomDeviceApplyController {
     @ApiOperation("实装分配-设备审批列表")
     @GetMapping("/admin/list")
     public BaseRsp<ListRsp<RoomDeviceApplyListRsp>> list(RoomDeviceApplyListReq requestParams) {
+        requestParams.setSort("-apply_time");
         return new BaseRsp<>(crRoomDeviceApplyService.list(requestParams.toPageParam(), requestParams.getDeviceId()));
     }
 

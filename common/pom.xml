@@ -189,40 +189,41 @@
         </dependency>
 
         <dependency>
-            <groupId>e-iceblue</groupId>
-            <artifactId>spire.doc.free</artifactId>
-            <version>5.2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>e-iceblue</groupId>
-            <artifactId>spire.presentation.free</artifactId>
-            <version>3.9.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>2.0.18</version>
         </dependency>
 
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-            <scope>compile</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+
+        <!-- word -->
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.doc.free</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <!-- excel  -->
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.xls.free</artifactId>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.21</version>
-            <scope>compile</scope>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.pdf.free</artifactId>
+            <version>5.1.0</version>
         </dependency>
+        <!-- ppt -->
         <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv-platform</artifactId>
-            <version>1.5</version>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.presentation.free</artifactId>
+            <version>5.1.0</version>
         </dependency>
+
 
     </dependencies>
 

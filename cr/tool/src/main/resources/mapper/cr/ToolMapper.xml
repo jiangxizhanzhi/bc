@@ -57,5 +57,28 @@
             </if>
         </where>
     </select>
+    <select id="selectNameSortList" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">
+        select * from cr_tool_tool
+        <where>
+            <if test="isAdmin == false">
+                and visible is true
+            </if>
+            <if test="listQuery.pattern != null and listQuery.pattern != ''">
+                <bind name="pattern" value="'%' + listQuery.pattern + '%'"/>
+                and `name` like #{pattern}
+            </if>
+            <if test="listQuery.category != null and listQuery.category != ''">
+                <bind name="category" value="'%' + listQuery.category + '%'"/>
+                and `category` like #{category}
+            </if>
+            <if test="listQuery.cracked != null">
+                and `cracked` = #{listQuery.cracked}
+            </if>
+            <if test="listQuery.platforms != null and listQuery.platforms != ''">
+                <bind name="platforms" value="'%' + listQuery.platforms + '%'"/>
+                and `platforms` like #{platforms}
+            </if>
+        </where>
+    </select>
 
 </mapper>

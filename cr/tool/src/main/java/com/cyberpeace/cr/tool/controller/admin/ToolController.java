@@ -58,7 +58,12 @@ public class ToolController {
 		Boolean isAdmin = true;
 		Page page = pageReqBase.toPageParam();
 		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
-		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
+		IPage<ToolRsp> toolBoListRsp;
+		if (pageReqBase.getSort() != null && pageReqBase.getSort().equals("name")) {
+			toolBoListRsp = toolService.selectNameSortPage(page, listQuery, isAdmin);
+		} else {
+			toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
+		}
 		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}
 

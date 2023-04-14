@@ -122,6 +122,12 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 	}
 
 	@Override
+	public IPage<ToolRsp> selectNameSortPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin) {
+		IPage<Tool> result = toolMapper.selectNameSortList(page, toolListQuery, isAdmin);
+		return result.convert(tool -> toBo(tool, false));
+	}
+
+	@Override
 	public ToolRsp selectById(String resourceId) {
 		Tool tool = getById(resourceId);
 		return toBo(tool, true);

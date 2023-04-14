@@ -20,6 +20,8 @@ public interface ToolService extends IService<Tool> {
 	 */
 	IPage<ToolRsp> selectPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
 
+	IPage<ToolRsp> selectNameSortPage(Page page, ToolListQuery toolListQuery, Boolean isAdmin);
+
 	/**
 	 * 根据工具ID查询工具数据
 	 * @param resourceId 工具ID

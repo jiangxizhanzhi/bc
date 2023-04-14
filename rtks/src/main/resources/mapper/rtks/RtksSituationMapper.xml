@@ -31,12 +31,6 @@
                  inner join rtks_role on rtks_situation_log.role_id = rtks_role.resource_id
         group by user_id, type
     </select>
-    <select id="getMomentsDesc" resultType="com.cyberpeace.rtks.dao.entity.SituationLog">
-        select *
-        from rtks_situation_log
-        order by id desc
-        limit 100;
-    </select>
     <select id="getLevels" resultType="com.cyberpeace.rtks.service.bo.situation.LevelRoleContext">
         select a.resource_id as level_id,
                a.name        as level_name,
@@ -58,5 +52,11 @@
         select *
         from rtks_situation_log
         where type = #{type}
+    </select>
+    <select id="getMomentsDesc" resultType="com.cyberpeace.rtks.service.bo.situation.SituationLogLocal">
+        select *
+        from rtks_situation_log
+        order by id desc
+        limit 100;
     </select>
 </mapper>

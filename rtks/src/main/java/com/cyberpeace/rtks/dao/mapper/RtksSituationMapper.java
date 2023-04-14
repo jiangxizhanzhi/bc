@@ -26,7 +26,7 @@ public interface RtksSituationMapper {
 
 	List<MultiRoleContext> countByUserIdAndType();
 
-	List<SituationLog> getMomentsDesc();
+	List<SituationLogLocal> getMomentsDesc();
 
 	List<LevelRoleContext> getLevels(@Param("masterId") String masterId);
 

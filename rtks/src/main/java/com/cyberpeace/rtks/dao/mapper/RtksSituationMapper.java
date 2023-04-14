@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.dao.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -20,7 +21,7 @@ public interface RtksSituationMapper {
 
 	void createLog(@Param("userId") String userId, @Param("userName") String userName,
 			@Param("roleId") String roleId, @Param("roleName") String roleName,
-			@Param("type") Integer type);
+			@Param("type") Integer type, @Param("time") LocalDateTime time);
 
 	List<MultiRoleContext> countByUserIdAndType();
 
@@ -29,4 +30,6 @@ public interface RtksSituationMapper {
 	List<LevelRoleContext> getLevels(@Param("masterId") String masterId);
 
 	List<SituationLog> getAllLogByType(@Param("type") Integer type);
+
+	void clearLog();
 }

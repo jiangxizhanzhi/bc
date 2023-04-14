@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
+
+	private final Random random = new Random();
 
 	@Override
 	public RtksSituationRankings getRankings() {
@@ -243,12 +246,20 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			// record match
 			recordMatch(userId, roleId, match);
 			// 记录动态
-			logMoment(userId, userName, roleId, roleName, match);
+			logMoment(userId, userName, roleId, roleName, match, null);
 		} catch (DuplicateKeyException e) {
 			log.error("duplicationKeyException when inserting rtks situation data into db");
 			e.printStackTrace();
 		}
 		return match;
+	}
+
+	@Override
+	public void recordFake(String userId, String name, String roleId, String roleName,
+			Integer match, LocalDateTime time) {
+		recordMatch(userId, roleId, match);
+
+		logMoment(userId, name, roleId, roleName, match, time);
 	}
 
 	@Override
@@ -329,7 +340,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	}
 
 	private void logMoment(String userId, String userName, String roleId, String roleName,
-			Integer match) {
+			Integer match, LocalDateTime time) {
 
 		if (match < RtksCommonConstants.QUALIFIED_MATCH) {
 			return;
@@ -343,7 +354,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 						userId, roleId, SituationLog.MatchType.QUALIFIED.getCode());
 				if (!qualificationLogged) {
 					rtksSituationMapper.createLog(userId, userName, roleId, roleName,
-							SituationLog.MatchType.QUALIFIED.getCode());
+							SituationLog.MatchType.QUALIFIED.getCode(), time);
 				}
 				// if excellent
 				if (match >= RtksCommonConstants.EXCELLENT_MATCH) {
@@ -351,7 +362,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 							userId, roleId, SituationLog.MatchType.EXCELLENT.getCode());
 					if (!excellenceLogged) {
 						rtksSituationMapper.createLog(userId, userName, roleId, roleName,
-								SituationLog.MatchType.EXCELLENT.getCode());
+								SituationLog.MatchType.EXCELLENT.getCode(), time);
 					}
 				}
 			}

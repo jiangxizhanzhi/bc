@@ -19,7 +19,7 @@ import com.cyberpeace.rtks.service.bo.UserRoleContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
+//@Component
 public class RtksSituationJob {
 
 	@Autowired

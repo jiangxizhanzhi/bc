@@ -164,7 +164,7 @@ public class LocalScene extends BaseTable {
 		LESSON_PRACTICE(140, "课程练习"),
 		SINGLE_TRAINING(211, "单兵训练", "Individual Training"),
 		LIVE_VULN(212, "漏洞"),
-		TEAM_TRAINING(213, "团队训练", "Team Training"),
+		TEAM_TRAINING(213, "红队训练", "RED Team Training"),
 		RED_VS_BLUE(214, "红蓝对抗", "Cyber Wargame"),
 		WEAPON_TEST(216, "武器"),
 		SYSTEM_TEST(217, "系统"),
@@ -176,7 +176,8 @@ public class LocalScene extends BaseTable {
 		COMPREHENSIVE_ASSESSMENT(233, "综合评估"),
 		TACTICAL_TRAINING(234, "战术训练"),
 		COMPREHENSIVE_TRAINING(235, "综合训练"),
-		RANGE_EVALUATION(236, "靶场测评");
+		RANGE_EVALUATION(236, "靶场测评"),
+		BLUE_TEAM_TRAINING(237, "蓝队训练", "BLUE Team Training");
 
 		@Getter
 		private final Integer code;

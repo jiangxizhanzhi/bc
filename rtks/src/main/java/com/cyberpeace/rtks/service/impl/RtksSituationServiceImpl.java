@@ -35,14 +35,19 @@ import lombok.extern.slf4j.Slf4j;
 public class RtksSituationServiceImpl implements RtksSituationService {
 
 	private final Random random = new Random();
+
 	@Autowired
 	private RtksSituationMapper rtksSituationMapper;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private RemoteUserService remoteUserService;
+
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
+
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
 
@@ -303,22 +308,31 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 
 	@Override
 	public List<NewsBo> getNews() {
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime base = LocalDateTime.parse(RtksCommonConstants.BASELINE_TIME_STR, formatter);
+		LocalDateTime now = LocalDateTime.now();
+		Duration duration = Duration.between(base, now);
+		// 当前时间和假数据基准时间相差的天数
+		long day = duration.toDays();
+
 		List<NewsBo> result = Lists.newArrayList();
 		// get recent 100 logs
-		List<SituationLog> logs = rtksSituationMapper.getMomentsDesc();
+		List<SituationLogLocal> logs = rtksSituationMapper.getMomentsDesc();
 		if (logs.isEmpty()) {
 			return result;
 		}
 		// get existing users
-		List<String> userIds = logs.stream().map(SituationLog::getUserId).distinct()
+		List<String> userIds = logs.stream().map(SituationLogLocal::getUserId).distinct()
 				.collect(Collectors.toList());
 		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 		String userId;
-		for (SituationLog log : logs) {
+		for (SituationLogLocal log : logs) {
 			userId = log.getUserId();
 			if (idNameMap.containsKey(userId)) {
 				// use logged roleName
-				NewsBo newsBo = new NewsBo(log);
+				NewsBo newsBo = new NewsBo(log,
+						log.getCreateTime().plusDays(day).format(formatter));
 				newsBo.setUserName(idNameMap.get(userId));
 				result.add(newsBo);
 			}

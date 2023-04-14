@@ -1,9 +1,6 @@
 package com.cyberpeace.rtks.service.bo.situation;
 
 import java.io.Serializable;
-import java.util.Date;
-
-import com.cyberpeace.rtks.dao.entity.SituationLog;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,13 +27,13 @@ public class NewsBo implements Serializable {
 	private Integer type;
 
 	@ApiModelProperty("记录时间")
-	private Date createTime;
+	private String createTime;
 
-	public NewsBo(SituationLog log) {
+	public NewsBo(SituationLogLocal log, String formattedTime) {
 		this.userId = log.getUserId();
 		this.roleId = log.getRoleId();
 		this.roleName = log.getRoleName();
 		this.type = log.getType();
-		this.createTime = log.getCreateTime();
+		this.createTime = formattedTime;
 	}
 }

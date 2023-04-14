@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import com.cyberpeace.rtks.dao.entity.SituationLog;
 import com.cyberpeace.rtks.service.bo.situation.LevelRoleContext;
 import com.cyberpeace.rtks.service.bo.situation.MultiRoleContext;
+import com.cyberpeace.rtks.service.bo.situation.SituationLogLocal;
 
 @Mapper
 public interface RtksSituationMapper {
@@ -29,7 +30,9 @@ public interface RtksSituationMapper {
 
 	List<LevelRoleContext> getLevels(@Param("masterId") String masterId);
 
-	List<SituationLog> getAllLogByType(@Param("type") Integer type);
+	List<SituationLogLocal> getAllLogByType(@Param("type") Integer type);
 
 	void clearLog();
+
+	LocalDateTime getFirstLogTime();
 }

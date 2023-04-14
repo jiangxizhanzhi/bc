@@ -21,4 +21,6 @@ public interface RtksCommonConstants {
 	 * rtks_level 最上层id
 	 */
 	String FRAME_MASTER_LEVEL_ID = "default";
+
+	String BASELINE_TIME_STR = "2023-04-14 02:00:00";
 }

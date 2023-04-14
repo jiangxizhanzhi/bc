@@ -1,5 +1,7 @@
 package com.cyberpeace.rtks.util;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
@@ -59,5 +61,10 @@ public class RtksCommonUtil {
 		difference.setAdded(added);
 
 		return difference;
+	}
+
+	public static String format6(LocalDateTime date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		return date.format(formatter);
 	}
 }

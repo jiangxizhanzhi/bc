@@ -1,6 +1,8 @@
 package com.cyberpeace.rtks.service.impl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,7 +17,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.cyberpeace.common.model.cache.RtksMatch;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.constant.RtksCommonConstants;
 import com.cyberpeace.rtks.dao.entity.SituationLog;
@@ -24,6 +25,7 @@ import com.cyberpeace.rtks.dao.mapper.RtksSituationMapper;
 import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.situation.*;
+import com.cyberpeace.rtks.util.RtksCommonUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,22 +34,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RtksSituationServiceImpl implements RtksSituationService {
 
+	private final Random random = new Random();
 	@Autowired
 	private RtksSituationMapper rtksSituationMapper;
-
 	@Autowired
 	private TransactionTemplate transactionTemplate;
-
 	@Autowired
 	private RemoteUserService remoteUserService;
-
 	@Autowired
 	private RtksStatisticService rtksStatisticService;
-
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
-
-	private final Random random = new Random();
 
 	@Override
 	public RtksSituationRankings getRankings() {
@@ -266,41 +263,41 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	public SituationTrendBo getTrends() {
 		SituationTrendBo result = new SituationTrendBo();
 		// 确定曲线开始和结束时间
-		Date startTime = rtksRoleMatchRecordMapper.getFirstRecordTime();
-		if (startTime == null) {
-			return new SituationTrendBo(2);
-		}
-		Date endTime = new Date();
+		LocalDateTime startTime = rtksSituationMapper.getFirstLogTime();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime base = LocalDateTime.parse(RtksCommonConstants.BASELINE_TIME_STR, formatter);
+		LocalDateTime now = LocalDateTime.now();
+		Duration duration = Duration.between(base, now);
+		// 当前时间和假数据基准时间相差的天数
+		long day = duration.toDays();
+
 		// get all qualification log
-		List<SituationLog> logs = rtksSituationMapper
+		List<SituationLogLocal> logs = rtksSituationMapper
 				.getAllLogByType(SituationLog.MatchType.QUALIFIED.getCode());
 		Map<String, Integer> dateNumMap = Maps.newHashMap();
 		String date6;
 		// count by date
-		for (SituationLog log : logs) {
-			date6 = TimeUtil.format6(log.getCreateTime());
+		for (SituationLogLocal log : logs) {
+			date6 = RtksCommonUtil.format6(log.getCreateTime().plusDays(day));
 			if (!dateNumMap.containsKey(date6)) {
 				dateNumMap.put(date6, 1);
 			} else {
 				dateNumMap.put(date6, dateNumMap.get(date6) + 1);
 			}
 		}
-		// group by date
-		int daysBetween = TimeUtil.getDaysBetween(TimeUtil.getStartOfDay(startTime),
-				TimeUtil.getStartOfDay(endTime));
-		Date date = startTime;
+		// group by date,共计32天的数据，包含第一天的0
+		long daysBetween = 32;
+		LocalDateTime date = startTime.plusDays(day - 1);
 		Integer sum = 0;
 		for (int i = 0; i < daysBetween; i++) {
-			date6 = TimeUtil.format6(date);
+			date6 = RtksCommonUtil.format6(date);
 			result.getXDates().add(date6);
 			if (dateNumMap.containsKey(date6)) {
 				sum += dateNumMap.get(date6);
 			}
 			result.getYNums().add(sum);
-			date = TimeUtil.addDates(date, 1);
+			date = date.plusDays(1);
 		}
-		// 填充不足
-		result.fill(2, startTime);
 		return result;
 	}
 

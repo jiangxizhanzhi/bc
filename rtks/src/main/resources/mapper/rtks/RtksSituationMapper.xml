@@ -48,7 +48,13 @@
         where a.parent = #{masterId}
         order by a.id
     </select>
-    <select id="getAllLogByType" resultType="com.cyberpeace.rtks.dao.entity.SituationLog">
+    <select id="getFirstLogTime" resultType="java.time.LocalDateTime">
+        select create_time
+        from rtks_situation_log
+        order by id
+        limit 1
+    </select>
+    <select id="getAllLogByType" resultType="com.cyberpeace.rtks.service.bo.situation.SituationLogLocal">
         select *
         from rtks_situation_log
         where type = #{type}

@@ -3,8 +3,12 @@
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.RtksSituationMapper">
     <insert id="createLog">
         insert into rtks_situation_log (`user_id`, `user_name`, `role_id`, `role_name`, `type`, `create_time`)
-        values (#{userId}, #{userName}, #{roleId}, #{roleName}, #{type}, now())
+        values (#{userId}, #{userName}, #{roleId}, #{roleName}, #{type}, #{time})
     </insert>
+    <delete id="clearLog">
+        delete
+        from rtks_situation_log;
+    </delete>
     <select id="getByUserIdAndRoleIdAndType" resultType="com.cyberpeace.rtks.dao.entity.SituationLog">
         select *
         from rtks_situation_log

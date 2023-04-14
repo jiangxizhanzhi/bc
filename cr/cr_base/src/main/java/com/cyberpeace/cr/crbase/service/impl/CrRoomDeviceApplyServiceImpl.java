@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -75,7 +77,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 
         webSocketHandler.pushMessageToUsers(
-                crEventListenerHelper.makeContext(JsonUtil.toJsonString(payload), crRoomDeviceApply.getRoomId()),
+                crEventListenerHelper.makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
+                        crRoomDeviceApply.getRoomId()),
                 Lists.newArrayList(crRoomDeviceApply.getApplyUserId())
         );
     }

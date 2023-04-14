@@ -1,5 +1,6 @@
 package com.cyberpeace.rtks.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
@@ -50,5 +51,8 @@ public interface RtksSituationService {
 	 * @return
 	 */
 	SituationTrendBo getTrends();
+
+	void recordFake(String userId, String name, String roleId, String roleName, Integer match,
+			LocalDateTime time);
 
 }

@@ -12,6 +12,13 @@ import com.cyberpeace.rtks.service.bo.skill.IdWeight;
 
 public class RtksCommonUtil {
 
+	private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+	private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+	private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+			.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 	/**
 	 * 比较编辑前后的关联关系
 	 * @param oldRel 编辑前原有的relations
@@ -64,7 +71,7 @@ public class RtksCommonUtil {
 	}
 
 	public static String format6(LocalDateTime date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		return date.format(formatter);
+		// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		return date.format(dateFormatter);
 	}
 }

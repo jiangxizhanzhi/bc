@@ -94,7 +94,7 @@ CREATE TABLE `cr_mission_event_device` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `mission_id` (`mission_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- 实装设备申请分配
 CREATE TABLE `cr_room_device_apply` (
@@ -117,4 +117,4 @@ CREATE TABLE `cr_room_device_apply` (
   KEY `room_id` (`room_id`) USING BTREE,
   KEY `device_id` (`device_id`) USING BTREE,
   KEY `apply_role_id` (`apply_role_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

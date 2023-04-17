@@ -216,6 +216,9 @@ public class CrBaseServiceImpl implements CrBaseService {
 					maxTrainExtraData = trainExtraData;
 				}
 			}
+			if (maxTrainExtraData == null) {
+				return map;
+			}
 			missionIdList = new ArrayList<>(maxTrainExtraData.getJSONObject("missions_record").keySet());
 			List<Mission> missionList = missionMapper.selectBatchIds(missionIdList);
 			Map<String, String> missionCategoryMap = StreamApiUtils.toMap(missionList, Mission::getResourceId, Mission::getCategoryId);

@@ -4,10 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +14,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ReleaseMissionReq;
@@ -53,6 +51,9 @@ import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -221,7 +222,8 @@ public class RbRoomDirectorController {
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 					}
 
-					List<MissionStageScheme> missionStageSchemeList = crRole.getMissionStageSchemes();
+					List<MissionStageScheme> missionStageSchemeList = crRole
+							.getMissionStageSchemes();
 
 					for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
 
@@ -266,7 +268,8 @@ public class RbRoomDirectorController {
 			List<GroupRole> childRoleInfoList = Lists.newArrayList();
 			String roleGroupName = roleGroup.getDesc();
 
-			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, roleGroup);
+			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
+					roleGroup);
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
@@ -306,8 +309,10 @@ public class RbRoomDirectorController {
 
 								// 如果下发，获取mission的用户列表
 								if (missionIds.contains(roleMission.getResourceId())) {
-									List<String> userIdList = JsonUtil.toJsonObjectArray(roleData.getUserIds(), String.class);
-									List<UserData> userDatas = crRoleService.getUserDatas(userIdList);
+									List<String> userIdList = JsonUtil
+											.toJsonObjectArray(roleData.getUserIds(), String.class);
+									List<UserData> userDatas = crRoleService
+											.getUserDatas(userIdList);
 
 									List<RbUserData> rbUserDatas = userDatas.stream()
 											.map(userData -> {
@@ -393,6 +398,14 @@ public class RbRoomDirectorController {
 		data.setStartTime(startTime);
 		data.setEndTime(endTime);
 
+		// 任务时间轴开始时间调整为结束时间的2天前的11:03:08
+		String start = "11:03:08";
+		Date twoDayAgo = TimeUtil.addDates(endTime, -2);
+		String startDate = TimeUtil.format6(twoDayAgo);
+		String startDateTime = startDate + " " + start;
+		startTime = TimeUtil.toDate1(startDateTime);
+
+		data.setStartTime(startTime);
 		return new BaseRsp(data);
 	}
 

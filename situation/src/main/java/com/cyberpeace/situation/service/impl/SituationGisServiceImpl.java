@@ -50,11 +50,7 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 	public void init() {
 
 		// 初始化权限列表
-		try {
-			AUTHORIZED_IPS = situationDbAccessAuthorityMapper.selectAllowedIps();
-		} catch (Exception e) {
-			AUTHORIZED_IPS = Lists.newArrayList();
-		}
+		initAuthorizationIp();
 
 		// 初始化省份边界数据
 		InputStream inputStream = getClass().getResourceAsStream("/100000_full.json");
@@ -73,6 +69,14 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 				}
 				provincePolygonMap.put(name, polygons);
 			}
+		}
+	}
+
+	private void initAuthorizationIp(){
+		try {
+			AUTHORIZED_IPS = situationDbAccessAuthorityMapper.selectAllowedIps();
+		} catch (Exception e) {
+			AUTHORIZED_IPS = Lists.newArrayList();
 		}
 	}
 
@@ -132,5 +136,10 @@ public class SituationGisServiceImpl extends ServiceImpl<SituationGisMapper, Sit
 	@Override
 	public Boolean checkAuthorizationIp(String ip) {
 		return AUTHORIZED_IPS.contains(ip);
+	}
+
+	@Override
+	public void refreshAuthorizationIp() {
+		initAuthorizationIp();
 	}
 }

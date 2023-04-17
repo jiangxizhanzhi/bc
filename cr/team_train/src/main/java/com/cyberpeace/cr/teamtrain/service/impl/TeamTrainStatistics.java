@@ -111,6 +111,13 @@ public class TeamTrainStatistics extends CrEventStatistics {
 							  .filter(teamRoom -> teamRoom.getTrainCategory().equals(code))
 							  .map(TeamRoom::getResourceId)
 							  .collect(Collectors.toList());
+		if (roomIds.size() == 0 && code.equals(TeamRoom.TrainCategory.BLUE.getCode())) {
+			trainingPeopleStatistics.add(new BarChartUnit("蓝队训练", 0));
+			return;
+		} else if (roomIds.size() == 0 && code.equals(TeamRoom.TrainCategory.RED.getCode())){
+			trainingPeopleStatistics.add(new BarChartUnit("红队训练", 0));
+			return;
+		}
 		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
 		Integer count = 0;
 		for (CrRole crRole : crRoleList) {

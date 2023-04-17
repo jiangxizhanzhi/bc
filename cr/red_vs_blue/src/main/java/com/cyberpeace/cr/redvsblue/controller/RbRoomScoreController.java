@@ -341,7 +341,7 @@ public class RbRoomScoreController {
 	public BaseRsp<List<RoleScore>> getRoleScoreInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		List<RoleScore> data = rbRoomScoreService.getRoleScoreInfo(resource_id);
-
+		// 接口被nginx拦截转发，详见/etc/nginx/default.d/situation.conf
 		return new BaseRsp(data);
 	}
 

@@ -74,7 +74,7 @@ CREATE TABLE `cr_train_action` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `user_id` varchar(64) NOT NULL COMMENT '事件操作用户id',
   `action_time` datetime NOT NULL COMMENT '事件时间',
-  `module_event` int(11) DEFAULT COMMENT '模块事件类型',
+  `module_event` int(11) DEFAULT NULL COMMENT '模块事件类型',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `resource_id` (`resource_id`),
   KEY `room_id` (`room_id`) USING BTREE

@@ -11,6 +11,7 @@ import com.cyberpeace.situation.controller.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SceneConfigReq;
 import com.cyberpeace.situation.controller.req.SceneIdListReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.LinkStateRes;
 import com.cyberpeace.situation.controller.res.RefreshDataRes;
 import com.cyberpeace.situation.controller.res.SceneConfigRes;
 import com.cyberpeace.situation.dao.entity.SceneConfig;
@@ -290,5 +291,19 @@ public class SituationController {
 		}
 
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("随机的节点数据")
+	@GetMapping("element_data")
+	public BaseRsp<ElementStateRes> getRandomElementData(@ApiParam(name = "element_id", value = "节点编号",
+			required = true) @RequestParam(value = "element_id") String elementId) {
+		return new BaseRsp<>(situationHandlerService.getRandomElementData(elementId));
+	}
+
+	@ApiOperation("随机的链路数据")
+	@GetMapping("link_data")
+	public BaseRsp<LinkStateRes> gatRandomLinkData(@ApiParam(name = "link_id", value = "链路编号",
+			required = true) @RequestParam(value = "link_id") String linkId) {
+		return new BaseRsp<>(situationHandlerService.getRandomLinkData(linkId));
 	}
 }

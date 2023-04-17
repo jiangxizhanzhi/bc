@@ -1,9 +1,9 @@
 package com.cyberpeace.integratation.model.mp;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class MpEventAggr implements Serializable {
@@ -38,4 +38,11 @@ public class MpEventAggr implements Serializable {
 	@ApiModelProperty("用户百分比")
 	private Double user;
 
+	public MpEventAggr() {
+		this.setUser(0d);
+		this.setNetwork(0d);
+		this.setPort(0d);
+		this.setFile(0d);
+		this.setProcess(0d);
+	}
 }

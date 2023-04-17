@@ -10,12 +10,20 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.integratation.model.mp.MpEventAggr;
+import com.cyberpeace.integratation.model.mp.MpFlowTrend;
+import com.cyberpeace.integratation.model.mp.MpHostState;
+import com.cyberpeace.integratation.model.mp.MpRiskCount;
 import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.LinkStateRes;
+import com.cyberpeace.situation.controller.res.SceneAllDataRes;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
@@ -52,6 +60,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	Cache<String, SituationTopo> situationTopoCache = CacheBuilder.newBuilder()
 																		  .expireAfterAccess(4, TimeUnit.HOURS).build();
+
+	Cache<String, ElementStateRes> elementDataCache = CacheBuilder.newBuilder()
+																  .expireAfterWrite(5, TimeUnit.SECONDS).build();
+
+	Cache<String, LinkStateRes> linkDataCache = CacheBuilder.newBuilder()
+															.expireAfterWrite(1, TimeUnit.SECONDS).build();
 
 	@Override
 	@CacheEvict(cacheNames = {"getNodeMap","getAreaMap"}, key = "#sceneData.getSceneId", allEntries = true)
@@ -728,6 +742,191 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 																				PropertyNamingStrategy.SnakeCase))
 																		.messageIdentifier(identifier).build();
 		myWebSocketHandler.pushMessage(messageContext, true);
+	}
+
+
+	@Override
+	public ElementStateRes getRandomElementData(String elementId) {
+		ElementStateRes elementStateRes = elementDataCache.getIfPresent(elementId);
+		if (elementStateRes == null) {
+			elementStateRes = new ElementStateRes();
+			MpEventAggr mpEventAggr = new MpEventAggr();
+			int leave = 100;
+			int user = (int) (Math.random() * leave) ;
+			leave -= user;
+			int network = (int) (Math.random() * leave);
+			leave -= network;
+			int port = (int) (Math.random() * leave);
+			leave -= port;
+			int process = (int) (Math.random() * leave);
+			int file = leave - process;
+			mpEventAggr.setFile((double) file);
+			mpEventAggr.setNetwork((double) network);
+			mpEventAggr.setPort((double) port);
+			mpEventAggr.setProcess((double) process);
+			mpEventAggr.setUser((double) user);
+			elementStateRes.setEventAggr(mpEventAggr);
+
+			MpHostState mpHostState = new MpHostState();
+			mpHostState.setCpuCount(4);
+			mpHostState.setMemoryTotal(4096);
+			mpHostState.setDiskSpace(500);
+			mpHostState.setMemoryFree(1604);
+			mpHostState.setElementId(elementId);
+			mpHostState.setCpuPercent(Math.random() * 100);
+			mpHostState.setDiskPercent(Math.random() * 100);
+			mpHostState.setMemoryPercent(Math.random() * 100);
+			elementStateRes.setHostState(mpHostState);
+
+			MpRiskCount mpRiskCount = new MpRiskCount();
+			mpRiskCount.setLowCount((int) (Math.random() * 30));
+			mpRiskCount.setMediumCount((int) (Math.random() * 25));
+			mpRiskCount.setHighCount((int) (Math.random() * 20));
+			elementStateRes.setRiskCount(mpRiskCount);
+
+			List<MpFlowTrend> flowTrend = new ArrayList<>();
+			for (int i = 19; i >= 0; i--){
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND) - (i * 5) );
+				flowTrend.add(new MpFlowTrend((int) (Math.random() * 100), calendar.getTime()));
+			}
+			elementStateRes.setFlowTrend(flowTrend);
+			elementDataCache.put(elementId, elementStateRes);
+		}
+		return elementStateRes;
+	}
+
+	@Override
+	public LinkStateRes getRandomLinkData(String linkId) {
+		LinkStateRes linkStateRes = linkDataCache.getIfPresent(linkId);
+		if (linkStateRes == null) {
+			linkStateRes = new LinkStateRes();
+			linkStateRes.setUpLinkRate((int) (Math.random() * 9000 + 1000));
+			linkStateRes.setDownLinkRate((int) (Math.random() * 9000 + 1000));
+			linkStateRes.setLinkId(linkId);
+			linkDataCache.put(linkId, linkStateRes);
+		}
+		return linkStateRes;
+	}
+
+	@Override
+	public SceneAllDataRes getSceneAllDate(String topoId) {
+		SituationTopo situationTopo = situationTopoCache.getIfPresent(topoId);
+		if(situationTopo == null){
+			SceneData sceneData = topoHandlerService.getSceneData(null, topoId);
+			sceneData.setSceneId(topoId);
+			situationTopo = getSituationTopo(sceneData);
+		}
+		List<String> elementIdList = new ArrayList<>(situationTopo.getElements().keySet());
+		List<String> linkIdList = StreamApiUtils.map(situationTopo.getConnections(), ConnectionInfo::getConnectionId);
+		SceneAllDataRes sceneAllDataRes = new SceneAllDataRes();
+		List<LinkStateRes> linkStateList = new ArrayList<>();
+		List<ElementStateRes> elementStateList = new ArrayList<>();
+		TotalSceneData totalSceneData = new TotalSceneData();
+		AverageSceneData averageSceneData = new AverageSceneData();
+		ElementStateRes totalElementStateRes = new ElementStateRes();
+		ElementStateRes averageElementStateRes = new ElementStateRes();
+
+		MpEventAggr totalEventAggr = new MpEventAggr();
+		MpHostState totalHostState = new MpHostState();
+		MpRiskCount totalRiskCount = new MpRiskCount();
+		List<MpFlowTrend> totalFlowTrend = new ArrayList<>();
+
+		MpEventAggr averageEventAggr = new MpEventAggr();
+		MpHostState averageHostState = new MpHostState();
+		MpRiskCount averageRiskCount = new MpRiskCount();
+		List<MpFlowTrend> averageFlowTrend = new ArrayList<>();
+
+		LinkStateRes totalLinkState = new LinkStateRes();
+		LinkStateRes averageLinkState = new LinkStateRes();
+
+		int elementCount = elementIdList.size();
+		for (String elementId : elementIdList) {
+			ElementStateRes elementStateRes = getRandomElementData(elementId);
+			elementStateList.add(elementStateRes);
+
+			MpEventAggr eventAggr = elementStateRes.getEventAggr();
+			totalEventAggr.setFile(totalEventAggr.getFile() + eventAggr.getFile());
+			totalEventAggr.setNetwork(totalEventAggr.getNetwork() + eventAggr.getNetwork());
+			totalEventAggr.setPort(totalEventAggr.getPort() + eventAggr.getPort());
+			totalEventAggr.setUser(totalEventAggr.getUser() + eventAggr.getUser());
+			totalEventAggr.setProcess(totalEventAggr.getProcess() + eventAggr.getProcess());
+
+			MpHostState hostState = elementStateRes.getHostState();
+			totalHostState.setMemoryTotal(totalHostState.getMemoryTotal() + hostState.getMemoryTotal());
+			totalHostState.setMemoryPercent(totalHostState.getMemoryPercent() + hostState.getMemoryPercent());
+			totalHostState.setCpuCount(totalHostState.getCpuCount() + hostState.getCpuCount());
+			totalHostState.setDiskSpace(totalHostState.getDiskSpace() + hostState.getDiskSpace());
+			totalHostState.setCpuPercent(totalHostState.getCpuPercent() + hostState.getCpuPercent());
+			totalHostState.setDiskPercent(totalHostState.getDiskPercent() + hostState.getDiskPercent());
+
+			MpRiskCount riskCount = elementStateRes.getRiskCount();
+			totalRiskCount.setHighCount(totalRiskCount.getHighCount() + riskCount.getHighCount());
+			totalRiskCount.setMediumCount(totalRiskCount.getMediumCount() + riskCount.getMediumCount());
+			totalRiskCount.setLowCount(totalRiskCount.getLowCount() + riskCount.getLowCount());
+
+			if (totalFlowTrend.size() == 0) {
+				totalFlowTrend.addAll(elementStateRes.getFlowTrend());
+			} else {
+				for (int i = 0; i < 20; i++) {
+					totalFlowTrend.get(i).setDataSize(totalFlowTrend.get(i).getDataSize()
+							+ elementStateRes.getFlowTrend().get(i).getDataSize());
+				}
+			}
+		}
+		totalElementStateRes.setHostState(totalHostState);
+		totalElementStateRes.setFlowTrend(totalFlowTrend);
+		totalElementStateRes.setRiskCount(totalRiskCount);
+		totalElementStateRes.setEventAggr(totalEventAggr);
+		totalSceneData.setElementStateRes(totalElementStateRes);
+
+		averageEventAggr.setProcess(totalEventAggr.getProcess()/elementCount);
+		averageEventAggr.setPort(totalEventAggr.getPort()/elementCount);
+		averageEventAggr.setFile(totalEventAggr.getFile()/elementCount);
+		averageEventAggr.setNetwork(totalEventAggr.getNetwork()/elementCount);
+		averageEventAggr.setUser(totalEventAggr.getUser()/elementCount);
+		averageElementStateRes.setEventAggr(averageEventAggr);
+
+		averageHostState.setDiskPercent(totalHostState.getDiskPercent()/elementCount);
+		averageHostState.setCpuPercent(totalHostState.getCpuPercent()/elementCount);
+		averageHostState.setDiskSpace(totalHostState.getDiskSpace()/elementCount);
+		averageHostState.setCpuCount(totalHostState.getCpuCount()/elementCount);
+		averageHostState.setMemoryPercent(totalHostState.getMemoryPercent()/elementCount);
+		averageHostState.setMemoryTotal(totalHostState.getMemoryTotal()/elementCount);
+		averageElementStateRes.setHostState(averageHostState);
+
+		averageRiskCount.setLowCount(totalRiskCount.getLowCount()/elementCount);
+		averageRiskCount.setMediumCount(totalRiskCount.getMediumCount()/elementCount);
+		averageRiskCount.setHighCount(totalRiskCount.getHighCount()/elementCount);
+		averageElementStateRes.setRiskCount(averageRiskCount);
+
+		for (MpFlowTrend flowTrend: totalFlowTrend) {
+			averageFlowTrend.add(new MpFlowTrend(flowTrend.getDataSize()/elementCount, flowTrend.getTime()));
+		}
+		averageElementStateRes.setFlowTrend(averageFlowTrend);
+		averageSceneData.setElementStateRes(averageElementStateRes);
+
+		int linkCount = linkIdList.size();
+		for (String linkId : linkIdList) {
+			LinkStateRes linkStateRes = getRandomLinkData(linkId);
+			linkStateList.add(linkStateRes);
+
+			totalLinkState.setUpLinkRate(totalLinkState.getUpLinkRate() + linkStateRes.getUpLinkRate());
+			totalLinkState.setDownLinkRate(totalLinkState.getUpLinkRate() + linkStateRes.getDownLinkRate());
+			totalLinkState.setBandwidth(totalLinkState.getBandwidth() + linkStateRes.getBandwidth());
+		}
+		totalSceneData.setLinkStateRes(totalLinkState);
+
+		averageLinkState.setBandwidth(totalLinkState.getBandwidth()/linkCount);
+		averageLinkState.setUpLinkRate(totalLinkState.getUpLinkRate()/linkCount);
+		averageLinkState.setDownLinkRate(totalLinkState.getDownLinkRate()/linkCount);
+		averageSceneData.setLinkStateRes(averageLinkState);
+
+		sceneAllDataRes.setTotalSceneData(totalSceneData);
+		sceneAllDataRes.setElementStateList(elementStateList);
+		sceneAllDataRes.setLinkStateList(linkStateList);
+		sceneAllDataRes.setAverageSceneData(averageSceneData);
+		return sceneAllDataRes;
 	}
 
 }

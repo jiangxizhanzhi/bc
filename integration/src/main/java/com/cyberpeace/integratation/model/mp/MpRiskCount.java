@@ -1,9 +1,9 @@
 package com.cyberpeace.integratation.model.mp;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class MpRiskCount implements Serializable {
@@ -26,4 +26,9 @@ public class MpRiskCount implements Serializable {
 	@ApiModelProperty("低风险")
 	private Integer lowCount;
 
+	public MpRiskCount() {
+		this.highCount = 0;
+		this.mediumCount = 0;
+		this.lowCount = 0;
+	}
 }

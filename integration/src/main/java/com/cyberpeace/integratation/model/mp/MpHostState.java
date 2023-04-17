@@ -1,10 +1,10 @@
 package com.cyberpeace.integratation.model.mp;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class MpHostState implements Serializable {
@@ -69,4 +69,12 @@ public class MpHostState implements Serializable {
 	@ApiModelProperty("时间")
 	private Date time;
 
+	public MpHostState() {
+		this.setDiskPercent(0d);
+		this.setCpuPercent(0d);
+		this.setDiskSpace(0);
+		this.setMemoryTotal(0);
+		this.setCpuCount(0);
+		this.setMemoryPercent(0d);
+	}
 }

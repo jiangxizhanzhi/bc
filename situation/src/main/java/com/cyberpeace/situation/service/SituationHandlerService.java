@@ -2,6 +2,9 @@ package com.cyberpeace.situation.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.controller.res.ElementStateRes;
+import com.cyberpeace.situation.controller.res.LinkStateRes;
+import com.cyberpeace.situation.controller.res.SceneAllDataRes;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsMultiNodeDynamic;
@@ -165,5 +168,11 @@ public interface SituationHandlerService {
 	Map<String, String> getAreaMap(String sceneId);
 
 	<T> void pushDataToRealisticScene(String topoId, T data);
+
+	ElementStateRes getRandomElementData(String elementId);
+
+	LinkStateRes getRandomLinkData(String linkId);
+
+	SceneAllDataRes getSceneAllDate(String topoId);
 
 }

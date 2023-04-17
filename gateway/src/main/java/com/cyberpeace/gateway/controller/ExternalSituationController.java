@@ -6,6 +6,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.situation.controller.res.SceneAllDataRes;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.model.DynamicSchemeProcess;
 import com.cyberpeace.situation.model.Instruction;
@@ -46,6 +48,9 @@ public class ExternalSituationController {
 
 	@Autowired
 	private AttackMessageHistoryService attackMessageHistoryService;
+
+	@Autowired
+	private BusinessTemplateService businessTemplateService;
 
 	@CrossOrigin("*")
 	@ApiOperation("获取场景拓扑")
@@ -123,6 +128,28 @@ public class ExternalSituationController {
 		}
 		situationTimeService.executeInstruction(instruction, businessTemplate.getTopoId());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("获取场景中节点和链路数据")
+	@GetMapping("/scene_data")
+	public BaseRsp<SceneAllDataRes> getSceneData(
+			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if(businessTemplate == null){
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
+		}
+		return new BaseRsp<>(situationHandlerService.getSceneAllDate(businessTemplate.getTopoId()));
+	}
+
+	@ApiOperation("获取拓扑数据")
+	@GetMapping("/topo")
+	public BaseRsp<SceneData> getTopoData(
+			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
+		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
+		if(businessTemplate == null){
+			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
+		}
+		return new BaseRsp<>(topoHandlerService.getSceneData(null, businessTemplate.getTopoId()));
 	}
 
 }

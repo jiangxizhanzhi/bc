@@ -481,7 +481,11 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		ClassroomBo classroomBo = new ClassroomBo();
 		classroomBo.setName(teamRoom.getName());
 		classroomBo.setResourceId(teamRoom.getResourceId());
-		classroomBo.setClassify(ClassroomType.TEAM.getCode());
+		if (teamRoom.getTrainCategory().intValue() == TeamRoom.TrainCategory.RED.getCode()) {
+			classroomBo.setClassify(ClassroomType.TEAM.getCode());
+		} else {
+			classroomBo.setClassify(ClassroomType.BLUE_TEAM.getCode());
+		}
 		classroomBo.setCreateUserId(teamRoom.getCreateUserId());
 		classroomBo.setStartTime(teamRoom.getStartTime());
 		classroomBo.setEndTime(teamRoom.getEndTime());

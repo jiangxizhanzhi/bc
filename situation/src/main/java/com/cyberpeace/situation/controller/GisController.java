@@ -220,7 +220,7 @@ public class GisController {
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp(true);
+		return new BaseRsp(true, "标绘文件导入成功");
 	}
 
 	public GisMarkContext addGisMark(GisMarkContext gisMarkContext) {

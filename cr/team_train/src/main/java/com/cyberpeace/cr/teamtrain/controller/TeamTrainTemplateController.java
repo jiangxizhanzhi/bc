@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,13 +98,16 @@ public class TeamTrainTemplateController {
 		// create team template
 		TeamTemplate teamTemplate = reqToTeamTemplate(addReq, new TeamTemplate());
 		teamTemplate.setTrainCategory(addReq.getTrainCategory());
+		Integer teamReferenceType = teamTemplate.getTrainCategory().equals(TeamRoom.TrainCategory.RED.getCode())
+				? LocalScene.BusinessCode.TEAM_TRAINING.getCode()
+				: LocalScene.BusinessCode.BLUE_TRAINING.getCode();
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// save business template
 				String businessTemplateId = businessTemplateService
-						.addTemplate(addReq.getBaseInfo());
+						.addTemplate(addReq.getBaseInfo(), teamReferenceType);
 				// save team template
 				teamTemplate.setBusinessTemplateId(businessTemplateId);
 				teamTemplateService.save(teamTemplate);

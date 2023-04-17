@@ -98,8 +98,14 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
+
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
+		return addTemplate(baseInfo, null);
+	}
+
+	@Override
+	public String addTemplate(BaseInfo baseInfo, Integer teamReferenceType) {
 		// validate length
 		baseInfo.validate();
 		// 1、从输入业务中解析公共模板
@@ -124,6 +130,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		topoJson.put("support_partial_start", topoData.getSupportPartialStart());
 
 		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
+		if (businessCode.getCode().equals(LocalScene.BusinessCode.TEAM_TRAINING.getCode())) {
+			if (!teamReferenceType.equals(businessCode.getCode())) {
+				businessCode = LocalScene.BusinessCode.BLUE_TEAM_TRAINING;
+			}
+		}
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
 		// 保存基础模板

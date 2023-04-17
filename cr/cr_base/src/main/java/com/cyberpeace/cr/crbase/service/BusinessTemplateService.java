@@ -54,6 +54,8 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	String addTemplate(BaseInfo baseInfo);
 
+	String addTemplate(BaseInfo baseInfo, Integer teamReferenceType);
+
 	/**
 	 * 查询有权查看的训练模板
 	 *

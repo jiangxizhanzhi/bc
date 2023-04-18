@@ -1,12 +1,16 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import com.cyberpeace.common.annoations.PermissionOperation;
 import com.cyberpeace.common.constant.*;
+import com.cyberpeace.cs.controller.req.FileRemoveMarkingReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -63,7 +67,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "oj-后台课时相关api")
 @RestController
 @RequestMapping("/oj/admin/lesson")
-@RequiresAuthentication
+//@RequiresAuthentication
 @Slf4j
 public class AdminLessonController extends PublicController<CourseLessonService, CourseLesson> {
 
@@ -491,6 +495,39 @@ public class AdminLessonController extends PublicController<CourseLessonService,
 		courseLessonService.uploadHandout(courseLesson, lessonAddReq.getHandout());
 
 		return courseLesson;
+	}
+
+	@ApiOperation("水印资源文件恢复")
+	@PostMapping("/resource/remove_marking")
+	public BaseRsp<String> removeMarking(FileRemoveMarkingReq removeMarkingReq) {
+		String resourceId = removeMarkingReq.getResourceId();
+		String target = resourceId + "_";
+		CourseLesson courseLesson = courseLessonMapper.selectById(resourceId);
+		if(null == courseLesson){
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		List<String> attachmentList = FileUtil.listDirs(
+				new File(ResourceImportConstant.RESOURCE_CRYPTO_PATH).getAbsolutePath(), true);
+		List<String> originFiles = attachmentList.stream().filter(attachment -> attachment.contains(target)).collect(Collectors.toList());
+		if(originFiles.isEmpty()){
+			throw new BusinessException("No source files for the current lesson!");
+		}
+		originFiles.forEach(originFile -> {
+			File file = new File(originFile);
+			String replace = file.getName().replace(target, "");
+			log.info(String.format("repalce is %s", replace));
+			File destFile = new File("/cpms/upload/attachment", replace);
+			if(originFile.endsWith(".mp4") || originFile.endsWith(".m4v")){
+				courseLesson.setVideoUrl(destFile.getAbsolutePath());
+			} else {
+				courseLesson.setHandoutUrl(destFile.getAbsolutePath());
+			}
+			if(!destFile.exists()){
+				FileUtil.copyFile(file, destFile);
+			}
+		});
+		courseLessonMapper.updateById(courseLesson);
+		return new BaseRsp<>("water marking remove success");
 	}
 
 }

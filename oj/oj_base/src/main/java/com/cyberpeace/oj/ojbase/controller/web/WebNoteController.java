@@ -113,7 +113,7 @@ public class WebNoteController {
 				}
 				WebNoteRes webNoteRes = WebNoteRes.builder()
 						.content(ConfigUtil.getContextProperty(template_name)).build();
-
+				webNoteRes.setIsSubmit(false);
 				if (null == noteBo) {
 					rsp.setData(webNoteRes);
 					return rsp;
@@ -192,9 +192,9 @@ public class WebNoteController {
 		if (report.getIsPublic() && !reportUpdateReq.getOperate()) {
 			throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
 		}
-		//已经评分过的无法再提交
+		//已经通过的无法再提交
 		NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
-		if (noteEvaluate != null) {
+		if (noteEvaluate != null && noteEvaluate.getPassed()) {
 			throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
 		}
 		Note newReport = BeanUtils.copy(reportUpdateReq, Note.class);

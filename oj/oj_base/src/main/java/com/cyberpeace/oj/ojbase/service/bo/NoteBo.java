@@ -35,4 +35,7 @@ public class NoteBo implements Serializable {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
+    @ApiModelProperty("是否公开")
+    private Boolean isPublic;
+
 }

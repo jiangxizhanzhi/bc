@@ -36,4 +36,7 @@ public class WebNoteRes implements Serializable {
 	@ApiModelProperty("评估内容")
 	private String evaluateComment;
 
+	@ApiModelProperty("实验报告是否已提交")
+	private Boolean isSubmit;
+
 }

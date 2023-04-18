@@ -24,7 +24,7 @@ public interface NoteService extends IService<Note> {
      * @param noteAddContext
      * @return
      */
-    Note addNote(NoteAddContext noteAddContext);
+    Note addNote(NoteAddContext noteAddContext, Boolean isPublic);
 
     /**
      * 分页查询笔记信息

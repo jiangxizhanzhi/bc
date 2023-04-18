@@ -1,18 +1,8 @@
 package com.cyberpeace.oj.ojbase.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
@@ -28,6 +18,14 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
@@ -49,11 +47,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	}
 
 	@Override
-	public Note addNote(NoteAddContext noteAddContext) {
+	public Note addNote(NoteAddContext noteAddContext, Boolean isPublic) {
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
-		note.setIsPublic(CommonConstant.TRUE);
+		note.setIsPublic(isPublic);
 		try {
 			noteMapper.insert(note);
 		} catch (DuplicateKeyException e) {

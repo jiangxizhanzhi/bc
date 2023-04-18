@@ -311,4 +311,10 @@ public interface OjBusinessErrorCode {
 
 	/** xxx课程中的xxx课时中的xxx习题为内置资源，无法导出 */
 	String LESSON_CONTAIN_BUILTIN_PRACTICE = "102102";
+
+	/** 已提交的实验报告无法再存草稿 */
+	String CANT_SAVE_SUBMIT_REPORT = "102123";
+
+	/** 无法对已经评估过的实验报告进行提交  */
+	String CANT_SUBMIT_EVALUATE_REPORT = "102124";
 }

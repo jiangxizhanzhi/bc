@@ -1,5 +1,9 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -18,10 +22,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.oj.ojbase.controller.req.GetNoteReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteAddReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteAttachmentReq;
-import com.cyberpeace.oj.ojbase.controller.req.NoteUpdateReq;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -56,7 +56,7 @@ public class WebNoteController {
 	@Autowired
 	private UtilService utilService;
 
-	@ApiOperation("笔记、实验报告新增")
+	@ApiOperation("笔记新增")
 	@PostMapping("")
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
@@ -65,14 +65,14 @@ public class WebNoteController {
 
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
-		Note newNote = noteService.addNote(noteAddContext);
+		Note newNote = noteService.addNote(noteAddContext, CommonConstant.TRUE);
 
 		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
 
 		return new BaseRsp<>(webNoteRes);
 	}
 
-	@ApiOperation("实验报告笔记修改")
+	@ApiOperation("笔记修改")
 	@PatchMapping("")
 	@RequiresPermissions(
 			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
@@ -128,6 +128,7 @@ public class WebNoteController {
 		}
 
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
+		noteRes.setIsSubmit(noteBo.getIsPublic());
 		// 实验报告数据评估结果组装
 		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());
@@ -167,6 +168,38 @@ public class WebNoteController {
 		String viewPath = utilService.handlerFileUrl(uploadFile.getFilePath());
 		uploadFile.setFilePath(viewPath);
 		return new BaseRsp(uploadFile);
+	}
+
+	@ApiOperation("实验报告保存")
+	@PostMapping("/report")
+	public BaseRsp<WebNoteRes> save(@RequestBody @Validated ReportAddReq reportAddReq) {
+		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
+		noteAddContext.setNoteType(Note.NoteType.REPORT.getCode());
+		noteAddContext.setBusinessType(Note.NoteResourceType.LESSON.getCode());
+		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
+		Note newNote = noteService.addNote(noteAddContext, reportAddReq.getOperate());
+
+		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
+
+		return new BaseRsp<>(webNoteRes);
+	}
+
+	@ApiOperation("实验报告更新")
+	@PatchMapping("/report")
+	public BaseRsp<Integer> update(@RequestBody @Validated ReportUpdateReq reportUpdateReq) {
+		Note report = noteMapper.selectById(reportUpdateReq.getResourceId());
+		//已经提交过的无法再存草稿
+		if (report.getIsPublic() && !reportUpdateReq.getOperate()) {
+			throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
+		}
+		//已经评分过的无法再提交
+		NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
+		if (noteEvaluate != null) {
+			throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
+		}
+		Note newReport = BeanUtils.copy(reportUpdateReq, Note.class);
+		newReport.setIsPublic(reportUpdateReq.getOperate());
+		return new BaseRsp<>(noteMapper.updateById(newReport));
 	}
 
 }

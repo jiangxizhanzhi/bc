@@ -25,6 +25,10 @@ public class EmissionReq implements Serializable {
 	@ApiModelProperty(value = "方案ID")
 	private String schemeId;
 
+	@JsonProperty("dashboardId")
+	@ApiModelProperty(value = "大屏ID")
+	private String dashboardId;
+
 	@JsonProperty("orderType")
 	@ApiModelProperty(value = "指令类型")
 	private String orderType;

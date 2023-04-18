@@ -112,7 +112,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
 		// 设置基础信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
 		DashboardAttribute dashboardAttribute = BeanUtils.copy(replayInstanceReq,
 				DashboardAttribute.class);
@@ -207,7 +207,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
 
         // 默认为未下发状态
-        situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+        situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
@@ -564,5 +564,23 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         });
         return situationPublishInstance;
     }
+
+	@Override
+	public Boolean changeInstancePublicStatus(String dashboardId, PublicStatus publicStatus) {
+
+		// 获取大屏实例
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectById(dashboardId);
+		if (null == situationPublishInstance) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 设置大屏公共状态属性
+		situationPublishInstance.setPublicStatus(publicStatus.getCode());
+		situationPublishInstance.setEdit(publicStatus.getEdit());
+		situationPublishInstanceMapper.updateById(situationPublishInstance);
+		return true;
+
+	}
 
 }

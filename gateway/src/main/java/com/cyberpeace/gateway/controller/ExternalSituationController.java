@@ -187,7 +187,7 @@ public class ExternalSituationController {
 
 		// 构造基本信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.ESCALATION.getCode());
 		situationPublishInstance.setEdit(false);
 		situationPublishInstance.setCategory("26c4cf546d1f4557ac29f9fa8e8a6c3a");
 		situationPublishInstanceMapper.insert(situationPublishInstance);

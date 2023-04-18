@@ -3,6 +3,7 @@ package com.cyberpeace.situation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.BcContext;
+import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.controller.req.ReplayInstanceReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq;
@@ -40,4 +41,6 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 	String getEnvIdByDashboardId(String dashboardId);
 
 	SituationPublishInstance createBcInstance(BcContext bcContext);
+
+	Boolean changeInstancePublicStatus(String dashboardId, PublicStatus publicStatus);
 }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.ReplayMode;
 import com.google.common.collect.Lists;
 
@@ -77,8 +78,8 @@ public class SituationPublishInstance extends BaseTable {
 	@ApiModelProperty("发布状态（草稿/发布）")
 	private String status = "1";
 
-	@ApiModelProperty("下发状态（下发/未下发）")
-	private Integer publicStatus = 2;
+	@ApiModelProperty("下发状态")
+	private Integer publicStatus = PublicStatus.PREPARATION.getCode();
 
 	@ApiModelProperty("是否可编辑")
 	private Boolean edit = false;

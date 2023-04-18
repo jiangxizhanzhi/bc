@@ -1,15 +1,20 @@
 package com.cyberpeace.cs.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ExtractBase;
+import com.cyberpeace.common.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.constant.UploadAttachmentPermission;
@@ -22,6 +27,7 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -93,6 +99,39 @@ public class CommonController {
 		attachmentBo.setFilePath(viewPath);
 
 		return new BaseRsp(attachmentBo);
+	}
+
+	@ApiOperation("解析md压缩包")
+	@PostMapping("/parse/md")
+	public BaseRsp<ExtractBase> parseMDFile(@RequestParam("md") MultipartFile md){
+		String realContent = null;
+		String suffix = FileUtil.getFileSuffix(md.getOriginalFilename());
+		suffix = suffix.toLowerCase();
+		if (!suffix.equals(FileSunffixConstant.ZIP.getDesc()) ){
+			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, FileSunffixConstant.ZIP.getDesc());
+		}
+		// 文件上传至服务器 原始文件地址存储
+		String markdownPath = AttachmentPath.UPLOAD_ATTACHMENT.getDesc();
+		AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, md);
+		ExtractBase extractBase = BeanUtils.copy(attachmentBo, ExtractBase.class);
+		// 获取md文件存储地址
+		String mdPath = AttachmentPath.UPLOAD_MARKDOWN.getDesc();
+		String realPath = utilService.getRealPath(attachmentBo.getFilePath());
+		// 计算要解压的文件地址
+		String unzipPath = mdPath + FileUtil.getFileName(realPath, false);
+		String mdFilePath = null;
+		ZipUtil.unzipToDest(realPath, unzipPath);
+		// 获取解压的文件
+		mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
+		if (StringUtils.isBlank(mdFilePath)) {
+			throw new BusinessException(ErrorCode.CANT_FIND_MD_FILE);
+		}
+		// md文件内容
+		String content = MdUtil.parseMarkdown(mdFilePath);
+		realContent = utilService.replaceMarkdownFile(content);
+		extractBase.setContent(realContent);
+		extractBase.setIsExtract(Boolean.TRUE);
+		return new BaseRsp<>(extractBase);
 	}
 
 }

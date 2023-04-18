@@ -158,4 +158,7 @@ public interface ErrorCode {
 
 	/** 图片后缀不为jpg */
 	String ILLEGAL_PICTURE_SUFFIX = "100051";
+
+	/** 压缩包内找不到md文件 */
+	String CANT_FIND_MD_FILE = "100052";
 }

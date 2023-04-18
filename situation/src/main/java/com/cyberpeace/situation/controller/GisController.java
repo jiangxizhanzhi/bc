@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.model.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -220,7 +221,7 @@ public class GisController {
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp(true);
+		return new BaseRsp(true, "标绘文件导入成功");
 	}
 
 	public GisMarkContext addGisMark(GisMarkContext gisMarkContext) {
@@ -317,7 +318,7 @@ public class GisController {
 
 	@ApiOperation("获取大屏地图源选项")
 	@GetMapping("/map/source/list/")
-	public BaseRsp<List<IntType>> getMapSourceList() {
+	public BaseRsp<List<StringType>> getMapSourceList() {
 		return new BaseRsp<>(MapSource.getList());
 	}
 

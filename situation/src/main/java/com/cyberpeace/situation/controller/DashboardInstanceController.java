@@ -25,6 +25,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.ReplayMode;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.SituationInstanceStatus;
@@ -42,6 +43,7 @@ import com.cyberpeace.situation.service.context.DynamicParameterContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "组件库-态势发布大屏")
@@ -49,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 // @RequiresAuthentication
 @RequestMapping("/situation/publish")
-public class SituationPublishController {
+public class DashboardInstanceController {
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
@@ -374,6 +376,17 @@ public class SituationPublishController {
 				.exchangeOptionDataSet(copy, context);
 		instanceDataQueryRes.setComponentsSetting(dashboardComponentsList);
 		return new BaseRsp<>(instanceDataQueryRes);
+	}
+
+	@ApiOperation("修改大屏公共状态")
+	@GetMapping("/public/status/")
+	public BaseRsp<Boolean> changePublicStatus(
+			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
+					value = "大屏ID") String dashboardId,
+			@RequestParam("public_status") @ApiParam(required = true, name = "public_status",
+					value = "状态") Integer publicStatus) {
+		return new BaseRsp<>(situationPublishInstanceService.changeInstancePublicStatus(dashboardId,
+				PublicStatus.getPublicStatusByCode(publicStatus)));
 	}
 
 }

@@ -112,14 +112,14 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
 		// 设置基础信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
 		DashboardAttribute dashboardAttribute = BeanUtils.copy(replayInstanceReq,
 				DashboardAttribute.class);
 		dashboardAttribute.setResourceId(IDGeneratorUtil.getID());
 		dashboardAttribute.setDashboardMode(DashboardMode.SPG.getCode());
 		dashboardAttribute.setTitle(replayInstanceReq.getName());
-		dashboardAttribute.setMapSource(MapSource.GG.getCode());
+		dashboardAttribute.setMapSource(MapSource.GGIM.getCode());
 		situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
 
 		// 设置类型
@@ -207,7 +207,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
 
         // 默认为未下发状态
-        situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+        situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
@@ -218,7 +218,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 		situationPublishInstance.setAttributeId(dashboardAttribute.getResourceId());
 
         // 默认使用谷歌地图源
-        dashboardAttribute.setMapSource(MapSource.GG.getCode());
+        dashboardAttribute.setMapSource(MapSource.GGIM.getCode());
 
         // 从可视化方案中拷贝属性
         SchemeVisualizationBo scheme = remoteSituationService.getScheme(situationPublishInstanceAddReq.getSchemeId());
@@ -544,7 +544,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
         // 设置分靶场大屏参数
         setInstanceTemplateInfo(templateId, situationPublishInstance, dashboardAttribute);
-        dashboardAttribute.setMapSource(MapSource.GG.getCode());
+        dashboardAttribute.setMapSource(MapSource.GGIM.getCode());
         dashboardAttribute.setDashboardType(1);
         dashboardAttribute.setDashboardMode(3);
         dashboardAttribute.setTitle(bcName + "综合态势");
@@ -564,5 +564,23 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         });
         return situationPublishInstance;
     }
+
+	@Override
+	public Boolean changeInstancePublicStatus(String dashboardId, PublicStatus publicStatus) {
+
+		// 获取大屏实例
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectById(dashboardId);
+		if (null == situationPublishInstance) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 设置大屏公共状态属性
+		situationPublishInstance.setPublicStatus(publicStatus.getCode());
+		situationPublishInstance.setEdit(publicStatus.getEdit());
+		situationPublishInstanceMapper.updateById(situationPublishInstance);
+		return true;
+
+	}
 
 }

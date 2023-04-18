@@ -137,11 +137,11 @@ public class ExternalSituationController {
 	@CrossOrigin("*")
 	@ApiOperation("接收想定下发大屏指令")
 	@PostMapping("/emission")
-	public BaseRsp<BooleanRes> receiveEmission(@RequestBody @Validated EmissionReq req) {
-		log.info("成功接收指令：{}", JsonUtil.toJsonString(req));
+	public BaseRsp<ControlRes> receiveEmission(@RequestBody @Validated EmissionReq req) {
+		log.info("成功接收想定指令：{}", JsonUtil.toJsonString(req));
 		BooleanRes res = new BooleanRes();
 		res.setResult(true);
-		return new BaseRsp<>(res);
+		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
 	@CrossOrigin("*")
@@ -187,7 +187,7 @@ public class ExternalSituationController {
 
 		// 构造基本信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.OFF.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.ESCALATION.getCode());
 		situationPublishInstance.setEdit(false);
 		situationPublishInstance.setCategory("26c4cf546d1f4557ac29f9fa8e8a6c3a");
 		situationPublishInstanceMapper.insert(situationPublishInstance);

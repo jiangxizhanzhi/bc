@@ -23,6 +23,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.controller.req.DashBoardTemplateConfigReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardComponentsReq;
 import com.cyberpeace.situation.controller.req.LayerShowReq;
@@ -40,7 +41,9 @@ import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
+import com.cyberpeace.situation.service.context.DashboardTemplateRefContext;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
+import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
 /**
  * @Author xuxz
@@ -66,6 +69,15 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
 	@Autowired
 	private DashboardAttributeMapper dashboardAttributeMapper;
+
+	public DashboardTemplateRef getDashboardTemplateRefById(String resourceId){
+		DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper
+				.selectById(resourceId);
+		if (dashboardTemplateRef == null) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return dashboardTemplateRef;
+	}
 
 	@Override
 	public DashboardTemplateRef createDashboardTemplate(String resourceId) {
@@ -463,5 +475,36 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 			}
 		}
 		return jsonArray;
+	}
+
+	@Override
+	public DashboardTemplateRefContext
+			updateTemplateRefConfig(DashBoardTemplateConfigReq dashBoardTemplateConfigReq) {
+
+		DashboardTemplateRef dashboardTemplateRef = getDashboardTemplateRefById(
+				dashBoardTemplateConfigReq.getResourceId());
+
+		// 修改大屏GIS初始视角
+		if (dashBoardTemplateConfigReq.getViewAngle() != null) {
+			dashboardTemplateRef
+					.setViewAngle(JsonUtil.toJsonString(dashBoardTemplateConfigReq.getViewAngle()));
+		}
+
+		DashboardConfigContext dashboardConfigContext = JsonUtil
+				.toJsonObject(dashboardTemplateRef.getConfig(), DashboardConfigContext.class);
+
+		// 修改大屏拓扑配置
+		if (dashBoardTemplateConfigReq.getTopoConfig() != null) {
+			dashboardConfigContext.setTopoConfig(dashBoardTemplateConfigReq.getTopoConfig());
+		}
+
+		// 修改大屏GIS配置
+		if (dashBoardTemplateConfigReq.getGisConfig() != null) {
+			dashboardConfigContext.setGisConfig(dashBoardTemplateConfigReq.getGisConfig());
+		}
+
+		dashboardTemplateRef.setConfig(JsonUtil.toJsonString(dashboardConfigContext));
+		dashboardTemplateRefMapper.updateById(dashboardTemplateRef);
+		return BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRefContext.class);
 	}
 }

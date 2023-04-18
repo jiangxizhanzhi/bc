@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cs.service.SystemPropertyService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONArray;
@@ -83,6 +83,9 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 	@Autowired
 	private PracticeValidateHandler practiceValidateHandler;
+
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
@@ -240,7 +243,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		practiceSetIds.forEach(practiceSetId -> practiceValidateHandler
 				.validatePracticeSetPermission(practiceSetId, authContext));
 		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
-		if (!SystemPropUtil.getExportBuiltin()) {
+		if (!systemPropertyService.getExportBuiltin()) {
 			practiceSets.forEach(practiceSet -> practiceValidateHandler.validateBuiltin(practiceSet));
 		}
 

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.oj.course.dao.entity.*;
 import com.cyberpeace.oj.course.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -130,6 +131,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
 	@Autowired
 	private CourseStudyHistoryMapper courseStudyHistoryMapper;
+
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
 	@Override
 	public CourseInfoBo selectById(String courseId, AuthContext authContext) {
@@ -482,7 +486,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseId -> courseValidateHandler.validateCoursePermission(courseId, authContext));
 		List<Course> courseList = StreamApiUtils.map(courseIds,
 				courseId -> courseValidateHandler.validateCourseExist(courseId));
-		if (!SystemPropUtil.getExportBuiltin()) {
+		if (!systemPropertyService.getExportBuiltin()) {
 			courseList.forEach(course -> courseValidateHandler.validateBuiltin(course));
 		}
 

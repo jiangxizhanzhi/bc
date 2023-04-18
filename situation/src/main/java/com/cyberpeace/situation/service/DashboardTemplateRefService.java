@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service;
 
+import com.cyberpeace.situation.controller.req.DashBoardTemplateConfigReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.InstanceDataQueryReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
@@ -7,6 +8,7 @@ import com.cyberpeace.situation.controller.res.SituationPublishInstanceReviewRes
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
+import com.cyberpeace.situation.service.context.DashboardTemplateRefContext;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
 
 import java.util.List;
@@ -56,5 +58,7 @@ public interface DashboardTemplateRefService {
     List<DashboardComponents> exchangeOptionDataSet(SituationPublishInstanceReviewRes situationPublishInstanceReviewRes, DynamicParameterContext context);
 
     DashboardTemplateContext getDashboardTemplateContext(String templateId);
+
+    DashboardTemplateRefContext updateTemplateRefConfig(DashBoardTemplateConfigReq dashBoardTemplateConfigReq);
 
 }

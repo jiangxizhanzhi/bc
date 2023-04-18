@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -222,4 +223,6 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 
 	void clearUserAuth(String user);
+
+	Map<String, Integer> selectTeamTrainCategory(List<String> ids);
 }

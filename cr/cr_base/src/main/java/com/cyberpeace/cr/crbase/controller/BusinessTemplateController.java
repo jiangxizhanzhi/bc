@@ -170,6 +170,7 @@ public class BusinessTemplateController {
 	public BaseRsp<Boolean> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
+		Map<String, Integer> teamMaps = businessTemplateService.selectTeamTrainCategory(deleteReq.getIds());
 
 		Boolean flag = businessTemplateService.batchDelete(deleteReq.getIds());
 
@@ -185,8 +186,13 @@ public class BusinessTemplateController {
 					module = OperationModule.SINGLE_TRAIN;
 					msg = LogContent.SINGLE_TRAIN_TEMPLATE.getMsg();
 				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode())) {
-					module = OperationModule.TEAM_TRAIN;
-					msg = LogContent.TEAM_TRAIN_TEMPLATE.getMsg();
+					if (teamMaps.get(businessTemplate.getResourceId()) == 1) {
+						module = OperationModule.RED_TEAM;
+						msg = LogContent.RED_TEAM_TRAIN_TEMPLATE.getMsg();
+					} else {
+						module = OperationModule.BLUE_TEAM;
+						msg = LogContent.BLUE_TEAM_TRAIN_TEMPLATE.getMsg();
+					}
 				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {
 					module = OperationModule.RED_VS_BLUE;
 					msg = LogContent.RB_ROOM_TEMPLATE.getMsg();

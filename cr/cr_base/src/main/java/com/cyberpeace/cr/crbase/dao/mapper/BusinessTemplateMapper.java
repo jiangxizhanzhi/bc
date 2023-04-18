@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -58,4 +59,6 @@ public interface BusinessTemplateMapper extends BaseMapper<BusinessTemplate> {
 			@Param("type") Integer type);
 
 	List<String> getAllIds();
+
+	List<JSONObject> selectTeamTrainCategory(@Param("ids") List<String> ids);
 }

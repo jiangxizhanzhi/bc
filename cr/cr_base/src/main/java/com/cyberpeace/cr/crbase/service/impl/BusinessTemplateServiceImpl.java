@@ -685,4 +685,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
 	}
+
+	@Override
+	public Map<String, Integer> selectTeamTrainCategory(List<String> ids) {
+		Map<String, Integer> result = Maps.newHashMap();
+		this.getBaseMapper().selectTeamTrainCategory(ids).forEach(jsonObject -> {
+			result.put(jsonObject.getString("resource_id"), jsonObject.getInteger("train_category"));
+		});
+		return result;
+	}
 }

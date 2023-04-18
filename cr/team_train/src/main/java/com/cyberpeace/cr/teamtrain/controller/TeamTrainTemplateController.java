@@ -118,9 +118,9 @@ public class TeamTrainTemplateController {
 		});
 
 		String teamTrainTemplateName = addReq.getBaseInfo().getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamTemplate.getModule(),
 				OperationType.CREATE, teamTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.CREATE, teamTemplate.getLogMsg(), teamTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -153,9 +153,9 @@ public class TeamTrainTemplateController {
 		});
 
 		String teamTrainTemplateName = modifyReq.getBaseInfo().getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamTemplate.getModule(),
 				OperationType.UPDATE, teamTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, teamTemplate.getLogMsg(), teamTrainTemplateName));
 
 		return new BaseRsp<>();
 	}

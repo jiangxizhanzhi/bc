@@ -289,9 +289,9 @@ public class TeamTrainRoomController {
 		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
 		String teamTemplateName = businessTemplateMapper
 				.selectById(teamTemplate.getBusinessTemplateId()).getName();
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamRoom.getModule(),
 				OperationType.CREATE, teamTrainRoomReq.getName(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamTrainRoomReq.getName()));
+				LogContent.CR_FORMAT.format(OperationType.CREATE, teamRoom.getLogMsg(), teamTrainRoomReq.getName()));
 
 		return getTeamRoom(teamRoom.getResourceId());
 	}
@@ -316,9 +316,9 @@ public class TeamTrainRoomController {
 		teamRoomService.updateTeamRoom(teamTrainRoomContext, teamRoom);
 
 		teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamRoom.getModule(),
 				OperationType.UPDATE, teamRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE, teamRoom.getLogMsg(), teamRoom.getName()));
 
 		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}
@@ -374,9 +374,9 @@ public class TeamTrainRoomController {
 		String teamTemplateName = teamRoomMapper.selectById(opsReq.getRoomId())
 				.getTeamTemplateName();
 		TeamRoom teamRoom = teamRoomService.getById(roomId);
-		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addOjLog(UserInfoContext.getUserContext(), teamRoom.getModule(),
 				OperationType.DELETE, teamRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
+				LogContent.CR_FORMAT.format(OperationType.DELETE, teamRoom.getLogMsg(), teamRoom.getName()));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -479,6 +479,7 @@ public class TeamTrainRoomController {
 	public BaseRsp<Map> changeTrainingStatus(@RequestBody @Validated ResourceIdReq resourceIdReq) {
 
 		int status = teamRoomService.changeTrainingStatus(resourceIdReq.getResourceId());
+		TeamRoom teamRoom = teamRoomService.getById(resourceIdReq.getResourceId());
 
 		Map map = Maps.newHashMap();
 		map.put("training_status", status);
@@ -487,7 +488,7 @@ public class TeamTrainRoomController {
 		OperationType operationType = Objects.equals(status,
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
 						: OperationType.START;
-		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
+		remoteLogService.addCrLog(UserInfoContext.getUserContext(), teamRoom.getModule(),
 				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
 	}

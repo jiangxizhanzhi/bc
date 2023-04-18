@@ -9,6 +9,8 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
 import lombok.Data;
 import lombok.Getter;
 
@@ -126,5 +128,17 @@ public class TeamRoom extends BaseTable {
 			this.desc = desc;
 		}
 
+	}
+
+	public OperationModule getModule() {
+		return getTrainCategory().equals(TrainCategory.RED.getCode())
+				? OperationModule.RED_TEAM
+				: OperationModule.BLUE_TEAM;
+	}
+
+	public String getLogMsg() {
+		return getTrainCategory().equals(TrainCategory.RED.getCode())
+				? LogContent.RED_TEAM_TRAIN_ROOM.getMsg()
+				: LogContent.BLUE_TEAM_TRAIN_ROOM.getMsg();
 	}
 }

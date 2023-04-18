@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 
+import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.integratation.constant.OperationModule;
 import lombok.Data;
 
 /**
@@ -62,5 +64,17 @@ public class TeamTemplate extends BaseTable {
 	private Integer peopleNumber;
 
 	private Integer trainCategory;
+
+	public OperationModule getModule() {
+		return getTrainCategory().equals(TeamRoom.TrainCategory.RED.getCode())
+				? OperationModule.RED_TEAM
+				: OperationModule.BLUE_TEAM;
+	}
+
+	public String getLogMsg() {
+		return getTrainCategory().equals(TeamRoom.TrainCategory.RED.getCode())
+				? LogContent.RED_TEAM_TRAIN_TEMPLATE.getMsg()
+				: LogContent.BLUE_TEAM_TRAIN_TEMPLATE.getMsg();
+	}
 
 }

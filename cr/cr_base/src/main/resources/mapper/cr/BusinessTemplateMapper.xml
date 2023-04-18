@@ -189,5 +189,15 @@
         from cr_business_template
     </select>
 
+    <select id="selectTeamTrainCategory" resultType="com.alibaba.fastjson.JSONObject">
+
+        select T2.resource_id, T1.train_category from cr_team_template T1
+        left join cr_business_template T2 on T1.business_template_id = T2.resource_id
+        where T1.business_template_id in
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
+
 
 </mapper>

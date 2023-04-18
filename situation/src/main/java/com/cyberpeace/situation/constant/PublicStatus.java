@@ -14,8 +14,8 @@ public enum PublicStatus {
 	PREPARATION(1, "拟制中", true),
 	COMPLETE(2, "拟制完成", false),
 	REVIEW(3, "评审中", false),
-	PASS(4, "评审通过", false),
-	NOPASS(5, "评审不通过", false),
+	PASS(4, "评审通过", true),
+	NOPASS(5, "评审不通过", true),
 	MODIFICATION(6, "修改完成", false),
 	ESCALATION(7, "方案完成上报", false);
 

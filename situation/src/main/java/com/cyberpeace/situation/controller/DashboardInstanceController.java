@@ -273,6 +273,7 @@ public class DashboardInstanceController {
 		// 修改大屏状态
 		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances, PublicStatus.COMPLETE);
 
+		// 构造推送方案状态变更消息
 		StatusOrderContext statusOrderContext = new StatusOrderContext();
 		statusOrderContext.setOrderTime(new Date());
 		statusOrderContext.setFaid(situationPublishInstances.getSchemeId());

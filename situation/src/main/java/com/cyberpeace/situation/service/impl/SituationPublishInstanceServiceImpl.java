@@ -426,7 +426,6 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
         //任务类型id列表
         List<SituationCategory> categories = situationCategoryMapper.selectList(new LambdaQueryWrapper<>());
-        List<LocalType> statusList = SituationInstanceStatus.getMsgList();
 
         //模板列表
         List<DashboardTemplateRef> dashboardTemplateRefs = dashboardTemplateRefMapper.selectList(new LambdaQueryWrapper<>());
@@ -451,13 +450,6 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 categories.forEach(situationCategory -> {
                     if (situationCategory.getResourceId().equals(category)) {
                         situationPublishInstancePageRes.setCategory(situationCategory.getName());
-                    }
-                });
-
-                // 赋值大屏状态
-                statusList.forEach(localType -> {
-                    if (Objects.equals(localType.getCode(), situationPublishInstancePageRes.getStatus())) {
-                        situationPublishInstancePageRes.setStatus(localType.getMsg());
                     }
                 });
 

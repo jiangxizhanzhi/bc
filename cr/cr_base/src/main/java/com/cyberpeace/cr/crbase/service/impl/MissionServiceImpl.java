@@ -35,6 +35,7 @@ import com.cyberpeace.situation.model.ws.WsMissionDynamic;
 import com.cyberpeace.situation.service.DynamicSchemeService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -776,7 +777,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				: Lists.newArrayList();
 
 		List<MissionEventDevice> missionEventDeviceList = Lists.newArrayList();
-		deviceIds.forEach(deviceId -> {
+		Sets.newHashSet(deviceIds).forEach(deviceId -> {
 			MissionEventDevice missionEventDevice = new MissionEventDevice();
 			missionEventDevice.setMissionId(mission.getResourceId());
 			missionEventDevice.setDeviceId(deviceId);

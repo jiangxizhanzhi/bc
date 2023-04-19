@@ -67,7 +67,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "oj-后台课时相关api")
 @RestController
 @RequestMapping("/oj/admin/lesson")
-//@RequiresAuthentication
+@RequiresAuthentication
 @Slf4j
 public class AdminLessonController extends PublicController<CourseLessonService, CourseLesson> {
 

@@ -26,6 +26,7 @@ import com.cyberpeace.situation.controller.req.SituationDbAccessAuthorityAddReq;
 import com.cyberpeace.situation.controller.res.SituationEnumRes;
 import com.cyberpeace.situation.dao.entity.SituationDbAccessAuthority;
 import com.cyberpeace.situation.dao.mapper.SituationDbAccessAuthorityMapper;
+import com.cyberpeace.situation.service.SituationGisService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,9 @@ public class SituationDbAccessAuthorityController {
 
 	@Autowired
 	private SituationDbAccessAuthorityMapper situationDbAccessAuthorityMapper;
+
+	@Autowired
+	private SituationGisService situationGisService;
 
 	@ApiOperation("获取系统名称列表")
 	@GetMapping("/sys/list")
@@ -74,6 +78,7 @@ public class SituationDbAccessAuthorityController {
 		SituationDbAccessAuthority dbAccessAuthority = new SituationDbAccessAuthority();
 		BeanUtils.copyProperties(req, dbAccessAuthority);
 		int insert = situationDbAccessAuthorityMapper.insert(dbAccessAuthority);
+		situationGisService.refreshAuthorizationIp();
 		return new BaseRsp(dbAccessAuthority);
 	}
 
@@ -90,6 +95,7 @@ public class SituationDbAccessAuthorityController {
 			}
 			res = situationDbAccessAuthorityMapper.deleteBatchIds(deleteReq.getResourceIds());
 		}
+		situationGisService.refreshAuthorizationIp();
 		return new BaseRsp<>(res);
 	}
 

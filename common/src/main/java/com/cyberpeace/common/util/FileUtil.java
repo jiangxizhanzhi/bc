@@ -292,7 +292,8 @@ public class FileUtil {
 
 			// 设置返回
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", "attachment;filename=" + file.getName());
+			response.setHeader("Content-disposition",
+					"attachment;filename=" + java.net.URLEncoder.encode(file.getName(), "UTF-8"));
 			outputStream = response.getOutputStream();
 			outputStream.write(buffer);
 			outputStream.flush();
@@ -599,13 +600,13 @@ public class FileUtil {
 		if (!file.exists()) {
 			return;
 		}
-		
+
 		try {
 			if (file.isFile()) {
 				FileUtils.delete(file);
 				return;
 			}
-			
+
 			if (self) {
 				FileUtils.deleteDirectory(file);
 				return;
@@ -622,12 +623,12 @@ public class FileUtil {
 				} else {
 					FileUtils.deleteDirectory(subFile);
 				}
- 			}
+			}
 		} catch (Exception e) {
 			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
 			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
-		
+
 	}
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {

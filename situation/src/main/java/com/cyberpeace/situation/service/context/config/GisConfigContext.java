@@ -13,7 +13,7 @@ public class GisConfigContext implements Serializable {
 	@ApiModelProperty(value = "配置文件ID")
 	private String configId;
 
-	@ApiModelProperty(value = "地图数据源 1-谷歌 2-百度 3-高德")
-	private Integer mapSource = MapSource.GG.getCode();
+	@ApiModelProperty(value = "地图数据源")
+	private Integer mapSource = MapSource.GGIM.getCode();
 
 }

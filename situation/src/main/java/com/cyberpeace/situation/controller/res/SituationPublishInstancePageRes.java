@@ -24,6 +24,9 @@ public class SituationPublishInstancePageRes implements Serializable {
 	@ApiModelProperty(value = "大屏状态")
 	private String status;
 
+	@ApiModelProperty(value = "大屏发布状态")
+	private Integer publicStatus;
+
 	@ApiModelProperty(value = "任务名称")
 	private String taskName;
 
@@ -47,6 +50,9 @@ public class SituationPublishInstancePageRes implements Serializable {
 
 	@ApiModelProperty(value = "是否可编辑")
 	private Boolean edit;
+
+	@ApiModelProperty(value = "是否为想定大屏")
+	private Boolean xd;
 
 	@ApiModelProperty(value = "模板可编辑")
 	private Boolean templateEdit;

@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.situation.controller.req.DashBoardTemplateConfigReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
@@ -45,6 +47,13 @@ public class DashboardTemplateRefController {
     public BaseRsp<String> updateDashboardTemplate(@RequestBody @Validated(Update.class) DashBoardTemplateReq dashBoardTemplateReq) {
         return new BaseRsp<>(dashboardTemplateRefService.updateDashboardTemplate(dashBoardTemplateReq));
     }
+
+	@ApiOperation("修改实例(定制模板)配置数据")
+	@PatchMapping("/config")
+	public BaseRsp<DashboardTemplateRefContext>
+			updateTemplateRefConfig(@RequestBody @Validated DashBoardTemplateConfigReq req) {
+		return new BaseRsp<>(dashboardTemplateRefService.updateTemplateRefConfig(req));
+	}
 
     @ApiOperation("获取改态势数据详情")
     @GetMapping("")

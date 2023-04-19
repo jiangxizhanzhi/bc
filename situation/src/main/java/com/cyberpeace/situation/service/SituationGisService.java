@@ -24,4 +24,6 @@ public interface SituationGisService {
 	List<ConfigContext> getAllConfig();
 
 	Boolean checkAuthorizationIp(String ip);
+
+	void refreshAuthorizationIp();
 }

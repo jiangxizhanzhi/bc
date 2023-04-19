@@ -26,6 +26,11 @@ public class BaseRsp<T> {
 		this.data = data;
 	}
 
+	public BaseRsp(T data, String message) {
+		this.data = data;
+		this.message = message;
+	}
+
 	public void setMsg(String msg) {
 		this.message = msg;
 	}

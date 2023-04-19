@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.controller;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticePageReq;
@@ -11,6 +12,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeListRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrNotice;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -30,6 +32,9 @@ public class CrNoticeController {
 
     @Autowired
     private CrNoticeService crNoticeService;
+
+    @Autowired
+    private CrTaskService crTaskService;
 
     @ApiOperation("训练公告管理公告对象查询")
     @GetMapping("/group")
@@ -70,7 +75,17 @@ public class CrNoticeController {
     @ApiOperation("训练公告批量删除")
     @DeleteMapping("")
     public BaseRsp<Boolean> delete(@RequestBody BatchDeleteReq batchDeleteReq) {
-        return new BaseRsp<>(crNoticeService.removeByIds(batchDeleteReq.getIds()));
+        List<CrNotice> crNoticeList = crNoticeService.listByIds(batchDeleteReq.getIds());
+        String roomId;
+        if (!crNoticeList.isEmpty()) {
+            roomId = crNoticeList.get(0).getRoomId();
+        } else {
+            return new BaseRsp<>(Boolean.FALSE);
+        }
+        Boolean result = crNoticeService.removeByIds(batchDeleteReq.getIds());
+        crTaskService.pushMissionWS(roomId, MissionWsCode.RELEASE_NOTICE);
+
+        return new BaseRsp<>(result);
     }
 
     @ApiOperation("训练公告置顶")

@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeCreateReq;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeUpdateReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeDetailRsp;
@@ -21,6 +22,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
 import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -48,6 +50,9 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
     @Autowired
     private CrTrainActionService crTrainActionService;
+
+    @Autowired
+    private CrTaskService crTaskService;
 
     @Override
     public List<CrLabelGroup> noticeGroup(String roomId) {
@@ -204,6 +209,8 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
             crTrainActionService.savePlatformAction(crNotice.getRoomId(), content, moduleEvent);
         }
 
+        crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RELEASE_NOTICE);
+
         return get(crNotice.getResourceId());
     }
 
@@ -220,6 +227,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
         }
 
         updateById(crNotice);
+        crTaskService.pushMissionWS(crNotice.getRoomId(), MissionWsCode.RELEASE_NOTICE);
 
         return get(crNotice.getResourceId());
     }
@@ -229,7 +237,11 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
         List<CrNotice> crNotices = lambdaQuery().in(CrNotice::getResourceId, ids).list();
         crNotices.forEach(crNotice -> crNotice.setStatus(status));
 
-        return updateBatchById(crNotices);
+        Boolean result = updateBatchById(crNotices);
+        if (result) {
+            crTaskService.pushMissionWS(crNotices.get(0).getRoomId(), MissionWsCode.RELEASE_NOTICE);
+        }
+        return result;
     }
 
 }

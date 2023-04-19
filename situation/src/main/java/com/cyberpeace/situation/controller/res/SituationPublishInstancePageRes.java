@@ -86,11 +86,15 @@ public class SituationPublishInstancePageRes implements Serializable {
 	@ApiModelProperty(value = "完成按钮名称")
 	private String finishButton;
 
+	@ApiModelProperty(value = "是否预览")
+	private Boolean preview;
+
 	public void setButton() {
 		PublicStatus publicStatus = PublicStatus.getPublicStatusByCode(this.publicStatus);
 		this.resetButton = xd ? publicStatus.getResetButtonXd() : publicStatus.getResetButton();
 		this.finishButton = xd ? publicStatus.getFinishButtonXd() : publicStatus.getFinishButton();
 		this.status = publicStatus.getName();
+		this.preview = publicStatus.getPreview();
 	}
 
 }

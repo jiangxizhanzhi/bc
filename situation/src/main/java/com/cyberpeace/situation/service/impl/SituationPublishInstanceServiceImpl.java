@@ -112,7 +112,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
 		// 设置基础信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.EDIT.getCode());
 
 		DashboardAttribute dashboardAttribute = BeanUtils.copy(replayInstanceReq,
 				DashboardAttribute.class);
@@ -207,7 +207,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
 
         // 默认为未下发状态
-        situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
+        situationPublishInstance.setPublicStatus(PublicStatus.EDIT.getCode());
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);
@@ -445,6 +445,8 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                 String taskId = situationPublishInstancePageRes.getTaskId();
                 String subjectId = situationPublishInstancePageRes.getSubjectId();
 
+                situationPublishInstancePageRes.setButton();
+
                 // 赋值大屏类型
                 categories.forEach(situationCategory -> {
                     if (situationCategory.getResourceId().equals(category)) {
@@ -574,13 +576,17 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 		if (null == situationPublishInstance) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		return changeInstancePublicStatus(situationPublishInstance, publicStatus);
+	}
 
+	@Override
+	public Boolean changeInstancePublicStatus(SituationPublishInstance situationPublishInstance,
+			PublicStatus publicStatus) {
 		// 设置大屏公共状态属性
 		situationPublishInstance.setPublicStatus(publicStatus.getCode());
 		situationPublishInstance.setEdit(publicStatus.getEdit());
 		situationPublishInstanceMapper.updateById(situationPublishInstance);
 		return true;
-
 	}
 
 }

@@ -91,6 +91,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String PG_GET_RUN_ID;
 
+	private String TS_RELEASE_SCREEN;
+
 	private String TS_EVENT_AXIS;
 
 	private String TS_FLOW_STATISTICS;
@@ -160,25 +162,26 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		XD_RELEASE_SCREEN = outerHostXd + ConfigUtil.getContextProperty("xd.release.screen");
 		PG_GET_RUN_ID = outerHostPg + ConfigUtil.getContextProperty("pg.run.get");
 
-		TS_EVENT_AXIS = outerHostPg + ConfigUtil.getContextProperty("event.axis");
-		TS_FLOW_STATISTICS = outerHostPg + ConfigUtil.getContextProperty("flow.statistics");
-		TS_FLOW_NODE_RANK = outerHostPg + ConfigUtil.getContextProperty("flow.node.rank");
-		TS_FLOW_TREND = outerHostPg + ConfigUtil.getContextProperty("flow.trend");
-		TS_LAYER_TOPO = outerHostPg + ConfigUtil.getContextProperty("layer.topo");
-		TS_LAYER_EVENT = outerHostPg + ConfigUtil.getContextProperty("layer.event");
-		TS_NODE_RANK_ATTACK = outerHostPg + ConfigUtil.getContextProperty("node.attack.rank");
-		TS_NODE_SIMILAR = outerHostPg + ConfigUtil.getContextProperty("node.similar");
-		TS_DISTRIBUTE_THREATENED = outerHostPg
+		TS_RELEASE_SCREEN = outerHostTs + ConfigUtil.getContextProperty("xd.scheme.status");
+		TS_EVENT_AXIS = outerHostTs + ConfigUtil.getContextProperty("event.axis");
+		TS_FLOW_STATISTICS = outerHostTs + ConfigUtil.getContextProperty("flow.statistics");
+		TS_FLOW_NODE_RANK = outerHostTs + ConfigUtil.getContextProperty("flow.node.rank");
+		TS_FLOW_TREND = outerHostTs + ConfigUtil.getContextProperty("flow.trend");
+		TS_LAYER_TOPO = outerHostTs + ConfigUtil.getContextProperty("layer.topo");
+		TS_LAYER_EVENT = outerHostTs + ConfigUtil.getContextProperty("layer.event");
+		TS_NODE_RANK_ATTACK = outerHostTs + ConfigUtil.getContextProperty("node.attack.rank");
+		TS_NODE_SIMILAR = outerHostTs + ConfigUtil.getContextProperty("node.similar");
+		TS_DISTRIBUTE_THREATENED = outerHostTs
 				+ ConfigUtil.getContextProperty("node.distribute.threatened");
-		TS_USER_ACTIVITY = outerHostPg + ConfigUtil.getContextProperty("user.activity");
-		TS_NODE_STATISTICS_STATUS = outerHostPg
+		TS_USER_ACTIVITY = outerHostTs + ConfigUtil.getContextProperty("user.activity");
+		TS_NODE_STATISTICS_STATUS = outerHostTs
 				+ ConfigUtil.getContextProperty("node.statistics.status");
-		TS_NODE_CRITICAL_DEGREE = outerHostPg
+		TS_NODE_CRITICAL_DEGREE = outerHostTs
 				+ ConfigUtil.getContextProperty("node.critical.degree");
-		TS_LINK_STATISTICS_STATUS = outerHostPg
+		TS_LINK_STATISTICS_STATUS = outerHostTs
 				+ ConfigUtil.getContextProperty("link.statistics.status");
-		TS_NODE_MIGRATION = outerHostPg + ConfigUtil.getContextProperty("node.migration");
-		TS_NODE_PROTOCOL = outerHostPg
+		TS_NODE_MIGRATION = outerHostTs + ConfigUtil.getContextProperty("node.migration");
+		TS_NODE_PROTOCOL = outerHostTs
 				+ ConfigUtil.getContextProperty("protocol.statistics.status");
 
 	}
@@ -489,6 +492,12 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		releaseScreenBo.setDashboardId(dashboardId);
 
 		BooleanRes rsp = HttpClientUtil.post(XD_RELEASE_SCREEN, releaseScreenBo, BooleanRes.class);
+		return rsp.getResult();
+	}
+
+	@Override
+	public Boolean releaseScreen(StatusOrderContext statusOrderContext){
+		BooleanRes rsp = HttpClientUtil.post(TS_RELEASE_SCREEN, statusOrderContext, BooleanRes.class);
 		return rsp.getResult();
 	}
 

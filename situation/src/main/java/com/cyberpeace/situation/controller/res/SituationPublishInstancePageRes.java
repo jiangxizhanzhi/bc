@@ -2,6 +2,8 @@ package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
 
+import com.cyberpeace.situation.constant.PublicStatus;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -77,5 +79,17 @@ public class SituationPublishInstancePageRes implements Serializable {
 
 	@ApiModelProperty(value = "更新时间")
 	private String updateTime;
+
+	@ApiModelProperty(value = "重置按钮名称")
+	private String resetButton;
+
+	@ApiModelProperty(value = "完成按钮名称")
+	private String finishButton;
+
+	public void setButton() {
+		PublicStatus publicStatus = PublicStatus.getPublicStatusByCode(this.publicStatus);
+		this.resetButton = xd ? publicStatus.getResetButtonXd() : publicStatus.getResetButton();
+		this.finishButton = xd ? publicStatus.getFinishButtonXd() : publicStatus.getFinishButton();
+	}
 
 }

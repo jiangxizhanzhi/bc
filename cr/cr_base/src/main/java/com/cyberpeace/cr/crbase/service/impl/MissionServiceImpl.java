@@ -800,19 +800,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public Boolean missionEventTest(String roomId, Integer eventType, List<String> targetIds) {
+	public Boolean missionEventTest(String sceneId, Integer eventType, List<String> targetIds) {
 		List<WsMissionDynamic> wsMissionDynamicList = new ArrayList<>();
-		LocalScene localScene = localSceneMapper.getByBusinessInstanceId(roomId);
 		List<Integer> redRoleType = Arrays.asList(ActionTypeZHL.ZHL_ATTACK3.getCode(), ActionTypeZHL.ZHL_ATTACK4.getCode(),
 				ActionTypeZHL.ZHL_ATTACK5.getCode(), ActionTypeZHL.ZHL_ATTACK6.getCode());
 		List<Integer> blueRoleType = Arrays.asList(ActionTypeZHL.ZHL_DEFENSE4.getCode(), ActionTypeZHL.ZHL_DEFENSE5.getCode(),
 				ActionTypeZHL.ZHL_DEFENSE6.getCode());
-		String sceneId = null;
-		if (localScene == null) {
-			sceneId = roomId;
-		} else {
-			sceneId = localScene.getMpSceneId();
-		}
 		String roleType = "";
 
 		for (String targetId: targetIds) {

@@ -276,5 +276,5 @@ public interface MissionService extends IService<Mission> {
 	 */
 	Boolean setMissionEvent(String missionId, Integer eventTypeId, List<String> deviceIds);
 
-	Boolean missionEventTest(String roomId, Integer eventTypeId, List<String> deviceIds);
+	Boolean missionEventTest(String sceneId, Integer eventTypeId, List<String> deviceIds);
 }

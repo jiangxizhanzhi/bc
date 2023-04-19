@@ -43,7 +43,8 @@ import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
-import com.cyberpeace.cr.redvsblue.service.impl.RbTaskSituationHandler;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -97,7 +98,7 @@ public class RbRoomDirectorController {
 	private CrTrainActionService crTrainActionService;
 
 	@Autowired
-	private RbTaskSituationHandler rbTaskSituationHandler;
+	private LocalSceneMapper localSceneMapper;
 
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
@@ -228,8 +229,16 @@ public class RbRoomDirectorController {
 	@PostMapping("/missions/event/test")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> testEventMissions(@RequestBody @Validated TestMissionEventReq testMissionEventReq) {
+		String sceneId = null;
+		LocalScene localScene = localSceneMapper.getByBusinessInstanceId(testMissionEventReq.getRoomId());
+		if (localScene == null) {
+			RbRoom rbRoom = rbRoomService.getById(testMissionEventReq.getRoomId());
+			sceneId = rbRoom.getCopyedTopoId();
+		} else {
+			sceneId = localScene.getMpSceneId();
+		}
 		return new BaseRsp<>(missionService.missionEventTest(
-				testMissionEventReq.getRoomId(),
+				sceneId,
 				testMissionEventReq.getEventTypeId(),
 				testMissionEventReq.getDeviceIds()));
 	}

@@ -1,6 +1,5 @@
 package com.cyberpeace.common.util;
 
-import cn.hutool.core.io.FileUtil;
 import com.cyberpeace.common.exception.BusinessException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -58,7 +57,8 @@ public class WaterMarkingUtils {
 //        String handout = "D:/cpms/upload/attachment/1313.pptx";
 //        String handout = "D:/cpms/upload/attachment/5af65c046dc14e8db7e2ddcc40bee49e.pdf";
 //        String handout = "D:/cpms/upload/attachment/6fd547d072ff439eb40e08495769f89c.pptx";
-        String handout = "D:/cpms/upload/attachment/e8c5a111e74c43339c6ffc467d6e159f.docx";
+//        String handout = "D:/cpms/upload/attachment/e8c5a111e74c43339c6ffc467d6e159f.docx";
+        String handout = "D:/cpms/app1.doc";
 //        String handout = "D:/cpms/upload/attachment/29f5a7dd5cf04f0082a3042ea46642d2.xlsx";
         String[] split = handout.split("/");
         if(split.length < 1){
@@ -84,8 +84,8 @@ public class WaterMarkingUtils {
         setExcelWaterMark(handout,replacehandout,markText);
         try {
 //            addPPTWatermark(handout, markText, null, replacehandout);
-            setPPTWaterMark(handout, replacehandout, markText);
-//            addWordWaterMark1(handout, markText,null,replacehandout);
+//            setPPTWaterMark(handout, replacehandout, markText);
+            addWordWaterMark1(handout, markText,null,replacehandout);
 //            setPdfWatermark(handout, replacehandout, markText);
 //        } catch (IOException e) {
 //            e.printStackTrace();
@@ -575,7 +575,8 @@ public class WaterMarkingUtils {
 
         ZipUtils.zip(outPath,new File(file.getAbsolutePath()));
         if (outPath.exists()) {
-            FileUtil.del(outPath);
+            FileUtil.deleteDir(outPath);
+//            outPath.delete();
         }
     }
 

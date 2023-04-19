@@ -17,10 +17,14 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.gateway.controller.req.*;
+import com.cyberpeace.gateway.controller.req.ControlCommandReq;
+import com.cyberpeace.gateway.controller.req.NodeMigrationReq;
+import com.cyberpeace.gateway.controller.req.SituationSchemeBo;
+import com.cyberpeace.gateway.controller.req.ThirdDashboardReq;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.constant.OrderType;
+import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
 import com.cyberpeace.situation.constant.PublicStatus;
@@ -137,10 +141,18 @@ public class ExternalSituationController {
 	@CrossOrigin("*")
 	@ApiOperation("接收想定下发大屏指令")
 	@PostMapping("/emission")
-	public BaseRsp<ControlRes> receiveEmission(@RequestBody @Validated EmissionReq req) {
-		log.info("成功接收想定指令：{}", JsonUtil.toJsonString(req));
-		BooleanRes res = new BooleanRes();
-		res.setResult(true);
+	public BaseRsp<ControlRes>
+			receiveEmission(@RequestBody @Validated StatusOrderContext statusOrderContext) {
+		log.info("成功接收想定指令：{}", JsonUtil.toJsonString(statusOrderContext));
+		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+				.selectXdDashboardBySchemeId(statusOrderContext.getFaid());
+		if (situationPublishInstance != null) {
+			PublicStatus publicStatus = PublicStatus
+					.getPublicStatusByName(statusOrderContext.getFazt());
+			situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstance,
+					publicStatus);
+			situationPublishInstanceService.updateById(situationPublishInstance);
+		}
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 

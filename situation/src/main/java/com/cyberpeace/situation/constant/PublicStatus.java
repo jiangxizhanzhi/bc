@@ -57,4 +57,9 @@ public enum PublicStatus {
 				.filter(t -> t.getCode().equals(code)).findFirst().orElse(PublicStatus.OTHERS);
 	}
 
+	public static PublicStatus getPublicStatusByName(String name) {
+		return Arrays.stream(PublicStatus.class.getEnumConstants())
+				.filter(t -> t.getName().equals(name)).findFirst().orElse(PublicStatus.OTHERS);
+	}
+
 }

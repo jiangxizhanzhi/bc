@@ -103,6 +103,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		if (roomIds.size() == 0) {
 			trainingPeopleStatistics.add(new BarChartUnit("红蓝对抗", 0));
+			return;
 		}
 		List<CrRole> crRoleList = crRoleMapper.getByRoomIds(roomIds);
 		Integer count = 0;

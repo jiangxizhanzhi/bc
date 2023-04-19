@@ -75,13 +75,8 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		}
 
 		// 3、构建本地scene对象
-		Integer code;
-		if (room.getTrainCategory().intValue() == TeamRoom.TrainCategory.RED.getCode()) {
-			code = LocalScene.BusinessCode.TEAM_TRAINING.getCode();
-		} else {
-			code = LocalScene.BusinessCode.BLUE_TEAM_TRAINING.getCode();
-		}
-		LocalScene localScene = createLocalScene(code, room, room.getCopyedTopoId());
+		LocalScene localScene = createLocalScene(LocalScene.BusinessCode.TEAM_TRAINING.getCode(),
+				room, room.getCopyedTopoId());
 
 		// 4、启动mp场景
 		String sceneId = localSceneService.startScene(localScene);

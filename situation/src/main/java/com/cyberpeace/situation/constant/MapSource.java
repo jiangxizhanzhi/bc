@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -39,6 +40,11 @@ public enum MapSource {
 	public static List<StringType> getList() {
 		return StreamApiUtils.map(Lists.newArrayList(MapSource.values()),
 				mapSource -> new StringType(mapSource.getName(), mapSource.getDesc()));
+	}
+
+	public static MapSource getMapSourceByCode(Integer code) {
+		return Arrays.stream(MapSource.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(code)).findFirst().orElse(MapSource.GGIM);
 	}
 
 }

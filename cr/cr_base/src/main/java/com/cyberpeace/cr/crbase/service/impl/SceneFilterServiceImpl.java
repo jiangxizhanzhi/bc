@@ -73,6 +73,22 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 				sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements")
 						.getJSONObject(imageId)
 						.put("apply_status", crRoomDeviceApply == null ? null : crRoomDeviceApply.getStatus());
+
+				if (crRoomDeviceApply == null
+						|| !crRoomDeviceApply.getStatus().equals(CrRoomDeviceApply.Status.AGREE.getCode())) {
+					JSONArray jsonArray = sceneData.getJSONObject("topology").getJSONArray("elements");
+					for (int i = 0; i < jsonArray.size(); i++) {
+						JSONObject elementInfo = jsonArray.getJSONObject(i);
+						if (elementInfo.getString("id").equals(imageId)) {
+							JSONArray ports = elementInfo.getJSONArray("ports");
+							for (int j = 0; j < ports.size(); j++) {
+								ports.getJSONObject(j).put("access_modes", Lists.newArrayList());
+							}
+							break;
+						}
+					}
+				}
+
 			}
 		}
 	}
@@ -90,7 +106,6 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 			JSONObject element = elements.getJSONObject(i);
 			String elementId = element.getString("id");
 			Integer elementType = element.getInteger("type");
-			// todo 识别节点是否为实装设备，为前端增加标识
 			if (!visibleNodeIds.contains(elementId)) {
 				// remove invisible element
 				elements.remove(i);
@@ -112,7 +127,6 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 								Lists.newArrayList());
 					}
 				}
-				// todo 未申请实装设备去除网络配置相关属性
 				i++;
 			}
 		}

@@ -180,19 +180,11 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		String componentsSetting = dashboardTemplateRef.getComponentsSetting();
-		String layerShow = dashboardTemplateRef.getLayerShow();
 
-		String viewAngle = dashboardTemplateRef.getViewAngle();
 		List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
 		DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplateRef,
 				DashboardTemplateRes.class);
-		if (StringUtils.isNotBlank(viewAngle)) {
-			dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
-		}
-		if (StringUtils.isNotBlank(layerShow)) {
-			dashboardTemplateRes
-					.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
-		}
+
 		// 图层排序
 		if (CollectionUtils.isNotEmpty(list)) {
 			List<DashboardComponents> dashboardComponents = dashboardComponentsMapper

@@ -493,6 +493,11 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 		DashboardConfigContext dashboardConfigContext = JsonUtil
 				.toJsonObject(dashboardTemplateRef.getConfig(), DashboardConfigContext.class);
 
+		// 当大屏实例没有初始配置时，创建初始数据
+		if (dashboardConfigContext == null){
+			dashboardConfigContext = new DashboardConfigContext();
+		}
+
 		// 修改大屏拓扑配置
 		if (dashBoardTemplateConfigReq.getTopoConfig() != null) {
 			dashboardConfigContext.setTopoConfig(dashBoardTemplateConfigReq.getTopoConfig());

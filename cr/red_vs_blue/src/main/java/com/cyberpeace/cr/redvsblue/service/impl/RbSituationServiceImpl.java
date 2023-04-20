@@ -292,6 +292,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 			result.add(rbSituationAdEventRsp);
 		});
+		result.sort(Comparator.comparing(RbSituationAdEventRsp::getEventTime).reversed());
 
 		return result;
 	}

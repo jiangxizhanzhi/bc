@@ -130,7 +130,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         data.put("cscene_id", localScene.getMpSceneId());
         data.put("scene_element_port_plugin_data", sceneElementPortPluginData);
-
+        data.put("scene_id", sceneData.getJSONObject("topology").getJSONObject("scene").getString("eid"));
 
         WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));
 

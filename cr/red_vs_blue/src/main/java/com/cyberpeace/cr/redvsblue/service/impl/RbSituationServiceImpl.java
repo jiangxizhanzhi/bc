@@ -302,7 +302,6 @@ public class RbSituationServiceImpl implements RbSituationService {
 		RbSituationAssetStatusRsp rbSituationAssetStatusRsp = new RbSituationAssetStatusRsp();
 		List<CrRoleAssetNode> crRoleAssetNodeList =  crRoleAssetNodeService.lambdaQuery()
 				.eq(CrRoleAssetNode::getRoomId, roomId)
-				.eq(CrRoleAssetNode::getOriginalRoleType, roleType)
 				.list();
 
 		int networkOriginalCount = 0;
@@ -314,7 +313,19 @@ public class RbSituationServiceImpl implements RbSituationService {
 		int securityOriginalCount = 0;
 		int securityChangedCount = 0;
 		for (CrRoleAssetNode crRoleAssetNode: crRoleAssetNodeList) {
-			if (!crRoleAssetNode.getOriginalRoleType().equals(crRoleAssetNode.getRoleType())) {
+			if (crRoleAssetNode.getOriginalRoleType().equals(roleType) && !crRoleAssetNode.getRoleType().equals(roleType)) {
+				if (crRoleAssetNode.getNodeCategory() == 3) {
+					networkChangedCount -= 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 1) {
+					operationChangedCount -= 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 2) {
+					applicationChangedCount -= 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 4) {
+					securityChangedCount -= 1;
+				}
+			}
+
+			if (!crRoleAssetNode.getOriginalRoleType().equals(roleType) && crRoleAssetNode.getRoleType().equals(roleType)) {
 				if (crRoleAssetNode.getNodeCategory() == 3) {
 					networkChangedCount += 1;
 				} else if (crRoleAssetNode.getNodeCategory() == 1) {
@@ -325,15 +336,19 @@ public class RbSituationServiceImpl implements RbSituationService {
 					securityChangedCount += 1;
 				}
 			}
-			if (crRoleAssetNode.getNodeCategory() == 3) {
-				networkOriginalCount += 1;
-			} else if (crRoleAssetNode.getNodeCategory() == 1) {
-				operationOriginalCount += 1;
-			} else if (crRoleAssetNode.getNodeCategory() == 2) {
-				applicationOriginalCount += 1;
-			} else if (crRoleAssetNode.getNodeCategory() == 4) {
-				securityOriginalCount += 1;
+
+			if (crRoleAssetNode.getOriginalRoleType().equals(roleType)) {
+				if (crRoleAssetNode.getNodeCategory() == 3) {
+					networkOriginalCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 1) {
+					operationOriginalCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 2) {
+					applicationOriginalCount += 1;
+				} else if (crRoleAssetNode.getNodeCategory() == 4) {
+					securityOriginalCount += 1;
+				}
 			}
+
 		}
 
 		rbSituationAssetStatusRsp.setNetwork(RbSituationAssetStatusRsp.AssetCount.builder()

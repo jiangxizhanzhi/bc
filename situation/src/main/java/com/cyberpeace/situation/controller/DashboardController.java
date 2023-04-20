@@ -203,6 +203,12 @@ public class DashboardController {
 	@ApiOperation("刷新大屏动态数据")
 	@PostMapping("/event/refresh/")
 	public BaseRsp<Boolean> refreshEvent(@RequestBody @Validated EventRefreshReq req) {
+
+		// 定制大屏预览时，直接返回TRUE
+		if (req.getDashboardId().equals("demo")) {
+			return new BaseRsp<>(true);
+		}
+
 		Integer level = dashboardService.getDashboardLevel(req.getDashboardId());
 		if (DashboardLevel.RW.getCode().equals(level)) {
 			SituationPublishInstance instance = situationPublishInstanceMapper

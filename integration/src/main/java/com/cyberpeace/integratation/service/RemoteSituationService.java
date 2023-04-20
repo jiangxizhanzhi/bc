@@ -163,6 +163,8 @@ public interface RemoteSituationService {
 	 */
 	Boolean releaseScreen(String schemeId, String dashboardId);
 
+	Boolean releaseScreen(StatusOrderContext statusOrderContext);
+
 	String getRunId(String subjectId);
 
 	List<NodeBasicInfoContext> getSimilarNodes(NodeIdApiReq nodeIdApiReq);

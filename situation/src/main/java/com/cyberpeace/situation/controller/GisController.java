@@ -274,7 +274,7 @@ public class GisController {
 	@ApiOperation("获取Gis配置")
 	@GetMapping("/config/get/")
 	public BaseRsp<ConfigContext>
-			getSituationGisConfig(@RequestParam("resource_id") String resourceId) {
+			getSituationGisConfig(@RequestParam("config_id") String resourceId) {
 		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
 	}
 

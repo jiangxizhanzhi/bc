@@ -43,4 +43,7 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 	SituationPublishInstance createBcInstance(BcContext bcContext);
 
 	Boolean changeInstancePublicStatus(String dashboardId, PublicStatus publicStatus);
+
+	Boolean changeInstancePublicStatus(SituationPublishInstance situationPublishInstance,
+			PublicStatus publicStatus);
 }

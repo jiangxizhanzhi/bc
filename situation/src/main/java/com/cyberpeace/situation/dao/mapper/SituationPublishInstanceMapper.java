@@ -35,4 +35,6 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 			@Param("subjectId") String subjectId);
 
 	List<SituationPublishInstance> selectSynthesizeDashboard();
+
+	SituationPublishInstance selectXdDashboardBySchemeId(@Param("schemeId") String schemeId);
 }

@@ -7,9 +7,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -26,6 +26,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.integratation.constant.TaskType;
+import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.PublicStatus;
 import com.cyberpeace.situation.constant.ReplayMode;
@@ -48,10 +49,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "组件库-态势发布大屏")
+@Api(tags = "态势大屏-实例")
 @RestController
 @Slf4j
-// @RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/situation/publish")
 public class DashboardInstanceController {
 
@@ -155,8 +156,10 @@ public class DashboardInstanceController {
 				.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
 	}
 
-	private SituationPublishInstanceRes getSituationPublishInstancePreviewRes(SituationPublishInstanceRes situationPublishInstance) {
-		DashboardAttribute dashboardAttribute = dashboardAttributeMapper.selectById(situationPublishInstance.getAttributeId());
+	private SituationPublishInstanceRes getSituationPublishInstancePreviewRes(
+			SituationPublishInstanceRes situationPublishInstance) {
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.selectById(situationPublishInstance.getAttributeId());
 		situationPublishInstance.setStartTime(dashboardAttribute.getStartTime());
 		situationPublishInstance.setEndTime(dashboardAttribute.getEndTime());
 		return situationPublishInstance;
@@ -271,7 +274,8 @@ public class DashboardInstanceController {
 		}
 
 		// 修改大屏状态
-		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances, PublicStatus.COMPLETE);
+		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances,
+				PublicStatus.COMPLETE);
 
 		// 构造推送方案状态变更消息
 		StatusOrderContext statusOrderContext = new StatusOrderContext();
@@ -312,7 +316,8 @@ public class DashboardInstanceController {
 		}
 
 		// 修改大屏状态
-		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances, PublicStatus.EDIT);
+		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances,
+				PublicStatus.EDIT);
 
 		// 想定大屏不允许主动取消发布
 		if (situationPublishInstances.getXd()) {

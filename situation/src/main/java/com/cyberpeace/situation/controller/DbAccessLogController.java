@@ -23,11 +23,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "数据库访问")
+@Api(tags = "数据库管理-访问日志")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/db/access")
-public class SituationDbAccessController {
+public class DbAccessLogController {
 
 	@Autowired
 	private SituationDbAccessMapper situationDbAccessMapper;

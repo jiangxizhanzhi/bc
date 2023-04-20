@@ -11,9 +11,10 @@ import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
-import org.apache.poi.xslf.usermodel.*;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
@@ -23,8 +24,6 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -45,50 +44,23 @@ public class WaterMarkingUtils {
 
     public static void main(String[] args) {
         String markText = "南京赛宁";
-
-//
-//        setExcelWaterMark("D:/cpms/app1.xls","D:/cpms/app2.xls",markText);
-//		// 原图位置, 输出图片位置, 水印文字颜色, 水印文字 支持doc docx
-//        try {
-//            addWordWaterMark1("D:/cpms/app.docx", String.format("D:/cpms/app2_%s.docx",-10),"南京赛宁");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        String handout = "D:/cpms/upload/attachment/1313.pptx";
-//        String handout = "D:/cpms/upload/attachment/5af65c046dc14e8db7e2ddcc40bee49e.pdf";
-//        String handout = "D:/cpms/upload/attachment/6fd547d072ff439eb40e08495769f89c.pptx";
-//        String handout = "D:/cpms/upload/attachment/e8c5a111e74c43339c6ffc467d6e159f.docx";
-        String handout = "D:/cpms/app1.doc";
-//        String handout = "D:/cpms/upload/attachment/29f5a7dd5cf04f0082a3042ea46642d2.xlsx";
+        String handout = "D:/cpms/upload/attachment/f239cb99da4047e385e558933bdc7483.docx";
         String[] split = handout.split("/");
         if(split.length < 1){
             return;
         }
-//        if(!handout.startsWith("/cpms")){
         if(!handout.startsWith("D:/cpms")){
-//            handout = ConfigUtil.getContextProperty("cr.local.file.prefix") + handout;
             handout = "D:/cpms" + handout;
         }
         String handoutPath = split[split.length - 1];
-//                    handout = "D:" + handout;
         String[] split1 = handoutPath.split("\\.");
         if(split1.length < 1){
             return;
         }
         String handoutName = split1[0];
         String replacehandout = handout.replace(handoutName, CryptoUtils.encode64(DEFAULT_SECRET_KEY2, handoutName));
-//        addWordWaterMark(handout, replacehandout, markText);
-//        WaterMarkUtils.setWordWaterMark(new File(handout), markText, "pptx");
-//        restWord(handout);
-//        addWordWaterMark1(handout, markText,null,replacehandout);
-        setExcelWaterMark(handout,replacehandout,markText);
         try {
-//            addPPTWatermark(handout, markText, null, replacehandout);
-//            setPPTWaterMark(handout, replacehandout, markText);
             addWordWaterMark1(handout, markText,null,replacehandout);
-//            setPdfWatermark(handout, replacehandout, markText);
-//        } catch (IOException e) {
-//            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -163,7 +135,7 @@ public class WaterMarkingUtils {
      * @param YCount    纵向共有水印多少个
      * @param waterRemarkWidth   水印图片宽度为多少列
      * @param waterRemarkHeight   水印图片高度为多少行
-     * @throws IOException
+     * @throws IOException IO异常
      */
     public static void putWaterRemarkToExcel(Workbook wb, Sheet sheet, String waterRemark, int startXCol,
                                               int startYRow, int betweenXCol, int betweenYRow, int XCount, int YCount, int waterRemarkWidth,
@@ -175,7 +147,6 @@ public class WaterMarkingUtils {
         ImageIO.write(bufferImg, "png", byteArrayOut);
         // 开始打水印
         Drawing drawing = sheet.createDrawingPatriarch();
-        Drawing<?> drawingPatriarch = sheet.getDrawingPatriarch();
         // 按照共需打印多少行水印进行循环
         for (int yCount = 0; yCount < YCount; yCount++) {
             // 按照每行需要打印多少个水印进行循环
@@ -203,8 +174,8 @@ public class WaterMarkingUtils {
     public static BufferedImage createWaterMarkImage(String waterMark) {
         String[] textArray = waterMark.split("\n");
         Font font = new Font("STSong-Light", Font.PLAIN, 20);
-        Integer width = 500;
-        Integer height = 200;
+        int width = 500;
+        int height = 200;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         // 背景透明 开始
@@ -219,8 +190,8 @@ public class WaterMarkingUtils {
         // 设置字体平滑
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int y = 150;
-        for (int i = 0; i < textArray.length; i++) {
-            g.drawString(textArray[i], 0, y);// 画出字符串
+        for (String s : textArray) {
+            g.drawString(s, 0, y);// 画出字符串
             y = y + font.getSize();
         }
         g.dispose();// 释放画笔
@@ -230,8 +201,8 @@ public class WaterMarkingUtils {
     /**
      * 获取水印文字图片流
      *
-     * @param text
-     * @return
+     * @param text 填入水印文字
+     * @return 水印文件填充的byte数组流
      */
     private static ByteArrayOutputStream getImage(String text) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -418,8 +389,6 @@ public class WaterMarkingUtils {
         int total = reader.getNumberOfPages() + 1;
         PdfContentByte content;
         BaseFont base = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.EMBEDDED);
-        // BaseFont base = BaseFont.createFont("/data/tmis/uploads/file/font/simsun.ttc,1", BaseFont.IDENTITY_H,
-        // BaseFont.EMBEDDED);
         PdfGState gs = new PdfGState();
         com.itextpdf.text.Rectangle pageRect = null;
         for (int i = 1; i < total; i++) {
@@ -429,7 +398,6 @@ public class WaterMarkingUtils {
             gs.setFillOpacity(0.2f);
             // content.setGState(gs);
             content.beginText();
-//			content.setRGBColorFill(192, 192, 192);
             content.setRGBColorFill(128, 128, 128);
             content.setFontAndSize(base, 18);
             content.setTextMatrix(300, 250);
@@ -441,8 +409,6 @@ public class WaterMarkingUtils {
                     content.showTextAligned(Element.ALIGN_LEFT, markStr, width - textW, height - textH, 30);
                 }
             }
-//			content.showTextAligned(Element.ALIGN_CENTER, markStr, 250, 400, 55);
-            // content.showTextAligned(Element.ALIGN_CENTER,
             // "检测管理信息系统！",400,250, 55);
             content.setRGBColorFill(0, 0, 0);
             content.setFontAndSize(base, 8);
@@ -465,7 +431,7 @@ public class WaterMarkingUtils {
      * @throws IOException
      * @throws XmlException
      */
-    public static boolean addWordWaterMark1(String filePath, String watermark, String cipher, String outFileName) throws IOException, InvalidFormatException, FontFormatException {
+    public static void addWordWaterMark1(String filePath, String watermark, String cipher, String outFileName) throws IOException, InvalidFormatException, FontFormatException {
         File file = new File(filePath);
         log.info(String.format("current word filepath:%s", filePath));
         log.info(String.format("current outfile %s", outFileName));
@@ -477,13 +443,13 @@ public class WaterMarkingUtils {
         if (cp.getProperty("cipher")!=null) {
             cp.addProperty("cipher",cipher);
         }
-//        没有header.xml添加xml
+        // 没有header.xml添加xml
         if (document.getHeaderFooterPolicy().getHeader(STHdrFtr.DEFAULT)==null
                 && document.getHeaderFooterPolicy().getHeader(STHdrFtr.FIRST)==null
                 && document.getHeaderFooterPolicy().getHeader(STHdrFtr.EVEN)==null) {
             document.createHeader(HeaderFooterType.DEFAULT);
         }
-//        生成图片水印
+        // 生成图片水印
         Font font = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(FONT_SIMHEI)).deriveFont(Font.BOLD,16);
         BufferedImage bufferedImage = waterMarkByText(1200,1600,watermark,DEFAULTCOLOR,font,315.0,0.5f);
         File watermarkPic = new File("/cpms","wordWatermark.png");
@@ -512,7 +478,6 @@ public class WaterMarkingUtils {
                 e.printStackTrace();
             }
         }
-        return true;
     }
 
     /**
@@ -524,7 +489,7 @@ public class WaterMarkingUtils {
     public static void editWordHeader(File file) throws IOException {
         List<File> headers,rels,picts;
         File outPath = new File(file.getParent()+"\\"+file.getName().split("\\.")[0]);
-        ZipUtils.unZip(file,outPath.getAbsolutePath());
+        ZipUtil.unZip(file,outPath.getAbsolutePath());
         File wordDirectory = new File(outPath.getAbsolutePath()+File.separator+"word");
         File _relsDirectory = new File(outPath.getAbsolutePath()+File.separator+"word"+File.separator+"_rels");
         File mediaDirectory = new File(outPath.getAbsolutePath()+File.separator+"word"+File.separator+"media");
@@ -573,10 +538,9 @@ public class WaterMarkingUtils {
         }
         editRels(rels,pictName);
 
-        ZipUtils.zip(outPath,new File(file.getAbsolutePath()));
+        ZipUtil.zip(outPath,new File(file.getAbsolutePath()));
         if (outPath.exists()) {
             FileUtil.deleteDir(outPath);
-//            outPath.delete();
         }
     }
 
@@ -588,7 +552,6 @@ public class WaterMarkingUtils {
             try {
                 file.createNewFile();
                 files.add(file);
-//                FileUtils.writeStringToFile(file,watermarkRels.replace("r_id","rId1"));
             }catch (IOException e) {
                 log.info("文件创建失败:{}"+file.getName());
             }
@@ -612,8 +575,6 @@ public class WaterMarkingUtils {
         File file = new File(path+File.separator+"header1.xml");
         try {
             file.createNewFile();
-//            FileUtils.writeStringToFile(file,watermarkXml.replace("WordPictureWatermark","WordPictureWatermark"+new Date().getTime()%10000000)
-//                    .replace("r_id","rId1"));
         }catch (IOException e) {
             log.info("文件创建失败:{}"+file.getName());
         }
@@ -626,15 +587,15 @@ public class WaterMarkingUtils {
         Pattern pattern = compile("<w:pPr[\\s>].*</w:r>");
         Matcher matcher;
         for (File header : files){
-            String headerContent="";
+            StringBuilder headerContent= new StringBuilder();
             String str = FileUtils.readFileToString(header, "UTF-8");
             matcher = pattern.matcher(str);
             while (matcher.find()){
-                headerContent+=matcher.group();
+                headerContent.append(matcher.group());
             }
             //直接覆盖header文件，不对存在的页眉做处理
             FileUtils.writeStringToFile(header,watermarkXml.replace("WordPictureWatermark","WordPictureWatermark"+new Date().getTime()%10000000)
-                    .replace("r_id","rId1").replace("WPHEADER",headerContent));
+                    .replace("r_id","rId1").replace("WPHEADER", headerContent.toString()));
         }
     }
 

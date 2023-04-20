@@ -1,13 +1,17 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.exception.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
+@Slf4j
 public class CmdExecuter {
 	public static String exec(List<String> cmd) {
-		String converted_time = null;
+		String convertedTime = null;
 		Process proc = null;
 		BufferedReader stdout = null;
 		try {
@@ -18,9 +22,12 @@ public class CmdExecuter {
 			stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			String line;
 			int lineNumber = 1;
-			List<String> returnStringList = new LinkedList<String>();
+			List<String> returnStringList = new LinkedList<>();
 			while ((line = stdout.readLine()) != null) {
-				System.out.println("第" + lineNumber + "行:" + line);
+				if(line.contains("error")){
+					throw new BusinessException(line);
+				}
+				log.info("第" + lineNumber + "行:" + line);
 				lineNumber = lineNumber + 1;
 				returnStringList.add(FFMPEG.dealString(line));
 			}
@@ -32,10 +39,10 @@ public class CmdExecuter {
 				}
 			}
 			if (null != info) {
-				converted_time = info.split("time=")[1].split("bitrate=")[0].trim();
+				convertedTime = info.split("time=")[1].split("bitrate=")[0].trim();
 			}
 		} catch (IndexOutOfBoundsException ex) {
-			converted_time = null;
+			log.info(ex.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -46,7 +53,7 @@ public class CmdExecuter {
 				e.printStackTrace();
 			}
 		}
-		return converted_time;
+		return convertedTime;
 	}
 
 }

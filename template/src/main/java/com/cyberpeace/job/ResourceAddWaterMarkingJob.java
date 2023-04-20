@@ -1,23 +1,25 @@
 package com.cyberpeace.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.itextpdf.text.DocumentException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static com.cyberpeace.common.util.CryptoUtils.DEFAULT_SECRET_KEY2;
 
@@ -35,7 +37,7 @@ public class ResourceAddWaterMarkingJob {
         if(!Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.isCrypto"))){
             return;
         }
-        String path = "/cpms/crypto";
+        String path = ResourceImportConstant.RESOURCE_CRYPTO_PATH;
         FileUtil.mkdirs(path);
         List<String> attachmentVideoList = FileUtil.listDirs(
                 new File(ResourceImportConstant.RESOURCE_CRYPTO_PATH).getAbsolutePath(), true);
@@ -54,11 +56,10 @@ public class ResourceAddWaterMarkingJob {
             if(!video.startsWith("/cpms")){
                 video = ConfigUtil.getContextProperty("cr.local.file.prefix") + video;
             }
-//            video = "D:" + video;
             HashMap<String, String> dto= new HashMap<>();
             dto.put("ffmpeg_path", "ffmpeg");//必填
             dto.put("input_path", video);//必填
-            String[] split = video.split("/");
+            String[] split = video.split(CommonConstant.LEFT_OBLIQUE_LINE);
             if(split.length < 1){
                 return;
             }
@@ -77,7 +78,6 @@ public class ResourceAddWaterMarkingJob {
             courseLesson.setVideoUrl(replaceVideo);
             courseLessonMapper.updateById(courseLesson);
         });
-//        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 
 
@@ -86,7 +86,7 @@ public class ResourceAddWaterMarkingJob {
         attachmentVideoList.forEach(attachment->{
             String[] split = attachment.split("_");
             if(split.length >= 2 && !(attachment.contains(".mp4") || attachment.contains(".m4v"))){
-                String[] split1 = split[0].split("/");
+                String[] split1 = split[0].split(CommonConstant.LEFT_OBLIQUE_LINE);
                 if(split1.length > 2 && !cryptoVideo.contains(split1[split1.length - 1])){
                     cryptoVideo.add(split1[split1.length - 1]);
                 }
@@ -100,7 +100,7 @@ public class ResourceAddWaterMarkingJob {
         attachmentVideoList.forEach(attachment->{
             String[] split = attachment.split("_");
             if(split.length >= 2 && (attachment.contains(".mp4") || attachment.contains(".m4v"))){
-                String[] split1 = split[0].split("/");
+                String[] split1 = split[0].split(CommonConstant.LEFT_OBLIQUE_LINE);
                 if(split1.length > 2 && !cryptoVideo.contains(split1[split1.length - 1])){
                     cryptoVideo.add(split1[split1.length - 1]);
                 }
@@ -108,13 +108,13 @@ public class ResourceAddWaterMarkingJob {
         });
         return cryptoVideo;
     }
-    // TODO 时间间隔恢复
+
     @Scheduled(cron="0 0/5 * * * ?")
     public void officeResourceAdd() {
         if(!Boolean.parseBoolean(ConfigUtil.getContextProperty("ojj.isCrypto"))){
             return;
         }
-        String path = "/cpms/crypto";
+        String path = ResourceImportConstant.RESOURCE_CRYPTO_PATH;
         FileUtil.mkdirs(path);
         List<String> attachmentList = FileUtil.listDirs(
                 new File(ResourceImportConstant.RESOURCE_CRYPTO_PATH).getAbsolutePath(), true);
@@ -134,7 +134,7 @@ public class ResourceAddWaterMarkingJob {
                         return;
                     }
                     Integer handoutType = courseLesson.getHandoutType();
-                    String[] split = handout.split("/");
+                    String[] split = handout.split(CommonConstant.LEFT_OBLIQUE_LINE);
                     if(split.length < 1){
                         return;
                     }
@@ -142,7 +142,6 @@ public class ResourceAddWaterMarkingJob {
                         handout = ConfigUtil.getContextProperty("cr.local.file.prefix") + handout;
                     }
                     String handoutPath = split[split.length - 1];
-//                    handout = "D:" + handout;
                     String[] split1 = handoutPath.split("\\.");
                     if(split1.length < 1){
                         return;
@@ -152,21 +151,18 @@ public class ResourceAddWaterMarkingJob {
                     log.info(String.format("replacehandout is %s", replacehandout));
                     File file = new File(handout);
                     File destFile = new File(path + File.separator + courseLesson.getResourceId() + "_" + handoutPath);
-                    if(!file.exists() || destFile.exists()){
+                    if(destFile.exists()){
                         return;
                     }
                     FileUtil.copyFile(file, destFile);
-                    // TODO
                     log.info(String.format("start to add %s water marking!!", handout));
                     String inputPath = handout.split("\\.")[0].replace(handoutName, "");
                     try {
                         if (handoutType.equals(CourseLesson.HandoutType.PPT.getCode())) {
                             log.info(String.format("inputpath is %s", inputPath));
                             log.info(String.format("handoutName is %s", handoutName));
-//                            WaterMarkingUtils.addPPTWatermark(handout, markStr, null, replacehandout);
                             WaterMarkingUtils.setPPTWaterMark(handout, replacehandout, markStr);
                         } else if (handoutType.equals(CourseLesson.HandoutType.DOC.getCode())) {
-//                            WaterMarkingUtils.addWordWaterMark(handout, markStr,null,inputPath, replacehandout);
                             WaterMarkingUtils.addWordWaterMark1(handout, markStr,null ,replacehandout);
 
                         } else if (handoutType.equals(CourseLesson.HandoutType.PDF.getCode())) {
@@ -183,6 +179,5 @@ public class ResourceAddWaterMarkingJob {
                     }
                 }
         );
-//        ShellUtils.execShell("rm -rf /cpms/waterImage*");
     }
 }

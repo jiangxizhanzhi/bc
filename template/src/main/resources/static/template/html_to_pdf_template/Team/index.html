@@ -93,8 +93,8 @@
         <div class="outer-block outer13 flex-row">
             <div class='allDIV' id='taskStatistic'></div>
             <script>
-                drawPie('taskStatistic', ['${locale.completed}', '${locale.not_finished}', '${locale.not_submitted}', '${locale.not_released}'], [${mission_report.missionsStatistics.finishProportion},${mission_report.missionsStatistics.notFinishProportion},
-		 ${mission_report.missionsStatistics.notSubmitProportion}, ${mission_report.missionsStatistics.unpublishedProportion}], '${locale.task_stat}', '${mission_report.missionsStatistics.missionCount} ${locale.pcs_task}');
+                drawPie('taskStatistic', ['${locale.completed}', '${locale.not_finished}', '${locale.not_submitted}', '${locale.not_released}', '${locale.closed}}'], [${mission_report.missionsStatistics.finishProportion},${mission_report.missionsStatistics.notFinishProportion},
+		 ${mission_report.missionsStatistics.notSubmitProportion}, ${mission_report.missionsStatistics.unpublishedProportion}, ${mission_report.missionsStatistics.endedProportion}], '${locale.task_stat}', '${mission_report.missionsStatistics.missionCount} ${locale.pcs_task}');
             </script>
         </div>
 

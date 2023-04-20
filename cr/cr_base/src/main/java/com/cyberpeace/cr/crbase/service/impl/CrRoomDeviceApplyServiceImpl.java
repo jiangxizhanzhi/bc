@@ -110,6 +110,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         JSONObject elementPorts = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("element_ports");
         JSONObject pluginElements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
         JSONObject sceneElementPortPluginData = new JSONObject();
+        JSONObject sceneElementPluginData = new JSONObject();
         JSONArray elements = sceneData.getJSONObject("topology").getJSONArray("elements");
 
         for (int i = 0; i < elements.size(); i++) {
@@ -122,14 +123,15 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
                     cpCloud.put(ports.getJSONObject(j).getString("id"), elementPorts.getJSONObject(ports.getJSONObject(j).getString("id")));
                 }
                 sceneElementPortPluginData.put("cpcloud", cpCloud);
+                sceneElementPluginData.put("cpcloud", pluginElements.getJSONObject(crRoomDeviceApply.getSceneDeviceId()));
 
-                data.put("scene_element_plugin_data", pluginElements.getJSONObject(crRoomDeviceApply.getSceneDeviceId()));
                 break;
             }
         }
 
         data.put("cscene_id", localScene.getMpSceneId());
         data.put("scene_element_port_plugin_data", sceneElementPortPluginData);
+        data.put("scene_element_plugin_data", sceneElementPluginData);
         data.put("scene_id", sceneData.getJSONObject("topology").getJSONObject("scene").getString("eid"));
 
         WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));

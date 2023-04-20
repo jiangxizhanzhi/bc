@@ -1,5 +1,12 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,14 +23,6 @@ import com.cyberpeace.situation.controller.req.SituationPlotPixelReq;
 import com.cyberpeace.situation.dao.entity.SituationPlotPixel;
 import com.cyberpeace.situation.dao.mapper.SituationPlotPixelMapper;
 import com.cyberpeace.situation.service.SituationPlotPixelService;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author xuxz
@@ -90,22 +89,6 @@ public class SituationPlotPixelServiceImpl extends ServiceImpl<SituationPlotPixe
         Page page = situationPlotPixelPageReq.toPageParam();
         IPage<SituationPlotPixel> situationPlotPixelIPage = situationPlotPixelMapper.selectPage(page, situationPlotPixelPageReq);
         List<SituationPlotPixel> situationPlotPixelList = situationPlotPixelIPage.getRecords();
-        List<String> userIdList = new ArrayList<>();
-
-        if (CollectionUtils.isNotEmpty(situationPlotPixelList)) {
-            situationPlotPixelList.forEach(situationPlotPixel -> userIdList.add(situationPlotPixel.getCreateUserId()));
-        }
-        //设置用户名
-        if (CollectionUtils.isNotEmpty(userIdList)) {
-            Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIdList);
-            situationPlotPixelList.forEach(situationPlotPixel -> {
-                String createUserId = situationPlotPixel.getCreateUserId();
-                if (idNameMap.containsKey(createUserId)) {
-                    situationPlotPixel.setCreateUserId(idNameMap.get(createUserId));
-                }
-            });
-        }
-
         situationPlotPixelIPage.setRecords(situationPlotPixelList);
 
         return PageUtil.getListResult(situationPlotPixelIPage);

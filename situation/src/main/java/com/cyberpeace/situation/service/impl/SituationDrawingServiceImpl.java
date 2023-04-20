@@ -1,6 +1,12 @@
 package com.cyberpeace.situation.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,15 +27,8 @@ import com.cyberpeace.situation.dao.entity.SituationDrawingCategory;
 import com.cyberpeace.situation.dao.mapper.SituationDrawingCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDrawingMapper;
 import com.cyberpeace.situation.service.SituationDrawingService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import cn.hutool.core.util.ObjectUtil;
 
 /**
  * @Author xuxz
@@ -91,28 +90,14 @@ public class SituationDrawingServiceImpl extends ServiceImpl<SituationDrawingMap
         List<SituationDrawingCategory> situationDrawingCategories = situationDrawingCategoryMapper.selectList(new LambdaQueryWrapper<>());
 
         if (CollectionUtils.isNotEmpty(situationDrawingPageResList)) {
-
-            List<String> userIdList = situationDrawingPageResList.stream().map(SituationDrawingPageRes::getCreateUserId).collect(Collectors.toList());
-            Map<String, String> idNameMap = new HashMap<>();
-            if (CollectionUtils.isNotEmpty(userIdList)) {
-                idNameMap.putAll(remoteUserService.getIdNameMap(userIdList));
-            }
-
             for (SituationDrawingPageRes situationDrawingPageRes : situationDrawingPageResList) {
                 String type = situationDrawingPageRes.getType();
-                String createUserId = situationDrawingPageRes.getCreateUserId();
                 //设置类型
                 situationDrawingCategories.forEach(situationDrawingCategory -> {
                     if (ObjectUtil.equal(situationDrawingCategory.getResourceId(), type)) {
                         situationDrawingPageRes.setType(situationDrawingCategory.getName());
                     }
                 });
-
-                //设置创建人
-                if (idNameMap.containsKey(createUserId)) {
-                    situationDrawingPageRes.setCreateUserName(idNameMap.get(createUserId));
-                }
-
             }
             situationDrawingPageResIPage.setRecords(situationDrawingPageResList);
             return PageUtil.getListResult(situationDrawingPageResIPage);

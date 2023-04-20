@@ -1,12 +1,20 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
@@ -20,15 +28,6 @@ import com.cyberpeace.situation.dao.entity.SituationIconCategory;
 import com.cyberpeace.situation.dao.mapper.SituationIconMapper;
 import com.cyberpeace.situation.service.SituationIconCategoryService;
 import com.cyberpeace.situation.service.SituationIconService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * @Author xuxz
@@ -84,12 +83,6 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
             });
         }
 
-        //设置创建人名称
-        String createUserId = situationIconRes.getCreateUserId();
-        UserInfo userInfo = remoteUserService.getById(createUserId);
-        if (userInfo != null) {
-            situationIconRes.setCreateUserName(userInfo.getUserName());
-        }
         return situationIconRes;
     }
 
@@ -118,15 +111,6 @@ public class SituationIconServiceImpl extends ServiceImpl<SituationIconMapper, S
                     situationIconRes.setTypeName(situationIconCategory.getName());
                 }
                 userIdList.add(situationIconRes.getCreateUserId());
-            });
-        }
-        //设置用户名
-        if (CollectionUtils.isNotEmpty(userIdList)) {
-            Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIdList);
-            situationIconResList.forEach(situationIconRes -> {
-                if (idNameMap.containsKey(situationIconRes.getCreateUserId())) {
-                    situationIconRes.setCreateUserName(idNameMap.get(situationIconRes.getCreateUserId()));
-                }
             });
         }
         selectPage.setRecords(situationIconResList);

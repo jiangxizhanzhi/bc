@@ -1,5 +1,15 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,10 +19,8 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.situation.controller.req.ColorThemeImportReq;
 import com.cyberpeace.situation.controller.req.ColorThemePageReq;
@@ -20,18 +28,6 @@ import com.cyberpeace.situation.controller.req.ColorThemeReq;
 import com.cyberpeace.situation.dao.entity.ColorTheme;
 import com.cyberpeace.situation.dao.mapper.SituationColorThemeMapper;
 import com.cyberpeace.situation.service.SituationColorThemeService;
-import com.rabbitmq.tools.json.JSONUtil;
-import nonapi.io.github.classgraph.json.JSONUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Author xuxz
@@ -75,9 +71,6 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
         if (colorTheme == null) {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        String createUserId = colorTheme.getCreateUserId();
-        UserInfo userInfo = remoteUserService.getById(createUserId);
-        colorTheme.setCreateUserId(userInfo.getUserName());
         return colorTheme;
     }
 
@@ -107,12 +100,7 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
             object.put("color", objects);
             colorTheme.setOption(object.toJSONString());
         });
-        Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 
-        //设置用户名
-        ColorThemeList.forEach(colorTheme -> {
-            colorTheme.setCreateUserId(idNameMap.getOrDefault(colorTheme.getCreateUserId(), null));
-        });
         colorThemeIPage.setRecords(ColorThemeList);
 
         return PageUtil.getListResult(colorThemeIPage);

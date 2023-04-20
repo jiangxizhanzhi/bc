@@ -146,7 +146,8 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 				throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
 			}
 			note.setIsSubmit(reportAddReq.getOperate());
-			noteMapper.updateById(note);
+			note.setResourceId(report.getResourceId());
+			noteMapper.updateReportByID(note);
 		}
 		return note;
 	}

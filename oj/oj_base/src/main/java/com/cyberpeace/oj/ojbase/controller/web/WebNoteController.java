@@ -123,7 +123,7 @@ public class WebNoteController {
 		}
 
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
-		noteRes.setIsSubmit(noteBo.getIsSubmit());
+		noteRes.setIsSubmit(noteBo.getIsSubmit() != null && noteBo.getIsSubmit());
 		// 实验报告数据评估结果组装
 		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());

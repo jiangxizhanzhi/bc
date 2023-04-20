@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "嵌入服务-GIS")
 @RestController
 @Slf4j
-@RequiresAuthentication
+// @RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class EmbeddedGisController {
 

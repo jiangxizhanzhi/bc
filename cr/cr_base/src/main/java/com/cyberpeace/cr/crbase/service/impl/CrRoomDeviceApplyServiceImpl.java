@@ -240,8 +240,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = save(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.apply(crRoomDeviceApply.getDeviceId());
-            pushSceneData(crRoomDeviceApply);
             pushElementData(crRoomDeviceApply);
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -307,8 +307,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.allot(crRoomDeviceApply.getDeviceId());
-            pushSceneData(crRoomDeviceApply);
             pushElementData(crRoomDeviceApply);
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -321,8 +321,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.refuse(crRoomDeviceApply.getDeviceId());
-            pushSceneData(crRoomDeviceApply);
             pushElementData(crRoomDeviceApply);
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }
@@ -343,8 +343,8 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         Boolean result = updateById(crRoomDeviceApply);
         if (result) {
             remoteTerminalService.recycle(crRoomDeviceApply.getDeviceId());
-            pushSceneData(crRoomDeviceApply);
             pushElementData(crRoomDeviceApply);
+            pushSceneData(crRoomDeviceApply);
         }
         return result;
     }

@@ -274,15 +274,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		Map<String, MissionCompletion> missionMap = Maps.newHashMap();
 		for (CrTask task : tasks) {
 			if (!missionMap.containsKey(task.getMissionId())) {
-				Integer missionStatus;
-				// task状态为关闭，mission状态为已关闭
-				if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSE.getCode()) {
-					missionStatus = CrTask.TaskStatus.CLOSE.getCode();
-				} else {
-					missionStatus = 1;
-				}
+				missionMap.put(task.getMissionId(), new MissionCompletion(1, 0));
+			}
 
-				missionMap.put(task.getMissionId(), new MissionCompletion(missionStatus, 0));
+			if (task.getStatus().intValue() == CrTask.TaskStatus.CLOSE.getCode()) {
+				missionMap.get(task.getMissionId()).setMissionStatus(CrTask.TaskStatus.CLOSE.getCode());
 			}
 		}
 

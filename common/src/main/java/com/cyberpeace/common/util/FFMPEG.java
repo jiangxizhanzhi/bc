@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 public class FFMPEG {
 
     public static String dealString( String str ){
@@ -15,20 +16,7 @@ public class FFMPEG {
         }
         return msg;
     }
-    /**
-     * 如果是数字就是成功的时间(秒数)
-     * @param str
-     * @return
-     */
-    public static boolean isNumeric(String str){
-        String regex = "[0-9]*";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher isNum = pattern.matcher(str);
-        if( !isNum.matches() ){
-            return false;
-        }
-        return true;
-    }
+
     /**
      *  如果返回不是null的值就是成功(值为转换用时单位:秒)
      * @param instr
@@ -40,8 +28,8 @@ public class FFMPEG {
             String[] a=instr.split("\\.");
             String[] b=a[0].split(":");
             int returnNumber=0;
-            if (null!=instr&&b[0].length()!=0) {
-                returnNumber=Integer.valueOf(b[0])*60*60 + Integer.valueOf(b[1])*60 + Integer.valueOf(b[2]);
+            if (b[0].length() != 0) {
+                returnNumber=Integer.parseInt(b[0])*60*60 + Integer.parseInt(b[1])*60 + Integer.parseInt(b[2]);
                 returnValue=String.valueOf(returnNumber);
             }else{
                 returnValue=null;
@@ -71,7 +59,6 @@ public class FFMPEG {
      * (可选)ab:音频比特率,传入一个数值,单位在程序里面拼接了k
      */
     public String videoTransfer(HashMap<String, String> dto){
-//		   String ffmpeg_path,String input_path,String video_converted_path,String logo,String screen_size,String xaxis,String yaxis,String vb,String ab
         List<String> cmd = new ArrayList<String>();
         cmd.add(dto.get("ffmpeg_path"));
         cmd.add("-y");
@@ -80,19 +67,6 @@ public class FFMPEG {
         if (null!=dto.get("screen_size")) {
             cmd.add("-s");
             cmd.add(dto.get("screen_size"));
-        }
-        if (null!=dto.get("logo")) {
-            String logo=dto.get("logo");
-            cmd.add("-vf");
-            String xaxis=dto.get("xaxis");
-            String yaxis=dto.get("yaxis");
-            xaxis=xaxis!=null&&!"".equals(xaxis)?xaxis:"0";
-            yaxis=yaxis!=null&&!"".equals(yaxis)?yaxis:"0";
-
-            // 图片水印
-            // String logoString="movie="+logo+"[logo],[in][logo]overlay=x="+xaxis+":y="+yaxis+"[out]";
-            // 本地测试用
-            // String logoString="drawtext=fontfile=C\\\\:Users/dell/Downloads/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
         }
         cmd.add("-vf");
         String logoString="drawtext=fontfile=/usr/share/fonts/simhei.ttf:text='南京赛宁':x=10:y=10:fontsize=24:fontcolor=white:shadowy=2";
@@ -103,22 +77,27 @@ public class FFMPEG {
             cmd.add("-vb");
             cmd.add(dto.get("vb")+"k");
         }
-        if(null!=dto.get("ab")&&!dto.get("ab").equals("")){
+        if(null!=dto.get("ab")&&!"".equals(dto.get("ab"))){
             cmd.add("-ab");
             cmd.add(dto.get("ab")+"k");
         }
         cmd.add("-q:v");
         cmd.add("4");
         cmd.add(dto.get("video_converted_path"));
-        String converted_time= CmdExecuter.exec(cmd);
-        return returnSecond(converted_time);//获取转换时间
+        String convertedTime = CmdExecuter.exec(cmd);
+        //获取转换时间
+        return returnSecond(convertedTime);
     }
     public static void  main(String [] arg){
         HashMap<String, String>dto=new HashMap<String, String>();
-        dto.put("ffmpeg_path", "C:\\ffmpeg\\bin\\ffmpeg.exe");//必填
-        dto.put("input_path", "D:\\cpms\\097a7b8eb253e852796d0b428631e292.mp4");//必填
-        dto.put("video_converted_path", "D:\\cpms\\gg.mp4");//必填
-        dto.put("logo", "D:\\cpms\\logo.png");//可选(注意windows下面的logo地址前面要写4个反斜杠,如果用浏览器里面调用servlet并传参只用两个,如 d:\\:/ffmpeg/input/logo.png)
+        //必填
+        dto.put("ffmpeg_path", "C:\\ffmpeg\\bin\\ffmpeg.exe");
+        //必填
+        dto.put("input_path", "D:\\cpms\\097a7b8eb253e852796d0b428631e292.mp4");
+        //必填
+        dto.put("video_converted_path", "D:\\cpms\\gg.mp4");
+        //可选(注意windows下面的logo地址前面要写4个反斜杠,如果用浏览器里面调用servlet并传参只用两个,如 d:\\:/ffmpeg/input/logo.png)
+        dto.put("logo", "D:\\cpms\\logo.png");
         String secondsString=  new FFMPEG().videoTransfer(dto);
         System.out.println("转换共用:"+secondsString+"秒");
     }

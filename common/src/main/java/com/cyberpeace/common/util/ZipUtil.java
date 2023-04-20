@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
-//@Slf4j
+@Slf4j
 public class ZipUtil {
 
 	public static String generatePath() {
@@ -52,8 +52,8 @@ public class ZipUtil {
 
 			return CommonConstant.TRUE;
 		} catch (Exception e) {
-			//logerror("unzipToDest: Unzip failed! zip_path=[{}], dest_path=[{}] catch error:",
-//					zipPath, destPath, e);
+			log.error("unzipToDest: Unzip failed! zip_path=[{}], dest_path=[{}] catch error:",
+					zipPath, destPath, e);
 			return CommonConstant.FALSE;
 		}
 	}
@@ -84,14 +84,14 @@ public class ZipUtil {
 				compress(file, zos, file.getName());
 			}
 		} catch (Exception e) {
-			//logerror("failed to Zip Directory {}", srcDir);
+			log.error("failed to Zip Directory {}", srcDir);
 			e.printStackTrace();
 		} finally {
 			if (zos != null) {
 				try {
 					zos.close();
 				} catch (IOException e) {
-					//logerror("failed to close ZipOutputStream");
+					log.error("failed to close ZipOutputStream");
 					e.printStackTrace();
 				}
 			}
@@ -121,8 +121,8 @@ public class ZipUtil {
 				compress(file, zos, file.getName());
 			}
 		} catch (Exception e) {
-			//logerror("toZipDest: Zip file failed! src=[{}], dest=[{}]; catch error:", srcDir,
-//					destDir, e);
+			log.error("toZipDest: Zip file failed! src=[{}], dest=[{}]; catch error:", srcDir,
+					destDir, e);
 			throw new BusinessException(ErrorCode.FILE_ZIP_FAIL);
 		} finally {
 			try {

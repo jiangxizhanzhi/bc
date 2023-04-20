@@ -83,6 +83,7 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 							JSONArray ports = elementInfo.getJSONArray("ports");
 							for (int j = 0; j < ports.size(); j++) {
 								ports.getJSONObject(j).put("access_modes", Lists.newArrayList());
+								ports.getJSONObject(j).put("ip", null);
 								sceneData.getJSONObject("plugins")
 										.getJSONObject("cpcloud")
 										.getJSONObject("element_ports")

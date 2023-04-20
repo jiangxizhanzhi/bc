@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -11,6 +12,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -21,9 +23,11 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoomDeviceApplyMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
+import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.WsMessageBO;
+import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -59,6 +63,9 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     @Autowired
     private LocalSceneService localSceneService;
 
+    @Autowired
+    private RemoteSceneService remoteSceneService;
+
     private CrRoomDeviceApply getObject(String resourceId) {
         CrRoomDeviceApply crRoomDeviceApply = getById(resourceId);
         if (crRoomDeviceApply == null) {
@@ -76,11 +83,115 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
                 : null);
         WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 
+        CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(crRoomDeviceApply.getRoomId(), crRoomDeviceApply.getApplyUserId());
+
+
         webSocketHandler.pushMessageToUsers(
                 crEventListenerHelper.makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
                         crRoomDeviceApply.getRoomId()),
-                Lists.newArrayList(crRoomDeviceApply.getApplyUserId())
+                crRole.getUserIdList()
         );
+    }
+
+    private void pushElementData(CrRoomDeviceApply crRoomDeviceApply) {
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(crRoomDeviceApply.getRoomId());
+        if (localScene == null) {
+            return;
+        }
+        CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(crRoomDeviceApply.getRoomId(), crRoomDeviceApply.getApplyUserId());
+
+        JSONObject sceneData = localSceneService.getSceneData(localScene.getMpSceneId(),
+                UserInfoContext.getUserContext().getUserId());
+
+        filterApplyDevice(sceneData, crRole);
+
+        JSONObject data = new JSONObject();
+
+        JSONObject elementPorts = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("element_ports");
+        JSONObject pluginElements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+        JSONObject sceneElementPortPluginData = new JSONObject();
+        JSONArray elements = sceneData.getJSONObject("topology").getJSONArray("elements");
+
+        for (int i = 0; i < elements.size(); i++) {
+            JSONObject element = elements.getJSONObject(i);
+            if (element.getString("id").equals(crRoomDeviceApply.getSceneDeviceId())) {
+                data.put("scene_element", element);
+                JSONObject cpCloud = new JSONObject();
+                JSONArray ports = element.getJSONArray("ports");
+                for (int j = 0; j < ports.size(); j++) {
+                    cpCloud.put(ports.getJSONObject(j).getString("id"), elementPorts.getJSONObject(ports.getJSONObject(j).getString("id")));
+                }
+                sceneElementPortPluginData.put("cpcloud", cpCloud);
+
+                data.put("scene_element_plugin_data", pluginElements.getJSONObject(crRoomDeviceApply.getSceneDeviceId()));
+                break;
+            }
+        }
+
+        data.put("cscene_id", localScene.getMpSceneId());
+        data.put("scene_element_port_plugin_data", sceneElementPortPluginData);
+
+
+        WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));
+
+        WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(JsonUtil.toJsonString(reportBO),
+                crRoomDeviceApply.getRoomId());
+        webSocketHandler.pushMessageToUsers(messageContext, crRole.getUserIdList());
+    }
+
+    private void filterApplyDevice(JSONObject sceneData, CrRole crRole) {
+        Map<String, CrRoomDeviceApply> crRoomDeviceApplyMap = lambdaQuery()
+                .eq(CrRoomDeviceApply::getRoomId, crRole.getRoomId())
+                .eq(CrRoomDeviceApply::getApplyRoleId, crRole.getResourceId())
+                .in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
+                .list()
+                .stream().collect(Collectors.toMap(
+                        CrRoomDeviceApply::getDeviceId,
+                        crRoomDeviceApply -> crRoomDeviceApply
+                ));
+
+        JSONObject elements = sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements");
+        for (String imageId: elements.keySet()) {
+            JSONObject elementData = elements.getJSONObject(imageId);
+
+            if (elementData.get("image_type").equals("entity")) {
+                CrRoomDeviceApply crRoomDeviceApply = crRoomDeviceApplyMap.get(elementData.getString("image_uuid"));
+                sceneData.getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("elements")
+                        .getJSONObject(imageId)
+                        .put("apply_status", crRoomDeviceApply == null ? null : crRoomDeviceApply.getStatus());
+
+                if (crRoomDeviceApply == null
+                        || !crRoomDeviceApply.getStatus().equals(CrRoomDeviceApply.Status.AGREE.getCode())) {
+                    JSONArray jsonArray = sceneData.getJSONObject("topology").getJSONArray("elements");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JSONObject elementInfo = jsonArray.getJSONObject(i);
+                        if (elementInfo.getString("id").equals(imageId)) {
+                            JSONArray ports = elementInfo.getJSONArray("ports");
+                            for (int j = 0; j < ports.size(); j++) {
+                                ports.getJSONObject(j).put("access_modes", org.apache.commons.compress.utils.Lists.newArrayList());
+                                ports.getJSONObject(j).put("ip", null);
+                                sceneData.getJSONObject("plugins")
+                                        .getJSONObject("cpcloud")
+                                        .getJSONObject("element_ports")
+                                        .remove(ports.getJSONObject(j).getString("id"));
+                            }
+                            break;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private JSONObject replaceAccessIp(JSONObject topoData) {
+        try {
+            JSONObject elementPorts = topoData.getJSONObject("scene_element_port_plugin_data").getJSONObject("cpcloud");
+            remoteSceneService.replaceAccessIpExe(elementPorts);
+        } catch (Exception e) {
+            log.error("[dispatch] access ip replacement failed:", e);
+        }
+        return topoData;
     }
 
     @Override
@@ -128,6 +239,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         if (result) {
             remoteTerminalService.apply(crRoomDeviceApply.getDeviceId());
             pushSceneData(crRoomDeviceApply);
+            pushElementData(crRoomDeviceApply);
         }
         return result;
     }
@@ -194,6 +306,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         if (result) {
             remoteTerminalService.allot(crRoomDeviceApply.getDeviceId());
             pushSceneData(crRoomDeviceApply);
+            pushElementData(crRoomDeviceApply);
         }
         return result;
     }
@@ -207,6 +320,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         if (result) {
             remoteTerminalService.refuse(crRoomDeviceApply.getDeviceId());
             pushSceneData(crRoomDeviceApply);
+            pushElementData(crRoomDeviceApply);
         }
         return result;
     }
@@ -228,6 +342,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         if (result) {
             remoteTerminalService.recycle(crRoomDeviceApply.getDeviceId());
             pushSceneData(crRoomDeviceApply);
+            pushElementData(crRoomDeviceApply);
         }
         return result;
     }

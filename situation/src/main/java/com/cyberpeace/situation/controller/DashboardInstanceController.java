@@ -2,10 +2,12 @@ package com.cyberpeace.situation.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,20 +270,16 @@ public class DashboardInstanceController {
 			throw new BusinessException(SituationErrorCode.SUBJECT_EMPTY_ERROR);
 		}
 
-		// 三级大屏同一科目下仅能有一个大屏发布
-		// if (StringUtils.isNotBlank(taskId)) {
-		// LambdaQueryWrapper<SituationPublishInstance> queryWrapper = new
-		// LambdaQueryWrapper<>();
-		// queryWrapper.eq(SituationPublishInstance::getStatus,
-		// SituationInstanceStatus.RELEASE.getCode());
-		// queryWrapper.eq(SituationPublishInstance::getSubjectId,
-		// situationPublishInstances.getSubjectId());
-		// SituationPublishInstance one =
-		// situationPublishInstanceService.getOne(queryWrapper);
-		// if (null != one) {
-		// throw new BusinessException(SituationErrorCode.RELEASE_REPEAT_ERROR);
-		// }
-		// }
+		// 修改大屏状态
+		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances, PublicStatus.COMPLETE);
+
+		// 构造推送方案状态变更消息
+		StatusOrderContext statusOrderContext = new StatusOrderContext();
+		statusOrderContext.setOrderTime(new Date());
+		statusOrderContext.setFaid(situationPublishInstances.getSchemeId());
+		statusOrderContext.setFazt(PublicStatus.COMPLETE.getName());
+		statusOrderContext.setTaskId(situationPublishInstances.getTaskId());
+		statusOrderContext.setSubjectId(situationPublishInstances.getSubjectId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -289,9 +287,7 @@ public class DashboardInstanceController {
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				// 想定大屏发布后调用想定接口进行备案
 				if (StringUtils.isNotBlank(subjectId) && situationPublishInstances.getXd()) {
-					Boolean result = remoteSituationService.releaseScreen(
-							situationPublishInstances.getSchemeId(),
-							situationPublishInstances.getResourceId());
+					Boolean result = remoteSituationService.releaseScreen(statusOrderContext);
 					if (!result) {
 						throw new BusinessException(SituationErrorCode.REMOTE_FAILED_TO_RELEASE);
 					}
@@ -314,6 +310,9 @@ public class DashboardInstanceController {
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+
+		// 修改大屏状态
+		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances, PublicStatus.EDIT);
 
 		// 想定大屏不允许主动取消发布
 		if (situationPublishInstances.getXd()) {

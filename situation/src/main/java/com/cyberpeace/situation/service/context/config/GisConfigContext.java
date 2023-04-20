@@ -14,6 +14,10 @@ public class GisConfigContext implements Serializable {
 	private String configId;
 
 	@ApiModelProperty(value = "地图数据源")
-	private Integer mapSource = MapSource.GGIM.getCode();
+	private String mapSource = MapSource.GGIM.getName();
+
+	public void setMapSource(Integer mapSource) {
+		this.mapSource = MapSource.getMapSourceByCode(mapSource).getName();
+	}
 
 }

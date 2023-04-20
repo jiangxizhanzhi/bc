@@ -120,4 +120,13 @@
             and situation_dashboard_attribute.level != 3
         </where>
     </select>
+
+    <select id="selectXdDashboardBySchemeId"
+            resultType="com.cyberpeace.situation.dao.entity.SituationPublishInstance">
+        SELECT * FROM situation_dashboard_instance
+        <where>
+            xd = 1
+            and scheme_id = #{schemeId}
+        </where>
+    </select>
 </mapper>

@@ -619,11 +619,10 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 					.eq(CrTask::getRoleId, crRole.getResourceId())
 					.eq(CrTask::getMissionId, mission.getResourceId())
 					.list();
-			crTaskList.forEach(crTask -> {
-				if (crTask.isFinished()) {
-					throw new BusinessException(CrBusinessErrorCode.CANNOT_END_FINISHED_TASK);
-				}
-			});
+			if (crTaskList.stream().filter(CrTask::isFinished).count() == crTaskList.size()) {
+				throw new BusinessException(CrBusinessErrorCode.CANNOT_END_FINISHED_TASK);
+			}
+
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 

@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.cyberpeace.situation.constant.SituationConstants.DEFAULT_LINE_WIDTH;
 
@@ -154,11 +155,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		RvbBusiness rvbBusiness = whLrvbMapper.getBusiness(sceneData.getSceneId());
 		if (rvbBusiness != null) {
 			List<RvbAsset> rvbAssets = whLrvbMapper.getRvbAsset(rvbBusiness.getBusinessInstanceId());
-			rvbAssets.stream().filter(
-					rvbAsset -> rvbAssets.stream().filter(
-							rvbAssetTmp -> rvbAssetTmp.getDeviceId().equals(rvbAsset.getDeviceId())
-					).count() > 1
-			).forEach(rvbAsset -> rvbAssetMap.put(rvbAsset.getDeviceId(), rvbAsset.getRoleType()));
+			List<RvbAsset> rs = rvbAssets.stream().filter(rvbAsset -> {
+				for (RvbAsset rvbAsset1: rvbAssets) {
+					if (rvbAsset1.getDeviceId().equals(rvbAsset.getDeviceId())
+							&& !rvbAsset1.getRoleType().equals(rvbAsset.getRoleType())) {
+						return false;
+					}
+				}
+				return true;
+			}).collect(Collectors.toList());
+			rs.forEach(rvbAsset -> rvbAssetMap.put(rvbAsset.getDeviceId(), rvbAsset.getRoleType().equals("4") ? "red" : "blue"));
 		}
 
 		for (int i = 0; i < elements.size(); i++) {

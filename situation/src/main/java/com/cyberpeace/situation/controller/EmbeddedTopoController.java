@@ -35,12 +35,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "拓扑接口")
+@Api(tags = "嵌入服务-拓扑")
 @RestController
 @Slf4j
 @RequiresAuthentication
 @RequestMapping("/situation/topo")
-public class TopoController {
+public class EmbeddedTopoController {
 
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;

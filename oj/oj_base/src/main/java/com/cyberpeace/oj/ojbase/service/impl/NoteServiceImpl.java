@@ -137,7 +137,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		} catch (DuplicateKeyException e) {
 			Note report = noteMapper.selectByUnique(note.getUserId(), note.getNoteType(), note.getBusinessType(), note.getBusinessId());
 			//已经提交过的无法再存草稿
-			if (report.getIsSubmit() && !reportAddReq.getOperate()) {
+			if (report.getIsSubmit() != null && report.getIsSubmit() && !reportAddReq.getOperate()) {
 				throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
 			}
 			//已经通过的无法再提交

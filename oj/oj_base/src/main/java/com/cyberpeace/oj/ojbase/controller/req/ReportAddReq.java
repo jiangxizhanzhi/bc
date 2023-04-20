@@ -17,7 +17,6 @@ public class ReportAddReq implements Serializable {
 	private String businessId;
 
 	@ApiModelProperty(value = "操作：存草稿=false,提交=true")
-	@NotBlank
 	private Boolean operate;
 
 	public String getContent() {

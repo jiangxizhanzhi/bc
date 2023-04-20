@@ -1,7 +1,6 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -11,7 +10,6 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.*;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
@@ -175,24 +173,6 @@ public class WebNoteController {
 		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
 
 		return new BaseRsp<>(webNoteRes);
-	}
-
-	@ApiOperation("实验报告更新")
-	@PatchMapping("/report")
-	public BaseRsp<Integer> update(@RequestBody @Validated ReportUpdateReq reportUpdateReq) {
-		Note report = noteMapper.selectById(reportUpdateReq.getResourceId());
-		//已经提交过的无法再存草稿
-		if (report.getIsPublic() && !reportUpdateReq.getOperate()) {
-			throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
-		}
-		//已经通过的无法再提交
-		NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
-		if (noteEvaluate != null && noteEvaluate.getPassed()) {
-			throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
-		}
-		Note newReport = BeanUtils.copy(reportUpdateReq, Note.class);
-		newReport.setIsPublic(reportUpdateReq.getOperate());
-		return new BaseRsp<>(noteMapper.updateById(newReport));
 	}
 
 }

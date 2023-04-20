@@ -12,7 +12,7 @@ public class ReportAddReq implements Serializable {
 	@ApiModelProperty("实验报告内容")
 	private String content;
 
-	@ApiModelProperty("资源编号 课程 课时 习题")
+	@ApiModelProperty("课时资源编号")
 	@NotBlank
 	private String businessId;
 

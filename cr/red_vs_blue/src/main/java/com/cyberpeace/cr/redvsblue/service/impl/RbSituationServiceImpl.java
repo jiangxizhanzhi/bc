@@ -353,6 +353,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 				.eq(CrTrainAction::getRoomId, roomId)
 				.eq(CrTrainAction::getRoleType, roleType)
 				.eq(CrTrainAction::getModule, CrTrainAction.Module.TEAM.getCode())
+				.orderByDesc(CrTrainAction::getActionTime)
 				.list();
 
 		return toRbSituationActionRsp(crTrainActionList);
@@ -367,6 +368,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 						CrRole.RbRoleGroup.RED.getCode())
 						? CrTrainAction.PlatformEvent.RED_PLATFORM_ACTION
 						: CrTrainAction.PlatformEvent.BLUE_PLATFORM_ACTION)
+				.orderByDesc(CrTrainAction::getActionTime)
 				.list();
 
 		return toRbSituationActionRsp(crTrainActionList);

@@ -115,7 +115,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				StringBuilder description = new StringBuilder("红队队员【" + userName + "】对【")
 						.append(StringUtils.join(targetName, ","))
 						.append("】发起【")
-						.append(EnumUtils.getEnumByCode(mission.getEventType(), ActionTypeZHL.class))
+						.append(EnumUtils.getEnumDescByCode(mission.getEventType(), ActionTypeZHL.class))
 						.append("】攻击，成功获得")
 						.append(score)
 						.append("分。");
@@ -125,7 +125,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 				StringBuilder description = new StringBuilder("蓝队队员【" + userName + "】对【")
 						.append(StringUtils.join(targetName, ","))
 						.append("】进行【")
-						.append(EnumUtils.getEnumByCode(mission.getEventType(), ActionTypeZHL.class))
+						.append(EnumUtils.getEnumDescByCode(mission.getEventType(), ActionTypeZHL.class))
 						.append("】防护，成功获得")
 						.append(score)
 						.append("分。");

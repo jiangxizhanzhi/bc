@@ -1791,7 +1791,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 				.businessType(Note.NoteResourceType.LESSON.getCode())
 				.noteType(Note.NoteType.REPORT.getCode()).userId(userInfo.getUserId()).build();
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
-		if (null != noteBo && noteBo.getIsPublic()) {
+		if (null != noteBo && noteBo.getIsSubmit()) {
 			reportBo.setContent(noteBo.getContent());
 			reportBo.setSubmitTime(noteBo.getUpdateTime());
 			reportBo.setNoteId(noteBo.getResourceId());

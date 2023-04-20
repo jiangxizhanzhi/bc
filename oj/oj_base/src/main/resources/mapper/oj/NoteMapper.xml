@@ -35,6 +35,9 @@
             <if test="isPublic != null and isPublic">
                 and `public` = #{isPublic}
             </if>
+            <if test="isSubmit != null">
+                and is_submit = #{isSubmit}
+            </if>
         </where>
     </select>
 
@@ -138,4 +141,13 @@
             </if>
         </where>
     </delete>
+
+    <select id="selectByUnique" resultType="com.cyberpeace.oj.ojbase.dao.entity.Note">
+        select *
+        from oj_note
+        where user_id = #{userId}
+            and note_type = #{noteType}
+            and business_type = #{businessType}
+            and business_id = #{businessId}
+    </select>
 </mapper>

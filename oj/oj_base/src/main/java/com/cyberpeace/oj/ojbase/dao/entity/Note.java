@@ -38,6 +38,9 @@ public class Note extends AuthTable {
 	@ApiModelProperty("是否公开")
 	private Boolean isPublic;
 
+	@ApiModelProperty("实验报告是否提交")
+	private Boolean isSubmit;
+
 	public enum NoteType implements GenericEnum {
 
 		NOTE(1, "笔记"), REPORT(2, "实验报告");

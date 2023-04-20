@@ -1,18 +1,7 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.controller.req.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -22,6 +11,8 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.*;
 import com.cyberpeace.oj.ojbase.controller.res.WebNoteRes;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -31,9 +22,15 @@ import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "oj-前台笔记相关api")
 @RestController
@@ -65,7 +62,7 @@ public class WebNoteController {
 
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
-		Note newNote = noteService.addNote(noteAddContext, CommonConstant.TRUE);
+		Note newNote = noteService.addNote(noteAddContext);
 
 		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
 
@@ -128,7 +125,7 @@ public class WebNoteController {
 		}
 
 		WebNoteRes noteRes = BeanUtils.copy(noteBo, WebNoteRes.class);
-		noteRes.setIsSubmit(noteBo.getIsPublic());
+		noteRes.setIsSubmit(noteBo.getIsSubmit());
 		// 实验报告数据评估结果组装
 		if (getNoteReq.getNoteType().intValue() == Note.NoteType.REPORT.getCode().intValue()) {
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(noteRes.getResourceId());
@@ -170,14 +167,10 @@ public class WebNoteController {
 		return new BaseRsp(uploadFile);
 	}
 
-	@ApiOperation("实验报告保存")
+	@ApiOperation("实验报告保存/更新")
 	@PostMapping("/report")
 	public BaseRsp<WebNoteRes> save(@RequestBody @Validated ReportAddReq reportAddReq) {
-		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
-		noteAddContext.setNoteType(Note.NoteType.REPORT.getCode());
-		noteAddContext.setBusinessType(Note.NoteResourceType.LESSON.getCode());
-		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
-		Note newNote = noteService.addNote(noteAddContext, reportAddReq.getOperate());
+		Note newNote = noteService.addAndUpdateReport(reportAddReq);
 
 		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
 

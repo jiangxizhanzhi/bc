@@ -3,15 +3,22 @@ package com.cyberpeace.oj.ojbase.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.UserPageContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.ReportAddReq;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
+import com.cyberpeace.oj.ojbase.dao.mapper.NoteEvaluateMapper;
 import com.cyberpeace.oj.ojbase.dao.mapper.NoteMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
@@ -36,6 +43,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private NoteEvaluateMapper noteEvaluateMapper;
+
 	@Override
 	public NoteBo selectByUnique(NoteUniqueContext uniqueContext) {
 		Note note = noteMapper.selectByCondition(uniqueContext);
@@ -47,11 +57,11 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	}
 
 	@Override
-	public Note addNote(NoteAddContext noteAddContext, Boolean isPublic) {
+	public Note addNote(NoteAddContext noteAddContext) {
 		Note note = BeanUtils.copy(noteAddContext, Note.class);
 		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
 		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
-		note.setIsPublic(isPublic);
+		note.setIsPublic(CommonConstant.TRUE);
 		try {
 			noteMapper.insert(note);
 		} catch (DuplicateKeyException e) {
@@ -81,8 +91,12 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			userInfoMap = StreamApiUtils.toMap(userList, UserInfo::getUserId,
 					UserInfo::getName);
 		}
-
-		IPage<Note> iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb);
+		IPage<Note> iPage;
+		if (listQuery.getNoteType().equals(Note.NoteType.REPORT.getCode())) {
+			iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb, true);
+		}else {
+			iPage = noteMapper.pageByUserIdsAndContent(page, listQuery, isWeb, null);
+		}
 
 		if (StringUtils.isNotBlank(noteListQuery.getUserName())) {
 
@@ -104,5 +118,36 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			});
 		}
 
+	}
+
+	@Override
+	public Note addAndUpdateReport(ReportAddReq reportAddReq) {
+		NoteAddContext noteAddContext = BeanUtils.copy(reportAddReq, NoteAddContext.class);
+		noteAddContext.setNoteType(Note.NoteType.REPORT.getCode());
+		noteAddContext.setBusinessType(Note.NoteResourceType.LESSON.getCode());
+		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
+
+		Note note = BeanUtils.copy(noteAddContext, Note.class);
+		note.setReadAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		note.setOperationAuthType(AuthTable.AuthType.ALL_SHARE_MODE.getCode());
+		note.setIsPublic(CommonConstant.TRUE);
+		note.setIsSubmit(reportAddReq.getOperate());
+		try {
+			noteMapper.insert(note);
+		} catch (DuplicateKeyException e) {
+			Note report = noteMapper.selectByUnique(note.getUserId(), note.getNoteType(), note.getBusinessType(), note.getBusinessId());
+			//已经提交过的无法再存草稿
+			if (report.getIsSubmit() && !reportAddReq.getOperate()) {
+				throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
+			}
+			//已经通过的无法再提交
+			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
+			if (noteEvaluate != null && noteEvaluate.getPassed()) {
+				throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
+			}
+			note.setIsSubmit(reportAddReq.getOperate());
+			noteMapper.updateById(note);
+		}
+		return note;
 	}
 }

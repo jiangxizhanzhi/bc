@@ -19,7 +19,8 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	IPage<Note> pageByUserIdsAndContent(Page page,
 			@Param("noteListQuery") NoteListQuery noteListQuery,
-			@Param("isPublic") Boolean isPublic);
+			@Param("isPublic") Boolean isPublic,
+			@Param("isSubmit") Boolean isSubmit);
 
 	@Override
 	int updateById(Note note);
@@ -33,4 +34,7 @@ public interface NoteMapper extends BaseMapper<Note> {
 
 	void deleteByBusiness(@Param("businessId") String businessId,
 			@Param("noteType") Integer noteType, @Param("resourceType") Integer resourceType);
+
+	Note selectByUnique(@Param("userId") String userId, @Param("noteType") Integer noteType,
+						@Param("businessType") Integer businessType, @Param("businessId") String businessId);
 }

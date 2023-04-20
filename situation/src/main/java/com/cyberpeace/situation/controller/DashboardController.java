@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.situation.service.context.NewPageContext;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +28,13 @@ import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardBasicAttributeRes;
 import com.cyberpeace.situation.controller.res.DashboardIdRes;
-import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
-import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.WsEventAd;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.service.*;
 import com.cyberpeace.situation.service.context.JtTaskEventContext;
+import com.cyberpeace.situation.service.context.NewPageContext;
 import com.cyberpeace.situation.service.context.TopoParaContext;
 import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 
@@ -45,7 +44,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势大屏")
 @RestController
-// @RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/dashboard/")
 public class DashboardController {
 
@@ -54,9 +53,6 @@ public class DashboardController {
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;
-
-	@Autowired
-	private DashboardAttributeMapper dashboardAttributeMapper;
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
@@ -73,7 +69,7 @@ public class DashboardController {
 	@Autowired
 	private SituationTopoService situationTopoService;
 
-	@ApiOperation("获取大屏类型属性（前台）")
+	@ApiOperation("获取大屏跳转信息（前台）")
 	@GetMapping("/id/")
 	public BaseRsp<DashboardIdRes> getDashboardId(
 			@ApiParam(name = "task_id", value = "任务ID",
@@ -84,8 +80,9 @@ public class DashboardController {
 					value = "sub_range_id", required = false) String subRangeId) {
 
 		SubjectListReq subjectListReq = new SubjectListReq(subRangeId, taskId, subjectId);
-		List<SubjectContext> subjectContexts = remoteSituationService.getSubjectList(subjectListReq);
-		if (subjectContexts.size() != 1){
+		List<SubjectContext> subjectContexts = remoteSituationService
+				.getSubjectList(subjectListReq);
+		if (subjectContexts.size() != 1) {
 			throw new BusinessException(SituationErrorCode.SUBJECT_INFO_ERROR);
 		}
 
@@ -101,7 +98,7 @@ public class DashboardController {
 
 	}
 
-	@ApiOperation("获取大屏类型属性（后台）")
+	@ApiOperation("获取大屏跳转信息（后台）")
 	@GetMapping("/attribute/type/")
 	public BaseRsp<DashboardIdRes>
 			getDashboardTypeAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
@@ -121,7 +118,7 @@ public class DashboardController {
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
 	}
 
-	@ApiOperation("获取大屏参数属性")
+	@ApiOperation("获取大屏配置属性")
 	@GetMapping("/config/parameter/")
 	public BaseRsp<DashboardConfigContext>
 			getDashboardParameterConfig(@RequestParam("dashboard_id") @ApiParam(required = true,
@@ -129,7 +126,7 @@ public class DashboardController {
 		return new BaseRsp<>(dashboardService.getParameterConfigByDashboardId(dashboardId));
 	}
 
-	@ApiOperation("获取动态字段列表")
+	@ApiOperation("获取大屏动态属性选项")
 	@GetMapping("/dynamic_parameter/")
 	public BaseRsp<List<JSONObject>> getDynamicParameter() {
 		return new BaseRsp<>(DynamicParameter.getTaskDynamicParameter());
@@ -141,66 +138,36 @@ public class DashboardController {
 		return new BaseRsp<>(ListUtil.listRangeInt(5, 10));
 	}
 
-	@ApiOperation("推送大屏属性变更消息")
+	@ApiOperation("推送大屏消息-通用")
 	@PostMapping("/change_notice/")
 	public BaseRsp<Boolean>
 			pushDashboardChange(@RequestBody @Validated DashboardChangeReq dashboardChangeReq) {
 		WsMessage<JSONObject> wsMessage = new WsMessage<>(dashboardChangeReq.getCode(),
 				dashboardChangeReq.getData());
-		if (dashboardChangeReq.getFeatureId() == null){
-			situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId());
+		if (dashboardChangeReq.getFeatureId() == null) {
+			situationHandlerService.pushDataToDashboard(wsMessage,
+					dashboardChangeReq.getDashboardId());
 		} else {
-			situationHandlerService.pushDataToDashboard(wsMessage, dashboardChangeReq.getDashboardId(),
-					dashboardChangeReq.getFeatureId());
+			situationHandlerService.pushDataToDashboard(wsMessage,
+					dashboardChangeReq.getDashboardId(), dashboardChangeReq.getFeatureId());
 		}
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("推送地图数据源变更消息")
-	@PostMapping("/map_source/")
-	public BaseRsp<Boolean>
-			pushMapSourceChange(@RequestBody @Validated MapSourceChangeReq mapSourceChangeReq) {
-
-		// 依据大屏ID修改相应的地图源属性
-		DashboardAttribute dashboardAttribute = dashboardService
-				.getDashboardAttribute(mapSourceChangeReq.getDashboardId());
-		dashboardAttribute.setMapSource(mapSourceChangeReq.getCode());
-		dashboardAttributeMapper.updateById(dashboardAttribute);
-
-		// 推送地图切换消息
-		JSONObject data = new JSONObject();
-		data.put("value", mapSourceChangeReq.getCode());
-		WsMessage<JSONObject> wsMessage = new WsMessage<>(MessageType.MapSource.getDesc(), data);
-		situationHandlerService.pushDataToDashboard(wsMessage, mapSourceChangeReq.getDashboardId(),
-				mapSourceChangeReq.getFeatureId());
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("推送返回首页消息")
+	@ApiOperation("推送大屏消息-打开首页")
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
-
-		// 获取默认的靶场信息
-		String bcCode = SystemPropUtil.getProp("BC_CODE");
-
-		// 获取默认的大屏属性
-		//DashboardBasicAttributeRes dashboardBasicAttributeRes = dashboardService
-		//		.getDashboardBasicAttribute(bcCode);
-		//if (dashboardBasicAttributeRes == null) {
-		//	throw new BusinessException(SituationErrorCode.DEFAULT_BC_ERROR);
-		//}
-
 		// 推送返回靶场大屏消息
-		NewPageContext message = new NewPageContext("00");
-		WsMessage<NewPageContext> wsMessage = new WsMessage<>(
-				MessageType.JumpPage.getDesc(), message);
+		NewPageContext message = new NewPageContext(SystemPropUtil.getProp("BC_CODE"));
+		WsMessage<NewPageContext> wsMessage = new WsMessage<>(MessageType.JumpPage.getDesc(),
+				message);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),
 				dashboardBasicReq.getFeatureId());
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("刷新大屏动态数据")
+	@ApiOperation("获取大屏刷新数据-通用")
 	@PostMapping("/event/refresh/")
 	public BaseRsp<Boolean> refreshEvent(@RequestBody @Validated EventRefreshReq req) {
 
@@ -230,12 +197,6 @@ public class DashboardController {
 		return eventMsgReq;
 	}
 
-	@ApiOperation("获取最新的任务事件")
-	@PostMapping("/event/task/")
-	public BaseRsp<Boolean> getTaskEvent(@RequestBody @Validated TaskEventMsgReq taskEventReq) {
-		return new BaseRsp<>(getTaskEvents(taskEventReq));
-	}
-
 	private Boolean getTaskEvents(TaskEventMsgReq taskEventReq) {
 		List<TaskEventContext> taskEventContexts = remoteSituationService
 				.getTaskEventList(taskEventReq, taskEventReq.getFeatureId());
@@ -243,25 +204,6 @@ public class DashboardController {
 				taskEventReq.getDashboardId(), taskEventReq.getFeatureId(), taskEventContexts, null,
 				null);
 		return true;
-	}
-
-	@ApiOperation("获取最新的任务解题事件")
-	@GetMapping("/event/task/jt/")
-	public BaseRsp<Boolean> getJtTaskEvent(EventQueryReq eventQueryReq) {
-
-		JtTaskEventContext jtTaskEventContext = new JtTaskEventContext();
-		WsMessage<JtTaskEventContext> wsMessage = new WsMessage<>(MessageType.TaskEventJt.getDesc(),
-				jtTaskEventContext);
-		String sceneId = eventQueryReq.getDashboardId() + "_" + eventQueryReq.getFeatureId();
-		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
-
-		return new BaseRsp<>(true);
-	}
-
-	@ApiOperation("获取最新的任务攻防事件")
-	@PostMapping("/event/task/ad/")
-	public BaseRsp<Boolean> getTaskAdEvent(@RequestBody @Validated EventMsgReq eventReq) {
-		return new BaseRsp<>(getAdEvents(eventReq));
 	}
 
 	private Boolean getAdEvents(EventMsgReq eventReq) {
@@ -289,13 +231,6 @@ public class DashboardController {
 				eventReq.getFeatureId());
 
 		return result;
-	}
-
-	@ApiOperation("获取最新的节点状态事件")
-	@PostMapping("/event/task/node/")
-	public BaseRsp<Boolean> getTaskNodeEvent(@RequestBody @Validated EventMsgReq eventReq) {
-
-		return new BaseRsp<>(getTaskNodeEvents(eventReq));
 	}
 
 	private Boolean getTaskNodeEvents(EventMsgReq eventReq) {
@@ -342,4 +277,18 @@ public class DashboardController {
 		}
 		return true;
 	}
+
+	@ApiOperation("获取大屏刷新数据-任务解题事件")
+	@GetMapping("/event/task/jt/")
+	public BaseRsp<Boolean> getJtTaskEvent(EventQueryReq eventQueryReq) {
+
+		JtTaskEventContext jtTaskEventContext = new JtTaskEventContext();
+		WsMessage<JtTaskEventContext> wsMessage = new WsMessage<>(MessageType.TaskEventJt.getDesc(),
+				jtTaskEventContext);
+		String sceneId = eventQueryReq.getDashboardId() + "_" + eventQueryReq.getFeatureId();
+		situationHandlerService.pushDataToRoom(wsMessage, sceneId);
+
+		return new BaseRsp<>(true);
+	}
+
 }

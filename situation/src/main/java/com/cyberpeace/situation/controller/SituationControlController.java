@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
-@Api(tags = "态势编排")
+@Api(tags = "【未用】态势编排")
 @RestController
 @Slf4j
 @RequiresAuthentication
@@ -123,8 +123,8 @@ public class SituationControlController {
 		dynamicSchemeService.clearMedia(sceneId);
 		dynamicSchemeService.clearRoomSchedule(sceneId);
 		String code = sceneConfigService.updateSceneCode(sceneId);
-		List<String> elementIds = dynamicSchemeService
-				.getElementIds(sceneId, runAttackMessageReq.getIsInstance());
+		List<String> elementIds = dynamicSchemeService.getElementIds(sceneId,
+				runAttackMessageReq.getIsInstance());
 		if (runAttackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 			dynamicSchemeService.pushMediaToRoom(attackMessageBo, code);
 		} else {

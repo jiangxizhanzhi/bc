@@ -31,11 +31,11 @@ import com.cyberpeace.situation.service.SituationGisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "数据库访问权限")
+@Api(tags = "数据库管理-访问权限管理")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/situation/db/access/authority")
-public class SituationDbAccessAuthorityController {
+public class DbAccessAuthorityController {
 
 	@Autowired
 	private SituationDbAccessAuthorityMapper situationDbAccessAuthorityMapper;

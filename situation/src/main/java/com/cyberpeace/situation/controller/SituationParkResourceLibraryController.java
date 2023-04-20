@@ -30,7 +30,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
-@Api(tags = "组件库-园区资源库")
+@Api(tags = "【废弃】组件库-园区资源库")
 @RestController
 @Slf4j
 @RequiresAuthentication

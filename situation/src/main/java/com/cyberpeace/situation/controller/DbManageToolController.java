@@ -37,11 +37,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(tags = "数据转换工具管理")
+@Api(tags = "数据库管理-管理工具")
 @RestController
 @Slf4j
 @RequestMapping("/situation/db/tool")
-public class SituationDbToolController {
+public class DbManageToolController {
 
 	@Autowired
 	private SituationDbToolMapper situationDbToolMapper;

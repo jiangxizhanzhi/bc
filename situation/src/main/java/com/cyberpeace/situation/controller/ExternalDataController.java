@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,11 +46,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "三方数据")
+@Api(tags = "外部数据")
 @RestController
 // @RequiresAuthentication
 @RequestMapping("/third/")
-public class ThirdPartyController {
+public class ExternalDataController {
 
 	@Autowired
 	private ThirdPartyService thirdPartyService;
@@ -155,8 +156,8 @@ public class ThirdPartyController {
 					value = "sub_range_id", required = false) String subRangeId,
 			@ApiParam(name = "scheme_id", value = "可视化方案ID", required = false) @RequestParam(
 					value = "scheme_id", required = false) String schemeId) {
-		List<PlatformLinkContext> platformLinkList = remoteSituationService.getPlatformLinkList(taskId,
-				subjectId, subRangeId, schemeId);
+		List<PlatformLinkContext> platformLinkList = remoteSituationService
+				.getPlatformLinkList(taskId, subjectId, subRangeId, schemeId);
 		return new BaseRsp<>(platformLinkList);
 	}
 

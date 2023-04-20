@@ -31,11 +31,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "推送态势事件")
+@Api(tags = "态势大屏-推送事件")
 @RestController
 @RequiresAuthentication
 @RequestMapping("/situation/simulation")
-public class SituationEventController {
+public class DashboardEventController {
 
 	@Autowired
 	private SituationHandlerService situationHandlerService;

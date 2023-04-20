@@ -10,9 +10,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.situation.dao.mapper.*;
-import com.cyberpeace.situation.model.StringType;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.TransactionStatus;
@@ -26,25 +24,15 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.integratation.model.situation.PlatformContext;
-import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.MapSource;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.controller.req.BatchDeleteReq;
-import com.cyberpeace.situation.controller.req.DashboardBatchDeleteReq;
-import com.cyberpeace.situation.controller.req.ImportMarkReq;
-import com.cyberpeace.situation.controller.req.SituationGisReq;
-import com.cyberpeace.situation.controller.res.TemplatePlatformRes;
-import com.cyberpeace.situation.dao.entity.DashboardTemplate;
+import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.GisMark;
-import com.cyberpeace.situation.model.IntType;
-import com.cyberpeace.situation.model.ViewAngle;
-import com.cyberpeace.situation.service.DashboardTemplateRefService;
-import com.cyberpeace.situation.service.DashboardTemplateService;
-import com.cyberpeace.situation.service.SituationGisService;
-import com.cyberpeace.situation.service.context.ConfigContext;
-import com.cyberpeace.situation.service.context.DashboardTemplateContext;
+import com.cyberpeace.situation.dao.entity.SituationPlotPixel;
+import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
+import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.service.SituationPlotPixelService;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 import com.google.common.collect.Lists;
 
@@ -54,53 +42,80 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
-@Api(tags = "GIS接口")
-@RestController
+/**
+ * @Author xuxz
+ * @Date 17/12/2022 下午5:01
+ */
+
+@Api(tags = "嵌入服务-GIS标绘")
 @Slf4j
-// @RequiresAuthentication
-@RequestMapping("/situation/gis")
-public class GisController {
+@RestController
+@RequiresAuthentication
+@RequestMapping("/situation")
+public class EmbeddedGisMarkController {
 
 	@Autowired
 	private GisMarkMapper gisMarkMapper;
 
 	@Autowired
-	private DashboardTemplateRefService dashboardTemplateRefService;
-
-	@Autowired
-	private RemoteSituationService remoteSituationService;
-
-	@Autowired
-	private DashboardTemplateMapper dashboardTemplateMapper;
+	private SituationPlotPixelService situationPlotPixelService;
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
-
-	@Autowired
-	private DashboardTemplateService dashboardTemplateService;
 
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Autowired
-	private DashboardTemplateRefMapper dashboardTemplateRefMapper;
+	@ApiOperation("新增绘标图元")
+	@PostMapping("/plot/pixel")
+	public BaseRsp<String> createColorTheme(
+			@RequestBody @Validated(Create.class) SituationPlotPixelReq situationPlotPixelReq) {
+		return new BaseRsp<>(
+				situationPlotPixelService.createSituationPlotPixel(situationPlotPixelReq));
+	}
 
-	@Autowired
-	private SituationGisMapper situationGisMapper;
+	@ApiOperation("修改绘标图元")
+	@PatchMapping("/plot/pixel")
+	public BaseRsp<String> updateSituationPlotPixel(
+			@RequestBody @Validated(Update.class) SituationPlotPixelReq situationPlotPixelReq) {
+		return new BaseRsp<>(
+				situationPlotPixelService.updateSituationPlotPixel(situationPlotPixelReq));
+	}
 
-	@Autowired
-	private SituationGisService situationGisService;
+	@ApiOperation("获取改绘标图元详情")
+	@GetMapping("/plot/pixel")
+	public BaseRsp<SituationPlotPixel>
+			getSituationPlotPixelInfo(@RequestParam("resource_id") @ApiParam(required = true,
+					name = "resource_id", value = "api资源id") String resourceId) {
+		return new BaseRsp<>(situationPlotPixelService.getSituationPlotPixelInfo(resourceId));
+	}
+
+	@ApiOperation("批量删除改绘标图元")
+	@DeleteMapping("/plot/pixel")
+	public BaseRsp<Integer> deleteSituationPlotPixel(
+			@RequestBody @Validated SituationIconDelReq situationIconDelReq) {
+		return new BaseRsp<>(situationPlotPixelService
+				.deleteSituationPlotPixel(situationIconDelReq.getIdList()));
+	}
+
+	@ApiOperation("绘标图元分页查询")
+	@GetMapping("/plot/pixel/list")
+	public BaseRsp<ListRsp<SituationPlotPixel>>
+			getSituationPlotPixelPage(SituationPlotPixelPageReq SituationPlotPixelPageReq) {
+		return new BaseRsp<>(
+				situationPlotPixelService.getSituationPlotPixelPage(SituationPlotPixelPageReq));
+	}
 
 	@ApiOperation("新增标绘配置")
-	@PostMapping("/mark/")
+	@PostMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> setConfig(@RequestBody GisMarkContext gisMarkContext) {
 		return new BaseRsp<>(addGisMark(gisMarkContext));
 	}
 
 	@ApiOperation("查询标绘配置")
-	@GetMapping("/mark/")
+	@GetMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> getConfig(@RequestParam("mark_id") @ApiParam(required = true,
 			name = "mark_id", value = "标绘ID") String markId) {
 		GisMark gisMark = gisMarkMapper.selectById(markId);
@@ -108,7 +123,7 @@ public class GisController {
 	}
 
 	@ApiOperation("更新标绘配置")
-	@PatchMapping("/mark/")
+	@PatchMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> updateConfig(@RequestBody GisMarkContext gisMarkContext) {
 
 		// 软删除原标绘数据
@@ -117,7 +132,7 @@ public class GisController {
 	}
 
 	@ApiOperation("删除标绘配置")
-	@DeleteMapping("/mark/")
+	@DeleteMapping("/gis/mark/")
 	public BaseRsp<Boolean> deleteConfig(@RequestParam("mark_id") @ApiParam(required = true,
 			name = "mark_id", value = "标绘ID") String markId) {
 		deleteMark(markId);
@@ -125,7 +140,7 @@ public class GisController {
 	}
 
 	@ApiOperation("查询大屏标绘配置")
-	@GetMapping("/mark/list/")
+	@GetMapping("/gis/mark/list/")
 	public BaseRsp<List<GisMarkContext>> getConfigList(
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
 					value = "大屏ID") String dashboardId,
@@ -137,7 +152,7 @@ public class GisController {
 	}
 
 	@ApiOperation("清空大屏标绘数据")
-	@DeleteMapping("/dashboard/mark/")
+	@DeleteMapping("/gis/dashboard/mark/")
 	public BaseRsp<Boolean>
 			deleteDashboardMark(@RequestBody @Validated DashboardBatchDeleteReq ids) {
 		List<String> dashboardIds = ids.getIds();
@@ -158,7 +173,7 @@ public class GisController {
 	}
 
 	@ApiOperation("导出大屏标绘数据")
-	@GetMapping("/mark/export/")
+	@GetMapping("/gis/mark/export/")
 	public void exportConfig(HttpServletResponse response,
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
 					value = "大屏ID") String dashboardId) {
@@ -187,7 +202,7 @@ public class GisController {
 	}
 
 	@ApiOperation("导入大屏标绘数据")
-	@PostMapping("/mark/import")
+	@PostMapping("/gis/mark/import")
 	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)
 			throws IOException, ZipException {
 		// 1. 临时存储导入文件
@@ -236,100 +251,5 @@ public class GisController {
 		GisMark gisMark = gisMarkMapper.selectById(markId);
 		gisMark.setDeleteTime(new Date());
 		gisMarkMapper.updateById(gisMark);
-	}
-
-	@ApiOperation("通过模板ID获取平台列表")
-	@GetMapping("/template/platform/")
-	public BaseRsp<TemplatePlatformRes> getPlatformByTemplateId(
-			@RequestParam("template_id") @ApiParam(required = true, name = "template_id",
-					value = "模板ID") String templateId,
-			@RequestParam("type") @ApiParam(required = true, name = "type",
-					value = "类型 1-模板 2-实例") Integer type) {
-
-		if (type.equals(1)) {
-			DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
-			if (dashboardTemplate != null) {
-				return new BaseRsp<>(new TemplatePlatformRes(
-						JsonUtil.toJsonObject(dashboardTemplate.getViewAngle(), ViewAngle.class)));
-			}
-		}
-
-		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
-				.getDashboardTemplateContext(templateId);
-
-		if (dashboardTemplateContext == null) {
-			return new BaseRsp<>(new TemplatePlatformRes());
-		}
-		List<PlatformContext> platformContexts = remoteSituationService.getPlatformList(
-				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
-				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
-
-		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
-		templatePlatformRes.setPlatformList(platformContexts);
-		templatePlatformRes.setViewAngle(
-				JsonUtil.toJsonObject(dashboardTemplateContext.getViewAngle(), ViewAngle.class));
-		return new BaseRsp<>(templatePlatformRes);
-	}
-
-	@ApiOperation("获取Gis配置")
-	@GetMapping("/config/get/")
-	public BaseRsp<ConfigContext>
-			getSituationGisConfig(@RequestParam("config_id") String resourceId) {
-		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
-	}
-
-	@ApiOperation("新增Gis配置")
-	@PostMapping("/config/create/")
-	public BaseRsp<ConfigContext> createSituationGisConfig(
-			@RequestBody @Validated(Create.class) SituationGisReq situationGisReq) {
-		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
-	}
-
-	@ApiOperation("修改Gis配置")
-	@PatchMapping("/config/update/")
-	public BaseRsp<ConfigContext> updateSituationGisConfig(
-			@RequestBody @Validated(Update.class) SituationGisReq situationGisReq) {
-		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
-	}
-
-	@ApiOperation("删除Gis配置")
-	@PatchMapping("/config/delete/")
-	public BaseRsp<Integer>
-			deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
-		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
-	}
-
-	@ApiOperation("获取全量GIS配置列表")
-	@GetMapping("/config/list/")
-	public BaseRsp<List<ConfigContext>> getAllConfig() {
-		return new BaseRsp<>(situationGisService.getAllConfig());
-	}
-
-	@ApiOperation("获取经纬度所属省份")
-	@GetMapping("/province/")
-	public BaseRsp<String> getProvince(
-			@RequestParam("longitude") @ApiParam(required = true, name = "longitude",
-					value = "经度") String longitude,
-			@RequestParam("latitude") @ApiParam(required = true, name = "latitude",
-					value = "维度") String latitude) {
-		return new BaseRsp<>(
-				situationGisService.getProvince(Float.valueOf(longitude), Float.valueOf(latitude)));
-	}
-
-	@ApiOperation("获取大屏地图源选项")
-	@GetMapping("/map/source/list/")
-	public BaseRsp<List<StringType>> getMapSourceList() {
-		return new BaseRsp<>(MapSource.getList());
-	}
-
-	@ApiOperation("地图静态资源鉴权")
-	@GetMapping("/map/resource/auth/")
-	public BaseRsp<Boolean> authMapResource(HttpServletResponse response) {
-		if (situationGisService.checkAuthorizationIp(CommonContext.getIp())) {
-			return new BaseRsp<>(true);
-		} else {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return new BaseRsp<>(false);
-		}
 	}
 }

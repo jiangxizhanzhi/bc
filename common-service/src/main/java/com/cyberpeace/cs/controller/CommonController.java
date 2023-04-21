@@ -29,6 +29,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.Date;
+
 @Api(tags = "公共服务接口")
 @RestController
 @RequestMapping("/common")
@@ -127,6 +130,10 @@ public class CommonController {
 			throw new BusinessException(ErrorCode.CANT_FIND_MD_FILE);
 		}
 		// md文件内容
+		File mdFile = new File(mdFilePath);
+		if (mdFile.length() > Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))) {
+			throw new BusinessException(ErrorCode.MD_SIZE_TOO_LARGE, Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))/1048576);
+		}
 		String content = MdUtil.parseMarkdown(mdFilePath);
 		realContent = utilService.replaceMarkdownFile(content);
 		extractBase.setContent(realContent);

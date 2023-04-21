@@ -161,4 +161,7 @@ public interface ErrorCode {
 
 	/** 压缩包内找不到md文件 */
 	String CANT_FIND_MD_FILE = "100052";
+
+	/** 压缩包中md文件不能大于%dM */
+	String MD_SIZE_TOO_LARGE = "100053";
 }

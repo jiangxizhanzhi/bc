@@ -7,6 +7,11 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * 以下数据库表共用一个entity
+ * rtks_attack_train_relation
+ * rtks_attack_ics_train_relation
+ */
 @Data
 @TableName("rtks_attack_train_relation")
 public class AttackTrainRelation extends BaseTable {

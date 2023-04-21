@@ -6,6 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
+/**
+ * 以下数据库表共用一个entity
+ * rtks_attack
+ * rtks_attack_ics
+ */
 @Data
 @TableName("rtks_attack")
 public class Attack {

@@ -15,7 +15,7 @@ public interface MenuConstant {
     String WEB_OJ_COURSE = "oj-course";
 
     // 全部课程
-    String WEB_OJ_ALL_COURSE = "course-folder";
+    String WEB_OJ_ALL_COURSE = "oj-all-course";
 
     //知识课程
     String WEB_OJ_KNOWLEDGE_COURSE = "oj-knowledge-course";
@@ -33,7 +33,7 @@ public interface MenuConstant {
     String WEB_CR_TEAM_TRAIN = "group-training";
 
     //红蓝对抗
-    String WEB_CR_RED_VS_BLUE = "red-vs-blue-web-folder";
+    String WEB_CR_RED_VS_BLUE = "red-vs-blue";
 
     //工具库
     String WEB_CR_TOOL_TOOLS = "tool-magazine";

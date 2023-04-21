@@ -79,4 +79,12 @@ public class DashboardTemplateRes implements Serializable {
 	public void setConfig(String config) {
 		this.config = JsonUtil.toJsonObject(config, DashboardConfigContext.class);
 	}
+
+	public void setViewAngle(String viewAngle) {
+		this.viewAngle = JsonUtil.toJsonObject(viewAngle, ViewAngle.class);
+	}
+
+	public void setLayerShow(String layerShow) {
+		this.layerShow = JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class);
+	}
 }

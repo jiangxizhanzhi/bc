@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "外部数据")
 @RestController
-// @RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/third/")
 public class ExternalDataController {
 

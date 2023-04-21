@@ -2,8 +2,6 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
@@ -37,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "嵌入服务-GIS")
 @RestController
 @Slf4j
-// @RequiresAuthentication
+@RequiresAuthentication
 @RequestMapping("/situation/gis")
 public class EmbeddedGisController {
 
@@ -137,14 +134,4 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(MapSource.getList());
 	}
 
-	@ApiOperation("地图静态资源鉴权")
-	@GetMapping("/map/resource/auth/")
-	public BaseRsp<Boolean> authMapResource(HttpServletResponse response) {
-		if (situationGisService.checkAuthorizationIp(CommonContext.getIp())) {
-			return new BaseRsp<>(true);
-		} else {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return new BaseRsp<>(false);
-		}
-	}
 }

@@ -3,12 +3,15 @@ package com.cyberpeace.gateway.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.JsonUtil;
@@ -36,6 +39,7 @@ import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
 import com.cyberpeace.situation.model.ws.DashboardMessage;
 import com.cyberpeace.situation.model.ws.WsMessage;
 import com.cyberpeace.situation.model.ws.WsTaskStatus;
+import com.cyberpeace.situation.service.SituationGisService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 
@@ -63,6 +67,9 @@ public class ExternalSituationController {
 
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
+
+	@Autowired
+	private SituationGisService situationGisService;
 
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
@@ -222,5 +229,16 @@ public class ExternalSituationController {
 					situationPublishInstance.getResourceId());
 		});
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("地图静态资源鉴权")
+	@GetMapping("/map/resource/auth/")
+	public BaseRsp<Boolean> authMapResource(HttpServletResponse response) {
+		if (Boolean.TRUE.equals(situationGisService.checkAuthorizationIp(CommonContext.getIp()))) {
+			return new BaseRsp<>(true);
+		} else {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return new BaseRsp<>(false);
+		}
 	}
 }

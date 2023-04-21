@@ -1,6 +1,12 @@
 package com.cyberpeace.situation.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -18,15 +24,8 @@ import com.cyberpeace.situation.controller.res.SituationDecorationPageRes;
 import com.cyberpeace.situation.dao.entity.SituationDecoration;
 import com.cyberpeace.situation.dao.mapper.SituationDecorationMapper;
 import com.cyberpeace.situation.service.SituationDecorationService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import cn.hutool.core.util.ObjectUtil;
 
 /**
  * @Author xuxz
@@ -76,36 +75,23 @@ public class SituationDecorationServiceImpl extends ServiceImpl<SituationDecorat
         return null;
     }
 
-    @Override
-    public ListRsp<SituationDecorationPageRes> getSituationDecorationPage(SituationDecorationPageReq situationDecorationPageReq) {
-        Page page = situationDecorationPageReq.toPageParam();
-        IPage<SituationDecorationPageRes> situationDecorationPageResIPage = situationDecorationMapper.selectPage(page, situationDecorationPageReq);
+	@Override
+	public ListRsp<SituationDecorationPageRes>
+			getSituationDecorationPage(SituationDecorationPageReq situationDecorationPageReq) {
+		Page page = situationDecorationPageReq.toPageParam();
+		IPage<SituationDecorationPageRes> situationDecorationPageResIPage = situationDecorationMapper
+				.selectPage(page, situationDecorationPageReq);
 
-        List<SituationDecorationPageRes> situationDecorationPageResList = situationDecorationPageResIPage.getRecords();
+		List<SituationDecorationPageRes> situationDecorationPageResList = situationDecorationPageResIPage
+				.getRecords();
 
-        if (CollectionUtils.isNotEmpty(situationDecorationPageResList)) {
+		if (CollectionUtils.isNotEmpty(situationDecorationPageResList)) {
+			situationDecorationPageResIPage.setRecords(situationDecorationPageResList);
+			return PageUtil.getListResult(situationDecorationPageResIPage);
+		}
 
-            List<String> userIdList = situationDecorationPageResList.stream().map(SituationDecorationPageRes::getCreateUserId).collect(Collectors.toList());
-            Map<String, String> idNameMap = new HashMap<>();
-            if (CollectionUtils.isNotEmpty(userIdList)) {
-                idNameMap.putAll(remoteUserService.getIdNameMap(userIdList));
-            }
-
-            for (SituationDecorationPageRes situationDecorationPageRes : situationDecorationPageResList) {
-                String type = situationDecorationPageRes.getType();
-                String createUserId = situationDecorationPageRes.getCreateUserId();
-                //设置创建人
-                if (idNameMap.containsKey(createUserId)) {
-                    situationDecorationPageRes.setCreateUserName(idNameMap.get(createUserId));
-                }
-
-            }
-            situationDecorationPageResIPage.setRecords(situationDecorationPageResList);
-            return PageUtil.getListResult(situationDecorationPageResIPage);
-        }
-
-        return null;
-    }
+		return null;
+	}
 
     private SituationDecoration changeToSituationDecoration(SituationDecorationReq situationDecorationReq) {
         String resourceId = situationDecorationReq.getResourceId();

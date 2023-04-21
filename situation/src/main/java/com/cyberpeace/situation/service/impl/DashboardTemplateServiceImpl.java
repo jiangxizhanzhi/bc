@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.situation.service.context.DynamicParameterContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,7 @@ import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.DataSourceService;
+import com.google.common.collect.Lists;
 
 /**
  * @Author xuxz
@@ -65,6 +65,54 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 	@Autowired
 	private SituationCategoryMapper situationCategoryMapper;
+
+	// 获取模板数据
+	public DashboardTemplate selectDashboardTemplateById(String templateId, Boolean nullThrow){
+		DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
+		if (dashboardTemplate == null && nullThrow) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return dashboardTemplate;
+	}
+
+	// 转换大屏组件配置（字符串 -> 列表）
+	public List<DashboardComponents> convertComponents(String components, String type){
+
+		// 1、构建返回结构
+		List<DashboardComponents> dashboardComponents = Lists.newArrayList();
+
+		// 2、提取组件ID列表
+		List<String> componentIds = JsonUtil.toJsonObjectArray(components, String.class);
+
+		// 3、处理组件数据
+		// 3-1 如果组件ID列表为空，直接返回空列表
+		if (CollectionUtils.isEmpty(componentIds)) {
+			return dashboardComponents;
+		}
+
+		// 3-2 组件ID列表不为空，提取控件数据
+		dashboardComponents = dashboardComponentsMapper.selectBatchIds(componentIds);
+		List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
+		// 3-3 根据type参数，过滤不同视角下的组件
+		if (type == null) {
+			// 3-3-1 如果未指定视角，默认返回全部组件
+			sortDashboardComponents.addAll(dashboardComponents);
+		} else {
+			// 3-3-2 存在视角时，按视角类型筛选数据
+			dashboardComponents.forEach(dashboardComponent -> {
+				String componentType = dashboardComponent.getType();
+				// 3-3-2-1 过滤当前视角类型控件及全局控件
+				if (Objects.equals(componentType, type) || "all".equals(type)){
+					sortDashboardComponents.add(dashboardComponent);
+				}
+			});
+		}
+
+		// 3-4 处理控件顺序
+		return sortDashboardComponents.stream()
+				.sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed())
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
@@ -122,10 +170,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		checkTemplateName(dashBoardTemplateReq.getName(), dashBoardTemplateReq.getResourceId());
 
 		String resourceId = dashBoardTemplateReq.getResourceId();
-		DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(resourceId);
-		if (dashboardTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
+		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(resourceId, true);
+
 		JSONArray newComponentsList = new JSONArray();
 		// 获取旧组件id
 		List<String> oldComponentsList = JsonUtil
@@ -173,54 +219,16 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	@Override
 	public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type,
 			Boolean isPreview) {
-		DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(resourceId);
-		if (dashboardTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		String componentsSetting = dashboardTemplate.getComponentsSetting();
-		String viewAngle = dashboardTemplate.getViewAngle();
-		String layerShow = dashboardTemplate.getLayerShow();
-		List<String> list = JsonUtil.toJsonObjectArray(componentsSetting, String.class);
+		// 1、获取大屏模板数据
+		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(resourceId, true);
+
+		// 2、构造返回模板数据
 		DashboardTemplateRes dashboardTemplateRes = BeanUtils.copy(dashboardTemplate,
 				DashboardTemplateRes.class);
-		if (StringUtils.isNotBlank(viewAngle)) {
-			dashboardTemplateRes.setViewAngle(JSONObject.parseObject(viewAngle, ViewAngle.class));
-		}
-		if (StringUtils.isNotBlank(layerShow)) {
-			dashboardTemplateRes
-					.setLayerShow(JsonUtil.toJsonObjectArray(layerShow, LayerShowReq.class));
-		}
-		if (CollectionUtils.isNotEmpty(list)) {
-			List<DashboardComponents> dashboardComponents = dashboardComponentsMapper
-					.selectBatchIds(list);
-			List<DashboardComponents> sortDashboardComponents = new ArrayList<>();
-			if (type == null) {
-				sortDashboardComponents.addAll(dashboardComponents);
-			} else {
-				// 存在视角时，按视角类型筛选数据
-				List<DashboardComponents> typeDashboardComponents = new ArrayList<>();
-				List<DashboardComponents> commonDashboardComponentList = new ArrayList<>();
-				dashboardComponents.forEach(dashboardComponent -> {
-					String componentType = dashboardComponent.getType();
-					if (Objects.equals(componentType, type)) {
-						typeDashboardComponents.add(dashboardComponent);
-					}
-					// 全局控件
-					if (StringUtils.isNotBlank(type) && Objects.equals(type, "all")) {
-						commonDashboardComponentList.add(dashboardComponent);
-					}
-				});
-				// 处理控件顺序和全局控件
-				typeDashboardComponents.removeAll(commonDashboardComponentList);
-				commonDashboardComponentList.addAll(typeDashboardComponents);
-				sortDashboardComponents.addAll(commonDashboardComponentList);
-			}
-			List<DashboardComponents> sortDashboardComponent = sortDashboardComponents.stream()
-					.sorted(Comparator.comparing(DashboardComponents::getComponentIndex).reversed())
-					.collect(Collectors.toList());
+		// 2-1 处理组件配置数据
+		dashboardTemplateRes.setComponentsSetting(
+				convertComponents(dashboardTemplate.getComponentsSetting(), type));
 
-			dashboardTemplateRes.setComponentsSetting(sortDashboardComponent);
-		}
 		return dashboardTemplateRes;
 	}
 

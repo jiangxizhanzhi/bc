@@ -1,0 +1,153 @@
+package com.cyberpeace.situation.controller;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.situation.*;
+import com.cyberpeace.integratation.model.situation.req.NodeActionReq;
+import com.cyberpeace.integratation.model.situation.req.NodeIdApiReq;
+import com.cyberpeace.integratation.model.situation.req.NodeIdPageReq;
+import com.cyberpeace.integratation.model.situation.req.TopoReq;
+import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.controller.req.NodeActionPageReq;
+import com.cyberpeace.situation.controller.req.NodePageReq;
+import com.cyberpeace.situation.dao.entity.TopoConfig;
+import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+@Api(tags = "外部数据-拓扑分析")
+@RestController
+@RequiresAuthentication
+@RequestMapping("/third/")
+public class ExternalDataTopoController {
+
+	@Autowired
+	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private TopoConfigMapper topoConfigMapper;
+
+	@ApiOperation("态势-获取节点链路状态")
+	@PostMapping("/node/connection/")
+	public BaseRsp<NodeConnectionContext>
+			getNodeConnection(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeConnection(nodeIdApiReq));
+	}
+
+	@ApiOperation("态势-获取节点基础信息")
+	@PostMapping("/node/info/")
+	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+		return new BaseRsp<>(remoteSituationService.getNodeInfo(nodeIdApiReq));
+	}
+
+	@ApiOperation("态势-获取相似节点")
+	@PostMapping("/node/similar_nodes/")
+	public BaseRsp<List<NodeBasicInfoContext>>
+			getSimilarNodeList(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+		List<NodeBasicInfoContext> rsp = remoteSituationService.getSimilarNodes(nodeIdApiReq);
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("态势-获取节点行为数据")
+	@GetMapping("/node/action/")
+	public BaseRsp<ListRsp<NodeActionContext>> getNodeAction(NodeActionPageReq nodeActionPageReq) {
+		return new BaseRsp<>(remoteSituationService
+				.getNodeAction(BeanUtils.copy(nodeActionPageReq, NodeActionReq.class)));
+	}
+
+	@ApiOperation("态势-获取节点行为趋势")
+	@PostMapping("/node/trend/")
+	public BaseRsp<List<NodeTrendContext>>
+			getNodeTrend(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getNodeTrend(nodeIdApiReq));
+	}
+
+	@ApiOperation("态势-获取用户行为数据")
+	@GetMapping("/user/action/")
+	public BaseRsp<ListRsp<UserActionContext>> getUserAction(NodePageReq nodeListApiReq) {
+
+		return new BaseRsp<>(remoteSituationService
+				.getUserAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
+	}
+
+	@ApiOperation("态势-获取用户行为趋势")
+	@PostMapping("/user/trend/")
+	public BaseRsp<List<UserTrendContext>>
+			getUserTrend(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+
+		return new BaseRsp<>(remoteSituationService.getUserTrend(nodeIdApiReq));
+	}
+
+	@ApiOperation("态势-获取节点脆弱性分析信息")
+	@PostMapping("/node/weak/info/")
+	public BaseRsp<NodeWeakInfoContext>
+			getNodeWeakInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
+		return new BaseRsp<>(remoteSituationService.getNodeWeakInfo(nodeIdApiReq));
+	}
+
+	@ApiOperation("态势-获取节点脆弱性列表")
+	@GetMapping("/node/weak/list/")
+	public BaseRsp<ListRsp<NodeWeakContext>> getNodeWeakList(NodePageReq nodePageReq) {
+
+		return new BaseRsp<>(remoteSituationService
+				.getNodeWeakList(BeanUtils.copy(nodePageReq, NodeIdPageReq.class)));
+	}
+
+	@ApiOperation("想定-获取拓扑数据")
+	@PostMapping("/topo/")
+	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
+
+		// 直接返回样例拓扑
+		if ("demo".equals(topoReq.getEnvId())) {
+			return new BaseRsp<>(JsonUtil.toJsonObject(
+					JsonUtil.toJsonString(getJsonByName("demoTopo")), TopoContext.class));
+		}
+
+		if ("test".equals(topoReq.getEnvId())) {
+			return new BaseRsp<>(JsonUtil.toJsonObject(
+					JsonUtil.toJsonString(getJsonByName("demo5000")), TopoContext.class));
+		}
+
+		TopoContext topoContext = remoteSituationService.getTopo(topoReq, false);
+
+		// 处理编排后的拓扑坐标
+		if (StringUtils.isNotBlank(topoReq.getEnvId())) {
+			TopoConfig topoConfig = topoConfigMapper.selectByEnvId(topoReq.getEnvId());
+			if (topoConfig != null) {
+				JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
+				Map<String, ElementSlimContext> elementSlimContextMap = JSONObject.parseObject(
+						json.toJSONString(),
+						new TypeReference<Map<String, ElementSlimContext>>() {});
+				topoContext.getElements().forEach((key, element) -> {
+					element.setPosition(elementSlimContextMap
+							.getOrDefault(key, new ElementSlimContext()).getPosition());
+				});
+			}
+		}
+
+		return new BaseRsp<>(topoContext);
+	}
+
+	private JSONObject getJsonByName(String name) {
+		InputStream inputStream = getClass().getResourceAsStream("/" + name + ".json");
+		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
+	}
+
+}

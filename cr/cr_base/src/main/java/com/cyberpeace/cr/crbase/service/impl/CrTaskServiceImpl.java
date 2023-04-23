@@ -335,6 +335,8 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			List<String> choices = JsonUtil.toJsonObjectArray(missionAnswer, String.class);
 			Set<String> choiceSet = Sets.newHashSet(choices);
 			return userChoiceSet.equals(choiceSet);
+		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())){
+			return userAnswer.equalsIgnoreCase(missionAnswer);
 		} else {
 			return userAnswer.equals(missionAnswer);
 		}

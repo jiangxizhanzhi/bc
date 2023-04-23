@@ -1,10 +1,9 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import java.util.List;
-
 import com.cyberpeace.common.model.PatternBase;
-
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class TheoryListQueryBo extends PatternBase {
@@ -13,7 +12,7 @@ public class TheoryListQueryBo extends PatternBase {
 
 	private List<String> categoryIds;
 
-	private Boolean solved;
+	private Integer solved;
 
 	private Integer difficulty;
 

@@ -15,4 +15,7 @@ public class WebTheoryBo extends AdminTheoryBo {
 	@ApiModelProperty("填空题空格数量")
 	private Integer blankCount;
 
+	@ApiModelProperty("解题状态：0=尝试过,1=已解出,2=未开始")
+	private Integer solved;
+
 }

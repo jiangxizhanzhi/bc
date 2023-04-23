@@ -1,34 +1,10 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.component.ExcelDataHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -40,8 +16,6 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
@@ -62,9 +36,20 @@ import com.cyberpeace.oj.practice.service.md.MdTheoryParser;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.cyberpeace.oj.practice.service.md.TheoryBaseMd;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -159,12 +144,18 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
 					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
 					CommonConstant.TRUE, IS_COLLECTED);
+			List<String> triedIds = practiceSolvedMapper.selectUserAndSolved(
+							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
+							CommonConstant.FALSE, IS_COLLECTED);
 
 			// 求交集 空则返回为空
-			if (listQuery.getSolved()) {
+			if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())) {
 				theoryListQuery.getResourceIds().retainAll(solvedIds);
+			} else if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode())){
+				theoryListQuery.getResourceIds().retainAll(triedIds);
 			} else {
 				theoryListQuery.getResourceIds().removeAll(solvedIds);
+				theoryListQuery.getResourceIds().removeAll(triedIds);
 			}
 
 			// 资源数据判空
@@ -188,8 +179,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
 							practiceTheory.getResourceId(), IS_COLLECTED);
-					theoryListBo.setSolved(null != practiceSolved ? practiceSolved.getSolved()
-							: CommonConstant.FALSE);
+					if (practiceSolved == null) {
+						theoryListBo.setSolved(2);
+					}else {
+						theoryListBo.setSolved(practiceSolved.getSolved() ? 1 : 0);
+					}
 				}
 			}
 
@@ -243,6 +237,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		if (null == practiceSolved) {
 			answerToNull(webTheoryBo);
+			webTheoryBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
 		} else {
 			PracticeSolvedDetailBo detailBo = new PracticeSolvedDetailBo();
 			if (practiceSolved.getSolved()) {
@@ -254,11 +249,13 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 					detailBo.setKeyword(webTheoryBo.getKeyword());
 				}
 				webTheoryBo.setResolvedDetail(detailBo);
+				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.SOLVED.getCode());
 			} else {
 				PracticeNoSolvedBo practiceNoSolvedBo = new PracticeNoSolvedBo();
 				practiceNoSolvedBo.setIsSolved(practiceSolved.getSolved());
 				answerToNull(webTheoryBo);
 				webTheoryBo.setResolvedDetail(practiceNoSolvedBo);
+				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
 			}
 		}
 

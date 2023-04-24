@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RtksRelatedService {
@@ -21,4 +22,17 @@ public interface RtksRelatedService {
 	 * @param businessTemplateIds 业务模板id 列表
 	 */
 	void clearEngageRel(List<String> businessTemplateIds);
+
+	/**
+	 * 去除单个场景模板和attack、engage框架的关联
+	 * @param btId
+	 */
+	void clearAttackEngageRel(String btId);
+
+	/**
+	 * drm 导入自动关联attack、engage
+	 * @param btId
+	 * @param relatedTechs
+	 */
+	void createAttackEngageRel(String btId, Collection<String> relatedTechs);
 }

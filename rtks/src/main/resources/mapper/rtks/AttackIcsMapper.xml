@@ -9,6 +9,14 @@
             (#{resourceId}, #{businessTemplateId}, now(), now())
         </foreach>
     </insert>
+    <insert id="loadRel">
+        insert into rtks_attack_ics_train_relation
+        (attack_ics_id, business_template_id, create_time, update_time)
+        values
+        <foreach collection="attackIcsIds" item="attackIcsId" separator=",">
+            (#{attackIcsId}, #{btId}, now(), now())
+        </foreach>
+    </insert>
     <delete id="deleteRel">
         delete
         from rtks_attack_ics_train_relation

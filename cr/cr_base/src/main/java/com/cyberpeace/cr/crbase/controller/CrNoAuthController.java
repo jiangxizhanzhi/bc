@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.controller;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -17,15 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.controller.req.resource.BatchLoadMdReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.resource.MDParser;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.google.common.collect.Sets;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,6 +61,9 @@ public class CrNoAuthController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RtksRelatedService rtksRelatedService;
 
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
@@ -96,6 +103,14 @@ public class CrNoAuthController {
 			// get handler
 			BusinessTemplateHandler handler = businessTemplateHandler
 					.getHandler(template.getBusinessType());
+			// auto load attack,engage relation
+			List<String> preSkills = JsonUtil
+					.toJsonObjectArray(mdParser.getTemplateContext().getPreSkills(), String.class);
+			List<String> trainSkills = JsonUtil.toJsonObjectArray(
+					mdParser.getTemplateContext().getTrainSkills(), String.class);
+			Set<String> relatedTechs = Sets.newHashSet(preSkills);
+			relatedTechs.addAll(trainSkills);
+			final String btId = businessTemplateId;
 
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -105,6 +120,7 @@ public class CrNoAuthController {
 					if (overWritten) {
 						// 覆盖，删除任务和旧训练模板，更新businessTemplate
 						handler.deleteTemplateRelated(template);
+						rtksRelatedService.clearAttackEngageRel(btId);
 						businessTemplateService.updateById(template);
 					} else {
 						// 新增，保存businessTemplate
@@ -113,6 +129,7 @@ public class CrNoAuthController {
 					missionTemplateService.batchInsert(missionTemplateList);
 					handler.loadTrainTemplate(mdParser.getTemplateContext());
 					attachmentService.loadZiguanImages(attachments);
+					rtksRelatedService.createAttackEngageRel(btId, relatedTechs);
 				}
 			});
 		}

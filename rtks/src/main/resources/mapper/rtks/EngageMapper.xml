@@ -9,6 +9,14 @@
             (#{resourceId}, #{businessTemplateId}, now(), now())
         </foreach>
     </insert>
+    <insert id="loadRel">
+        insert into rtks_engage_train_relation
+        (engage_id, business_template_id, create_time, update_time)
+        values
+        <foreach collection="engageIds" item="engageId" separator=",">
+            (#{engageId}, #{btId}, now(), now())
+        </foreach>
+    </insert>
     <delete id="deleteRel">
         delete from rtks_engage_train_relation
         where engage_id = #{resourceId}

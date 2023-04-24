@@ -34,4 +34,6 @@ public interface AttackIcsMapper {
 	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	void loadRel(@Param("btId") String btId, @Param("attackIcsIds") List<String> attackIcsIds);
 }

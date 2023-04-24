@@ -1,17 +1,17 @@
 package com.cyberpeace.oj.practice.service;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalTheoryCountBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
+
+import java.util.List;
 
 public interface PracticeTheoryService extends IService<PracticeTheory> {
 
@@ -105,4 +105,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	ExternalTheoryCountBo typeCount(TheoryListQueryBo theoryListQueryBo, AuthContext authContext);
 
 	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
+
+	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
 }

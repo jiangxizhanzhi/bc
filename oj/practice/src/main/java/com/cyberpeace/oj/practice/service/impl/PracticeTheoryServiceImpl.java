@@ -7,6 +7,7 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -18,6 +19,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -582,6 +584,51 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		mdTheoryPractice.setAnwserList(anwserList);
 
 		return mdTheoryPractice;
+	}
+
+	@Override
+	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
+		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
+		PageReqBase pageReqBase = new PageReqBase();
+		pageReqBase.setPer_page(2147483647);
+		TheoryListQueryBo listQueryBo = new TheoryListQueryBo();
+		listQueryBo.setPracticeSetId(practiceSetId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		IPage<PracticeTheoryListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
+		List<PracticeTheoryListBo> practiceTheoryListBoList = new ArrayList<>();
+		if (practiceTheoryListBoIPage != null) {
+			practiceTheoryListBoList = practiceTheoryListBoIPage.getRecords();
+		}
+		ProgressProportion simple = new ProgressProportion();
+		simple.setCount((int) practiceTheoryListBoList.stream()
+													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())
+															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+		simple.setSum((int) practiceTheoryListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())).count());
+		progressStatisticsRes.setSimple(simple);
+
+		ProgressProportion medium = new ProgressProportion();
+		medium.setCount((int) practiceTheoryListBoList.stream()
+													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())
+															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+		medium.setSum((int) practiceTheoryListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())).count());
+		progressStatisticsRes.setMedium(medium);
+
+		ProgressProportion difficulty = new ProgressProportion();
+		difficulty.setCount((int) practiceTheoryListBoList.stream()
+													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())
+															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+		difficulty.setSum((int) practiceTheoryListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())).count());
+		progressStatisticsRes.setDifficulty(difficulty);
+
+		ProgressProportion sum = new ProgressProportion();
+		sum.setSum(simple.getSum() + medium.getSum() + difficulty.getSum());
+		sum.setCount(simple.getCount() + medium.getCount() + difficulty.getCount());
+		progressStatisticsRes.setSum(sum);
+		return progressStatisticsRes;
 	}
 
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {

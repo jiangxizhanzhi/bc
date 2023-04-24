@@ -15,12 +15,14 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -113,6 +115,13 @@ public class PracticeTheoryController {
 				CommonConstant.TRUE);
 		List<String> practiceIds = practiceTheoryService.selectPracticeListIds(authContext);
 		return new BaseRsp<>(practiceIds);
+	}
+
+	@ApiOperation("获取进度统计")
+	@GetMapping("/progress")
+	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
+			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
+		return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
 	}
 
 }

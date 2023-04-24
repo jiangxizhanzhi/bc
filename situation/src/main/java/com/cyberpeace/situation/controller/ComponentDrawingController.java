@@ -50,21 +50,21 @@ public class ComponentDrawingController {
 	@Autowired
 	private SituationDrawingCategoryMapper situationDrawingCategoryMapper;
 
-	@ApiOperation("新增图形资源")
+	@ApiOperation("样式组件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDrawing(
 			@RequestBody @Validated(Create.class) SituationDrawingReq situationDrawingReq) {
 		return new BaseRsp<>(situationDrawingService.createSituationDrawing(situationDrawingReq));
 	}
 
-	@ApiOperation("修改图形资源")
+	@ApiOperation("样式组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDrawing(
 			@RequestBody @Validated(Update.class) SituationDrawingReq situationDrawingReq) {
 		return new BaseRsp<>(situationDrawingService.updateSituationDrawing(situationDrawingReq));
 	}
 
-	@ApiOperation("获取改图形资源详情")
+	@ApiOperation("样式组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDrawing>
 			getSituationDrawingInfo(@RequestParam("resource_id") @ApiParam(required = true,
@@ -72,7 +72,7 @@ public class ComponentDrawingController {
 		return new BaseRsp<>(situationDrawingService.getSituationDrawingInfo(resourceId));
 	}
 
-	@ApiOperation("批量删除改图形资源")
+	@ApiOperation("样式组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDrawing(
 			@RequestBody @Validated SituationIconDelReq situationIconDelReq) {
@@ -80,7 +80,7 @@ public class ComponentDrawingController {
 				situationDrawingService.deleteSituationDrawing(situationIconDelReq.getIdList()));
 	}
 
-	@ApiOperation("图形资源分页查询")
+	@ApiOperation("样式组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDrawingPageRes>>
 			getSituationDrawingPage(SituationDrawingPageReq situationDrawingPageReq) {
@@ -88,7 +88,7 @@ public class ComponentDrawingController {
 				situationDrawingService.getSituationDrawingPage(situationDrawingPageReq));
 	}
 
-	@ApiOperation("图形资源全量查询")
+	@ApiOperation("样式组件-全量查询")
 	@GetMapping("/all")
 	public BaseRsp<List<SituationDrawingPageRes>>
 			getSituationDrawing(SituationDrawingPageReq situationDrawingPageReq) {
@@ -111,7 +111,7 @@ public class ComponentDrawingController {
 		return new BaseRsp(situationDrawing);
 	}
 
-	@ApiOperation("图形类型查询")
+	@ApiOperation("样式组件类型-列表查询")
 	@GetMapping("/category")
 	public BaseRsp<List<SituationDrawingCategory>> getSituationDrawingCategory() {
 		return new BaseRsp<>(situationDrawingService.getSituationCategory());

@@ -33,7 +33,7 @@ public class ComponentDecorationController {
 	@Autowired
 	private SituationDecorationService situationDecorationService;
 
-	@ApiOperation("新增图形资源")
+	@ApiOperation("显示控件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDecoration(
 			@RequestBody @Validated(Create.class) SituationDecorationReq situationDecorationReq) {
@@ -41,7 +41,7 @@ public class ComponentDecorationController {
 				situationDecorationService.createSituationDecoration(situationDecorationReq));
 	}
 
-	@ApiOperation("修改图形资源")
+	@ApiOperation("显示控件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDecoration(
 			@RequestBody @Validated(Update.class) SituationDecorationReq situationDecorationReq) {
@@ -49,7 +49,7 @@ public class ComponentDecorationController {
 				situationDecorationService.updateSituationDecoration(situationDecorationReq));
 	}
 
-	@ApiOperation("获取改图形资源详情")
+	@ApiOperation("显示控件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDecoration>
 			getSituationDecorationInfo(@RequestParam("resource_id") @ApiParam(required = true,
@@ -57,7 +57,7 @@ public class ComponentDecorationController {
 		return new BaseRsp<>(situationDecorationService.getSituationDecorationInfo(resourceId));
 	}
 
-	@ApiOperation("批量删除改图形资源")
+	@ApiOperation("显示控件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDecoration(
 			@RequestBody @Validated SituationIconDelReq situationIconDelReq) {
@@ -65,7 +65,7 @@ public class ComponentDecorationController {
 				.deleteSituationDecoration(situationIconDelReq.getIdList()));
 	}
 
-	@ApiOperation("图形资源分页查询")
+	@ApiOperation("显示控件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDecorationPageRes>>
 			getSituationDecorationPage(SituationDecorationPageReq situationDecorationPageReq) {

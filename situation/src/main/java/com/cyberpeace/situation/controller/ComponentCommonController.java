@@ -56,7 +56,7 @@ public class ComponentCommonController {
 	@Autowired
 	private UtilService utilService;
 
-	@ApiOperation("获取控件组件资源列表")
+	@ApiOperation("通用组件-列表查询")
 	@GetMapping
 	public BaseRsp<ListRsp<SituationCommonComponentsPageRes>>
 			getComponentsPage(SituationCommonComponentsPageReq situationCommonComponentsPageReq) {
@@ -64,7 +64,7 @@ public class ComponentCommonController {
 				.getComponentsPage(situationCommonComponentsPageReq));
 	}
 
-	@ApiOperation("获取控件组件资源全量列表")
+	@ApiOperation("通用组件-全量查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationCommonComponentsPageRes>>
 			getComponentsPages(SituationCommonComponentsPageReq situationCommonComponentsPageReq) {
@@ -72,7 +72,7 @@ public class ComponentCommonController {
 				.getComponentsPages(situationCommonComponentsPageReq));
 	}
 
-	@ApiOperation("获取组件详情")
+	@ApiOperation("通用组件-单个查询")
 	@GetMapping("/info")
 	public BaseRsp<SituationCommonComponents>
 			getComponentsInfo(@RequestParam("resource_id") @ApiParam(required = true,
@@ -80,7 +80,7 @@ public class ComponentCommonController {
 		return new BaseRsp<>(situationCommonComponentsService.getComponentsInfo(resourceId));
 	}
 
-	@ApiOperation("新增组件信息")
+	@ApiOperation("通用组件-新增")
 	@PostMapping("")
 	public BaseRsp<String> createComponents(
 			@RequestBody @Validated(Create.class) CommonComponentsReq commonComponentsReq) {
@@ -88,7 +88,7 @@ public class ComponentCommonController {
 				situationCommonComponentsService.createComponents(commonComponentsReq));
 	}
 
-	@ApiOperation("修改组件信息")
+	@ApiOperation("通用组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateComponents(
 			@RequestBody @Validated(Update.class) CommonComponentsReq commonComponentsReq) {
@@ -96,38 +96,38 @@ public class ComponentCommonController {
 				situationCommonComponentsService.updateComponents(commonComponentsReq));
 	}
 
-	@ApiOperation("批量删除组件")
+	@ApiOperation("通用组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponents(@RequestBody @Validated ColorThemeDelReq idList) {
 		return new BaseRsp<>(situationCommonComponentsService.deleteComponents(idList.getIdList()));
 	}
 
-	@ApiOperation("获取组件类型列表")
+	@ApiOperation("通用组件类型-列表查询")
 	@GetMapping("/type/list")
 	public BaseRsp<Map<Integer, String>> getComponentsType() {
 		return new BaseRsp<>(getCommonComponentsType());
 	}
 
-	@ApiOperation("获取海康rtsp直播流")
+	@ApiOperation("海康摄像头-获取RTSP直播流")
 	@GetMapping("/hik/rtsp/channels")
 	public BaseRsp<JSONObject> getHikVisionRtsp(HikVisionReq hikVisionReq) {
 		return new BaseRsp<>(situationCommonComponentsService.getHikVisionRtsp(hikVisionReq));
 	}
 
-	@ApiOperation("获取海康flv直播流")
+	@ApiOperation("海康摄像头-获取FLV直播流")
 	@GetMapping("/hik/flv/channels")
 	public BaseRsp<JSONObject> getHikVisionFlv(@RequestParam("rtspKey") String rtspKey,
 			@RequestParam("setpts") Double setpts) {
 		return new BaseRsp<>(situationCommonComponentsService.getHikVisionFLv(rtspKey, setpts));
 	}
 
-	@ApiOperation("退出直播流")
+	@ApiOperation("海康摄像头-退出直播流")
 	@PostMapping("/hik/flv/exit")
 	public BaseRsp<JSONObject> exitHikVisionFlv(@RequestParam("rtspKey") String rtspKey) {
 		return new BaseRsp<>(situationCommonComponentsService.exitHikVisionFLv(rtspKey));
 	}
 
-	@ApiOperation("附件txt上传解析内容")
+	@ApiOperation("文本组件-解析TXT内容")
 	@PostMapping("/text_upload")
 	public BaseRsp<String> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {
 

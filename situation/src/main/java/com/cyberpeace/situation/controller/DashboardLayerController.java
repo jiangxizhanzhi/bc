@@ -33,7 +33,7 @@ public class DashboardLayerController {
 	@Autowired
 	private SituationComponentLayerService situationComponentLayerService;
 
-	@ApiOperation("新增模板图层")
+	@ApiOperation("组件图层-新增")
 	@PostMapping()
 	public BaseRsp<String> addComponentLayer(
 			@RequestBody @Validated(Create.class) List<ComponentLayerReq> componentLayerReqList) {
@@ -41,7 +41,7 @@ public class DashboardLayerController {
 		return new BaseRsp(situationComponentLayerService.addComponentLayer(componentLayerReqList));
 	}
 
-	@ApiOperation("修改模板图层")
+	@ApiOperation("组件图层-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateComponentLayer(
 			@RequestBody @Validated(Update.class) List<ComponentLayerReq> componentLayerReqList) {
@@ -49,7 +49,7 @@ public class DashboardLayerController {
 				situationComponentLayerService.updateComponentLayer(componentLayerReqList));
 	}
 
-	@ApiOperation("批量删除图层")
+	@ApiOperation("组件图层-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
 			deleteComponentLayer(@RequestBody @Validated ColorThemeDelReq colorThemeDelReq) {
@@ -57,7 +57,7 @@ public class DashboardLayerController {
 				situationComponentLayerService.deleteComponentLayer(colorThemeDelReq.getIdList()));
 	}
 
-	@ApiOperation("获取图层列表")
+	@ApiOperation("组件图层-列表查询")
 	@GetMapping("")
 	public BaseRsp<List<ComponentLayerRes>> getComponentLayer(@ApiParam(required = true,
 			name = "resource_id", value = "资源id") @RequestParam("resource_id") String resourceId) {

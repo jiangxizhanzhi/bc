@@ -58,7 +58,7 @@ public class DashboardTemplateController {
 	@Autowired
 	private CommonController commonController;
 
-	@ApiOperation("新增态势模板")
+	@ApiOperation("原始模板-新增")
 	@PostMapping()
 	public BaseRsp<String> createDashboardTemplate(
 			@RequestBody @Validated(Create.class) DashBoardTemplateReq dashBoardTemplateReq) {
@@ -66,7 +66,7 @@ public class DashboardTemplateController {
 				dashboardTemplateService.createDashboardTemplate(dashBoardTemplateReq));
 	}
 
-	@ApiOperation("修改态势模板")
+	@ApiOperation("原始模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
 			@RequestBody @Validated(Update.class) DashBoardTemplateReq dashBoardTemplateReq) {
@@ -74,7 +74,7 @@ public class DashboardTemplateController {
 				dashboardTemplateService.updateDashboardTemplate(dashBoardTemplateReq));
 	}
 
-	@ApiOperation("获取改态势模板详情")
+	@ApiOperation("原始模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
 			@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id",
@@ -85,7 +85,7 @@ public class DashboardTemplateController {
 				dashboardTemplateService.getDashboardTemplateInfo(resourceId, type, Boolean.FALSE));
 	}
 
-	@ApiOperation("批量删除改态势模板")
+	@ApiOperation("原始模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(
 			@RequestBody @Validated DashboardTemplateDelReq dashboardTemplateDelReq) {
@@ -93,7 +93,7 @@ public class DashboardTemplateController {
 				.deleteDashboardTemplate(dashboardTemplateDelReq.getDashboardTemplateIdList()));
 	}
 
-	@ApiOperation("获取改态势模板列表")
+	@ApiOperation("原始模板-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<DashboardTemplatePageRes>>
 			getDashboardTemplatePage(DashboardTemplatePageReq dashboardTemplatePageReq) {
@@ -101,19 +101,19 @@ public class DashboardTemplateController {
 				dashboardTemplateService.getDashboardTemplatePage(dashboardTemplatePageReq));
 	}
 
-	@ApiOperation("获取组件类型")
+	@ApiOperation("模板组件-获取组件类型")
 	@GetMapping("type/list")
 	public BaseRsp<Map<Integer, String>> getComponentType() {
 		return new BaseRsp<>(DashboardComponents.getComponentType());
 	}
 
-	@ApiOperation("获取模板等级列表")
+	@ApiOperation("模板属性-获取模板等级列表")
 	@GetMapping("level/list")
 	public BaseRsp<Map<Integer, String>> getDashboardTemplateLevel() {
 		return new BaseRsp<>(DashboardTemplate.getDashboardTemplateLevel());
 	}
 
-	@ApiOperation("获取echarts数据")
+	@ApiOperation("模板组件-获取echarts数据")
 	@PostMapping("option/data")
 	public BaseRsp<JSONArray> getEchartsOption(@RequestBody ComponentsDataReq componentsDataReq) {
 		return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));

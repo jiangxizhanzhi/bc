@@ -69,7 +69,7 @@ public class DashboardController {
 	@Autowired
 	private SituationTopoService situationTopoService;
 
-	@ApiOperation("获取大屏跳转信息（前台）")
+	@ApiOperation("大屏跳转-获取大屏跳转信息（前台）")
 	@GetMapping("/id/")
 	public BaseRsp<DashboardIdRes> getDashboardId(
 			@ApiParam(name = "task_id", value = "任务ID",
@@ -98,7 +98,7 @@ public class DashboardController {
 
 	}
 
-	@ApiOperation("获取大屏跳转信息（后台）")
+	@ApiOperation("大屏跳转-获取大屏跳转信息（后台）")
 	@GetMapping("/attribute/type/")
 	public BaseRsp<DashboardIdRes>
 			getDashboardTypeAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
@@ -106,7 +106,7 @@ public class DashboardController {
 		return new BaseRsp<>(dashboardService.getAttributeByDashboardId(dashboardId));
 	}
 
-	@ApiOperation("获取大屏基本属性")
+	@ApiOperation("态势运行-获取大屏基本属性")
 	@GetMapping("/basic_attribute/")
 	public BaseRsp<DashboardBasicAttributeRes>
 			getDashboardBasicAttribute(@RequestParam("dashboard_id") @ApiParam(required = true,
@@ -118,7 +118,7 @@ public class DashboardController {
 		return new BaseRsp<>(dashboardService.getDashboardBasicAttribute(dashboardId));
 	}
 
-	@ApiOperation("获取大屏配置属性")
+	@ApiOperation("态势运行-获取大屏配置属性")
 	@GetMapping("/config/parameter/")
 	public BaseRsp<DashboardConfigContext>
 			getDashboardParameterConfig(@RequestParam("dashboard_id") @ApiParam(required = true,
@@ -126,19 +126,19 @@ public class DashboardController {
 		return new BaseRsp<>(dashboardService.getParameterConfigByDashboardId(dashboardId));
 	}
 
-	@ApiOperation("获取大屏动态属性选项")
+	@ApiOperation("态势选项-获取大屏动态属性选项")
 	@GetMapping("/dynamic_parameter/")
 	public BaseRsp<List<JSONObject>> getDynamicParameter() {
 		return new BaseRsp<>(DynamicParameter.getTaskDynamicParameter());
 	}
 
-	@ApiOperation("获取大屏刷新时间选项")
+	@ApiOperation("态势选项-获取大屏刷新时间选项")
 	@GetMapping("/refresh/list/")
 	public BaseRsp<List<Integer>> getRefreshList() {
 		return new BaseRsp<>(ListUtil.listRangeInt(5, 10));
 	}
 
-	@ApiOperation("推送大屏消息-通用")
+	@ApiOperation("态势消息-推送通用消息")
 	@PostMapping("/change_notice/")
 	public BaseRsp<Boolean>
 			pushDashboardChange(@RequestBody @Validated DashboardChangeReq dashboardChangeReq) {
@@ -154,7 +154,7 @@ public class DashboardController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("推送大屏消息-打开首页")
+	@ApiOperation("态势消息-推送打开首页消息")
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
@@ -167,7 +167,7 @@ public class DashboardController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("获取大屏刷新数据-通用")
+	@ApiOperation("态势动效-获取大屏通用刷新数据")
 	@PostMapping("/event/refresh/")
 	public BaseRsp<Boolean> refreshEvent(@RequestBody @Validated EventRefreshReq req) {
 
@@ -278,7 +278,7 @@ public class DashboardController {
 		return true;
 	}
 
-	@ApiOperation("获取大屏刷新数据-任务解题事件")
+	@ApiOperation("态势动效-获取任务解题事件")
 	@GetMapping("/event/task/jt/")
 	public BaseRsp<Boolean> getJtTaskEvent(EventQueryReq eventQueryReq) {
 

@@ -35,4 +35,6 @@ public class SituationDrawingPageRes extends PageReqBase implements Serializable
     private String createUserName;
 
     private Date createTime;
+
+    private Date updateTime;
 }

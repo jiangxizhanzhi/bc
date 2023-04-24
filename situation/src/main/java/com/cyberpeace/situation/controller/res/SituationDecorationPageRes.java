@@ -35,4 +35,6 @@ public class SituationDecorationPageRes extends PageReqBase implements Serializa
     private String createUserName;
 
     private Date createTime;
+
+    private Date updateTime;
 }

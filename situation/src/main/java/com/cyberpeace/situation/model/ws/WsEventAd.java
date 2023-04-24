@@ -13,6 +13,9 @@ import lombok.Data;
 @Data
 public class WsEventAd implements Serializable {
 
+	@ApiModelProperty("事件结果")
+	private String result = "success";
+
 	@ApiModelProperty("源节点ID")
 	private String sourceId;
 

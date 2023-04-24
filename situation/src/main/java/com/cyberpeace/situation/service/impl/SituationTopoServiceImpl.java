@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.common.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.SituationTaskReq;
 import com.cyberpeace.integratation.service.bo.situation.TopoHistoryBo;
@@ -90,7 +88,7 @@ public class SituationTopoServiceImpl extends ServiceImpl<SituationTopoMapper, S
 	@Override
 	public TopoParaContext getCurrentTopo(EventMsgReq eventReq) {
 		String featureId = eventReq.getFeatureId();
-		String topoId = getCurrentTopoId(getTopoHistory(eventReq), eventReq.getQueryTime());
+		String topoId = getCurrentTopoId(getTopoHistory(eventReq),TimeUtil.toDate1(eventReq.getQueryTime()));
 		if (featureCache.getIfPresent(featureId) == null
 				|| featureCache.getIfPresent(featureId) != topoId) {
 			if (topoId != null) {
@@ -118,7 +116,7 @@ public class SituationTopoServiceImpl extends ServiceImpl<SituationTopoMapper, S
 	private String getCurrentTopoId(List<TopoHistoryBo> topoHistorys, Date currentTime) {
 		String topoId = null;
 		for (TopoHistoryBo history : topoHistorys) {
-			if (currentTime.after(history.getUpdateTime())) {
+			if (history.getUpdateTime() != null && currentTime.after(history.getUpdateTime())) {
 				topoId = history.getUpdateId();
 			}
 		}

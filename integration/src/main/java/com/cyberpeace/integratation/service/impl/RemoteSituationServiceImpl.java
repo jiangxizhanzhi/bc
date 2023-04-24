@@ -7,7 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
 import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
@@ -378,14 +376,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		return res;
 	}
 
-	private Date getQueryTime(String featureId) {
+	private String getQueryTime(String featureId) {
 
 		if (StringUtils.isBlank(featureId)) {
 			return null;
 		}
 
 		Date currentLastTime = queryTimeCache.getIfPresent(featureId);
-		return currentLastTime;
+		return TimeUtil.format1(currentLastTime);
 	}
 
 	@Override
@@ -396,7 +394,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 		// 更新查询时间缓存
 		if (res != null && !res.isEmpty()) {
-			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+			queryTimeCache.put(featureId, res.get(0).getEventTime());
 		}
 
 		return res;
@@ -410,7 +408,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 		// 更新查询时间缓存
 		if (res != null && !res.isEmpty()) {
-			queryTimeCache.put(featureId, res.get(res.size() - 1).getEventTime());
+			queryTimeCache.put(featureId, res.get(0).getEventTime());
 		}
 		return res;
 	}
@@ -482,7 +480,17 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public List<TopoHistoryBo> getTopoHistory(SituationTaskReq req) {
 		String rsp = HttpClientUtil.rawGet(XD_TOPO_HISTORY + req.toQuery(), String.class);
-		List<TopoHistoryBo> res = JsonUtil.toJsonObjectArray(rsp, TopoHistoryBo.class);
+		List<TopoHistoryBo> res = Lists.newArrayList();
+
+		try {
+
+			res = JsonUtil.toJsonObjectArray(rsp, TopoHistoryBo.class);
+
+		} catch (JSONException e) {
+			TopoHistoryBo topoHistoryBo = JsonUtil.toJsonObject(rsp, TopoHistoryBo.class);
+			res.add(topoHistoryBo);
+		}
+
 		return res;
 	}
 
@@ -605,7 +613,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 		// 更新查询时间缓存
 		if (res != null && !res.isEmpty()) {
-			queryTimeCache.put(featureId, res.get(res.size() - 1).getTime());
+			queryTimeCache.put(featureId, res.get(0).getTime());
 		}
 		return res;
 	}

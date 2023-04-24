@@ -13,6 +13,8 @@ import lombok.Data;
 @Data
 public class StatusOrderContext implements Serializable {
 
+	public static final String KSH_SYS_ID = "SYXLKSHXT";
+
 	@JsonProperty("orderId")
 	@ApiModelProperty(value = "指令ID")
 	private String orderId;
@@ -66,6 +68,6 @@ public class StatusOrderContext implements Serializable {
 	private String kshfaid;
 
 	public void setKshfaid() {
-		this.kshfaid = this.getYwxtArrId().getString("SYXLKSHXT");
+		this.kshfaid = this.getYwxtArrId().getString(StatusOrderContext.KSH_SYS_ID);
  	}
 }

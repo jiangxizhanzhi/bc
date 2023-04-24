@@ -738,8 +738,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				.collect(Collectors.toSet());
 		// get code
 		List<EventType> typeContextList = eventTypeMapper.selectBatchByName(subTypes);
-		if (typeContextList.size() != subTypes.size()) {
-			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
+
+		// collect types
+		Set<String> eventTypes = typeContextList.stream().map(EventType::getName)
+				.collect(Collectors.toSet());
+		if (eventTypes.size() != subTypes.size()) {
+			subTypes.removeAll(typeContextList.stream().map(EventType::getName)
+					.collect(Collectors.toSet()));
+		log.error("subTypes is not available" + subTypes.toString() );
+//			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
 		}
 		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList, EventType::getName,
 				EventType::getCode);

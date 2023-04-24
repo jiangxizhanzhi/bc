@@ -287,7 +287,7 @@ public class DashboardInstanceController {
 		statusOrderContext.setTaskId(situationPublishInstances.getTaskId());
 		statusOrderContext.setSubjectId(situationPublishInstances.getSubjectId());
 		statusOrderContext.setDescription("方案状态同步");
-		statusOrderContext.setSourceSys("SYXLKSHXT");
+		statusOrderContext.setSourceSys(StatusOrderContext.KSH_SYS_ID);
 		statusOrderContext.setOrderId(IDGeneratorUtil.getID());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

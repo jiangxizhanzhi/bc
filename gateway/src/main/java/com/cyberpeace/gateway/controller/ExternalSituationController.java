@@ -154,7 +154,7 @@ public class ExternalSituationController {
 
  		StatusOrderContext statusOrderContext = JsonUtil.toJsonObject(statusOrderContextString , StatusOrderContext.class);
 
-		 if(statusOrderContext.getYwxtArr().contains("SYXLKSHXT")){
+		 if(statusOrderContext.getYwxtArr().contains(StatusOrderContext.KSH_SYS_ID)){
 			 statusOrderContext.setKshfaid();
  			 SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
 					 .selectXdDashboardBySchemeId(statusOrderContext.getKshfaid());

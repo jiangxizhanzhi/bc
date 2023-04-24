@@ -149,17 +149,25 @@ public class ExternalSituationController {
 	@ApiOperation("接收想定下发大屏指令")
 	@PostMapping("/emission")
 	public BaseRsp<ControlRes>
-			receiveEmission(@RequestBody @Validated StatusOrderContext statusOrderContext) {
-		log.info("成功接收想定指令：{}", JsonUtil.toJsonString(statusOrderContext));
-		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
-				.selectXdDashboardBySchemeId(statusOrderContext.getFaid());
-		if (situationPublishInstance != null) {
-			PublicStatus publicStatus = PublicStatus
-					.getPublicStatusByName(statusOrderContext.getFazt());
-			situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstance,
-					publicStatus);
-			situationPublishInstanceService.updateById(situationPublishInstance);
-		}
+			receiveEmission(@RequestBody @Validated String  statusOrderContextString ) {
+		log.info("成功接收想定指令：{}", statusOrderContextString);
+
+ 		StatusOrderContext statusOrderContext = JsonUtil.toJsonObject(statusOrderContextString , StatusOrderContext.class);
+
+		 if(statusOrderContext.getYwxtArr().contains("SYXLKSHXT")){
+			 statusOrderContext.setKshfaid();
+ 			 SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
+					 .selectXdDashboardBySchemeId(statusOrderContext.getKshfaid());
+			 if (situationPublishInstance != null) {
+				 PublicStatus publicStatus = PublicStatus
+						 .getPublicStatusByName(statusOrderContext.getFazt().trim());
+				 situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstance,
+						 publicStatus);
+				 situationPublishInstanceService.updateById(situationPublishInstance);
+			 }
+		 }
+
+
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 

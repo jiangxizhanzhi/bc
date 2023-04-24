@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -279,11 +281,14 @@ public class DashboardInstanceController {
 
 		// 构造推送方案状态变更消息
 		StatusOrderContext statusOrderContext = new StatusOrderContext();
-		statusOrderContext.setOrderTime(new Date());
-		statusOrderContext.setFaid(situationPublishInstances.getSchemeId());
+		statusOrderContext.setOrderTime(TimeUtil.format1(new Date()));
+		statusOrderContext.setZfaid(situationPublishInstances.getSchemeId());
 		statusOrderContext.setFazt(PublicStatus.COMPLETE.getName());
 		statusOrderContext.setTaskId(situationPublishInstances.getTaskId());
 		statusOrderContext.setSubjectId(situationPublishInstances.getSubjectId());
+		statusOrderContext.setDescription("方案状态同步");
+		statusOrderContext.setSourceSys("SYXLKSHXT");
+		statusOrderContext.setOrderId(IDGeneratorUtil.getID());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -317,7 +322,7 @@ public class DashboardInstanceController {
 
 		// 修改大屏状态
 		situationPublishInstanceService.changeInstancePublicStatus(situationPublishInstances,
-				PublicStatus.EDIT);
+				PublicStatus.PREPARATION);
 
 		// 想定大屏不允许主动取消发布
 		if (situationPublishInstances.getXd()) {

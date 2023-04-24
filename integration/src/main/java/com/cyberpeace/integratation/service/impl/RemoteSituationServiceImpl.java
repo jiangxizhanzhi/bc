@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -497,7 +498,11 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public Boolean releaseScreen(StatusOrderContext statusOrderContext){
-		BooleanRes rsp = HttpClientUtil.post(TS_RELEASE_SCREEN, statusOrderContext, BooleanRes.class);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("msg",JsonUtil.toJsonString(statusOrderContext, PropertyNamingStrategy.SnakeCase));
+		jsonObject.put("task_id",statusOrderContext.getTaskId());
+
+ 		BooleanRes rsp = HttpClientUtil.post( TS_RELEASE_SCREEN, jsonObject, BooleanRes.class);
 		return rsp.getResult();
 	}
 

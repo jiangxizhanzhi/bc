@@ -79,7 +79,7 @@ public class SituationPublishInstance extends BaseTable {
 	private String status = "1";
 
 	@ApiModelProperty("下发状态")
-	private Integer publicStatus = PublicStatus.EDIT.getCode();
+	private Integer publicStatus = PublicStatus.PREPARATION.getCode();
 
 	@ApiModelProperty("是否可编辑")
 	private Boolean edit = false;

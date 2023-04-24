@@ -112,7 +112,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
 		// 设置基础信息
 		situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
-		situationPublishInstance.setPublicStatus(PublicStatus.EDIT.getCode());
+		situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
 		DashboardAttribute dashboardAttribute = BeanUtils.copy(replayInstanceReq,
 				DashboardAttribute.class);
@@ -207,7 +207,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         situationPublishInstance.setStatus(SituationInstanceStatus.DRAFT.getCode());
 
         // 默认为未下发状态
-        situationPublishInstance.setPublicStatus(PublicStatus.EDIT.getCode());
+        situationPublishInstance.setPublicStatus(PublicStatus.PREPARATION.getCode());
 
         // 构造大屏属性表
         DashboardAttribute dashboardAttribute = BeanUtils.copy(situationPublishInstanceAddReq, DashboardAttribute.class);

@@ -135,6 +135,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		List<String> roomIds = StreamApiUtils.map(crTaskList, CrTask::getRoomId);
 		if (roomIds.size() == 0) {
+			trainingStatsScore.add(new BarChartUnit("红队训练", 0));
+			trainingStatsScore.add(new BarChartUnit("蓝队训练", 0));
 			return;
 		}
 		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
@@ -149,8 +151,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 				blueScore += score;
 			}
 		}
-		trainingStatsScore.add(new BarChartUnit("蓝队训练", blueScore));
 		trainingStatsScore.add(new BarChartUnit("红队训练", redScore));
+		trainingStatsScore.add(new BarChartUnit("蓝队训练", blueScore));
 	}
 
 	@Override

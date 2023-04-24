@@ -8,7 +8,7 @@ import lombok.Data;
 @ApiModel
 public class WebTheoryListReq extends AdminTheoryListReq {
 
-	@ApiModelProperty("是否解决")
-	private Boolean solved;
+	@ApiModelProperty("解决状态")
+	private Integer solved;
 
 }

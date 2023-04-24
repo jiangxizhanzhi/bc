@@ -54,7 +54,8 @@ public class CrConstantsConfig implements SelectI18nName {
 		MATCH_STATUS(28, "赛事状态"),
 		MESSAGE_MODULE_TYPE(31, "留言主题类型"),
 		STUDY_STATISTICS(37,"学习统计类型难度"),
-		EVAL_STATUS(38, "靶场测评评估状态");
+		EVAL_STATUS(38, "靶场测评评估状态"),
+		WEB_PRACTICE_STATUS(39, "三种练习状态");
 		@Getter
 		private final Integer code;
 

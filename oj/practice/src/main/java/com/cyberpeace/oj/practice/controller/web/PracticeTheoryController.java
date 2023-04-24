@@ -1,16 +1,5 @@
 package com.cyberpeace.oj.practice.controller.web;
 
-import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
@@ -26,16 +15,22 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
+import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
-import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
-import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
-import com.cyberpeace.oj.practice.service.bo.TheoryListQueryBo;
-import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
-
+import com.cyberpeace.oj.practice.service.bo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Api(tags = "oj-前台理论基础练习相关")
 @RestController
@@ -89,7 +84,7 @@ public class PracticeTheoryController {
 	@ApiOperation("理论基础练习题提交")
 	@PostMapping("/submit_answer")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
-	public BaseRsp<EvaluateResult> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+	public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 
 		EvaluateResult evaluateResult = practiceTheoryService.submitAnswer(
 				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
@@ -100,7 +95,13 @@ public class PracticeTheoryController {
 				: LogContent.INCORRECT;
 		practiceTheoryService.createMpLog(answerReq.getResourceId(), logContent);
 
-		return new BaseRsp<>(evaluateResult);
+		EvaluateResultTheory evaluateResultTheory = BeanUtils.copy(evaluateResult, EvaluateResultTheory.class);
+		if (evaluateResult.getSolved()){
+			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
+		} else {
+			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());
+		}
+		return new BaseRsp<>(evaluateResultTheory);
 	}
 
 	@ApiOperation("获取所有理论习题编号列表")

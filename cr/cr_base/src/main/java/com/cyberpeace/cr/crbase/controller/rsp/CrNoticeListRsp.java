@@ -38,6 +38,6 @@ public class CrNoticeListRsp implements Serializable {
     private String attachmentId;
 
     @ApiModelProperty("附件")
-    private Attachment attachmentBo;
+    private AttachmentBo attachmentBo;
 
 }

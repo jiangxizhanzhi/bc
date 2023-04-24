@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -26,7 +27,9 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -94,14 +97,28 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
         return crLabelGroupList;
     }
 
+    private Map<String, AttachmentBo> convAttachmentBoMap(List<String> attachmentIds) {
+        if (attachmentIds.isEmpty()) {
+            return Maps.newHashMap();
+        }
+
+        String attachmentIdsString = String.join(CommonConstant.CODE_COMMA, attachmentIds);
+
+        return attachmentService.selectByIds(attachmentIdsString, true)
+                .stream().collect(Collectors.toMap(AttachmentBo::getResourceId, attachmentBo -> attachmentBo));
+    }
+
     @Override
     public ListRsp<CrNoticeListRsp> pageAdmin(String roomId, Page page) {
         IPage<CrNoticeListRsp> crNoticeIPage = this.getBaseMapper().pageAdmin(roomId, page);
 
+        List<String> attachmentIds = crNoticeIPage.getRecords()
+                .stream().map(CrNoticeListRsp::getAttachmentId).collect(Collectors.toList());
+        Map<String, AttachmentBo> attachmentBoMap = convAttachmentBoMap(attachmentIds);
         crNoticeIPage.getRecords().forEach(crNoticeListRsp -> {
             crNoticeListRsp.setIsTop(crNoticeListRsp.getStatus().equals(CrNotice.Status.TOP.getCode()));
             if (StringUtils.isNotEmpty(crNoticeListRsp.getAttachmentId())) {
-                crNoticeListRsp.setAttachmentBo(attachmentService.getById(crNoticeListRsp.getAttachmentId()));
+                crNoticeListRsp.setAttachmentBo(attachmentBoMap.get(crNoticeListRsp.getAttachmentId()));
             }
         });
 
@@ -133,9 +150,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
         // 关联附件map
         List<String> attachmentIds = crNoticeList.stream().map(CrNotice::getAttachmentId).collect(Collectors.toList());
-        Map<String, Attachment> attachmentMap = attachmentService.batchGetByIds(attachmentIds).stream().collect(
-                Collectors.toMap(Attachment::getResourceId, attachment -> attachment)
-        );
+        Map<String, AttachmentBo> attachmentBoMap = convAttachmentBoMap(attachmentIds);
 
         crNoticeList.forEach(crNotice -> {
             CrNoticeListRsp crNoticeListRsp = new CrNoticeListRsp();
@@ -143,7 +158,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
             BeanUtils.copyProperties(crNotice, crNoticeListRsp);
             crNoticeListRsp.setIsTop(crNotice.getStatus().equals(CrNotice.Status.TOP.getCode()));
             if (StringUtils.isNotEmpty(crNotice.getAttachmentId())) {
-                crNoticeListRsp.setAttachmentBo(attachmentMap.get(crNotice.getAttachmentId()));
+                crNoticeListRsp.setAttachmentBo(attachmentBoMap.get(crNotice.getAttachmentId()));
             }
 
             result.add(crNoticeListRsp);

@@ -101,9 +101,11 @@ public class TeamTrainStatistics extends CrEventStatistics {
 	public void getPeopleCountByCode(String userId, List<BarChartUnit> trainingPeopleStatistics, Integer code) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
-		if (roomIds.size() == 0) {
-			trainingPeopleStatistics.add(new BarChartUnit("红队训练", 0));
+		if (roomIds.size() == 0 && code.equals(TeamRoom.TrainCategory.BLUE.getCode())) {
 			trainingPeopleStatistics.add(new BarChartUnit("蓝队训练", 0));
+			return;
+		} else if (roomIds.size() == 0 && code.equals(TeamRoom.TrainCategory.RED.getCode())) {
+			trainingPeopleStatistics.add(new BarChartUnit("红队训练", 0));
 			return;
 		}
 		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);

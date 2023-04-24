@@ -100,7 +100,7 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	@Override
 	public void getPeopleCount(String userId, List<BarChartUnit> trainingPeopleStatistics) {
 		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		if (roomIds.size() == 0) {
 			trainingPeopleStatistics.add(new BarChartUnit("红蓝对抗", 0));
 			return;

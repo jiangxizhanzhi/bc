@@ -64,7 +64,7 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @param authContext
 	 * @return
 	 */
-	List<String> selectPracticeListIds(AuthContext authContext);
+	List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId);
 
 	/**
 	 * 习题批量删除

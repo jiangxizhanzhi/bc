@@ -354,11 +354,16 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	}
 
 	@Override
-	public List<String> selectPracticeListIds(AuthContext authContext) {
+	public List<String> selectPracticeListIds(AuthContext authContext, String practiceSetId) {
 
-		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(setIds)) {
-			return Lists.newArrayList();
+		List<String> setIds ;
+		if (practiceSetId == null) {
+			setIds = practiceSetMapper.selectByAuthContext(authContext);
+			if (CollectionUtils.isEmpty(setIds)) {
+				return Lists.newArrayList();
+			}
+		} else {
+			setIds = Arrays.asList(practiceSetId);
 		}
 
 		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(setIds);

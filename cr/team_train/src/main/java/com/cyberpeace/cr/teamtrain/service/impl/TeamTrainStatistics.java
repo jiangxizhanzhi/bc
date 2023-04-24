@@ -145,6 +145,9 @@ public class TeamTrainStatistics extends CrEventStatistics {
 		Integer blueScore = 0;
 		for (CrTask crTask: crTaskList) {
 			Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
+			if (teamRoomHashMap.get(crTask.getRoomId()) == null) {
+				continue;
+			}
 			if (teamRoomHashMap.get(crTask.getRoomId()).equals(TeamRoom.TrainCategory.RED.getCode())) {
 				redScore += score;
 			} else {

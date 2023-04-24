@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainStatsOverviewRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SingleTrainStatistics extends CrEventStatistics {
@@ -94,9 +96,13 @@ public class SingleTrainStatistics extends CrEventStatistics {
 		trainRecordLambdaQueryWrapper.eq(TrainRecord::getUserId, userId);
 		List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
 		Integer sum = 0;
+		List<String> templateIds = StreamApiUtils.map(trainRecordList, TrainRecord::getBusinessTemplateId);
+		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.selectBatchIds(templateIds);
+		Map<String, BusinessTemplate> businessTemplateMap = StreamApiUtils.toMap(businessTemplateList, BusinessTemplate::getResourceId, businessTemplate -> businessTemplate);
 		for (TrainRecord trainRecord: trainRecordList) {
 			JSONObject trainExtraData = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
-			if (trainExtraData != null && trainExtraData.getInteger("score") != null) {
+			if (businessTemplateMap.get(trainRecord.getBusinessTemplateId()) != null
+					&& trainExtraData != null && trainExtraData.getInteger("score") != null) {
 				sum += trainExtraData.getInteger("score");
 			}
 		}

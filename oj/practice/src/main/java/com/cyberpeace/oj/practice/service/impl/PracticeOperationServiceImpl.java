@@ -150,6 +150,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	@Autowired
+	private PracticeWrongMapper practiceWrongMapper;
+
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
@@ -635,7 +638,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceSolved.setCollection(resourceCollectionService.selectByUnique(userId,
 				ResourceCollection.BusinessType.OPERATION.getCode(), operation.getResourceId()));
 		try {
-			practiceSolvedMapper.insert(practiceSolved);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					practiceSolvedMapper.insert(practiceSolved);
+					if (!practiceSolved.getSolved()) {
+						PracticeWrong practiceWrong = BeanUtils.copy(practiceSolved, PracticeWrong.class);
+						practiceWrong.setResourceId(null);
+						practiceWrongMapper.insert(practiceWrong);
+					}
+				}
+			});
 		} catch (DuplicateKeyException e) {
 			practiceSolvedMapper.updateSolved(practiceSolved);
 		}

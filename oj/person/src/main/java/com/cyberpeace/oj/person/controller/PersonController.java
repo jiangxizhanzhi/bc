@@ -17,6 +17,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.PracticeWrongRes;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
@@ -195,5 +196,17 @@ public class PersonController {
 		WebOperationBo theoryBo = practiceOperationService.selectById(resourceId, authContext,
 				Boolean.TRUE);
 		return new BaseRsp<>(theoryBo);
+	}
+
+	@ApiOperation("查询错题集列表")
+	@GetMapping("/practice_wrong_set")
+	public BaseRsp<ListRsp<PracticeWrongRes>> getPracticeWringSet(PageReqBase pageReqBase) {
+		if (pageReqBase.getSort() == null) {
+			pageReqBase.setSort("-submitTime");
+		}
+		Page page = pageReqBase.toPageParam();
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		List<PracticeWrongRes> practiceWrongResList = personCenterService.getPracticeWrongSetByPerson(userInfo);
+		return new BaseRsp<>(PageUtil.getListResult(practiceWrongResList, page, practiceWrongResList.size()));
 	}
 }

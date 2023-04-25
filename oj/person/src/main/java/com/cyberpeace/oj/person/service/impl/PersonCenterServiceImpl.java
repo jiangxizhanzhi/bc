@@ -1,11 +1,12 @@
 package com.cyberpeace.oj.person.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.practice.controller.res.PracticeWrongRes;
+import com.cyberpeace.oj.practice.dao.entity.PracticeWrong;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeWrongMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,9 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 
 	@Autowired
 	private PracticeCategoryMapper practiceCategoryMapper;
+
+	@Autowired
+	private PracticeWrongMapper practiceWrongMapper;
 
 	@Override
 	public IPage<PersonComment> pageComment(Page page, String userId, String parent,
@@ -277,6 +281,47 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		}
 
 		return Lists.newArrayList();
+	}
+
+	@Override
+	public List<PracticeWrongRes> getPracticeWrongSetByPerson(UserInfo userInfo) {
+		List<PracticeWrong> practiceWrongList = practiceWrongMapper.selectByUserId(userInfo.getUserId());
+		List<String> optionPracticeIds = practiceWrongList.stream()
+													.filter(practiceWrong -> practiceWrong.getPracticeType().equals(PracticeCategory.PracticeType.OPERATION.getCode()))
+													.map(PracticeWrong::getPracticeId)
+													.collect(Collectors.toList());
+		List<String> theoryPracticeIds = practiceWrongList.stream()
+														  .filter(practiceWrong -> practiceWrong.getPracticeType().equals(PracticeCategory.PracticeType.THEORY.getCode()))
+														  .map(PracticeWrong::getPracticeId)
+														  .collect(Collectors.toList());
+		List<PracticeOperation> practiceOperationList = new ArrayList<>();
+		if (optionPracticeIds.size() > 0 ) {
+			practiceOperationList = practiceOperationMapper.selectBatchIds(optionPracticeIds);
+		}
+		List<PracticeTheory> practiceTheoryList = new ArrayList<>();
+		if (theoryPracticeIds.size() > 0 ) {
+			practiceTheoryList = practiceTheoryMapper.selectBatchIds(theoryPracticeIds);
+		}
+		Map<String, String> contentMap = new HashMap<>();
+		for (PracticeOperation practiceOperation : practiceOperationList) {
+			contentMap.put(practiceOperation.getResourceId(), practiceOperation.getContent());
+		}
+		for (PracticeTheory practiceTheory : practiceTheoryList) {
+			contentMap.put(practiceTheory.getResourceId(), practiceTheory.getContent());
+		}
+		List<PracticeWrongRes> practiceWrongResList = new ArrayList<>();
+		for (PracticeWrong practiceWrong : practiceWrongList) {
+			PracticeWrongRes practiceWrongRes = BeanUtils.copy(practiceWrong, PracticeWrongRes.class);
+			String content = contentMap.get(practiceWrong.getPracticeId());
+			if (content == null) {
+				continue;
+			}
+			practiceWrongRes.setContent(content);
+			practiceWrongRes.setUserName(userInfo.getName());
+			practiceWrongRes.setSubmitTime(TimeUtil.format1(practiceWrong.getCreateTime()));
+			practiceWrongResList.add(practiceWrongRes);
+		}
+		return practiceWrongResList;
 	}
 
 	/**

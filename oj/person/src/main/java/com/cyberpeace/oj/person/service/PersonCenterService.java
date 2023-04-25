@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.PracticeWrongRes;
 
 import java.util.Date;
 import java.util.List;
@@ -67,4 +69,6 @@ public interface PersonCenterService {
 	 * @return
 	 */
 	List<CollectionPracticeBo> selectCollectionPractice(String userId, Integer practiceType);
+
+	List<PracticeWrongRes> getPracticeWrongSetByPerson(UserInfo userId);
 }

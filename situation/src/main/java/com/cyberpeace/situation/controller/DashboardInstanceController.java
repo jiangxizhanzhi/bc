@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.TimeUtil;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
@@ -87,21 +87,43 @@ public class DashboardInstanceController {
 
 	@ApiOperation("实例类型-列表查询")
 	@GetMapping("/category/list")
-	public BaseRsp<List<SituationCategoryRes>> getSituationPublishInstanceCategory() {
-		LambdaQueryWrapper<SituationCategory> queryWrapper = new LambdaQueryWrapper<>();
+	public BaseRsp<List<SituationCategoryRes>> getSituationPublishInstanceCategory(
+			@ApiParam(name = "type", value = "大屏类型 1-综合态势 2-任务态势") @RequestParam(value = "type",
+					required = false) Integer type) {
+
+		// 1、获取所有大屏类型
 		List<SituationCategory> situationCategories = situationCategoryMapper
-				.selectList(queryWrapper);
-		List<String> types = dashboardTemplateMapper.selectCustomTypes();
-		List<SituationCategoryRes> res = Lists.newArrayList();
-		situationCategories.forEach(situationCategory -> {
-			SituationCategoryRes situationCategoryRes = BeanUtils.copy(situationCategory,
-					SituationCategoryRes.class);
-			if (types.contains(situationCategory.getResourceId())) {
-				situationCategoryRes.setTemplate(true);
-			}
-			res.add(situationCategoryRes);
-		});
+				.selectList(new LambdaQueryWrapper<>());
+
+		// 2、获取所有定制大屏列表
+		List<String> categories = dashboardTemplateMapper.selectCustomTypes();
+
+		// 3、根据大屏类型和定制化模板囊括类型进行数据过滤
+		List<SituationCategoryRes> res = situationCategories.stream()
+				.filter(situationCategory -> checkCategoryType(situationCategory, type))
+				.map(situationCategory -> convertCategory(situationCategory, categories))
+				.collect(Collectors.toList());
 		return new BaseRsp<>(res);
+	}
+
+	private Boolean checkCategoryType(SituationCategory situationCategory, Integer type) {
+		if (type == null) {
+			return true;
+		} else if (type.equals(2)) {
+			return StringUtils.isNotEmpty(situationCategory.getTaskType())
+					&& !situationCategory.getTaskType().contains("99");
+		} else if (type.equals(1)) {
+			return StringUtils.isEmpty(situationCategory.getTaskType());
+		}
+		return true;
+	}
+
+	private SituationCategoryRes convertCategory(SituationCategory situationCategory,
+			List<String> categories) {
+		SituationCategoryRes situationCategoryRes = BeanUtils.copy(situationCategory,
+				SituationCategoryRes.class);
+		situationCategoryRes.setTemplate(categories.contains(situationCategory.getResourceId()));
+		return situationCategoryRes;
 	}
 
 	@ApiOperation("实例状态-列表查询")

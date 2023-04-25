@@ -150,7 +150,7 @@ public class DashboardEventController {
 		if (TaskEvent.RWXF.getName().equals(taskEvent)) {
 			// 构造源节点数据
 			taskEventContext.setSourceType(SiteType.CENTER.getCode());
-			taskEventContext.setSourceId(center.getCenterId());
+			taskEventContext.setSourceId("01");
 
 			// 构造目标节点数据
 			TargetSiteContext mainRange = new TargetSiteContext(SiteType.RANGE.getCode(),

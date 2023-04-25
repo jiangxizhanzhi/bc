@@ -97,6 +97,10 @@ public class SingleTrainStatistics extends CrEventStatistics {
 		List<TrainRecord> trainRecordList = trainRecordMapper.selectList(trainRecordLambdaQueryWrapper);
 		Integer sum = 0;
 		List<String> templateIds = StreamApiUtils.map(trainRecordList, TrainRecord::getBusinessTemplateId);
+		if (templateIds.size() == 0) {
+			trainingStatsScore.add(new BarChartUnit("单兵训练", sum));
+			return;
+		}
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.selectBatchIds(templateIds);
 		Map<String, BusinessTemplate> businessTemplateMap = StreamApiUtils.toMap(businessTemplateList, BusinessTemplate::getResourceId, businessTemplate -> businessTemplate);
 		for (TrainRecord trainRecord: trainRecordList) {

@@ -266,8 +266,6 @@ public class RbSituationServiceImpl implements RbSituationService {
 				.filter(crTask -> crTask.getStatus().intValue() == CrTask.TaskStatus.SUCCESS.getCode())
 				.collect(Collectors.toList());
 
-		Map<String, Date> taskFinishTimeMap = crTaskList.stream().collect(Collectors.toMap(CrTask::getMissionId, CrTask::getLastSubmitTime));
-
 		Map<String, String> deviceMap = rbRoomService.missionEventDevice(roomId).stream().collect(
 				Collectors.toMap(CrLabelGroup::getValue, CrLabelGroup::getLabel)
 		);
@@ -277,6 +275,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 			return result;
 		}
 
+		// 所有任务事件
 		List<CrConstantsConfig> crConstantsConfigList = Lists.newArrayList();
 		crConstantsConfigList.addAll(crConstantsService.getByType(CrConstantsConfig.ConstantsType.RED_ACTION_TYPE.getCode()));
 		crConstantsConfigList.addAll(crConstantsService.getByType(CrConstantsConfig.ConstantsType.BLUE_ACTION_TYPE.getCode()));
@@ -286,20 +285,28 @@ public class RbSituationServiceImpl implements RbSituationService {
 				CommonContext.isChinese() ? CrConstantsConfig::getCnName : CrConstantsConfig::getEnName
 		));
 
-		missionEventDeviceService.lambdaQuery()
+		List<MissionEventDevice> missionEventDeviceList = missionEventDeviceService.lambdaQuery()
 				.in(MissionEventDevice::getMissionId, crTaskList.stream().map(CrTask::getMissionId).collect(Collectors.toList()))
-				.list().forEach(missionEventDevice -> {
-			Mission mission = missionMap.get(missionEventDevice.getMissionId());
+				.list();
+
+		crTaskList.forEach(crTask -> {
+			Mission mission = missionMap.get(crTask.getMissionId());
 
 			RbSituationAdEventRsp rbSituationAdEventRsp = new RbSituationAdEventRsp();
 
-			rbSituationAdEventRsp.setDeviceId(missionEventDevice.getDeviceId());
-			rbSituationAdEventRsp.setDeviceName(deviceMap.get(missionEventDevice.getDeviceId()));
+			List<String> taskDeviceIds = missionEventDeviceList.stream()
+					.filter(missionEventDevice -> missionEventDevice.getMissionId().equals(crTask.getMissionId()))
+					.map(MissionEventDevice::getDeviceId)
+					.collect(Collectors.toList());
+
+			rbSituationAdEventRsp.setDeviceName(taskDeviceIds.stream().map(deviceMap::get).collect(Collectors.joining(", ")));
 			rbSituationAdEventRsp.setEventName(actionMap.get(mission.getEventType()));
-			rbSituationAdEventRsp.setEventTime(taskFinishTimeMap.get(mission.getResourceId()));
+			rbSituationAdEventRsp.setEventTime(crTask.getLastSubmitTime());
 
 			result.add(rbSituationAdEventRsp);
+
 		});
+
 		result.sort(Comparator.comparing(RbSituationAdEventRsp::getEventTime).reversed());
 
 		return result;

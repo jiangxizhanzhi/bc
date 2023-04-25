@@ -93,6 +93,7 @@ public class RbTaskSituationHandler extends CrTaskSituationHandler {
 		for (String targetId: targetIds) {
 			LambdaQueryWrapper<CrRoleAssetNode> crRoleAssetNodeLambdaQueryWrapper = new LambdaQueryWrapper<>();
 			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getDeviceId, targetId);
+			crRoleAssetNodeLambdaQueryWrapper.eq(CrRoleAssetNode::getRoomId, mission.getRoomId());
 			List<CrRoleAssetNode> crRoleAssetNodeList = crRoleAssetNodeMapper.selectList(crRoleAssetNodeLambdaQueryWrapper);
 			if (crRoleAssetNodeList.size() != 1) {
 				roleType = "";

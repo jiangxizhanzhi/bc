@@ -83,7 +83,7 @@ public class DashboardInstanceController {
 	@Autowired
 	private DashboardTemplateMapper dashboardTemplateMapper;
 
-	@ApiOperation("查询态势发布类型列表")
+	@ApiOperation("实例类型-列表查询")
 	@GetMapping("/category/list")
 	public BaseRsp<List<SituationCategoryRes>> getSituationPublishInstanceCategory() {
 		LambdaQueryWrapper<SituationCategory> queryWrapper = new LambdaQueryWrapper<>();
@@ -102,7 +102,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("查询态势发布状态列表")
+	@ApiOperation("实例状态-列表查询")
 	@GetMapping("/status/list")
 	public BaseRsp<List<SituationInstanceStatusRes>> getSituationPublishInstanceStatus() {
 		List<SituationInstanceStatusRes> res = new ArrayList<>();
@@ -114,13 +114,13 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("查询重演态势类型列表")
+	@ApiOperation("重演实例类型-列表查询")
 	@GetMapping("/replay/code/")
 	public BaseRsp<List<IntType>> getReplayMode() {
 		return new BaseRsp<>(ReplayMode.getList());
 	}
 
-	@ApiOperation("新增重演态势实例")
+	@ApiOperation("重演实例-新增")
 	@PostMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> addReplayInstance(
 			@RequestBody @Validated(Create.class) ReplayInstanceReq replayInstanceReq) {
@@ -129,7 +129,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
-	@ApiOperation("编辑重演态势实例")
+	@ApiOperation("重演实例-修改")
 	@PatchMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> updateReplayInstance(
 			@RequestBody @Validated(Update.class) ReplayInstanceReq replayInstanceReq) {
@@ -138,7 +138,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
-	@ApiOperation("新增态势发布实例")
+	@ApiOperation("实例-新增")
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
 			@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
@@ -147,7 +147,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
-	@ApiOperation("查询态势发布实例列表")
+	@ApiOperation("实例-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationPublishInstancePageRes>> getSituationPublishInstance(
 			SituationPublishInstanceFilterReq situationPublishInstanceFilterReq) {
@@ -165,7 +165,7 @@ public class DashboardInstanceController {
 		return situationPublishInstance;
 	}
 
-	@ApiOperation("查询态势发布实例详情")
+	@ApiOperation("实例-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationPublishInstanceRes> getSituationPublishInstanceDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -195,7 +195,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstanceRes);
 	}
 
-	@ApiOperation("删除态势发布实例")
+	@ApiOperation("实例-删除")
 	@DeleteMapping("")
 	public BaseRsp
 			deleteSituationPublishInstance(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -241,7 +241,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改态势发布实例")
+	@ApiOperation("实例-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(
 			@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
@@ -252,7 +252,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
-	@ApiOperation("态势实例发布")
+	@ApiOperation("实例-发布")
 	@PostMapping("release")
 	public BaseRsp releaseSituationPublishInstance(
 			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
@@ -304,7 +304,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("态势实例取消发布")
+	@ApiOperation("实例-取消发布")
 	@PostMapping("cancel_release")
 	public BaseRsp cancelReleaseSituationPublishInstance(
 			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
@@ -330,7 +330,7 @@ public class DashboardInstanceController {
 
 	}
 
-	@ApiOperation("态势实例预览")
+	@ApiOperation("实例-大屏预览")
 	@PostMapping("preview")
 	public SituationPublishInstanceReviewRes previewSituationPublishInstance(
 			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
@@ -354,7 +354,7 @@ public class DashboardInstanceController {
 		return copy;
 	}
 
-	@ApiOperation("态势组件实例数据")
+	@ApiOperation("实例-大屏数据")
 	@PostMapping("/query/")
 	public BaseRsp<InstanceDataQueryRes>
 			getInstanceData(@RequestBody @Validated InstanceDataQueryReq query) {
@@ -382,7 +382,7 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(instanceDataQueryRes);
 	}
 
-	@ApiOperation("修改大屏公共状态")
+	@ApiOperation("实例-修改公共状态")
 	@GetMapping("/public/status/")
 	public BaseRsp<Boolean> changePublicStatus(
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",

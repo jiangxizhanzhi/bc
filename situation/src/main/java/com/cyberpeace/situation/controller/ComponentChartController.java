@@ -72,7 +72,7 @@ public class ComponentChartController {
 	@Autowired
 	private SituationDbAccessMapper situationDbAccessMapper;
 
-	@ApiOperation("查询二维组件类型列表")
+	@ApiOperation("图表组件类型-列表查询")
 	@GetMapping("/category/list")
 	public BaseRsp<List<TwoDimensionalComponentsCategory>> getTwoDimensionalComponents() {
 		LambdaQueryWrapper<TwoDimensionalComponentsCategory> queryWrapper = new LambdaQueryWrapper<>();
@@ -82,7 +82,21 @@ public class ComponentChartController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("新增二维组件")
+	@ApiOperation("图表组件类型-单个查询")
+	@GetMapping("")
+	public BaseRsp<TwoDimensionalComponents> getThreeDimensionalComponentsCategoryDetail(
+			@RequestParam("resourceId") @NotBlank String resourceId) {
+
+		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper
+				.selectById(resourceId);
+		if (null == twoDimensionalComponents) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		insertIntoDb();
+		return new BaseRsp<>(twoDimensionalComponents);
+	}
+
+	@ApiOperation("图表组件-新增")
 	@PostMapping("")
 	public BaseRsp<TwoDimensionalComponents> setTwoDimensionalComponents(
 			@RequestBody @Validated(Create.class) TwoDimensionalComponentsAddReq twoDimensionalComponentsAddReq) {
@@ -107,7 +121,7 @@ public class ComponentChartController {
 		return new BaseRsp<>(twoDimensionalComponents);
 	}
 
-	@ApiOperation("查询二维组件")
+	@ApiOperation("图表组件-单个查询")
 	@GetMapping("list")
 	public BaseRsp<List<SituationComponentsChartDetailsRes>> getTwoDimensionalComponents(
 			TwoDimensionalComponentsFilterReq twoDimensionalComponentsFilterReq) {
@@ -144,21 +158,7 @@ public class ComponentChartController {
 		return new BaseRsp<>(result);
 	}
 
-	@ApiOperation("查询二维组件类型详情")
-	@GetMapping("")
-	public BaseRsp<TwoDimensionalComponents> getThreeDimensionalComponentsCategoryDetail(
-			@RequestParam("resourceId") @NotBlank String resourceId) {
-
-		TwoDimensionalComponents twoDimensionalComponents = twoDimensionalComponentsMapper
-				.selectById(resourceId);
-		if (null == twoDimensionalComponents) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		insertIntoDb();
-		return new BaseRsp<>(twoDimensionalComponents);
-	}
-
-	@ApiOperation("删除二维组件")
+	@ApiOperation("图表组件-删除")
 	@DeleteMapping("")
 	public BaseRsp
 			deleteTwoDimensionalComponents(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -173,7 +173,7 @@ public class ComponentChartController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改二维组件")
+	@ApiOperation("图表组件-修改")
 	@PatchMapping("")
 	public BaseRsp patchTwoDimensionalComponents(
 			@RequestBody @Validated(Update.class) TwoDimensionalComponentsUpdateReq twoDimensionalComponentsUpdateReq) {
@@ -200,7 +200,7 @@ public class ComponentChartController {
 	}
 
 	@SneakyThrows
-	@ApiOperation("二维组件导出")
+	@ApiOperation("图表组件-导出")
 	@GetMapping("export")
 	public void exportTwoDimensionalComponents(
 			@RequestParam("resourceId") @NotBlank String resourceId, HttpServletResponse response) {
@@ -228,7 +228,7 @@ public class ComponentChartController {
 		insertIntoDb();
 	}
 
-	@ApiOperation("二维组件导入")
+	@ApiOperation("图表组件-导入")
 	@PutMapping("import")
 	public BaseRsp<TwoDimensionalComponents>
 			importTwoDimensionalComponents(@RequestParam("file") MultipartFile file) {

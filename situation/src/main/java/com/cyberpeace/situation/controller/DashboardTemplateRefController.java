@@ -33,7 +33,7 @@ public class DashboardTemplateRefController {
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;
 
-	@ApiOperation("新增态势数据")
+	@ApiOperation("实例模板-新增")
 	@PostMapping()
 	public BaseRsp<DashboardTemplateRefContext>
 			createDashboardTemplate(@RequestParam("resource_id") @ApiParam(required = true,
@@ -44,7 +44,7 @@ public class DashboardTemplateRefController {
 				BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRefContext.class));
 	}
 
-	@ApiOperation("修改态势数据")
+	@ApiOperation("实例模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
 			@RequestBody @Validated(Update.class) DashBoardTemplateReq dashBoardTemplateReq) {
@@ -52,14 +52,14 @@ public class DashboardTemplateRefController {
 				dashboardTemplateRefService.updateDashboardTemplate(dashBoardTemplateReq));
 	}
 
-	@ApiOperation("修改实例(定制模板)配置数据")
+	@ApiOperation("实例模板-修改配置")
 	@PatchMapping("/config")
 	public BaseRsp<DashboardTemplateRefContext>
 			updateTemplateRefConfig(@RequestBody @Validated DashBoardTemplateConfigReq req) {
 		return new BaseRsp<>(dashboardTemplateRefService.updateTemplateRefConfig(req));
 	}
 
-	@ApiOperation("获取改态势数据详情")
+	@ApiOperation("实例模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
 			@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id",
@@ -70,7 +70,7 @@ public class DashboardTemplateRefController {
 				Boolean.FALSE));
 	}
 
-	@ApiOperation("批量删除改态势数据")
+	@ApiOperation("实例模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(
 			@RequestBody @Validated DashboardTemplateDelReq dashboardTemplateDelReq) {

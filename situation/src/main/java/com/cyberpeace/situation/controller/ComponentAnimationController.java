@@ -32,7 +32,7 @@ public class ComponentAnimationController {
 	@Autowired
 	private SituationComponentAnimationService situationComponentAnimationService;
 
-	@ApiOperation("新增模板动画")
+	@ApiOperation("动画组件-新增")
 	@PostMapping()
 	public BaseRsp<String> addComponentAnimation(
 			@RequestBody @Validated(Create.class) SituationComponentsAnimationAddReq situationComponentsAnimationAddReq) {
@@ -41,7 +41,7 @@ public class ComponentAnimationController {
 				.addComponentAnimation(situationComponentsAnimationAddReq));
 	}
 
-	@ApiOperation("修改模板动画")
+	@ApiOperation("动画组件-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationComponentsAnimationRes> updateComponentAnimation(
 			@RequestBody @Validated(Update.class) SituationComponentsAnimationUpdateReq situationComponentsAnimationUpdateReq) {
@@ -49,7 +49,7 @@ public class ComponentAnimationController {
 				.updateComponentAnimation(situationComponentsAnimationUpdateReq));
 	}
 
-	@ApiOperation("删除动画")
+	@ApiOperation("动画组件-删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponentAnimation(
 			@RequestBody @Validated SituationComponentsAnimationDeleteReq deleteReq) {
@@ -57,14 +57,14 @@ public class ComponentAnimationController {
 				.deleteComponentAnimation(deleteReq.getResourceIds()));
 	}
 
-	@ApiOperation("获取动画列表")
+	@ApiOperation("动画组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationComponentsAnimationRes>>
 			getComponentAnimations(@ApiParam @Validated SituationComponentsAnimationReq req) {
 		return new BaseRsp<>(situationComponentAnimationService.getComponentAnimations(req));
 	}
 
-	@ApiOperation("获取动画详情")
+	@ApiOperation("动画组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationComponentsAnimation> getComponentAnimation(@ApiParam(required = true,
 			name = "resource_id", value = "资源id") @RequestParam("resource_id") String resourceId) {

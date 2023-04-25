@@ -33,21 +33,21 @@ public class ComponentThemeController {
 	@Autowired
 	private SituationColorThemeService situationColorThemeService;
 
-	@ApiOperation("新增颜色主题")
+	@ApiOperation("图表主题-新增")
 	@PostMapping()
 	public BaseRsp<ColorThemeReq>
 			createColorTheme(@RequestBody @Validated(Create.class) ColorThemeReq colorThemeReq) {
 		return new BaseRsp<>(situationColorThemeService.createColorTheme(colorThemeReq));
 	}
 
-	@ApiOperation("修改颜色主题")
+	@ApiOperation("图表主题-修改")
 	@PatchMapping("")
 	public BaseRsp<String>
 			updateColorTheme(@RequestBody @Validated(Update.class) ColorThemeReq ColorThemeReq) {
 		return new BaseRsp<>(situationColorThemeService.updateColorTheme(ColorThemeReq));
 	}
 
-	@ApiOperation("获取改颜色主题详情")
+	@ApiOperation("图表主题-单个查询")
 	@GetMapping("")
 	public BaseRsp<ColorTheme>
 			getColorThemeInfo(@RequestParam("resource_id") @ApiParam(required = true,
@@ -55,7 +55,7 @@ public class ComponentThemeController {
 		return new BaseRsp<>(situationColorThemeService.getColorThemeInfo(resourceId));
 	}
 
-	@ApiOperation("批量删除改颜色主题")
+	@ApiOperation("图表主题-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
 			deleteColorTheme(@RequestBody @Validated ColorThemeDelReq ColorThemeDelReq) {
@@ -63,13 +63,13 @@ public class ComponentThemeController {
 				situationColorThemeService.deleteColorTheme(ColorThemeDelReq.getIdList()));
 	}
 
-	@ApiOperation("获取颜色主题列表")
+	@ApiOperation("图表主题-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<ColorTheme>> getColorThemePage(ColorThemePageReq colorThemePageReq) {
 		return new BaseRsp<>(situationColorThemeService.getColorThemePage(colorThemePageReq));
 	}
 
-	@ApiOperation("导入颜色主题")
+	@ApiOperation("图表主题-导入")
 	@PostMapping("upload")
 	public BaseRsp<String> importColorTheme(ColorThemeImportReq colorThemeImportReq) {
 		return new BaseRsp<>(situationColorThemeService.importColorTheme(colorThemeImportReq));

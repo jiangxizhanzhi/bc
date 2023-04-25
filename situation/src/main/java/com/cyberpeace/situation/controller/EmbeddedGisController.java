@@ -50,7 +50,7 @@ public class EmbeddedGisController {
 	@Autowired
 	private SituationGisService situationGisService;
 
-	@ApiOperation("通过模板ID获取平台列表")
+	@ApiOperation("视角编排-通过模板ID获取平台列表")
 	@GetMapping("/template/platform/")
 	public BaseRsp<TemplatePlatformRes> getPlatformByTemplateId(
 			@RequestParam("template_id") @ApiParam(required = true, name = "template_id",
@@ -83,38 +83,44 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(templatePlatformRes);
 	}
 
-	@ApiOperation("获取Gis配置")
+	@ApiOperation("配置-单个查询")
 	@GetMapping("/config/get/")
 	public BaseRsp<ConfigContext>
 			getSituationGisConfig(@RequestParam("config_id") String resourceId) {
 		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
 	}
 
-	@ApiOperation("新增Gis配置")
+	@ApiOperation("配置-新增")
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationGisConfig(
 			@RequestBody @Validated(Create.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
 	}
 
-	@ApiOperation("修改Gis配置")
+	@ApiOperation("配置-修改")
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationGisConfig(
 			@RequestBody @Validated(Update.class) SituationGisReq situationGisReq) {
 		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
 	}
 
-	@ApiOperation("删除Gis配置")
+	@ApiOperation("配置-删除")
 	@PatchMapping("/config/delete/")
 	public BaseRsp<Integer>
 			deleteSituationGisConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
 	}
 
-	@ApiOperation("获取全量GIS配置列表")
+	@ApiOperation("配置-全量查询")
 	@GetMapping("/config/list/")
 	public BaseRsp<List<ConfigContext>> getAllConfig() {
 		return new BaseRsp<>(situationGisService.getAllConfig());
+	}
+
+	@ApiOperation("配置-获取地图源选项")
+	@GetMapping("/map/source/list/")
+	public BaseRsp<List<StringType>> getMapSourceList() {
+		return new BaseRsp<>(MapSource.getList());
 	}
 
 	@ApiOperation("获取经纬度所属省份")
@@ -126,12 +132,6 @@ public class EmbeddedGisController {
 					value = "维度") String latitude) {
 		return new BaseRsp<>(
 				situationGisService.getProvince(Float.valueOf(longitude), Float.valueOf(latitude)));
-	}
-
-	@ApiOperation("获取大屏地图源选项")
-	@GetMapping("/map/source/list/")
-	public BaseRsp<List<StringType>> getMapSourceList() {
-		return new BaseRsp<>(MapSource.getList());
 	}
 
 }

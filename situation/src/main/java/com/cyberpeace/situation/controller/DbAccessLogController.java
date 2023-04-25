@@ -32,7 +32,7 @@ public class DbAccessLogController {
 	@Autowired
 	private SituationDbAccessMapper situationDbAccessMapper;
 
-	@ApiOperation("获取数据库访问列表")
+	@ApiOperation("访问日志-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDbAccess>>
 			getDbAccess(@ApiParam @Validated SituationDbAccessReq req) {
@@ -42,7 +42,7 @@ public class DbAccessLogController {
 		return new BaseRsp<>(PageUtil.getListResult(situationDbAccessIPage));
 	}
 
-	@ApiOperation("新增数据库访问")
+	@ApiOperation("访问日志-新增")
 	@GetMapping("/")
 	public BaseRsp<SituationDbAccess>
 			addDbAccess(@ApiParam @Validated SituationDbAccessAddReq req) {

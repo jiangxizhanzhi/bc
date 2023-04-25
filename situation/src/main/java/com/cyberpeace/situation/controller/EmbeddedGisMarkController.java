@@ -68,7 +68,7 @@ public class EmbeddedGisMarkController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@ApiOperation("新增绘标图元")
+	@ApiOperation("标绘图元-新增")
 	@PostMapping("/plot/pixel")
 	public BaseRsp<String> createColorTheme(
 			@RequestBody @Validated(Create.class) SituationPlotPixelReq situationPlotPixelReq) {
@@ -76,7 +76,7 @@ public class EmbeddedGisMarkController {
 				situationPlotPixelService.createSituationPlotPixel(situationPlotPixelReq));
 	}
 
-	@ApiOperation("修改绘标图元")
+	@ApiOperation("标绘图元-修改")
 	@PatchMapping("/plot/pixel")
 	public BaseRsp<String> updateSituationPlotPixel(
 			@RequestBody @Validated(Update.class) SituationPlotPixelReq situationPlotPixelReq) {
@@ -84,7 +84,7 @@ public class EmbeddedGisMarkController {
 				situationPlotPixelService.updateSituationPlotPixel(situationPlotPixelReq));
 	}
 
-	@ApiOperation("获取改绘标图元详情")
+	@ApiOperation("标绘图元-单个查询")
 	@GetMapping("/plot/pixel")
 	public BaseRsp<SituationPlotPixel>
 			getSituationPlotPixelInfo(@RequestParam("resource_id") @ApiParam(required = true,
@@ -92,7 +92,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(situationPlotPixelService.getSituationPlotPixelInfo(resourceId));
 	}
 
-	@ApiOperation("批量删除改绘标图元")
+	@ApiOperation("标绘图元-批量删除")
 	@DeleteMapping("/plot/pixel")
 	public BaseRsp<Integer> deleteSituationPlotPixel(
 			@RequestBody @Validated SituationIconDelReq situationIconDelReq) {
@@ -100,7 +100,7 @@ public class EmbeddedGisMarkController {
 				.deleteSituationPlotPixel(situationIconDelReq.getIdList()));
 	}
 
-	@ApiOperation("绘标图元分页查询")
+	@ApiOperation("标绘图元-列表查询")
 	@GetMapping("/plot/pixel/list")
 	public BaseRsp<ListRsp<SituationPlotPixel>>
 			getSituationPlotPixelPage(SituationPlotPixelPageReq SituationPlotPixelPageReq) {
@@ -108,13 +108,13 @@ public class EmbeddedGisMarkController {
 				situationPlotPixelService.getSituationPlotPixelPage(SituationPlotPixelPageReq));
 	}
 
-	@ApiOperation("新增标绘配置")
+	@ApiOperation("标绘数据-新增")
 	@PostMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> setConfig(@RequestBody GisMarkContext gisMarkContext) {
 		return new BaseRsp<>(addGisMark(gisMarkContext));
 	}
 
-	@ApiOperation("查询标绘配置")
+	@ApiOperation("标绘数据-单个查询")
 	@GetMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> getConfig(@RequestParam("mark_id") @ApiParam(required = true,
 			name = "mark_id", value = "标绘ID") String markId) {
@@ -122,7 +122,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(BeanUtils.copy(gisMark, GisMarkContext.class));
 	}
 
-	@ApiOperation("更新标绘配置")
+	@ApiOperation("标绘数据-修改")
 	@PatchMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> updateConfig(@RequestBody GisMarkContext gisMarkContext) {
 
@@ -131,7 +131,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(addGisMark(gisMarkContext));
 	}
 
-	@ApiOperation("删除标绘配置")
+	@ApiOperation("标绘数据-删除")
 	@DeleteMapping("/gis/mark/")
 	public BaseRsp<Boolean> deleteConfig(@RequestParam("mark_id") @ApiParam(required = true,
 			name = "mark_id", value = "标绘ID") String markId) {
@@ -139,7 +139,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("查询大屏标绘配置")
+	@ApiOperation("标绘数据-列表查询")
 	@GetMapping("/gis/mark/list/")
 	public BaseRsp<List<GisMarkContext>> getConfigList(
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
@@ -151,7 +151,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(gisMarkList);
 	}
 
-	@ApiOperation("清空大屏标绘数据")
+	@ApiOperation("标绘数据-清空")
 	@DeleteMapping("/gis/dashboard/mark/")
 	public BaseRsp<Boolean>
 			deleteDashboardMark(@RequestBody @Validated DashboardBatchDeleteReq ids) {
@@ -172,7 +172,7 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("导出大屏标绘数据")
+	@ApiOperation("标绘数据-导出")
 	@GetMapping("/gis/mark/export/")
 	public void exportConfig(HttpServletResponse response,
 			@RequestParam("dashboard_id") @ApiParam(required = true, name = "dashboard_id",
@@ -201,7 +201,7 @@ public class EmbeddedGisMarkController {
 		}
 	}
 
-	@ApiOperation("导入大屏标绘数据")
+	@ApiOperation("标绘数据-导入")
 	@PostMapping("/gis/mark/import")
 	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)
 			throws IOException, ZipException {

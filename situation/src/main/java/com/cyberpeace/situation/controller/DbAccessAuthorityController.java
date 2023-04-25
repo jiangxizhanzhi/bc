@@ -43,7 +43,7 @@ public class DbAccessAuthorityController {
 	@Autowired
 	private SituationGisService situationGisService;
 
-	@ApiOperation("获取系统名称列表")
+	@ApiOperation("外部系统名称-列表查询")
 	@GetMapping("/sys/list")
 	public BaseRsp<ListRsp<SituationEnumRes>> getSubSystems(PageReqBase pageReqBase) {
 		ListRsp<SituationEnumRes> res = new ListRsp<>();
@@ -57,7 +57,7 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("获取数据类型列表")
+	@ApiOperation("访问数据类型-列表查询")
 	@GetMapping("/data_type/list")
 	public BaseRsp<ListRsp<SituationEnumRes>> getDataTypes(PageReqBase pageReqBase) {
 		ListRsp<SituationEnumRes> res = new ListRsp<>();
@@ -71,7 +71,7 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("新增数据库访问权限")
+	@ApiOperation("访问权限-新增")
 	@PostMapping()
 	public BaseRsp<String> addDbAccessAuthority(
 			@RequestBody @Validated(Create.class) SituationDbAccessAuthorityAddReq req) {
@@ -82,7 +82,7 @@ public class DbAccessAuthorityController {
 		return new BaseRsp(dbAccessAuthority);
 	}
 
-	@ApiOperation("删除数据库访问权限")
+	@ApiOperation("访问权限--删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDbAccessAuthority(
 			@RequestBody @Validated SituationComponentsAnimationDeleteReq deleteReq) {
@@ -99,7 +99,7 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("获取数据库访问权限列表")
+	@ApiOperation("访问权限-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDbAccessAuthority>>
 			getDbAccessAuthorities(PageReqBase pageReqBase) {

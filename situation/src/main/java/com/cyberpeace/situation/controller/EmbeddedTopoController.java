@@ -16,7 +16,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
-import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.NodePositionReq;
@@ -46,15 +45,12 @@ public class EmbeddedTopoController {
 	private DashboardTemplateRefService dashboardTemplateRefService;
 
 	@Autowired
-	private RemoteSituationService remoteSituationService;
-
-	@Autowired
 	private TopoConfigMapper topoConfigMapper;
 
 	@Autowired
 	private SituationTopoService situationTopoService;
 
-	@ApiOperation("通过模板ID获取大屏ID")
+	@ApiOperation("拓扑编排-通过模板ID获取大屏ID")
 	@GetMapping("/template/dashboard/")
 	public BaseRsp<DashboardIdRes> getTopoByTemplateId(@RequestParam(value = "template_id",
 			required = false) @ApiParam(name = "template_id", value = "模板ID") String templateId) {
@@ -71,7 +67,7 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(dashboardIdRes);
 	}
 
-	@ApiOperation("更新拓扑节点坐标")
+	@ApiOperation("拓扑编排-更新节点坐标")
 	@PostMapping("/template/topo/position/")
 	public BaseRsp<Boolean> updateNodePosition(@RequestBody @Validated NodePositionReq req) {
 
@@ -91,28 +87,36 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(true);
 	}
 
-	@ApiOperation("获取Topo配置")
+	@ApiOperation("拓扑编排-获取可视化编辑页面路径")
+	@GetMapping("/visualization/edit/url/")
+	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
+			required = false) @ApiParam(name = "model_id", value = "模型ID") String modelId) {
+		EditUrlRes editUrlRes = new EditUrlRes(modelId);
+		return new BaseRsp<>(editUrlRes);
+	}
+
+	@ApiOperation("配置-单个查询")
 	@GetMapping("/config/get/")
 	public BaseRsp<ConfigContext>
 			getSituationTopoConfig(@RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(situationTopoService.getSituationTopoConfig(resourceId));
 	}
 
-	@ApiOperation("新增Topo配置")
+	@ApiOperation("配置-新增")
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationTopoConfig(
 			@RequestBody @Validated(Create.class) SituationTopoReq situationTopoReq) {
 		return new BaseRsp<>(situationTopoService.createSituationTopoConfig(situationTopoReq));
 	}
 
-	@ApiOperation("修改Topo配置")
+	@ApiOperation("配置-修改")
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationTopoConfig(
 			@RequestBody @Validated(Update.class) SituationTopoReq situationTopoReq) {
 		return new BaseRsp<>(situationTopoService.updateSituationTopoConfig(situationTopoReq));
 	}
 
-	@ApiOperation("删除Topo配置")
+	@ApiOperation("配置-删除")
 	@PatchMapping("/config/delete/")
 	public BaseRsp<Integer>
 			deleteSituationTopoConfig(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -120,17 +124,10 @@ public class EmbeddedTopoController {
 				situationTopoService.deleteSituationTopoConfig(batchDeleteReq.getIds()));
 	}
 
-	@ApiOperation("获取全量拓扑配置列表")
+	@ApiOperation("配置-全量查询")
 	@GetMapping("/config/list/")
 	public BaseRsp<List<ConfigContext>> getAllConfig() {
 		return new BaseRsp<>(situationTopoService.getAllConfig());
 	}
 
-	@ApiOperation("获取跳转可视化编辑路径")
-	@GetMapping("/visualization/edit/url/")
-	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
-			required = false) @ApiParam(name = "model_id", value = "模型ID") String modelId) {
-		EditUrlRes editUrlRes = new EditUrlRes(modelId);
-		return new BaseRsp<>(editUrlRes);
-	}
 }

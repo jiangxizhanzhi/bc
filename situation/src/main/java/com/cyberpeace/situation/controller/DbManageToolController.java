@@ -49,7 +49,7 @@ public class DbManageToolController {
 	@Autowired
 	private SituationDbToolCategoryMapper situationDbToolCategoryMapper;
 
-	@ApiOperation("查询数据转换工具类型列表")
+	@ApiOperation("管理工具类型-列表查询")
 	@GetMapping("/category/list")
 	public BaseRsp<List<SituationDbToolCategory>>
 			getSituationDbToolCategory(PageReqBase pageReqBase) {
@@ -62,7 +62,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("查询数据转换工具类型详情")
+	@ApiOperation("管理工具类型-单个查询")
 	@GetMapping("/category/")
 	public BaseRsp<SituationDbToolCategory> getSituationDbToolCategoryDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -74,7 +74,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(situationDbToolCategory);
 	}
 
-	@ApiOperation("新增数据转换工具类型列表")
+	@ApiOperation("管理工具类型-新增")
 	@PostMapping("/category/")
 	public BaseRsp<SituationDbToolCategory>
 			addSituationDbToolCategory(@RequestBody @Validated AddCategoryReq req) {
@@ -84,7 +84,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(situationDbToolCategory);
 	}
 
-	@ApiOperation("删除数据转换工具类型")
+	@ApiOperation("管理工具类型-删除")
 	@DeleteMapping("/category/")
 	public BaseRsp
 			deleteSituationDbToolCategory(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -98,7 +98,7 @@ public class DbManageToolController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改数据转换工具类型")
+	@ApiOperation("管理工具类型-修改")
 	@PatchMapping("/category/")
 	public BaseRsp updateSituationDbToolCategory(@RequestBody @Validated AddCategoryReq req) {
 		String resourceId = req.getResourceId();
@@ -122,7 +122,7 @@ public class DbManageToolController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("查询数据转换工具详情")
+	@ApiOperation("管理工具-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDbTool>
 			getSituationDbToolDetail(@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -133,7 +133,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(situationDbTool);
 	}
 
-	@ApiOperation("新增数据转换工具")
+	@ApiOperation("管理工具-新增")
 	@PostMapping("")
 	public BaseRsp<SituationDbTool> setSituationDbTool(
 			@RequestBody @Validated(Create.class) SituationDbToolAddReq dbToolAddReq) {
@@ -159,7 +159,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(situationDbTool);
 	}
 
-	@ApiOperation("查询数据转换工具列表")
+	@ApiOperation("管理工具-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<DbToolRes>> getSituationDbTool(SituationDbToolFilterReq req) {
 		Page page = req.toPageParam();
@@ -179,7 +179,7 @@ public class DbManageToolController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("删除数据转换工具")
+	@ApiOperation("管理工具-删除")
 	@DeleteMapping("")
 	public BaseRsp deleteSituationDbTool(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 		List<String> resourceIds = batchDeleteReq.getIds();
@@ -192,7 +192,7 @@ public class DbManageToolController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改数据转换工具")
+	@ApiOperation("管理工具-修改")
 	@PatchMapping("")
 	public BaseRsp patchSituationDbTool(
 			@RequestBody @Validated(Update.class) SituationDbToolUpdateReq twoDimensionalComponentsUpdateReq) {

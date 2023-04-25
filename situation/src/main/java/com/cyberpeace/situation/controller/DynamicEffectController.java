@@ -62,7 +62,7 @@ public class DynamicEffectController {
 	@Autowired
 	private SituationDynamicEffectMappingService situationDynamicEffectMappingService;
 
-	@ApiOperation("新增动效库")
+	@ApiOperation("动效-新增")
 	@PostMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffectsLibrary> setDynamicEffectsLibrary(
 			@RequestBody @Validated(Create.class) DynamicEffectLibraryAddReq dynamicEffectLibraryAddReq) {
@@ -90,7 +90,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibrary);
 	}
 
-	@ApiOperation("查询动效库")
+	@ApiOperation("动效-列表查询")
 	@GetMapping("/dynamic_effect_library/list")
 	public BaseRsp<List<DynamicEffectsLibrary>>
 			getDynamicEffectsLibrary(DynamicEffectLibraryFilterReq dynamicEffectLibraryFilterReq) {
@@ -116,7 +116,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("查询动效库详情")
+	@ApiOperation("动效-单个查询")
 	@GetMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffectsLibrary> getDynamicEffectsLibraryDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -129,7 +129,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibrary);
 	}
 
-	@ApiOperation("删除动效库")
+	@ApiOperation("动效-删除")
 	@DeleteMapping("/dynamic_effect_library")
 	public BaseRsp
 			deleteDynamicEffectsLibrary(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -145,7 +145,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改动效库")
+	@ApiOperation("动效-修改")
 	@PatchMapping("/dynamic_effect_library")
 	public BaseRsp patchDynamicEffectsLibrary(
 			@Validated(Update.class) DynamicEffectLibraryUpdateReq dynamicEffectLibraryUpdateReq) {
@@ -176,7 +176,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("新增动效库类型")
+	@ApiOperation("动效类型-新增")
 	@PostMapping("/dynamic_effect_library/category")
 	public BaseRsp<DynamicEffectsLibraryCategory> setDynamicEffectsLibraryCategory(
 			@RequestBody @Validated(Create.class) AddCategoryReq addCategoryReq) {
@@ -193,7 +193,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibraryCategory);
 	}
 
-	@ApiOperation("查询动效库类型列表")
+	@ApiOperation("动效类型-列表查询")
 	@GetMapping("/dynamic_effect_library/category/list")
 	public BaseRsp<List<DynamicEffectsLibraryCategory>>
 			getDynamicEffectsLibraryCategory(String name) {
@@ -209,7 +209,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("查询动效库类型详情")
+	@ApiOperation("动效类型-单个查询")
 	@GetMapping("/dynamic_effect_library/category")
 	public BaseRsp<DynamicEffectsLibraryCategory> getDynamicEffectsLibraryCategoryDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -222,7 +222,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibraryCategory);
 	}
 
-	@ApiOperation("删除动效库类型")
+	@ApiOperation("动效类型-删除")
 	@DeleteMapping("/dynamic_effect_library/category")
 	public BaseRsp deleteDynamicEffectsLibraryCategory(
 			@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -237,7 +237,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("修改动效库类型")
+	@ApiOperation("动效类型-修改")
 	@PatchMapping("/dynamic_effect_library/category")
 	public BaseRsp patchDynamicEffectsLibraryCategory(
 			@RequestBody @Validated(Update.class) AddCategoryReq addCategoryReq) {
@@ -267,7 +267,7 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
-	@ApiOperation("返回所有选择项")
+	@ApiOperation("动效-获取动效属性选项")
 	@GetMapping("/dynamic_effect_library/option")
 	public BaseRsp<OptionsRes> getAllOption() {
 		OptionsRes optionsRes = new OptionsRes();
@@ -286,7 +286,7 @@ public class DynamicEffectController {
 		return destPath;
 	}
 
-	@ApiOperation("新增动效映射")
+	@ApiOperation("动效映射-新增")
 	@PostMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> setDynamicEffectsMapping(
 			@RequestBody @Validated(Create.class) DynamicEffectMappingReq dynamicEffectMappingReq) {
@@ -295,7 +295,7 @@ public class DynamicEffectController {
 				.setDynamicEffectsMapping(dynamicEffectMappingReq));
 	}
 
-	@ApiOperation("查询动效映射")
+	@ApiOperation("动效映射-列表查询")
 	@GetMapping("/dynamic/effect/mapping/list")
 	public BaseRsp<ListRsp<DynamicEffectsMapping>>
 			getDynamicEffectsMapping(DynamicEffectMappingPageReq dynamicEffectMappingFilterReq) {
@@ -304,7 +304,7 @@ public class DynamicEffectController {
 				.getDynamicEffectsMapping(dynamicEffectMappingFilterReq));
 	}
 
-	@ApiOperation("查询动效映射详情")
+	@ApiOperation("动效映射-单个查询")
 	@GetMapping("/dynamic/effect/mapping")
 	public BaseRsp<DynamicEffectsMapping> getDynamicEffectsMappingDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
@@ -313,7 +313,7 @@ public class DynamicEffectController {
 				situationDynamicEffectMappingService.getDynamicEffectsMappingDetail(resourceId));
 	}
 
-	@ApiOperation("删除动效映射")
+	@ApiOperation("动效映射-删除")
 	@DeleteMapping("/dynamic/effect/mapping")
 	public BaseRsp<Integer>
 			deleteDynamicEffectsMapping(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -322,7 +322,7 @@ public class DynamicEffectController {
 				situationDynamicEffectMappingService.deleteDynamicEffectsMapping(batchDeleteReq));
 	}
 
-	@ApiOperation("修改动效映射")
+	@ApiOperation("动效映射-修改")
 	@PatchMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> patchDynamicEffectsMapping(
 			@RequestBody @Validated(Update.class) DynamicEffectMappingUpdateReq dynamicEffectMappingUpdateReq) {

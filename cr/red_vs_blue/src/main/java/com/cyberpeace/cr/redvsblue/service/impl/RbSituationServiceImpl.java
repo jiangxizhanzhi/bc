@@ -150,7 +150,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 	private void checkRole(Integer roleGroup) {
 		if (!CrRole.RbRoleGroup.isRvbStudentRole(roleGroup)) {
-			throw new BusinessException();
+			throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 		}
 	}
 
@@ -162,6 +162,12 @@ public class RbSituationServiceImpl implements RbSituationService {
 
 		List<CrRole> crRoleList = crRoleService.selectRbStudentsRoleByRoomIdAndRoleGroup(roomId, roleType);
 		List<CrTask> crTaskList = crTaskService.getByRoles(crRoleList.stream().map(CrRole::getResourceId).collect(Collectors.toList()));
+		crTaskList.sort(Comparator.comparing(
+				(CrTask crTask) -> crTask.getScore() == null ? 0 : crTask.getScore()
+		).reversed());
+
+		Set<String> tmpFilter = Sets.newHashSet();
+		crTaskList = crTaskList.stream().filter(crTask -> tmpFilter.add(crTask.getMissionId())).collect(Collectors.toList());
 
 		Map<String, RbSituationScoreRsp.RoleScoreInfo> roleScoreInfoMap = crRoleList.stream().collect(Collectors.toMap(CrRole::getResourceId, crRole -> {
 			RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = new RbSituationScoreRsp.RoleScoreInfo();
@@ -192,7 +198,9 @@ public class RbSituationServiceImpl implements RbSituationService {
 		rbSituationScoreRsp.setRoleScoreInfoList(
 				roleScoreInfoMap.values().stream().peek(
 						roleScoreInfo -> roleScoreInfo.setPercentage(
-								(double) roleScoreInfo.getScore() / (double) rbSituationScoreRsp.getScore() * 100
+								roleScoreInfo.getScore() == 0
+										? (double) 0
+										: (double) roleScoreInfo.getScore() / (double) rbSituationScoreRsp.getScore() * 100
 						)
 				).collect(Collectors.toList())
 		);

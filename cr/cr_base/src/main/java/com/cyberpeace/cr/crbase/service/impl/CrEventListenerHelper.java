@@ -2,7 +2,11 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -22,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrEventListenerHelper {
 
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 	/**
 	 * 过滤 ws 推送的节点消息
 	 * @param role
@@ -33,6 +39,8 @@ public class CrEventListenerHelper {
 		WsSceneReportBO report;
 		// is student
 		if (role.isRvbStudent() || role.isTeamStudent()) {
+			data = filterApplyDevice(data, role);
+
 			CrRoleNodesData nodesData = role.getNodeData();
 			// filter visible nodes
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),
@@ -70,5 +78,41 @@ public class CrEventListenerHelper {
 		identifier.setPath(WsPath.CR_SCENE);
 		identifier.setBusiness_id(businessId);
 		return WebSocketMessageContext.builder().data(data).messageIdentifier(identifier).build();
+	}
+
+	public String filterApplyDevice(String data, CrRole role) {
+		JSONObject dataObject = JsonUtil.toJsonObject(data, JSONObject.class);
+
+		if (dataObject.getJSONObject("data").getString("type").equals("scene_element")) {
+			JSONObject elementCpCloud = dataObject.getJSONObject("data")
+					.getJSONObject("data")
+					.getJSONObject("scene_element_plugin_data")
+					.getJSONObject("cpcloud");
+
+			if (elementCpCloud.getString("image_type").equals("entity")) {
+				CrRoomDeviceApply crRoomDeviceApply = crRoomDeviceApplyService.lambdaQuery()
+						.eq(CrRoomDeviceApply::getRoomId, role.getRoomId())
+						.eq(CrRoomDeviceApply::getDeviceId, elementCpCloud.getString("image_uuid"))
+						.eq(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.AGREE.getCode())
+						.one();
+
+				if (crRoomDeviceApply == null) {
+					JSONArray ports = dataObject.getJSONObject("data").getJSONObject("data").getJSONObject("scene_element").getJSONArray("ports");
+					for (int i = 0; i < ports.size(); i++) {
+						ports.getJSONObject(i).put("access_modes", Lists.newArrayList());
+						ports.getJSONObject(i).put("ip", null);
+						dataObject.getJSONObject("data")
+								.getJSONObject("data")
+								.getJSONObject("scene_element_port_plugin_data")
+								.getJSONObject("cpcloud")
+								.remove(ports.getJSONObject(i).getString("id"));
+					}
+				}
+			}
+		} else {
+			return data;
+		}
+
+		return JsonUtil.toJsonString(dataObject);
 	}
 }

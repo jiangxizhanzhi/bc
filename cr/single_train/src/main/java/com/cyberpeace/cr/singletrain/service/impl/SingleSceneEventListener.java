@@ -1,5 +1,8 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,12 @@ public class SingleSceneEventListener extends MessageListener {
 	@Autowired
 	private SingleRoomService singleRoomService;
 
+	@Autowired
+	private CrEventListenerHelper crEventListenerHelper;
+
+	@Autowired
+	private CrRoleService crRoleService;
+
 	@Override
 	public Integer declareMessageType() {
 		return LocalScene.BusinessCode.SINGLE_TRAINING.getCode();
@@ -49,6 +58,10 @@ public class SingleSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(businessId, context.getUserId());
+		if (crRole != null) {
+			data = crEventListenerHelper.filterApplyDevice(data, crRole);
+		}
 		pushDataToWeb(data, businessId);
 
 		return true;

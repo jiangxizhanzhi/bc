@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.component.MyWebSocketHandler;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -23,7 +24,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoomDeviceApplyMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
-import com.cyberpeace.cr.crbase.service.SceneFilterService;
+import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.WsMessageBO;
@@ -31,7 +32,6 @@ import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +58,6 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     private MyWebSocketHandler webSocketHandler;
 
     @Autowired
-    private CrEventListenerHelper crEventListenerHelper;
-
-    @Autowired
     private LocalSceneService localSceneService;
 
     @Autowired
@@ -72,6 +69,14 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
             throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
         }
         return crRoomDeviceApply;
+    }
+
+    private WebSocketMessageContext makeContext(String data, String businessId) {
+        // 构建需要向页面推送的消息上下文
+        CrSceneWsMessageIdentifier identifier = new CrSceneWsMessageIdentifier();
+        identifier.setPath(WsPath.CR_SCENE);
+        identifier.setBusiness_id(businessId);
+        return WebSocketMessageContext.builder().data(data).messageIdentifier(identifier).build();
     }
 
     private void pushSceneData(CrRoomDeviceApply crRoomDeviceApply) {
@@ -87,7 +92,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
 
         webSocketHandler.pushMessageToUsers(
-                crEventListenerHelper.makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
+                makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
                         crRoomDeviceApply.getRoomId()),
                 crRole.getUserIdList()
         );
@@ -136,7 +141,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));
 
-        WebSocketMessageContext messageContext = crEventListenerHelper.makeContext(JsonUtil.toJsonString(reportBO),
+        WebSocketMessageContext messageContext = makeContext(JsonUtil.toJsonString(reportBO),
                 crRoomDeviceApply.getRoomId());
         webSocketHandler.pushMessageToUsers(messageContext, crRole.getUserIdList());
     }

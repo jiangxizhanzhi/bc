@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.redvsblue.controller.req.AllStartFlowRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.FlowListQuery;
 import com.cyberpeace.cr.redvsblue.controller.rsp.DownloadFlowFilePathRsp;
 import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -202,6 +204,21 @@ public class RbSceneController {
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
 		return new BaseRsp();
+	}
+
+	@ApiOperation("更新源IP")
+	@PostMapping("/flow/source_ip")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<Boolean> updateFlowSourceIp(@RequestBody FlowOpsReq req) {
+
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(req.getRoomId());
+		if (localScene == null) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		FlowOpsContext flowOpsContext = BeanUtils.copy(req, FlowOpsContext.class);
+		flowOpsContext.setId(localScene.getMpSceneId());
+		return new BaseRsp<>(crSceneService.updateFlowParam(flowOpsContext));
 	}
 
 	@ApiOperation("下载流量文件")

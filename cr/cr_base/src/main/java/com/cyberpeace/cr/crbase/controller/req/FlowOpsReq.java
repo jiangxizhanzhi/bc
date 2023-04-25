@@ -16,4 +16,7 @@ public class FlowOpsReq implements Serializable {
 
 	@ApiModelProperty("流量id")
 	private String flowId;
+
+	@ApiModelProperty("源IP")
+	private String sourceIp;
 }

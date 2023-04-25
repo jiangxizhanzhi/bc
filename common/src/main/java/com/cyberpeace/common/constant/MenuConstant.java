@@ -119,6 +119,9 @@ public interface MenuConstant {
     //工具库
     String CMS_TOOL = "tool";
 
+    // 态势推演工具库
+    String CMS_TOOLS = "tools";
+
     //系统配置
     String CMS_SYSTEM_CONFIG = "system-config";
 

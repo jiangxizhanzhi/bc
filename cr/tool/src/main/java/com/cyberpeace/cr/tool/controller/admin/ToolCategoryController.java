@@ -2,6 +2,7 @@ package com.cyberpeace.cr.tool.controller.admin;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class ToolCategoryController {
 
 	@GetMapping("/list")
 	@ApiOperation("工具分类列表")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
 	public BaseRsp<ListRsp<ToolCategory>> getList(
 			@ApiParam(name = "listReq", value = "查询条件") @Validated PageReqBase pageReqBase) {
 		ListRsp<ToolCategory> courseInfos = toolCategoryService.selectPage(pageReqBase);
@@ -44,7 +45,7 @@ public class ToolCategoryController {
 
 	@GetMapping()
 	@ApiOperation("工具分类详情")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
 	public BaseRsp<ToolCategoryRsp> getDetail(@ApiParam(name = "resource_id", value = "查询id",
 			required = true) @RequestParam("resource_id") @NotBlank String resource_id) {
 		ToolCategory toolCategory = toolCategoryService.getById(resource_id);
@@ -54,7 +55,7 @@ public class ToolCategoryController {
 
 	@PostMapping()
 	@ApiOperation("工具分类创建")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
 	public BaseRsp<String> create(@RequestBody @Validated CategoryAddReq categoryAddReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryAddReq, ToolCategory.class);
 		toolCategoryService.validateToolCategoryNameExist(toolCategory);
@@ -64,7 +65,7 @@ public class ToolCategoryController {
 
 	@PatchMapping()
 	@ApiOperation("工具分类更新")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
 	public BaseRsp<String> update(@RequestBody @Validated CategoryUpdateReq categoryUpdateReq) {
 		ToolCategory toolCategory = BeanUtils.copy(categoryUpdateReq, ToolCategory.class);
 		toolCategoryService.updateToolCategoryById(toolCategory);
@@ -73,7 +74,7 @@ public class ToolCategoryController {
 
 	@DeleteMapping()
 	@ApiOperation("工具分类批量删除")
-	@RequiresPermissions(MenuConstant.CMS_TOOL)
+	@RequiresPermissions(value = {MenuConstant.CMS_TOOL, MenuConstant.CMS_TOOLS}, logical = Logical.OR)
 	public BaseRsp<String> batchRemove(@RequestBody @Validated DeleteReq deleteReq) {
 		toolCategoryService.batchDelete(deleteReq.getIds());
 		return new BaseRsp<>();

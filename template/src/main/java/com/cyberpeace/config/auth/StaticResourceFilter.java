@@ -34,7 +34,7 @@ public class StaticResourceFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        MP_HOST = "http://" + SystemPropUtil.getProp("MP_HOST");
+        MP_HOST = "http://" + SystemPropUtil.getProp("OUTER_HOST");
         redirectStatus = Boolean.parseBoolean(ConfigUtil.getContextProperty("redirectStatus"));
         log.info("静态资源权限过滤开启状态：{}", false);
     }

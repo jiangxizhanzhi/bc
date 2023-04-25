@@ -66,16 +66,6 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
             userInfo = remoteUserService.doAuthentication(token);
             CommonContext.setAuthorization(token);
-            Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
-            userInfo.setPermissions(userPermission);
-
-            // rtks相关角色
-            UserRole roleInfo = userRelateService.getUserRoleInfo(userInfo.getUserId());
-
-            if (null != roleInfo) {
-                userInfo.setRoleId(roleInfo.getRoleId());
-                userInfo.setRoleName(roleInfo.getRoleName());
-            }
             UserInfoContext.setUserContext(userInfo);
         } catch (Exception e) {
             log.error("RemoteUserService.doAuthentication error", e);

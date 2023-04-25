@@ -293,6 +293,9 @@ public class TimeUtil {
      * @return
      */
     public static String format1(Date date) {
+        if(date == null) {
+            return null;
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(date);
     }

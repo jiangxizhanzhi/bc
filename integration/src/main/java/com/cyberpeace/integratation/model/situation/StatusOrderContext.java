@@ -1,8 +1,8 @@
 package com.cyberpeace.integratation.model.situation;
 
 import java.io.Serializable;
-import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +12,8 @@ import lombok.Data;
 
 @Data
 public class StatusOrderContext implements Serializable {
+
+	public static final String KSH_SYS_ID = "SYXLKSHXT";
 
 	@JsonProperty("orderId")
 	@ApiModelProperty(value = "指令ID")
@@ -24,7 +26,7 @@ public class StatusOrderContext implements Serializable {
 	@JsonProperty("orderTime")
 	@ApiModelProperty(value = "指令下达时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date orderTime;
+	private String orderTime;
 
 	@ApiModelProperty(value = "指令描述")
 	private String description;
@@ -39,7 +41,11 @@ public class StatusOrderContext implements Serializable {
 
 	@JsonProperty("faid")
 	@ApiModelProperty(value = "方案ID")
-	private String faid;
+	private String faid = "";
+
+	@JsonProperty("zfaid")
+	@ApiModelProperty(value = "子方案ID")
+	private String zfaid;
 
 	@JsonProperty("fazt")
 	@ApiModelProperty(value = "方案状态")
@@ -49,4 +55,19 @@ public class StatusOrderContext implements Serializable {
 	@ApiModelProperty(value = "业务系统编号")
 	private String sourceSys;
 
+	@JsonProperty("ywxtArr")
+	@ApiModelProperty(value = "接收业务系统编号列表")
+	private String ywxtArr;
+
+	@JsonProperty("ywxtArrId")
+	@ApiModelProperty(value = "接收业务系统编号")
+	private JSONObject ywxtArrId;
+
+
+	@ApiModelProperty(value = "可视化方案ID")
+	private String kshfaid;
+
+	public void setKshfaid() {
+		this.kshfaid = this.getYwxtArrId().getString(StatusOrderContext.KSH_SYS_ID);
+ 	}
 }

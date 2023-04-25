@@ -6,19 +6,16 @@ import lombok.Getter;
 
 public enum PublicStatus {
 
-	/**
-	 * 大屏状态（想定）
-	 */
 
 	OTHERS(0, "其它", false, "-", "-", "-", "-", false),
 	ZERO(1, "未开始", false, "-", "-", "-", "-", false),
-	EDIT(2, "编辑中", true, "拟制完成", "-", "拟制完成", "-", false),
-	COMPLETE(3, "已完成", false, "-", "-", "-", "重新拟制", true),
-	ISSUE(4, "已下发", false, "-", "-", "-", "-", true),
-	DIRECTING(5, "导调中", false, "-", "-", "-", "-", true),
-	DIRECT_COMPLETE(6, "导调完成", false, "-", "-", "-", "-", true),
-	REVIEW(7, "评审中", false, "-", "-", "-", "-", true),
-	REVIEW_COMPLETE(8, "评审完成", false, "-", "-", "-", "-", true);
+	PREPARATION(2, "拟制中", true, "拟制完成", "-", "拟制完成", "-", false),
+	COMPLETE(3, "拟制完成", false, "-", "-", "-", "重新拟制", true),
+	REVIEW(4, "评审中", false, "-", "-", "-", "-", true),
+	PASS(5, "评审通过", true, "修改完成", "-", "修改完成", "-", false),
+	NOPASS(6, "评审不通过", true, "修改完成", "-", "修改完成", "-", false),
+	MODIFICATION(7, "修改完成", false, "-", "-", "-", "-", true),
+	ESCALATION(8, "方案完成上报", false, "-", "-", "-", "-", true);
 
 	@Getter
 	private Integer code;

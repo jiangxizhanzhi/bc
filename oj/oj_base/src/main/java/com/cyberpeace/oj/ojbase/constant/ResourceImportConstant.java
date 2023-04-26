@@ -133,4 +133,9 @@ public interface ResourceImportConstant {
 	String SCRIPT = "script";
 
 	String WRITEUP_MD = "writeup.md";
+
+	/**
+	 * 资源导入导出文件存放目录
+	 */
+	String RESOURCE_CRYPTO_PATH = "/cpms/crypto";
 }

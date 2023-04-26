@@ -1,5 +1,9 @@
 package com.cyberpeace.common.util;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
@@ -11,8 +15,14 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cyberpeace.common.constant.CommonConstant;
@@ -599,13 +609,13 @@ public class FileUtil {
 		if (!file.exists()) {
 			return;
 		}
-		
+
 		try {
 			if (file.isFile()) {
 				FileUtils.delete(file);
 				return;
 			}
-			
+
 			if (self) {
 				FileUtils.deleteDirectory(file);
 				return;
@@ -627,7 +637,7 @@ public class FileUtil {
 			log.error("Directory delete failed! file_path=[{}], catch error:", destDir, e);
 			throw new BusinessException(ErrorCode.FILE_DELETE_FAILED);
 		}
-		
+
 	}
 
 	public static String getHash256(File file) throws IOException, NoSuchAlgorithmException {
@@ -689,6 +699,54 @@ public class FileUtil {
 	public static void createManyPath(String parentPath, String... children) {
 		for (String child : children) {
 			createPath(new File(parentPath, child));
+		}
+	}
+
+	public static Boolean convertPPTToPDF(File file, File toFile) {
+		try{
+			Document pdfDocument = new Document();
+			PdfWriter pdfWriter = PdfWriter.getInstance(pdfDocument, new FileOutputStream(toFile));
+			FileInputStream is = new FileInputStream(file);
+			double zoom = 2;
+			XMLSlideShow ppt = convertPPTToPDFByPPTX(is);
+			if (ppt == null) {
+				throw new NullPointerException("This PPTX get data is error....");
+			}
+			Dimension pgsize = ppt.getPageSize();
+			List<XSLFSlide> slide = ppt.getSlides();
+			AffineTransform at = new AffineTransform();
+			at.setToScale(zoom, zoom);
+			pdfDocument.setPageSize(new com.itextpdf.text.Rectangle((float) pgsize.getWidth(), (float) pgsize.getHeight()));
+			pdfWriter.open();
+			pdfDocument.open();
+			PdfPTable table = new PdfPTable(1);
+			for (XSLFSlide xslfSlide : slide) {
+				BufferedImage img = new BufferedImage((int) Math.ceil(pgsize.width * zoom), (int) Math.ceil(pgsize.height * zoom), BufferedImage.TYPE_INT_RGB);
+				Graphics2D graphics = img.createGraphics();
+				graphics.setTransform(at);
+				graphics.setPaint(Color.white);
+				graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+				xslfSlide.draw(graphics);
+				graphics.getPaint();
+				com.itextpdf.text.Image slideImage = com.itextpdf.text.Image.getInstance(img, null);
+				table.addCell(new PdfPCell(slideImage, true));
+			}
+			ppt.close();
+			pdfDocument.add(table);
+			pdfDocument.close();
+			pdfWriter.close();
+			log.info(file.getAbsolutePath() + "Powerpoint file converted to PDF successfully");
+			return true;
+		} catch (Exception e){
+			log.error("cover ppt to covert failed" + file.getAbsolutePath() + "--->" + e.getMessage());
+			return false;
+		}
+	}
+	private static XMLSlideShow convertPPTToPDFByPPTX(FileInputStream is) {
+		try {
+			return new XMLSlideShow(is);
+		} catch (IOException e) {
+			return null;
 		}
 	}
 }

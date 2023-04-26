@@ -97,7 +97,12 @@ public class CrEventListenerHelper {
 						.one();
 
 				if (crRoomDeviceApply == null) {
-					JSONArray ports = dataObject.getJSONObject("data").getJSONObject("data").getJSONObject("scene_element").getJSONArray("ports");
+					elementCpCloud.put("apply_status", null);
+					JSONArray ports = dataObject.getJSONObject("data")
+							.getJSONObject("data")
+							.getJSONObject("scene_element")
+							.getJSONArray("ports");
+
 					for (int i = 0; i < ports.size(); i++) {
 						ports.getJSONObject(i).put("access_modes", Lists.newArrayList());
 						ports.getJSONObject(i).put("ip", null);

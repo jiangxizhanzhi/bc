@@ -230,6 +230,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			singleRoomBo.setShowSubmitBtn(false);
 			return singleRoomBo;
 		} else {
+			singleRoomBo.setLocalSceneId(singleRoom.getLocalSceneId());
 			singleRoomBo.setShowSubmitBtn(!singleRoom.getIsFinish());
 		}
 

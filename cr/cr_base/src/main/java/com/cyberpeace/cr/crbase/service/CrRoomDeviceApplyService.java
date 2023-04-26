@@ -7,6 +7,8 @@ import com.cyberpeace.cr.crbase.controller.rsp.RoomDeviceApplyListRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.RoomDeviceOccupyRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 
+import java.util.List;
+
 public interface CrRoomDeviceApplyService extends IService<CrRoomDeviceApply> {
     Boolean apply(String roomId, String roomName, String deviceId, String localSceneId);
 
@@ -19,5 +21,9 @@ public interface CrRoomDeviceApplyService extends IService<CrRoomDeviceApply> {
     Boolean refuse(String applyId);
 
     Boolean recycle(String roomId, String deviceId);
+
+    void pushSceneData(CrRoomDeviceApply crRoomDeviceApply);
+
+    void pushSceneData(String deviceId, String sceneDeviceId, String roomId, List<String> userIds);
 
 }

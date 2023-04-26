@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.sql.Time;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
@@ -99,7 +100,6 @@ public class CrEventListenerHelper {
 						.one();
 
 				if (crRoomDeviceApply == null) {
-					elementCpCloud.put("apply_status", null);
 					JSONArray ports = dataObject.getJSONObject("data")
 							.getJSONObject("data")
 							.getJSONObject("scene_element")
@@ -115,11 +115,20 @@ public class CrEventListenerHelper {
 								.remove(ports.getJSONObject(i).getString("id"));
 					}
 				}
+				if (crRoomDeviceApply == null) {
+					String deviceId = dataObject.getJSONObject("data")
+							.getJSONObject("data")
+							.getJSONObject("scene_element").getString("id");
+					String sceneDeviceId = elementCpCloud.getString("image_uuid");
+					crRoomDeviceApplyService.pushSceneData(deviceId, sceneDeviceId, role.getRoomId(), role.getUserIdList());
+				} else {
+					crRoomDeviceApplyService.pushSceneData(crRoomDeviceApply);
+				}
 			}
 		} else {
 			return data;
 		}
 
-		return JSON.toJSONString(dataObject, SerializerFeature.WriteMapNullValue);
+		return JsonUtil.toJsonString(dataObject);
 	}
 }

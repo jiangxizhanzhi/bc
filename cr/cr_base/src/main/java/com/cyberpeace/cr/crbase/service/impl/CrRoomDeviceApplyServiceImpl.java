@@ -79,7 +79,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         return WebSocketMessageContext.builder().data(data).messageIdentifier(identifier).build();
     }
 
-    private void pushSceneData(CrRoomDeviceApply crRoomDeviceApply) {
+    public void pushSceneData(CrRoomDeviceApply crRoomDeviceApply) {
         JSONObject data = new JSONObject();
         data.put("device_id", crRoomDeviceApply.getSceneDeviceId());
         data.put("device_origin_id", crRoomDeviceApply.getDeviceId());
@@ -95,6 +95,20 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
                 makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
                         crRoomDeviceApply.getRoomId()),
                 crRole.getUserIdList()
+        );
+    }
+
+    @Override
+    public void pushSceneData(String deviceId, String sceneDeviceId, String roomId, List<String> userIds) {
+        JSONObject data = new JSONObject();
+        data.put("device_id", sceneDeviceId);
+        data.put("device_origin_id", deviceId);
+        data.put("status", null);
+        WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
+
+        webSocketHandler.pushMessageToUsers(
+                makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue), roomId),
+                userIds
         );
     }
 

@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * 以下数据库表共用一个entity
  * rtks_attack_category
- * rtks_attack_category_ics
+ * rtks_attack_ics_category
  */
 @Data
 @TableName("rtks_attack_category")

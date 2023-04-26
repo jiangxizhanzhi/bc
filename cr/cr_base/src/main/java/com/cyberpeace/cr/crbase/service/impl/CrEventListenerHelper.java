@@ -2,7 +2,9 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.compress.utils.Lists;
@@ -105,7 +107,7 @@ public class CrEventListenerHelper {
 
 					for (int i = 0; i < ports.size(); i++) {
 						ports.getJSONObject(i).put("access_modes", Lists.newArrayList());
-						ports.getJSONObject(i).put("ip", null);
+						ports.getJSONObject(i).remove("ip");
 						dataObject.getJSONObject("data")
 								.getJSONObject("data")
 								.getJSONObject("scene_element_port_plugin_data")
@@ -118,6 +120,6 @@ public class CrEventListenerHelper {
 			return data;
 		}
 
-		return JsonUtil.toJsonString(dataObject);
+		return JSON.toJSONString(dataObject, SerializerFeature.WriteMapNullValue);
 	}
 }

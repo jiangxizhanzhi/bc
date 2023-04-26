@@ -125,8 +125,8 @@ public class CrEventListenerHelper {
 						String deviceId = dataObject.getJSONObject("data")
 								.getJSONObject("data")
 								.getJSONObject("scene_element").getString("id");
-						String sceneDeviceId = elementCpCloud.getString("image_uuid");
-						crRoomDeviceApplyService.pushSceneData(deviceId, sceneDeviceId, role.getRoomId(), role.getUserIdList());
+						String deviceOriginId = elementCpCloud.getString("image_uuid");
+						crRoomDeviceApplyService.pushSceneData(deviceId, deviceOriginId, role.getRoomId(), role.getUserIdList());
 					} else {
 						crRoomDeviceApplyService.pushSceneData(crRoomDeviceApply);
 					}

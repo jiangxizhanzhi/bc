@@ -99,10 +99,10 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     }
 
     @Override
-    public void pushSceneData(String deviceId, String sceneDeviceId, String roomId, List<String> userIds) {
+    public void pushSceneData(String deviceId, String deviceOriginId, String roomId, List<String> userIds) {
         JSONObject data = new JSONObject();
-        data.put("device_id", sceneDeviceId);
-        data.put("device_origin_id", deviceId);
+        data.put("device_id", deviceId);
+        data.put("device_origin_id", deviceOriginId);
         data.put("status", null);
         WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 

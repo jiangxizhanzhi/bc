@@ -11,7 +11,9 @@ import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.statistics.*;
+import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -117,7 +119,17 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	public void getTrainingScore(String userId, List<BarChartUnit> trainingStatsScore) {
 		List<CrTask> crTaskList = crTaskMapper.selectByUserIdAndBusinessType(userId, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		Integer sum = 0;
+		List<String> roomIds = StreamApiUtils.map(crTaskList, CrTask::getRoomId);
+		if (roomIds.size() == 0) {
+			trainingStatsScore.add(new BarChartUnit("红蓝对抗", sum));
+			return;
+		}
+		List<RbRoom> rbRoomList = rbRoomMapper.selectBatchIds(roomIds);
+		Map<String, RbRoom> rbRoomMap = StreamApiUtils.toMap(rbRoomList, RbRoom::getResourceId, rbRoom -> rbRoom);
 		for (CrTask crTask: crTaskList) {
+			if (rbRoomMap.get(crTask.getRoomId()) == null) {
+				continue;
+			}
 			Integer score = crTask.getScore() == null ? 0 : crTask.getScore();
 			sum += score;
 		}

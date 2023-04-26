@@ -250,6 +250,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		SingleRoomInfoBo singleRoomInfoBo = new SingleRoomInfoBo();
 		singleRoomInfoBo.setStartTime(singleRoom.getStartTime());
 		singleRoomInfoBo.setTrainingRecordData(missionsRecord);
+		singleRoomInfoBo.setResourceId(singleRoom.getResourceId());
 		singleRoomInfoBo
 				.setRunningTime(TimeUtil.getIntervalSeconds(singleRoom.getStartTime(), new Date()));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);

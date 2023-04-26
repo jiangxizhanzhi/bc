@@ -13,6 +13,9 @@ import lombok.Data;
 @ApiModel("单兵训练房间信息")
 public class SingleRoomInfoBo implements Serializable {
 
+	@ApiModelProperty("roomId")
+	private String resourceId;
+
 	@ApiModelProperty("训练开始时间")
 	private Date startTime;
 

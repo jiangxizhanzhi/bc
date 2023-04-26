@@ -212,13 +212,14 @@ public class SingleRoomController {
 	@PostMapping("/device/apply")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<Boolean> deviceApply(@RequestBody @Validated RoomDeviceApplyReq roomDeviceApplyReq) {
+		// `roomDeviceApplyReq.getRoomId()`实际获取到的是businessTemplateId
 		SingleRoomBo singleRoomBo = singleRoomService.getRoomInfo(roomDeviceApplyReq.getRoomId());
 		if (singleRoomBo == null) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
 		return new BaseRsp<>(crRoomDeviceApplyService.apply(
-				singleRoomBo.getResourceId(),
+				singleRoomBo.getRoomInfo().getResourceId(),
 				singleRoomBo.getEventData().getName(),
 				roomDeviceApplyReq.getDeviceId(),
 				singleRoomBo.getLocalSceneId()));

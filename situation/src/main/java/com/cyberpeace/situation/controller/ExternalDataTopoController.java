@@ -29,6 +29,7 @@ import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "外部数据-拓扑分析")
 @RestController
@@ -41,6 +42,8 @@ public class ExternalDataTopoController {
 
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
+	
+	private volatile Boolean demo = false;
 
 	@ApiOperation("态势-获取节点链路状态")
 	@PostMapping("/node/connection/")
@@ -115,7 +118,7 @@ public class ExternalDataTopoController {
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
 		// 直接返回样例拓扑
-		if ("demo".equals(topoReq.getEnvId())) {
+		if ("demo".equals(topoReq.getEnvId()) && demo) {
 			return new BaseRsp<>(JsonUtil.toJsonObject(
 					JsonUtil.toJsonString(getJsonByName("demoTopo")), TopoContext.class));
 		}
@@ -148,6 +151,14 @@ public class ExternalDataTopoController {
 	private JSONObject getJsonByName(String name) {
 		InputStream inputStream = getClass().getResourceAsStream("/" + name + ".json");
 		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
+	}
+
+	@ApiOperation("系统-切换拓扑模式")
+	@GetMapping("/topo/mode/")
+	public BaseRsp<Boolean> changeTopoMode(@ApiParam(name = "mode", value = "Demo模式",
+			required = false) @RequestParam(value = "mode", required = false) Boolean mode) {
+		demo = mode;
+		return new BaseRsp<>(mode);
 	}
 
 }

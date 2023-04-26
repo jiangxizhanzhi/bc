@@ -16,6 +16,12 @@
         <if test="situationPublishInstanceFilterReq.category != null and situationPublishInstanceFilterReq.category != ''">
             AND category = #{situationPublishInstanceFilterReq.category}
         </if>
+        <if test="situationPublishInstanceFilterReq.levels != null and situationPublishInstanceFilterReq.levels.size() != 0">
+            AND situation_dashboard_attribute.level in
+            <foreach collection="situationPublishInstanceFilterReq.levels" item="level" open="(" close=")" separator=",">
+                #{level}
+            </foreach>
+        </if>
         <if test="situationPublishInstanceFilterReq.startTime != null">
             AND situation_dashboard_instance.update_time &gt; #{situationPublishInstanceFilterReq.startTime}
         </if>

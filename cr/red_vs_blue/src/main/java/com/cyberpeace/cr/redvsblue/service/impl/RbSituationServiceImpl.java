@@ -181,7 +181,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 		Integer score = 0;
 		Integer residualScore = 0;
 		for (CrTask crTask: crTaskList) {
-			if (crTask.getStatus().intValue() == CrTask.TaskStatus.SUCCESS.getCode()) {
+			if (crTask.isFinished()) {
 				score += crTask.getScore();
 				RbSituationScoreRsp.RoleScoreInfo roleScoreInfo = roleScoreInfoMap.get(crTask.getRoleId());
 				roleScoreInfo.setScore(roleScoreInfo.getScore() + crTask.getScore());

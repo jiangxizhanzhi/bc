@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.rtks.service.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
@@ -35,10 +36,6 @@ import com.cyberpeace.rtks.controller.frame.FrameModifyInput;
 import com.cyberpeace.rtks.controller.frame.FrameOutput;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
-import com.cyberpeace.rtks.service.FrameService;
-import com.cyberpeace.rtks.service.LevelService;
-import com.cyberpeace.rtks.service.RoleService;
-import com.cyberpeace.rtks.service.SkillService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
@@ -76,6 +73,9 @@ public class FrameController {
 
 	@Autowired
 	private SkillService skillService;
+
+	@Autowired
+	private KnowledgeService knowledgeService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -282,6 +282,9 @@ public class FrameController {
 				roleService.initDefaultFromPreset("task");
 				roleService.initDefaultFromPreset("knowledge_category");
 				roleService.initDefaultFromPreset("knowledge");
+				// 重置框架后，去除所有k默认的course关联
+				knowledgeService.clearCourseRel();
+				// course_related表只有写和删，没有读和改，没有意义
 				roleService.initDefaultFromPreset("course_related");
 			}
 		});

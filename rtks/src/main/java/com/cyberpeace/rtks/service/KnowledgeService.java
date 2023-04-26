@@ -64,4 +64,9 @@ public interface KnowledgeService extends IService<Knowledge> {
 	List<String> getCourseByIds(List<String> knowledgeIds);
 
 	List<KnowledgeRes> getAllKnowledge();
+
+	/**
+	 * 重置框架后，去除所有k默认的course关联
+	 */
+	void clearCourseRel();
 }

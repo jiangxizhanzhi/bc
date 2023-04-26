@@ -263,4 +263,9 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 		return knowledgeResList;
 	}
+
+	@Override
+	public void clearCourseRel() {
+		knowledgeMapper.clearCourseRel();
+	}
 }

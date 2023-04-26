@@ -19,6 +19,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -182,9 +183,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
 							practiceTheory.getResourceId(), IS_COLLECTED);
 					if (practiceSolved == null) {
-						theoryListBo.setSolved(2);
+						theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
 					}else {
-						theoryListBo.setSolved(practiceSolved.getSolved() ? 1 : 0);
+						theoryListBo.setSolved(practiceSolved.getSolved() ?
+								PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
 					}
 				}
 			}
@@ -594,17 +596,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
 		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
-		PageReqBase pageReqBase = new PageReqBase();
-		pageReqBase.setPer_page(2147483647);
-		TheoryListQueryBo listQueryBo = new TheoryListQueryBo();
-		listQueryBo.setPracticeSetId(practiceSetId);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-		IPage<PracticeTheoryListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
-		List<PracticeTheoryListBo> practiceTheoryListBoList = new ArrayList<>();
-		if (practiceTheoryListBoIPage != null) {
-			practiceTheoryListBoList = practiceTheoryListBoIPage.getRecords();
-		}
+		List<PracticeTheoryListBo> practiceTheoryListBoList = getAllPracticeTheoryByAuthAndSetId(practiceSetId);
 		ProgressProportion simple = new ProgressProportion();
 		simple.setCount((int) practiceTheoryListBoList.stream()
 													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())
@@ -636,6 +628,23 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return progressStatisticsRes;
 	}
 
+	@Override
+	public List<CategoryProgressRes> getProgressByCategory() {
+		List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
+		List<PracticeTheoryListBo> practiceTheoryListBoList = getAllPracticeTheoryByAuthAndSetId(null);
+		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
+		for (PracticeCategory practiceCategory : practiceCategoryList) {
+			categoryProgressResList.add(
+					new CategoryProgressRes(practiceCategory.getName(), practiceCategory.getResourceId(),
+					//该方向已解出的题目数
+					(int) practiceTheoryListBoList.stream().filter(practiceTheoryListBo -> practiceTheoryListBo.getCategoryId().equals(practiceCategory.getResourceId())
+															&& practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count(),
+					//该方向所有的题目数
+					(int) practiceTheoryListBoList.stream().filter(practiceTheoryListBo -> practiceTheoryListBo.getCategoryId().equals(practiceCategory.getResourceId())).count()));
+		}
+		return categoryProgressResList;
+	}
+
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");
 		List<String> content = Arrays.asList(split);
@@ -655,5 +664,19 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		theoryBaseMd.setTitle(title);
 
+	}
+
+	private List<PracticeTheoryListBo> getAllPracticeTheoryByAuthAndSetId (String practiceSetId){
+		PageReqBase pageReqBase = new PageReqBase();
+		pageReqBase.setPer_page(2147483647);
+		TheoryListQueryBo listQueryBo = new TheoryListQueryBo();
+		listQueryBo.setPracticeSetId(practiceSetId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		IPage<PracticeTheoryListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
+		if (practiceTheoryListBoIPage == null) {
+			return new ArrayList<>();
+		}
+		return practiceTheoryListBoIPage.getRecords();
 	}
 }

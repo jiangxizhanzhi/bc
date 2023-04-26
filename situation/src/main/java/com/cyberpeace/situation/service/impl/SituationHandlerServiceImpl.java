@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +13,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.constant.*;
@@ -37,6 +38,7 @@ import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
+import com.cyberpeace.situation.service.context.EventTypeContext;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -726,58 +728,93 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	private EventTypeContext convertEventType(Map<String, String> parentTypeMap,
+			EventType eventType) {
+		EventTypeContext eventTypeContext = BeanUtils.deepCopy(eventType, EventTypeContext.class);
+		eventTypeContext.setParentType(parentTypeMap.get(eventTypeContext.getParentNode()));
+		return eventTypeContext;
+	}
+
+	private EventTypeContext getEventTypeByAdEvent(Map<String, List<EventTypeContext>> eventTypeMap,
+			AdEventContext context) {
+
+		// 1、指定默认的攻击类型
+		EventTypeContext defaultEventType = eventTypeMap.get("其它网络攻击").get(0);
+
+		// 2、优先使用子类型来匹配事件类型
+		List<EventTypeContext> eventTypeList = eventTypeMap.get(context.getEventSubType());
+
+		// 3、如果未匹配到事件类型，返回默认值
+		if (CollectionUtils.isEmpty(eventTypeList)) {
+			return defaultEventType;
+		}
+
+		// 4、如果匹配，直接返回
+		if (eventTypeList.size() == 1) {
+			return eventTypeList.get(0);
+		}
+
+		// 5、如果有多个，使用父类型来优化匹配
+		for (EventTypeContext eventTypeContext : eventTypeList) {
+			if (eventTypeContext.getParentType().equals(context.getEventType())) {
+				return eventTypeContext;
+			}
+		}
+
+		// 6、如果未匹配任何类型，返回默认值
+		return defaultEventType;
+	}
+
 	@Override
 	public List<WsEventAd> eventContext2EventAd(List<AdEventContext> contextList,
 			Map<String, ElementSlimContext> elementSlimContextMap) {
-		List<WsEventAd> adList = org.apache.commons.compress.utils.Lists.newArrayList();
+
+		// 1、构造ws消息列表
+		List<WsEventAd> adList = Lists.newArrayList();
+
+		// 2、如果攻防消息为空，直接返回空列表
 		if (CollectionUtils.isEmpty(contextList)) {
 			return adList;
 		}
-		// collect types
-		Set<String> subTypes = contextList.stream().map(AdEventContext::getEventSubType)
-				.collect(Collectors.toSet());
-		// get code
-		List<EventType> typeContextList = eventTypeMapper.selectBatchByName(subTypes);
 
-		// collect types
-		Set<String> eventTypes = typeContextList.stream().map(EventType::getName)
+		// 3、提取所有涉及的攻防消息的事件类型
+		List<EventType> eventTypeList = eventTypeMapper.selectList(new LambdaQueryWrapper<>());
+		Map<String, String> parentTypeMap = eventTypeList.stream()
+				.filter(eventType -> StringUtils.isEmpty(eventType.getParentNode()))
+				.collect(Collectors.toMap(EventType::getCode, EventType::getName));
+		List<EventTypeContext> eventTypeContextList = eventTypeList.stream()
+				.map(eventType -> convertEventType(parentTypeMap, eventType))
+				.collect(Collectors.toList());
+		Map<String, List<EventTypeContext>> eventTypeMap = eventTypeContextList.stream()
+				.collect(Collectors.groupingBy(EventType::getName));
+		Set<String> typeCodeList = contextList.stream()
+				.map(context -> getEventTypeByAdEvent(eventTypeMap, context).getCode())
 				.collect(Collectors.toSet());
-		if (eventTypes.size() != subTypes.size()) {
-			subTypes.removeAll(typeContextList.stream().map(EventType::getName)
-					.collect(Collectors.toSet()));
-		log.error("subTypes is not available" + subTypes.toString() );
-//			throw new BusinessException(SituationErrorCode.UNKNOWN_EVENT_TYPE);
-		}
-		Map<String, String> nameCodeMap = StreamApiUtils.toMap(typeContextList, EventType::getName,
-				EventType::getCode);
-		Map<String, EventType> codeTypeMap = StreamApiUtils.toMap(typeContextList,
-				EventType::getCode, context -> context);
-		// 查找映射动效
+
+		// 4、提取所有涉及的映射动效
 		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
-				.selectBatchByType(codeTypeMap.keySet(), SystemPropUtil.getProp("BC_CODE"));
+				.selectBatchByType(typeCodeList, SystemPropUtil.getProp("BC_CODE"));
 		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
 				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
 
-		// 查询动效列表
-		List<String> dynamicEffectNames = org.apache.commons.compress.utils.Lists.newArrayList();
+		// 5、提取所有涉及的动效
+		List<String> dynamicEffectNames = Lists.newArrayList();
 		mappingEffectList.forEach(dynamicEffectsMapping -> {
 			dynamicEffectNames.add(dynamicEffectsMapping.getSourceNodeDynamic());
 			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
 		});
 
 		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
-
 		if (!dynamicEffectNames.isEmpty()) {
 			List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
 					.selectByNames(dynamicEffectNames);
-
 			dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
 				dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(),
 						dynamicEffectsLibrary);
 			});
 		}
 
-		// 转化
+		// 6、使用上述提取的数据，来进行攻防动效处理
 		contextList.forEach(context -> {
 			WsEventAd ad = new WsEventAd();
 			ad.load(context);
@@ -790,9 +827,12 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			ad.setTargetPlatformId(
 					getElementById(elementSlimContextMap, ad.getTargetId()).getPlatformId());
 
-			String code = nameCodeMap.get(context.getEventSubType());
+			// 获取动效事件类型的code
+			EventTypeContext typeContext = getEventTypeByAdEvent(eventTypeMap, context);
+			String code = typeContext.getCode();
+
 			if (mappingEffectMap.containsKey(code)) {
-				// 映射类型
+				// 如果动效的事件类型存在映射记录，使用映射后的效果
 				ad.setDynamicType(2);
 				DynamicEffectsMapping effect = mappingEffectMap.get(code);
 				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
@@ -800,18 +840,15 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 				ad.setSourceNodeDynamicDir(dynamicEffectsLibraryMap
 						.get(effect.getSourceNodeDynamic()).getSourceNodeDynamicDir());
 				ad.setTargetNodeDynamicDir(dynamicEffectsLibraryMap
-						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());;
+						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());
 				ad.setLineStyle(lineStyle);
 				ad.setLookAtTarget(effect.getFocus());
 			} else {
-				// 内置类型
+				// 否则，使用内置类型
 				ad.setDynamicType(1);
-				EventType typeContext = codeTypeMap.get(code);
 				ad.setSourceActionType(typeContext.getSourceActionType());
 				ad.setTargetActionType(typeContext.getTargetActionType());
-				// todo
-				LineStyle lineStyle = new LineStyle("#FF0000", 5, "dashed");
-				ad.setLineStyle(lineStyle);
+				ad.setLineStyle(new LineStyle("#FF0000", 5, "dashed"));
 				ad.setLookAtTarget(false);
 			}
 			adList.add(ad);

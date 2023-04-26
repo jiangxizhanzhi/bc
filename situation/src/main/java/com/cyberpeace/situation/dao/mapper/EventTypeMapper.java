@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.dao.entity.EventType;
 
 /**
@@ -13,7 +14,7 @@ import com.cyberpeace.situation.dao.entity.EventType;
  * @Date 30/11/2022 下午5:41
  */
 @Mapper
-public interface EventTypeMapper {
+public interface EventTypeMapper extends BaseMapper<EventType> {
 
 	List<EventType> getEventTypeContextList(@Param("isRootNode") Boolean isRootNode);
 

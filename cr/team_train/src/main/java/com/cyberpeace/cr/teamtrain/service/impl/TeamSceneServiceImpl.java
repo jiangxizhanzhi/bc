@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 	@Autowired
 	private SceneFilterService sceneFilterService;
+
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -157,6 +161,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
 		if (stopResult) {
 			clearLocal(teamRoom);
+			crRoomDeviceApplyService.releaseApply(teamRoom.getResourceId());
 		}
 
 		return stopResult;

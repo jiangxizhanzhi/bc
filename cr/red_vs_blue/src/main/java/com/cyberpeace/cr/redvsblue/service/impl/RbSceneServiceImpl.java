@@ -213,6 +213,8 @@ public class RbSceneServiceImpl implements RbSceneService {
 			clearLocal(room);
 			// 清理 device
 			rbDeviceService.removeByRoomId(roomId);
+			// 清理 实装申请
+			crRoomDeviceApplyService.releaseApply(room.getResourceId());
 		}
 
 		return stopResult;

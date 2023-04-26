@@ -103,6 +103,9 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Autowired
 	private SceneFilterService sceneFilterService;
 
+	@Autowired
+	private CrRoomDeviceApplyService crRoomDeviceApplyService;
+
 	/**
 	 * 创建单兵训练
 	 *
@@ -293,6 +296,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(singleRoom.getResourceId(),
 						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				crRoomDeviceApplyService.releaseApply(singleRoom.getResourceId());
 			}
 		});
 		return true;

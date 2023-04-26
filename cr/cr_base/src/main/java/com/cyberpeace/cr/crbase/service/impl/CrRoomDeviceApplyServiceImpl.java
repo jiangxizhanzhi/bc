@@ -367,4 +367,27 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         }
         return result;
     }
+
+    @Override
+    public void releaseApply(String roomId) {
+        List<CrRoomDeviceApply> crRoomDeviceApplyList = lambdaQuery()
+                .eq(CrRoomDeviceApply::getRoomId, roomId)
+                .in(CrRoomDeviceApply::getStatus, CrRoomDeviceApply.Status.APPLIED_LIST)
+                .list();
+        if (crRoomDeviceApplyList.isEmpty()) {
+            return;
+        }
+
+        crRoomDeviceApplyList.forEach(crRoomDeviceApply -> {
+            if (crRoomDeviceApply.getStatus().equals(CrRoomDeviceApply.Status.AGREE.getCode())) {
+                remoteTerminalService.recycle(crRoomDeviceApply.getDeviceId());
+                crRoomDeviceApply.setStatus(CrRoomDeviceApply.Status.RECYCLED.getCode());
+            } else if (crRoomDeviceApply.getStatus().equals(CrRoomDeviceApply.Status.APPLYING.getCode())) {
+                remoteTerminalService.refuse(crRoomDeviceApply.getDeviceId());
+                crRoomDeviceApply.setStatus(CrRoomDeviceApply.Status.REFUSE.getCode());
+            }
+        });
+
+        updateBatchById(crRoomDeviceApplyList);
+    }
 }

@@ -26,4 +26,5 @@ public interface CrRoomDeviceApplyService extends IService<CrRoomDeviceApply> {
 
     void pushSceneData(String deviceId, String deviceOriginId, String roomId, List<String> userIds);
 
+    void releaseApply(String roomId);
 }

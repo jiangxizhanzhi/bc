@@ -115,15 +115,22 @@ public class CrEventListenerHelper {
 								.remove(ports.getJSONObject(i).getString("id"));
 					}
 				}
-				if (crRoomDeviceApply == null) {
-					String deviceId = dataObject.getJSONObject("data")
-							.getJSONObject("data")
-							.getJSONObject("scene_element").getString("id");
-					String sceneDeviceId = elementCpCloud.getString("image_uuid");
-					crRoomDeviceApplyService.pushSceneData(deviceId, sceneDeviceId, role.getRoomId(), role.getUserIdList());
-				} else {
-					crRoomDeviceApplyService.pushSceneData(crRoomDeviceApply);
-				}
+				new Thread(() -> {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (crRoomDeviceApply == null) {
+						String deviceId = dataObject.getJSONObject("data")
+								.getJSONObject("data")
+								.getJSONObject("scene_element").getString("id");
+						String sceneDeviceId = elementCpCloud.getString("image_uuid");
+						crRoomDeviceApplyService.pushSceneData(deviceId, sceneDeviceId, role.getRoomId(), role.getUserIdList());
+					} else {
+						crRoomDeviceApplyService.pushSceneData(crRoomDeviceApply);
+					}
+				}).start();
 			}
 		} else {
 			return data;

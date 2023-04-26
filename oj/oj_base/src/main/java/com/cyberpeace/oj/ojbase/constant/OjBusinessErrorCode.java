@@ -317,4 +317,7 @@ public interface OjBusinessErrorCode {
 
 	/** 无法对已经通过的实验报告进行提交  */
 	String CANT_SUBMIT_EVALUATE_REPORT = "102124";
+
+	/** 组卷时根据所选条件找不到足够的题目数 */
+	String NOT_ENOUGH_PRACTICE = "102125";
 }

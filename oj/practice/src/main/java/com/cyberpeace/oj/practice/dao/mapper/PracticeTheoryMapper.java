@@ -63,4 +63,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 			@Param("isPublic") Boolean isPublic);
 
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
+
+	List<PracticeTheory> selectAllByCreatePaper(@Param("difficulties") List<Integer> difficulties,
+												@Param("types") List<Integer> types,
+												@Param("directions") List<String> directions,
+												@Param("practiceIds") List<String> practiceIds);
 }

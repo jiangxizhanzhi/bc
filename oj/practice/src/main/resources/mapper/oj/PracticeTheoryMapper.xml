@@ -191,4 +191,33 @@
         </foreach>
         and builtin = 1 limit 1
     </select>
+
+    <select id="selectAllByCreatePaper" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeTheory">
+        select *
+        from oj_practice_theory
+        <where>
+            resource_id in
+            <foreach collection="practiceIds" separator="," open="(" close=")" item="practiceId">
+                #{practiceId}
+            </foreach>
+            <if test="difficulties != null and difficulties.size() != 0">
+                and difficulty in
+                <foreach collection="difficulties" separator="," open="(" close=")" item="difficultyItem">
+                    #{difficultyItem}
+                </foreach>
+            </if>
+            <if test="types != null and types.size() != 0">
+                and theory_type in
+                <foreach collection="types" separator="," open="(" close=")" item="typeItem">
+                    #{typeItem}
+                </foreach>
+            </if>
+            <if test="directions != null and directions.size() != 0">
+                and category_id in
+                <foreach collection="directions" separator="," open="(" close=")" item="directionItem">
+                    #{directionItem}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -132,7 +132,7 @@ public class SituationCommonComponentsServiceImpl extends ServiceImpl<SituationC
         } else {
             url = String.format(HIK_DEVICE_CHANNELS, deviceIp, devicePort, username, password);
         }
-        jsonObject = HttpClientUtil.rawGet(url, JSONObject.class);
+        jsonObject = HttpClientUtil.rawSpecialGet(url, JSONObject.class);
         if (jsonObject == null) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_RESPONSE_JSON);
         }

@@ -170,4 +170,21 @@
         </set>
         where resource_id = #{resourceId}
     </update>
+
+    <select id="countByUserId" resultType="java.lang.Integer">
+        select count(*)
+        from oj_note
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="noteType != null and noteType != ''">
+                and note_type = #{noteType}
+            </if>
+            <if test="resourceType != null and resourceType != ''">
+                and business_type = #{resourceType}
+            </if>
+        </where>
+    </select>
 </mapper>

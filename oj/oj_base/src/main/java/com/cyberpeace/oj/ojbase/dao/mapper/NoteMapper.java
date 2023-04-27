@@ -39,4 +39,6 @@ public interface NoteMapper extends BaseMapper<Note> {
 						@Param("businessType") Integer businessType, @Param("businessId") String businessId);
 
 	int updateReportByID(Note note);
+
+	int countByUserId(@Param("userId") String userId, @Param("noteType") Integer noteType, @Param("resourceType") Integer resourceType);
 }

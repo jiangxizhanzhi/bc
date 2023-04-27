@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeMistakeMapper">
+
+    <select id="countByUserId" resultType="java.lang.Integer">
+        select count(*)
+        from oj_practice_mistake
+        <where>
+            1=1
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="practiceType != null and practiceType != ''">
+                and practice_type = #{practiceType}
+            </if>
+        </where>
+    </select>
+</mapper>

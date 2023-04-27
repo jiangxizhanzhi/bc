@@ -35,5 +35,12 @@ public interface NoteService extends IService<Note> {
      */
     IPage<NoteListBo> pageByUserNameAndContent(Page page, AdminNoteListQuery noteListQuery, Boolean isWeb);
 
+    /**
+     * 实验报告保存和更新
+     * @param reportAddReq
+     * @return
+     */
     Note addAndUpdateReport(ReportAddReq reportAddReq);
+
+    Integer getCount(String userId, Integer noteType, Integer resourceType);
 }

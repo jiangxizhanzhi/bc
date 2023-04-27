@@ -13,11 +13,18 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
+import com.cyberpeace.oj.practice.controller.res.TheoryStatisticsRes;
+import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
+import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
 import io.swagger.annotations.Api;
@@ -46,6 +53,15 @@ public class PracticeTheoryController {
 
 	@Autowired
 	private PracticeCategoryService practiceCategoryService;
+
+	@Autowired
+	private PracticeMistakeService practiceMistakeService;
+
+	@Autowired
+	private ResourceCollectionService resourceCollectionService;
+
+	@Autowired
+	private NoteService noteService;
 
 	@GetMapping("")
 	@ApiOperation("查询理论基础练习详细信息")
@@ -123,6 +139,19 @@ public class PracticeTheoryController {
 	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
 			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 		return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
+	}
+
+	@ApiOperation("统计错题、收藏、笔记数量")
+	@GetMapping("/statistics")
+	public BaseRsp<TheoryStatisticsRes> getTheoryStatistics () {
+		TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId,
+				PracticeCategory.PracticeType.THEORY.getCode()));
+		theoryStatisticsRes.setCollection(resourceCollectionService.selectByType(userId,
+				ResourceCollection.BusinessType.THEORY.getCode()).size());
+		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), Note.NoteResourceType.PRACTICE.getCode()));
+		return new BaseRsp<>(theoryStatisticsRes);
 	}
 
 }

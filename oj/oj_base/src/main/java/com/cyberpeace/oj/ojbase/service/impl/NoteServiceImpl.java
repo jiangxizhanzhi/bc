@@ -151,4 +151,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 		}
 		return note;
 	}
+
+	@Override
+	public Integer getCount(String userId, Integer noteType, Integer resourceType) {
+		return noteMapper.countByUserId(userId, noteType, resourceType);
+	}
 }

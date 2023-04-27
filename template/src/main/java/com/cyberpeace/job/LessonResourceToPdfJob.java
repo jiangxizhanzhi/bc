@@ -1,14 +1,17 @@
 package com.cyberpeace.job;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +32,7 @@ public class LessonResourceToPdfJob {
 
 	private boolean isCovertPdf;
 
-	private String LIBREOFFICE_URL;
+	private String LOCAL_HOST;
 
 	private String wordPath = ConfigUtil.getContextProperty("cr.pdf.word.file.prefix");
 
@@ -37,11 +41,11 @@ public class LessonResourceToPdfJob {
 	@PostConstruct
 	public void init() {{
 		isCovertPdf = Boolean.parseBoolean(SystemPropUtil.getProp("COVERT_PDF"));
-		LIBREOFFICE_URL = "http://" + SystemPropUtil.getProp("PY_HOST")  + ":" + SystemPropUtil.getProp("PY_PORT") + "/covert_to_pdf/";
+		LOCAL_HOST = SystemPropUtil.getProp("LOCAL_HOST");
 
 	}}
 
-	@Scheduled(fixedRate =  1 * 60 * 1000)
+	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void covertWordToPdf() {
 		log.info("query word lesson resources start----------");
 		if(!isCovertPdf){
@@ -64,16 +68,10 @@ public class LessonResourceToPdfJob {
 			if(!handoutUrl.startsWith("/cpms")){
 				handoutUrl = "/cpms/" + handoutUrl;
 			}
-			String covertToPdfCmd = String.format("cd /cpms/pdf/word/ && libreoffice --headless --convert-to pdf:writer_pdf_Export %s --outdir %s", handoutUrl, wordPath);
-			log.info(String.format("current cmd is %s", covertToPdfCmd));
-			JSONObject body = new JSONObject();
-			body.put("data", covertToPdfCmd);
-			JSONObject post = HttpClientUtil.post(LIBREOFFICE_URL, body, JSONObject.class);
-			String error = (String) post.get("error");
-			if("empty".equals(error)){
-				log.info(String.format("%s covert to pdf failed  for %s", handoutUrl, error));
-				return;
-			}
+			String covertToPdfCmd = String.format("libreoffice --headless --convert-to pdf:writer_pdf_Export %s --outdir %s", handoutUrl, wordPath);
+			log.info(String.format("LOCAL_HOST: %s",LOCAL_HOST));
+			log.info(String.format("PASSWD: %s",SystemPropUtil.getProp("PASSWD")));
+			executeCommand(LOCAL_HOST,"root",SystemPropUtil.getProp("PASSWD"), covertToPdfCmd);
 			String originalPath = getFileName(handoutUrl);
 			String newPath = wordPath + wordLesson.getResourceId() + "_" + originalPath + ".pdf";
 			FileUtil.copyFile(new File(wordPath,originalPath + ".pdf"), new File(newPath));
@@ -105,7 +103,7 @@ public class LessonResourceToPdfJob {
 		return file[0];
 	}
 
-	@Scheduled(fixedRate =  1 * 60 * 1000)
+	@Scheduled(fixedRate =  5 * 60 * 1000)
 	public void covertPptToPdf() {
 		log.info("query ppt lesson resources start----------");
 		if(!isCovertPdf){
@@ -128,16 +126,59 @@ public class LessonResourceToPdfJob {
 			if(!handoutUrl.startsWith("/cpms")){
 				handoutUrl = "/cpms/" + handoutUrl;
 			}
-			String fileName = getFileName(handoutUrl);
-			File pdfFile = new File(pptPath, fileName + "_" + pptLesson.getResourceId() + ".pdf");
 			log.info(String.format("update current lesson %s", pptLesson.getName()));
-			Boolean aBoolean = FileUtil.convertPPTToPDF(new File(handoutUrl), pdfFile);
-			if(aBoolean){
-				pptLesson.setHandoutUrl(pdfFile.getAbsolutePath());
-				courseLessonMapper.updateById(pptLesson);
-			}
+			String covertToPdfCmd = String.format("libreoffice --headless --convert-to pdf:writer_pdf_Export %s --outdir %s", handoutUrl, pptPath);
+			String originalPath = getFileName(handoutUrl);
+			String newPath = pptPath + pptLesson.getResourceId() + "_" + originalPath + ".pdf";
+			executeCommand(LOCAL_HOST,"root",SystemPropUtil.getProp("PASSWD"), covertToPdfCmd);
+			FileUtil.copyFile(new File(pptPath,originalPath + ".pdf"), new File(newPath));
+			pptLesson.setHandoutUrl(newPath);
+			pptLesson.setHandoutType(CourseLesson.HandoutType.PDF.getCode());
+			courseLessonMapper.updateById(pptLesson);
 			log.info(String.format("update current lesson %s success!!", pptLesson.getName()));
 		});
 
+	}
+
+	public static void executeCommand(String host, String user, String password, String command) {
+		try {
+			JSch jsch = new JSch();
+			Session session = jsch.getSession(user, host, 22);
+			session.setPassword(password);
+			session.setConfig("StrictHostKeyChecking", "no");
+			session.connect();
+			Channel channel = session.openChannel("exec");
+			((ChannelExec) channel).setCommand(command);
+			channel.setInputStream(null);
+			((ChannelExec) channel).setErrStream(System.err);
+			InputStream in = channel.getInputStream();
+			channel.connect();
+			byte[] tmp = new byte[1024];
+			while (true) {
+				while (in.available() > 0) {
+					int i = in.read(tmp, 0, 1024);
+					if (i < 0) {
+						break;
+					}
+					System.out.print(new String(tmp, 0, i));
+				}
+				if (channel.isClosed()) {
+					if (in.available() > 0) {
+						continue;
+					}
+					log.info("exit-status: " + channel.getExitStatus());
+					break;
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (Exception ee) {
+				}
+			}
+			channel.disconnect();
+			session.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BusinessException(String.format("fail to exec covert cmd case by %s", e.getMessage()));
+		}
 	}
 }

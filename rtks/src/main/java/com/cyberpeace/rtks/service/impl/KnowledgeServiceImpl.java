@@ -5,9 +5,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +13,16 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
+import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
@@ -39,6 +39,10 @@ import com.cyberpeace.rtks.service.RelatedCourseService;
 import com.cyberpeace.rtks.service.bo.KnowledgeUnderCourseBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.PostConstruct;
 
 /**
  *
@@ -58,6 +62,19 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 
 	@Autowired
 	private CourseRelatedService courseRelatedService;
+
+	@Autowired
+	private CourseMapper courseMapper;
+
+	@PostConstruct
+	private void init(){
+		// 第一次部署会因表不存在而无法执行，升级可以执行成功
+		try{
+			clearOutdatedFakeData();
+		} catch (Exception e){
+			log.info("failed to clear outdated fake course-knowledge relation", e);
+		}
+	}
 
 	@Override
 	public ListRsp<KnowledgeRes> page(KnowledgeListReq knowledgeListReq) {
@@ -267,5 +284,34 @@ public class KnowledgeServiceImpl extends ServiceImpl<KnowledgeMapper, Knowledge
 	@Override
 	public void clearCourseRel() {
 		knowledgeMapper.clearCourseRel();
+	}
+
+	/**
+	 * 保持向前兼容，去掉k数据表中的关联课程假数据
+	 */
+	private void clearOutdatedFakeData() {
+		List<Knowledge> knowledgeList = knowledgeMapper.selectAll();
+		List<String> courseIds = knowledgeList.stream()
+				.map(knowledge -> JsonUtil.toJsonObjectArray(knowledge.getCourses(),
+						KnowledgeUnderCourseBo.class))
+				.flatMap(Collection::stream).map(KnowledgeUnderCourseBo::getResourceId).distinct()
+				.collect(Collectors.toList());
+		// 获取实际存在的课程
+		List<String> existingIds = courseMapper.notDeleteIdsByIds(courseIds);
+		for (Knowledge knowledge : knowledgeList) {
+			List<KnowledgeUnderCourseBo> courseBos = JsonUtil
+					.toJsonObjectArray(knowledge.getCourses(), KnowledgeUnderCourseBo.class);
+			if (courseBos.isEmpty()) {
+				continue;
+			}
+			// remove fake
+			courseBos.removeIf(courseBo -> !existingIds.contains(courseBo.getResourceId()));
+			String newCourses = JsonUtil.toJsonString(courseBos);
+			// update
+			if (!newCourses.equals(knowledge.getCourses())) {
+				knowledge.setCourses(newCourses);
+				updateById(knowledge);
+			}
+		}
 	}
 }

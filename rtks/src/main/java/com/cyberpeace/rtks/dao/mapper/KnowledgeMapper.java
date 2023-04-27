@@ -26,4 +26,6 @@ public interface KnowledgeMapper extends BaseMapper<Knowledge> {
 	List<CourseRelatedRes> getKnowledgeByCourseId(List<String> ids);
 
 	void clearCourseRel();
+
+	List<Knowledge> selectAll();
 }

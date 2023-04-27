@@ -911,6 +911,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		wsDefenseDynamic.setDefenseType(
 				DefenseType.getEnumByKeyWord(attackMessageReq.getDefenseType(), DefenseType.class)
 						   .getDefenseActionType().getCode());
+		wsDefenseDynamic.setDuration(attackMessageReq.getDurationTime());
 		WsMessage<WsDefenseDynamic> wsMessage = new WsMessage<>(MessageType.DefenseDynamic.getDesc(), wsDefenseDynamic);
 		pushDataToRoom(wsMessage, attackMessageReq, playback);
 	}

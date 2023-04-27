@@ -20,4 +20,7 @@ public class WsDefenseDynamic implements Serializable {
 	@ApiModelProperty("是否聚焦")
 	private Boolean lookAtTarget;
 
+	@ApiModelProperty("持续时间（秒）")
+	private Integer duration;
+
 }

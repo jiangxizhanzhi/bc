@@ -3,6 +3,9 @@ package com.cyberpeace.situation.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.integratation.service.impl.SituationEnvService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,6 +40,9 @@ public class ExternalDataController {
 
 	@Autowired
 	private RemoteOperationService remoteOperationService;
+
+	@Autowired
+	private SituationEnvService situationEnvService;
 
 	@ApiOperation("态势-获取特定事件类型列表")
 	@GetMapping("/event/list/")
@@ -104,7 +110,16 @@ public class ExternalDataController {
 			@ApiParam(name = "role", value = "角色", required = true) @RequestParam(value = "role",
 					required = true) String role) {
 		String runId = remoteSituationService.getRunId(subjectId);
-		return new BaseRsp<>(new EvaluateUrlRes(runId, role));
+		EvaluateUrlRes evaluateUrlRes = new EvaluateUrlRes(runId, role);
+		Integer type = EnumUtils.getEnumCodeByDesc(role, EvaluateUrlRes.Role.class);
+
+		String url = situationEnvService.getPgPageHost()
+				+ ConfigUtil.getContextProperty("pg.run.page") + "&runId=" + runId + "&type="
+				+ type;
+
+		evaluateUrlRes.setUrl(url);
+
+		return new BaseRsp<>(evaluateUrlRes);
 	}
 
 }

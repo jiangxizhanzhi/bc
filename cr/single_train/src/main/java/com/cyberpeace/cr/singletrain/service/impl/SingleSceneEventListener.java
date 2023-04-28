@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -58,9 +61,15 @@ public class SingleSceneEventListener extends MessageListener {
 
 	@Override
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(businessId, context.getUserId());
-		if (crRole != null) {
-			data = crEventListenerHelper.filterApplyDevice(data, crRole, businessId);
+		try {
+			String[] singleBusinessId = StringUtils.split(businessId, "_");
+			SingleRoom singleRoom = singleRoomService.getByBusinessTemplateIdAndUserId(singleBusinessId[0], singleBusinessId[1]);
+			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(), singleRoom.getUserId());
+			if (crRole != null) {
+				data = crEventListenerHelper.filterApplyDevice(data, crRole, businessId);
+			}
+		} catch (Exception e) {
+			// 忽略
 		}
 		pushDataToWeb(data, businessId);
 

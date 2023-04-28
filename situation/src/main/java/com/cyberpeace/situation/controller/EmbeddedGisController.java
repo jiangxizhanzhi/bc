@@ -12,6 +12,7 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
+import com.cyberpeace.integratation.model.situation.PlatformLinkContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.situation.constant.MapSource;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
@@ -76,8 +77,13 @@ public class EmbeddedGisController {
 				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
 				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
 
+		List<PlatformLinkContext> platformLinkContexts = remoteSituationService.getPlatformLinkList(
+				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
+				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
+
 		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
 		templatePlatformRes.setPlatformList(platformContexts);
+		templatePlatformRes.setPlatformLinkList(platformLinkContexts);
 		templatePlatformRes.setViewAngle(
 				JsonUtil.toJsonObject(dashboardTemplateContext.getViewAngle(), ViewAngle.class));
 		return new BaseRsp<>(templatePlatformRes);

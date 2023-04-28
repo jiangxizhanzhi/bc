@@ -33,6 +33,7 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,11 +90,13 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         WsMessageBO<JSONObject> payload = new WsMessageBO<>("apply_device", data);
 
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(crRoomDeviceApply.getRoomId(), crRoomDeviceApply.getApplyUserId());
-
+        String businessId = crRoomDeviceApply.isSingle()
+                ? crRoomDeviceApply.getBusinessTemplateId() + "_" + crRole.getUserIdList().get(0)
+                : crRoomDeviceApply.getRoomId();
 
         webSocketHandler.pushMessageToUsers(
                 makeContext(JSON.toJSONString(payload, SerializerFeature.WriteMapNullValue),
-                        crRoomDeviceApply.getRoomId()),
+                        businessId),
                 crRole.getUserIdList()
         );
     }
@@ -155,8 +158,11 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));
 
+        String businessId = crRoomDeviceApply.isSingle()
+                ? crRoomDeviceApply.getBusinessTemplateId() + "_" + crRole.getUserIdList().get(0)
+                : crRoomDeviceApply.getRoomId();
         WebSocketMessageContext messageContext = makeContext(JsonUtil.toJsonString(reportBO),
-                crRoomDeviceApply.getRoomId());
+                businessId);
         webSocketHandler.pushMessageToUsers(messageContext, crRole.getUserIdList());
     }
 
@@ -216,7 +222,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     }
 
     @Override
-    public Boolean apply(String roomId, String roomName, String deviceId, String localSceneId) {
+    public Boolean apply(String roomId, String roomName, String deviceId, String localSceneId, Integer businessType, String businessTemplateId) {
 
         String userId = UserInfoContext.getUserContext().getUserId();
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
@@ -242,6 +248,10 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
         crRoomDeviceApply.setApplyUserId(userId);
         crRoomDeviceApply.setApplyRoleId(crRole.getResourceId());
         crRoomDeviceApply.setApplyTime(new Date());
+        crRoomDeviceApply.setBusinessType(businessType);
+        if (StringUtils.isNotEmpty(businessTemplateId)) {
+            crRoomDeviceApply.setBusinessTemplateId(businessTemplateId);
+        }
 
         // 获取场景中实装设备id
         LocalScene localScene = localSceneService.getById(localSceneId);

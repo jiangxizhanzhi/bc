@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -222,7 +223,9 @@ public class SingleRoomController {
 				singleRoomBo.getRoomInfo().getResourceId(),
 				singleRoomBo.getEventData().getName(),
 				roomDeviceApplyReq.getDeviceId(),
-				singleRoomBo.getLocalSceneId()));
+				singleRoomBo.getLocalSceneId(),
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+				singleRoomBo.getResourceId()));
 	}
 
 }

@@ -8,8 +8,7 @@ import javax.validation.Valid;
 
 import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
-import com.cyberpeace.cr.crbase.dao.entity.CrTrainAction;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import com.cyberpeace.cr.crbase.service.CrTrainActionService;
 import com.cyberpeace.cr.crbase.service.MissionService;
@@ -28,8 +27,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
@@ -300,7 +297,9 @@ public class RbRoomUserController {
 				rbRoom.getResourceId(),
 				rbRoom.getName(),
 				roomDeviceApplyReq.getDeviceId(),
-				rbRoom.getLocalSceneId()));
+				rbRoom.getLocalSceneId(),
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(),
+				null));
 	}
 
 	@ApiOperation("队伍动态-任务预览")

@@ -60,7 +60,7 @@ public class SingleSceneEventListener extends MessageListener {
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(businessId, context.getUserId());
 		if (crRole != null) {
-			data = crEventListenerHelper.filterApplyDevice(data, crRole);
+			data = crEventListenerHelper.filterApplyDevice(data, crRole, businessId);
 		}
 		pushDataToWeb(data, businessId);
 

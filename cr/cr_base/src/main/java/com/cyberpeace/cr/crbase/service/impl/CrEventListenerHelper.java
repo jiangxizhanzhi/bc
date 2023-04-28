@@ -9,6 +9,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class CrEventListenerHelper {
 		WsSceneReportBO report;
 		// is student
 		if (role.isRvbStudent() || role.isTeamStudent()) {
-			data = filterApplyDevice(data, role);
+			data = filterApplyDevice(data, role, null);
 
 			CrRoleNodesData nodesData = role.getNodeData();
 			// filter visible nodes
@@ -83,7 +84,7 @@ public class CrEventListenerHelper {
 		return WebSocketMessageContext.builder().data(data).messageIdentifier(identifier).build();
 	}
 
-	public String filterApplyDevice(String data, CrRole role) {
+	public String filterApplyDevice(String data, CrRole role, String businessId) {
 		JSONObject dataObject = JsonUtil.toJsonObject(data, JSONObject.class);
 
 		if (dataObject.getJSONObject("data").getString("type").equals("scene_element")) {
@@ -126,7 +127,8 @@ public class CrEventListenerHelper {
 								.getJSONObject("data")
 								.getJSONObject("scene_element").getString("id");
 						String deviceOriginId = elementCpCloud.getString("image_uuid");
-						crRoomDeviceApplyService.pushSceneData(deviceId, deviceOriginId, role.getRoomId(), role.getUserIdList());
+						String roomId = StringUtils.isEmpty(businessId) ? role.getRoomId() : businessId;
+						crRoomDeviceApplyService.pushSceneData(deviceId, deviceOriginId, roomId, role.getUserIdList());
 					} else {
 						crRoomDeviceApplyService.pushSceneData(crRoomDeviceApply);
 					}

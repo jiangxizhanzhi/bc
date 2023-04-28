@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -328,7 +329,9 @@ public class TeamTrainStudentsController {
 				teamRoom.getResourceId(),
 				teamRoom.getName(),
 				roomDeviceApplyReq.getDeviceId(),
-				teamRoom.getLocalSceneId()));
+				teamRoom.getLocalSceneId(),
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(),
+				null));
 	}
 
 }

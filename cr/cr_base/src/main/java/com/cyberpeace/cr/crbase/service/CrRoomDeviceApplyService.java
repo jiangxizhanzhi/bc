@@ -10,7 +10,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRoomDeviceApply;
 import java.util.List;
 
 public interface CrRoomDeviceApplyService extends IService<CrRoomDeviceApply> {
-    Boolean apply(String roomId, String roomName, String deviceId, String localSceneId);
+    Boolean apply(String roomId, String roomName, String deviceId, String localSceneId, Integer businessType, String businessTemplateId);
 
     RoomDeviceOccupyRsp occupy(String deviceId);
 

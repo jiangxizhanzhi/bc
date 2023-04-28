@@ -110,6 +110,8 @@ CREATE TABLE `cr_room_device_apply` (
   `apply_time` datetime DEFAULT NULL COMMENT '申请时间',
   `allow_user_id` varchar(64) DEFAULT NULL COMMENT '申请通过操作用户id',
   `allow_time` datetime DEFAULT NULL COMMENT '申请通过时间',
+  `business_type` int(11) NOT NULL COMMENT '业务类型',
+  `business_template_id` varchar(64) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,

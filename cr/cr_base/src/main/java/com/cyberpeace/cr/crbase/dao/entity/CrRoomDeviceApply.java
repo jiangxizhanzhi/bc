@@ -36,6 +36,13 @@ public class CrRoomDeviceApply extends BaseTable {
 
     private Date allowTime;
 
+    private Integer businessType;
+
+    /**
+     * 单兵训练使用
+     */
+    private String businessTemplateId;
+
     public enum Status {
         APPLYING(1, "申请中"),
         AGREE(2, "同意"),
@@ -55,6 +62,10 @@ public class CrRoomDeviceApply extends BaseTable {
             this.desc = desc;
         }
 
+    }
+
+    public Boolean isSingle() {
+        return businessType.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
     }
 
 }

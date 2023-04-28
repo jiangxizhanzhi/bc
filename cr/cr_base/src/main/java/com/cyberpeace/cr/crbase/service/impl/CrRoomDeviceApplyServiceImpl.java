@@ -116,14 +116,18 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
     }
 
     private void pushElementData(CrRoomDeviceApply crRoomDeviceApply) {
-        LocalScene localScene = localSceneService.getByBusinessInstanceId(crRoomDeviceApply.getRoomId());
+        String businessId = crRoomDeviceApply.isSingle()
+                ? crRoomDeviceApply.getBusinessTemplateId() + "_" + crRoomDeviceApply.getApplyUserId()
+                : crRoomDeviceApply.getRoomId();
+
+        LocalScene localScene = localSceneService.getByBusinessInstanceId(businessId);
         if (localScene == null) {
             return;
         }
         CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(crRoomDeviceApply.getRoomId(), crRoomDeviceApply.getApplyUserId());
 
         JSONObject sceneData = localSceneService.getSceneData(localScene.getMpSceneId(),
-                UserInfoContext.getUserContext().getUserId());
+                crRoomDeviceApply.getApplyUserId());
 
         filterApplyDevice(sceneData, crRole);
 
@@ -158,9 +162,7 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
 
         WsSceneReportBO reportBO = new WsSceneReportBO("", "scene_element", replaceAccessIp(data));
 
-        String businessId = crRoomDeviceApply.isSingle()
-                ? crRoomDeviceApply.getBusinessTemplateId() + "_" + crRole.getUserIdList().get(0)
-                : crRoomDeviceApply.getRoomId();
+
         WebSocketMessageContext messageContext = makeContext(JsonUtil.toJsonString(reportBO),
                 businessId);
         webSocketHandler.pushMessageToUsers(messageContext, crRole.getUserIdList());

@@ -87,7 +87,8 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 								sceneData.getJSONObject("plugins")
 										.getJSONObject("cpcloud")
 										.getJSONObject("element_ports")
-										.remove(ports.getJSONObject(j).getString("id"));
+										.getJSONObject(ports.getJSONObject(j).getString("id"))
+										.put("access_modes", Lists.newArrayList());
 							}
 							break;
 						}

@@ -113,7 +113,8 @@ public class CrEventListenerHelper {
 								.getJSONObject("data")
 								.getJSONObject("scene_element_port_plugin_data")
 								.getJSONObject("cpcloud")
-								.remove(ports.getJSONObject(i).getString("id"));
+								.getJSONObject(ports.getJSONObject(i).getString("id"))
+								.put("access_modes", Lists.newArrayList());
 					}
 				}
 				new Thread(() -> {

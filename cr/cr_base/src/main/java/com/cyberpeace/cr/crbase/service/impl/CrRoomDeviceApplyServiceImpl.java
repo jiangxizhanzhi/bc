@@ -33,6 +33,7 @@ import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,12 +198,13 @@ public class CrRoomDeviceApplyServiceImpl extends ServiceImpl<CrRoomDeviceApplyM
                         if (elementInfo.getString("id").equals(imageId)) {
                             JSONArray ports = elementInfo.getJSONArray("ports");
                             for (int j = 0; j < ports.size(); j++) {
-                                ports.getJSONObject(j).put("access_modes", org.apache.commons.compress.utils.Lists.newArrayList());
+                                ports.getJSONObject(j).put("access_modes", Lists.newArrayList());
                                 ports.getJSONObject(j).put("ip", null);
                                 sceneData.getJSONObject("plugins")
                                         .getJSONObject("cpcloud")
                                         .getJSONObject("element_ports")
-                                        .remove(ports.getJSONObject(j).getString("id"));
+                                        .getJSONObject(ports.getJSONObject(j).getString("id"))
+                                        .put("access_modes", Lists.newArrayList());
                             }
                             break;
                         }

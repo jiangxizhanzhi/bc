@@ -1,6 +1,7 @@
 package com.cyberpeace.integratation.model.situation.req;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class SubjectListReq implements Serializable {
 
 	@ApiModelProperty(name = "subject_id", value = "科目ID")
 	private String subjectId;
+
+	@ApiModelProperty(name = "subject_id", value = "科目ID列表")
+	private List<String> subjectIds;
 
 	@ApiModelProperty(name = "task_type", value = "任务类型")
 	private String taskType;

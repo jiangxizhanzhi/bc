@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,6 +123,7 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
         }
         String filePath = "/cpms/" + file.getOriginalFilename();
         File pathFile = new File(filePath);
+        JSONObject colorJson = new JSONObject();
 
         //解析json内容，新增样式数据
         try {
@@ -129,23 +131,24 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
             String content = FileUtil.getContent(pathFile);
             JSONObject jsonObject = JSONObject.parseObject(content);
             String color = jsonObject.getString("color");
-            JSONObject colorJson = new JSONObject();
             colorJson.put("color", color);
-            if (StringUtils.isNotBlank(color)) {
-                ColorTheme colorTheme = new ColorTheme();
-                colorTheme.setName(name);
-                colorTheme.setResourceId(IDGeneratorUtil.getID());
-                colorTheme.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-                colorTheme.setOption(colorJson.toJSONString());
-                situationColorThemeMapper.insert(colorTheme);
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             pathFile.delete();
         }
 
-
+        if (StringUtils.isNotBlank(colorJson.getString("color"))) {
+            ColorTheme colorTheme = new ColorTheme();
+            colorTheme.setName(name);
+            colorTheme.setResourceId(IDGeneratorUtil.getID());
+            colorTheme.setCreateUserId(UserInfoContext.getUserContext().getUserId());
+            colorTheme.setOption(colorJson.toJSONString());
+            situationColorThemeMapper.insert(colorTheme);
+        } else {
+            throw new BusinessException(SituationErrorCode.IMPORT_FORMAT_FAILED);
+        }
 
         return null;
     }

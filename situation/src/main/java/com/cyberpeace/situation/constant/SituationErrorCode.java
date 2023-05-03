@@ -201,4 +201,8 @@ public interface SituationErrorCode {
 	 */
 	String SUBJECT_INFO_ERROR = "106016";
 
+	/**
+	 * 导入格式不正确
+	 */
+	String IMPORT_FORMAT_FAILED = "106017";
 }

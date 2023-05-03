@@ -110,6 +110,7 @@ public class ExternalDataController {
 			@ApiParam(name = "role", value = "角色", required = true) @RequestParam(value = "role",
 					required = true) String role) {
 		String runId = remoteSituationService.getRunId(subjectId);
+
 		EvaluateUrlRes evaluateUrlRes = new EvaluateUrlRes(runId, role);
 		Integer type = EnumUtils.getEnumCodeByDesc(role, EvaluateUrlRes.Role.class);
 

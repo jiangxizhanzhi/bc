@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotBlank;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.Create;
@@ -28,8 +29,10 @@ public class ColorTheme extends BaseTable implements Serializable {
 
 	@NotBlank(groups = { Create.class, Update.class })
 	@ApiModelProperty("名称")
+	@TableField("`name`")
 	private String name;
 
+	@TableField("`option`")
 	@ApiModelProperty("颜色内容")
 	private String option;
 

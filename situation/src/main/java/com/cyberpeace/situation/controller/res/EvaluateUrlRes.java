@@ -6,12 +6,11 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.integratation.service.impl.SituationEnvService;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+
 @Data
 public class EvaluateUrlRes implements Serializable {
 
@@ -21,7 +20,7 @@ public class EvaluateUrlRes implements Serializable {
 	@Autowired
 	private SituationEnvService situationEnvService;
 
-	public String getUrl(){
+	public String getUrl() {
 		return this.url;
 	}
 

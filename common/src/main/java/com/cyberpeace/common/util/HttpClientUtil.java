@@ -43,6 +43,8 @@ public class HttpClientUtil {
 
 	private static final String SUCCESS_POSTFIX = "-000000";
 
+	private static volatile Boolean verbose = false;
+
 	/**
 	 * 执行post请求
 	 * @param url 请求的url地址
@@ -53,26 +55,17 @@ public class HttpClientUtil {
 	 */
 	public static <T> T post(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
-		setContext(url);
+		setContext(url, null);
 
-		// 2、设置请求参数
-		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
-
-		HttpPost post = new HttpPost(url);
-		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
-		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		post.setEntity(entity);
-
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(post, resultType);
+		// 2、执行实际调用、返回序列化后的结果
+		return doHttp(getHttpPost(url, body), resultType);
 	}
 
 	public static <T> T delete(String url, Object body, Class<T> resultType) {
-		// 1、设置请；线程数据
-		setContext(url);
+		// 1、设置请求线程数据
+		setContext(url, null);
 
-		// 2、设置请求参数
+		// 2、构建删除请求
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
 		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
@@ -86,6 +79,67 @@ public class HttpClientUtil {
 	}
 
 	/**
+	 * 附带参数get查询
+	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
+	 * @param url 接口地址
+	 * @param resultType
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
+		// 使用拼接好参数的url调用接口
+		return rawGet(convertRawUrl(obj, url), resultType);
+
+	}
+
+	private static HttpGet getHttpGet(String url) {
+		// 1、构建请求
+		HttpGet httpGet = new HttpGet(url);
+
+		// 2、 配置请求头基本信息
+		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+
+		// 3、 配置用户权限信息
+		setAuthorization(httpGet);
+
+		return httpGet;
+	}
+
+	private static HttpPost getHttpPost(String url, Object body) {
+		// 1、构建请求
+		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
+
+		HttpPost post = new HttpPost(url);
+		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
+		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
+		post.setEntity(entity);
+
+		return post;
+	}
+
+	public static String convertRawUrl(Object obj, String url) {
+		// 1、将请求体转换为键值对
+		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
+		List<BasicNameValuePair> nvps = Lists.newArrayList();
+		treeMap.forEach((key, value) -> nvps
+				.add(new BasicNameValuePair(key, JsonUtil.toJsonString(value))));
+
+		// 2、将请求参数拼接到url上
+		try {
+			HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, WebConstant.ENCODING);
+			String paramsStr = EntityUtils.toString(urlEncodedFormEntity);
+			url = url + "?" + paramsStr;
+		} catch (Exception e) {
+			LOG.error("rawGetByParam: Request param format failed! params={}, url=[{}]",
+					JsonUtil.toJsonString(treeMap), url, e);
+			throw new RemoteServiceException();
+		}
+		return url;
+	}
+
+	/**
 	 * 请求地址中包含特殊字符的可使用该方法 比如空格 * ｜
 	 * @param resultType
 	 * @param url
@@ -94,7 +148,7 @@ public class HttpClientUtil {
 	 */
 	public static <T> T rawSpecialGet(String url, Class<T> resultType) {
 		// 1、设置请求线程数据
-		setContext(url);
+		setContext(url, null);
 
 		// 2、生成get请求
 		URL httpUrl;
@@ -130,62 +184,37 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static <T> T rawGet(String url, Class<T> resultType) {
-		// 1、设置请求线程数据
-		setContext(url);
 
-		// 2、生成get请求
-		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		String authorization = CommonContext.getAuthorization();
-		if (null != authorization) { // 调用竞赛接口需要
-			httpGet.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
-		}
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(httpGet, resultType);
+		// 1、设置请求线程数据
+		setContext(url, null);
+
+		// 2、执行实际调用、返回序列化后的结果
+		return doHttp(getHttpGet(url), resultType);
 	}
 
-	public static <T> T tokenGet(String url, Class<T> resultType, String field, String token) {
-
+	/**
+	 * 使用get请求运维系统接口
+	 */
+	public static <T> T ywGet(String url, Class<T> resultType, String errorMsg) {
 		// 1、设置请求线程数据
-		setContext(url);
+		setContext(url, errorMsg);
 
 		// 2、生成get请求
-		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		httpGet.setHeader(field, token);
-		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(httpGet, resultType);
-	}
-
-	public static <T> T ywGet(String url, Class<T> resultType, String token, String errorMsg) {
-		// 1、设置请求线程数据
-		setContext(url);
-
-		// 2、生成get请求
-		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
-		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
-		httpGet.setHeader(WebConstant.TOKEN, token);
+		HttpGet httpGet = getHttpGet(url);
+		httpGet.setHeader(WebConstant.TOKEN, WebConstant.YW_TOKEN);
 
 		// 3、执行实际调用、返回序列化后的结果
-		T rsp;
-		try {
-			rsp = doHttp(httpGet, resultType);
-		} catch (RemoteServiceException e) {
-			throw new RemoteServiceException(errorMsg);
-		}
-		return rsp;
+		return doHttp(getHttpGet(url), resultType);
 	}
 
 	/**
 	 * 设置请求上下文
 	 * @param url
 	 */
-	private static void setContext(String url) {
+	private static void setContext(String url, String errorMsg) {
 		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
 		HttpclientContext.setContext(httpclientModel);
+		HttpclientContext.setErrorMsg(errorMsg);
 	}
 
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
@@ -199,22 +228,26 @@ public class HttpClientUtil {
 			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
 
 			// 3、记录调用日志
-			HttpclientContext.getContext().addLog(httpResponse);
+			HttpclientContext.getContext().addLog(httpRequest, httpResponse, verbose);
+
 		} catch (Exception e) {
 			try {
+				// 4、如果接口报错（未返回返回体），打印错误日志
 				HttpclientContext.getContext().doRemoteException(e);
 			} catch (Exception e1) {
 				LOG.error("remote error logging Exception", e1);
 			} finally {
+
+				// 5、抛出远程服务异常
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException();
+				throw new RemoteServiceException(HttpclientContext.getErrorMsg());
 			}
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {
-			HttpclientContext.getContext().addLog("httpResponse is null");
+			HttpclientContext.getContext().addLog(httpRequest, "httpResponse is null", verbose);
 			HttpclientContext.removeContext();
-			throw new RemoteServiceException();
+			throw new RemoteServiceException(HttpclientContext.getErrorMsg());
 		}
 
 		// 4、解析结果并返回
@@ -271,6 +304,19 @@ public class HttpClientUtil {
 	}
 
 	/**
+	 * 设置请求的权限校验信息
+	 *
+	 * @return
+	 */
+	private static void setAuthorization(HttpUriRequest request) {
+		String authorization = CommonContext.getAuthorization();
+		// 如果存在token信息，则写入请求头
+		if (null != authorization) {
+			request.setHeader(WebConstant.AUTHORIZATION_HEADER, "JWT " + authorization);
+		}
+	}
+
+	/**
 	 * 默认加载的http请求头
 	 *
 	 * @return
@@ -309,31 +355,11 @@ public class HttpClientUtil {
 	}
 
 	/**
-	 * 附带参数get查询
-	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
-	 * @param url 接口地址
-	 * @param resultType
-	 * @param <T>
-	 * @return
+	 * 修改是否打印请求详情
 	 */
-	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
-
-		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
-		List<BasicNameValuePair> nvps = Lists.newArrayList();
-		treeMap.forEach((key, value) -> nvps
-				.add(new BasicNameValuePair(key, JsonUtil.toJsonString(value))));
-
-		try {
-			HttpEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
-			String paramsStr = EntityUtils.toString(urlEncodedFormEntity);
-			url = url + "?" + paramsStr;
-		} catch (Exception e) {
-			LOG.error("rawGetByParam: Request param format failed! params={}, url=[{}]",
-					JsonUtil.toJsonString(treeMap), url, e);
-			throw new RemoteServiceException();
-		}
-		return rawGet(url, resultType);
-
+	public static boolean changeMode(Boolean mode) {
+		verbose = mode;
+		return true;
 	}
 
 }

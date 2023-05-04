@@ -1,5 +1,7 @@
 package com.cyberpeace.common.constant;
 
+import com.cyberpeace.common.util.ConfigUtil;
+
 public interface WebConstant {
 
 	String CONTENT_TYPE = "application/json;charset=UTF-8";
@@ -44,5 +46,5 @@ public interface WebConstant {
 
 	String TOKEN = "token";
 
-	String YW_TOKEN = "bf7b2e6d-cc9c-4d4b-bc77-e2046f7b2967";
+	String YW_TOKEN = ConfigUtil.getContextProperty("yw.token");
 }

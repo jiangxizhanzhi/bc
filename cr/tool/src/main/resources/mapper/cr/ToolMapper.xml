@@ -79,6 +79,7 @@
                 and `platforms` like #{platforms}
             </if>
         </where>
+        order by convert(`name` using gbk)
     </select>
 
 </mapper>

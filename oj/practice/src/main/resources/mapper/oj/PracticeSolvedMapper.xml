@@ -26,6 +26,31 @@
         </where>
     </select>
 
+    <select id="selectPracticeTheoryRecord" resultType="com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo">
+        select oj_practice_theory.resource_id, category_id, practice_set_id, content, difficulty, solved, oj_practice_solved.update_time, theory_type
+        from oj_practice_solved
+        inner join oj_practice_theory on oj_practice_solved.practice_id = oj_practice_theory.resource_id
+        <where>
+            oj_practice_solved.is_paper = 0
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                and oj_practice_theory.resource_id in
+                <foreach collection="practiceIds" separator="," open="(" close=")" item="practiceId">
+                    #{practiceId}
+                </foreach>
+            </if>
+            <if test="startTime != null">
+                and oj_practice_solved.update_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and oj_practice_solved.update_time &lt; #{endTime}
+            </if>
+            <if test="solved != null">
+                and solved = #{solved}
+            </if>
+        </where>
+        order by oj_practice_solved.update_time desc
+    </select>
+
     <update id="updateSolved">
         update oj_practice_solved
         <set>

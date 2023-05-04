@@ -19,6 +19,7 @@ import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
+import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.controller.res.TheoryStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
@@ -152,6 +153,24 @@ public class PracticeTheoryController {
 				ResourceCollection.BusinessType.THEORY.getCode()).size());
 		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), Note.NoteResourceType.PRACTICE.getCode()));
 		return new BaseRsp<>(theoryStatisticsRes);
+	}
+
+	@ApiOperation("最近5条练习记录")
+	@GetMapping("/record")
+	public BaseRsp<List<PracticeTheoryListBo>> getTheoryRecord() {
+		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
+		if (practiceTheoryList.size() > 5) {
+			return new BaseRsp(practiceTheoryList.subList(0, 5));
+		}
+		return new BaseRsp(practiceTheoryList);
+	}
+
+	@ApiOperation("练习记录")
+	@GetMapping("/record_page")
+	public BaseRsp<ListRsp<PracticeTheoryListBo>> getTheoryRecordPage(WebTheoryRecordReq webTheoryRecordReq) {
+		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(webTheoryRecordReq);
+		Page page = webTheoryRecordReq.toPageParam();
+		return new BaseRsp<>(PageUtil.getListResult(practiceTheoryList, page, practiceTheoryList.size()));
 	}
 
 }

@@ -19,6 +19,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
@@ -645,6 +646,25 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return categoryProgressResList;
 	}
 
+
+	@Override
+	public List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq) {
+		//获取所有可见的习题id
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+		List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, null);
+		//获取练习记录
+		List<PracticeTheoryListBo> practiceTheoryList = practiceSolvedMapper.selectPracticeTheoryRecord(practiceIds,
+				webTheoryRecordReq.getStartTime(), webTheoryRecordReq.getEndTime(), webTheoryRecordReq.getSolved());
+		//设置习题集名称
+		List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
+		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+		Map<String, String> practiceSetIdNameMap = StreamApiUtils.toMap(practiceSets, PracticeSet::getResourceId, PracticeSet::getName);
+		for (PracticeTheoryListBo practiceTheoryListBo : practiceTheoryList) {
+			practiceTheoryListBo.setPracticeSetName(practiceSetIdNameMap.get(practiceTheoryListBo.getPracticeSetId()));
+		}
+		return practiceTheoryList;
+	}
+
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");
 		List<String> content = Arrays.asList(split);
@@ -678,5 +698,43 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			return new ArrayList<>();
 		}
 		return practiceTheoryListBoIPage.getRecords();
+	}
+
+	/**
+	 * 获取该用户所有可见的习题id
+	 * @param authContext
+	 * @param practiceSetId
+	 * @return
+	 */
+	private List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId) {
+		// 过滤无权限习题集
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authSetIds)) {
+			return new ArrayList<>();
+		}
+
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		if (CollectionUtils.isEmpty(authSetIds)
+				|| (StringUtils.isNotBlank(practiceSetId)
+				&& !authSetIds.contains(practiceSetId))) {
+			return new ArrayList<>();
+		}
+
+		// 根据习题集过滤习题编号
+		if (StringUtils.isNotBlank(practiceSetId)) {
+			authSetIds.clear();
+			authSetIds.add(practiceSetId);
+		}
+		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+				authContext.getIsWeb());
+
+		if (CollectionUtils.isEmpty(practiceIds)) {
+			return new ArrayList<>();
+		}
+		return practiceIds;
 	}
 }

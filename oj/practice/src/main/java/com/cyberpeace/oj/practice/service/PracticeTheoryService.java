@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
+import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
@@ -107,7 +108,23 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 
 	MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
 
+	/**
+	 * 统计做题进度
+	 * @param practiceSetId
+	 * @return
+	 */
 	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
 
+	/**
+	 * 查询所有方向上的做题进度
+	 * @return
+	 */
 	List<CategoryProgressRes> getProgressByCategory();
+
+	/**
+	 * 查询练习记录
+	 * @param webTheoryRecordReq
+	 * @return
+	 */
+	List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq);
 }

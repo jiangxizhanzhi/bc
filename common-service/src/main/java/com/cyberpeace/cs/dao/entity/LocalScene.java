@@ -155,8 +155,8 @@ public class LocalScene extends BaseTable {
 	public enum BusinessCode implements GenericEnum, BaseI18n {
 		/***/
 		DEFAULT(0, "默认"),
-		RED_TRAINING(1, "红方训练"),
-		BLUE_TRAINING(2, "蓝方训练"),
+		RED_TRAINING(1, "红队训练"),
+		BLUE_TRAINING(2, "蓝队训练"),
 		PRACTICE(110, "练习"),
 		LESSON(120, "课程"),
 		CLASSROOM(121, "课程表"),

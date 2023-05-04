@@ -31,6 +31,8 @@ public class PracticeSolved extends BaseTable {
 
 	private Boolean collection;
 
+	private Boolean isPaper;
+
 	public enum SolvedStatus implements GenericEnum {
 		TRIED(0, "尝试过"),
 		SOLVED(1, "已解决"),

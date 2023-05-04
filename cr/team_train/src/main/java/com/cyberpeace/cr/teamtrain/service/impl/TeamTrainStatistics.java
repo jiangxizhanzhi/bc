@@ -142,7 +142,7 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			return;
 		}
 		List<TeamRoom> teamRoomList = teamRoomMapper.selectBatchIds(roomIds);
-		Map<String, Integer> teamRoomHashMap = StreamApiUtils.toMap(teamRoomList, TeamRoom::getResourceId, TeamRoom::getTrainingStatus);
+		Map<String, Integer> teamRoomHashMap = StreamApiUtils.toMap(teamRoomList, TeamRoom::getResourceId, TeamRoom::getTrainCategory);
 		Integer redScore = 0;
 		Integer blueScore = 0;
 		for (CrTask crTask: crTaskList) {

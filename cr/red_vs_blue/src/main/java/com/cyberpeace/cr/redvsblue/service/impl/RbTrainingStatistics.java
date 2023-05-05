@@ -163,6 +163,8 @@ public class RbTrainingStatistics extends CrEventStatistics {
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));
 			data.setDurationTime(durationTime);
+			data.setMinute((int)((room.getEndTime().getTime()
+					- room.getStartTime().getTime()) / (60 * 1000)) % 60);
 			data.setStatus(getState(room.getTrainingStatus()));
 			List<CrRole> crRoles = StreamApiUtils.filter(crRoleList, crRole -> crRole.getRoomId().equals(room.getResourceId()));
 			Integer peopleCount = 0;

@@ -38,4 +38,7 @@ public class TrainStatsOverviewRsp implements Serializable {
     @ApiModelProperty("用户角色")
     private Integer roleGroup;
 
+    @ApiModelProperty("分钟数")
+    private Integer minute;
+
 }

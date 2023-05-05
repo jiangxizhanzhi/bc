@@ -190,6 +190,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));
 			data.setDurationTime(durationTime);
+			data.setMinute((int) (((room.getEndTime().getTime()
+					- room.getStartTime().getTime()) / (60 * 1000)) % 60));
 			data.setStatus(room.getTrainingStatus());
 			Integer score = 0;
 			List<CrTask> crTaskList = crTaskMapper.selectByRoomIdAndUserId(room.getResourceId(), userId);

@@ -111,7 +111,7 @@ public class LcHttpClient {
 			httpResponse = EntityUtils.toString(response.getEntity(), WebConstant.ENCODING);
 
 			// 3、记录调用日志
-			HttpclientContext.getContext().addLog(httpResponse);
+			HttpclientContext.getContext().addLog(httpRequest, httpResponse, false);
 		} catch (Exception e) {
 			try {
 				HttpclientContext.getContext().doRemoteException(e);
@@ -124,7 +124,7 @@ public class LcHttpClient {
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {
-			HttpclientContext.getContext().addLog("httpResponse is null");
+			HttpclientContext.getContext().addLog(httpRequest, "httpResponse is null", false);
 			HttpclientContext.removeContext();
 			throw new RemoteServiceException();
 		}

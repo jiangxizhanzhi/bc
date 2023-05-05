@@ -7,6 +7,8 @@ public class HttpclientContext {
 
 	private static final ThreadLocal<HttpclientModel> context = new ThreadLocal<HttpclientModel>();
 
+	private static String errorMsg = null;
+
 	public static HttpclientModel getContext() {
 		return context.get();
 	}
@@ -17,5 +19,13 @@ public class HttpclientContext {
 
 	public static void removeContext() {
 		context.remove();
+	}
+
+	public static void setErrorMsg(String msg) {
+		errorMsg = msg;
+	}
+
+	public static String getErrorMsg() {
+		return errorMsg;
 	}
 }

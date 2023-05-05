@@ -46,23 +46,21 @@ public class RemoteOperationServiceImpl implements RemoteOperationService {
 
 	@Override
 	public List<BcContext> getBcList(String type) {
-		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, YW_TOKEN,
-				"获取运维系统靶场数据失败");
+		String rsp = HttpClientUtil.ywGet(YW_BC_LIST + type, String.class, "获取运维系统靶场数据失败");
 		List<BcContext> res = JsonUtil.toJsonObjectArray(rsp, BcContext.class);
 		return res;
 	}
 
 	@Override
 	public List<ModelTypeContext> getModelTypeList() {
-		String rsp = HttpClientUtil.ywGet(YW_MODEL_TYPE_LIST, String.class, YW_TOKEN,
-				"获取运维系统模型类型数据失败");
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_TYPE_LIST, String.class, "获取运维系统模型类型数据失败");
 		List<ModelTypeContext> res = JsonUtil.toJsonObjectArray(rsp, ModelTypeContext.class);
 		return res;
 	}
 
 	@Override
 	public List<ModelContext> getModelList() {
-		String rsp = HttpClientUtil.ywGet(YW_MODEL_LIST, String.class, YW_TOKEN, "获取运维系统模型数据失败");
+		String rsp = HttpClientUtil.ywGet(YW_MODEL_LIST, String.class, "获取运维系统模型数据失败");
 		List<ModelContext> res = JsonUtil.toJsonObjectArray(rsp, ModelContext.class);
 		return res;
 	}

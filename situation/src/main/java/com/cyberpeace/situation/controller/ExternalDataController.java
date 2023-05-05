@@ -3,19 +3,20 @@ package com.cyberpeace.situation.controller;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.integratation.service.impl.SituationEnvService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.common.util.HttpClientUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.integratation.service.impl.SituationEnvService;
 import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.TaskEventMsgReq;
 import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
@@ -110,6 +111,7 @@ public class ExternalDataController {
 			@ApiParam(name = "role", value = "角色", required = true) @RequestParam(value = "role",
 					required = true) String role) {
 		String runId = remoteSituationService.getRunId(subjectId);
+
 		EvaluateUrlRes evaluateUrlRes = new EvaluateUrlRes(runId, role);
 		Integer type = EnumUtils.getEnumCodeByDesc(role, EvaluateUrlRes.Role.class);
 
@@ -120,6 +122,14 @@ public class ExternalDataController {
 		evaluateUrlRes.setUrl(url);
 
 		return new BaseRsp<>(evaluateUrlRes);
+	}
+
+	@ApiOperation("系统-切换日志模式")
+	@GetMapping("/log/mode/")
+	public BaseRsp<Boolean> changeLogMode(@ApiParam(name = "mode", value = "日志模式",
+			required = false) @RequestParam(value = "mode", required = false) Boolean mode) {
+		HttpClientUtil.changeMode(mode);
+		return new BaseRsp<>(mode);
 	}
 
 }

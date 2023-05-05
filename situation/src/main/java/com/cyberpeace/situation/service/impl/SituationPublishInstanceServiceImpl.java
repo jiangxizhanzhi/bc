@@ -430,8 +430,13 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
         //模板列表
         List<DashboardTemplateRef> dashboardTemplateRefs = dashboardTemplateRefMapper.selectList(new LambdaQueryWrapper<>());
 
+        SubjectListReq subjectListReq = new SubjectListReq();
+
+        subjectListReq.setSubjectIds(StreamApiUtils.map(situationPublishInstancePageResList,
+                SituationPublishInstancePageRes::getSubjectId));
+
         //任务科目列表
-        List<SubjectContext> subjectList = remoteSituationService.getSubjectList(new SubjectListReq());
+        List<SubjectContext> subjectList = remoteSituationService.getSubjectList(subjectListReq);
 
 
         List<DashboardAttribute> dashboardAttributes = dashboardAttributeMapper.selectList(null);

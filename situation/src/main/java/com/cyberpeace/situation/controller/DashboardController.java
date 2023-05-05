@@ -158,8 +158,13 @@ public class DashboardController {
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
+
+		// 获取当前靶场首页代码
+		String bcCode = SystemPropUtil.getProp("BC_CODE");
+		String homeCode = "01".equals(bcCode)? "00": bcCode;
+
 		// 推送返回靶场大屏消息
-		NewPageContext message = new NewPageContext(SystemPropUtil.getProp("BC_CODE"));
+		NewPageContext message = new NewPageContext(homeCode);
 		WsMessage<NewPageContext> wsMessage = new WsMessage<>(MessageType.JumpPage.getDesc(),
 				message);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),

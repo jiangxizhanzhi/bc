@@ -192,6 +192,19 @@ public class HttpClientUtil {
 		return doHttp(getHttpGet(url), resultType);
 	}
 
+	public static <T> T tokenGet(String url, Class<T> resultType, String field, String token) {
+
+		// 1、设置请求线程数据
+		setContext(url, null);
+
+		// 2、生成get请求
+		HttpGet httpGet = getHttpGet(url);
+		httpGet.setHeader(field, token);
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
+	}
+
 	/**
 	 * 使用get请求运维系统接口
 	 */

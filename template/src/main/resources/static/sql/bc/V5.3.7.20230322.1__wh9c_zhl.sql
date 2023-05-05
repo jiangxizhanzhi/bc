@@ -120,3 +120,6 @@ CREATE TABLE `cr_room_device_apply` (
   KEY `device_id` (`device_id`) USING BTREE,
   KEY `apply_role_id` (`apply_role_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+-- 禅道13054
+alter table cr_eval_index_ref modify next_ids text not null comment '子节点关联id';

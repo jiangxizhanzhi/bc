@@ -7,18 +7,18 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.cyberpeace.common.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.flow.FlowStatisticsContext;
 import com.cyberpeace.integratation.model.situation.flow.FlowTrendContext;
@@ -187,24 +187,24 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public SubRangeInfoContext getSubRangeInfo(String subRangeId) {
-		SubRangeInfoContext subRangeInfoContext = HttpClientUtil.rawGet(RANGE_INFO_URL + subRangeId,
-				SubRangeInfoContext.class);
+		SubRangeInfoContext subRangeInfoContext = HttpClientUtil.tsGet(RANGE_INFO_URL + subRangeId,
+				SubRangeInfoContext.class, "获取态势系统分靶场信息失败");
 		return subRangeInfoContext;
 	}
 
 	@Override
 	public CenterInfoContext getCenterInfo(String centerId) {
-		CenterInfoContext centerInfoContext = HttpClientUtil.rawGet(CENTER_INFO_URL + centerId,
-				CenterInfoContext.class);
+		CenterInfoContext centerInfoContext = HttpClientUtil.tsGet(CENTER_INFO_URL + centerId,
+				CenterInfoContext.class, "获取态势系统联管中心信息失败");
 		return centerInfoContext;
 	}
 
 	@Override
 	public List<PlatformContext> getPlatformList(String taskId, String subjectId, String subRangeId,
 			String schemeId) {
-		JSONArray result = HttpClientUtil.rawGet(PLATFORM_LIST_URL + "?taskId=" + taskId
-				+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId,
-				JSONArray.class);
+		String url = PLATFORM_LIST_URL + "?taskId=" + taskId + "&subjectId=" + subjectId
+				+ "&subRangeId=" + subRangeId + "&schemeId=" + schemeId;
+		JSONArray result = HttpClientUtil.tsGet(url, JSONArray.class, "获取想定系统平台列表信息失败");
 		List<PlatformContext> platformContexts = JSONArray
 				.parseArray(JSONObject.toJSONString(result), PlatformContext.class);
 
@@ -221,11 +221,13 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	}
 
 	@Override
-	public List<PlatformLinkContext> getPlatformLinkList(String taskId, String subjectId, String subRangeId,
-												 String schemeId) {
-		String result = HttpClientUtil.rawGet(PLATFORM_LINK_LIST_URL + "?taskId=" + taskId
-						+ "&subjectId=" + subjectId + "&subRangeId=" + subRangeId + "&schemeId=" + schemeId, String.class);
-		List<PlatformLinkContext> platformLinkContexts = JSONArray.parseArray(result, PlatformLinkContext.class);
+	public List<PlatformLinkContext> getPlatformLinkList(String taskId, String subjectId,
+			String subRangeId, String schemeId) {
+		String url = PLATFORM_LINK_LIST_URL + "?taskId=" + taskId + "&subjectId=" + subjectId
+				+ "&subRangeId=" + subRangeId + "&schemeId=" + schemeId;
+		String result = HttpClientUtil.tsGet(url, String.class, "获取想定系统平台连线列表信息失败");
+		List<PlatformLinkContext> platformLinkContexts = JSONArray.parseArray(result,
+				PlatformLinkContext.class);
 		return platformLinkContexts;
 	}
 
@@ -239,13 +241,14 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	public NetworkInfoContext getNetworkInfo(PlatformReq platformReq) {
 		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
 		List<String> nodeIdList = getNodeIdList(nodeListReq);
-		ThirdPartyTopoBo topoBo = HttpClientUtil.rawGet(
-				XD_TOPO_URL + "?platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class);
+		ThirdPartyTopoBo topoBo = HttpClientUtil.tsGet(
+				XD_TOPO_URL + "?platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class,
+				"获取想定系统拓扑信息失败");
 
 		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);
 		nodeListApiReq.setNodeIds(nodeIdList);
-		NetworkInfoContext networkInfoContext = HttpClientUtil.post(NETWORK_INFO_URL,
-				nodeListApiReq, NetworkInfoContext.class);
+		NetworkInfoContext networkInfoContext = HttpClientUtil.tsPost(NETWORK_INFO_URL,
+				nodeListApiReq, NetworkInfoContext.class, "获取态势系统子网信息失败");
 
 		if (networkInfoContext == null) {
 			networkInfoContext = new NetworkInfoContext();
@@ -302,8 +305,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public ListRsp<TaskContext> getTaskList(TaskListReq taskListReq) {
-		LgTaskContextPageRes rsp = HttpClientUtil.post(TASK_LIST_URL, taskListReq,
-				LgTaskContextPageRes.class);
+		LgTaskContextPageRes rsp = HttpClientUtil.tsPost(TASK_LIST_URL, taskListReq,
+				LgTaskContextPageRes.class, "获取态势系统任务列表失败");
 		ListRsp<TaskContext> res = rsp.convert();
 		res.setList(rsp.getList());
 		return res;
@@ -311,23 +314,23 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<SubjectContext> getSubjectList(SubjectListReq subjectListReq) {
-		String rsp = HttpClientUtil.post(SUBJECT_LIST_URL, subjectListReq, String.class);
+		String rsp = HttpClientUtil.tsPost(SUBJECT_LIST_URL, subjectListReq, String.class,
+				"获取态势系统科目列表失败");
 		List<SubjectContext> res = JsonUtil.toJsonObjectArray(rsp, SubjectContext.class);
 		return res;
-
 	}
 
 	@Override
 	public NodeInfoContext getNodeInfo(NodeIdApiReq nodeIdApiReq) {
-		NodeInfoContext context = HttpClientUtil.post(NODE_INFO_URL, nodeIdApiReq,
-				NodeInfoContext.class);
+		NodeInfoContext context = HttpClientUtil.tsPost(NODE_INFO_URL, nodeIdApiReq,
+				NodeInfoContext.class, "获取态势系统节点基本信息失败");
 		return context;
 	}
 
 	@Override
 	public ListRsp<NodeActionContext> getNodeAction(NodeActionReq nodeActionReq) {
-		LgNodeActionPageRsp rsp = HttpClientUtil.post(NODE_ACTION_URL, nodeActionReq,
-				LgNodeActionPageRsp.class);
+		LgNodeActionPageRsp rsp = HttpClientUtil.tsPost(NODE_ACTION_URL, nodeActionReq,
+				LgNodeActionPageRsp.class, "获取态势系统节点行为数据失败");
 		ListRsp<NodeActionContext> res = rsp.convert();
 		res.setList(rsp.getList());
 
@@ -336,15 +339,15 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<NodeTrendContext> getNodeTrend(NodeIdApiReq nodeIdApiReq) {
-		String rsp = HttpClientUtil.post(NODE_TREND_URL, nodeIdApiReq, String.class);
-		List<NodeTrendContext> res = JsonUtil.toJsonObjectArray(rsp, NodeTrendContext.class);
-		return res;
+		String rsp = HttpClientUtil.tsPost(NODE_TREND_URL, nodeIdApiReq, String.class,
+				"获取态势系统节点行为趋势失败");
+		return JsonUtil.toJsonObjectArray(rsp, NodeTrendContext.class);
 	}
 
 	@Override
 	public ListRsp<UserActionContext> getUserAction(NodeIdPageReq nodeIdPageReq) {
-		LgUserActionRsp rsp = HttpClientUtil.post(USER_ACTION_URL, nodeIdPageReq,
-				LgUserActionRsp.class);
+		LgUserActionRsp rsp = HttpClientUtil.tsPost(USER_ACTION_URL, nodeIdPageReq,
+				LgUserActionRsp.class, "获取态势系统用户行为数据失败");
 		ListRsp<UserActionContext> res = rsp.convert();
 		res.setList(rsp.getList());
 		return res;
@@ -352,25 +355,28 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<UserTrendContext> getUserTrend(NodeIdApiReq nodeIdApiReq) {
-		String rsp = HttpClientUtil.post(USER_TREND_URL, nodeIdApiReq, String.class);
+		String rsp = HttpClientUtil.tsPost(USER_TREND_URL, nodeIdApiReq, String.class,
+				"获取态势系统用户行为趋势失败");
 		List<UserTrendContext> res = JsonUtil.toJsonObjectArray(rsp, UserTrendContext.class);
 		return res;
 	}
 
 	@Override
 	public NodeConnectionContext getNodeConnection(NodeIdApiReq nodeIdApiReq) {
-		return HttpClientUtil.post(NODE_CONNECTION_URL, nodeIdApiReq, NodeConnectionContext.class);
+		return HttpClientUtil.tsPost(NODE_CONNECTION_URL, nodeIdApiReq, NodeConnectionContext.class,
+				"获取态势系统链路数据失败");
 	}
 
 	@Override
 	public NodeWeakInfoContext getNodeWeakInfo(NodeIdApiReq nodeIdApiReq) {
-		return HttpClientUtil.post(NODE_WEAK_INFO_URL, nodeIdApiReq, NodeWeakInfoContext.class);
+		return HttpClientUtil.tsPost(NODE_WEAK_INFO_URL, nodeIdApiReq, NodeWeakInfoContext.class,
+				"获取态势系统节点脆弱性数据失败");
 	}
 
 	@Override
 	public ListRsp<NodeWeakContext> getNodeWeakList(NodeIdPageReq nodeIdPageReq) {
-		LgNodeWeakRsp rsp = HttpClientUtil.post(NODE_WEAK_LIST_URL, nodeIdPageReq,
-				LgNodeWeakRsp.class);
+		LgNodeWeakRsp rsp = HttpClientUtil.tsPost(NODE_WEAK_LIST_URL, nodeIdPageReq,
+				LgNodeWeakRsp.class, "获取态势系统节点脆弱性列表失败");
 		ListRsp<NodeWeakContext> res = rsp.convert();
 		res.setList(rsp.getList());
 		return res;
@@ -389,7 +395,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public List<TaskEventContext> getTaskEventList(TaskEventReq taskEventReq, String featureId) {
 		taskEventReq.setQueryTime(getQueryTime(featureId));
-		String rsp = HttpClientUtil.rawGetByParam(taskEventReq, TASK_EVENT_URL, String.class);
+		String url = HttpClientUtil.convertRawUrl(taskEventReq, TASK_EVENT_URL);
+		String rsp = HttpClientUtil.tsGet(url, String.class, "获取态势系统任务动效失败");
 		List<TaskEventContext> res = JsonUtil.toJsonObjectArray(rsp, TaskEventContext.class);
 
 		// 更新查询时间缓存
@@ -403,7 +410,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 	@Override
 	public List<AdEventContext> getAdEventList(EventReq eventReq, String featureId) {
 		eventReq.setQueryTime(getQueryTime(featureId));
-		String rsp = HttpClientUtil.post(AD_EVENT_URL, eventReq, String.class);
+		String rsp = HttpClientUtil.tsPost(AD_EVENT_URL, eventReq, String.class, "获取态势系统攻防动效失败");
 		List<AdEventContext> res = JsonUtil.toJsonObjectArray(rsp, AdEventContext.class);
 
 		// 更新查询时间缓存
@@ -415,7 +422,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<NodeEventContext> getNodeEventList(EventReq eventReq, String featureId) {
-		String rsp = HttpClientUtil.post(NODE_STATUS_URL, eventReq, String.class);
+		String rsp = HttpClientUtil.tsPost(NODE_STATUS_URL, eventReq, String.class,
+				"获取态势系统节点状态动效失败");
 		List<NodeEventContext> res = JsonUtil.toJsonObjectArray(rsp, NodeEventContext.class);
 		return res;
 	}
@@ -437,32 +445,15 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public ThirdPartyTopoBo getXdTopo(TopoReq topoReq) {
-		String query = "?envId=" + topoReq.getEnvId();
-
-		if (StringUtils.isNotBlank(topoReq.getNetworkId())) {
-			query = query + "&networkId=" + topoReq.getNetworkId();
-		} ;
-		if (StringUtils.isNotBlank(topoReq.getPlatformId())) {
-			query = query + "&platformId=" + topoReq.getPlatformId();
-		} ;
-		if (StringUtils.isNotBlank(topoReq.getTaskId())) {
-			query = query + "&taskId=" + topoReq.getTaskId();
-		} ;
-		if (StringUtils.isNotBlank(topoReq.getSubjectId())) {
-			query = query + "&subjectId=" + topoReq.getSubjectId();
-		} ;
-		if (topoReq.getLevel() != null) {
-			query = query + "&level=" + topoReq.getLevel();
-		} ;
-
-		return HttpClientUtil.rawGet(XD_TOPO_URL + query, ThirdPartyTopoBo.class);
+		String url = HttpClientUtil.convertRawUrl(topoReq, XD_TOPO_URL);
+		return HttpClientUtil.tsGet(url, ThirdPartyTopoBo.class, "获取想定系统拓扑数据失败");
 
 	}
 
 	@Override
 	public List<SchemeRspBo> getSchemeList(SituationTaskReq req) {
-
-		String rsp = HttpClientUtil.rawGet(XD_SCHEME_LIST + req.toQuery(), String.class);
+		String rsp = HttpClientUtil.tsGet(XD_SCHEME_LIST + req.toQuery(), String.class,
+				"获取想定系统可视化方案列表失败");
 		List<SchemeRspBo> res = JsonUtil.toJsonObjectArray(rsp, SchemeRspBo.class);
 		return res;
 	}
@@ -473,13 +464,15 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 			throw new BusinessException(ErrorCode.EMPTY_SCHEME_ID);
 		}
 		String targetUrl = XD_SCHEME + "?schemeId=" + schemeId;
-		SchemeVisualizationBo rsp = HttpClientUtil.rawGet(targetUrl, SchemeVisualizationBo.class);
+		SchemeVisualizationBo rsp = HttpClientUtil.tsGet(targetUrl, SchemeVisualizationBo.class,
+				"获取想定系统可视化方案详情失败");
 		return rsp;
 	}
 
 	@Override
 	public List<TopoHistoryBo> getTopoHistory(SituationTaskReq req) {
-		String rsp = HttpClientUtil.rawGet(XD_TOPO_HISTORY + req.toQuery(), String.class);
+		String rsp = HttpClientUtil.tsGet(XD_TOPO_HISTORY + req.toQuery(), String.class,
+				"获取想定系统历史拓扑数据失败");
 		List<TopoHistoryBo> res = Lists.newArrayList();
 
 		try {
@@ -500,114 +493,130 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		releaseScreenBo.setSchemeId(schemeId);
 		releaseScreenBo.setDashboardId(dashboardId);
 
-		BooleanRes rsp = HttpClientUtil.post(XD_RELEASE_SCREEN, releaseScreenBo, BooleanRes.class);
+		BooleanRes rsp = HttpClientUtil.tsPost(XD_RELEASE_SCREEN, releaseScreenBo, BooleanRes.class,
+				"想定系统发布大屏失败");
 		return rsp.getResult();
 	}
 
 	@Override
-	public Boolean releaseScreen(StatusOrderContext statusOrderContext){
+	public Boolean releaseScreen(StatusOrderContext statusOrderContext) {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("msg",JsonUtil.toJsonString(statusOrderContext, PropertyNamingStrategy.SnakeCase));
-		jsonObject.put("task_id",statusOrderContext.getTaskId());
+		jsonObject.put("msg",
+				JsonUtil.toJsonString(statusOrderContext, PropertyNamingStrategy.SnakeCase));
+		jsonObject.put("task_id", statusOrderContext.getTaskId());
 
- 		BooleanRes rsp = HttpClientUtil.post( TS_RELEASE_SCREEN, jsonObject, BooleanRes.class);
+		BooleanRes rsp = HttpClientUtil.tsPost(TS_RELEASE_SCREEN, jsonObject, BooleanRes.class,
+				"想定系统发布大屏失败");
 		return rsp.getResult();
 	}
 
 	private List<String> getNodeIdList(NodeListReq nodeListReq) {
-		String rsp = HttpClientUtil.rawGetByParam(nodeListReq, XD_NODE_LIST, String.class);
+		String url = HttpClientUtil.convertRawUrl(nodeListReq, XD_NODE_LIST);
+		String rsp = HttpClientUtil.tsGet(url, String.class, "获取想定系统平台下节点列表数据失败");
 		List<String> res = JsonUtil.toJsonObjectArray(rsp, String.class);
 		return res;
 	}
 
 	@Override
 	public String getRunId(String subjectId) {
-		RunContext runContext = HttpClientUtil.rawGet(PG_GET_RUN_ID + subjectId, RunContext.class);
+		RunContext runContext = HttpClientUtil.tsGet(PG_GET_RUN_ID + subjectId, RunContext.class,
+				"获取评估系统评估实例ID失败");
 		return runContext.getRunId();
 	}
 
 	@Override
 	public List<NodeBasicInfoContext> getSimilarNodes(NodeIdApiReq nodeIdApiReq) {
-		String rsp = HttpClientUtil.post(TS_NODE_SIMILAR, nodeIdApiReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_SIMILAR, nodeIdApiReq, String.class,
+				"获取态势系统相似节点数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeBasicInfoContext.class);
 	}
 
 	@Override
 	public TopoContext getCrossLayerTopo(TaskBaseReq taskBaseReq) {
-		LayerTopoContext rep = HttpClientUtil.post(TS_LAYER_TOPO, taskBaseReq,
-				LayerTopoContext.class);
+		LayerTopoContext rep = HttpClientUtil.tsPost(TS_LAYER_TOPO, taskBaseReq,
+				LayerTopoContext.class, "获取态势系统跨层分析拓扑失败");
 		return rep.convert();
 	}
 
 	@Override
 	public List<LayerEventContext> getCrossLayerEvent(TaskBaseReq taskBaseReq) {
-		EventLayerRsp eventLayerRsp = HttpClientUtil.post(TS_LAYER_EVENT, taskBaseReq,
-				EventLayerRsp.class);
+		EventLayerRsp eventLayerRsp = HttpClientUtil.tsPost(TS_LAYER_EVENT, taskBaseReq,
+				EventLayerRsp.class, "获取态势系统跨层分析事件失败");
 		return eventLayerRsp.getEvents();
 	}
 
 	@Override
 	public EventAxisRsp getEventAxis(TaskBaseReq taskBaseReq) {
-		return HttpClientUtil.post(TS_EVENT_AXIS, taskBaseReq, EventAxisRsp.class);
+		return HttpClientUtil.tsPost(TS_EVENT_AXIS, taskBaseReq, EventAxisRsp.class, "获取态势系统事件轴失败");
 	}
 
 	@Override
 	public List<NodeThreatenedDistributeContext>
 			getNodeThreatenedDistribute(TaskBaseReq taskBaseReq) {
-		String rsp = HttpClientUtil.post(TS_DISTRIBUTE_THREATENED, taskBaseReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_DISTRIBUTE_THREATENED, taskBaseReq, String.class,
+				"获取态势系统受威胁节点分布数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeThreatenedDistributeContext.class);
 	}
 
 	@Override
 	public List<NodeAttackStatisticsContext> getNodeRankAttack(TaskSizeReq taskSizeReq) {
-		String rsp = HttpClientUtil.post(TS_NODE_RANK_ATTACK, taskSizeReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_RANK_ATTACK, taskSizeReq, String.class,
+				"获取态势系统攻击节点排名数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeAttackStatisticsContext.class);
 	}
 
 	@Override
 	public List<UserActivityContext> getUserActivity(TaskSizeReq taskSizeReq) {
-		String rsp = HttpClientUtil.post(TS_USER_ACTIVITY, taskSizeReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_USER_ACTIVITY, taskSizeReq, String.class,
+				"获取态势系统用户活跃度数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, UserActivityContext.class);
 	}
 
 	@Override
 	public FlowStatisticsContext getFlowStatistics(TaskBaseReq taskBaseReq) {
-		return HttpClientUtil.post(TS_FLOW_STATISTICS, taskBaseReq, FlowStatisticsContext.class);
+		return HttpClientUtil.tsPost(TS_FLOW_STATISTICS, taskBaseReq, FlowStatisticsContext.class,
+				"获取态势系统流量统计数据失败");
 	}
 
 	@Override
 	public List<NodeFlowRankContext> getNodeFlowRank(TaskSizeReq taskSizeReq) {
-		String rsp = HttpClientUtil.post(TS_FLOW_NODE_RANK, taskSizeReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_FLOW_NODE_RANK, taskSizeReq, String.class,
+				"获取态势系统节点流量排名失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeFlowRankContext.class);
 	}
 
 	@Override
 	public FlowTrendContext getFlowTrend(TaskBaseReq taskBaseReq) {
-		return HttpClientUtil.post(TS_FLOW_TREND, taskBaseReq, FlowTrendContext.class);
+		return HttpClientUtil.tsPost(TS_FLOW_TREND, taskBaseReq, FlowTrendContext.class,
+				"获取态势系统流量趋势数据失败");
 	}
 
 	@Override
 	public List<StatusStatisticsContext> getNodeStatusStatistics(TaskSizeReq taskSizeReq) {
-		String rsp = HttpClientUtil.post(TS_NODE_STATISTICS_STATUS, taskSizeReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_STATISTICS_STATUS, taskSizeReq, String.class,
+				"获取态势系统节点状态统计数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, StatusStatisticsContext.class);
 	}
 
 	@Override
 	public List<NodeCriticalDegreeContext> getNodeCriticalDegree(TaskSizeReq taskSizeReq) {
-		String rsp = HttpClientUtil.post(TS_NODE_CRITICAL_DEGREE, taskSizeReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_CRITICAL_DEGREE, taskSizeReq, String.class,
+				"获取态势系统节点重要度数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeCriticalDegreeContext.class);
 	}
 
 	@Override
 	public List<StatusStatisticsContext> getLinkStatusStatistics(TaskBaseReq taskBaseReq) {
-		String rsp = HttpClientUtil.post(TS_LINK_STATISTICS_STATUS, taskBaseReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_LINK_STATISTICS_STATUS, taskBaseReq, String.class,
+				"获取态势系统链路状态统计数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, StatusStatisticsContext.class);
 	}
 
 	@Override
 	public List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId) {
 		eventReq.setQueryTime(getQueryTime(featureId));
-		String rsp = HttpClientUtil.post(TS_NODE_MIGRATION, eventReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_MIGRATION, eventReq, String.class,
+				"获取态势系统节点迁移事件失败");
 		List<NodeMigrationContext> res = JsonUtil.toJsonObjectArray(rsp,
 				NodeMigrationContext.class);
 
@@ -620,7 +629,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	@Override
 	public List<NodeProtocolContext> getNodeProtocols(TaskBaseReq taskBaseReq) {
-		String rsp = HttpClientUtil.post(TS_NODE_PROTOCOL, taskBaseReq, String.class);
+		String rsp = HttpClientUtil.tsPost(TS_NODE_PROTOCOL, taskBaseReq, String.class,
+				"获取态势系统节点协议数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeProtocolContext.class);
 	}
 

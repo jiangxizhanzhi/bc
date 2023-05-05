@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service.impl;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.ConfigUtil;
@@ -33,17 +34,23 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 		for (ServiceStatusContext.Service service : ServiceStatusContext.Service.values()) {
 			ServiceStatusContext serviceStatusContext = new ServiceStatusContext(service.getCode(),
 					service.getDesc());
-			HttpClientUtil.post(GL_REPORT_STATUS, serviceStatusContext, String.class);
+			HttpClientUtil.tsPost(GL_REPORT_STATUS, serviceStatusContext, String.class,
+					"上报态势系统状态失败");
 
-		} ;
+		}
 		return true;
 	}
 
 	@Override
 	public Boolean writeLog(ServiceLogContext.SubModule subModule, ServiceLogContext.Type type) {
 		ServiceLogContext serviceLogContext = new ServiceLogContext(subModule, type);
-		String result = HttpClientUtil.post(GL_REPORT_LOG, serviceLogContext, String.class);
+		writeLog(serviceLogContext);
 		return true;
+	}
+
+	@Async
+	public void writeLog(ServiceLogContext serviceLogContext) {
+		HttpClientUtil.tsPost(GL_REPORT_LOG, serviceLogContext, String.class, "上报态势系统日志失败");
 	}
 
 }

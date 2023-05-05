@@ -29,7 +29,7 @@ public class RemoteCodeServiceImpl implements RemoteCodeService {
 
 	@Override
 	public List<EventListRsp> getEvents() {
-		String rsp = HttpClientUtil.rawGet(TS_GET_EVENT_LIST, String.class);
+		String rsp = HttpClientUtil.tsGet(TS_GET_EVENT_LIST, String.class, "获取态势系统特定事件类型数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, EventListRsp.class);
 	}
 

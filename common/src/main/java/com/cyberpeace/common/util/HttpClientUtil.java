@@ -61,6 +61,14 @@ public class HttpClientUtil {
 		return doHttp(getHttpPost(url, body), resultType);
 	}
 
+	public static <T> T tsPost(String url, Object body, Class<T> resultType, String errorMsg) {
+		// 1、设置请求线程数据
+		setContext(url, errorMsg);
+
+		// 2、执行实际调用、返回序列化后的结果
+		return doHttp(getHttpPost(url, body), resultType);
+	}
+
 	public static <T> T delete(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
 		setContext(url, null);
@@ -76,20 +84,6 @@ public class HttpClientUtil {
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(delete, resultType);
-	}
-
-	/**
-	 * 附带参数get查询
-	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
-	 * @param url 接口地址
-	 * @param resultType
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
-		// 使用拼接好参数的url调用接口
-		return rawGet(convertRawUrl(obj, url), resultType);
-
 	}
 
 	private static HttpGet getHttpGet(String url) {
@@ -192,14 +186,28 @@ public class HttpClientUtil {
 		return doHttp(getHttpGet(url), resultType);
 	}
 
-	public static <T> T tokenGet(String url, Class<T> resultType, String field, String token) {
+	/**
+	 * 附带参数get查询
+	 * @param obj 对象参数 根据对象字段和值去查询 过滤掉空值字段
+	 * @param url 接口地址
+	 * @param resultType
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T rawGetByParam(Object obj, String url, Class<T> resultType) {
+		// 使用拼接好参数的url调用接口
+		return rawGet(convertRawUrl(obj, url), resultType);
+
+	}
+
+	public static <T> T tokenGet(String url, Class<T> resultType, String tokenField, String token) {
 
 		// 1、设置请求线程数据
 		setContext(url, null);
 
 		// 2、生成get请求
 		HttpGet httpGet = getHttpGet(url);
-		httpGet.setHeader(field, token);
+		httpGet.setHeader(tokenField, token);
 
 		// 3、执行实际调用、返回序列化后的结果
 		return doHttp(httpGet, resultType);
@@ -217,7 +225,21 @@ public class HttpClientUtil {
 		httpGet.setHeader(WebConstant.TOKEN, WebConstant.YW_TOKEN);
 
 		// 3、执行实际调用、返回序列化后的结果
-		return doHttp(getHttpGet(url), resultType);
+		return doHttp(httpGet, resultType);
+	}
+
+	/**
+	 * 使用get请求态势系统接口
+	 */
+	public static <T> T tsGet(String url, Class<T> resultType, String errorMsg) {
+		// 1、设置请求线程数据
+		setContext(url, errorMsg);
+
+		// 2、生成get请求
+		HttpGet httpGet = getHttpGet(url);
+
+		// 3、执行实际调用、返回序列化后的结果
+		return doHttp(httpGet, resultType);
 	}
 
 	/**
@@ -253,14 +275,14 @@ public class HttpClientUtil {
 
 				// 5、抛出远程服务异常
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException(HttpclientContext.getErrorMsg());
+				throw new RemoteServiceException(HttpclientContext.getErrorMsg() + " | 服务异常");
 			}
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {
 			HttpclientContext.getContext().addLog(httpRequest, "httpResponse is null", verbose);
 			HttpclientContext.removeContext();
-			throw new RemoteServiceException(HttpclientContext.getErrorMsg());
+			throw new RemoteServiceException(HttpclientContext.getErrorMsg() + " | 空返回异常");
 		}
 
 		// 4、解析结果并返回
@@ -284,7 +306,8 @@ public class HttpClientUtil {
 				// 只要中台的错误码不是000000，都认为是有问题的
 				LOG.error("url=[{}], result=[{}] error, code=[{}]",
 						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
-				throw new RemoteServiceException(baseRsp.getMessage());
+				throw new RemoteServiceException(
+						HttpclientContext.getErrorMsg() + " | " + baseRsp.getMessage());
 			}
 			if (null == baseRsp.getData()) {
 				return null;

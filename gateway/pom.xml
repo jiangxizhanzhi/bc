@@ -27,16 +27,6 @@
             <version>${common.service.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>course</artifactId>
-            <version>${oj.course.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cyberpeace.oj</groupId>
-            <artifactId>practice</artifactId>
-            <version>${oj.practice.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.cyberpeace.situation</groupId>
             <artifactId>situation</artifactId>
             <version>${situation.version}</version>

@@ -16,6 +16,11 @@ public class BusinessException extends RuntimeException {
 	@Getter
 	private String errorMessage;
 
+	/**
+	* 业务异常
+	*
+	* @param code 代码
+	*/
 	public BusinessException(String code) {
 		super(code);
 		errorMessage = getMessageByLanguage(code);

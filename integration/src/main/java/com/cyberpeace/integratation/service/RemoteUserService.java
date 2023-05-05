@@ -8,6 +8,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.model.UserPageContext;
 
+/**
+ * 远程用户服务
+ *
+ * @author HY
+ * @date 2023/05/05
+ */
 public interface RemoteUserService {
 
 	/**
@@ -18,6 +24,12 @@ public interface RemoteUserService {
 	 */
 	UserInfo doAuthentication(String token);
 
+	/**
+	* 通过id
+	*
+	* @param userId 用户id
+	* @return {@link UserInfo}
+	*/
 	UserInfo getById(String userId);
 
 	JSONObject getList(Long page, Long perPage, String pattern, String organization);

@@ -38,9 +38,6 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
-	@Autowired
-	RtksRelatedService rtksRelatedService;
-
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
 		List<String> missionTemplateIds = getIdsByMissionsSchemeJson(schemeJson);
@@ -83,7 +80,6 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				missionTemplateMapper.deleteBatchIds(missionTemplateIds);
-				rtksRelatedService.deleteSkillMissionRelation(missionTemplateIds);
 			}
 		});
 

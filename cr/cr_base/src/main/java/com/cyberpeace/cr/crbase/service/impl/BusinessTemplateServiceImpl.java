@@ -92,9 +92,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	private AttachmentService attachmentService;
 
 	@Autowired
-	private RtksRelatedService rtksRelatedService;
-
-	@Autowired
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
@@ -384,9 +381,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				}
 				// 删除模板
 				businessTemplateMapper.deleteBatchIds(businessTemplateIds);
-				// 删除attack、engage关联
-				rtksRelatedService.clearAttackRel(businessTemplateIds);
-				rtksRelatedService.clearEngageRel(businessTemplateIds);
 			}
 		});
 

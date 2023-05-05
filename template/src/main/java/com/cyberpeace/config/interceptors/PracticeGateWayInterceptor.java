@@ -5,9 +5,6 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +12,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthKeyUser;
+import com.cyberpeace.common.annoations.AuthOjKey;
 import com.cyberpeace.common.annoations.AuthUser;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 练习门方法拦截器
+ *
+ * @author HY
+ * @date 2023/05/05
+ */
 @Slf4j
 @Component
 public class PracticeGateWayInterceptor implements HandlerInterceptor {
@@ -71,7 +76,10 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 	}
 
 	/**
+	 * 验证关键
 	 * 接口认证(key获取方式后续可能调整)
+	 *
+	 * @param request 请求
 	 */
 	private void validateKey(HttpServletRequest request) {
 		String key = request.getHeader(WebConstant.OJ_HEADER_KEY);
@@ -98,12 +106,6 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 		if (null == userInfo) {
 			log.error("User does not exist！user_id=[{}]", authParam);
 			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
-		}
-
-		if (StringUtils.isBlank(userInfo.getOrganizationId())) {
-			log.error("User organization is blank! user_id=[{}], user_name=[{}]",
-					userInfo.getUserId(), userInfo.getUserName());
-			throw new BusinessException(OjBusinessErrorCode.ORG_INFORMATION_NOT_NULL);
 		}
 
 		return userInfo;

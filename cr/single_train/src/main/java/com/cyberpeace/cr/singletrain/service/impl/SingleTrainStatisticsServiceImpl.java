@@ -89,7 +89,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null
+                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null, 1, null
         );
 
         if (null != personalStatistics) {
@@ -143,7 +143,7 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
         statusList.add(CrTask.SingleTaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null
+                statusList, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(), null, null, 1, null
         );
 
         if (null != personalStatistics) {

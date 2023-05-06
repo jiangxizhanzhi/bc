@@ -1,15 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -26,8 +17,15 @@ import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -81,7 +79,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory
+                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory, null, null
         );
 
         if (null != personalStatistics) {
@@ -136,7 +134,7 @@ public class TeamTrainStatisticsServiceImpl implements TeamTrainStatisticsServic
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory
+                statusList, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), null, teamCategory, null, null
         );
 
         if (null != personalStatistics) {

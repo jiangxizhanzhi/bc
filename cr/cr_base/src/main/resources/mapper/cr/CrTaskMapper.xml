@@ -262,6 +262,12 @@
         <if test="teamCategory != null and teamCategory != ''">
             room_id in (select resource_id from cr_team_room where train_category = #{teamCategory}) and
         </if>
+        <if test="single != null and single != ''">
+            mission_template_id in (select resource_id from cr_mission_template) and
+        </if>
+        <if test="rbTeam != null and rbTeam != ''">
+            room_id in  (select resource_id from cr_rb_room) and
+        </if>
         status in
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}

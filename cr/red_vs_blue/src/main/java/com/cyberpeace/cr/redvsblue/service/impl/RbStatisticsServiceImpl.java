@@ -87,7 +87,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null
+                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null, null, 1
         );
 
         if (null != personalStatistics) {
@@ -141,7 +141,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null
+                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null, null, null, 1
         );
 
         if (null != personalStatistics) {

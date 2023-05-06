@@ -86,7 +86,7 @@ public interface CrTaskMapper extends BaseMapper<CrTask> {
 
 	List<TrainingPersonalStatistics> selectPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, List<String> user_ids);
 
-	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, Integer teamCategory);
+	List<TrainingPersonalStatistics> selectAllPersonalStatistics(List<Integer> statusList, Integer businessType, Integer limit, Integer teamCategory, Integer single, Integer rbTeam);
 
 	List<CrTask> selectByUserIdAndBusinessType(String userId, Integer businessType);
 }

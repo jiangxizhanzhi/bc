@@ -10,5 +10,10 @@ import java.util.List;
 @Mapper
 @Repository
 public interface ActualDeviceMapper extends BaseMapper<ActualDevice> {
+    /**
+     * 查询所有
+     *
+     * @return {@code List<ActualDevice>}
+     */
     List<ActualDevice> selectAll();
 }

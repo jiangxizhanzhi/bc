@@ -1,41 +1,92 @@
 package com.cyberpeace.bs.service.bo.lc;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import lombok.Data;
-
+/**
+ * 远程行为返回体
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 public class LcBehaviorRspBo implements Serializable {
 
-	private String id;
+    /**
+     * id
+     */
+    private String id;
 
-	private String flowChartName;
+    /**
+     * 流程图名称
+     */
+    private String flowChartName;
 
-	private String appName;
+    /**
+     * 应用程序名称
+     */
+    private String appName;
 
-	private Integer deviceType;
+    /**
+     * 设备类型
+     */
+    private Integer deviceType;
 
-	private Integer netModel;
+    /**
+     * 网络模型
+     */
+    private Integer netModel;
 
-	private Integer stepNum;
+    /**
+     * 步骤数
+     */
+    private Integer stepNum;
 
-	private Integer consumeTime;
+    /**
+     * 消耗时间
+     */
+    private Integer consumeTime;
 
-	private String creatorName;
+    /**
+     * 创建者名称
+     */
+    private String creatorName;
 
-	private String type;
+    /**
+     * 类型
+     */
+    private String type;
 
-	private String application;
+    /**
+     * 行为依赖
+     */
+    private String application;
 
-	private Date createTime;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
-	private String tag;
+    /**
+     * 标签
+     */
+    private String tag;
 
-	private Integer appType;
+    /**
+     * 客户端类型
+     */
+    private Integer appType;
 
-	private Integer isActual;
+    /**
+     * 是否实体设备
+     */
+    private Integer isActual;
 
-	private List<LcVariableRspBo> variables;
+    /**
+     * 变量
+     */
+    private List<LcVariableRspBo> variables;
 }

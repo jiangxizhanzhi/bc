@@ -7,6 +7,12 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 实体设备
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 @TableName("bs_actual_device")
 public class ActualDevice {

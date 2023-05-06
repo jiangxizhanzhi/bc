@@ -6,66 +6,148 @@ import org.apache.commons.compress.utils.Lists;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 下发任务请求体
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 public class ReleaseTaskReq implements Serializable {
 
-	private List<String> notifySettings = Lists.newArrayList();
+    /**
+     * 通知设置
+     */
+    private List<String> notifySettings = Lists.newArrayList();
 
-	private Task task;
+    /**
+     * 任务
+     */
+    private Task task;
 
-	private List<Long> flowChartIds = Lists.newArrayList();
+    /**
+     * 流程图id
+     */
+    private List<Long> flowChartIds = Lists.newArrayList();
 
-	private List<String> prevSteps = Lists.newArrayList();
+    /**
+     * 前置步骤
+     */
+    private List<String> prevSteps = Lists.newArrayList();
 
-	private String taskStrategy = "";
+    /**
+     * 任务策略
+     */
+    private String taskStrategy = "";
 
-	private String ip;
+    /**
+     * ip地址
+     */
+    private String ip;
 
-	private Boolean isUsingIp;
+    /**
+     * 是否使用ip识别设备
+     */
+    private Boolean isUsingIp;
 
-	private List<ReqVariable> variable = Lists.newArrayList();
+    /**
+     * 变量
+     */
+    private List<ReqVariable> variable = Lists.newArrayList();
 
-	public ReleaseTaskReq() {
-		this.setTask(new Task());
-	}
+    public ReleaseTaskReq() {
+        this.setTask(new Task());
+    }
 
-	public void setDeviceId(String id) {
-		this.getTask().setDeviceId(id);
-	}
+    /**
+     * 设置设备id
+     *
+     * @param id id
+     */
+    public void setDeviceId(String id) {
+        this.getTask().setDeviceId(id);
+    }
 
-	public void setFlowChart(String id) {
-		this.getFlowChartIds().add(new Long(id));
-	}
+    /**
+     * 设置流程图
+     *
+     * @param id id
+     */
+    public void setFlowChart(String id) {
+        this.getFlowChartIds().add(new Long(id));
+    }
 
-	public void addVariable(String name,String value){
-		ReqVariable variable = new ReqVariable(name,value);
-		this.variable.add(variable);
-	}
+    /**
+     * 添加变量
+     *
+     * @param name  变量名称
+     * @param value 变量值
+     */
+    public void addVariable(String name, String value) {
+        ReqVariable variable = new ReqVariable(name, value);
+        this.variable.add(variable);
+    }
 }
 
+/**
+ * 任务
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 class Task implements Serializable {
 
-	private String deviceId;
+    /**
+     * 设备id
+     */
+    private String deviceId;
 
-	private Integer deviceSource = 2;
+    /**
+     * 设备来源
+     */
+    private Integer deviceSource = 2;
 
-	private Integer execType = 1;
+    /**
+     * 执行类型
+     */
+    private Integer execType = 1;
 
-	private String name = "test";
+    /**
+     * 名称
+     */
+    private String name = "test";
 
-	private String isRecordVideo = "0";
+    /**
+     * 是否录制视频
+     */
+    private String isRecordVideo = "0";
 
 }
 
+/**
+ * 请求体变量
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
-class ReqVariable implements Serializable{
-	private String name;
-	private String varValue;
-	private String variableType = "Text";
+class ReqVariable implements Serializable {
+    /**
+     * 名称
+     */
+    private String name;
+    /**
+     * 变量值
+     */
+    private String varValue;
+    /**
+     * 变量类型
+     */
+    private String variableType = "Text";
 
-	public ReqVariable(String name, String varValue){
-		this.name = name;
-		this.varValue = varValue;
-	}
+    public ReqVariable(String name, String varValue) {
+        this.name = name;
+        this.varValue = varValue;
+    }
 }

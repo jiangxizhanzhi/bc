@@ -1,13 +1,22 @@
 package com.cyberpeace.bs.service.bo.behavior;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
+/**
+ * 行为实例
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 public class BehaviorInstance extends LcBehavior implements Serializable {
 
-	@ApiModelProperty(value = "用户名")
-	private String userName;
+    /**
+     * 用户名称
+     */
+    @ApiModelProperty(value = "用户名")
+    private String userName;
 }

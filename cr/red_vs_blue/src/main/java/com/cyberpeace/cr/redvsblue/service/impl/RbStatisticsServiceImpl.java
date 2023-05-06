@@ -1,24 +1,18 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import com.cyberpeace.cr.redvsblue.controller.req.RbStatisticsDetailReq;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbStatisticsService;
 import com.cyberpeace.cr.redvsblue.service.bo.RbOrganizationStatisticsBo;
 import com.cyberpeace.cr.redvsblue.service.bo.RbPersonalStatisticsBo;
@@ -26,8 +20,15 @@ import com.cyberpeace.cr.redvsblue.service.bo.RbStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,6 +42,9 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
     @Autowired
     RemoteOrganizationService remoteOrganizationService;
+
+    @Autowired
+    RbRoomMapper rbRoomMapper;
 
 
     @Override
@@ -200,7 +204,16 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
             personalTotalStatistics = personalTotalStatistics.stream().filter(personalTotalStatistic -> startTime.before(personalTotalStatistic.getCreateTime()) && personalTotalStatistic.getCreateTime().before(endTime)).collect(Collectors.toList());
         }
         Map<String, List<CrTask>> user2Tasks = new HashMap<>();
+        List<String> roomIds = StreamApiUtils.map(personalTotalStatistics, CrTask::getRoomId);
+        Map<String, RbRoom> rbRoomMap = new HashMap<>();
+        if (roomIds.size() != 0) {
+            List<RbRoom> rbRoomList = rbRoomMapper.selectBatchIds(roomIds);
+            rbRoomMap = StreamApiUtils.toMap(rbRoomList, RbRoom::getResourceId, rbRoom -> rbRoom);
+        }
         for (CrTask personStatistic : personalTotalStatistics) {
+            if (rbRoomMap.get(personStatistic.getRoomId()) == null) {
+                continue;
+            }
             String userId = personStatistic.getUserId();
             List<CrTask> tmpList = user2Tasks.get(userId);
             if (null == tmpList) {

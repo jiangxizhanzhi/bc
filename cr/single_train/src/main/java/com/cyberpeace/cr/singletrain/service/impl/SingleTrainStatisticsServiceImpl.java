@@ -1,34 +1,35 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.cs.service.UtilService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
 import com.cyberpeace.cr.singletrain.service.bo.SinglePersonalStatisticsBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleStatisticsDetailBo;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,6 +46,9 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
 
     @Autowired
     private UtilService utilService;
+
+    @Autowired
+    private MissionTemplateMapper missionTemplateMapper;
 
     @Override
     public List<SingleOrganizationStatisticsBo> getOrganizationRankStatistics() {
@@ -201,7 +205,16 @@ public class SingleTrainStatisticsServiceImpl implements SingleTrainStatisticsSe
             personalTotalStatistics = personalTotalStatistics.stream().filter(personalTotalStatistic -> startTime.before(personalTotalStatistic.getCreateTime()) && personalTotalStatistic.getCreateTime().before(endTime)).collect(Collectors.toList());
         }
         Map<String, List<CrTask>> user2Tasks = new HashMap<>();
+        List<String> missionTemplateIds = StreamApiUtils.map(personalTotalStatistics, CrTask::getMissionTemplateId);
+        Map<String, MissionTemplate> missionTemplateMap = new HashMap<>();
+        if (missionTemplateIds.size() != 0) {
+            List<MissionTemplate> missionTemplateList = missionTemplateMapper.selectBatchIds(missionTemplateIds);
+            missionTemplateMap = StreamApiUtils.toMap(missionTemplateList, MissionTemplate::getResourceId, missionTemplate -> missionTemplate);
+        }
         for (CrTask personStatistic : personalTotalStatistics) {
+            if (missionTemplateMap.get(personStatistic.getMissionTemplateId()) == null) {
+                continue;
+            }
             String userId = personStatistic.getUserId();
             List<CrTask> tmpList = user2Tasks.get(userId);
             if (null == tmpList) {

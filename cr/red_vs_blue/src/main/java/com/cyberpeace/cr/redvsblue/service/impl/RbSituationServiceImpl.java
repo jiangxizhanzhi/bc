@@ -2,7 +2,6 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
@@ -19,7 +18,6 @@ import com.cyberpeace.cr.redvsblue.service.context.RbSituationServer;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.situation.constant.ws.ActionTypeZHL;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -294,9 +292,11 @@ public class RbSituationServiceImpl implements RbSituationService {
 				.in(MissionEventDevice::getMissionId, crTaskList.stream().map(CrTask::getMissionId).collect(Collectors.toList()))
 				.list();
 
-		crTaskList.forEach(crTask -> {
+		for (CrTask crTask : crTaskList) {
 			Mission mission = missionMap.get(crTask.getMissionId());
-
+			if (mission.getEventType() == null) {
+				continue;
+			}
 			RbSituationAdEventRsp rbSituationAdEventRsp = new RbSituationAdEventRsp();
 
 			List<String> taskDeviceIds = missionEventDeviceList.stream()
@@ -309,8 +309,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 			rbSituationAdEventRsp.setEventTime(crTask.getLastSubmitTime());
 
 			result.add(rbSituationAdEventRsp);
-
-		});
+		}
 
 		result.sort(Comparator.comparing(RbSituationAdEventRsp::getEventTime).reversed());
 

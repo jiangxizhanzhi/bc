@@ -1,18 +1,25 @@
 package com.cyberpeace.situation.controller.req;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
+ * 大屏组件资源请求
+ *
  * @Author xuxz
  * @Date 28/11/2022 上午11:15
  */
 @Data
 public class DashboardComponentsResourceReq implements Serializable {
 
-    private String resourceId;
+	/**
+	 * 资源id
+	 */
+	private String resourceId;
 
-    private String customParams;
+	/**
+	 * 自定义参数
+	 */
+	private String customParams;
 }

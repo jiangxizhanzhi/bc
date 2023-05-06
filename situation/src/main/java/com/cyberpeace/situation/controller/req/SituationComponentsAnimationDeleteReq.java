@@ -1,17 +1,25 @@
 package com.cyberpeace.situation.controller.req;
 
-import com.cyberpeace.common.constant.ErrorCode;
+import java.util.List;
+
+import javax.validation.constraints.NotEmpty;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
-
+/**
+ * 动画组件删除请求
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class SituationComponentsAnimationDeleteReq {
 
-    @ApiModelProperty()
-    @NotEmpty()
-    private List<String> resourceIds;
+	/**
+	 * 动画组件id列表
+	 */
+	@ApiModelProperty()
+	@NotEmpty()
+	private List<String> resourceIds;
 }

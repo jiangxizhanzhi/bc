@@ -6,18 +6,33 @@ import com.google.common.collect.Lists;
 
 import lombok.Getter;
 
+/**
+ * 链路效果
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 public enum LineEffect {
 
 	/**
-	 * 特效
+	 * 流动
 	 */
-
 	STREAM("stream", "流动"),
+
+	/**
+	 * 发光
+	 */
 	SHINE("shine", "发光");
 
+	/**
+	 * 代码
+	 */
 	@Getter
 	private String code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private String desc;
 
@@ -26,6 +41,12 @@ public enum LineEffect {
 		this.desc = desc;
 	}
 
+	/**
+	 * 获取随机效果
+	 *
+	 * @param values 值
+	 * @return {@code List<String>}
+	 */
 	public static List<String> getRandomEffect(LineEffect[] values) {
 
 		List<String> effect = Lists.newArrayList();

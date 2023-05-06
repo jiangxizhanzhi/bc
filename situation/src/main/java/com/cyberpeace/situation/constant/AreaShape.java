@@ -2,17 +2,28 @@ package com.cyberpeace.situation.constant;
 
 import lombok.Getter;
 
+/**
+ * 区域形状
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 public enum AreaShape {
 
 	/**
-	 * 区域形状
+	 * 矩形
 	 */
-
 	RECTANGLE("rectangle", "矩形");
 
+	/**
+	 * 代码
+	 */
 	@Getter
 	private String code;
 
+	/**
+	 * 描述
+	 */
 	@Getter
 	private String desc;
 

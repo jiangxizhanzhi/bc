@@ -2,17 +2,38 @@ package com.cyberpeace.situation.constant;
 
 import lombok.Getter;
 
+/**
+ * 站点类型
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 public enum SiteType {
 
 	/**
-	 * 站点类型
+	 * LG中心
 	 */
+	CENTER("RL", "LG中心"),
 
-	CENTER("RL", "LG中心"), RANGE("RF", "分靶场"), STATION("RC", "场站");
+	/**
+	 * 分靶场
+	 */
+	RANGE("RF", "分靶场"),
 
+	/**
+	 * 场站
+	 */
+	STATION("RC", "场站");
+
+	/**
+	 * 代码
+	 */
 	@Getter
 	private String code;
 
+	/**
+	 * 名称
+	 */
 	@Getter
 	private String name;
 

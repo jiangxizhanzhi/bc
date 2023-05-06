@@ -4,17 +4,57 @@ import java.util.Arrays;
 
 import lombok.Getter;
 
+/**
+ * 想定方案状态
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 public enum PublicStatus {
 
-
+	/**
+	 * 其它
+	 */
 	OTHERS(0, "其它", false, "-", "-", "-", "-", false),
+
+	/**
+	 * 未开始
+	 */
 	ZERO(1, "未开始", false, "-", "-", "-", "-", false),
+
+	/**
+	 * 拟制中
+	 */
 	PREPARATION(2, "拟制中", true, "拟制完成", "-", "拟制完成", "-", false),
+
+	/**
+	 * 拟制完成
+	 */
 	COMPLETE(3, "拟制完成", false, "-", "-", "-", "重新拟制", true),
+
+	/**
+	 * 评审中
+	 */
 	REVIEW(4, "评审中", false, "-", "-", "-", "-", true),
+
+	/**
+	 * 评审通过
+	 */
 	PASS(5, "评审通过", true, "修改完成", "-", "修改完成", "-", false),
+
+	/**
+	 * 评审不通过
+	 */
 	NOPASS(6, "评审不通过", true, "修改完成", "-", "修改完成", "-", false),
+
+	/**
+	 * 修改完成
+	 */
 	MODIFICATION(7, "修改完成", false, "-", "-", "-", "-", true),
+
+	/**
+	 * 方案完成上报
+	 */
 	ESCALATION(8, "方案完成上报", false, "-", "-", "-", "-", true);
 
 	@Getter

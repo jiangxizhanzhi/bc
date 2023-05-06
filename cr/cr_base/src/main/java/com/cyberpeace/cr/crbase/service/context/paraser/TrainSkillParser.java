@@ -13,7 +13,11 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.LocalStringUtil;
 
 /**
+ * 培训技能解析器
  * 训练技能解析
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Service
 public class TrainSkillParser implements MdContentParser<Collection, String> {

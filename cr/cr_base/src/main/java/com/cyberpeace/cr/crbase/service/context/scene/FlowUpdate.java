@@ -8,7 +8,11 @@ import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import lombok.Data;
 
 /**
+ * 流程更新
  * 流量更新模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class FlowUpdate implements Serializable {

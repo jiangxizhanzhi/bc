@@ -3,6 +3,12 @@ package com.cyberpeace.cr.crbase.controller.rsp.constants;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 代码名字返回值
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class CodeNameRsp {
 

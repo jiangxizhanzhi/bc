@@ -1,4 +1,9 @@
 package com.cyberpeace.common.exception.evaluate;
 
-public class ItemStoppedException extends RuntimeException{
-}
+/**
+ * 项目停止异常
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
+public class ItemStoppedException extends RuntimeException {}

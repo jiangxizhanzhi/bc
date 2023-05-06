@@ -2,7 +2,6 @@ package com.cyberpeace.cs.dao.entity;
 
 import java.util.Date;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,11 +11,16 @@ import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cs.constant.SceneEvent;
 import com.cyberpeace.cs.constant.SceneEventStatus;
-import com.cyberpeace.cs.service.impl.SceneStatusCompute;
-import io.swagger.models.auth.In;
+
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 本地场景
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("local_scene")
 public class LocalScene extends BaseTable {
@@ -33,7 +37,7 @@ public class LocalScene extends BaseTable {
 	private String mpSceneId;
 
 	/**
-	 *
+	 * 业务代码
 	 */
 	private Integer businessCode;
 
@@ -78,6 +82,9 @@ public class LocalScene extends BaseTable {
 	 */
 	private String topoId;
 
+	/**
+	 * 用户id
+	 */
 	private String userId;
 
 	/**
@@ -97,6 +104,9 @@ public class LocalScene extends BaseTable {
 	 */
 	private String sceneName;
 
+	/**
+	 * 场景attr
+	 */
 	private Integer sceneAttr;
 
 	/**
@@ -119,13 +129,19 @@ public class LocalScene extends BaseTable {
 	 */
 	private String meta;
 
+	/**
+	 * 场景状态枚举
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum SceneStatusEnum implements GenericEnum {
 
 		/***/
-		INIT(0, "未启动", SceneEvent.DEFAULT, SceneEventStatus.INITIALIZE),
-		START(1, "启动", SceneEvent.CREATE, SceneEventStatus.FINISH),
-		DESTROY(2, "删除", SceneEvent.CLOSE, SceneEventStatus.FINISH),
-		PAUSE(3, "暂停", SceneEvent.PAUSE, SceneEventStatus.FINISH);
+		INIT(0, "未启动", SceneEvent.DEFAULT, SceneEventStatus.INITIALIZE), START(1, "启动",
+				SceneEvent.CREATE, SceneEventStatus.FINISH), DESTROY(2, "删除", SceneEvent.CLOSE,
+						SceneEventStatus.FINISH), PAUSE(3, "暂停", SceneEvent.PAUSE,
+								SceneEventStatus.FINISH);
 
 		@Getter
 		private final Integer code;
@@ -137,6 +153,14 @@ public class LocalScene extends BaseTable {
 
 		private final SceneEventStatus eventStatus;
 
+		/**
+		 * 场景状态枚举
+		 *
+		 * @param code        代码
+		 * @param desc        desc
+		 * @param event       事件
+		 * @param eventStatus 事件状态
+		 */
 		SceneStatusEnum(Integer code, String desc, SceneEvent event, SceneEventStatus eventStatus) {
 			this.code = code;
 			this.desc = desc;
@@ -144,40 +168,57 @@ public class LocalScene extends BaseTable {
 			this.eventStatus = eventStatus;
 		}
 
+		/**
+		 * 是否 当前状态
+		 *
+		 * @param event       事件
+		 * @param eventStatus 事件状态
+		 * @return {@link Boolean}
+		 */
 		public Boolean isCurrent(Integer event, Integer eventStatus) {
 			return event.intValue() == this.event.getCode().intValue()
 					&& eventStatus.intValue() == this.eventStatus.getCode().intValue();
 		}
 
+		/**
+		 * 很近
+		 *
+		 * @return {@link Boolean}
+		 */
 		public Boolean isClose() {
 			return this.code.intValue() == DESTROY.code.intValue();
 		}
 
 	}
 
+	/**
+	 * 业务代码
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum BusinessCode implements GenericEnum, BaseI18n {
+
 		/***/
-		DEFAULT(0, "默认"),
-		PRACTICE(110, "练习"),
-		LESSON(120, "课程"),
-		CLASSROOM(121, "课程表"),
-		EXAM(130, "考试"),
-		LESSON_PRACTICE(140, "课程练习"),
-		SINGLE_TRAINING(211, "单兵训练", "Individual Training"),
-		LIVE_VULN(212, "漏洞"),
-		TEAM_TRAINING(213, "团队训练", "Team Training"),
-		RED_VS_BLUE(214, "红蓝对抗", "Cyber Wargame"),
-		WEAPON_TEST(216, "武器"),
-		SYSTEM_TEST(217, "系统"),
-		SOFTWARE_TEST(221, "软件测试"),
-		TEST_SCENE(222, "后台测试"),
-		COURSE_TRAINING(150, "课程训练"),
-		SKILLS_ASSESSMENT(231, "技能评估"),
-		TACTICAL_ASSESSMENT(232, " 战术评估"),
-		COMPREHENSIVE_ASSESSMENT(233, "综合评估"),
-		TACTICAL_TRAINING(234, "战术训练"),
-		COMPREHENSIVE_TRAINING(235, "综合训练"),
-		RANGE_EVALUATION(236, "靶场测评");
+		DEFAULT(0, "默认"), PRACTICE(110, "练习"), LESSON(120, "课程"), CLASSROOM(121, "课程表"), EXAM(130,
+				"考试"), LESSON_PRACTICE(140, "课程练习"), SINGLE_TRAINING(211, "单兵训练",
+						"Individual Training"), LIVE_VULN(212, "漏洞"), TEAM_TRAINING(213, "团队训练",
+								"Team Training"), RED_VS_BLUE(214, "红蓝对抗",
+										"Cyber Wargame"), WEAPON_TEST(216, "武器"), SYSTEM_TEST(217,
+												"系统"), SOFTWARE_TEST(221, "软件测试"), TEST_SCENE(222,
+														"后台测试"), COURSE_TRAINING(150,
+																"课程训练"), SKILLS_ASSESSMENT(231,
+																		"技能评估"), TACTICAL_ASSESSMENT(
+																				232,
+																				" 战术评估"), COMPREHENSIVE_ASSESSMENT(
+																						233,
+																						"综合评估"), TACTICAL_TRAINING(
+																								234,
+																								"战术训练"), COMPREHENSIVE_TRAINING(
+																										235,
+																										"综合训练"), RANGE_EVALUATION(
+																												236,
+																												"靶场测评");
 
 		@Getter
 		private final Integer code;
@@ -207,10 +248,16 @@ public class LocalScene extends BaseTable {
 
 	}
 
+	/**
+	 * 销毁模式
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum DestroyMode implements GenericEnum {
+
 		/***/
-		MANUAL(1, "手动销毁"),
-		AUTO(2, "自动销毁");
+		MANUAL(1, "手动销毁"), AUTO(2, "自动销毁");
 
 		@Getter
 		private final Integer code;

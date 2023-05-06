@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 流
  * 单个流量
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class Flow implements Serializable {

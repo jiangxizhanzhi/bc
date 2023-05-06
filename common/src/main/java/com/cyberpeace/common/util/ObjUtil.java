@@ -108,6 +108,14 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 设置字段值
+	 *
+	 * @param obj       obj
+	 * @param fieldName 字段名
+	 * @param value     价值
+	 * @throws IllegalAccessException 非法访问异常
+	 */
 	public static void setFieldValue(Object obj, String fieldName, String value)
 			throws IllegalAccessException {
 		Field[] fields = getFields(obj);
@@ -153,6 +161,13 @@ public class ObjUtil {
 				+ "], field=[" + fieldName + "] not found");
 	}
 
+	/**
+	 * 获取字段值名字
+	 *
+	 * @param fieldName 字段名
+	 * @param obj       obj
+	 * @return {@link Object}
+	 */
 	public static Object getFieldValueByName(String fieldName, Object obj) {
 		String firstLetter = fieldName.substring(0, 1).toUpperCase();
 		try {
@@ -182,11 +197,23 @@ public class ObjUtil {
 		}
 	}
 
+	/**
+	 * 获取字段
+	 *
+	 * @param obj obj
+	 * @return {@link Field[]}
+	 */
 	public static Field[] getFields(Object obj) {
 		Class<?> cls = obj.getClass();
 		return getFields(cls);
 	}
 
+	/**
+	 * 获取字段
+	 *
+	 * @param target 目标
+	 * @return {@link Field[]}
+	 */
 	public static Field[] getFields(Class<?> target) {
 
 		Class<?> cls = target;

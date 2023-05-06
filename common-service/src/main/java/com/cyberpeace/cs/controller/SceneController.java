@@ -2,8 +2,6 @@ package com.cyberpeace.cs.controller;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.integratation.model.scene.SnapshotDeleteContext;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -11,20 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.cs.controller.req.MergeSnapshotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
-import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -32,6 +27,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 场景控制器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "场景操作相关api")
 @Slf4j
 @RestController
@@ -45,6 +46,12 @@ public class SceneController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/**
+	 * 节点快照
+	 *
+	 * @param snapShotReq 乱射点播
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -63,6 +70,12 @@ public class SceneController {
 		return new BaseRsp(result);
 	}
 
+	/**
+	 * 删除快照
+	 *
+	 * @param deleteReq 删除请求
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@DeleteMapping("/node/snapshot")
 	@ApiOperation("场景节点快照删除")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
@@ -75,6 +88,13 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
+	/**
+	 * 快照路径
+	 *
+	 * @param sceneId 场景id
+	 * @param imageId 形象标识
+	 * @return {@link BaseRsp}<{@link JSONArray}>
+	 */
 	@GetMapping("/node/snapshot")
 	@ApiOperation("场景节点快照路径")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,

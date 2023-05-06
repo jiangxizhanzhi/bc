@@ -4,6 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
+/**
+ * 场景状态计算
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class SceneStatusCompute {
 
 	/**

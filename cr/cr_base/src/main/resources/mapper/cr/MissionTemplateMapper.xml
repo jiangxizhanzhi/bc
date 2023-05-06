@@ -18,7 +18,8 @@
             , #{missionTemplate.categoryId,jdbcType=VARCHAR}, #{missionTemplate.writeUp,jdbcType=VARCHAR},
             #{missionTemplate.createUserId,jdbcType=VARCHAR}
             , #{missionTemplate.createTime,jdbcType=TIMESTAMP}, #{missionTemplate.updateTime,jdbcType=TIMESTAMP},
-            #{missionTemplate.templateId,jdbcType=VARCHAR}, #{missionTemplate.attachment}, #{missionTemplate.businessTemplateId})
+            #{missionTemplate.templateId,jdbcType=VARCHAR}, #{missionTemplate.attachment},
+            #{missionTemplate.businessTemplateId})
         </foreach>
     </insert>
     <update id="batchUpdateBusinessTemplateId">

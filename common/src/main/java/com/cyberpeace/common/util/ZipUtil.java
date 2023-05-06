@@ -9,17 +9,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.cyberpeace.common.constant.CommonConstant;
-
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
+
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+/**
+ * 邮政编码工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 public class ZipUtil {
 
+	/**
+	 * 生成路径
+	 *
+	 * @return {@link String}
+	 */
 	public static String generatePath() {
 		String tmpPath;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -31,6 +41,12 @@ public class ZipUtil {
 		return file.getPath();
 	}
 
+	/**
+	 * 生成路径
+	 *
+	 * @param fileName 文件名称
+	 * @return {@link String}
+	 */
 	public static String generatePath(String fileName) {
 		String tmpPath;
 		if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -42,6 +58,13 @@ public class ZipUtil {
 		return file.getPath();
 	}
 
+	/**
+	 * 联合国邮政tmp路径
+	 *
+	 * @param zipPath zip路径
+	 * @return {@link String}
+	 * @throws ZipException 邮政编码异常
+	 */
 	public static String unZipToTmpPath(String zipPath) throws ZipException {
 		ZipFile zipFile = new ZipFile(zipPath);
 		String tmpPath = generatePath();
@@ -71,8 +94,14 @@ public class ZipUtil {
 		}
 	}
 
+	/**
+	 * 缓冲区大小
+	 */
 	private static final int BUFFER_SIZE = 2 * 1024;
 
+	/**
+	 * 后缀
+	 */
 	private static final String SUFFIX = ".zip";
 
 	/**

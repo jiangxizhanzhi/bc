@@ -7,6 +7,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.Data;
 
+/**
+ * 任务计划模板
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("cr_mission_scheme_template")
 public class MissionSchemeTemplate extends BaseTable {

@@ -10,6 +10,12 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * cr任务提交
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("cr_task_submit")
 public class CrTaskSubmit extends BaseTable {

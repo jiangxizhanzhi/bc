@@ -7,6 +7,9 @@ import lombok.Data;
 
 /**
  * 任务统计报告
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionReport {

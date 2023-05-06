@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +22,16 @@ import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 
+/**
+ * 消息侦听器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 public class MessageListener implements ChannelAwareMessageListener {
 
@@ -42,6 +48,9 @@ public class MessageListener implements ChannelAwareMessageListener {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -51,6 +60,13 @@ public class MessageListener implements ChannelAwareMessageListener {
 		register.put(declareMessageType(), this);
 	}
 
+	/**
+	 * 处理消息
+	 *
+	 * @param message 消息
+	 * @param channel 通道
+	 * @throws Exception 异常
+	 */
 	@Override
 	public void onMessage(Message message, Channel channel) throws Exception {
 		String realMessage = new String(message.getBody(), WebConstant.ENCODING);
@@ -86,18 +102,48 @@ public class MessageListener implements ChannelAwareMessageListener {
 		return false;
 	}
 
+	/**
+	 * 在场景开始过程
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 * @param context    上下文
+	 * @return {@link Boolean}
+	 */
 	public Boolean onSceneStartProcess(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 在场景中
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 * @param context    上下文
+	 * @return {@link Boolean}
+	 */
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 场景成功
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 * @param context    上下文
+	 * @return {@link Boolean}
+	 */
 	public Boolean onSceneSuccess(String data, String businessId, MqContext context) {
 		return false;
 	}
 
+	/**
+	 * 调度
+	 *
+	 * @param message 消息
+	 * @return boolean
+	 */
 	private boolean dispatch(String message) {
 		JSONObject object;
 
@@ -189,9 +235,16 @@ public class MessageListener implements ChannelAwareMessageListener {
 		return result;
 	}
 
+	/**
+	 * 替换访问ip
+	 *
+	 * @param topoData 拓扑数据
+	 * @return {@link JSONObject}
+	 */
 	private JSONObject replaceAccessIp(JSONObject topoData) {
 		try {
-			JSONObject elementPorts = topoData.getJSONObject("scene_element_port_plugin_data").getJSONObject("cpcloud");
+			JSONObject elementPorts = topoData.getJSONObject("scene_element_port_plugin_data")
+					.getJSONObject("cpcloud");
 			remoteSceneService.replaceAccessIpExe(elementPorts);
 		} catch (Exception e) {
 			log.error("[dispatch] access ip replacement failed:", e);

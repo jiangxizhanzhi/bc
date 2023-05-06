@@ -6,6 +6,12 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 仪表盘上信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class DashboardInfo implements Serializable {
 

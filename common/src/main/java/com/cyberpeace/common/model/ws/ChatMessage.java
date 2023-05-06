@@ -5,6 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 聊天信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -34,6 +40,9 @@ public class ChatMessage {
 
 	private long timestamp;
 
+	/**
+	 * 设置时间戳
+	 */
 	public void setTimestamp() {
 		timestamp = System.currentTimeMillis();
 	}

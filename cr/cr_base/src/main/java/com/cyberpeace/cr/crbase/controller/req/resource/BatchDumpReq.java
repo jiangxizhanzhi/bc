@@ -6,6 +6,12 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 批处理转储请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class BatchDumpReq implements Serializable {
 

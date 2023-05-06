@@ -8,7 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 网络套接字消息上下文
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Data
 @Builder

@@ -12,8 +12,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * 列表工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class ListUtil {
 
+	/**
+	 * 列表工具
+	 */
 	private ListUtil() {}
 
 	public static String list2String(List<String> list) {
@@ -29,6 +38,12 @@ public class ListUtil {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * string转换列表
+	 *
+	 * @param str str
+	 * @return {@link List}<{@link String}>
+	 */
 	public static List<String> string2List(String str) {
 		List<String> ret = Lists.newArrayList();
 
@@ -70,6 +85,15 @@ public class ListUtil {
 		return builder.toString().trim();
 	}
 
+	/**
+	 * 页面列表
+	 *
+	 * @param list     列表
+	 * @param page     页面
+	 * @param perPage  每个页面
+	 * @param listSize 列表大小
+	 * @return {@link List}<{@link E}>
+	 */
 	public static <E> List<E> pageList(List<E> list, int page, int perPage, int listSize) {
 		int startIndex = (page - 1) * perPage;
 		int endIndex = page * perPage;
@@ -117,6 +141,13 @@ public class ListUtil {
 
 	}
 
+	/**
+	 * 顺序合并
+	 *
+	 * @param l1 l1
+	 * @param l2 l2
+	 * @return {@link List}<{@link T}>
+	 */
 	public static <T> List<T> mergeWithOldOrder(List<T> l1, List<T> l2) {
 		List<T> res = Lists.newArrayList();
 		Set<T> set = Sets.newHashSet(l2);

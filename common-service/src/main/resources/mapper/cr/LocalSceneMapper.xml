@@ -22,24 +22,28 @@
     </update>
 
     <select id="selectByCloseTime" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
         where end_time &lt; #{closeTime}
-        and scene_status = 1
+          and scene_status = 1
     </select>
 
     <select id="selectBetweenEndTime" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
         where end_time &gt;= #{start_time}
-        and end_time &lt;= #{end_time}
-        and scene_status = 1
+          and end_time &lt;= #{end_time}
+          and scene_status = 1
     </select>
 
     <select id="selectBySceneId" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
         where mp_scene_id = #{sceneId}
     </select>
 
     <select id="selectAll" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
     </select>
 </mapper>

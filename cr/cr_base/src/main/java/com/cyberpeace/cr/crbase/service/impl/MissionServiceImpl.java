@@ -47,7 +47,10 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 任务服务impl
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Service
 @Slf4j
@@ -84,27 +87,57 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	private Object lock = new Object();
 
+	/**
+	 * 添加任务模板
+	 *
+	 * @param missionTemplate 任务模板
+	 * @return {@link MissionTemplate}
+	 */
 	@Override
 	public MissionTemplate addMissionTemplate(MissionTemplate missionTemplate) {
 		missionTemplateMapper.insert(missionTemplate);
 		return missionTemplate;
 	}
 
+	/**
+	 * 通过任务模板id获取
+	 *
+	 * @param missionTemplateId 任务模板id
+	 * @return {@link MissionTemplate}
+	 */
 	@Override
 	public MissionTemplate getByMissionTemplateId(String missionTemplateId) {
 		return missionTemplateMapper.selectById(missionTemplateId);
 	}
 
+	/**
+	 * 更新任务模板
+	 *
+	 * @param missionTemplate 任务模板
+	 */
 	@Override
 	public void updateMissionTemplate(MissionTemplate missionTemplate) {
 		missionTemplateMapper.updateById(missionTemplate);
 	}
 
+	/**
+	 * 通过id获取
+	 *
+	 * @param missionId 任务id
+	 * @return {@link Mission}
+	 */
 	@Override
 	public Mission getById(String missionId) {
 		return missionMapper.selectById(missionId);
 	}
 
+	/**
+	 * 批量获取
+	 *
+	 *
+	 * @param resourceIds 资源id
+	 * @return {@link List}<{@link Mission}>
+	 */
 	@Override
 	public List<Mission> batchGet(List<String> resourceIds) {
 		List<Mission> ret = Lists.newArrayList();
@@ -125,11 +158,24 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return ret;
 	}
 
+	/**
+	 * 通过房间批量获取
+	 *
+	 * @param roomId 房间id
+	 * @return {@link List}<{@link Mission}>
+	 */
 	@Override
 	public List<Mission> batchGetByRoom(String roomId) {
 		return missionMapper.selectByRoomId(roomId);
 	}
 
+	/**
+	 * 下发
+	 *
+	 * @param missionId     任务id
+	 * @param roleId        角色id
+	 * @param currentUserId 当前用户id
+	 */
 	@Override
 	public void release(String missionId, String roleId, String currentUserId) {
 		Mission mission = missionMapper.selectById(missionId);
@@ -182,6 +228,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		});
 	}
 
+	/**
+	 * 角色下发
+	 *
+	 * @param roomId        房间id
+	 * @param roleId        角色id
+	 * @param currentUserId 当前用户id
+	 */
 	@Override
 	public void roleRelease(String roomId, String roleId, String currentUserId) {
 		List<Mission> missions = lambdaQuery().eq(Mission::getRoomId, roomId).list();
@@ -214,6 +267,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 添加动态
+	 *
+	 * @param mission 任务
+	 * @param role    角色
+	 * @param stage   阶段
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
 		// 校验是否和角色既存任务重名
@@ -239,6 +300,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return true;
 	}
 
+	/**
+	 * 类别列表
+	 *
+	 * @return {@link List}<{@link MissionCategory}>
+	 */
 	@Override
 	public List<MissionCategory> listCategories() {
 		// read categories
@@ -250,6 +316,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 						category.selectI18nName()));
 	}
 
+	/**
+	 * 获取任务状态数据
+	 *
+	 * @param roomId 房间id
+	 * @return {@link Map}<{@link String}, {@link MissionCompletion}>
+	 */
 	@Override
 	public Map<String, MissionCompletion> getMissionStatusData(String roomId) {
 
@@ -269,6 +341,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return missionMap;
 	}
 
+	/**
+	 * 获取类别通过id
+	 *
+	 * @param categoryId 类别id
+	 * @return {@link MissionCategory}
+	 */
 	@Override
 	public MissionCategory getCategoryById(String categoryId) {
 		ensureCache();
@@ -276,6 +354,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return new MissionCategory(categoryId, category.selectI18nName());
 	}
 
+	/**
+	 * 复制方案
+	 *
+	 * @param missionTemplateIds 任务模板id
+	 * @param userId             用户id
+	 * @param roomId             房间id
+	 * @return {@link Map}<{@link String}, {@link String}>
+	 */
 	@Override
 	public Map<String, String> copyScheme(List<String> missionTemplateIds, String userId,
 			String roomId) {
@@ -305,6 +391,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return missionCopyMap;
 	}
 
+	/**
+	 * 打开或关闭题解
+	 *
+	 * @param missionId   任务id
+	 * @param showWriteup 题解
+	 */
 	@Override
 	public void openOrCloseWriteup(String missionId, Boolean showWriteup) {
 		Mission mission = missionMapper.selectById(missionId);
@@ -329,26 +421,53 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		});
 	}
 
+	/**
+	 * 添加计划模板
+	 *
+	 * @param schemeTemplate 方案模板
+	 */
 	@Override
 	public void addSchemeTemplate(MissionSchemeTemplate schemeTemplate) {
 		missionSchemeTemplateMapper.insert(schemeTemplate);
 	}
 
+	/**
+	 * 批量删除计划模板
+	 *
+	 * @param schemeTemplateIds 方案模板id
+	 */
 	@Override
 	public void batchDeleteSchemeTemplate(List<String> schemeTemplateIds) {
 		missionSchemeTemplateMapper.deleteBatchIds(schemeTemplateIds);
 	}
 
+	/**
+	 * 通过id获取计划模板
+	 *
+	 * @param schemeTemplateId 方案模板id
+	 * @return {@link MissionSchemeTemplate}
+	 */
 	@Override
 	public MissionSchemeTemplate getSchemeTemplateById(String schemeTemplateId) {
 		return missionSchemeTemplateMapper.selectById(schemeTemplateId);
 	}
 
+	/**
+	 * 通过id更新任务计划模板
+	 *
+	 * @param toUpdateSchemeTemplate 更新计划模板
+	 */
 	@Override
 	public void updateMissionSchemeTemplateById(MissionSchemeTemplate toUpdateSchemeTemplate) {
 		missionSchemeTemplateMapper.updateById(toUpdateSchemeTemplate);
 	}
 
+	/**
+	 * 页面计划模板返回值
+	 *
+	 * @param pageReqBase 页面请求基地
+	 * @return {@link ListRsp}<{@link MissionSchemeTemplateRsp}>
+	 */
 	@Override
 	public ListRsp<MissionSchemeTemplateRsp> pageSchemeTemplateRsp(PageReqBase pageReqBase) {
 		Page page = pageReqBase.toPageParam();
@@ -359,6 +478,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return PageUtil.getListResult(iPage);
 	}
 
+	/**
+	 * 通过id获取计划模板返回值
+	 *
+	 * @param resourceId 资源id
+	 * @return {@link MissionSchemeTemplateRsp}
+	 */
 	@Override
 	public MissionSchemeTemplateRsp getSchemeTemplateRspById(String resourceId) {
 		MissionSchemeTemplate template = missionSchemeTemplateMapper.selectById(resourceId);
@@ -366,6 +491,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return schemeTemplateToRsp(template);
 	}
 
+	/**
+	 * 通过房间id和用户id获取任务日志
+	 *
+	 * @param roomId    房间id
+	 * @param studentId 学生证
+	 * @return {@link List}<{@link DynamicData}>
+	 */
 	@Override
 	public List<DynamicData> getTaskLogByRoomIdAndUserId(String roomId, String studentId) {
 		List<String> taskLogIds = crTaskLogMapper.getReleaseIdsByRoomIdAndUserId(roomId, studentId);
@@ -386,6 +518,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return dynamicDataList;
 	}
 
+	/**
+	 * 计划模板转换返回值
+	 *
+	 * @param schemeTemplate 方案模板
+	 * @return {@link MissionSchemeTemplateRsp}
+	 */
 	private MissionSchemeTemplateRsp schemeTemplateToRsp(MissionSchemeTemplate schemeTemplate) {
 		MissionSchemeTemplateRsp templateRsp = BeanUtils.deepCopy(schemeTemplate,
 				MissionSchemeTemplateRsp.class);
@@ -401,6 +539,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return templateRsp;
 	}
 
+	/**
+	 * 获取团队培训手册
+	 *
+	 * @param roomId 房间id
+	 * @return {@link String}
+	 */
 	@Override
 	public String getTeamTrainingManual(String roomId) {
 		List<CrRole> roles = crRoleMapper
@@ -422,6 +566,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return manual.toMarkDown();
 	}
 
+	/**
+	 * 批量导入任务模板
+	 *
+	 * @param missionTemplates 任务模板
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean batchLoadMissionTemplates(List<MissionTemplate> missionTemplates) {
 		if (missionTemplates == null || missionTemplates.size() == 0) {
@@ -443,6 +593,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return true;
 	}
 
+	/**
+	 * 添加动态任务信息
+	 *
+	 * @param missionStageSchemeList 任务阶段计划列表
+	 * @param stage                  阶段
+	 * @param missionId              任务id
+	 */
 	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
 			Integer stage, String missionId) {
 
@@ -477,6 +634,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 获取动态id
+	 *
+	 * @param missionStageScheme 任务阶段计划
+	 * @param resourceId         资源id
+	 * @return {@link List}<{@link String}>
+	 */
 	private List<String> getDynamicIds(MissionStageScheme missionStageScheme, String resourceId) {
 
 		List<String> ids = missionStageScheme.getDynamic();
@@ -502,6 +666,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return missionMapper.existByTitleAndIds(title, missionIds);
 	}
 
+	/**
+	 * 获取任务内容
+	 *
+	 * @param schemeData 计划数据
+	 */
 	@Override
 	public void getMissionContent(MissionSchemeObject<AddTemplateMission> schemeData) {
 		List<String> missionIds = StreamApiUtils.map(schemeData.getMissions(),
@@ -527,6 +696,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	}
 
+	/**
+	 * 验证任务
+	 *
+	 * @param colorMission 颜色使命
+	 */
 	@Override
 	public void validateMission(ColorMission<AddTemplateMission> colorMission) {
 		SerializeConfig config = new SerializeConfig();
@@ -536,6 +710,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		missionsSchemeValidator(JSON.parseObject(json));
 	}
 
+	/**
+	 * 任务计划验证器
+	 *
+	 * @param missionsScheme 任务计划
+	 */
 	@Override
 	public void missionsSchemeValidator(JSONObject missionsScheme) {
 
@@ -574,6 +753,14 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	}
 
+	/**
+	 * 导出文件
+	 *
+	 * @param templateIds 模板id
+	 * @param tempDir     临时dir
+	 * @return {@link String}
+	 * @throws IOException ioexception
+	 */
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
 		if (templateIds.isEmpty()) {
@@ -591,6 +778,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return ZipUtil.toZip(tempDir);
 	}
 
+	/**
+	 * 批量导入计划
+	 *
+	 * @param unZipPath 联合国邮政路径
+	 */
 	@Override
 	public void batchLoadScheme(String unZipPath) {
 		// 1. read data.json
@@ -618,11 +810,21 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 获取雷达标签
+	 *
+	 * @return {@link List}<{@link RadarLabel}>
+	 */
 	@Override
 	public List<RadarLabel> getRadarLabel() {
 		return radarLabelMapper.selectList();
 	}
 
+	/**
+	 * 雷达更新标签
+	 *
+	 * @param radarLabelList 雷达标签列表
+	 */
 	@Override
 	public void updateRadarLabel(List<RadarLabel> radarLabelList) {
 		for (RadarLabel radarLabel : radarLabelList) {
@@ -631,6 +833,11 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	}
 
+	/**
+	 * 检查计划模板标题重复
+	 *
+	 * @param title 标题
+	 */
 	@Override
 	public void checkSchemeTemplateTitleDuplicate(String title) {
 		if (missionSchemeTemplateMapper.existByTitle(title)) {
@@ -639,6 +846,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 通过计划获取任务id
+	 *
+	 * @param missionStageSchemes 任务阶段计划
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getMissionIdsByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = Lists.newArrayList();
@@ -646,6 +859,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return missionIds;
 	}
 
+	/**
+	 * 任务模板页
+	 *
+	 * @param pageReq 页面请求
+	 * @return {@link ListRsp}<{@link MissionTemplateRes}>
+	 */
 	@Override
 	public ListRsp<MissionTemplateRes> pageMissionTemplate(MissionTemplatePageReq pageReq) {
 		Page page = pageReq.toPageParam();
@@ -654,6 +873,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return PageUtil.getListResult(iPage);
 	}
 
+	/**
+	 * 通过房间和cr角色批量获取
+	 *
+	 * @param roomId     房间id
+	 * @param crRoleList cr角色列表
+	 * @return {@link List}<{@link Mission}>
+	 */
 	@Override
 	public List<Mission> batchGetByRoomAndCrRoles(String roomId, List<CrRole> crRoleList) {
 		List<String> missionIds = Lists.newArrayList();
@@ -665,6 +891,13 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return batchGet(missionIds);
 	}
 
+	/**
+	 * 更新任务验证
+	 *
+	 * @param missionId 任务id
+	 * @param roomId    房间id
+	 * @param title     标题
+	 */
 	@Override
 	public void updateMissionValidate(String missionId, String roomId, String title) {
 		CrRole role = crRoleMapper.selectByRoomIdAndMissionId(roomId, missionId);
@@ -686,12 +919,21 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 导出计划模板
+	 *
+	 * @param templateIds 模板id
+	 * @return {@link String}
+	 */
 	private String dumpSchemeTemplates(List<String> templateIds) {
 		List<MissionSchemeTemplate> templateList = missionSchemeTemplateMapper
 				.selectBatchIds(templateIds);
 		return JsonUtil.arrayToString(templateList);
 	}
 
+	/**
+	 * 初始化
+	 */
 	private void doInit() {
 		List<CrConstantsConfig> missionCategories = crConstantsService
 				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
@@ -705,6 +947,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		}
 	}
 
+	/**
+	 * 确保缓存存在
+	 */
 	private void ensureCache() {
 		if (null == categoryCache) {
 			synchronized (lock) {

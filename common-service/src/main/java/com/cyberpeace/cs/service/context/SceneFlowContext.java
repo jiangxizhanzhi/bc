@@ -8,6 +8,12 @@ import org.apache.commons.compress.utils.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 场景流上下文
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class SceneFlowContext implements Serializable {
 

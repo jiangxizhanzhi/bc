@@ -6,7 +6,11 @@ import java.util.List;
 import lombok.Data;
 
 /**
+ * cr角色任务计划阶段
  * 角色任务编排阶段模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrRoleMissionSchemeStage implements Serializable {

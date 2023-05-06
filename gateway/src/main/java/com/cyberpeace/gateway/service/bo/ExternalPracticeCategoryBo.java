@@ -6,6 +6,12 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 外部实训类别
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @ApiModel
 public class ExternalPracticeCategoryBo implements Serializable {

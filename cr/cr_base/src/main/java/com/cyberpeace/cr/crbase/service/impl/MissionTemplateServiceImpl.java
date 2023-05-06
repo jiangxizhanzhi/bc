@@ -18,7 +18,6 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.MissionTemplateMapper;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,7 +25,10 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 任务模板服务impl
+ *
  * @author SN
+ * @date 2023/05/06
  */
 @Service
 @Slf4j
@@ -38,6 +40,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	@Autowired
 	TransactionTemplate transactionTemplate;
 
+	/**
+	 * 通过任务计划json批量获取
+	 *
+	 * @param schemeJson 计划json
+	 * @return {@link List}<{@link MissionTemplate}>
+	 */
 	@Override
 	public List<MissionTemplate> batchGetByMissionSchemeJson(String schemeJson) {
 		List<String> missionTemplateIds = getIdsByMissionsSchemeJson(schemeJson);
@@ -47,6 +55,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
 
+	/**
+	 * 通过id获取映射
+	 *
+	 * @param templateIds 模板id
+	 * @return {@link Map}<{@link String}, {@link MissionTemplate}>
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingByIds(List<String> templateIds) {
 		if (templateIds.isEmpty()) {
@@ -56,12 +70,23 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 				.toMap(MissionTemplate::getResourceId, missionTemplate -> missionTemplate));
 	}
 
+	/**
+	 * 通过计划json获取映射
+	 *
+	 * @param schemeJson 计划json
+	 * @return {@link Map}<{@link String}, {@link MissionTemplate}>
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJson(String schemeJson) {
 		List<String> templateIds = getIdsByMissionsSchemeJson(schemeJson);
 		return getMappingByIds(templateIds);
 	}
 
+	/**
+	 * 批量插入
+	 *
+	 * @param missionTemplateList 任务模板列表
+	 */
 	@Override
 	public void batchInsert(List<MissionTemplate> missionTemplateList) {
 		if (missionTemplateList.isEmpty()) {
@@ -70,6 +95,11 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		missionTemplateMapper.batchInsert(missionTemplateList);
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param missionTemplateIds 任务模板id
+	 */
 	@Override
 	public void batchDelete(List<String> missionTemplateIds) {
 		if (missionTemplateIds.isEmpty()) {
@@ -85,6 +115,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 
 	}
 
+	/**
+	 * 批量更新业务模板id
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param missionTemplateIds 任务模板id
+	 */
 	@Override
 	public void batchUpdateBusinessTemplateId(String businessTemplateId,
 			List<String> missionTemplateIds) {
@@ -94,6 +130,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		missionTemplateMapper.batchUpdateBusinessTemplateId(businessTemplateId, missionTemplateIds);
 	}
 
+	/**
+	 * 通过任务计划json获取id
+	 *
+	 * @param schemeJson 计划json
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getIdsByMissionsSchemeJson(String schemeJson) {
 		String reg = String.format(PatternConstant.RESOURCE_ID,
@@ -101,6 +143,12 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return LocalStringUtil.getMatchStr(schemeJson, reg, 1);
 	}
 
+	/**
+	 * 业务映射
+	 *
+	 * @param missionTemplateIds 任务模板id
+	 * @return {@link Map}<{@link String}, {@link MissionTemplateRes}>
+	 */
 	@Override
 	public Map<String, MissionTemplateRes> mapWithBusiness(List<String> missionTemplateIds) {
 		Map<String, MissionTemplateRes> mapping = Maps.newHashMap();
@@ -120,10 +168,16 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 		return missionTemplateMapper.selectByBusinessTemplateId(businessTemplateId);
 	}
 
+	/**
+	 * 通过计划json列表获取映射
+	 *
+	 * @param schemeJsonList 计划列表json
+	 * @return {@link Map}<{@link String}, {@link MissionTemplate}>
+	 */
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList) {
 		List<String> templateIds = new ArrayList<>();
-		for (String schemeJson: schemeJsonList){
+		for (String schemeJson : schemeJsonList) {
 			templateIds.addAll(getIdsByMissionsSchemeJson(schemeJson));
 		}
 		return getMappingByIds(templateIds);

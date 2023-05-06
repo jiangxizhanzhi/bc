@@ -4,7 +4,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 题解开放状态
+ * 显示题解开放状态
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class ShowWriteup {

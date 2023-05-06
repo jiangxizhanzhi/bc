@@ -6,6 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 元素流
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ElementFlow implements Serializable {
 
@@ -45,14 +51,16 @@ public class ElementFlow implements Serializable {
 	@ApiModelProperty("来源IP")
 	private String sourceIp;
 
+	/**
+	 * 任务状态枚举
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum TaskStatusEnum {
 
-		UNDEFINED(-1,"未定义"),
-		INIT(0, "初始化"),
-		RUNNING(1, "运行中"),
-		STOPPING(2, "停止中"),
-		STOPPED(3, "已停止"),
-		ZERO(4, "未启动过");
+		UNDEFINED(-1, "未定义"), INIT(0, "初始化"), RUNNING(1, "运行中"), STOPPING(2, "停止中"), STOPPED(3,
+				"已停止"), ZERO(4, "未启动过");
 
 		@Getter
 		private Integer code;
@@ -66,10 +74,15 @@ public class ElementFlow implements Serializable {
 		}
 	}
 
+	/**
+	 * 常见状态枚举
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum CommonStatusEnum {
 
-		FREE(0, "空闲"),
-		ACTIVE(1, "活动");
+		FREE(0, "空闲"), ACTIVE(1, "活动");
 
 		@Getter
 		private Integer code;
@@ -84,6 +97,11 @@ public class ElementFlow implements Serializable {
 
 	}
 
+	/**
+	 * 设置常见状态
+	 *
+	 * @param taskStatus 任务状态
+	 */
 	public void setCommonStatus(Integer taskStatus) {
 
 		Integer commonStatus = CommonStatusEnum.ACTIVE.getCode();

@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * 角色查询体
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 @NoArgsConstructor
@@ -21,7 +24,7 @@ public class RoleQuery {
 		this.roleGroup = roleGroup;
 	}
 
-	public RoleQuery(String roomId, CrRole.RoleGroup roleGroup){
+	public RoleQuery(String roomId, CrRole.RoleGroup roleGroup) {
 		this(roomId, roleGroup.getCode());
 	}
 }

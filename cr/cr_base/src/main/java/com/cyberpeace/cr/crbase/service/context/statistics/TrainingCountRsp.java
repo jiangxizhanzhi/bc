@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 培训数返回值
  * 训练统计返回体
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TrainingCountRsp implements Serializable {

@@ -8,6 +8,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
+/**
+ * 雷达标签
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("cr_radar_label")
 public class RadarLabel implements Serializable {

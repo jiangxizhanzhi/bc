@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * cr角色配置
  * 用于后台模板查询的返回
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrRoleConfig extends CrRoleNodesData implements Serializable {

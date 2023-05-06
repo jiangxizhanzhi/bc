@@ -1,9 +1,15 @@
 package com.cyberpeace.common.model.scene;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
+import lombok.Data;
+
+/**
+ * 语言环境
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class Locale implements Serializable {
 

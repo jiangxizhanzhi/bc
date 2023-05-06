@@ -14,11 +14,16 @@ import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.google.common.collect.Lists;
+
 import lombok.Data;
 import lombok.Getter;
 
 /**
+ * cr角色
+ *
+ * @author cyberpeace
  * @TableName cr_role
+ * @date 2023/05/06
  */
 @TableName(value = "cr_role")
 @Data
@@ -113,16 +118,16 @@ public class CrRole extends BaseTable {
 		this.missionScheme = JSONObject.toJSONString(missionStageSchemeList);
 	}
 
-	public CrRoleNodesData getNodeData(){
+	public CrRoleNodesData getNodeData() {
 		return JsonUtil.toJsonObject(getNodes(), CrRoleNodesData.class);
 	}
 
-	public void setNodesData(CrRoleNodesData nodesData){
+	public void setNodesData(CrRoleNodesData nodesData) {
 		this.nodes = JsonUtil.toJsonString(nodesData);
 	}
 
-
 	public interface RoleGroup {
+
 		/**
 		 * 角色类型数字代码
 		 */
@@ -144,8 +149,7 @@ public class CrRole extends BaseTable {
 	public enum TeamRoleGroup implements GenericEnum, RoleGroup, BaseI18n {
 
 		/***/
-		TEACHER(1, "教员", "Teacher"),
-		STUDENT(2, "学员", "Student");
+		TEACHER(1, "教员", "Teacher"), STUDENT(2, "学员", "Student");
 
 		@Getter
 		private final Integer code;
@@ -199,13 +203,11 @@ public class CrRole extends BaseTable {
 	}
 
 	public enum RbRoleGroup implements GenericEnum, BaseI18n, RoleGroup {
+
 		/***/
-		ADMIN(1, "管理员", "Administrator"),
-		DIRECTOR(2, "导演", "Director"),
-		REFEREE(3, "裁判", "Referee"),
-		RED(4, "红方", "Red"),
-		BLUE(5, "蓝方", "Blue"),
-		RED_BLUE(6, "红方蓝方", "RedBlue");
+		ADMIN(1, "管理员", "Administrator"), DIRECTOR(2, "导演", "Director"), REFEREE(3, "裁判",
+				"Referee"), RED(4, "红方",
+						"Red"), BLUE(5, "蓝方", "Blue"), RED_BLUE(6, "红方蓝方", "RedBlue");
 
 		@Getter
 		private final Integer code;
@@ -243,7 +245,6 @@ public class CrRole extends BaseTable {
 		}
 	}
 
-
 	public CrRole(RbRoleGroup roleGroup) {
 		this(roleGroup, roleGroup.getDesc());
 	}
@@ -269,13 +270,14 @@ public class CrRole extends BaseTable {
 	}
 
 	public boolean isRvbStaff() {
-		return isInGroup(RbRoleGroup.ADMIN) || isInGroup(RbRoleGroup.DIRECTOR) || isInGroup(RbRoleGroup.REFEREE);
+		return isInGroup(RbRoleGroup.ADMIN) || isInGroup(RbRoleGroup.DIRECTOR)
+				|| isInGroup(RbRoleGroup.REFEREE);
 	}
-
 
 	/**
 	 * 单兵训练
 	 */
 	public static final String SINGLE_ROLE_GROUP_NAME = "单兵训练角色";
+
 	public static final Integer SINGLE_ROLE_GROUP_CODE = 1;
 }

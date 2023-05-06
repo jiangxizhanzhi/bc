@@ -6,7 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 任务类别返回值
+ *
  * @author SN
+ * @date 2023/05/06
  */
 @Data
 public class MissionCategoryRes implements Serializable {

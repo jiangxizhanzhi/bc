@@ -7,6 +7,9 @@ import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 
 /**
  * 训练使用记录
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface TrainRecordService extends IService<TrainRecord> {
 
@@ -23,12 +26,14 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @param userId 用户id
 	 * @param businessType 业务类型
 	 */
-	void saveRecord(String name, String businessTemplateId, String roomId, String userId, Integer businessType);
+	void saveRecord(String name, String businessTemplateId, String roomId, String userId,
+			Integer businessType);
 
 	/**
 	 * 更新拓展信息
 	 */
-	void updateExtraDate(String businessTemplateId, String userId, Integer businessType, String extra);
+	void updateExtraDate(String businessTemplateId, String userId, Integer businessType,
+			String extra);
 
 	/**
 	 * 更新结束时间
@@ -42,7 +47,8 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @param businessType 业务类型
 	 * @param extra 附加信息
 	 */
-	void updateEndDate(String businessTemplateId, String userId, Integer businessType, String extra);
+	void updateEndDate(String businessTemplateId, String userId, Integer businessType,
+			String extra);
 
 	/**
 	 * 通过房间id更新结束时间

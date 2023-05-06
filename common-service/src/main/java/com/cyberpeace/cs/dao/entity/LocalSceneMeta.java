@@ -3,11 +3,18 @@ package com.cyberpeace.cs.dao.entity;
 import java.io.Serializable;
 
 import com.alibaba.fastjson.JSONObject;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 本地场景元
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @Builder
 @AllArgsConstructor

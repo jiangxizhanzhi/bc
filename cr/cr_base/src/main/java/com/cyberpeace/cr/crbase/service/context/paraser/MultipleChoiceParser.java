@@ -7,7 +7,11 @@ import com.cyberpeace.common.mdparser.parser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 
 /**
+ * 选择题解析器
  * 多选题解析
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Service
 public class MultipleChoiceParser implements MdContentParser<String, String> {

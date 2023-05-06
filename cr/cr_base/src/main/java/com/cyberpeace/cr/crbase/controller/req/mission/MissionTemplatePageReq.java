@@ -6,6 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 任务模板页面请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class MissionTemplatePageReq extends PageReqBase {
 
 	@ApiModelProperty("类型")

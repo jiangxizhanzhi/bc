@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * cr角色配置任务计划
  * 用于后台模板查询接口返回基本任务信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrRoleConfigMissionsScheme implements Serializable {

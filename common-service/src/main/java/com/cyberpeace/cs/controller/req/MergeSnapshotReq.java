@@ -1,12 +1,19 @@
 package com.cyberpeace.cs.controller.req;
 
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
+/**
+ * 合并快照要求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @ApiModel
 public class MergeSnapshotReq implements Serializable {

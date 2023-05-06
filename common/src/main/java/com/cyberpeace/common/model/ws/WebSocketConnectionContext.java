@@ -10,9 +10,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 网络套接字连接上下文
  * websocket连接需要的上下文
- * 
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Data
 @AllArgsConstructor

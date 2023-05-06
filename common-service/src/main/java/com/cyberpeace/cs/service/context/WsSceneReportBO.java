@@ -6,6 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 
 import lombok.Data;
 
+/**
+ * ws场景报告
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class WsSceneReportBO implements Serializable {
 
@@ -13,6 +19,13 @@ public class WsSceneReportBO implements Serializable {
 
 	private WsSceneReportData data;
 
+	/**
+	 * ws场景报告
+	 *
+	 * @param code 代码
+	 * @param type 类型
+	 * @param data 数据
+	 */
 	public WsSceneReportBO(String code, String type, JSONObject data) {
 		WsSceneReportData reportData = new WsSceneReportData();
 		reportData.setData(data);

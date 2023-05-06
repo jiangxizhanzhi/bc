@@ -11,6 +11,9 @@ import lombok.Data;
 
 /**
  * 场景配置数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class SceneConfigData implements Serializable {

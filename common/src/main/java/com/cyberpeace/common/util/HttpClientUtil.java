@@ -33,6 +33,12 @@ import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.*;
 import com.google.common.collect.Lists;
 
+/**
+ * http客户端工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class HttpClientUtil {
 
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
@@ -61,6 +67,15 @@ public class HttpClientUtil {
 		return doHttp(getHttpPost(url, body), resultType);
 	}
 
+	/**
+	 * ts帖子
+	 *
+	 * @param url        url
+	 * @param body       身体
+	 * @param resultType 结果类型
+	 * @param errorMsg   错误味精
+	 * @return {@link T}
+	 */
 	public static <T> T tsPost(String url, Object body, Class<T> resultType, String errorMsg) {
 		// 1、设置请求线程数据
 		setContext(url, errorMsg);
@@ -69,6 +84,14 @@ public class HttpClientUtil {
 		return doHttp(getHttpPost(url, body), resultType);
 	}
 
+	/**
+	 * 删除
+	 *
+	 * @param url        url
+	 * @param body       身体
+	 * @param resultType 结果类型
+	 * @return {@link T}
+	 */
 	public static <T> T delete(String url, Object body, Class<T> resultType) {
 		// 1、设置请求线程数据
 		setContext(url, null);
@@ -86,6 +109,12 @@ public class HttpClientUtil {
 		return doHttp(delete, resultType);
 	}
 
+	/**
+	 * 得到http get
+	 *
+	 * @param url url
+	 * @return {@link HttpGet}
+	 */
 	private static HttpGet getHttpGet(String url) {
 		// 1、构建请求
 		HttpGet httpGet = new HttpGet(url);
@@ -100,6 +129,13 @@ public class HttpClientUtil {
 		return httpGet;
 	}
 
+	/**
+	 * get http post
+	 *
+	 * @param url  url
+	 * @param body 身体
+	 * @return {@link HttpPost}
+	 */
 	private static HttpPost getHttpPost(String url, Object body) {
 		// 1、构建请求
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
@@ -113,6 +149,13 @@ public class HttpClientUtil {
 		return post;
 	}
 
+	/**
+	 * 转换原始url
+	 *
+	 * @param obj obj
+	 * @param url url
+	 * @return {@link String}
+	 */
 	public static String convertRawUrl(Object obj, String url) {
 		// 1、将请求体转换为键值对
 		TreeMap<String, Object> treeMap = ObjUtil.obj2TreemapExcludeEmpty(obj);
@@ -252,6 +295,13 @@ public class HttpClientUtil {
 		HttpclientContext.setErrorMsg(errorMsg);
 	}
 
+	/**
+	 * 执行http
+	 *
+	 * @param httpRequest http请求
+	 * @param resultType  结果类型
+	 * @return {@link T}
+	 */
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
 		String httpResponse = null;

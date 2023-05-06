@@ -16,6 +16,7 @@ import lombok.Data;
  */
 @Data
 public class MultipleChoiceMD implements Serializable {
+
 	@MdHeadLine(level = 3, name = "任务名称")
 	private String title;
 

@@ -8,7 +8,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ *
  * 场景展示模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class SceneViewContext implements Serializable {

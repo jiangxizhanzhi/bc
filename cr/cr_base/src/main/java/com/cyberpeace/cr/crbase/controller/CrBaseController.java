@@ -35,6 +35,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 靶场公用控制器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "靶场公用接口")
 @RestController
 @Slf4j
@@ -48,6 +54,12 @@ public class CrBaseController {
 	@Autowired
 	private CrConstantsService crConstantsService;
 
+	/**
+	 * 个人中心训练统计
+	 *
+	 * @param req 请求
+	 * @return {@link BaseRsp}<{@link TrainingStatisticsRsp}>
+	 */
 	@ApiOperation("个人中心训练统计")
 	@GetMapping("/training_statistics")
 	public BaseRsp<TrainingStatisticsRsp>
@@ -61,6 +73,12 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取常量配置
+	 *
+	 * @param type 类型
+	 * @return {@link BaseRsp}
+	 */
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")
 	public BaseRsp getConstantsConfig(@ApiParam(name = "type", value = "类型") Integer type) {
@@ -78,6 +96,11 @@ public class CrBaseController {
 		}
 	}
 
+	/**
+	 * 获取当前时间
+	 *
+	 * @return {@link BaseRsp}<{@link CurrentTimeRsp}>
+	 */
 	@ApiOperation("获取当前服务器时间")
 	@GetMapping("/current_time")
 	@RequiresPermissions(
@@ -90,6 +113,11 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取授权类型
+	 *
+	 * @return {@link BaseRsp}<{@link List}<{@link CodeNameRsp}>>
+	 */
 	@ApiOperation("获取当前用户拥有权限的训练类型")
 	@GetMapping("/authorized_type")
 	public BaseRsp<List<CodeNameRsp>> getAuthorizedType() {

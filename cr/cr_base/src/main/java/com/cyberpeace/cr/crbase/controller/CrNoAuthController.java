@@ -32,7 +32,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ *
  * 无需用户认证的接口
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Api(tags = "靶场无需用户认证的接口")
 @RestController
@@ -58,6 +62,10 @@ public class CrNoAuthController {
 	@Autowired
 	private LocalSceneService localSceneService;
 
+	/** 批量导入资管模板
+	 * @param req 请求
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@ApiOperation("批量导入资管模板")
 	@PostMapping("/batchLoadMD")
 	public BaseRsp<Boolean> batchLoadMd(@RequestBody @Valid BatchLoadMdReq req) {

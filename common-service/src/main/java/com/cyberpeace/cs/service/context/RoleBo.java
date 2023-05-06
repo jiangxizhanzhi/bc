@@ -1,10 +1,16 @@
 package com.cyberpeace.cs.service.context;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.Data;
+
+/**
+ * 角色
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class RoleBo implements Serializable {
 
@@ -17,6 +23,5 @@ public class RoleBo implements Serializable {
 		this.roleName = roleName;
 	}
 
-	public RoleBo() {
-	}
+	public RoleBo() {}
 }

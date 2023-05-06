@@ -12,7 +12,10 @@ import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 
 /**
+ * cr场景服务
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface CrSceneService {
 

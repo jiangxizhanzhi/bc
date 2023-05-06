@@ -1,11 +1,16 @@
 package com.cyberpeace.cr.crbase.service;
 
-
 import java.io.IOException;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 
+/**
+ * 导出训练mdservice
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface ExportTrainMDService {
 
 	/**
@@ -15,7 +20,8 @@ public interface ExportTrainMDService {
 	 * @param type 类型
 	 * @throws IOException
 	 */
-	void chooseTypeAndExportTrain (List<String> resourceIds, String path, Integer type) throws IOException;
+	void chooseTypeAndExportTrain(List<String> resourceIds, String path, Integer type)
+			throws IOException;
 
 	/**
 	 * 实际导出资管

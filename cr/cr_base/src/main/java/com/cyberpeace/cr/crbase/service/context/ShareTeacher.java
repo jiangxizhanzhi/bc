@@ -5,6 +5,9 @@ import lombok.Data;
 
 /**
  * 授权的教员
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class ShareTeacher {

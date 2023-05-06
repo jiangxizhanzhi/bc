@@ -12,7 +12,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 列出负责
  * 分页返回数据模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 @AllArgsConstructor

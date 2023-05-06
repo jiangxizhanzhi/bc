@@ -6,6 +6,12 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 指示板组
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class DashboardGroup implements Serializable {
 
@@ -24,6 +30,11 @@ public class DashboardGroup implements Serializable {
 	@ApiModelProperty("组员编号")
 	private List<String> members;
 
+	/**
+	 * 指示板组
+	 *
+	 * @param role 角色
+	 */
 	public DashboardGroup(String role) {
 		this.role = role;
 		this.avatar = "";

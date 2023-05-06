@@ -5,8 +5,11 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/** 在获取任务列表接口使用
- * @author
+/**
+ * 计划列表任务返回值 在获取任务列表接口使用
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class SchemeListMissionRsp implements Serializable {

@@ -9,7 +9,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * cr角色上下文
  * 角色模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrRoleContext<T> {

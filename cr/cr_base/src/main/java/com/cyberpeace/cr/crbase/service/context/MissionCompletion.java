@@ -4,7 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ *
  * 任务完成数
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionCompletion {

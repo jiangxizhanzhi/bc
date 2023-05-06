@@ -1,10 +1,16 @@
 package com.cyberpeace.common.model.room;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * 仪表板用户
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class DashboardUser implements Serializable {
 

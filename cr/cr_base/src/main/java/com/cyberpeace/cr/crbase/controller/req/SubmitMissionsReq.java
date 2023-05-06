@@ -5,6 +5,12 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 提交任务请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class SubmitMissionsReq {
 
@@ -17,5 +23,5 @@ public class SubmitMissionsReq {
 	private String missionHash;
 
 	@ApiModelProperty(required = true, value = "提交答案")
- 	private String answer;
+	private String answer;
 }

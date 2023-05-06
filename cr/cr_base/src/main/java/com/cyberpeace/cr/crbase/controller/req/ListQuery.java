@@ -8,8 +8,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/*
- * 前台使用的查询类
+/**
+ * 列表查询前台使用的查询类
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @ApiModel
 @Data

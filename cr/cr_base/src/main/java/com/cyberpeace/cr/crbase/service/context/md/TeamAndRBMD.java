@@ -20,10 +20,10 @@ public class TeamAndRBMD implements Serializable {
 	private String node;
 
 	@MdHeadLine(level = 2, name = "战争迷雾", parser = ListParser.class)
-	private List<String>  seeNode;
+	private List<String> seeNode;
 
 	@MdHeadLine(level = 2, name = "用户资产", parser = ListParser.class)
-	private List<String>  useNode;
+	private List<String> useNode;
 
 	@MdHeadLine(level = 1, name = "任务集合", parser = TaskParser.class)
 	private List<RoleBo> task;

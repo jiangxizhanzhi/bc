@@ -1,9 +1,15 @@
 package com.cyberpeace.common.model.ws;
 
-import lombok.Data;
-
 import java.util.List;
 
+import lombok.Data;
+
+/**
+ * 聊天内容
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ChatToContent {
 

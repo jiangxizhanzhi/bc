@@ -10,6 +10,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 附件
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

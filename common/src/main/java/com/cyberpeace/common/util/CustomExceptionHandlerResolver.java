@@ -6,8 +6,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * 自定义异常处理程序解析器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class CustomExceptionHandlerResolver implements HandlerExceptionResolver {
 
+	/**
+	 * 解决异常
+	 *
+	 * @param httpServletRequest  http servlet请求
+	 * @param httpServletResponse http servlet响应
+	 * @param o                   o
+	 * @param e                   e
+	 * @return {@link ModelAndView}
+	 */
 	@Override
 	public ModelAndView resolveException(HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, Object o, Exception e) {

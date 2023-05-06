@@ -1,32 +1,50 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.constant.CommonConstant;
+import com.google.common.collect.Lists;
+
+/**
+ * 本地字符串工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class LocalStringUtil {
 
+	/**
+	 * 本地字符串工具
+	 */
 	private LocalStringUtil() {}
 
-    /**
-     * 前后增加换行符
-     * @param value
-     * @return
-     */
-    public static String frontBackLine(String value) {
-        if (StringUtils.isBlank(value)) {
-            value = CommonConstant.EMPTY_STRING;
-        }
-        return System.lineSeparator() + value + System.lineSeparator();
-    }
+	/**
+	 * 前回线
+	 * 前后增加换行符
+	 *
+	 * @param value 价值
+	 * @return {@link String}
+	 */
+	public static String frontBackLine(String value) {
+		if (StringUtils.isBlank(value)) {
+			value = CommonConstant.EMPTY_STRING;
+		}
+		return System.lineSeparator() + value + System.lineSeparator();
+	}
 
+	/**
+	 * 蛇行格式
+	 *
+	 * @param name 名字
+	 * @return {@link String}
+	 */
 	public static String snakeCaseFormat(String name) {
 		final StringBuilder result = new StringBuilder();
 
@@ -71,11 +89,23 @@ public class LocalStringUtil {
 		return result.toString();
 	}
 
+	/**
+	 * str列出
+	 *
+	 * @param data 数据
+	 * @return {@link List}<{@link Integer}>
+	 */
 	public static List<Integer> strToList(String data) {
 		return Arrays.stream(StringUtils.split(data, ',')).map(Integer::parseInt)
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * str转换str字符串
+	 *
+	 * @param data 数据
+	 * @return {@link List}<{@link String}>
+	 */
 	public static List<String> strToListStr(String data) {
 		return Arrays.stream(StringUtils.split(data, ',')).collect(Collectors.toList());
 	}
@@ -208,6 +238,13 @@ public class LocalStringUtil {
 		return randomStr + getRandomStr(length - randomStr.length());
 	}
 
+	/**
+	 * 替换为空
+	 *
+	 * @param content  内容
+	 * @param matchStr 匹配str
+	 * @return {@link String}
+	 */
 	public static String replaceToBlank(String content, List<String> matchStr) {
 		if (StringUtils.isBlank(content) || CollectionUtils.isEmpty(matchStr)) {
 			return content;

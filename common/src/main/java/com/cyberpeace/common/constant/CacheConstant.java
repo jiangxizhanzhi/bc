@@ -1,5 +1,11 @@
 package com.cyberpeace.common.constant;
 
+/**
+ * 缓存常数
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface CacheConstant {
 
 	/**

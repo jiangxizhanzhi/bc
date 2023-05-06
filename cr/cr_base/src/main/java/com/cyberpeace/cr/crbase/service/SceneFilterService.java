@@ -3,6 +3,12 @@ package com.cyberpeace.cr.crbase.service;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 
+/**
+ * 场景过滤器服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface SceneFilterService {
 
 	/**

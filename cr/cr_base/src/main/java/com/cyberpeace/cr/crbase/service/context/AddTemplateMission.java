@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 添加模板任务
  * 任务模板简要信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class AddTemplateMission implements Serializable {

@@ -2,6 +2,9 @@ package com.cyberpeace.cr.crbase.constant;
 
 /**
  * 靶场常用常量
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface CrCommonConstants {
 
@@ -15,14 +18,23 @@ public interface CrCommonConstants {
 	 */
 	String RESOURCE_IMAGE_DIR = "images";
 
+	/**
+	 * uuid生成长度
+	 */
 	Integer GENERATED_UUID_LENGTH = 32;
 
+	/**
+	 * 场景id键值
+	 */
 	String MP_SCENE_ID_KEY = "resource_id";
 
 	String TOPO_DATA_KEY = "scene_config";
 
 	Integer STUDENT_ROLE = 1;
 
+	/**
+	 * 终端类型代码
+	 */
 	Integer TERMINAL_TYPE_CODE = 4;
 
 	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
@@ -37,6 +49,9 @@ public interface CrCommonConstants {
 
 	int SCORE_MAX_VALUE = ConfigReader.readInt("cr.score.max");
 
+	/**
+	 * 分钟培训名称len
+	 */
 	int MIN_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.min");
 
 	int MAX_TRAINING_NAME_LEN = ConfigReader.readInt("cr.training.name.len.max");

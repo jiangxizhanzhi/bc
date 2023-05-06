@@ -31,6 +31,12 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * cr公共服务impl
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 @Slf4j
 public class CrCommonServiceImpl implements CrCommonService {
@@ -44,6 +50,13 @@ public class CrCommonServiceImpl implements CrCommonService {
 	@Autowired
 	private MissionTemplateService missionTemplateService;
 
+	/**
+	 * 获取监控会话
+	 *
+	 * @param localSceneId 本地场景id
+	 * @param studentId    学生证
+	 * @return {@link List}<{@link MonitorSession}>
+	 */
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
 		// 1. 查询localScene
@@ -85,12 +98,24 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return sessionList;
 	}
 
+	/**
+	 * 停止
+	 *
+	 * @param sceneData 场景数据
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean isStopped(JSONObject sceneData) {
 		SceneData data = sceneData.toJavaObject(SceneData.class);
 		return data.isStopped();
 	}
 
+	/**
+	 * 验证角色配置
+	 *
+	 * @param roleConfigs 角色配置
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs) {
 
@@ -110,6 +135,12 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return missionTemplateIds;
 	}
 
+	/**
+	 * 验证任务计划
+	 *
+	 * @param missionsScheme 任务计划
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> validateMissionsScheme(CrRoleConfigMissionsScheme missionsScheme) {
 		List<String> missionTemplateIds = CrCommonUtil.getMissionTemplateIds(missionsScheme);
@@ -148,6 +179,11 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return missionTemplateIds;
 	}
 
+	/**
+	 * 验证rb角色配置
+	 *
+	 * @param roleConfigRb 角色配置rb
+	 */
 	@Override
 	public void validateRbRoleConfig(CrRoleConfigRb roleConfigRb) {
 		List<String> missionTemplateIds = Lists.newArrayList();

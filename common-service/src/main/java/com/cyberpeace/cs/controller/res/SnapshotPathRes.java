@@ -1,12 +1,19 @@
 package com.cyberpeace.cs.controller.res;
 
+import java.io.Serializable;
+
 import com.alibaba.fastjson.JSONObject;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
+/**
+ * 快照路径res
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @ApiModel
 public class SnapshotPathRes implements Serializable {

@@ -12,6 +12,12 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * 流api工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class StreamApiUtils {
 
 	/**

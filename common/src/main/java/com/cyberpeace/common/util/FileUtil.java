@@ -577,9 +577,11 @@ public class FileUtil {
 	}
 
 	/**
+	 * 得到文件后缀
 	 * 获取文件后缀名称
-	 * @param filePath
-	 * @return
+	 *
+	 * @param filePath 文件路径
+	 * @return {@link String}
 	 */
 	public static String getFileSuffix(String filePath) {
 		int indexOf = filePath.lastIndexOf(CommonConstant.PERIOD);

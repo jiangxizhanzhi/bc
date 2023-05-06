@@ -9,6 +9,9 @@ import lombok.Data;
 
 /**
  * rtks 匹配度缓存
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class RtksMatch implements Serializable {
@@ -27,6 +30,11 @@ public class RtksMatch implements Serializable {
 
 	private String orgName;
 
+	/**
+	 * rtk匹配
+	 *
+	 * @param userInfo 用户信息
+	 */
 	public RtksMatch(UserInfo userInfo) {
 		this.userId = userInfo.getUserId();
 		this.name = userInfo.getName();
@@ -34,6 +42,12 @@ public class RtksMatch implements Serializable {
 		this.orgName = getOrgName(userInfo.getOrgpaths());
 	}
 
+	/**
+	 * 得到组织名字
+	 *
+	 * @param orgPath org路径
+	 * @return {@link String}
+	 */
 	private String getOrgName(List<List<String>> orgPath) {
 		int size = orgPath.get(0).size();
 		return orgPath.get(0).get(size - 1);

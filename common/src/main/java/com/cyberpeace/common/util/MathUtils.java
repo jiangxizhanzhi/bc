@@ -6,6 +6,12 @@ import java.util.Random;
 
 import com.cyberpeace.common.constant.CommonConstant;
 
+/**
+ * 数学工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class MathUtils {
 
 	private static final long serialVersionUID = -3345205828566485102L;
@@ -13,30 +19,29 @@ public class MathUtils {
 	// 默认除法运算精度
 	private static final Integer DEF_DIV_SCALE = 2;
 
-	private static char[] codes = { '0','1','2','3','4','5','6','7','8','9',
-			'A','B','C','D','E','F','G','H','I','J',
-			'K','L','M','N','O','P','Q','R','S','T',
-			'U','V','W','X','Y','Z'};
+	private static char[] codes = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C',
+			'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+			'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 	/**
 	 * 返回随机字符串，同时包含数字、大写字母
 	 * @param len 字符串长度
 	 * @return String 随机字符串
 	 */
-	public static String randomStr(int len){
-		if(len == CommonConstant.ZERO){
+	public static String randomStr(int len) {
+		if (len == CommonConstant.ZERO) {
 			return "";
 		}
-		//数组，用于存放随机字符
+		// 数组，用于存放随机字符
 		char[] chArr = new char[len];
 		Random random = new Random();
 
-		for(int i = 0; i < len; i++){
+		for (int i = 0; i < len; i++) {
 			chArr[i] = codes[random.nextInt(codes.length)];
 		}
 
-		//将数组chArr随机排序
-		for(int i = 0; i < len; i++){
+		// 将数组chArr随机排序
+		for (int i = 0; i < len; i++) {
 			int r = i + random.nextInt(len - i);
 			char temp = chArr[i];
 			chArr[i] = chArr[r];

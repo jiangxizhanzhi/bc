@@ -8,6 +8,12 @@ import com.cyberpeace.cr.crbase.service.context.RbUserData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 角色任务返回值
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class RoleMissionRsp implements Serializable {
 

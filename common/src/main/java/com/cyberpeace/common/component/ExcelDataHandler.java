@@ -30,7 +30,11 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * excel数据处理程序
  * excel数据处理器 需要什么方法自己加
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Slf4j
 public class ExcelDataHandler {
@@ -42,6 +46,7 @@ public class ExcelDataHandler {
 	private FileInputStream fileInputStream;
 
 	/**
+	 * excel数据处理程序
 	 * 构造参数 初始化excel数据
 	 *
 	 * @param filePath   文件路径
@@ -78,6 +83,7 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * excel数据处理程序
 	 * 构造函数，初始化excel数据
 	 *
 	 * @param filePath  excel路径
@@ -114,21 +120,23 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 得到表数据
 	 * excel数据读取
 	 *
-	 * @param startRow
-	 * @return
+	 * @param startRow 开始行
+	 * @return {@link List}<{@link List}<{@link String}>>
 	 */
 	public List<List<String>> getSheetData(int startRow) {
 		return getSheetData(startRow, CommonConstant.ZERO);
 	}
 
 	/**
+	 * 得到表数据
 	 * excel文件数据读取
 	 *
 	 * @param startRow 开始行读取 0从第一行开始读取
 	 * @param endRow   结束行 0=不限制结尾 非0则读取startRow-endRow之间的数据
-	 * @return
+	 * @return {@link List}<{@link List}<{@link String}>>
 	 */
 	public List<List<String>> getSheetData(int startRow, int endRow) {
 
@@ -162,11 +170,12 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 被指数excel日期
 	 * 根据行和列的索引获取单元格的数据
 	 *
-	 * @param row
-	 * @param column
-	 * @return
+	 * @param row    行
+	 * @param column 列
+	 * @return {@link String}
 	 */
 	public String getExcelDateByIndex(int row, int column) {
 		Row sheetRow = sheet.getRow(row);
@@ -187,6 +196,9 @@ public class ExcelDataHandler {
 		return cell.toString().trim();
 	}
 
+	/**
+	 * 关闭输入输出
+	 */
 	public void closeIO() {
 		try {
 			fileInputStream.close();
@@ -198,8 +210,11 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 创建工作簿
 	 * 获取excel写对象
-	 * @return
+	 *
+	 * @param filePath 文件路径
+	 * @return {@link Workbook}
 	 */
 	private static Workbook createWorkbook(String filePath) {
 		String fileSuffix = FileUtil.getFileSuffix(filePath);
@@ -220,13 +235,14 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 导出excel
+	 *
 	 * @param dataList    传入对象 对象非基本数据类型
 	 * @param filePath    excel导出的文件路径
-	 * @param sheetName   
 	 * @param excelHeader 标题
 	 * @param workbook    导出格式
-	 * @param <T>
-	 * @return
+	 * @param sheetName   表名字
+	 * @param passFields  通过字段
 	 */
 	private static <T> void doExportExcel(List<T> dataList, String filePath, String sheetName,
 			ExcelHeader excelHeader, Workbook workbook, List<String> passFields) {
@@ -307,12 +323,12 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 导出excel
 	 * excel文件导出
-	 * @param data
-	 * @param filePath
-	 * @param excelHeader
-	 * @param <T>
-	 * @return
+	 *
+	 * @param data        数据
+	 * @param filePath    文件路径
+	 * @param excelHeader excel头
 	 */
 	public static <T> void exportExcel(List<T> data, String filePath, ExcelHeader excelHeader) {
 
@@ -332,12 +348,14 @@ public class ExcelDataHandler {
 	}
 
 	/**
+	 * 导出excel
 	 * excel 文件导出
-	 * @param list 导出数据
-	 * @param sheetName sheet名
-	 * @param passFields 过滤字段
+	 *
+	 * @param list        导出数据
+	 * @param sheetName   sheet名
+	 * @param passFields  过滤字段
 	 * @param excelHeader 导出列头
-	 * @param <T> 数据bean
+	 * @param filePath    文件路径
 	 * @return 文件流
 	 */
 	public static <T> File exportExcel(List<T> list, String filePath, String sheetName,

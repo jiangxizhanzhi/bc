@@ -11,6 +11,12 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务计划模板修改请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class MissionSchemeTemplateModifyReq extends MissionSchemeTemplateReq implements Serializable {
 

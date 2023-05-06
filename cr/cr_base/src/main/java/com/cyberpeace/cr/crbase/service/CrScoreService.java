@@ -9,7 +9,10 @@ import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 
 /**
+ * cr分数服务
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface CrScoreService extends IService<CrScore> {
 

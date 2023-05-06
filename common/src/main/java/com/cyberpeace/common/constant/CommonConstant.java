@@ -1,5 +1,11 @@
 package com.cyberpeace.common.constant;
 
+/**
+ * 常见常数
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface CommonConstant {
 
 	/** 常量定义 便于后续查找代码中默认值使用*/
@@ -93,14 +99,14 @@ public interface CommonConstant {
 
 	String SPACE = " ";
 
-	long TOOL_ATTACHMENT_FILE_SIZE =  500 * 1024 * 1024;
+	long TOOL_ATTACHMENT_FILE_SIZE = 500 * 1024 * 1024;
 
 	/** 底层 中台 靶场 竞赛共享目录*/
 	String SHARE_DIR = "/data/resource/export/";
 
 	String EXPORT_CTF_PATH = SHARE_DIR + "CTF";
 
-	String EXPORT_TRAIN_PATH =  SHARE_DIR + "train/";
+	String EXPORT_TRAIN_PATH = SHARE_DIR + "train/";
 
 	String MD_IMAGE_TEMPLATE = "![](%s)";
 

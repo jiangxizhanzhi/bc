@@ -7,8 +7,11 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 /**
+ * 豆跑龙套
  * 对象拷贝工具类
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 public class BeanUtils {
 
@@ -68,7 +71,7 @@ public class BeanUtils {
 	 * @param target
 	 * @return
 	 */
-	public static void copyProperties(Object source, Object target){
+	public static void copyProperties(Object source, Object target) {
 		org.springframework.beans.BeanUtils.copyProperties(source, target);
 	}
 

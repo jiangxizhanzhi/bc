@@ -16,6 +16,12 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
 
+/**
+ * html转换pdf工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class HtmlToPdfUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(HtmlToPdfUtil.class);
@@ -68,7 +74,12 @@ public class HtmlToPdfUtil {
 	}
 
 	/**
+	 * 获得html模板实例
 	 * 生成html模板实例
+	 *
+	 * @param data                 数据
+	 * @param htmlTemplateEnum     html模板枚举
+	 * @param templateInstancePath 模板实例路径
 	 * @description 获取模板
 	 */
 	public static void getHtmlTemplateInstance(Map<String, Object> data,
@@ -122,6 +133,11 @@ public class HtmlToPdfUtil {
 
 	}
 
+	/**
+	 * 确保dir存在
+	 *
+	 * @param file 文件
+	 */
 	private static void ensureDir(File file) {
 		File dir = file.getParentFile();
 

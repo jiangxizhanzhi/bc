@@ -16,6 +16,12 @@ import com.cyberpeace.common.util.ShellUtils;
 import com.cyberpeace.gateway.controller.req.NfsMountReq;
 import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 
+/**
+ * nfs装载控制器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "外部接口-nfs挂载相关api")
 @RestController
 @RequestMapping("/exec/nfs/mount")
@@ -27,6 +33,12 @@ public class NfsMountController {
 
 	private String MKDIR = "mkdir -p %s";
 
+	/**
+	 * nfs挂载
+	 *
+	 * @param nfsMountReq nfs山请求
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@ApiOperation("NFS目录挂载")
 	@PostMapping("/mount")
 	public BaseRsp<Boolean> nfsMount(@RequestBody NfsMountReq nfsMountReq) {
@@ -41,6 +53,12 @@ public class NfsMountController {
 		return new BaseRsp<>(Boolean.TRUE);
 	}
 
+	/**
+	 * nfs 卸载
+	 *
+	 * @param umountReq 卸载请求
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@ApiOperation("NFS目录卸载")
 	@PostMapping("/umount")
 	public BaseRsp<Boolean> nfsUmount(@RequestBody NfsUmountReq umountReq) {

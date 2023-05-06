@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +33,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -44,6 +44,12 @@ import com.google.common.collect.Sets;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 团队训练评分控制器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "团队训练评分")
 @RestController
 @RequestMapping("/cr/training_team/training_team")
@@ -68,7 +74,13 @@ public class CrScoreController {
 	@Autowired
 	private TrainRecordService trainRecordService;
 
-
+	/**
+	 * 获取学生分数
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户希
+	 * @return {@link StudentScoreRsp}
+	 */
 	public StudentScoreRsp getStudentScore(String resource_id, String user_hash) {
 
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(resource_id, user_hash);
@@ -115,6 +127,11 @@ public class CrScoreController {
 		return studentScoreRsp;
 	}
 
+	/**
+	 * 更新学生成绩
+	 *
+	 * @param studentScoreReq 学生分数请求
+	 */
 	public void updateStudentScore(StudentScoreReq studentScoreReq) {
 
 		Integer trainingPercentage = Integer
@@ -178,6 +195,11 @@ public class CrScoreController {
 
 	}
 
+	/**
+	 * 更新提交评估
+	 *
+	 * @param submitEvaluationReq 提交评价请求
+	 */
 	public void updateSubmitEvaluation(SubmitEvaluationReq submitEvaluationReq) {
 
 		crTaskService.submitEvaluation(submitEvaluationReq.getSubmitId(),
@@ -190,6 +212,12 @@ public class CrScoreController {
 
 	}
 
+	/**
+	 * 获取任务评估
+	 *
+	 * @param missionEvaluationListReq 任务评价列表请求
+	 * @return {@link BaseRsp}<{@link List}<{@link MissionEvaluationRsp}>>
+	 */
 	public BaseRsp<List<MissionEvaluationRsp>>
 			getMissionEvaluations(MissionEvaluationListReq missionEvaluationListReq) {
 
@@ -246,6 +274,12 @@ public class CrScoreController {
 		return new BaseRsp(PageUtil.getListResult(data));
 	}
 
+	/**
+	 * 从请求获取team分数
+	 *
+	 * @param studentScoreReq 学生分数请求
+	 * @return {@link CrScore}
+	 */
 	private CrScore getTeamScoreFromReq(StudentScoreReq studentScoreReq) {
 		CrScore crScore = BeanUtils.copy(studentScoreReq, CrScore.class);
 
@@ -258,6 +292,13 @@ public class CrScoreController {
 		return crScore;
 	}
 
+	/**
+	 * 获取用户任务动态
+	 *
+	 * @param resource_id 资源id
+	 * @param student_id  学生证
+	 * @return {@link MissionDynamicRsp}
+	 */
 	public MissionDynamicRsp getUserMissionDynamic(String resource_id, String student_id) {
 		TaskCounter taskCounter = crRoleService.getTaskCounter(resource_id, student_id);
 
@@ -289,6 +330,13 @@ public class CrScoreController {
 		return missionDynamicRsp;
 	}
 
+	/**
+	 * 获取培训任务报告
+	 *
+	 * @param resource_id 资源id
+	 * @param crRoleList  cr角色列表
+	 * @return {@link MissionReport}
+	 */
 	public MissionReport getTrainingMissionReport(String resource_id, List<CrRole> crRoleList) {
 
 		MissionReport missionReport = new MissionReport();
@@ -301,6 +349,13 @@ public class CrScoreController {
 		return missionReport;
 	}
 
+	/**
+	 * 获取培训记录
+	 *
+	 * @param resource_id 资源id
+	 * @param user_hash   用户希
+	 * @return {@link List}<{@link MissionSchemeObject}<{@link TrainingRecordMissionRsp}>>
+	 */
 	public List<MissionSchemeObject<TrainingRecordMissionRsp>> getTrainingRecord(String resource_id,
 			String user_hash) {
 
@@ -328,15 +383,17 @@ public class CrScoreController {
 						if (crTask != null) {
 							trainingRecord.setRecord(crTask.getUserAnswer());
 							trainingRecordMissionRsp.setTraininStatus(crTask.getStatus());
-							if (crTask.getBusinessType()
-									  .equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())){
-								if (trainRecordMessage != null && trainRecordMessage.get(crTask.getMissionId()) != null) {
-									String time = ((JSONObject) trainRecordMessage.get(crTask.getMissionId())).get("time").toString();
+							if (crTask.getBusinessType().equals(
+									BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())) {
+								if (trainRecordMessage != null
+										&& trainRecordMessage.get(crTask.getMissionId()) != null) {
+									String time = ((JSONObject) trainRecordMessage
+											.get(crTask.getMissionId())).get("time").toString();
 									if (StringUtils.isNotEmpty(time)) {
 										trainingRecord.setTime(new Timestamp(Long.parseLong(time)));
 									}
 								}
-							}else {
+							} else {
 								trainingRecord.setTime(crTask.getLastSubmitTime());
 							}
 						} else {
@@ -356,6 +413,13 @@ public class CrScoreController {
 		return missionSchemeList;
 	}
 
+	/**
+	 * 获取培训报告
+	 *
+	 * @param resource_id 资源id
+	 * @param crRoleList  cr角色列表
+	 * @return {@link List}<{@link UserReport}>
+	 */
 	public List<UserReport> getTrainingReport(String resource_id, List<CrRole> crRoleList) {
 
 		List<String> userIds = Lists.newArrayList();
@@ -412,6 +476,11 @@ public class CrScoreController {
 		return userReportList;
 	}
 
+	/**
+	 * 获取模板i18n
+	 *
+	 * @return {@link JSONObject}
+	 */
 	public JSONObject getTemplateI18n() {
 		JSONObject jsonObject = new JSONObject();
 
@@ -422,6 +491,12 @@ public class CrScoreController {
 		return jsonObject;
 	}
 
+	/**
+	 * 获取标题
+	 *
+	 * @param name 名字
+	 * @return {@link String}
+	 */
 	public String getTitle(String name) {
 
 		if (!CommonContext.isChinese()) {
@@ -431,6 +506,12 @@ public class CrScoreController {
 		}
 	}
 
+	/**
+	 * 获取训练记录消息
+	 *
+	 * @param trainRecord 培训记录
+	 * @return {@link JSONObject}
+	 */
 	private JSONObject getTrainRecordMessage(TrainRecord trainRecord) {
 		if (trainRecord == null) {
 			return new JSONObject();

@@ -6,6 +6,9 @@ import lombok.Data;
 
 /**
  * 训练实例简要信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class RoomInfo implements Serializable {

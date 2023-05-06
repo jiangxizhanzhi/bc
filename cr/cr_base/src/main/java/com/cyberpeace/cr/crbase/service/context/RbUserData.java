@@ -4,7 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ *
  * 红蓝用户数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class RbUserData {

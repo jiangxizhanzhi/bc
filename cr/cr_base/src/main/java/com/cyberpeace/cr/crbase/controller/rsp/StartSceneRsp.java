@@ -5,6 +5,12 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 开始场景返回值
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class StartSceneRsp implements Serializable {
 

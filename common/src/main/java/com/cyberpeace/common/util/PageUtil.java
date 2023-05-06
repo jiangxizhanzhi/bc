@@ -15,10 +15,26 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.model.ListRsp;
 import com.google.common.collect.Lists;
 
+/**
+ * 页面工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class PageUtil {
 
+	/**
+	 * 页面工具
+	 */
 	private PageUtil() {}
 
+	/**
+	 * 变换结果列表
+	 *
+	 * @param page 页面
+	 * @param func 函数
+	 * @return {@link ListRsp}
+	 */
 	public static <T, U> ListRsp transformListResult(IPage<T> page, Function<T, U> func) {
 		List<U> outputs = new ArrayList<>();
 		for (T record : page.getRecords()) {
@@ -33,6 +49,12 @@ public class PageUtil {
 		return ret;
 	}
 
+	/**
+	 * 得到列表结果
+	 *
+	 * @param data 数据
+	 * @return {@link ListRsp}<{@link K}>
+	 */
 	public static <K> ListRsp<K> getListResult(IPage data) {
 
 		if (null == data) {
@@ -49,6 +71,14 @@ public class PageUtil {
 		return ret;
 	}
 
+	/**
+	 * 得到列表结果
+	 *
+	 * @param data  数据
+	 * @param page  页面
+	 * @param total 总
+	 * @return {@link ListRsp}<{@link K}>
+	 */
 	public static <K> ListRsp<K> getListResult(List<K> data, Page page, long total) {
 
 		// 空数据直接返回
@@ -111,11 +141,23 @@ public class PageUtil {
 		return listRsp;
 	}
 
+	/**
+	 * 得到零结果
+	 *
+	 * @return {@link ListRsp}
+	 */
 	public static ListRsp getNullResult() {
 		return ListRsp.builder().list(Lists.newArrayList()).lastPage(CommonConstant.ZERO)
 				.currentPage(CommonConstant.ONE).total(CommonConstant.ZERO).build();
 	}
 
+	/**
+	 * 设置页面顺序
+	 *
+	 * @param page      页面
+	 * @param orderName 订单名称
+	 * @param asc       asc
+	 */
 	public static void setPageOrder(Page page, String orderName, boolean asc) {
 		OrderItem orderItem = new OrderItem(orderName, asc);
 		if (CollectionUtils.isEmpty(page.getOrders())) {

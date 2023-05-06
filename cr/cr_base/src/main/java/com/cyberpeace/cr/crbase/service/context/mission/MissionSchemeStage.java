@@ -12,6 +12,9 @@ import lombok.Data;
 
 /**
  * 任务编排阶段
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionSchemeStage {
@@ -38,6 +41,12 @@ public class MissionSchemeStage {
 	}
 }
 
+/**
+ * 任务计划任务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 class MissionSchemeMission {
 
@@ -49,6 +58,7 @@ class MissionSchemeMission {
 
 	public void validate() {
 		CrCommonValidator.validateNameLen(title, CrBusinessErrorCode.INVALID_MISSION_NAME);
-		CrCommonValidator.validateDescLen(description, CrBusinessErrorCode.ILLEGAL_MISSION_DESC_LEN);
+		CrCommonValidator.validateDescLen(description,
+				CrBusinessErrorCode.ILLEGAL_MISSION_DESC_LEN);
 	}
 }

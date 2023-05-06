@@ -3,6 +3,12 @@ package com.cyberpeace.cr.crbase.controller.req;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 释放任务请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ReleaseMissionReq {
 

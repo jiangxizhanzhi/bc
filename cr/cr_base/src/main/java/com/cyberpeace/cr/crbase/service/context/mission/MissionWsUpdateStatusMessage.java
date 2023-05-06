@@ -7,7 +7,11 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
+ *
  * 任务ws推送状态更新
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionWsUpdateStatusMessage implements Serializable {

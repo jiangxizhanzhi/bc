@@ -1,12 +1,16 @@
 package com.cyberpeace.cr.crbase.constant;
 
 /**
+ * cr业务错误代码
  * 靶场自定义错误码。
  * 1、从101001开始递增编号；
  * 2、截止编号地址101999；
  * <p>
  * 编号定义完成后，需要在wiki填写编号对应的错误原因。
  * wiki地址：http://10.10.10.11/pages/viewpage.action?pageId=27367377
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface CrBusinessErrorCode {
 

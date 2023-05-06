@@ -35,7 +35,10 @@ import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateHandler;
+import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
@@ -61,7 +64,10 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 业务模板服务impl 业务模板服务实现
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Service
 @Slf4j
@@ -95,6 +101,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	@Qualifier("businessTemplateHandler")
 	private BusinessTemplateHandler businessTemplateHandler;
 
+	/**
+	 * 添加模板
+	 *
+	 * @param baseInfo 基础信息
+	 * @return {@link String}
+	 */
 	@Override
 	public String addTemplate(BaseInfo baseInfo) {
 		// validate length
@@ -130,6 +142,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplate.getResourceId();
 	}
 
+	/**
+	 * 检查权限
+	 *
+	 * @param businessId 业务标识
+	 * @param userId     用户id
+	 */
 	@Override
 	public void checkPermission(String businessId, String userId) {
 		List<String> businessIds = selectAuthIdsByUserId(userId);
@@ -139,11 +157,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 校验名字存在
+	 *
+	 * @param templateName 模板名称
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean existByName(String templateName) {
 		return businessTemplateMapper.existByName(templateName);
 	}
 
+	/**
+	 * 获取存在的名字
+	 *
+	 * @param names 名字
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getExistedNames(List<String> names) {
 		if (names == null || names.isEmpty()) {
@@ -152,11 +182,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getExistedNames(names);
 	}
 
+	/**
+	 * 通过名字获取id
+	 *
+	 * @param templateName 模板名称
+	 * @return {@link String}
+	 */
 	@Override
 	public String getIdByName(String templateName) {
 		return businessTemplateMapper.getIdByName(templateName);
 	}
 
+	/**
+	 * 更新模板
+	 *
+	 * @param businessTemplate 业务模板
+	 * @param baseInfo         基础信息
+	 */
 	@Override
 	public void updateTemplate(BusinessTemplate businessTemplate, BaseInfo baseInfo) {
 		// validate length
@@ -181,6 +223,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateById(businessTemplate);
 	}
 
+	/**
+	 * 验证名字
+	 *
+	 * @param name       名字
+	 * @param type       类型
+	 * @param resourceId 资源id
+	 */
 	@Override
 	public void validateName(String name, Integer type, String resourceId) {
 		CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
@@ -190,6 +239,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 更新任务模板关系
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param before             之前
+	 * @param after              后
+	 */
 	@Override
 	public void updateMissionTemplateRelation(String businessTemplateId, String before,
 			String after) {
@@ -213,6 +269,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 				newMissionTemplateIds);
 	}
 
+	/**
+	 * 获取攻击相关id
+	 *
+	 * @param businessTemplateIds 业务模板id
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getAttackRelatedIds(List<String> businessTemplateIds) {
 		if (businessTemplateIds.isEmpty()) {
@@ -221,6 +283,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getAttackRelatedIds(businessTemplateIds);
 	}
 
+	/**
+	 * 获取Engage相关id
+	 *
+	 * @param businessTemplateIds 业务模板id
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getEngageRelatedIds(List<String> businessTemplateIds) {
 		if (businessTemplateIds.isEmpty()) {
@@ -229,6 +297,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplateMapper.getEngageRelatedIds(businessTemplateIds);
 	}
 
+	/**
+	 * 分页页面
+	 *
+	 * @param btPageReq 英国电信页面请求
+	 * @return {@link ListRsp}<{@link BusinessTemplateSimple}>
+	 */
 	@Override
 	public ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq) {
 		Page page = btPageReq.toPageParam();
@@ -238,11 +312,23 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return PageUtil.getListResult(result);
 	}
 
+	/**
+	 * 通过用户id获取身份验证id
+	 *
+	 * @param userId 用户id
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> selectAuthIdsByUserId(String userId) {
 		return businessTemplateMapper.selectIdsByUserId(userId);
 	}
 
+	/**
+	 * 通过本地场景id获取
+	 *
+	 * @param localSceneId 本地场景id
+	 * @return {@link BusinessTemplate}
+	 */
 	@Override
 	public BusinessTemplate getByLocalSceneId(String localSceneId) {
 		BusinessTemplate res = businessTemplateMapper.selectByLocalSceneId(localSceneId);
@@ -253,6 +339,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return res;
 	}
 
+	/**
+	 * 页面
+	 *
+	 * @param businessTemplateQuery 业务模板查询
+	 * @return {@link IPage}<{@link BusinessTemplateData}>
+	 */
 	@Override
 	public IPage<BusinessTemplateData> page(BusinessTemplateQuery businessTemplateQuery) {
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -275,6 +367,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 	}
 
+	/**
+	 * 获取授权
+	 *
+	 * @param resourceId 资源id
+	 * @return {@link Share}
+	 */
 	@Override
 	public Share getShares(String resourceId) {
 		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
@@ -305,6 +403,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return share;
 	}
 
+	/**
+	 * 批量授权
+	 *
+	 * @param shareContext 共享上下文
+	 */
 	@Override
 	public void batchSetShares(ShareContext shareContext) {
 		String shareTeachers = JsonUtil.toJsonString(shareContext.getShareTeachers());
@@ -319,6 +422,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		updateBatchById(businessTemplateList);
 	}
 
+	/**
+	 * 获取业务模板
+	 *
+	 * @param basicTemplate 基本模板
+	 * @return {@link BusinessTemplate}
+	 */
 	private BusinessTemplate getBusinessTemplate(BasicTemplate basicTemplate) {
 		BaseInfo baseInfo = basicTemplate.getBaseInfo();
 		BusinessTemplate businessTemplate = new BusinessTemplate();
@@ -333,6 +442,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return businessTemplate;
 	}
 
+	/**
+	 * 批量删除
+	 *
+	 * @param businessTemplateIds 业务模板id
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean batchDelete(List<String> businessTemplateIds) {
 
@@ -387,6 +502,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return true;
 	}
 
+	/**
+	 * 清除本地
+	 *
+	 * @param template 模板
+	 */
 	@Override
 	public void clearLocal(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();
@@ -401,6 +521,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		});
 	}
 
+	/**
+	 * 创建本地场景
+	 *
+	 * @param template 模板
+	 * @return {@link LocalScene}
+	 */
 	@Override
 	public LocalScene createLocalScene(BusinessTemplate template) {
 
@@ -424,6 +550,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return localScene;
 	}
 
+	/**
+	 * 查看场景
+	 *
+	 * @param template 模板
+	 * @return {@link SceneViewContext}
+	 */
 	@Override
 	public SceneViewContext viewScene(BusinessTemplate template) {
 		SceneViewContext ret = new SceneViewContext();
@@ -444,6 +576,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return ret;
 	}
 
+	/**
+	 * 类型转换成代码
+	 *
+	 * @param code 代码
+	 * @return {@link LocalScene.BusinessCode}
+	 */
 	@Override
 	public LocalScene.BusinessCode convertTypeToCode(Integer code) {
 		BusinessTemplate.BusinessType type = EnumUtils.getEnumByCode(code,
@@ -470,6 +608,14 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}
 
+	/**
+	 * 使转储文件
+	 *
+	 * @param templateIds 模板id
+	 * @param tempDir     临时dir
+	 * @return {@link String}
+	 * @throws IOException ioexception
+	 */
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
 		if (templateIds.isEmpty()) {
@@ -508,6 +654,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return ZipUtil.toZip(tempDir);
 	}
 
+	/**
+	 * 转储文件模板
+	 *
+	 * @param templateId 模板id
+	 * @return {@link ResourceDumpContext}
+	 */
 	@Override
 	public ResourceDumpContext dumpTemplate(String templateId) {
 		// 1. 获取要导出的模板
@@ -541,6 +693,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return context;
 	}
 
+	/**
+	 * 批量加载
+	 *
+	 * @param unZipPath 联合国邮政路径
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean batchLoad(String unZipPath) {
 		// 1. read data.json
@@ -576,6 +734,13 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return true;
 	}
 
+	/**
+	 * 加载图片
+	 *
+	 * @param files    文件
+	 * @param imageDir dir形象
+	 * @return {@link Boolean}
+	 */
 	private Boolean loadImages(Map<String, String> files, String imageDir) {
 		if (files == null || files.size() == 0) {
 			return false;
@@ -587,6 +752,11 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		return true;
 	}
 
+	/**
+	 * 加载业务模板
+	 *
+	 * @param template 模板
+	 */
 	private void loadBusinessTemplate(BusinessTemplate template) {
 		template.setId(null);
 		template.setCreateUserId(UserInfoContext.getUserContext().getUserId());
@@ -602,6 +772,12 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		}
 	}
 
+	/**
+	 * 获取场景数据
+	 *
+	 * @param template 模板
+	 * @return {@link JSONObject}
+	 */
 	private JSONObject getMpSceneData(BusinessTemplate template) {
 		String localSceneId = template.getLocalSceneId();
 		// localSceneId字段为空

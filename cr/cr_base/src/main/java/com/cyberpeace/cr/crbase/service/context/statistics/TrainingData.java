@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 训练数据
  * 训练实例数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TrainingData implements Serializable {

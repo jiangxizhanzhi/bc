@@ -4,6 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 基地负责
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,15 +28,31 @@ public class BaseRsp<T> {
 
 	public long timestamp = System.currentTimeMillis();
 
+	/**
+	 * 基本信息
+	 *
+	 * @param data 数据
+	 */
 	public BaseRsp(T data) {
 		this.data = data;
 	}
 
+	/**
+	 * 基本信息
+	 *
+	 * @param data    数据
+	 * @param message 消息
+	 */
 	public BaseRsp(T data, String message) {
 		this.data = data;
 		this.message = message;
 	}
 
+	/**
+	 * 设置信息
+	 *
+	 * @param msg 味精
+	 */
 	public void setMsg(String msg) {
 		this.message = msg;
 	}

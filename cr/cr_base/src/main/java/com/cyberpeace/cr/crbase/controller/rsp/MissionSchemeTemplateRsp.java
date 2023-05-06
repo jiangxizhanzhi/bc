@@ -7,6 +7,12 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeStage;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务计划模板返回值
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class MissionSchemeTemplateRsp {
 

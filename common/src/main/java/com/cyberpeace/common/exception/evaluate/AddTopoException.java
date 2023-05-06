@@ -1,4 +1,9 @@
 package com.cyberpeace.common.exception.evaluate;
 
-public class AddTopoException extends RuntimeException{
-}
+/**
+ * 添加topo异常
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
+public class AddTopoException extends RuntimeException {}

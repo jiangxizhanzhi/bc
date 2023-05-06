@@ -17,30 +17,49 @@ import com.cyberpeace.common.exception.BusinessException;
  * path 相对路径
  * fileMap 子文件名:子文件
  * dirMap 子文件夹名:子文件夹
- * */
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class FileTree {
 
 	public static final String SEPARATOR = "/";
 
 	/**
-	 * 相对于根节点的相对路径
+	 * 路径
 	 */
 	private final String path;
 
+	/**
+	 * 文件映射
+	 */
 	private final Map<String, File> fileMap;
 
+	/**
+	 * dir地图
+	 */
 	private final Map<String, FileTree> dirMap;
 
 	public FileTree() {
 		this("");
 	}
 
+	/**
+	 * 文件树
+	 *
+	 * @param path 路径
+	 */
 	public FileTree(String path) {
 		this.path = path;
 		dirMap = new HashMap<>();
 		fileMap = new HashMap<>();
 	}
 
+	/**
+	 * 得到文件映射
+	 *
+	 * @return {@link Map}<{@link String}, {@link File}>
+	 */
 	private Map<String, File> getFileMap() {
 		return fileMap;
 	}
@@ -104,6 +123,12 @@ public class FileTree {
 		return file;
 	}
 
+	/**
+	 * 输入流
+	 *
+	 * @param inputStream 输入流
+	 * @throws IOException ioexception
+	 */
 	public void inputFromStream(InputStream inputStream) throws IOException {
 		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
@@ -132,6 +157,12 @@ public class FileTree {
 		}
 	}
 
+	/**
+	 * 输出流
+	 *
+	 * @param outputStream 输出流
+	 * @throws IOException ioexception
+	 */
 	public void outputToStream(OutputStream outputStream) throws IOException {
 		ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(zipOutputStream);
@@ -140,6 +171,13 @@ public class FileTree {
 		zipOutputStream.close();
 	}
 
+	/**
+	 * 压缩
+	 *
+	 * @param zos 环球
+	 * @param bos bos
+	 * @throws IOException ioexception
+	 */
 	private void compress(ZipOutputStream zos, BufferedOutputStream bos) throws IOException {
 
 		for (String dirName : dirMap.keySet()) {

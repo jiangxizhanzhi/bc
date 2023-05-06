@@ -112,7 +112,7 @@ public class ExternalDataController {
 					required = true) String role) {
 		String runId = remoteSituationService.getRunId(subjectId);
 
-		EvaluateUrlRes evaluateUrlRes = new EvaluateUrlRes(runId, role);
+		EvaluateUrlRes evaluateUrlRes = new EvaluateUrlRes();
 		Integer type = EnumUtils.getEnumCodeByDesc(role, EvaluateUrlRes.Role.class);
 
 		String url = situationEnvService.getPgPageHost()

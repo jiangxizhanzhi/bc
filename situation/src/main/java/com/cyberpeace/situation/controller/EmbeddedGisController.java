@@ -14,7 +14,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.PlatformContext;
 import com.cyberpeace.integratation.model.situation.PlatformLinkContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.MapSource;
+import com.cyberpeace.situation.constant.gis.MapSource;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.SituationGisReq;
 import com.cyberpeace.situation.controller.res.TemplatePlatformRes;

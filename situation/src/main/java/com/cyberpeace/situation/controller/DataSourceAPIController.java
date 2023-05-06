@@ -12,7 +12,7 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.constant.ApiRequestType;
+import com.cyberpeace.situation.constant.datasource.ApiRequestType;
 import com.cyberpeace.situation.controller.req.ApiConnectDelReq;
 import com.cyberpeace.situation.controller.req.ApiConnectReq;
 import com.cyberpeace.situation.controller.req.ApiRequestPageReq;

@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant.ws;
+package com.cyberpeace.situation.constant.topo;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant;
+package com.cyberpeace.situation.constant.auth;
 
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.model.IntType;

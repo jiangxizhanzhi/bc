@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.TimeUtil;
-import com.cyberpeace.situation.constant.DashboardLevel;
+import com.cyberpeace.situation.constant.dashboard.DashboardLevel;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

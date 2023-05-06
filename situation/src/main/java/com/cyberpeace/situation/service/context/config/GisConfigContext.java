@@ -2,7 +2,7 @@ package com.cyberpeace.situation.service.context.config;
 
 import java.io.Serializable;
 
-import com.cyberpeace.situation.constant.MapSource;
+import com.cyberpeace.situation.constant.gis.MapSource;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

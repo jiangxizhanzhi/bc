@@ -14,7 +14,7 @@ import com.cyberpeace.integratation.constant.TaskMode;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.req.TaskListReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.SiteType;
+import com.cyberpeace.situation.constant.gis.SiteType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.EventMessageReq;
 import com.cyberpeace.situation.controller.req.EventTaskReq;

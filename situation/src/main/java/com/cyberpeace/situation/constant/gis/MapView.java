@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant;
+package com.cyberpeace.situation.constant.gis;
 
 import com.cyberpeace.situation.model.ViewAngle;
 

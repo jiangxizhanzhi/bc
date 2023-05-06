@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-import com.cyberpeace.integratation.constant.BcType;
 import com.cyberpeace.integratation.model.situation.BcContext;
 import com.cyberpeace.integratation.model.situation.ThirdDictContext;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteCodeService;
 import com.cyberpeace.integratation.service.RemoteOperationService;
 import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.SiteType;
+import com.cyberpeace.situation.constant.gis.SiteType;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.situation.constant.MapView;
+import com.cyberpeace.situation.constant.gis.MapView;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
 

@@ -21,7 +21,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.situation.constant.SituationErrorCode;
-import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.constant.topo.AttackType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicSchemeNameRes;
 import com.cyberpeace.situation.controller.res.DynamicSchemeRes;

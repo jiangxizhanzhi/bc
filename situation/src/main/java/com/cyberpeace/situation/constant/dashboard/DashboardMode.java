@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.constant;
+package com.cyberpeace.situation.constant.dashboard;
 
 import lombok.Getter;
 

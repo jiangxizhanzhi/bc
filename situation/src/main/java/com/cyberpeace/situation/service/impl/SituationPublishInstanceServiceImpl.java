@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.cyberpeace.situation.constant.dashboard.*;
+import com.cyberpeace.situation.constant.gis.MapSource;
+import com.cyberpeace.situation.constant.gis.MapView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,6 @@ import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.*;
-import com.cyberpeace.situation.model.LocalType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;

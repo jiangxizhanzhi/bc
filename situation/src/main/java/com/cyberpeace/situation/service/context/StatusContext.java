@@ -2,7 +2,7 @@ package com.cyberpeace.situation.service.context;
 
 import java.io.Serializable;
 
-import com.cyberpeace.situation.constant.ElementStatus;
+import com.cyberpeace.situation.constant.topo.ElementStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -2,7 +2,7 @@ package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
 
-import com.cyberpeace.situation.constant.PublicStatus;
+import com.cyberpeace.situation.constant.dashboard.PublicStatus;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

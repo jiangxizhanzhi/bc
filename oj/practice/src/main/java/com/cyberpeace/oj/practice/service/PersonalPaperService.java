@@ -14,5 +14,5 @@ public interface PersonalPaperService extends IService<PersonalPaper> {
 
 	PaperSummaryRes getPaperSummaryRes(String paperId);
 
-	WebTheoryBo getPracticeDetail(String practiceRefId);
+
 }

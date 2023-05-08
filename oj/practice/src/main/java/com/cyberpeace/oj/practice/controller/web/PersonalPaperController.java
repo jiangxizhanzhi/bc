@@ -2,21 +2,22 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
+import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
 import com.cyberpeace.oj.practice.dao.entity.PersonalPaper;
+import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PersonalPaperService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
+import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +34,9 @@ public class PersonalPaperController {
 
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
+
+	@Autowired
+	private PaperPracticeTheoryService paperPracticeTheoryService;
 
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
@@ -73,7 +77,13 @@ public class PersonalPaperController {
 	@ApiOperation("查看练习详情")
 	@GetMapping("/practice_detail")
 	public BaseRsp<WebTheoryBo> getWebTheoryBo(@ApiParam(value = "练习id") @RequestParam(value = "practice_id") String practiceId) {
-		return new BaseRsp<>(personalPaperService.getPracticeDetail(practiceId));
+		return new BaseRsp<>(paperPracticeTheoryService.getPracticeDetail(practiceId));
+	}
+
+	@ApiOperation("提交答案")
+	@PostMapping("/submit_answer")
+	public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
+		return new BaseRsp<>(paperPracticeTheoryService.submitAnswer(answerReq.getResourceId(), answerReq.getSubmitAnswer()));
 	}
 
 }

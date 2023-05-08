@@ -847,7 +847,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				// 删除仪表
 				userSimulatorMapper.deleteBatchIds(simulatorIds);
+				// 删除用户实例
 				userInstanceMapper.deleteBySimulatorIds(simulatorIds);
 				// 删除定时任务
 				batchRemoveTimer(simulatorIds);
@@ -855,66 +857,92 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		});
 	}
 
+	/**
+	 * 通过节点id查询仪表
+	 *
+	 * @param nodeId 节点id
+	 * @return {@code UserSimulator}
+	 */
 	private UserSimulator getByNodeId(String nodeId) {
+		// 非法的节点id
 		if (StringUtils.isBlank(nodeId)) {
 			throw new BusinessException(BsErrorCode.NODE_ID_MISSING);
 		}
+		// 查询
 		UserSimulator simulator = userSimulatorMapper.selectByNodeId(nodeId);
+		// 不存在节点相关仪表
 		if (simulator == null) {
 			throw new BusinessException(BsErrorCode.SIMULATOR_NOT_FOUND);
 		}
+		// 返回数据
 		return simulator;
 	}
 
-	private UserSimulator getOrNull(String resourceId) {
-		if (StringUtils.isBlank(resourceId)) {
-			return null;
-		}
-		return userSimulatorMapper.selectById(resourceId);
-	}
-
+	/**
+	 * 批量删除定时任务执行器
+	 *
+	 * @param simulatorIds 仪表id列表
+	 */
 	private void batchRemoveTimer(Collection<String> simulatorIds) {
 		for (String simulatorId : simulatorIds) {
+			// 删除
 			removeTimer(simulatorId);
 		}
 	}
 
+	/**
+	 * 删除定时任务执行器
+	 *
+	 * @param simulatorId 仪表id
+	 */
 	private void removeTimer(String simulatorId) {
+		// 获取指定的执行器
 		Map<String, BsTimer> timers = timerMap.get(simulatorId);
 		if (timers != null) {
 			for (BsTimer timer : timers.values()) {
+				// 取消全部定时任务
 				timer.cancel();
 			}
 		}
+		// 从map中删除执行器
 		timerMap.remove(simulatorId);
 	}
 
 	/**
 	 * 获取ip
-	 * @param ipBoList
+	 * @param ipBoList ip列表
 	 * @return
 	 */
 	private String getIp(List<IpBo> ipBoList) {
+		// 未提供ip
 		if (CollectionUtils.isEmpty(ipBoList)) {
 			return CommonConstant.EMPTY_STRING;
 		}
+		// 只提供一个ip的情况
 		if (ipBoList.size() == 1) {
 			return ipBoList.get(0).getIp();
 		}
+		// 必须配置外部网段
 		if (StringUtils.isBlank(EXTERNAL_IP_SEGMENT)) {
 			throw new BusinessException(BsErrorCode.SEGMENT_NOT_CONFIGURED);
 		}
 		String ip;
+		// 循环匹配ip是否在指定网段
 		for (IpBo ipBo : ipBoList) {
 			ip = ipBo.getIp();
 			if (BsUtil.isInRange(ip, EXTERNAL_IP_SEGMENT)) {
+				// 返回匹配到的第一个
 				return ip;
 			}
 		}
 		log.error("No valid external ip found.");
+		// 未匹配到有效ip，返回空白字符串
 		return CommonConstant.EMPTY_STRING;
 	}
 
+	/**
+	 * 恢复定时任务
+	 */
 	private void recoverTimerTask() {
 		// 获取正在运行的仪表
 		List<UserSimulator> activeSimulators = userSimulatorMapper

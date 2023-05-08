@@ -21,6 +21,12 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
 
+/**
+ * 配置
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Configuration
 @EnableOpenApi
 public class SwaggerConfig {

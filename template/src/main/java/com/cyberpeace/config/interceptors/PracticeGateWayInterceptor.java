@@ -25,7 +25,7 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 练习门方法拦截器
+ * 认证方法拦截器
  *
  * @author HY
  * @date 2023/05/05

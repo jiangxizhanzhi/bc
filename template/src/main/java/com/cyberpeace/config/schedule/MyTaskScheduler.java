@@ -4,6 +4,12 @@ import java.util.concurrent.ScheduledFuture;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+/**
+ * 任务调度器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class MyTaskScheduler extends ThreadPoolTaskScheduler {
 
 	@Override

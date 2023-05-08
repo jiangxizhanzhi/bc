@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
+ *
  * 重写CustomCountingQuietWriter
  * 计算长度时,设置字符级
  * Created by xxx on 2018/7/24.
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public class CustomCountingQuietWriter extends QuietWriter {
     protected long count;

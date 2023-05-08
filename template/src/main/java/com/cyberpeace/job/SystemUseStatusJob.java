@@ -17,6 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 系统使用状态工作
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 //@Component
 public class SystemUseStatusJob {

@@ -5,7 +5,7 @@ import java.net.URI;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
- * http delete和身体
+ * http delete和请求体
  *
  * @author cyberpeace
  * @date 2023/05/06
@@ -25,7 +25,7 @@ public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 	}
 
 	/**
-	 * http delete和身体
+	 * http delete和请求体
 	 *
 	 * @param uri uri
 	 */
@@ -35,7 +35,7 @@ public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 	}
 
 	/**
-	 * http delete和身体
+	 * http delete和请求体
 	 *
 	 * @param uri uri
 	 */
@@ -45,7 +45,7 @@ public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
 	}
 
 	/**
-	 * http delete和身体
+	 * http delete和请求体
 	 */
 	public HttpDeleteWithBody() {
 		super();

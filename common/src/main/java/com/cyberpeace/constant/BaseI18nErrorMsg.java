@@ -3,7 +3,7 @@ package com.cyberpeace.constant;
 import lombok.Getter;
 
 /**
- * 基地i18n错误味精
+ * 基地i18n错误信息
  * 国际化错误消息接口
  * 相较国际化字符串多一个errorCode
  * 另外提供一个参数化方法以满足国际化字符串中有参数的情形

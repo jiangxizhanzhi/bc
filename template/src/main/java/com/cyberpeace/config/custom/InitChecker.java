@@ -10,9 +10,13 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 初始化检查程序
  * 服务启动，依赖的参数校验。
  *
  * 目的在于快速发现可能的配置项错误！
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Slf4j
 @Component

@@ -12,6 +12,12 @@ import com.cyberpeace.common.constant.WebConstant;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * jwt过滤器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
@@ -39,6 +45,14 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		return true;
 	}
 
+	/**
+	 * 是否访问允许
+	 *
+	 * @param request     请求
+	 * @param response    响应
+	 * @param mappedValue 映射值
+	 * @return boolean
+	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response,
 			Object mappedValue) {
@@ -56,6 +70,13 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		return true;
 	}
 
+	/**
+	 * 登录尝试
+	 *
+	 * @param request  请求
+	 * @param response 响应
+	 * @return boolean
+	 */
 	@Override
 	protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
 

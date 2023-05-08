@@ -11,10 +11,21 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+/**
+ * 异步配置
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
 
+	/**
+	 * 获取异步执行
+	 *
+	 * @return {@link Executor}
+	 */
 	@Override
 	@Bean(name = "taskExecutor")
 	public Executor getAsyncExecutor() {

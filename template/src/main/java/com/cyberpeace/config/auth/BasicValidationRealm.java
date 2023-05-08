@@ -23,6 +23,12 @@ import com.cyberpeace.integratation.service.RemoteUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 基本验证
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {

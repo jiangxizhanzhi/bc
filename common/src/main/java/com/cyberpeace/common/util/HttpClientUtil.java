@@ -71,9 +71,9 @@ public class HttpClientUtil {
 	 * ts帖子
 	 *
 	 * @param url        url
-	 * @param body       身体
+	 * @param body       请求体
 	 * @param resultType 结果类型
-	 * @param errorMsg   错误味精
+	 * @param errorMsg   错误信息
 	 * @return {@link T}
 	 */
 	public static <T> T tsPost(String url, Object body, Class<T> resultType, String errorMsg) {
@@ -88,7 +88,7 @@ public class HttpClientUtil {
 	 * 删除
 	 *
 	 * @param url        url
-	 * @param body       身体
+	 * @param body       请求体
 	 * @param resultType 结果类型
 	 * @return {@link T}
 	 */
@@ -133,7 +133,7 @@ public class HttpClientUtil {
 	 * get http post
 	 *
 	 * @param url  url
-	 * @param body 身体
+	 * @param body 请求体
 	 * @return {@link HttpPost}
 	 */
 	private static HttpPost getHttpPost(String url, Object body) {

@@ -42,6 +42,12 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * 异常过滤器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 public class ExceptionFilter implements Filter {
 
@@ -76,6 +82,12 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 处理异常
+	 *
+	 * @param servletResponse servlet响应
+	 * @param e               e
+	 */
 	private void dealException(HttpServletResponse servletResponse, Exception e) {
 		log.error("exceptionfilter catch error", e);
 
@@ -135,7 +147,11 @@ public class ExceptionFilter implements Filter {
 	}
 
 	/**
+	 *
 	 * 处理主键重复异常
+	 *
+	 * @param httpServletResponse http servlet响应
+	 * @param e                   e
 	 */
 	private void parseDuplicateKeyException(HttpServletResponse httpServletResponse,
 			DuplicateKeyException e) {
@@ -152,6 +168,12 @@ public class ExceptionFilter implements Filter {
 		flushErrorInfo(httpServletResponse, ErrorCode.DUPLICATE_KEY, message);
 	}
 
+	/**
+	 * 获取重复键
+	 *
+	 * @param errorMsg 错误信息
+	 * @return {@link String}
+	 */
 	private String getDuplicateKey(String errorMsg) {
 		String duplicateKey = "";
 		String rgex = "key '(.*?)'";
@@ -223,11 +245,22 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 处理默认错误
+	 *
+	 * @param httpServletResponse http servlet响应
+	 */
 	private void dealDefaultError(HttpServletResponse httpServletResponse) {
 		flushErrorInfo(httpServletResponse, ErrorCode.INTERNAL_ERROR,
 				BusinessException.getMessageByLanguage(ErrorCode.INTERNAL_ERROR));
 	}
 
+	/**
+	 * 刷新错误信息
+	 *
+	 * @param httpServletResponse http servlet响应
+	 * @param errorInfo           错误信息
+	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, BaseRsp errorInfo) {
 		httpServletResponse.setContentType(WebConstant.CONTENT_TYPE);
 		httpServletResponse.setStatus(WebConstant.HTTP_200);
@@ -238,6 +271,13 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 刷新错误信息
+	 *
+	 * @param httpServletResponse http servlet响应
+	 * @param code                代码
+	 * @param message             消息
+	 */
 	private void flushErrorInfo(HttpServletResponse httpServletResponse, String code,
 			String message) {
 		BaseRsp<String> errorInfo = new BaseRsp<>();
@@ -255,6 +295,12 @@ public class ExceptionFilter implements Filter {
 		}
 	}
 
+	/**
+	 * 获取错误代码
+	 *
+	 * @param code 代码
+	 * @return {@link String}
+	 */
 	private String getErrorCode(String code) {
 		if (!cache.containsKey(code)) {
 			cache.put(code, errorPrefix + code);

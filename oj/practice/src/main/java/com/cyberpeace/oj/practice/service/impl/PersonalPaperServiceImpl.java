@@ -6,15 +6,23 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
+import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
+import com.cyberpeace.oj.practice.controller.res.PracticeSolvedRes;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
+import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PersonalPaperService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
+import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +52,18 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 
 	@Autowired
 	private PracticeTheoryRefService practiceTheoryRefService;
+
+	@Autowired
+	private PracticeTheoryRefMapper practiceTheoryRefMapper;
+
+	@Autowired
+	private ResourceCollectionService resourceCollectionService;
+
+	@Autowired
+	private PaperPracticeTheoryService paperPracticeTheoryService;
+
+	@Autowired
+	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
 	@Override
 	public PersonalPaperCreateReq getLastPaperSetting() {
@@ -109,18 +129,54 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				personalPaperMapper.insert(personalPaper);
-				List<PracticeTheoryRef> practiceTheoryRefList = new ArrayList<>();
+				List<PaperPracticeTheory> paperPracticeTheories = new ArrayList<>();
 				for (PracticeTheory practiceTheory : practiceTheoryList){
-					PracticeTheoryRef practiceTheoryRef = new PracticeTheoryRef();
-					practiceTheoryRef.setPaperId(personalPaper.getResourceId());
-					practiceTheoryRef.setOriginId(practiceTheory.getResourceId());
-					practiceTheoryRef.setSnapshot(JsonUtil.toJsonString(practiceTheory));
-					practiceTheoryRefList.add(practiceTheoryRef);
+					PaperPracticeTheory paperPracticeTheory = new PaperPracticeTheory();
+					paperPracticeTheory.setPaperId(personalPaper.getResourceId());
+					paperPracticeTheory.setOriginId(practiceTheory.getResourceId());
+					paperPracticeTheory.setSnapshot(JsonUtil.toJsonString(practiceTheory));
+					paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+					paperPracticeTheories.add(paperPracticeTheory);
 				}
-				practiceTheoryRefService.saveBatch(practiceTheoryRefList);
+				paperPracticeTheoryService.saveBatch(paperPracticeTheories);
 			}
 		});
 		return personalPaper;
+	}
+
+	@Override
+	public PaperSummaryRes getPaperSummaryRes(String paperId) {
+		PaperSummaryRes paperSummaryRes = new PaperSummaryRes();
+		List<PracticeSolvedRes> practiceSolvedResList = paperPracticeTheoryMapper.selectSolvedByPaperId(paperId);
+		paperSummaryRes.setPracticeSolved(practiceSolvedResList);
+		paperSummaryRes.setRight((int) practiceSolvedResList.stream()
+															.filter(practiceSolvedRes -> practiceSolvedRes.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()))
+															.count());
+		paperSummaryRes.setWrong((int) practiceSolvedResList.stream()
+															.filter(practiceSolvedRes -> practiceSolvedRes.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))
+															.count());
+		paperSummaryRes.setNotStart((int) practiceSolvedResList.stream()
+															.filter(practiceSolvedRes -> practiceSolvedRes.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode()))
+															.count());
+		return paperSummaryRes;
+	}
+
+	@Override
+	public WebTheoryBo getPracticeDetail(String practiceRefId) {
+		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(practiceRefId);
+		PracticeTheory practiceTheory = JsonUtil.toJsonObject(paperPracticeTheory.getSnapshot(), PracticeTheory.class);
+		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
+		String practiceId = paperPracticeTheory.getOriginId();
+		Boolean result = resourceCollectionService.selectByUnique(UserInfoContext.getUserContext().getUserId(),
+				ResourceCollection.BusinessType.THEORY.getCode(), practiceId);
+		webTheoryBo.setIsCollection(result);
+		webTheoryBo.setAnswer(paperPracticeTheory.getSubmitAnswer());
+		webTheoryBo.setSolved(paperPracticeTheory.getSolved());
+		if (webTheoryBo.getTheoryType().equals(PracticeTheory.TheoryType.FILL_BLANK.getCode())) {
+			webTheoryBo.setBlankCount(JsonUtil
+					.toJsonObjectArray(practiceTheory.getBlank(), BlankAnswer.class).size());
+		}
+		return webTheoryBo;
 	}
 
 	/**

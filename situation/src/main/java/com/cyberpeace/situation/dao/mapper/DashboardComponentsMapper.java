@@ -1,18 +1,27 @@
 package com.cyberpeace.situation.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.situation.dao.entity.DashboardComponents;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.situation.dao.entity.DashboardComponents;
 
 /**
+ * 大屏组件映射器
+ *
  * @Author xuxz
  * @Date 11/11/2022 下午4:30
  */
 @Mapper
 public interface DashboardComponentsMapper extends BaseMapper<DashboardComponents> {
 
-    void batchInsert(@Param("dashboardComponentsList") List<DashboardComponents> dashboardComponentsList);
+	/**
+	 * 批量插入
+	 *
+	 * @param dashboardComponentsList 大屏组件列表
+	 */
+	void batchInsert(
+			@Param("dashboardComponentsList") List<DashboardComponents> dashboardComponentsList);
 }

@@ -5,6 +5,8 @@ import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
+import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
+import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
 import com.cyberpeace.oj.practice.dao.entity.PersonalPaper;
 import com.cyberpeace.oj.practice.dao.mapper.PersonalPaperMapper;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "oj-前台自由组卷相关api")
 @RestController
@@ -101,9 +104,26 @@ public class PersonalPaperController {
 	@GetMapping("/submit_paper")
 	public BaseRsp<Boolean> submitPaper(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
 		PersonalPaper personalPaper = personalPaperMapper.selectById(paperId);
-		personalPaper.setFinish(true);
+		personalPaper.setIsFinish(true);
 		personalPaperMapper.updateById(personalPaper);
 		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("最近5条组卷记录")
+	@GetMapping("/record")
+	public BaseRsp<List<PaperRecordRes>> getLast5PaperRecord() {
+		List<PaperRecordRes> paperRecordResList = personalPaperService.getPaperRecord();
+		if (paperRecordResList.size() > 5) {
+			return new BaseRsp<>(paperRecordResList.subList(0, 5));
+		}else {
+			return new BaseRsp<>(paperRecordResList);
+		}
+	}
+
+	@ApiOperation("组卷记录概要")
+	@GetMapping("/record_summary")
+	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary() {
+		return new BaseRsp<>(personalPaperService.getAllPaperRecord());
 	}
 
 }

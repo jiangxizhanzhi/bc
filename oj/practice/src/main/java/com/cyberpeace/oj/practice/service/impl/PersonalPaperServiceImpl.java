@@ -8,9 +8,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
+import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
+import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
 import com.cyberpeace.oj.practice.controller.res.PracticeSolvedRes;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -102,7 +105,7 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 			practiceTheoryList.addAll(practiceTheories.subList(0, count));
 		}
 		personalPaper.setCount(personalPaperCreateReq.getCount());
-		personalPaper.setFinish(false);
+		personalPaper.setIsFinish(false);
 		personalPaper.setDifficulty(JsonUtil.toJsonString(personalPaperCreateReq.getDifficulty()));
 		personalPaper.setDirection(JsonUtil.toJsonString(personalPaperCreateReq.getDirection()));
 		personalPaper.setPracticeStatus(JsonUtil.toJsonString(personalPaperCreateReq.getStatus()));
@@ -144,6 +147,37 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 															.filter(practiceSolvedRes -> practiceSolvedRes.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode()))
 															.count());
 		return paperSummaryRes;
+	}
+
+	/**
+	 * 组卷记录
+	 * @return
+	 */
+	@Override
+	public List<PaperRecordRes> getPaperRecord() {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return personalPaperMapper.getPaperRecord(userId);
+	}
+
+	@Override
+	public Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord() {
+		Map<String, List<PaperRecordSummaryRes>> recordListMap = new HashMap<>();
+		List<PaperRecordSummaryRes> paperRecordSummaryResList = personalPaperMapper.getAllPaperRecord(UserInfoContext.getUserContext().getUserId());
+		for (PaperRecordSummaryRes paperRecordSummaryRes : paperRecordSummaryResList) {
+			String dayTime = TimeUtil.format6(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime()));
+			paperRecordSummaryRes.setPaperTime(TimeUtil.format9(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
+			if (paperRecordSummaryRes.getIsFinish()) {
+				paperRecordSummaryRes.setAccuracyRate(paperRecordSummaryRes.getRight() * 100 / paperRecordSummaryRes.getCount());
+			}
+			if (recordListMap.get(dayTime) == null) {
+				List<PaperRecordSummaryRes> recordList = new ArrayList<>();
+				recordList.add(paperRecordSummaryRes);
+				recordListMap.put(dayTime, recordList);
+			} else {
+				recordListMap.get(dayTime).add(paperRecordSummaryRes);
+			}
+		}
+		return recordListMap;
 	}
 
 	/**

@@ -1,12 +1,12 @@
 package com.cyberpeace.common.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class TimeUtil {
 
@@ -366,6 +366,16 @@ public class TimeUtil {
      */
     public static String format8(Date date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 格式化成07-12 18:00的形式
+     * @param date
+     * @return
+     */
+    public static String format9(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd HH:mm");
         return simpleDateFormat.format(date);
     }
 

@@ -29,7 +29,7 @@ public class PersonalPaper extends BaseTable {
 	private String direction;
 
 	//是否完成
-	private Boolean finish;
+	private Boolean isFinish;
 
 	//组卷人
 	private String userId;

@@ -31,6 +31,12 @@ import com.cyberpeace.situation.service.SituationGisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * 数据库访问权限控制器
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "数据库管理-访问权限管理")
 @RestController
 @RequiresAuthentication
@@ -43,6 +49,12 @@ public class DbAccessAuthorityController {
 	@Autowired
 	private SituationGisService situationGisService;
 
+	/**
+	 * 外部系统名称-列表查询
+	 *
+	 * @param pageReqBase 分页查询请求
+	 * @return {@code BaseRsp<ListRsp<SituationEnumRes>>}
+	 */
 	@ApiOperation("外部系统名称-列表查询")
 	@GetMapping("/sys/list")
 	public BaseRsp<ListRsp<SituationEnumRes>> getSubSystems(PageReqBase pageReqBase) {
@@ -57,6 +69,12 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 访问数据类型-列表查询
+	 *
+	 * @param pageReqBase 分页查询请求
+	 * @return {@code BaseRsp<ListRsp<SituationEnumRes>>}
+	 */
 	@ApiOperation("访问数据类型-列表查询")
 	@GetMapping("/data_type/list")
 	public BaseRsp<ListRsp<SituationEnumRes>> getDataTypes(PageReqBase pageReqBase) {
@@ -71,6 +89,12 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 新增数据库访问权限
+	 *
+	 * @param req 访问权限新增请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("访问权限-新增")
 	@PostMapping()
 	public BaseRsp<String> addDbAccessAuthority(
@@ -82,6 +106,12 @@ public class DbAccessAuthorityController {
 		return new BaseRsp(dbAccessAuthority);
 	}
 
+	/**
+	 * 删除数据库访问权限
+	 *
+	 * @param deleteReq 访问权限删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("访问权限--删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDbAccessAuthority(
@@ -99,6 +129,12 @@ public class DbAccessAuthorityController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 数据库访问权限-列表查询
+	 *
+	 * @param pageReqBase 分页查询请求
+	 * @return {@code BaseRsp<ListRsp<SituationDbAccessAuthority>>}
+	 */
 	@ApiOperation("访问权限-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDbAccessAuthority>>

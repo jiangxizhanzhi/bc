@@ -31,6 +31,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 推送事件
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "态势大屏-推送事件")
 @RestController
 @RequiresAuthentication
@@ -52,6 +58,14 @@ public class DashboardEventController {
 	@Autowired
 	private ThirdPartyService thirdPartyService;
 
+	/**
+	 * 推送随机攻防动效
+	 *
+	 * @param dashboardId 大屏ID
+	 * @param eventType   事件类型
+	 * @param eventName   事件名称
+	 * @return {@code BaseRsp<List<WsEventAd>>}
+	 */
 	@ApiOperation("推送随机攻防动效")
 	@GetMapping("event_ad")
 	public BaseRsp<List<WsEventAd>> randomEventAd(
@@ -88,6 +102,13 @@ public class DashboardEventController {
 		return rsp;
 	}
 
+	/**
+	 * 推送随机节点工作状态
+	 *
+	 * @param dashboardId 大屏ID
+	 * @param workStatus  工作状态 0-工作中 1-离线
+	 * @return {@code BaseRsp<NodeEventContext>}
+	 */
 	@ApiOperation("推送随机节点工作状态")
 	@GetMapping("event_node")
 	public BaseRsp<NodeEventContext> randomEventNode(
@@ -111,6 +132,13 @@ public class DashboardEventController {
 		return new BaseRsp<>(nodeEventContext);
 	}
 
+	/**
+	 * 推送随机任务动效
+	 *
+	 * @param dashboardId 大屏ID
+	 * @param taskEvent   任务操作 1-下发 2-开始 3-结束
+	 * @return {@code BaseRsp<TaskEventContext>}
+	 */
 	@ApiOperation("推送随机任务动效")
 	@GetMapping("event_task")
 	public BaseRsp<TaskEventContext> randomEventTask(
@@ -187,6 +215,12 @@ public class DashboardEventController {
 		return new BaseRsp<>(taskEventContext);
 	}
 
+	/**
+	 * 推送自定义任务动效
+	 *
+	 * @param eventTaskReq 任务事件请求
+	 * @return {@code BaseRsp<TaskEventContext>}
+	 */
 	@ApiOperation("推送自定义任务动效")
 	@PostMapping("event_task")
 	public BaseRsp<TaskEventContext> pushEventTask(@RequestBody EventTaskReq eventTaskReq) {
@@ -196,6 +230,12 @@ public class DashboardEventController {
 		return new BaseRsp<>(eventTaskReq.getTaskEvent());
 	}
 
+	/**
+	 * 推送多节点动效
+	 *
+	 * @param eventMessageReq 事件消息请求
+	 * @return {@code BaseRsp<WsMessage<WsMultiNodeDynamic>>}
+	 */
 	@ApiOperation("推送多节点动效")
 	@PostMapping("multi_event")
 	public BaseRsp<WsMessage<WsMultiNodeDynamic>>
@@ -207,6 +247,12 @@ public class DashboardEventController {
 		return new BaseRsp<>(wsMessage);
 	}
 
+	/**
+	 * 推送单节点动效
+	 *
+	 * @param eventMessageReq 事件消息请求
+	 * @return {@code BaseRsp<WsMessage<WsSingleNodeDynamic>>}
+	 */
 	@ApiOperation("推送单节点动效")
 	@PostMapping("single_event")
 	public BaseRsp<WsMessage<WsSingleNodeDynamic>>
@@ -218,6 +264,12 @@ public class DashboardEventController {
 		return new BaseRsp<>(wsMessage);
 	}
 
+	/**
+	 * 推送多媒体动效
+	 *
+	 * @param wsAttackEffectDynamic 多媒体动效
+	 * @return {@code BaseRsp<WsMessage<WsAttackEffectDynamic>>}
+	 */
 	@ApiOperation("推送多媒体动效")
 	@PostMapping("media_event")
 	public BaseRsp<WsMessage<WsAttackEffectDynamic>>

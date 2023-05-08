@@ -31,6 +31,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 组件管理-样式组件
+ *
  * @Author xuxz
  * @Date 4/1/2023 上午11:11
  */
@@ -50,6 +52,12 @@ public class ComponentDrawingController {
 	@Autowired
 	private SituationDrawingCategoryMapper situationDrawingCategoryMapper;
 
+	/**
+	 * 样式组件-新增
+	 *
+	 * @param situationDrawingReq 样式组件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("样式组件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDrawing(
@@ -57,6 +65,12 @@ public class ComponentDrawingController {
 		return new BaseRsp<>(situationDrawingService.createSituationDrawing(situationDrawingReq));
 	}
 
+	/**
+	 * 样式组件-修改
+	 *
+	 * @param situationDrawingReq 样式组件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("样式组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDrawing(
@@ -64,6 +78,12 @@ public class ComponentDrawingController {
 		return new BaseRsp<>(situationDrawingService.updateSituationDrawing(situationDrawingReq));
 	}
 
+	/**
+	 * 样式组件-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationDrawing>}
+	 */
 	@ApiOperation("样式组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDrawing>
@@ -72,6 +92,12 @@ public class ComponentDrawingController {
 		return new BaseRsp<>(situationDrawingService.getSituationDrawingInfo(resourceId));
 	}
 
+	/**
+	 * 样式组件-批量删除
+	 *
+	 * @param situationIconDelReq 样式组件删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("样式组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDrawing(
@@ -80,6 +106,12 @@ public class ComponentDrawingController {
 				situationDrawingService.deleteSituationDrawing(situationIconDelReq.getIdList()));
 	}
 
+	/**
+	 * 样式组件-列表查询
+	 *
+	 * @param situationDrawingPageReq 样式组件分页请求
+	 * @return {@code BaseRsp<ListRsp<SituationDrawingPageRes>>}
+	 */
 	@ApiOperation("样式组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDrawingPageRes>>
@@ -88,15 +120,21 @@ public class ComponentDrawingController {
 				situationDrawingService.getSituationDrawingPage(situationDrawingPageReq));
 	}
 
+	/**
+	 * 样式组件-全量查询
+	 *
+	 * @return {@code BaseRsp<List<SituationDrawingPageRes>>}
+	 */
 	@ApiOperation("样式组件-全量查询")
 	@GetMapping("/all")
-	public BaseRsp<List<SituationDrawingPageRes>>
-			getSituationDrawing(SituationDrawingPageReq situationDrawingPageReq) {
-		List<SituationDrawing> situationDrawing = situationDrawingMapper.selectList(null);
+	public BaseRsp<List<SituationDrawingPageRes>> getSituationDrawing() {
 
+		// 查询所有样式组件
+		List<SituationDrawing> situationDrawing = situationDrawingMapper.selectList(null);
 		List<SituationDrawingCategory> situationDrawingCategories = situationDrawingCategoryMapper
 				.selectList(null);
 
+		// 组装样式组件类型
 		Map<String, String> categoryNameMap = StreamApiUtils.toMap(situationDrawingCategories,
 				SituationDrawingCategory::getResourceId,
 				situationDrawingCategory -> situationDrawingCategory.getName());
@@ -111,6 +149,11 @@ public class ComponentDrawingController {
 		return new BaseRsp(situationDrawing);
 	}
 
+	/**
+	 * 样式组件类型-列表查询
+	 *
+	 * @return {@code BaseRsp<List<SituationDrawingCategory>>}
+	 */
 	@ApiOperation("样式组件类型-列表查询")
 	@GetMapping("/category")
 	public BaseRsp<List<SituationDrawingCategory>> getSituationDrawingCategory() {

@@ -21,6 +21,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 组件管理-图表主题
+ *
  * @Author xuxz
  * @Date 7/12/2022 下午6:18
  */
@@ -33,6 +35,12 @@ public class ComponentThemeController {
 	@Autowired
 	private SituationColorThemeService situationColorThemeService;
 
+	/**
+	 * 图表主题-新增
+	 *
+	 * @param colorThemeReq 图表主题要求
+	 * @return {@code BaseRsp<ColorThemeReq>}
+	 */
 	@ApiOperation("图表主题-新增")
 	@PostMapping()
 	public BaseRsp<ColorThemeReq>
@@ -40,6 +48,12 @@ public class ComponentThemeController {
 		return new BaseRsp<>(situationColorThemeService.createColorTheme(colorThemeReq));
 	}
 
+	/**
+	 * 图表主题-修改
+	 *
+	 * @param ColorThemeReq 图表主题要求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图表主题-修改")
 	@PatchMapping("")
 	public BaseRsp<String>
@@ -47,6 +61,12 @@ public class ComponentThemeController {
 		return new BaseRsp<>(situationColorThemeService.updateColorTheme(ColorThemeReq));
 	}
 
+	/**
+	 * 图表主题-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ColorTheme>}
+	 */
 	@ApiOperation("图表主题-单个查询")
 	@GetMapping("")
 	public BaseRsp<ColorTheme>
@@ -55,6 +75,12 @@ public class ComponentThemeController {
 		return new BaseRsp<>(situationColorThemeService.getColorThemeInfo(resourceId));
 	}
 
+	/**
+	 * 图表主题-批量删除
+	 *
+	 * @param ColorThemeDelReq 图表主题删除要求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("图表主题-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
@@ -63,12 +89,24 @@ public class ComponentThemeController {
 				situationColorThemeService.deleteColorTheme(ColorThemeDelReq.getIdList()));
 	}
 
+	/**
+	 * 图表主题-列表查询
+	 *
+	 * @param colorThemePageReq 图表主题分页查询请求
+	 * @return {@code BaseRsp<ListRsp<ColorTheme>>}
+	 */
 	@ApiOperation("图表主题-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<ColorTheme>> getColorThemePage(ColorThemePageReq colorThemePageReq) {
 		return new BaseRsp<>(situationColorThemeService.getColorThemePage(colorThemePageReq));
 	}
 
+	/**
+	 * 图表主题-导入
+	 *
+	 * @param colorThemeImportReq 图表主题导入请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图表主题-导入")
 	@PostMapping("upload")
 	public BaseRsp<String> importColorTheme(ColorThemeImportReq colorThemeImportReq) {

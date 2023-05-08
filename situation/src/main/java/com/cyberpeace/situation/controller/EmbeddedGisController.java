@@ -32,6 +32,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 嵌入式gis控制器
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "嵌入服务-GIS")
 @RestController
 @Slf4j
@@ -51,6 +57,13 @@ public class EmbeddedGisController {
 	@Autowired
 	private SituationGisService situationGisService;
 
+	/**
+	 * 通过模板ID获取平台列表
+	 *
+	 * @param templateId 模板id
+	 * @param type       类型
+	 * @return {@code BaseRsp<TemplatePlatformRes>}
+	 */
 	@ApiOperation("视角编排-通过模板ID获取平台列表")
 	@GetMapping("/template/platform/")
 	public BaseRsp<TemplatePlatformRes> getPlatformByTemplateId(
@@ -59,6 +72,7 @@ public class EmbeddedGisController {
 			@RequestParam("type") @ApiParam(required = true, name = "type",
 					value = "类型 1-模板 2-实例") Integer type) {
 
+		// 如果是模板，直接返回模板的视角
 		if (type.equals(1)) {
 			DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
 			if (dashboardTemplate != null) {
@@ -67,20 +81,25 @@ public class EmbeddedGisController {
 			}
 		}
 
+		// 如果是实例，返回实例的视角
 		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
 				.getDashboardTemplateContext(templateId);
 
 		if (dashboardTemplateContext == null) {
 			return new BaseRsp<>(new TemplatePlatformRes());
 		}
+
+		// 获取平台列表
 		List<PlatformContext> platformContexts = remoteSituationService.getPlatformList(
 				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
 				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
 
+		// 获取平台连线列表
 		List<PlatformLinkContext> platformLinkContexts = remoteSituationService.getPlatformLinkList(
 				dashboardTemplateContext.getTaskId(), dashboardTemplateContext.getSubjectId(),
 				dashboardTemplateContext.getSubRangeId(), dashboardTemplateContext.getSchemeId());
 
+		// 构造返回数据
 		TemplatePlatformRes templatePlatformRes = new TemplatePlatformRes();
 		templatePlatformRes.setPlatformList(platformContexts);
 		templatePlatformRes.setPlatformLinkList(platformLinkContexts);
@@ -89,6 +108,12 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(templatePlatformRes);
 	}
 
+	/**
+	 * GIS配置-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-单个查询")
 	@GetMapping("/config/get/")
 	public BaseRsp<ConfigContext>
@@ -96,6 +121,12 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(situationGisService.getSituationGisConfig(resourceId));
 	}
 
+	/**
+	 * GIS配置-新增
+	 *
+	 * @param situationGisReq GIS配置请求
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-新增")
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationGisConfig(
@@ -103,6 +134,12 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
 	}
 
+	/**
+	 * GIS配置-修改
+	 *
+	 * @param situationGisReq GIS配置请求
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-修改")
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationGisConfig(
@@ -110,6 +147,12 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
 	}
 
+	/**
+	 * GIS配置-删除
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("配置-删除")
 	@PatchMapping("/config/delete/")
 	public BaseRsp<Integer>
@@ -117,18 +160,35 @@ public class EmbeddedGisController {
 		return new BaseRsp<>(situationGisService.deleteSituationGisConfig(batchDeleteReq.getIds()));
 	}
 
+	/**
+	 * GIS配置-全量查询
+	 *
+	 * @return {@code BaseRsp<List<ConfigContext>>}
+	 */
 	@ApiOperation("配置-全量查询")
 	@GetMapping("/config/list/")
 	public BaseRsp<List<ConfigContext>> getAllConfig() {
 		return new BaseRsp<>(situationGisService.getAllConfig());
 	}
 
+	/**
+	 * 获取地图源选项
+	 *
+	 * @return {@code BaseRsp<List<StringType>>}
+	 */
 	@ApiOperation("配置-获取地图源选项")
 	@GetMapping("/map/source/list/")
 	public BaseRsp<List<StringType>> getMapSourceList() {
 		return new BaseRsp<>(MapSource.getList());
 	}
 
+	/**
+	 * 获取经纬度所属省份
+	 *
+	 * @param longitude 经度
+	 * @param latitude  纬度
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("获取经纬度所属省份")
 	@GetMapping("/province/")
 	public BaseRsp<String> getProvince(

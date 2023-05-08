@@ -14,6 +14,12 @@ import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 仪表测试Service实现
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Service
 @Slf4j
 public class MeterServiceImpl implements MeterService {
@@ -29,8 +35,11 @@ public class MeterServiceImpl implements MeterService {
 
 		String simulatorId = req.getSimulatorId();
 		String behaviorId = req.getBehaviorId();
+		// 查询仪表
 		UserSimulator simulator = userSimulatorService.getOrException(simulatorId);
+		// 组装任务下发请求体
 		ReleaseTaskReq taskReq = new ReleaseTaskReq();
+		// 区分实体设备和虚拟设备
 		taskReq.setIsUsingIp(!simulator.getIsEntity());
 		if (taskReq.getIsUsingIp()) {
 			taskReq.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
@@ -39,8 +48,10 @@ public class MeterServiceImpl implements MeterService {
 		}
 		taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setFlowChart(behaviorId);
+		// 设置行为变量
 		req.getVariables().forEach(
 				variableBo -> taskReq.addVariable(variableBo.getName(), variableBo.getValue()));
+		// 下发行为任务
 		lcService.startBehavior(taskReq);
 	}
 
@@ -48,9 +59,12 @@ public class MeterServiceImpl implements MeterService {
 	public void stopSingleBehavior(SingleBehaviorReq req) {
 		String simulatorId = req.getSimulatorId();
 		String behaviorId = req.getBehaviorId();
+		// 查询仪表
 		UserSimulator simulator = userSimulatorService.getOrException(simulatorId);
+		// 设置请求体
 		StopTaskReq stopTaskReq = new StopTaskReq();
 		stopTaskReq.setChartId(new Long(behaviorId));
+		// 区分实体设备、虚拟设备
 		stopTaskReq.setIsUsingIp(!simulator.getIsEntity());
 		if (simulator.getIsEntity()) {
 			stopTaskReq.setDeviceId(new Integer(simulator.getDeviceId()));
@@ -58,6 +72,7 @@ public class MeterServiceImpl implements MeterService {
 			stopTaskReq.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
 		}
 		stopTaskReq.setIp(simulator.getDeviceIp());
+		// 发送停止任务请求
 		lcService.stopBehavior(stopTaskReq);
 	}
 }

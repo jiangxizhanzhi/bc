@@ -1,67 +1,150 @@
 package com.cyberpeace.bs.service.bo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
-
 /**
  * 配管下发的命令
+ *
+ * @author SN
+ * @date 2023/05/08
  */
 @Data
 public class CommandBo<T> implements Serializable {
 
-	private String taskId;
+    /**
+     * 任务id
+     */
+    private String taskId;
 
-	private String subTaskId;
+    /**
+     * 子任务id
+     */
+    private String subTaskId;
 
-	private String xdschemaId;
+    /**
+     * 想定id
+     */
+    private String xdschemaId;
 
-	private String agentType;
+    /**
+     * 代理类型
+     */
+    private String agentType;
 
-	private String reportUrl;
+    /**
+     * 上报路径
+     */
+    private String reportUrl;
 
-	private List<Configuration<T>> configurations;
+    /**
+     * 配置
+     */
+    private List<Configuration<T>> configurations;
 
-	private String configTaskId;
+    /**
+     * 配置任务id
+     */
+    private String configTaskId;
 
-	private AgentInfo agentInfo;
+    /**
+     * 代理信息
+     */
+    private AgentInfo agentInfo;
 
-	public T getCommandBody() {
-		return configurations.get(0).getPolicy();
-	}
+    /**
+     * 获取指令
+     *
+     * @return {@code T}
+     */
+    public T getCommandBody() {
+        return configurations.get(0).getPolicy();
+    }
 }
 
+/**
+ * 配置
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 class Configuration<T> implements Serializable {
 
-	private TargetInfo targetInfo;
+    /**
+     * 目标信息
+     */
+    private TargetInfo targetInfo;
 
-	private T policy;
+    /**
+     * 指令
+     */
+    private T policy;
 
-	private String action;
+    /**
+     * 行动
+     */
+    private String action;
 }
 
+/**
+ * 目标信息
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 class TargetInfo implements Serializable {
 
-	private String id;
+    /**
+     * id
+     */
+    private String id;
 
-	private String host;
+    /**
+     * 主机
+     */
+    private String host;
 
-	private String name;
+    /**
+     * 名称
+     */
+    private String name;
 
-	private String resourceId;
+    /**
+     * 资源id
+     */
+    private String resourceId;
 
-	private String imageType;
+    /**
+     * 镜像类型
+     */
+    private String imageType;
 }
 
+/**
+ * 代理信息
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 class AgentInfo implements Serializable {
 
-	private String agentId;
+    /**
+     * 代理id
+     */
+    private String agentId;
 
-	private String agentType;
+    /**
+     * 代理类型
+     */
+    private String agentType;
 
-	private String url;
+    /**
+     * url
+     */
+    private String url;
 }

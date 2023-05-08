@@ -59,6 +59,12 @@ import com.google.common.collect.Sets;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 用户仪表Service实现
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Service
 @Slf4j
 public class UserSimulatorServiceImpl implements UserSimulatorService {
@@ -93,6 +99,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@PostConstruct
 	public void init() {
+		// 获取外部ip段，用于从多网卡节点的多个ip中筛选出可与ocr服务通信的ip
 		EXTERNAL_IP_SEGMENT = SystemPropUtil.getProp("EXTERNAL_IP_SEGMENT");
 		try {
 			// 重启程序后恢复正在运行的仪表的定时任务
@@ -104,23 +111,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchCreate(SimulatorAddBo addBo) {
+		// 日志记录仪表创建请求
 		String reqString = JsonUtil.toJsonString(addBo, PropertyNamingStrategy.SnakeCase);
 		log.info("create simulator request: {}", reqString);
 		try {
+			// 上报请求数据
 			flowReportService.reportCreation(reqString);
 		} catch (Exception e) {
 			log.error("failed to report creation: ", e);
 		}
+		// 创建仪表实体
 		SimulatorAddResult result = createSimulatorBatch(addBo);
 		// save
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
+				// 保存仪表实体数据
 				for (UserSimulator simulator : result.getSimulatorList()) {
 					userSimulatorMapper.insert(simulator);
 				}
+				// 保存用户实例数据
 				if (!result.getUserInstanceList().isEmpty()) {
 					userInstanceMapper.insertUserInstanceBatch(result.getUserInstanceList());
 				}
@@ -129,6 +140,12 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	}
 
+	/**
+	 * 批量创建仪表
+	 *
+	 * @param addBo 新增请求体
+	 * @return {@code SimulatorAddResult}
+	 */
 	private SimulatorAddResult createSimulatorBatch(SimulatorAddBo addBo) {
 		List<String> userModelIds = Lists.newArrayList();
 		// collect user model ids
@@ -169,9 +186,19 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return result;
 	}
 
+	/**
+	 * 创建仪表
+	 *
+	 * @param userInstanceList 用户实例列表
+	 * @param nodeBo           节点数据
+	 * @param sceneId          场景id
+	 * @param sceneName        场景名称
+	 * @return {@code UserSimulator}
+	 */
 	private UserSimulator createSimulator(List<UserInstance> userInstanceList, NodeBo nodeBo,
 			String sceneId, String sceneName) {
 		UserSimulator simulator = new UserSimulator();
+		// 操作系统类型
 		simulator.setAccessOs(nodeBo.getType());
 
 		Set<String> habits = Sets.newHashSet();
@@ -225,14 +252,24 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		return simulator;
 	}
 
+	/**
+	 * 创建用户实例列表
+	 *
+	 * @param userModels   用户模型
+	 * @param userModelMap 用户模型映射map
+	 * @param userTypeMap  用户类型map
+	 * @return {@code List<UserInstance>}
+	 */
 	private List<UserInstance> createUserInstanceList(List<UserInstanceAddBo> userModels,
 			Map<String, UserModel> userModelMap, Map<String, String> userTypeMap) {
 		List<UserInstance> instanceList = Lists.newArrayList();
+		// 判断用户模型列表是否为空
 		if (CollectionUtils.isEmpty(userModels)) {
 			return instanceList;
 		}
 		String userModelId;
 		UserModel userModel;
+		// 循环用户模型，生成用户实例
 		for (UserInstanceAddBo instanceAddBo : userModels) {
 			userModelId = instanceAddBo.getUserModelId();
 			userModel = userModelMap.get(userModelId);
@@ -264,25 +301,31 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public Integer countSimulators() {
+		// 统计仪表数量
 		return userSimulatorMapper.countAll();
 	}
 
 	@Override
 	public Integer countActiveSimulators() {
+		// 统计状态为运行中的仪表数量
 		return userSimulatorMapper.countByStatus(UserSimulator.Status.RUNNING.getCode());
 	}
 
 	@Override
 	public ListRsp<BehaviorMeterBo> pageBehaviorMeters(MeterPageReq pageReq) {
+		// 生成分页器
 		Page page = pageReq.toPageParam();
 		String sceneId = pageReq.getScene_id();
+		// 查询指定场景中的行为仪表
 		IPage<UserSimulator> simulators = userSimulatorMapper.page(page, sceneId);
 		simulators.convert(simulator -> {
 			BehaviorMeterBo behaviorMeterBo = new BehaviorMeterBo();
 			behaviorMeterBo.setId(simulator.getDeviceId());
 			behaviorMeterBo.setIp(simulator.getDeviceIp());
+			// 设置仪表名称为统一格式
 			behaviorMeterBo.setName("用户行为仪表" + "_" + simulator.getResourceId());
 			behaviorMeterBo.setResourceId(simulator.getResourceId());
+			// 场景名称
 			behaviorMeterBo.setSceneName(simulator.getSceneName());
 			behaviorMeterBo.setStatus(simulator.getStatus());
 			return behaviorMeterBo;
@@ -292,10 +335,13 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public SimulatorDetail getDetail(String simulatorId) {
+		// 查询仪表
 		UserSimulator userSimulator = getOrException(simulatorId);
 		SimulatorDetail detail = BeanUtils.copy(userSimulator, SimulatorDetail.class);
+		// 设置访问习惯
 		detail.setAccessHabit(
 				JsonUtil.toJsonObjectArray(userSimulator.getAccessHabit(), String.class));
+		// 设置用户类型列表
 		detail.setUserTypes(JsonUtil.toJsonObjectArray(userSimulator.getUserTypes(), String.class));
 		// collect behavior ids and usernames
 		List<UserInstance> instanceList = userInstanceMapper.getBatchBySimulatorId(simulatorId);
@@ -303,6 +349,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		Map<String, String> userNameMap = Maps.newHashMap();
 		Set<String> behaviorIdSet = Sets.newHashSet();
 		for (UserInstance instance : instanceList) {
+			// 收集行为id
 			List<String> behaviorIds = BsUtil.parseBehaviorList(instance.getBehaviorList()).stream()
 					.map(BehaviorSimple::getId).collect(Collectors.toList());
 			userBehaviorMap.put(instance.getUserModelId(), behaviorIds);
@@ -326,6 +373,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				String userName = userNameMap.get(userModelId);
 				for (String behaviorId : behaviorIds) {
 					LcBehavior behavior = behaviorMap.get(behaviorId);
+					// 行为不存在，跳过
 					if (behavior == null) {
 						continue;
 					}
@@ -342,8 +390,11 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void deleteBySceneId(List<String> sceneIdList) {
+		// 日志记录配管的请求
 		log.info("Delete simulators by scene_id: {}", sceneIdList);
+		// 查询关联仪表
 		List<String> relatedSimulatorIds = userSimulatorMapper.getIdsBySceneIdList(sceneIdList);
+		// 无关联仪表，直接返回
 		if (relatedSimulatorIds.isEmpty()) {
 			return;
 		}
@@ -363,9 +414,16 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public List<SceneIdName> getSceneList() {
+		// 查询当前存在仪表所保存的关联场景信息
 		return userSimulatorMapper.getSceneList();
 	}
 
+	/**
+	 * 创建远程行为
+	 *
+	 * @param rspBo 响应数据
+	 * @return {@code LcBehavior}
+	 */
 	private LcBehavior createLcBehavior(LcBehaviorRspBo rspBo) {
 		LcBehavior behavior = new LcBehavior();
 		behavior.setId(rspBo.getId());
@@ -393,33 +451,52 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void batchStartSimulator(List<String> simulatorIds) {
+		// 查询仪表列表
 		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchIds(simulatorIds);
+		// 只选中一个仪表时，按对单个仪表操作的方式抛错
 		if (simulatorIds.size() == 1) {
 			if (simulatorList.isEmpty()) {
+				// 未指定仪表id
 				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			}
+			// 仪表已在运行
 			if (simulatorList.get(0).getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 				throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 			}
 		}
 		// 不加事务
 		for (UserSimulator simulator : simulatorList) {
+			// 依次启动选中的仪表
 			if (!simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 				start(simulator);
 			}
 		}
 	}
 
+	/**
+	 * 启动行为模拟仪表
+	 *
+	 * @param simulator 仪表
+	 */
 	private void start(UserSimulator simulator) {
+		// 查询用户实例
 		List<UserInstance> userInstanceList = userInstanceMapper
 				.getBatchBySimulatorId(simulator.getResourceId());
 		// 启动定时任务前，先删除可能已存在的任务
 		removeTimer(simulator.getResourceId());
+		// 创建定时任务
 		createTimerTask(simulator, userInstanceList);
+		// 更新仪表状态
 		simulator.setStatus(UserSimulator.Status.RUNNING.getCode());
 		userSimulatorMapper.updateById(simulator);
 	}
 
+	/**
+	 * 创建定时任务
+	 *
+	 * @param simulator        仪表
+	 * @param userInstanceList 用户实例列表
+	 */
 	private void createTimerTask(UserSimulator simulator, List<UserInstance> userInstanceList) {
 		timerMap.putIfAbsent(simulator.getResourceId(), Maps.newHashMap());
 		// 一个用户一个timer
@@ -447,21 +524,30 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void stopSimulator(String resourceId) {
+		// 查询仪表
 		UserSimulator simulator = getOrException(resourceId);
+		// 停止仪表运行
 		stop(simulator);
 	}
 
 	@Override
 	public void batchStopSimulator(List<String> simulatorIds) {
+		// 查询指定的仪表
 		List<UserSimulator> simulatorList = userSimulatorMapper.selectBatchIds(simulatorIds);
 		// 不加事务
 		for (UserSimulator simulator : simulatorList) {
 			if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
+				// 依次关闭仪表
 				stop(simulator);
 			}
 		}
 	}
 
+	/**
+	 * 停止仪表运行
+	 *
+	 * @param simulator 仪表
+	 */
 	private void stop(UserSimulator simulator) {
 		// cancel timer
 		removeTimer(simulator.getResourceId());
@@ -473,6 +559,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				StopTaskReq req = new StopTaskReq();
 				req.setChartId(new Long(latestBehaviorId));
 				req.setIsUsingIp(!simulator.getIsEntity());
+				// 根据是否使用ip识别设备，设置不同的设备id
 				if (Boolean.TRUE.equals(req.getIsUsingIp())) {
 					req.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
 				} else {
@@ -481,6 +568,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 				req.setIp(simulator.getDeviceIp());
 				lcService.stopBehavior(req);
 			} catch (Exception e) {
+				// 出错时日志记录错误
 				log.warn("Failed to stop behavior [{}] of simulator [{}]: {}", latestBehaviorId,
 						simulator.getResourceId(), e);
 			}
@@ -492,27 +580,38 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public void updateProcess(String simulatorId, String behaviorId) {
+		// 查询仪表
 		UserSimulator simulator = getOrException(simulatorId);
+		// 当前日期
 		String dateNow = LocalDate.now().toString();
+		// 如果不是当天执行的第一个任务，则执行数加1
 		if (dateNow.equals(simulator.getLastExeDate())) {
 			simulator.setExeCount(simulator.getExeCount() + 1);
 		} else {
+			// 如果是当天执行的第一个任务，则将最后执行日期设置为今天
 			simulator.setLastExeDate(dateNow);
+			// 重置执行计数
 			simulator.setExeCount(1);
 		}
+		// 设置最后执行行为id
 		simulator.setLastExeId(behaviorId);
+		// 更新仪表
 		userSimulatorMapper.updateById(simulator);
 	}
 
 	@Override
 	public UserSimulator getOrException(String resourceId) {
+		// id不存在或为空字符串
 		if (StringUtils.isBlank(resourceId)) {
 			throw new BusinessException(BsErrorCode.RESOURCE_ID_MISSING);
 		}
+		// 查询仪表
 		UserSimulator simulator = userSimulatorMapper.selectById(resourceId);
+		// 查询不到数据，报错
 		if (simulator == null) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		// 返回仪表数据
 		return simulator;
 	}
 
@@ -569,7 +668,9 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public List<String> getSceneIdList() {
+		// 获取关联场景列表
 		List<SceneIdName> sceneList = userSimulatorMapper.getSceneList();
+		// 解析id并收集
 		return sceneList.stream().map(SceneIdName::getSceneId).collect(Collectors.toList());
 	}
 
@@ -688,6 +789,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 						}
 					}
 				}
+				// 如果用户实例存在，则插入数据库
 				if (!result.getUserInstanceList().isEmpty()) {
 					userInstanceMapper.insertUserInstanceBatch(result.getUserInstanceList());
 				}
@@ -698,8 +800,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	@Override
 	public List<SimulatorTimer> showTimers() {
 		List<SimulatorTimer> res = Lists.newArrayList();
+		// 遍历定时任务执行器集合
 		timerMap.forEach((simulatorId, timers) -> {
 			SimulatorTimer simulatorTimer = new SimulatorTimer(simulatorId);
+			// 遍历执行器中用户模型
 			timers.forEach((userModelId, timer) -> simulatorTimer.addUser(userModelId,
 					timer.getUserName()));
 			res.add(simulatorTimer);
@@ -709,24 +813,27 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 	@Override
 	public Integer getBandwidthSum() {
+		// 远程返回数据单位为bps
 		Integer bytePerSecond = 0;
+		// 尝试获取远程数据
 		try {
 			bytePerSecond = lcService.getBandwidthSum();
 		} catch (RemoteServiceException e) {
+			// 远程错误
 			log.error("remote error: ", e);
 		} catch (Exception e1) {
+			// 其他错误
 			log.error("failed to get bandwidth sum: ", e1);
 		}
-		// 单位 mbps
+		// 单位转为mbps
 		return BsUtil.divide(bytePerSecond, 128 * 1024);
 	}
 
 	@Override
 	public void deleteByNodeId(List<String> nodeIds) {
-		// List<String> simulatorIds = nodeIds.stream().map(nodeId ->
-		// nodeId.replaceAll("-", ""))
-		// .collect(Collectors.toList());
+		// 查询节点id关联的仪表的id
 		List<String> simulatorIds = userSimulatorMapper.getIdsByDeviceIds(nodeIds);
+		// 删除关联仪表
 		if (!simulatorIds.isEmpty()) {
 			deleteSimulatorByIds(simulatorIds);
 		}

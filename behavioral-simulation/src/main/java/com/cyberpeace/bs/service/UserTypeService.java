@@ -10,6 +10,12 @@ import com.cyberpeace.bs.service.bo.user.UserTypeBo;
 import com.cyberpeace.bs.service.bo.user.UserTypeModifyBo;
 import com.cyberpeace.common.model.ListRsp;
 
+/**
+ * 用户类型Service
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 public interface UserTypeService {
 
 	/**

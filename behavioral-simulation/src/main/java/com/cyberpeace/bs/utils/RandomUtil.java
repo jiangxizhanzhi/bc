@@ -62,6 +62,13 @@ public class RandomUtil {
 		BsUtil.sortBehaviorList(chartInput.getBehaviors());
 	}
 
+	/**
+	 * 随机查询
+	 *
+	 * @param elements 元素
+	 * @param num      数量
+	 * @return {@code List<T>}
+	 */
 	public static <T> List<T> randomSelect(List<T> elements, Integer num){
 		int size = elements.size();
 		if(size <= num){

@@ -1,16 +1,31 @@
 package com.cyberpeace.bs.service.bo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalTime;
 
-import lombok.Data;
-
+/**
+ * 行为统计
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 public class BehaviorStatistic implements Serializable {
 
-	private LocalTime startTime;
+    /**
+     * 开始时间
+     */
+    private LocalTime startTime;
 
-	private LocalTime endTime;
+    /**
+     * 结束时间
+     */
+    private LocalTime endTime;
 
-	private Integer behaviorCount = 0;
+    /**
+     * 行为计数
+     */
+    private Integer behaviorCount = 0;
 }

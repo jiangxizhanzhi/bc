@@ -11,11 +11,21 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 大屏基本属性返回
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class DashboardBasicAttributeRes implements Serializable {
 
+	/**
+	 * 大屏ID
+	 */
 	@ApiModelProperty("大屏ID")
 	private String dashboardId;
+
 
 	@ApiModelProperty("大屏模式 1-GIS/TOPO 2-单GIS 3-单TOPO")
 	private Integer dashboardMode;

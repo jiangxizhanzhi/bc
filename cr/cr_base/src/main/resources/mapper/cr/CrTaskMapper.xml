@@ -237,7 +237,8 @@
         </foreach>
     </select>
 
-    <select id="selectPersonalStatistics" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics">
+    <select id="selectPersonalStatistics"
+            resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics">
         select user_id, sum(score) as total_score
         from cr_task
         where business_type = #{businessType} and
@@ -245,14 +246,16 @@
         <foreach collection="statusList" item="status" separator="," open="(" close=")">
             #{status}
         </foreach>
-        and  user_id in <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
-        group by user_id order by total_score desc 
+        and user_id in
+        <foreach collection="user_ids" separator="," open="(" close=")" item="user_id">#{user_id}</foreach>
+        group by user_id order by total_score desc
         <if test="limit != null">
             limit #{limit}
         </if>
     </select>
 
-    <select id="selectAllPersonalStatistics" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics">
+    <select id="selectAllPersonalStatistics"
+            resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics">
         select user_id, sum(score) as total_score
         from cr_task
         where business_type = #{businessType} and

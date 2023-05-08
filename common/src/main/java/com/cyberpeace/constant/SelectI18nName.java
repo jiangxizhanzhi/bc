@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.CommonContext;
  * @author shazhichuan
  */
 public interface SelectI18nName {
+
 	/**
 	 * 返回中文名称
 	 *

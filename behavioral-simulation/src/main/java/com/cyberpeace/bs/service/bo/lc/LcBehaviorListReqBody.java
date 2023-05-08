@@ -1,23 +1,50 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import java.io.Serializable;
-
 import lombok.Data;
 
+import java.io.Serializable;
+
+/**
+ * 远程行为列表请求体
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 public class LcBehaviorListReqBody implements Serializable {
 
-	private String flowChartName;
+    /**
+     * 流程图名称
+     */
+    private String flowChartName;
 
-	private Integer page;
+    /**
+     * 分页
+     */
+    private Integer page;
 
-	private Integer size;
+    /**
+     * 页的大小
+     */
+    private Integer size;
 
-	private Integer netModel;
+    /**
+     * 网络模型
+     */
+    private Integer netModel;
 
-	private Integer deviceType;
+    /**
+     * 设备类型
+     */
+    private Integer deviceType;
 
-	private Integer appType;
+    /**
+     * 客户端类型
+     */
+    private Integer appType;
 
-	private Integer isActual;
+    /**
+     * 是否实体设备
+     */
+    private Integer isActual;
 }

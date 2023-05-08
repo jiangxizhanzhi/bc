@@ -7,6 +7,12 @@ import com.cyberpeace.common.model.BaseTable;
 
 import lombok.*;
 
+/**
+ * cr任务日志
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

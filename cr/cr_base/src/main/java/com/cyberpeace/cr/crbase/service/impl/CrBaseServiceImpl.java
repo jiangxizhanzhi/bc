@@ -20,12 +20,25 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * impl cr基础服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
 
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
+	/**
+	 * 获取训练统计数据
+	 *
+	 * @param userId 用户id
+	 * @param page   页面
+	 * @return {@link TrainingStatisticsRsp}
+	 */
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page) {
 		// 1. define variables
@@ -71,6 +84,12 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 }
 
+/**
+ * 训练比较器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 class TrainingComparator implements Comparator<TrainingData> {
 
 	private final Boolean asc;
@@ -79,16 +98,19 @@ class TrainingComparator implements Comparator<TrainingData> {
 		this.asc = asc;
 	}
 
+	/**
+	 * 比较
+	 *
+	 * @param o1 o1群
+	 * @param o2 o2
+	 * @return int
+	 */
 	@Override
 	public int compare(TrainingData o1, TrainingData o2) {
 		if (asc) {
-			return Long.compare(o1.getStartTime()
-								  .getTime(), o2.getStartTime()
-												.getTime());
+			return Long.compare(o1.getStartTime().getTime(), o2.getStartTime().getTime());
 		} else {
-			return Long.compare(o2.getStartTime()
-								  .getTime(), o1.getStartTime()
-												.getTime());
+			return Long.compare(o2.getStartTime().getTime(), o1.getStartTime().getTime());
 		}
 	}
 }

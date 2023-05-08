@@ -1,7 +1,0 @@
-package com.cyberpeace.cr.evaluation.service;
-
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalProbeData;
-
-public interface EvalProbeDataService extends IService<EvalProbeData> {
-}

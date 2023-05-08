@@ -7,7 +7,11 @@ import com.cyberpeace.common.model.PageReqBase;
 import lombok.Data;
 
 /**
- * 训练统计分页
+ * 培训统计页面
+ * 统计分页
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TrainingStatisticsPage implements Serializable {

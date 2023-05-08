@@ -7,7 +7,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Data;
 
 /**
+ * 上下文元素流列表
  * 节点流量查询体
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class ElementFlowListContext implements Serializable {

@@ -7,6 +7,12 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 任务评价返回值
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class MissionEvaluationRsp {
 

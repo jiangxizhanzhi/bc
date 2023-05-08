@@ -1,19 +1,26 @@
 package com.cyberpeace.situation.controller.req;
 
-import com.cyberpeace.common.baseinterface.Create;
+import javax.validation.constraints.NotBlank;
+
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.situation.constant.SituationErrorCode;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
+/**
+ * 大屏实例更新请求
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class SituationPublishInstanceUpdateReq extends SituationPublishInstanceAddReq {
 
-    @ApiModelProperty()
-    @NotBlank(groups = { Update.class },
-            message = ErrorCode.RESOURCE_NOT_FOUND)
-    private String resourceId;
+	/**
+	 * 资源id
+	 */
+	@ApiModelProperty()
+	@NotBlank(groups = { Update.class }, message = ErrorCode.RESOURCE_NOT_FOUND)
+	private String resourceId;
 }

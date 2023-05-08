@@ -150,7 +150,8 @@
         from cr_business_template
         <where>
             name in
-            <foreach collection="business_template_names" separator="," open="(" close=")" item="business_template_name">
+            <foreach collection="business_template_names" separator="," open="(" close=")"
+                     item="business_template_name">
                 #{business_template_name}
             </foreach>
             and business_type = #{type}

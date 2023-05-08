@@ -8,6 +8,12 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 
+/**
+ * cr公共服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface CrCommonService {
 
 	/**

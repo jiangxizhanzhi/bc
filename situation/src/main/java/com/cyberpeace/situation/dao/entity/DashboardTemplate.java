@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
-import com.cyberpeace.situation.constant.CustomCode;
+import com.cyberpeace.situation.constant.dashboard.CustomCode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

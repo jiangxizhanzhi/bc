@@ -1,29 +1,50 @@
 package com.cyberpeace.situation.controller.res;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.model.PageReqBase;
+
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
+ * 通用控件分页返回
+ *
  * @Author xuxz
  * @Date 16/11/2022 下午5:04
  */
 @Data
 public class SituationCommonComponentsPageRes extends PageReqBase implements Serializable {
 
-    @TableId(type = IdType.UUID, value = "resource_id")
-    private String resourceId;
+	/**
+	 * 资源id
+	 */
+	@TableId(type = IdType.UUID, value = "resource_id")
+	private String resourceId;
 
-    private String name;
+	/**
+	 * 名称
+	 */
+	private String name;
 
-    private Integer componentType;
+	/**
+	 * 组件类型
+	 */
+	private Integer componentType;
 
-    private Integer type;
+	/**
+	 * 类型
+	 */
+	private Integer type;
 
-    private String img;
+	/**
+	 * 图片
+	 */
+	private String img;
 
-    private String url;
+	/**
+	 * url
+	 */
+	private String url;
 }

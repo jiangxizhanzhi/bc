@@ -1,11 +1,18 @@
 package com.cyberpeace.cs.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.*;
+
+import lombok.Data;
+
+/**
+ * 系统使用状态
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("system_use_status")
 

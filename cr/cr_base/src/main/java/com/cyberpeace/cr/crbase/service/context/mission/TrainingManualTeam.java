@@ -11,6 +11,9 @@ import lombok.Data;
 
 /**
  * 团队训练手册
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TrainingManualTeam {
@@ -21,14 +24,16 @@ public class TrainingManualTeam {
 
 	private Map<String, Mission> missionMap;
 
-	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages, Map<String, Mission> missionMap) {
+	public TrainingManualTeam(List<CrRoleMissionSchemeStage> stages,
+			Map<String, Mission> missionMap) {
 		this.text = new StringBuffer();
 		this.stages = stages;
 		this.missionMap = missionMap;
 	}
 
 	public void addStage(CrRoleMissionSchemeStage stage, Integer index) {
-		String head = String.format("\n\n## %s%d： %s\n\n\n", TrainI18n.STAGE, index,	stage.getStage());
+		String head = String.format("\n\n## %s%d： %s\n\n\n", TrainI18n.STAGE, index,
+				stage.getStage());
 		text.append(head);
 
 		for (int i = 1; i <= stage.getMissions().size(); i++) {
@@ -39,8 +44,8 @@ public class TrainingManualTeam {
 
 	public void addMission(String missionId, Integer index) {
 		Mission mission = missionMap.get(missionId);
-		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", TrainI18n.TASK,
-				index, mission.getTitle(), TrainI18n.WRITEUP, mission.getWriteUp());
+		String missionText = String.format("#### %s%d： %s\n\n%s: \n%s\n\n\n", TrainI18n.TASK, index,
+				mission.getTitle(), TrainI18n.WRITEUP, mission.getWriteUp());
 		text.append(missionText);
 	}
 

@@ -15,6 +15,12 @@ import com.cyberpeace.cr.crbase.service.context.resource.TrainingTemplateContext
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
+/**
+ * 业务模板处理程序
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 public class BusinessTemplateHandler {
 
@@ -45,7 +51,12 @@ public class BusinessTemplateHandler {
 	}
 
 	/**
+	 *
 	 * 保存实际的业务模板。如红蓝对抗、团队训练
+	 *
+	 * @param basicTemplate 基本模板
+	 * @param businessId    业务标识
+	 * @return {@link String}
 	 */
 	public String saveRealBusiness(BasicTemplate basicTemplate, String businessId) {
 		// 业务定义自己的保存操作
@@ -53,6 +64,12 @@ public class BusinessTemplateHandler {
 
 	}
 
+	/**
+	 * 获取业务类型
+	 *
+	 * @param businessType 业务类型
+	 * @return {@link BusinessTemplate.BusinessType}
+	 */
 	private BusinessTemplate.BusinessType getBusinessType(Integer businessType) {
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
 		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(businessType,
@@ -64,6 +81,12 @@ public class BusinessTemplateHandler {
 
 	}
 
+	/**
+	 * 导出业务
+	 *
+	 * @param template 模板
+	 * @return {@link ResourceDumpContext}
+	 */
 	public ResourceDumpContext dumpBusiness(BusinessTemplate template) {
 		BusinessTemplateHandler handler = getHandler(template.getBusinessType());
 		return handler.realDumpBusiness(template);
@@ -74,6 +97,11 @@ public class BusinessTemplateHandler {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
+	/**
+	 * 导入业务资源
+	 *
+	 * @param resource 资源
+	 */
 	public void loadBusinessResource(ResourceDumpContext resource) {
 		BusinessTemplateHandler handler = getHandler(resource.getType());
 		handler.realLoadBusinessResource(resource);

@@ -7,6 +7,12 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 场景数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class SceneData implements Serializable {
 

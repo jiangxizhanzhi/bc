@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.situation.constant.ws.AttackType;
+import com.cyberpeace.situation.constant.topo.AttackType;
 import com.cyberpeace.situation.controller.req.AttackMessageReq;
 import com.cyberpeace.situation.dao.entity.AttackMessage;
 import com.cyberpeace.situation.dao.mapper.AttackMessageMapper;

@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 任务上下文
  * 任务模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionContext extends Mission {

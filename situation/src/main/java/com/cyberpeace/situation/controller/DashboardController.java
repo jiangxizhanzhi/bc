@@ -20,9 +20,9 @@ import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.node.NodeMigrationContext;
 import com.cyberpeace.integratation.model.situation.req.SubjectListReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
-import com.cyberpeace.situation.constant.DashboardLevel;
-import com.cyberpeace.situation.constant.DynamicParameter;
-import com.cyberpeace.situation.constant.MapView;
+import com.cyberpeace.situation.constant.dashboard.DashboardLevel;
+import com.cyberpeace.situation.constant.dashboard.DynamicParameter;
+import com.cyberpeace.situation.constant.gis.MapView;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.*;
@@ -158,8 +158,13 @@ public class DashboardController {
 	@PostMapping("/back_home/")
 	public BaseRsp<Boolean>
 			pushBackHomeNotice(@RequestBody @Validated DashboardBasicReq dashboardBasicReq) {
+
+		// 获取当前靶场首页代码
+		String bcCode = SystemPropUtil.getProp("BC_CODE");
+		String homeCode = "01".equals(bcCode)? "00": bcCode;
+
 		// 推送返回靶场大屏消息
-		NewPageContext message = new NewPageContext(SystemPropUtil.getProp("BC_CODE"));
+		NewPageContext message = new NewPageContext(homeCode);
 		WsMessage<NewPageContext> wsMessage = new WsMessage<>(MessageType.JumpPage.getDesc(),
 				message);
 		situationHandlerService.pushDataToDashboard(wsMessage, dashboardBasicReq.getDashboardId(),

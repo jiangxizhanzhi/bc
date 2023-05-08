@@ -24,13 +24,26 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * json工具
  * json序列化和反序列化工具类
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Slf4j
 public class JsonUtil {
 
+	/**
+	 * json工具
+	 */
 	private JsonUtil() {}
 
+	/**
+	 * json字符串
+	 *
+	 * @param obj obj
+	 * @return {@link String}
+	 */
 	public static String toJsonString(Object obj) {
 		if (null == obj) {
 			return "{}";
@@ -43,6 +56,13 @@ public class JsonUtil {
 		return JSON.toJSONString(obj);
 	}
 
+	/**
+	 * json对象数组
+	 *
+	 * @param text  文本
+	 * @param clazz clazz
+	 * @return {@link List}<{@link T}>
+	 */
 	public static <T> List<T> toJsonObjectArray(String text, Class<T> clazz) {
 		if (StringUtils.isBlank(text)) {
 			return Lists.newArrayList();
@@ -51,10 +71,24 @@ public class JsonUtil {
 		return JSONObject.parseArray(text, clazz);
 	}
 
+	/**
+	 * json对象
+	 *
+	 * @param text  文本
+	 * @param clazz clazz
+	 * @return {@link T}
+	 */
 	public static <T> T toJsonObject(String text, Class<T> clazz) {
 		return JSONObject.parseObject(text, clazz);
 	}
 
+	/**
+	 * json对象
+	 *
+	 * @param inputStream 输入流
+	 * @param clazz       clazz
+	 * @return {@link T}
+	 */
 	@SneakyThrows
 	public static <T> T toJsonObject(InputStream inputStream, Class<T> clazz) {
 
@@ -202,7 +236,11 @@ public class JsonUtil {
 
 	}
 
-	/** 获取有顺序的key*/
+	/**
+	 *  获取有顺序的key@param jsonObject json对象
+	 *
+	 * @return {@link TreeMap}<{@link String}, {@link String}>
+	 */
 	private static TreeMap<String, String> toTreeMap(JSONObject jsonObject) {
 
 		TreeMap<String, String> treeMap = Maps.newTreeMap();

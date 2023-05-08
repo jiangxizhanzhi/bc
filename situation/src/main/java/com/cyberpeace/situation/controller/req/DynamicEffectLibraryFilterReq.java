@@ -1,26 +1,34 @@
 package com.cyberpeace.situation.controller.req;
 
-import com.cyberpeace.common.baseinterface.Create;
-import com.cyberpeace.common.baseinterface.Update;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.situation.constant.SituationErrorCode;
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-
-
+/**
+ * 动效库新增请求
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class DynamicEffectLibraryFilterReq implements Serializable {
 
+	/**
+	 * 动效名称
+	 */
 	@ApiModelProperty(value = "动效名称")
 	private String name;
 
+	/**
+	 * 动效类型
+	 */
 	@ApiModelProperty(value = "动效类型")
 	private String category;
 
+	/**
+	 * 源节点动效文件
+	 */
 	@ApiModelProperty(value = "源节点动效文件")
 	private String sourceNodeDynamicFile;
 

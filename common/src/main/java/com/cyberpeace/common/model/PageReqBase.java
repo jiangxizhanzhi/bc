@@ -14,6 +14,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 页面要求基础
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @ApiModel
 public class PageReqBase implements Serializable {
 
@@ -37,6 +43,11 @@ public class PageReqBase implements Serializable {
 	@Setter
 	private String pattern;
 
+	/**
+	 * 页面参数
+	 *
+	 * @return {@link Page}
+	 */
 	public Page toPageParam() {
 		Page page = new Page(this.page, this.perPage);
 
@@ -58,10 +69,20 @@ public class PageReqBase implements Serializable {
 		return page;
 	}
 
+	/**
+	 * 设置每页大小
+	 *
+	 * @param perPage 每个页面
+	 */
 	public void setPer_page(Integer perPage) {
 		this.perPage = perPage;
 	}
 
+	/**
+	 * 设置页面
+	 *
+	 * @param page 页面
+	 */
 	public void setPage(Integer page) {
 		this.page = page;
 	}

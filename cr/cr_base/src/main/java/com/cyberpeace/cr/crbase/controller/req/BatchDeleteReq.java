@@ -9,6 +9,12 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 批处理删除请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class BatchDeleteReq implements Serializable {
 

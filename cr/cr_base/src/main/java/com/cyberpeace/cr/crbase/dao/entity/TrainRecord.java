@@ -11,6 +11,8 @@ import lombok.Data;
 
 /**
  * 训练记录，记录训练房间的创建和销毁
+ @author cyberpeace
+ @date 2023/05/06
  */
 @Data
 @TableName("cr_train_record")

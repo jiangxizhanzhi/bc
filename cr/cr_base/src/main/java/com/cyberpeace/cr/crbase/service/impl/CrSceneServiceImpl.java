@@ -35,7 +35,10 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 
 /**
+ * cr场景服务impl
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Service
 public class CrSceneServiceImpl implements CrSceneService {
@@ -49,6 +52,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 	@Autowired
 	private RemoteSceneService remoteSceneService;
 
+	/**
+	 * 保存拓扑
+	 *
+	 * @param sceneConfigData 场景配置数据
+	 * @param businessCode    业务代码
+	 * @param topoId          拓扑id
+	 * @return {@link String}
+	 */
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
 			String topoId) {
@@ -64,6 +75,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return remoteTopoService.save(topoJson);
 	}
 
+	/**
+	 * 获取流文件路径
+	 *
+	 * @param flowId 流id
+	 * @return {@link String}
+	 */
 	@Override
 	public String getFlowFilePath(String flowId) {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
@@ -79,12 +96,28 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return flowFilePath;
 	}
 
+	/**
+	 * 获取节点流上下文列表
+	 *
+	 * @param mpSceneId 场景id
+	 * @param topoId    拓扑id
+	 * @param nodeId    节点id
+	 * @return {@link List}<{@link FlowInfo}>
+	 */
 	@Override
 	public List<FlowInfo> getNodeFlowContextList(String mpSceneId, String topoId, String nodeId) {
 		List<ElementFlow> elementFlowList = getNodeFlowList(mpSceneId, topoId, nodeId);
 		return BeanUtils.deepCopyList(elementFlowList, FlowInfo.class);
 	}
 
+	/**
+	 * 获取节点流列表
+	 *
+	 * @param mpSceneId 场景id
+	 * @param topoId    拓扑id
+	 * @param nodeId    节点id
+	 * @return {@link List}<{@link ElementFlow}>
+	 */
 	@Override
 	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
@@ -109,7 +142,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return nodeFlowList;
 	}
 
-	/**获取cpFlow*/
+	/**
+	 * 获取cp流获取cpFlow@param mpSceneId 场景id
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@link CpFlow}
+	 */
 	private CpFlow getCpFlow(String mpSceneId, String topoId) {
 
 		// 1.创建变量
@@ -138,7 +176,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return cpFlow;
 	}
 
-	/**过滤流量列表*/
+	/**
+	 * 过滤流列表过滤流量列表@param elementFlowList 元素流列表
+	 *
+	 * @param interactiveType 互动类型
+	 * @param page            页面
+	 * @return {@link ListRsp}<{@link ElementFlow}>
+	 */
 	private ListRsp<ElementFlow> filterFlowList(List<ElementFlow> elementFlowList,
 			Integer interactiveType, Page page) {
 
@@ -155,6 +199,14 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return flowListRsp;
 	}
 
+	/**
+	 * 设置元素流状态
+	 *
+	 * @param elementFlowList 元素流列表
+	 * @param mpSceneId       场景id
+	 * @param nodeId          节点id
+	 * @return {@link List}<{@link ElementFlow}>
+	 */
 	@Override
 	public List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList,
 			String mpSceneId, String nodeId) {
@@ -168,7 +220,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return elementFlowList;
 	}
 
-	/**启动流量前校验流量任务状态*/
+	/**
+	 * 检查流任务状态启动流量前校验流量任务状态@param mpSceneId 场景id
+	 *
+	 * @param nodeId 节点id
+	 * @return {@link Boolean}
+	 */
 	private Boolean checkFlowTaskStatus(String mpSceneId, String nodeId) {
 
 		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
@@ -185,7 +242,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
-	/**获取节点流量任务状态*/
+	/**
+	 * 获取流任务状态获取节点流量任务状态@param mpSceneId 场景id
+	 *
+	 * @param nodeId 节点id
+	 * @return {@link Integer}
+	 */
 	private Integer getFlowTaskStatus(String mpSceneId, String nodeId) {
 
 		FlowRecordContext flowRecordContext = new FlowRecordContext(mpSceneId, nodeId, null);
@@ -209,6 +271,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return taskStatus;
 	}
 
+	/**
+	 * 获取cr流列表
+	 *
+	 * @param context 上下文
+	 * @return {@link ListRsp}<{@link ElementFlow}>
+	 */
 	@Override
 	public ListRsp<ElementFlow> getCrFlowList(ElementFlowListContext context) {
 
@@ -225,6 +293,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return flowListRsp;
 	}
 
+	/**
+	 * 更新流参数
+	 *
+	 * @param flowOpsContext 流行动背景下
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean updateFlowParam(FlowOpsContext flowOpsContext) {
 
@@ -246,6 +320,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return result;
 	}
 
+	/**
+	 * 开始流
+	 *
+	 * @param mpSceneId  场景id
+	 * @param nodeId     节点id
+	 * @param flows      流
+	 * @param businessId 业务标识
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean startFlows(String mpSceneId, String nodeId, List<FlowInfoContext> flows,
 			String businessId) {
@@ -278,6 +361,15 @@ public class CrSceneServiceImpl implements CrSceneService {
 		return true;
 	}
 
+	/**
+	 * 开始流
+	 *
+	 * @param mpSceneId  场景id
+	 * @param nodeId     节点id
+	 * @param runType    运行类型
+	 * @param businessId 业务标识
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean startAllFlows(String mpSceneId, String nodeId, Integer runType,
 			String businessId) {

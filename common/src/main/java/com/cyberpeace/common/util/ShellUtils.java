@@ -10,6 +10,12 @@ import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 脚本 工具
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 public class ShellUtils {
 

@@ -10,8 +10,12 @@ import lombok.Data;
 import lombok.Getter;
 
 /**
+ * 业务模板
  * 靶场模板公共信息模型
- * */
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("cr_business_template")
 public class BusinessTemplate extends AuthTable {

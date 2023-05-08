@@ -1,8 +1,15 @@
 package com.cyberpeace.cs.service.context;
 
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
+
 import lombok.Data;
 
+/**
+ * 聊天ws消息标识符
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ChatWsMessageIdentifier extends WsMessageIdentifier {
 

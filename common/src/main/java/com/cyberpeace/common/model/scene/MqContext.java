@@ -2,6 +2,12 @@ package com.cyberpeace.common.model.scene;
 
 import java.io.Serializable;
 
+/**
+ * mq上下文
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class MqContext implements Serializable {
 
 	private String USER_ID;

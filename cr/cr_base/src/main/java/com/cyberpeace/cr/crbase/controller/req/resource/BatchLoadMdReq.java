@@ -13,6 +13,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 批量装载md请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @Slf4j
 public class BatchLoadMdReq implements Serializable {

@@ -9,6 +9,8 @@ import lombok.Data;
 
 /**
  * 角色数据
+ @author cyberpeace
+ @date 2023/05/06
  */
 @Data
 public class RoleData<T> {

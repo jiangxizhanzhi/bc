@@ -15,6 +15,12 @@ import com.cyberpeace.cs.service.impl.MessageListener;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 测试场景事件侦听器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 @Slf4j
 public class TestSceneEventListener extends MessageListener {
@@ -50,6 +56,12 @@ public class TestSceneEventListener extends MessageListener {
 		return true;
 	}
 
+	/**
+	 * 推数据到页面
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 */
 	private void pushDataToWeb(String data, String businessId) {
 		// 构建需要向页面推送的消息上下文
 		CrSceneWsMessageIdentifier identifier = new CrSceneWsMessageIdentifier();

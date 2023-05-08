@@ -1,7 +1,11 @@
 package com.cyberpeace.common.constant;
 
 /**
+ * 错误代码
  * 统一错误吗
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface ErrorCode {
 

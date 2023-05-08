@@ -7,7 +7,11 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import lombok.Data;
 
 /**
+ *
  * 任务评估模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionEvaluationContext {

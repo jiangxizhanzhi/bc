@@ -12,7 +12,10 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 
 /**
+ * cr角色服务
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface CrRoleService extends IService<CrRole> {
 

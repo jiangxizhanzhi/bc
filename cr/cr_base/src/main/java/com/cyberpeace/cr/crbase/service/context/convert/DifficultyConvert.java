@@ -4,10 +4,14 @@ import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 
 /**
  * 资管难度转换
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 
-	PRIMARY(1, "低"), INTERMEDIATE(2, "中"), ADVANCED(3, "高");;
+	PRIMARY(1, "低"), INTERMEDIATE(2, "中"), ADVANCED(3, "高");
+	;
 
 	DifficultyConvert(Integer difficulty, String desc) {
 		this.difficulty = difficulty;

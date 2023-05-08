@@ -2,46 +2,75 @@ package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.cyberpeace.common.baseinterface.GenericEnum;
-import com.cyberpeace.integratation.service.impl.SituationEnvService;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 评估链接返回
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class EvaluateUrlRes implements Serializable {
 
+	/**
+	 * 评估链接
+	 */
 	@ApiModelProperty("评估链接")
 	private String url;
 
-	@Autowired
-	private SituationEnvService situationEnvService;
-
+	/**
+	 * 获取url
+	 *
+	 * @return {@code String}
+	 */
 	public String getUrl() {
 		return this.url;
 	}
 
+	/**
+	 * 角色
+	 *
+	 * @author chenhy
+	 * @date 2023/05/06
+	 */
 	public enum Role implements GenericEnum {
 
-		WHITE(0, "白方"), RED(1, "红方"), BLUE(2, "蓝方");
+		/**
+		 * 白方
+		 */
+		WHITE(0, "白方"),
 
+		/**
+		 * 红方
+		 */
+		RED(1, "红方"),
+
+		/**
+		 * 蓝方
+		 */
+		BLUE(2, "蓝方");
+
+		/**
+		 * 代码
+		 */
 		@Getter
 		private Integer code;
 
+		/**
+		 * 描述
+		 */
 		@Getter
 		private String desc;
 
-		private Role(Integer code, String desc) {
+		Role(Integer code, String desc) {
 			this.code = code;
 			this.desc = desc;
 		}
-
-	}
-
-	public EvaluateUrlRes(String runId, String role) {
 
 	}
 

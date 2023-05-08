@@ -6,7 +6,11 @@ import java.util.List;
 import lombok.Data;
 
 /**
+ * cr角色配置rb
  * 红蓝后台模板的角色配置
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrRoleConfigRb implements Serializable {

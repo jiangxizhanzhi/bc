@@ -53,34 +53,21 @@
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
         <common.version>0.0.2-SNAPSHOT</common.version>
-        <evaluation.version>0.0.1-SNAPSHOT</evaluation.version>
         <situation.version>0.0.1-SNAPSHOT</situation.version>
         <integration.version>0.0.1-SNAPSHOT</integration.version>
         <template.version>0.0.2-SNAPSHOT</template.version>
-        <rtks.version>0.0.1-SNAPSHOT</rtks.version>
         <gateway.version>0.0.1-SNAPSHOT</gateway.version>
         <cr.version>0.0.1-SNAPSHOT</cr.version>
         <cr.base.version>0.0.1-SNAPSHOT</cr.base.version>
-        <cr.team.train.version>0.0.1-SNAPSHOT</cr.team.train.version>
-        <cr.single.train.version>0.0.1-SNAPSHOT</cr.single.train.version>
-        <cr.redvsvblue.version>0.0.1-SNAPSHOT</cr.redvsvblue.version>
-        <cr.tool.version>0.0.1-SNAPSHOT</cr.tool.version>
-        <cr.evaluation.version>0.0.1-SNAPSHOT</cr.evaluation.version>
-        <oj.base.version>0.0.1-SNAPSHOT</oj.base.version>
-        <oj.practice.version>0.0.1-SNAPSHOT</oj.practice.version>
-        <oj.course.version>0.0.1-SNAPSHOT</oj.course.version>
-        <oj.person.version>0.0.1-SNAPSHOT</oj.person.version>
         <behavioral.simulation.version>0.0.1-SNAPSHOT</behavioral.simulation.version>
     </properties>
 
     <modules>
         <module>common</module>
-        <module>rtks</module>
         <module>integration</module>
         <module>template</module>
         <module>gateway</module>
         <module>cr</module>
-        <module>oj</module>
         <module>common-service</module>
         <module>situation</module>
         <module>behavioral-simulation</module>

@@ -7,6 +7,9 @@ import lombok.Data;
 
 /**
  * 动态数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class DynamicData {

@@ -15,6 +15,12 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * cr常量服务impl
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 @Slf4j
 public class CrConstantsServiceImpl implements CrConstantsService {
@@ -24,6 +30,12 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 
 	private volatile Map<Integer, List<CrConstantsConfig>> cache = Maps.newHashMap();
 
+	/**
+	 * 通过类型获取
+	 *
+	 * @param type 类型
+	 * @return {@link List}<{@link CrConstantsConfig}>
+	 */
 	@Override
 	public List<CrConstantsConfig> getByType(Integer type) {
 		if (cache.isEmpty()) {
@@ -36,6 +48,9 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 	}
 
+	/**
+	 * 初始化
+	 */
 	private synchronized void init() {
 		if (cache.isEmpty()) {
 			List<CrConstantsConfig> configs = crConstantsConfigMapper.getAll();
@@ -49,6 +64,13 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 	}
 
+	/**
+	 * 验证类型
+	 *
+	 * @param type 类型
+	 * @param code 代码
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean validateType(Integer type, Integer code) {
 		if (cache.isEmpty()) {

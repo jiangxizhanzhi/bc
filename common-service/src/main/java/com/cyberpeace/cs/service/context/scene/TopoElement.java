@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import lombok.Data;
 
+/**
+ * 拓扑元素
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class TopoElement implements Serializable {
 

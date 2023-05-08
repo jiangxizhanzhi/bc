@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ *
  * 任务编排中间模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MissionSchemeObject<T> implements Serializable {

@@ -1,43 +1,93 @@
 package com.cyberpeace.bs.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalTime;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-
+/**
+ * 用户实例
+ *
+ * @author SN
+ * @date 2023/05/06
+ */
 @Data
 @TableName("bs_user_instance")
 public class UserInstance implements Serializable {
 
-	private Integer id;
+    /**
+     * id
+     */
+    private Integer id;
 
-	private String userName;
+    /**
+     * 用户名
+     */
+    private String userName;
 
-	private String userTypeId;
+    /**
+     * 用户类型id
+     */
+    private String userTypeId;
 
-	private String userType;
+    /**
+     * 用户类型
+     */
+    private String userType;
 
-	private LocalTime startTime;
+    /**
+     * 开始时间
+     */
+    private LocalTime startTime;
 
-	private LocalTime endTime;
+    /**
+     * 结束时间
+     */
+    private LocalTime endTime;
 
-	private Integer accessConfig;
+    /**
+     * 访问配置
+     */
+    private Integer accessConfig;
 
-	private String behaviorList;
+    /**
+     * 行为列表
+     */
+    private String behaviorList;
 
-	private String behaviorVariable;
+    /**
+     * 行为变量
+     */
+    private String behaviorVariable;
 
-	private Integer behaviorCount;
+    /**
+     * 行为统计
+     */
+    private Integer behaviorCount;
 
-	private String accessHabit;
+    /**
+     * 访问习惯
+     */
+    private String accessHabit;
 
-	private Boolean bandwidthLimited;
+    /**
+     * 是否限制带宽
+     */
+    private Boolean bandwidthLimited;
 
-	private Integer bandwidth;
+    /**
+     * 带宽
+     */
+    private Integer bandwidth;
 
-	private String userSimulatorId;
+    /**
+     * 用户仪表id
+     */
+    private String userSimulatorId;
 
-	private String userModelId;
+    /**
+     * 用户模型id
+     */
+    private String userModelId;
 }

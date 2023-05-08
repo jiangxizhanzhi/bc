@@ -7,7 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Sets;
 
 /**
+ * ws路径
  * 对外暴露的websocket路径
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public class WsPath {
 
@@ -38,6 +42,9 @@ public class WsPath {
 
 	public static final String SITUATION = "/ws/dashboard";
 
+	/**
+	 * 缓存
+	 */
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {
@@ -55,6 +62,12 @@ public class WsPath {
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
 	}
 
+	/**
+	 * 有效路径
+	 *
+	 * @param path 路径
+	 * @return boolean
+	 */
 	public static boolean validPath(String path) {
 		if (StringUtils.isBlank(path)) {
 			return false;

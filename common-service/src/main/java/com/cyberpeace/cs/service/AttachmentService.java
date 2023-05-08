@@ -9,6 +9,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.context.AttachmentBo;
 
+/**
+ * 附件服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface AttachmentService extends IService<Attachment> {
 
 	/**
@@ -27,10 +33,11 @@ public interface AttachmentService extends IService<Attachment> {
 	List<Attachment> batchGetByIds(List<String> attachmentIds);
 
 	/**
+	 * 创建
 	 *
-	 * @param filename
-	 * @param filePath
-	 * @return
+	 * @param filename 文件名
+	 * @param filePath 文件路径
+	 * @return {@link AttachmentBo}
 	 */
 	AttachmentBo create(String filename, String filePath);
 
@@ -64,24 +71,37 @@ public interface AttachmentService extends IService<Attachment> {
 	AttachmentBo copyFile(String originPath, Integer type, Boolean insert, Boolean renameFile);
 
 	/**
+	 * 批量插入
 	 * 文件目录插入数据库
-	 * @param attachmentPaths
-	 * @return
+	 *
+	 * @param attachmentPaths 附件路径
+	 * @return {@link List}<{@link String}>
 	 */
 	List<String> batchInsert(List<String> attachmentPaths);
 
 	/**
+	 * 加载图片
 	 * 导入场景模板时，将图片存入统一文件夹，插入或更新数据库条目
+	 *
+	 * @param imageId  形象标识
+	 * @param fileName 文件名称
+	 * @param imageDir dir形象
+	 * @return {@link Boolean}
 	 */
 	Boolean loadImage(String imageId, String fileName, String imageDir);
 
 	/**
 	 * 资管平台导入时，图片附件插入数据库
+	 *
+	 * @param images 图片
 	 */
 	void loadZiguanImages(Map<String, String> images);
 
 	/**
 	 * 判断文件是否存在
+	 *
+	 * @param attachmentId 附件标识
+	 * @return {@link Boolean}
 	 */
 	Boolean isExist(String attachmentId);
 

@@ -1,11 +1,13 @@
 package com.cyberpeace.situation.controller.req;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
+ * 数据源请求
+ *
  * @Author xuxz
  * @Date 5/12/2022 下午5:24
  */
@@ -13,26 +15,51 @@ import java.io.Serializable;
 @Data
 public class DataSourceReq implements Serializable {
 
-    @ApiModelProperty("查询sql")
-    private String sql;
+	/**
+	 * 查询sql
+	 */
+	@ApiModelProperty("查询sql")
+	private String sql;
 
-    @ApiModelProperty(value = "数据源id", required = true)
-    private String resourceId;
+	/**
+	 * 数据源id
+	 */
+	@ApiModelProperty(value = "数据源id", required = true)
+	private String resourceId;
 
-    @ApiModelProperty("表名称")
-    private String tableName;
+	/**
+	 * 表名称
+	 */
+	@ApiModelProperty("表名称")
+	private String tableName;
 
-    @ApiModelProperty("数据库名称")
-    private String dbName;
+	/**
+	 * 数据库名称
+	 */
+	@ApiModelProperty("数据库名称")
+	private String dbName;
 
-    @ApiModelProperty("自定义参数列表")
-    private String customParams;
+	/**
+	 * 自定义参数列表
+	 */
+	@ApiModelProperty("自定义参数列表")
+	private String customParams;
 
-    public DataSourceReq(String sql, String resourceId, String dbName, String tableName, String customParams) {
-        this.sql = sql;
-        this.dbName = dbName;
-        this.resourceId = resourceId;
-        this.tableName = tableName;
-        this.customParams = customParams;
-    }
+	/**
+	 * 构造函数
+	 *
+	 * @param sql          查询sql
+	 * @param resourceId   资源id
+	 * @param dbName       数据库名称
+	 * @param tableName    表名称
+	 * @param customParams 自定义参数列表
+	 */
+	public DataSourceReq(String sql, String resourceId, String dbName, String tableName,
+			String customParams) {
+		this.sql = sql;
+		this.dbName = dbName;
+		this.resourceId = resourceId;
+		this.tableName = tableName;
+		this.customParams = customParams;
+	}
 }

@@ -5,6 +5,12 @@ import java.io.Serializable;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 场景节点要求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class SceneNodeReq implements Serializable {
 

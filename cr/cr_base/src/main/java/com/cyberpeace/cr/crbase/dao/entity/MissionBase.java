@@ -12,6 +12,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * 任务基础
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class MissionBase extends BaseTable {
 

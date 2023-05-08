@@ -7,8 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.situation.constant.PublicStatus;
-import com.cyberpeace.situation.constant.ReplayMode;
+import com.cyberpeace.situation.constant.dashboard.PublicStatus;
+import com.cyberpeace.situation.constant.dashboard.ReplayMode;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;

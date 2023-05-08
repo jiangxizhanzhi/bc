@@ -8,9 +8,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/*
- * 后台使用的查询类
- */
+/**
+ * 业务模板查询
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ *//*
+	* 后台使用的查询类
+	*/
 @ApiModel
 @Data
 public class BusinessTemplateQuery extends PageReqBase {

@@ -5,7 +5,11 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
+ *
  * 任务得分
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class CrTaskScore implements Serializable {

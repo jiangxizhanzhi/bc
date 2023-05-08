@@ -30,6 +30,12 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 聊天网络套接字处理程序
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 @Component
 public class ChatWebSocketHandler extends MyWebSocketHandler {
@@ -40,6 +46,9 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return CHAT_TYPE.COMMON.type;
 	}
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		if (register.containsKey(declareMessageType())) {
@@ -92,6 +101,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return false;
 	}
 
+	/**
+	 * 连接建立之后
+	 *
+	 * @param session 会话
+	 * @throws Exception 异常
+	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		WebSocketConnectionContext webSocketContext = (WebSocketConnectionContext) session
@@ -113,6 +128,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 
 	}
 
+	/**
+	 * 得到处理程序
+	 *
+	 * @param webSocketConnectionContext 网络套接字连接上下文
+	 * @return {@link ChatWebSocketHandler}
+	 */
 	private ChatWebSocketHandler getHandler(WebSocketConnectionContext webSocketConnectionContext) {
 		String businessType = webSocketConnectionContext.getOriginParams()
 				.get(JsonKeyConstant.BUSINESS_TYPE);
@@ -124,6 +145,13 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return register.get(Integer.valueOf(businessType));
 	}
 
+	/**
+	 * 处理消息
+	 *
+	 * @param session 会话
+	 * @param message 消息
+	 * @throws Exception 异常
+	 */
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
 			throws Exception {
@@ -165,10 +193,13 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 	}
 
 	/**
+	 * 推动聊天信息
 	 * 好友消息推送 默认推送给好友
-	 * @param identifier
-	 * @param mine
-	 * @param message
+	 *
+	 * @param identifier 标识符
+	 * @param mine       我
+	 * @param message    消息
+	 * @param role       角色
 	 */
 	public void pushChatMessage(ChatWsMessageIdentifier identifier, UserInfo mine, String message,
 			String role) {
@@ -254,6 +285,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		return chatMessage;
 	}
 
+	/**
+	 * 消息类型
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum MESSAGE_TYPE implements GenericEnum {
 
 		/** 信息类型*/
@@ -275,6 +312,12 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		}
 	}
 
+	/**
+	 * 聊天类型
+	 *
+	 * @author cyberpeace
+	 * @date 2023/05/06
+	 */
 	public enum CHAT_TYPE implements GenericEnum {
 
 		/** 聊天室类型*/

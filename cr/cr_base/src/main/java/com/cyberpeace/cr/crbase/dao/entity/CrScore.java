@@ -8,6 +8,12 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * cr得分
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName(value = "cr_score")
 public class CrScore extends BaseTable {

@@ -9,6 +9,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 基表
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class BaseTable implements Serializable {
 

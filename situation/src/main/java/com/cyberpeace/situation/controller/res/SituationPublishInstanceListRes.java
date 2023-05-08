@@ -1,35 +1,64 @@
 package com.cyberpeace.situation.controller.res;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
-
+/**
+ * 态势发布实例列表返回
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class SituationPublishInstanceListRes implements Serializable {
 
-    @ApiModelProperty(value = "资源id")
-    private String resourceId;
+	/**
+	 * 资源id
+	 */
+	@ApiModelProperty(value = "资源id")
+	private String resourceId;
 
-    @ApiModelProperty(value = "名称")
-    private String name;
+	/**
+	 * 名称
+	 */
+	@ApiModelProperty(value = "名称")
+	private String name;
 
-    @ApiModelProperty(value = "类型")
-    private String category;
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty(value = "类型")
+	private String category;
 
-    @ApiModelProperty(value = "大屏状态")
-    private String status;
+	/**
+	 * 大屏状态
+	 */
+	@ApiModelProperty(value = "大屏状态")
+	private String status;
 
-    @ApiModelProperty(value = "想定方案名称")
-    private String planName;
+	/**
+	 * 想定方案名称
+	 */
+	@ApiModelProperty(value = "想定方案名称")
+	private String planName;
 
-    @ApiModelProperty(value = "任务名称")
-    private String taskName;
+	/**
+	 * 任务名称
+	 */
+	@ApiModelProperty(value = "任务名称")
+	private String taskName;
 
-    @ApiModelProperty(value = "科目名称")
-    private String subjectName;
+	/**
+	 * 科目名称
+	 */
+	@ApiModelProperty(value = "科目名称")
+	private String subjectName;
 
-    @ApiModelProperty(value = "模板名称")
-    private String templateName;
+	/**
+	 * 模板名称
+	 */
+	@ApiModelProperty(value = "模板名称")
+	private String templateName;
 }

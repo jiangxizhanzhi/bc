@@ -1,11 +1,17 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * 导出训练md请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ExportTrainMDReq implements Serializable {
 

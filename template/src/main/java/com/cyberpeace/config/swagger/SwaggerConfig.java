@@ -26,24 +26,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 public class SwaggerConfig {
 
 //	@Bean
-//	public Docket apiRtks() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.rtks"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.groupName("rtks");
-//	}
-//
-//	@Bean
 //	public Docket apiTemplate() {
 //		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
 //				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 //				.groupName("demo");
-//	}
-//
-//	@Bean
-//	public Docket apiCr() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.cr"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.groupName("cr");
 //	}
 
 	@Bean
@@ -52,20 +38,6 @@ public class SwaggerConfig {
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
 				.groupName("cs");
 	}
-
-//	@Bean
-//	public Docket apiOj() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.oj"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.groupName("oj");
-//	}
-//
-//	@Bean
-//	public Docket apiEs() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.evaluate"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.groupName("es");
-//	}
 
 	@Bean
 	public Docket apiSituation() {

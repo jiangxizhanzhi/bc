@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
@@ -23,7 +22,10 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.google.common.collect.Maps;
 
 /**
+ * cr分数服务impl
  *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Service
 public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements CrScoreService {
@@ -40,11 +42,25 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	@Autowired
 	CrTaskService crTaskService;
 
+	/**
+	 * 通过房间id和用户获取
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link CrScore}
+	 */
 	@Override
 	public CrScore getByRoomIdAndUser(String roomId, String userId) {
 		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
 	}
 
+	/**
+	 * 获取任务统计数据
+	 *
+	 * @param roomId     房间id
+	 * @param crRoleList cr角色列表
+	 * @return {@link MissionsStatistics}
+	 */
 	@Override
 	public MissionsStatistics getMissionsStatistics(String roomId, List<CrRole> crRoleList) {
 		MissionsStatistics missionsStatistics = new MissionsStatistics();
@@ -69,11 +85,25 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return missionsStatistics;
 	}
 
+	/**
+	 * 通过房间id和用户id获取
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id
+	 * @return {@link List}<{@link CrScore}>
+	 */
 	@Override
 	public List<CrScore> selectByRoomIdAndUserIds(String roomId, List<String> userIds) {
 		return crScoreMapper.selectByRoomIdAndUserIds(roomId, userIds);
 	}
 
+	/**
+	 * 获取任务类别
+	 *
+	 * @param roomId     房间id
+	 * @param crRoleList cr角色列表
+	 * @return {@link Map}<{@link String}, {@link Integer}>
+	 */
 	@Override
 	public Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList) {
 		Map<String, Integer> missionsCategory = Maps.newHashMap();
@@ -86,7 +116,8 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				.collect(Collectors.toMap(MissionCategory::getResourceId, bo -> bo.getName()));
 
 		for (Mission mission : missionList) {
-			Integer count = missionsCategory.getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
+			Integer count = missionsCategory
+					.getOrDefault(missionCategoryMap.get(mission.getCategoryId()), 0) + 1;
 			missionsCategory.put(missionCategoryMap.get(mission.getCategoryId()), count);
 		}
 

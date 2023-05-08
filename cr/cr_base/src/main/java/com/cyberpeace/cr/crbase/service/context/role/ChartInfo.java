@@ -8,8 +8,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
-/**
+/**图表信息
  * 角色图表
+ @author cyberpeace
+ @date 2023/05/06
  */
 @Data
 public class ChartInfo {

@@ -10,6 +10,12 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 
+/**
+ * cr任务服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface CrTaskService {
 
 	/**

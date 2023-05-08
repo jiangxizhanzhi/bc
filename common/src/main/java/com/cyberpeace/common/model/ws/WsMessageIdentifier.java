@@ -8,9 +8,11 @@ import com.cyberpeace.common.util.ObjUtil;
 import com.google.common.collect.Maps;
 
 /**
+ * ws消息标识符
  * websocket标记的基类。
  *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 public class WsMessageIdentifier implements Serializable {
 
@@ -46,18 +48,38 @@ public class WsMessageIdentifier implements Serializable {
 		return stringBuilder.toString();
 	}
 
+	/**
+	 * 得到用户id
+	 *
+	 * @return {@link String}
+	 */
 	public String getUserId() {
 		return userId;
 	}
 
+	/**
+	 * 设置用户id
+	 *
+	 * @param userId 用户id
+	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	/**
+	 * 获取路径
+	 *
+	 * @return {@link String}
+	 */
 	public String getPath() {
 		return path;
 	}
 
+	/**
+	 * 设置路径
+	 *
+	 * @param path 路径
+	 */
 	public void setPath(String path) {
 		this.path = path;
 	}

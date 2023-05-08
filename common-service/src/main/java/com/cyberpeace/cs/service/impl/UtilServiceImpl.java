@@ -1,18 +1,26 @@
 package com.cyberpeace.cs.service.impl;
 
+import java.io.File;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.impl.RemoteServerEnvService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.List;
-
+/**
+ * 工具服务impl
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 public class UtilServiceImpl implements UtilService {
 
@@ -31,6 +39,9 @@ public class UtilServiceImpl implements UtilService {
 	@Autowired
 	private RemoteServerEnvService remoteServerEnvService;
 
+	/**
+	 * 初始化
+	 */
 	@PostConstruct
 	public void init() {
 		FDFS_PREFIX = ConfigUtil.getContextProperty("common.fastdfs.url.prefix");
@@ -41,6 +52,12 @@ public class UtilServiceImpl implements UtilService {
 		HANDOUT_CONTENT_URL = ConfigUtil.getContextProperty("office.handout.content");
 	}
 
+	/**
+	 * 处理程序文件url
+	 *
+	 * @param fileUrl 文件url
+	 * @return {@link String}
+	 */
 	@Override
 	public String handlerFileUrl(String fileUrl) {
 
@@ -57,6 +74,13 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * 办公地址
+	 *
+	 * @param fileUrl 文件url
+	 * @param fileId  文件标识
+	 * @return {@link String}
+	 */
 	@Override
 	public String officeUrl(String fileUrl, String fileId) {
 
@@ -78,6 +102,12 @@ public class UtilServiceImpl implements UtilService {
 		return officeViewUrl;
 	}
 
+	/**
+	 * 替换文件url
+	 *
+	 * @param fileUrl 文件url
+	 * @return {@link String}
+	 */
 	@Override
 	public String replaceFileUrl(String fileUrl) {
 
@@ -103,6 +133,12 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * 获得真正路径
+	 *
+	 * @param fileUrl 文件url
+	 * @return {@link String}
+	 */
 	@Override
 	public String getRealPath(String fileUrl) {
 
@@ -130,6 +166,13 @@ public class UtilServiceImpl implements UtilService {
 		return fileUrl;
 	}
 
+	/**
+	 * 处理程序文件
+	 *
+	 * @param content      内容
+	 * @param destFilePath 桌子文件路径
+	 * @return {@link String}
+	 */
 	@Override
 	public String handlerMarkdownFile(String content, String destFilePath) {
 		// 匹配src图片
@@ -138,8 +181,9 @@ public class UtilServiceImpl implements UtilService {
 
 		List<String> realPathList = LocalStringUtil.getMatchUrlStr(content,
 				PatternConstant.MARKDOWN_IMAGE_MD_URL);
-//		List<String> realPathList = StreamApiUtils.map(matchList, realPath -> LocalStringUtil
-//				.getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
+		// List<String> realPathList = StreamApiUtils.map(matchList, realPath ->
+		// LocalStringUtil
+		// .getFirstMatchStr(realPath, PatternConstant.MARKDOWN_IMAGE_URL));
 		realPathList.addAll(matchSrcList);
 
 		// 文件拷贝到nginx可转发目录 同时生成nginx转发地址
@@ -157,10 +201,16 @@ public class UtilServiceImpl implements UtilService {
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 
+	/**
+	 * 替换md文件
+	 *
+	 * @param content 内容
+	 * @return {@link String}
+	 */
 	@Override
 	public String replaceMarkdownFile(String content) {
 
-		//获取过滤掉代码块的markdown内容
+		// 获取过滤掉代码块的markdown内容
 		String filterCodeContent = MdUtil.filterCodeContent(content);
 
 		// 将文件中的绝对路径替换为nginx可访问路径
@@ -176,7 +226,7 @@ public class UtilServiceImpl implements UtilService {
 			String fileUrl = replaceFileUrl(realPath);
 			return handlerFileUrl(fileUrl);
 		});
-		//比对内容为过滤代码块后的内容，实际替换是未过滤的内容
+		// 比对内容为过滤代码块后的内容，实际替换是未过滤的内容
 		return LocalStringUtil.replaceAll(content, realPathList, nginxUrlList);
 	}
 }

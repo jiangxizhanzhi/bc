@@ -5,10 +5,13 @@ import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 
 /**
  * 资管训练类型转换
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public enum BusinessTypeConvert implements GenericEnum, MdConvertEnum<Integer, String> {
 
-	SINGLE(1, "单兵训练"),TEAM(3, "团队训练"),REDVSBLUE(4,"红蓝对抗");
+	SINGLE(1, "单兵训练"), TEAM(3, "团队训练"), REDVSBLUE(4, "红蓝对抗");
 
 	private Integer code;
 

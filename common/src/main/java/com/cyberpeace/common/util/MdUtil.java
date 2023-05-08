@@ -23,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MdUtil {
 
+	/**
+	 * 医学博士工具
+	 */
 	private MdUtil() {}
 
 	/**
@@ -91,12 +94,12 @@ public class MdUtil {
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
 	 * @param mdFile md文件
-     * @param content md内容
+	 * @param content md内容
 	 * @return
 	 */
 	public static String dumpMarkdownImages(File mdFile, String content) {
-        String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
-        FileUtil.mkdirs(img);
+		String img = new File(mdFile.getParentFile().getAbsolutePath(), "img").getAbsolutePath();
+		FileUtil.mkdirs(img);
 
 		// 匹配文件路径
 		String withOutCode = filterCodeContent(content);
@@ -114,44 +117,49 @@ public class MdUtil {
 		// 文件路径替换
 		for (String imagePath : matchStrSet) {
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
-            String realPath = getRealPath(imagePath);
-            File source = new File(realPath);
-            if (!source.exists()) {
-                throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
-            }
+			String realPath = getRealPath(imagePath);
+			File source = new File(realPath);
+			if (!source.exists()) {
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
+			}
 
-            File dist = new File(img, source.getName());
-            if (!dist.exists()) {
-                FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
-            }
+			File dist = new File(img, source.getName());
+			if (!dist.exists()) {
+				FileUtil.copyFile(source.getAbsolutePath(), dist.getAbsolutePath(), false);
+			}
 
-            content = content.replace(imagePath, "img/" + dist.getName());
+			content = content.replace(imagePath, "img/" + dist.getName());
 		}
 
 		return content;
 	}
 
-    private static String getRealPath(String fileUrl) {
+	/**
+	 * 获得真正路径
+	 *
+	 * @param fileUrl 文件url
+	 * @return {@link String}
+	 */
+	private static String getRealPath(String fileUrl) {
 
-        String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
-        String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
+		String LOCAL_PREFIX = ConfigUtil.getContextProperty("cr.local.file.prefix");
+		String LOCAL_PARENT_PATH = ConfigUtil.getContextProperty("cr.local.upload.path");
 
-        if (StringUtils.isNotBlank(fileUrl)) {
-            if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
-                return fileUrl;
-            }
+		if (StringUtils.isNotBlank(fileUrl)) {
+			if (fileUrl.startsWith(LOCAL_PARENT_PATH)) {
+				return fileUrl;
+			}
 
-            if (fileUrl.startsWith(LOCAL_PREFIX)) {
-                return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
-            }
+			if (fileUrl.startsWith(LOCAL_PREFIX)) {
+				return fileUrl.replace(LOCAL_PREFIX, LOCAL_PARENT_PATH + File.separator);
+			}
 
-            return LOCAL_PARENT_PATH + File.separator + fileUrl;
+			return LOCAL_PARENT_PATH + File.separator + fileUrl;
 
-        }
+		}
 
-        return fileUrl;
-    }
-
+		return fileUrl;
+	}
 
 	/**
 	 * 解读markdown文件内容 替换文件路径 由相对路径替换为绝对路径 用于后续文件复制然后替换
@@ -183,8 +191,8 @@ public class MdUtil {
 
 		// 文件路径替换
 		for (String imagePath : matchStrSet) {
-//			String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
-//					PatternConstant.MARKDOWN_IMAGE_URL);
+			// String imagePath = LocalStringUtil.getFirstMatchStr(matchStr,
+			// PatternConstant.MARKDOWN_IMAGE_URL);
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
 			String relativePath = imagePath;
 			if (imagePath.startsWith(CommonConstant.PERIOD)) {
@@ -209,14 +217,25 @@ public class MdUtil {
 	 */
 	public static String filterCodeContent(String content) {
 		// 匹配```代码块```
-		List<String> matchStr = LocalStringUtil.getMatchStr(content, PatternConstant.MULTIPLE_CODING_BLOCK);
+		List<String> matchStr = LocalStringUtil.getMatchStr(content,
+				PatternConstant.MULTIPLE_CODING_BLOCK);
 		String tmp = LocalStringUtil.replaceToBlank(content, matchStr);
 
 		// 匹配`代码块`｜``代码块``
-		List<String> singleMatchStr = LocalStringUtil.getMatchStr(tmp, PatternConstant.SINGLE_CODING_BLOCK);
+		List<String> singleMatchStr = LocalStringUtil.getMatchStr(tmp,
+				PatternConstant.SINGLE_CODING_BLOCK);
 		return LocalStringUtil.replaceToBlank(tmp, singleMatchStr);
 	}
 
+	/**
+	 * 附加
+	 *
+	 * @param content 内容
+	 * @param coding  编码
+	 * @param builder 构建器
+	 * @param type    类型
+	 * @return boolean
+	 */
 	private static boolean append(String content, boolean coding, StringBuilder builder, int type) {
 		// 如果开始和结尾在一行里 直接跳过此行
 		boolean singleLine = content.trim().length() >= CommonConstant.FOUR
@@ -236,16 +255,19 @@ public class MdUtil {
 		} else {
 			if (!coding) {
 				String compareContent = content;
-				//当前行内存在字符 ` 时，开始裁剪
+				// 当前行内存在字符 ` 时，开始裁剪
 				while (content.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
 					int firstIndex = content.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE, "");
-					//存在两个`符号时，进行裁剪，否则跳出循环
+					compareContent = compareContent.replaceFirst(CommonConstant.MD_CODING_BLOCK_ONE,
+							"");
+					// 存在两个`符号时，进行裁剪，否则跳出循环
 					if (compareContent.contains(CommonConstant.MD_CODING_BLOCK_ONE)) {
-						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE, 0);
-						content = content.replace(content.substring(firstIndex,secondIndex + 2),"");
+						int secondIndex = compareContent.indexOf(CommonConstant.MD_CODING_BLOCK_ONE,
+								0);
+						content = content.replace(content.substring(firstIndex, secondIndex + 2),
+								"");
 						compareContent = content;
-					}else {
+					} else {
 						break;
 					}
 				}
@@ -268,9 +290,9 @@ public class MdUtil {
 
 	public static File saveAsFileWriter(String content, String savefile) {
 		FileWriter fwriter = null;
-        File file = new File(savefile);
+		File file = new File(savefile);
 		try {
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			fwriter = new FileWriter(savefile);
@@ -285,6 +307,6 @@ public class MdUtil {
 				ex.printStackTrace();
 			}
 		}
-        return file;
+		return file;
 	}
 }

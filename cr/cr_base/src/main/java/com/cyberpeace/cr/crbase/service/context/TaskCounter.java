@@ -5,6 +5,9 @@ import lombok.Getter;
 
 /**
  * 任务统计计数结果
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TaskCounter {

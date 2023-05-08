@@ -7,8 +7,11 @@ import com.cyberpeace.cr.crbase.service.context.TrainingRecord;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-/** 在获取训练记录接口使用
+/**
+ * 培训记录任务返回值 在获取训练记录接口使用
+ *
  * @author 张晋宝
+ * @date 2023/05/06
  */
 @Data
 public class TrainingRecordMissionRsp implements Serializable {

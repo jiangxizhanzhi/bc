@@ -7,7 +7,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 流量列表
+ * 流返回值
+ * 包括流量列表
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class FlowRsp implements Serializable {

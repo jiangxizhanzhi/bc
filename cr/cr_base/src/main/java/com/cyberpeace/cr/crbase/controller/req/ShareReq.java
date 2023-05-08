@@ -7,6 +7,12 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * 授权请求
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class ShareReq {
 

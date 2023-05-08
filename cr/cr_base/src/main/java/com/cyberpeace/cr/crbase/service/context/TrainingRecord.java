@@ -7,6 +7,9 @@ import lombok.Data;
 
 /**
  * 训练记录
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class TrainingRecord {

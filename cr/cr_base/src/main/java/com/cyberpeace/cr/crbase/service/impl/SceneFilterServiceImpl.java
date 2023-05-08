@@ -18,9 +18,21 @@ import com.google.common.collect.Sets;
 
 import lombok.Data;
 
+/**
+ * 场景过滤器服务impl
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 public class SceneFilterServiceImpl implements SceneFilterService {
 
+	/**
+	 * 过滤器可见拓扑
+	 *
+	 * @param topoData 拓扑数据
+	 * @param nodes    节点
+	 */
 	@Override
 	public void filterVisibleTopo(JSONObject topoData, CrRoleNodesData nodes) {
 		if (nodes == null || null == topoData) {
@@ -42,6 +54,14 @@ public class SceneFilterServiceImpl implements SceneFilterService {
 		filterAreas(areas, pieces, elements);
 	}
 
+	/**
+	 * 过滤器元素
+	 *
+	 * @param topoData       拓扑数据
+	 * @param elements       元素
+	 * @param visibleNodeIds 可见节点id
+	 * @param assetNodeIds   资产节点id
+	 */
 	private void filterElements(JSONObject topoData, JSONArray elements,
 			List<String> visibleNodeIds, List<String> assetNodeIds) {
 		// empty topo

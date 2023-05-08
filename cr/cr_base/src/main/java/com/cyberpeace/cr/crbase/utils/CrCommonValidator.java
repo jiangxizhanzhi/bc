@@ -9,6 +9,10 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
 
+/** 校验器
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public class CrCommonValidator {
 
 	/**

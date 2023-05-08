@@ -8,8 +8,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 业务模板返回值
  * 靶场模板公共信息类
- * */
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 public class BusinessTemplateRsp implements Serializable {
 

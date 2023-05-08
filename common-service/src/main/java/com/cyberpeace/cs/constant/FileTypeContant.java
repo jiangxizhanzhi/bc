@@ -1,5 +1,11 @@
 package com.cyberpeace.cs.constant;
 
+/**
+ * 显示文件类型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface FileTypeContant {
 
 	/** 文件类型后缀*/

@@ -5,6 +5,9 @@ import lombok.Data;
 
 /**
  * 统计信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class StatisticalInfo {

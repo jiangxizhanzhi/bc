@@ -8,6 +8,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 
+/**
+ * 任务技能评估
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Data
 @TableName("cr_mission_skillevaluation")
 public class MissionSkillEvaluation {

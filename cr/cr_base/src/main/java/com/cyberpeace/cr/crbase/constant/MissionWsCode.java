@@ -1,7 +1,11 @@
 package com.cyberpeace.cr.crbase.constant;
 
 /**
+ * 任务ws代码
  * 任务相关ws推送code
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 public interface MissionWsCode {
 

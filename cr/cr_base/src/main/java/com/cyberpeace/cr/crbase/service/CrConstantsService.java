@@ -4,6 +4,12 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 
+/**
+ * cr常量服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface CrConstantsService {
 
 	/**

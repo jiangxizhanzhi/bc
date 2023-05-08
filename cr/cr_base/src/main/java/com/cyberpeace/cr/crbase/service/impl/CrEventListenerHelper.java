@@ -18,6 +18,12 @@ import com.cyberpeace.cs.service.context.WsSceneReportBO;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * cr事件监听器助手
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 @Slf4j
 public class CrEventListenerHelper {
@@ -59,10 +65,12 @@ public class CrEventListenerHelper {
 	}
 
 	/**
+	 *
 	 * 构建需要向页面推送的消息上下文
-	 * @param data 
-	 * @param businessId
-	 * @return
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 * @return {@link WebSocketMessageContext}
 	 */
 	public WebSocketMessageContext makeContext(String data, String businessId) {
 		// 构建需要向页面推送的消息上下文

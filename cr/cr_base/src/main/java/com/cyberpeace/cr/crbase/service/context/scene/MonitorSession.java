@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 监控会话
  * 监控中间模型
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class MonitorSession implements Serializable {

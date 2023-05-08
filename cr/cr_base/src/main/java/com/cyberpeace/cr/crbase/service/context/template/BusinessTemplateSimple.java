@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
+ * 业务模板
  * 训练模板简要信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class BusinessTemplateSimple implements Serializable {

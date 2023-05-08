@@ -44,7 +44,10 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * cr任务服务impl
+ *
  * @author SN
+ * @date 2023/05/06
  */
 @Service
 @Slf4j
@@ -56,24 +59,43 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
 			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
+
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
 	@Autowired
 	private MissionMapper missionMapper;
+
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
+
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
 
+	/**
+	 * 通过id获取
+	 *
+	 * @param taskId 任务id
+	 * @return {@link CrTask}
+	 */
 	@Override
 	public CrTask getById(String taskId) {
 		return crTaskMapper.selectById(taskId);
 	}
 
+	/**
+	 * 通过任务和用户获取
+	 *
+	 * @param missionId 任务id
+	 * @param userId    用户id
+	 * @return {@link TaskContext}
+	 */
 	@Override
 	public TaskContext getByMissionAndUser(String missionId, String userId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
@@ -88,11 +110,26 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return taskContext;
 	}
 
+	/**
+	 * 提交任务
+	 *
+	 * @param roomId    房间id
+	 * @param missionId 任务id
+	 * @param answer    回答
+	 */
 	@Override
 	public void submitMissions(String roomId, String missionId, String answer) {
 		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "");
 	}
 
+	/**
+	 * 批量提交任务
+	 *
+	 * @param roomId     房间id
+	 * @param missionIds 任务id
+	 * @param answer     回答
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer batchSubmitMissions(String roomId, List<String> missionIds,
 			Map<String, String> answer) {
@@ -169,6 +206,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	}
 
+	/**
+	 * 通过房间id获取任务上下文
+	 *
+	 * @param roomId 房间id
+	 * @return {@link List}<{@link TaskContext}>
+	 */
 	@Override
 	public List<TaskContext> getTaskContextByRoomId(String roomId) {
 		List<CrTask> taskList = crTaskMapper.selectByRoomId(roomId);
@@ -177,6 +220,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	}
 
+	/**
+	 * 通过房间id和用户获取任务上下文
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id
+	 * @return {@link List}<{@link TaskContext}>
+	 */
 	@Override
 	public List<TaskContext> getTaskContextByRoomIdAndUsers(String roomId, List<String> userIds) {
 		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserIds(roomId, userIds);
@@ -184,6 +234,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return getTaskContext(taskList);
 	}
 
+	/**
+	 * 获取任务上下文
+	 *
+	 * @param taskList 任务列表
+	 * @return {@link List}<{@link TaskContext}>
+	 */
 	private List<TaskContext> getTaskContext(List<CrTask> taskList) {
 		List<TaskContext> taskContextList = new ArrayList<>();
 
@@ -210,6 +266,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return taskContextList;
 	}
 
+	/**
+	 * 通过房间id和用户获取
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link List}<{@link TaskContext}>
+	 */
 	@Override
 	public List<TaskContext> getByRoomIdAndUser(String roomId, String userId) {
 		List<CrTask> taskList = crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
@@ -217,6 +280,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return getTaskContext(taskList);
 	}
 
+	/**
+	 * 开始任务
+	 *
+	 * @param task 任务
+	 */
 	@Override
 	public void startTask(CrTask task) {
 		task.setStatus(CrTask.TaskStatus.STARTED.getCode());
@@ -224,6 +292,13 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		crTaskMapper.updateById(task);
 	}
 
+	/**
+	 * 通过用户id和任务id获取
+	 *
+	 * @param userId    用户id
+	 * @param missionId 任务id
+	 * @return {@link CrTask}
+	 */
 	@Override
 	public CrTask getByUserIdAndMissionId(String userId, String missionId) {
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
@@ -231,104 +306,231 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return task;
 	}
 
+	/**
+	 * 通过房间id和用户id获取
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.selectByRoomIdAndUserId(roomId, userId);
 	}
 
+	/**
+	 * 通过房间id和用户id计数
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.countByRoomIdAndUserId(roomId, userId);
 	}
 
+	/**
+	 * 获取完成
+	 *
+	 * @param roomId 房间id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getFinished(String roomId) {
 		return crTaskMapper.selectByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 统计完成
+	 *
+	 * @param roomId 房间id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countFinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 计数未提交
+	 *
+	 * @param roomId 房间id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countUnsubmitted(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
 	}
 
+	/**
+	 * 计算未完成
+	 *
+	 * @param roomId 房间id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countUnfinished(String roomId) {
 		return crTaskMapper.countByRoomIdAndStatusList(roomId,
 				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 房间id和用户id计算完成数量
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.countByRoomIdAndUserIdAndStatusList(roomId, userId,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 通过房间id和用户id获取完成
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserId(String roomId, String userId) {
 		return crTaskMapper.selectByRoomIdAndUserIdAndStatusList(roomId, userId,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 通过房间id和用户id获取完成
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getFinishedByRoomIdAndUserIds(String roomId, List<String> userIds) {
 		return crTaskMapper.selectByRoomIdAndUserIdsAndStatusList(roomId, userIds,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 通过房间id获取
+	 *
+	 * @param roomId 房间id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getByRoomId(String roomId) {
 		return crTaskMapper.selectByRoomId(roomId);
 	}
 
+	/**
+	 * 通过角色获取
+	 *
+	 * @param roleId 角色id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getByRole(String roleId) {
 		return crTaskMapper.selectByRole(roleId);
 	}
 
+	/**
+	 * 通过角色获取
+	 *
+	 * @param roleIds 角色id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getByRoles(List<String> roleIds) {
 		return crTaskMapper.selectByRoles(roleIds);
 	}
 
+	/**
+	 * 通过任务获取
+	 *
+	 * @param roomId     房间id
+	 * @param missionIds 任务id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getByMissions(String roomId, List<String> missionIds) {
 		return crTaskMapper.selectByRoomIdAndMissionIds(roomId, missionIds);
 	}
 
+	/**
+	 * 通过用户id和任务获取报告
+	 *
+	 * @param roomId     房间id
+	 * @param userIds    用户id
+	 * @param missionIds 任务id
+	 * @return {@link List}<{@link CrTask}>
+	 */
 	@Override
 	public List<CrTask> getReportedByUserIdsAndMissions(String roomId, List<String> userIds,
 			List<String> missionIds) {
 		return crTaskMapper.selectReportedByUserIdsAndMissionIds(roomId, userIds, missionIds);
 	}
 
+	/**
+	 * 用户未报告数量
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countUnreportedByUsers(String roomId, List<String> userIds) {
 		return crTaskMapper.countUnreportedByRoomIdAndUserIds(roomId, userIds);
 	}
 
+	/**
+	 * 任务判断下发
+	 *
+	 * @param missionId 任务id
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean isReleasedByMission(String missionId) {
 		return crTaskMapper.selectByMissionId(missionId) != null;
 	}
 
+	/**
+	 * 通过用户id获取id列表
+	 *
+	 * @param roomId  房间id
+	 * @param userIds 用户id
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getIdsByUserIds(String roomId, List<String> userIds) {
 		return crTaskMapper.selectIdsByRoomIdAndUserIds(roomId, userIds);
 	}
 
+	/**
+	 * 通过用户id获取任务id
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@link List}<{@link String}>
+	 */
 	@Override
 	public List<String> getIdsByOptionalUserId(String roomId, String userId) {
 		return crTaskMapper.selectIdsByRoomIdAndUserId(roomId, userId);
 	}
 
+	/**
+	 * 判断正确
+	 *
+	 * @param userAnswer    用户答案
+	 * @param missionAnswer 任务答案
+	 * @param missionType   任务类型
+	 * @return {@link Boolean}
+	 */
 	private Boolean isCorrect(String userAnswer, String missionAnswer, Integer missionType) {
 		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
 			List<String> userChoices = JsonUtil.toJsonObjectArray(userAnswer, String.class);
@@ -341,6 +543,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 	}
 
+	/**
+	 * 提交答案
+	 *
+	 * @param missionId       任务id
+	 * @param answer          回答
+	 * @param userId          用户id
+	 * @param answerExtension 回答扩展
+	 */
 	@Override
 	public void submitAnswer(String missionId, String answer, String userId,
 			String answerExtension) {
@@ -425,6 +635,16 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		});
 	}
 
+	/**
+	 * 提交评价
+	 *
+	 * @param taskSubmitId   任务提交id
+	 * @param score          分数
+	 * @param detail         细节
+	 * @param reason         原因
+	 * @param evaluateStatus 评估状况
+	 * @param currentUserId  当前用户id
+	 */
 	@Override
 	public void submitEvaluation(String taskSubmitId, Integer score, String detail, Integer reason,
 			Integer evaluateStatus, String currentUserId) {
@@ -480,6 +700,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	}
 
+	/**
+	 * 获取rb任务评价列表
+	 *
+	 * @param missionEvaluationQuery 任务评估查询
+	 * @return {@link IPage}<{@link MissionEvaluationContext}>
+	 */
 	@Override
 	public IPage<MissionEvaluationContext>
 			getRbMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
@@ -493,11 +719,23 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return setMission(data);
 	}
 
+	/**
+	 * 通过任务获取提交
+	 *
+	 * @param resourceId 资源id
+	 * @return {@link List}<{@link CrTaskSubmit}>
+	 */
 	@Override
 	public List<CrTaskSubmit> getOrderedSubmitsByTask(String resourceId) {
 		return crTaskSubmitMapper.selectOrderedSubmitsByTask(resourceId);
 	}
 
+	/**
+	 * 设置任务
+	 *
+	 * @param data 数据
+	 * @return {@link IPage}<{@link MissionEvaluationContext}>
+	 */
 	private IPage<MissionEvaluationContext> setMission(IPage<MissionEvaluationContext> data) {
 		List<String> missionIds = data.getRecords().stream()
 				.map(MissionEvaluationContext::getMissionHash).distinct()
@@ -519,6 +757,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return data;
 	}
 
+	/**
+	 * 获取任务评价列表
+	 *
+	 * @param missionEvaluationQuery 任务评估查询
+	 * @return {@link IPage}<{@link MissionEvaluationContext}>
+	 */
 	@Override
 	public IPage<MissionEvaluationContext>
 			getMissionEvaluationList(MissionEvaluationQuery missionEvaluationQuery) {
@@ -531,6 +775,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		return setMission(data);
 	}
 
+	/**
+	 * 推任务ws
+	 *
+	 * @param businessId 业务标识
+	 * @param code       代码
+	 */
 	@Override
 	public void pushMissionWS(String businessId, Integer code) {
 
@@ -538,12 +788,24 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		sendWsData(data, businessId);
 	}
 
+	/**
+	 * 推状态ws
+	 *
+	 * @param businessId    业务标识
+	 * @param runningStatus 运行状态
+	 */
 	@Override
 	public void pushStatusWs(String businessId, Integer runningStatus) {
 		MissionWsUpdateStatusMessage message = new MissionWsUpdateStatusMessage(runningStatus);
 		sendWsData(message, businessId);
 	}
 
+	/**
+	 * 发送ws数据
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 */
 	private <T> void sendWsData(T data, String businessId) {
 		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);
@@ -555,30 +817,66 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		webSocketHandler.pushMessage(messageContext, true);
 	}
 
+	/**
+	 * 判断客观题正确
+	 *
+	 * @param userAnswer    用户答案
+	 * @param missionAnswer 任务答案
+	 * @param missionType   任务类型
+	 * @return {@link Boolean}
+	 */
 	@Override
 	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer,
 			Integer missionType) {
 		return isCorrect(userAnswer, missionAnswer, missionType);
 	}
 
+	/**
+	 * 通过房间id和角色id计算未完成
+	 *
+	 * @param roomId    房间id
+	 * @param crRoleIds cr角色id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countUnfinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
 				CrTask.TaskStatus.UNFINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 通过房间id和角色id计算未提交
+	 *
+	 * @param roomId    房间id
+	 * @param crRoleIds cr角色id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countUnsubmittedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
 				CrTask.TaskStatus.UNSUBMITTED_STATUS_LIST);
 	}
 
+	/**
+	 * 通过房间id和角色id计算完成
+	 *
+	 * @param roomId    房间id
+	 * @param crRoleIds cr角色id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countFinishedByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIdsAndStatusList(roomId, crRoleIds,
 				CrTask.TaskStatus.FINISHED_STATUS_LIST);
 	}
 
+	/**
+	 * 房间id和角色id计算
+	 *
+	 * @param roomId    房间id
+	 * @param crRoleIds cr角色id
+	 * @return {@link Integer}
+	 */
 	@Override
 	public Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);

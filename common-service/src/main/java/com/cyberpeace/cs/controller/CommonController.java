@@ -23,6 +23,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/** 公共服务接口
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "公共服务接口")
 @RestController
 @RequestMapping("/common")
@@ -30,12 +34,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CommonController {
 
+	/**
+	 * 附件服务
+	 */
 	@Autowired
 	private AttachmentService attachmentService;
 
+	/**
+	 * 工具服务
+	 */
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 图片上传
+	 *
+	 * @param fileCommonUploadReq 常见文件上传要求
+	 * @return {@link BaseRsp}<{@link AttachmentBo}>
+	 */
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
@@ -68,6 +84,12 @@ public class CommonController {
 		return new BaseRsp(attachmentBo);
 	}
 
+	/**
+	 * 附件上传
+	 *
+	 * @param fileCommonUploadReq 常见文件上传要求
+	 * @return {@link BaseRsp}<{@link AttachmentBo}>
+	 */
 	@ApiOperation("附件上传")
 	@PostMapping("/attachment_upload")
 	public BaseRsp<AttachmentBo> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {

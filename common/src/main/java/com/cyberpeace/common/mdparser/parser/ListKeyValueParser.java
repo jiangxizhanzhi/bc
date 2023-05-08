@@ -1,20 +1,33 @@
 package com.cyberpeace.common.mdparser.parser;
 
-import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.cyberpeace.common.constant.PatternConstant;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.google.common.collect.Maps;
+
+/**
+ * 键值列表解析器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Service
 public class ListKeyValueParser implements MdContentParser<Map<String, String>, String> {
 
+	/**
+	 * 解析
+	 *
+	 * @param content 内容
+	 * @return {@link Map}<{@link String}, {@link String}>
+	 */
 	@Override
 	public Map<String, String> parse(Object content) {
 
@@ -39,6 +52,12 @@ public class ListKeyValueParser implements MdContentParser<Map<String, String>, 
 		return map;
 	}
 
+	/**
+	 * 写
+	 *
+	 * @param map 地图
+	 * @return {@link String}
+	 */
 	@Override
 	public String write(Map<String, String> map) {
 

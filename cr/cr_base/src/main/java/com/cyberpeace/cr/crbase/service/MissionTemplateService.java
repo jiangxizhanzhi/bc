@@ -7,6 +7,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
+/**
+ * 任务模板服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface MissionTemplateService extends IService<MissionTemplate> {
 
 	/**

@@ -1,17 +1,28 @@
 package com.cyberpeace.situation.controller.res;
 
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
-
+/**
+ * 实例状态返回
+ *
+ * @author chenhy
+ * @date 2023/05/06
+ */
 @Data
 public class SituationInstanceStatusRes implements Serializable {
 
-    private String code;
+	/**
+	 * 代码
+	 */
+	private String code;
 
-    @ApiModelProperty("状态值")
-    private String desc;
+	/**
+	 * 状态值
+	 */
+	@ApiModelProperty("状态值")
+	private String desc;
 
 }

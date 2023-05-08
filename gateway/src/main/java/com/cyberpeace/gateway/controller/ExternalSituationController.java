@@ -30,8 +30,8 @@ import com.cyberpeace.integratation.constant.OrderType;
 import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.model.situation.TaskEventContext;
 import com.cyberpeace.integratation.service.bo.situation.BooleanRes;
-import com.cyberpeace.situation.constant.PublicStatus;
-import com.cyberpeace.situation.constant.SituationInstanceStatus;
+import com.cyberpeace.situation.constant.dashboard.PublicStatus;
+import com.cyberpeace.situation.constant.dashboard.SituationInstanceStatus;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceAddReq;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
@@ -47,6 +47,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 外部形势控制器
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Api(tags = "外部接口-态势相关api")
 @Slf4j
 @RestController
@@ -95,6 +101,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
+	/**
+	 * 发送消息
+	 *
+	 * @param orderType                订单类型
+	 * @param situationPublishInstance 情况发布实例
+	 */
 	private void sendMessage(OrderType orderType,
 			SituationPublishInstance situationPublishInstance) {
 		if (orderType.getAction().equals("message")) {
@@ -111,6 +123,12 @@ public class ExternalSituationController {
 				situationPublishInstance.getResourceId());
 	}
 
+	/**
+	 * 收到方案
+	 *
+	 * @param schemeBo 计划博
+	 * @return {@link BaseRsp}<{@link ScreenPathRes}>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收可视化方案的新建、编辑")
 	@PostMapping("/scheme")
@@ -145,6 +163,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(new ScreenPathRes(dashboardId));
 	}
 
+	/**
+	 * 接收命令
+	 *
+	 * @param statusOrderContextString 地位顺序上下文字符串
+	 * @return {@link BaseRsp}<{@link ControlRes}>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收想定下发大屏指令")
 	@PostMapping("/emission")
@@ -171,6 +195,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(new ControlRes("1", "0"));
 	}
 
+	/**
+	 * 接收节点迁移信息
+	 *
+	 * @param req 请求
+	 * @return {@link BaseRsp}<{@link BooleanRes}>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收节点迁移信息")
 	@PostMapping("/migration/")
@@ -194,6 +224,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 接收第三方大屏绑定
+	 *
+	 * @param thirdDashboardReq 第三指示板请求
+	 * @return {@link BaseRsp}<{@link BooleanRes}>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收第三方大屏绑定")
 	@PostMapping("/third_dashboard/")
@@ -223,6 +259,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 接收任务实时动效
+	 *
+	 * @param context 上下文
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收任务实时动效")
 	@PostMapping("/event/task/")
@@ -239,6 +281,12 @@ public class ExternalSituationController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 地图静态资源鉴权
+	 *
+	 * @param response 响应
+	 * @return {@link BaseRsp}<{@link Boolean}>
+	 */
 	@ApiOperation("地图静态资源鉴权")
 	@GetMapping("/map/resource/auth/")
 	public BaseRsp<Boolean> authMapResource(HttpServletResponse response) {

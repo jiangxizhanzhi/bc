@@ -5,6 +5,9 @@ import lombok.Data;
 
 /**
  * 用户简要数据
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class UserData {

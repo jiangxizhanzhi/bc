@@ -1,12 +1,15 @@
 package com.cyberpeace.situation.controller.req;
 
+import java.io.Serializable;
+
 import com.cyberpeace.common.model.PageReqBase;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
-
 /**
+ * 装饰组件分页查询请求
+ *
  * @Author xuxz
  * @Date 4/1/2023 上午11:47
  */
@@ -14,9 +17,15 @@ import java.io.Serializable;
 @Data
 public class SituationDecorationPageReq extends PageReqBase implements Serializable {
 
-    @ApiModelProperty("背景名称")
-    private String name;
+	/**
+	 * 名称
+	 */
+	@ApiModelProperty("名称")
+	private String name;
 
-    @ApiModelProperty("类型")
-    private String type;
+	/**
+	 * 类型
+	 */
+	@ApiModelProperty("类型")
+	private String type;
 }

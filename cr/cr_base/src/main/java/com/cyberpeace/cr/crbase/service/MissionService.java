@@ -15,6 +15,12 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
+/**
+ * 任务服务
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 public interface MissionService extends IService<Mission> {
 
 	/**

@@ -64,7 +64,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 */
 	BusinessTemplate getByLocalSceneId(String resourceId);
 
-	/**
+	/**批量删除
 	 * 训练模板删除
 	 * @param businessTemplateIds 训练业务模板id列表
 	 * @return 布尔值

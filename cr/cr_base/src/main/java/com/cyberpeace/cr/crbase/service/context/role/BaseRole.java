@@ -7,6 +7,9 @@ import lombok.Data;
 
 /**
  * 基础角色信息
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
  */
 @Data
 public class BaseRole {

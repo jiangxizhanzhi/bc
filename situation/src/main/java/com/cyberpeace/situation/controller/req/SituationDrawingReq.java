@@ -1,17 +1,21 @@
 package com.cyberpeace.situation.controller.req;
 
+import java.io.Serializable;
+
+import javax.validation.constraints.NotBlank;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseTable;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-
 /**
+ * 样式组件请求
+ *
  * @Author xuxz
  * @Date 4/1/2023 上午11:38
  */
@@ -19,20 +23,32 @@ import java.io.Serializable;
 @Data
 public class SituationDrawingReq extends BaseTable implements Serializable {
 
-    @ApiModelProperty("资源id")
-    @TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
-    @NotBlank(groups = Update.class)
-    private String resourceId;
+	/**
+	 * 资源id
+	 */
+	@ApiModelProperty("资源id")
+	@TableId(type = IdType.ASSIGN_UUID, value = "resource_id")
+	@NotBlank(groups = Update.class)
+	private String resourceId;
 
-    @ApiModelProperty("图形名称")
-    @NotBlank(groups = {Update.class, Create.class})
-    private String name;
+	/**
+	 * 图形名称
+	 */
+	@ApiModelProperty("图形名称")
+	@NotBlank(groups = { Update.class, Create.class })
+	private String name;
 
-    @ApiModelProperty("图形类型")
-    @NotBlank(groups = {Update.class, Create.class})
-    private String type;
+	/**
+	 * 图形类型
+	 */
+	@ApiModelProperty("图形类型")
+	@NotBlank(groups = { Update.class, Create.class })
+	private String type;
 
-    @ApiModelProperty("图形url")
-    @NotBlank(groups = {Update.class, Create.class})
-    private String drawingUrl;
+	/**
+	 * 图形url
+	 */
+	@ApiModelProperty("图形url")
+	@NotBlank(groups = { Update.class, Create.class })
+	private String drawingUrl;
 }

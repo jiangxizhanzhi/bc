@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.practice.controller.web;
 
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
@@ -37,6 +39,9 @@ public class PersonalPaperController {
 
 	@Autowired
 	private PaperPracticeTheoryService paperPracticeTheoryService;
+
+	@Autowired
+	private ResourceCollectionService resourceCollectionService;
 
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
@@ -84,6 +89,12 @@ public class PersonalPaperController {
 	@PostMapping("/submit_answer")
 	public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 		return new BaseRsp<>(paperPracticeTheoryService.submitAnswer(answerReq.getResourceId(), answerReq.getSubmitAnswer()));
+	}
+
+	@ApiOperation("(取消)收藏")
+	@PostMapping("/practice_collection")
+	public BaseRsp<Boolean> collection(@RequestBody @Validated CollectionReq collectionReq) {
+		return new BaseRsp<>(paperPracticeTheoryService.collection(collectionReq));
 	}
 
 }

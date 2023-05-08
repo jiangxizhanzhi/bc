@@ -320,4 +320,7 @@ public interface OjBusinessErrorCode {
 
 	/** 组卷时根据所选条件找不到足够的题目数 */
 	String NOT_ENOUGH_PRACTICE = "102125";
+
+	/** 原题目已删除，无法收藏 */
+	String CANT_COLLECT_DELETE_PRACTICE = "102126";
 }

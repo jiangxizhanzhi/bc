@@ -7,14 +7,18 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
+import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 import com.cyberpeace.oj.practice.dao.entity.PaperPracticeTheory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperPracticeTheoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
+import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
@@ -51,16 +55,20 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 	@Autowired
 	private ResourceCollectionService resourceCollectionService;
 
+	@Autowired
+	private PracticeTheoryMapper practiceTheoryMapper;
+
 	@Override
 	public WebTheoryBo getPracticeDetail(String practiceRefId) {
 		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(practiceRefId);
 		PracticeTheory practiceTheory = JsonUtil.toJsonObject(paperPracticeTheory.getSnapshot(), PracticeTheory.class);
 		WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
 		String practiceId = paperPracticeTheory.getOriginId();
-		Boolean result = resourceCollectionService.selectByUnique(UserInfoContext.getUserContext().getUserId(),
+		Boolean isCollection = resourceCollectionService.selectByUnique(UserInfoContext.getUserContext().getUserId(),
 				ResourceCollection.BusinessType.THEORY.getCode(), practiceId);
+		PracticeTheory originPracticeTheory = practiceTheoryMapper.selectById(paperPracticeTheory.getOriginId());
 		webTheoryBo.setResourceId(practiceRefId);
-		webTheoryBo.setIsCollection(result);
+		webTheoryBo.setIsCollection(originPracticeTheory != null && isCollection);
 		webTheoryBo.setAnswer(paperPracticeTheory.getSubmitAnswer());
 		webTheoryBo.setSolved(paperPracticeTheory.getSolved());
 		if (webTheoryBo.getTheoryType().equals(PracticeTheory.TheoryType.FILL_BLANK.getCode())) {
@@ -134,5 +142,23 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 			}
 		});
 		return evaluateResultTheory;
+	}
+
+	@Override
+	public Boolean collection(CollectionReq collectionReq) {
+		PaperPracticeTheory paperPracticeTheory = paperPracticeTheoryMapper.selectById(collectionReq.getBusinessId());
+		CollectionContext collectionContext = BeanUtils.copy(collectionReq,
+				CollectionContext.class);
+		collectionContext.setUserId(UserInfoContext.getUserContext().getUserId());
+
+		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(paperPracticeTheory.getOriginId());
+		if (practiceTheory == null) {
+			throw new BusinessException(OjBusinessErrorCode.CANT_COLLECT_DELETE_PRACTICE);
+		}
+
+		collectionContext.setBusinessId(paperPracticeTheory.getOriginId());
+
+		return resourceCollectionService.collectionResource(collectionContext,
+				collectionReq.getIsCollection());
 	}
 }

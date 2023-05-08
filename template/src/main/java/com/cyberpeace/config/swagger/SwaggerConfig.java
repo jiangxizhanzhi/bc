@@ -1,6 +1,5 @@
 package com.cyberpeace.config.swagger;
 
-import java.time.LocalTime;
 import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
@@ -25,12 +24,13 @@ import springfox.documentation.spring.web.plugins.Docket;
 @EnableOpenApi
 public class SwaggerConfig {
 
-//	@Bean
-//	public Docket apiTemplate() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.groupName("demo");
-//	}
+	// @Bean
+	// public Docket apiTemplate() {
+	// return
+	// getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.demo"))
+	// .apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+	// .groupName("demo");
+	// }
 
 	@Bean
 	public Docket apiCs() {
@@ -53,12 +53,13 @@ public class SwaggerConfig {
 				.groupName("outer");
 	}
 
-//	@Bean
-//	public Docket apiBehavioralSimulation() {
-//		return getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.bs"))
-//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
-//				.directModelSubstitute(LocalTime.class, String.class).groupName("bs");
-//	}
+	// @Bean
+	// public Docket apiBehavioralSimulation() {
+	// return
+	// getDocket().apis(RequestHandlerSelectors.basePackage("com.cyberpeace.bs"))
+	// .apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build()
+	// .directModelSubstitute(LocalTime.class, String.class).groupName("bs");
+	// }
 
 	private ApiSelectorBuilder getDocket() {
 		String apiDoc = ConfigUtil.getContextProperty("ojj.apiDoc");

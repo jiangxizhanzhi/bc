@@ -2,12 +2,12 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
-import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
 import com.cyberpeace.oj.practice.dao.entity.PersonalPaper;
+import com.cyberpeace.oj.practice.dao.mapper.PersonalPaperMapper;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PersonalPaperService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
@@ -41,7 +41,7 @@ public class PersonalPaperController {
 	private PaperPracticeTheoryService paperPracticeTheoryService;
 
 	@Autowired
-	private ResourceCollectionService resourceCollectionService;
+	private PersonalPaperMapper personalPaperMapper;
 
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
@@ -95,6 +95,15 @@ public class PersonalPaperController {
 	@PostMapping("/practice_collection")
 	public BaseRsp<Boolean> collection(@RequestBody @Validated CollectionReq collectionReq) {
 		return new BaseRsp<>(paperPracticeTheoryService.collection(collectionReq));
+	}
+
+	@ApiOperation("交卷")
+	@GetMapping("/submit_paper")
+	public BaseRsp<Boolean> submitPaper(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
+		PersonalPaper personalPaper = personalPaperMapper.selectById(paperId);
+		personalPaper.setFinish(true);
+		personalPaperMapper.updateById(personalPaper);
+		return new BaseRsp<>(true);
 	}
 
 }

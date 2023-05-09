@@ -122,8 +122,8 @@ public class PersonalPaperController {
 
 	@ApiOperation("组卷记录概要")
 	@GetMapping("/record_summary")
-	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary() {
-		return new BaseRsp<>(personalPaperService.getAllPaperRecord());
+	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary(@ApiParam("是否已结束") @RequestParam("is_finish") Boolean isFinish) {
+		return new BaseRsp<>(personalPaperService.getAllPaperRecord(isFinish));
 	}
 
 }

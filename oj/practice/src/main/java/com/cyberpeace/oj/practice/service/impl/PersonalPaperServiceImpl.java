@@ -160,9 +160,13 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 	}
 
 	@Override
-	public Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord() {
+	public Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish) {
 		Map<String, List<PaperRecordSummaryRes>> recordListMap = new HashMap<>();
 		List<PaperRecordSummaryRes> paperRecordSummaryResList = personalPaperMapper.getAllPaperRecord(UserInfoContext.getUserContext().getUserId());
+		if (paperRecordSummaryResList.size() > 40) {
+			paperRecordSummaryResList = paperRecordSummaryResList.subList(0, 40);
+		}
+		paperRecordSummaryResList = StreamApiUtils.filter(paperRecordSummaryResList, paperRecordSummaryRes -> paperRecordSummaryRes.getIsFinish() == isFinish);
 		for (PaperRecordSummaryRes paperRecordSummaryRes : paperRecordSummaryResList) {
 			String dayTime = TimeUtil.format6(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime()));
 			paperRecordSummaryRes.setPaperTime(TimeUtil.format9(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));

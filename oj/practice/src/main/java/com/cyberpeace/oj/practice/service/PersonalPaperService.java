@@ -20,5 +20,5 @@ public interface PersonalPaperService extends IService<PersonalPaper> {
 
 	List<PaperRecordRes> getPaperRecord();
 
-	Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord();
+	Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish);
 }

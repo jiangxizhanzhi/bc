@@ -1,11 +1,7 @@
 package com.cyberpeace.gateway.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import java.io.File;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +12,11 @@ import com.cyberpeace.common.util.ShellUtils;
 import com.cyberpeace.gateway.controller.req.NfsMountReq;
 import com.cyberpeace.gateway.controller.req.NfsUmountReq;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
- * nfs装载控制器
+ * 外部接口-nfs挂载相关api
  *
  * @author cyberpeace
  * @date 2023/05/06
@@ -34,9 +33,9 @@ public class NfsMountController {
 	private String MKDIR = "mkdir -p %s";
 
 	/**
-	 * nfs挂载
+	 * NFS目录挂载
 	 *
-	 * @param nfsMountReq nfs山请求
+	 * @param nfsMountReq 挂载请求
 	 * @return {@link BaseRsp}<{@link Boolean}>
 	 */
 	@ApiOperation("NFS目录挂载")
@@ -54,7 +53,7 @@ public class NfsMountController {
 	}
 
 	/**
-	 * nfs 卸载
+	 * NFS目录卸载
 	 *
 	 * @param umountReq 卸载请求
 	 * @return {@link BaseRsp}<{@link Boolean}>

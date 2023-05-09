@@ -1,21 +1,5 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.oj.ojbase.constant.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -31,6 +15,7 @@ import com.cyberpeace.common.model.room.DashboardGroup;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -51,6 +36,7 @@ import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.ClassroomGroupInfoService;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.dao.context.NoteListQuery;
 import com.cyberpeace.oj.ojbase.dao.context.NoteUniqueContext;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
@@ -71,8 +57,20 @@ import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 import com.cyberpeace.oj.practice.service.bo.TheoryLessonBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -332,25 +330,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
 			AuthContext authContext) {
+		List<ClassroomBo> classroomBos = new ArrayList<>();
 
 		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (CollectionUtils.isEmpty(authCourseIds)) {
-			return Lists.newArrayList();
-		}
+		if (!CollectionUtils.isEmpty(authCourseIds)) {
 
-		// 公开过滤
-		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
-				authContext.getIsWeb());
-		if (CollectionUtils.isEmpty(publicCourseIds)) {
-			return Lists.newArrayList();
-		}
+			// 公开过滤
+			List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
+					authContext.getIsWeb());
+			if (!CollectionUtils.isEmpty(publicCourseIds)) {
 
-		// 课程表数据查询
-		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
-				roomListQuery);
-		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
-				classroom -> entityToBo(classroom));
+				// 课程表数据查询
+				List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
+						roomListQuery);
+				classroomBos = StreamApiUtils.map(classrooms,
+						classroom -> entityToBo(classroom));
+			}
+		}
 
 		// 单兵 团队 红蓝对抗
 		List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),

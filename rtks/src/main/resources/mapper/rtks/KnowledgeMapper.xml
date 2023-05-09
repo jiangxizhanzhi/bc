@@ -3,9 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.KnowledgeMapper">
-    <update id="clearCourseRel">
-        update rtks_knowledge set courses = '[]' where id > 0;
-    </update>
 
     <select id="listKnowledge" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
         <if test="knowledgeListReq.pattern != null and knowledgeListReq.pattern != ''">
@@ -92,9 +89,6 @@
                 ('')
             </if>
         </where>
-    </select>
-    <select id="selectAll" resultType="com.cyberpeace.rtks.dao.entity.Knowledge">
-        select * from rtks_knowledge;
     </select>
 
 </mapper>

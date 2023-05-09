@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
-import com.cyberpeace.oj.course.service.CourseService;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -119,9 +118,6 @@ public class RoleController {
 
 	@Autowired
 	private SkillService skillService;
-
-	@Autowired
-	private CourseService courseService;
 
 	@Autowired
 	private AbilityService abilityService;
@@ -583,7 +579,7 @@ public class RoleController {
 		output.setAbilityCount(abilityIds.size());
 
 		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
-		List<String> existingCourseIds = courseService.idsByNotDeleteIds(courseIds);
+		List<String> existingCourseIds = courseNameService.filterId(courseIds);
 		output.setKnowledgeCourseCount(existingCourseIds.size());
 
 		return output;

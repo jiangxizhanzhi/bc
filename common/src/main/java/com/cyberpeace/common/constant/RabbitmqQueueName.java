@@ -1,7 +1,6 @@
 package com.cyberpeace.common.constant;
 
 /**
- * rabbitmq队列名称
  * rabbitmq监听的队列名统一管理
  *
  * @author cyberpeace

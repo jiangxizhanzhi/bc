@@ -330,25 +330,24 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	@Override
 	public List<TimeScheduleBo> selectTimeList(ClassRoomListQuery roomListQuery,
 			AuthContext authContext) {
+		List<ClassroomBo> classroomBos = new ArrayList<>();
 
 		// 权限过滤
 		List<String> authCourseIds = courseMapper.selectByAuth(authContext);
-		if (CollectionUtils.isEmpty(authCourseIds)) {
-			return Lists.newArrayList();
-		}
+		if (!CollectionUtils.isEmpty(authCourseIds)) {
 
-		// 公开过滤
-		List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
-				authContext.getIsWeb());
-		if (CollectionUtils.isEmpty(publicCourseIds)) {
-			return Lists.newArrayList();
-		}
+			// 公开过滤
+			List<String> publicCourseIds = courseMapper.selectIdsByCategory(authCourseIds, null,
+					authContext.getIsWeb());
+			if (!CollectionUtils.isEmpty(publicCourseIds)) {
 
-		// 课程表数据查询
-		List<Classroom> classrooms = classroomMapper.selectListByCourse(authCourseIds,
-				roomListQuery);
-		List<ClassroomBo> classroomBos = StreamApiUtils.map(classrooms,
-				classroom -> entityToBo(classroom));
+				// 课程表数据查询
+				List<Classroom> classrooms = classroomMapper.selectListByCourse(publicCourseIds,
+						roomListQuery);
+				classroomBos = StreamApiUtils.map(classrooms,
+						classroom -> entityToBo(classroom));
+			}
+		}
 
 		// 单兵 团队 红蓝对抗
 		List<ClassroomBo> crClassroom = crClassroom(roomListQuery.getStartTime(),

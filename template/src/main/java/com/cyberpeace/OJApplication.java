@@ -7,6 +7,12 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * 应用启动类
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @EnableCaching
 @EnableScheduling
 @ServletComponentScan

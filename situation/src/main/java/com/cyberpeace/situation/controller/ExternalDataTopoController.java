@@ -31,6 +31,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 外部数据-拓扑分析
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "外部数据-拓扑分析")
 @RestController
 @RequiresAuthentication
@@ -42,9 +48,15 @@ public class ExternalDataTopoController {
 
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
-	
+
 	private volatile Boolean demo = false;
 
+	/**
+	 * 获取节点链路状态
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<NodeConnectionContext>}
+	 */
 	@ApiOperation("态势-获取节点链路状态")
 	@PostMapping("/node/connection/")
 	public BaseRsp<NodeConnectionContext>
@@ -53,12 +65,24 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(remoteSituationService.getNodeConnection(nodeIdApiReq));
 	}
 
+	/**
+	 * 获取节点基础信息
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<NodeInfoContext>}
+	 */
 	@ApiOperation("态势-获取节点基础信息")
 	@PostMapping("/node/info/")
 	public BaseRsp<NodeInfoContext> getNodeInfo(@RequestBody @Validated NodeIdApiReq nodeIdApiReq) {
 		return new BaseRsp<>(remoteSituationService.getNodeInfo(nodeIdApiReq));
 	}
 
+	/**
+	 * 获取相似节点
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<List<NodeBasicInfoContext>>}
+	 */
 	@ApiOperation("态势-获取相似节点")
 	@PostMapping("/node/similar_nodes/")
 	public BaseRsp<List<NodeBasicInfoContext>>
@@ -67,6 +91,12 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(rsp);
 	}
 
+	/**
+	 * 获取节点行为数据
+	 *
+	 * @param nodeActionPageReq 节点行为分页请求
+	 * @return {@code BaseRsp<ListRsp<NodeActionContext>>}
+	 */
 	@ApiOperation("态势-获取节点行为数据")
 	@GetMapping("/node/action/")
 	public BaseRsp<ListRsp<NodeActionContext>> getNodeAction(NodeActionPageReq nodeActionPageReq) {
@@ -74,6 +104,12 @@ public class ExternalDataTopoController {
 				.getNodeAction(BeanUtils.copy(nodeActionPageReq, NodeActionReq.class)));
 	}
 
+	/**
+	 * 获取节点行为趋势
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<List<NodeTrendContext>>}
+	 */
 	@ApiOperation("态势-获取节点行为趋势")
 	@PostMapping("/node/trend/")
 	public BaseRsp<List<NodeTrendContext>>
@@ -82,6 +118,12 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(remoteSituationService.getNodeTrend(nodeIdApiReq));
 	}
 
+	/**
+	 * 获取用户行为数据
+	 *
+	 * @param nodeListApiReq 节点列表请求
+	 * @return {@code BaseRsp<ListRsp<UserActionContext>>}
+	 */
 	@ApiOperation("态势-获取用户行为数据")
 	@GetMapping("/user/action/")
 	public BaseRsp<ListRsp<UserActionContext>> getUserAction(NodePageReq nodeListApiReq) {
@@ -90,6 +132,12 @@ public class ExternalDataTopoController {
 				.getUserAction(BeanUtils.copy(nodeListApiReq, NodeIdPageReq.class)));
 	}
 
+	/**
+	 * 获取用户行为趋势
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<List<UserTrendContext>>}
+	 */
 	@ApiOperation("态势-获取用户行为趋势")
 	@PostMapping("/user/trend/")
 	public BaseRsp<List<UserTrendContext>>
@@ -98,6 +146,12 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(remoteSituationService.getUserTrend(nodeIdApiReq));
 	}
 
+	/**
+	 * 获取节点脆弱性分析信息
+	 *
+	 * @param nodeIdApiReq 节点ID请求
+	 * @return {@code BaseRsp<NodeWeakInfoContext>}
+	 */
 	@ApiOperation("态势-获取节点脆弱性分析信息")
 	@PostMapping("/node/weak/info/")
 	public BaseRsp<NodeWeakInfoContext>
@@ -105,6 +159,12 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(remoteSituationService.getNodeWeakInfo(nodeIdApiReq));
 	}
 
+	/**
+	 * 获取节点脆弱性列表
+	 *
+	 * @param nodePageReq 节点分页请求
+	 * @return {@code BaseRsp<ListRsp<NodeWeakContext>>}
+	 */
 	@ApiOperation("态势-获取节点脆弱性列表")
 	@GetMapping("/node/weak/list/")
 	public BaseRsp<ListRsp<NodeWeakContext>> getNodeWeakList(NodePageReq nodePageReq) {
@@ -113,6 +173,12 @@ public class ExternalDataTopoController {
 				.getNodeWeakList(BeanUtils.copy(nodePageReq, NodeIdPageReq.class)));
 	}
 
+	/**
+	 * 获取拓扑数据
+	 *
+	 * @param topoReq 拓扑请求
+	 * @return {@code BaseRsp<TopoContext>}
+	 */
 	@ApiOperation("想定-获取拓扑数据")
 	@PostMapping("/topo/")
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
@@ -123,6 +189,7 @@ public class ExternalDataTopoController {
 					JsonUtil.toJsonString(getJsonByName("demoTopo")), TopoContext.class));
 		}
 
+		// 返回5000节点的测试拓扑
 		if ("test".equals(topoReq.getEnvId())) {
 			return new BaseRsp<>(JsonUtil.toJsonObject(
 					JsonUtil.toJsonString(getJsonByName("demo5000")), TopoContext.class));
@@ -148,14 +215,26 @@ public class ExternalDataTopoController {
 		return new BaseRsp<>(topoContext);
 	}
 
+	/**
+	 * 通过文件名获取json
+	 *
+	 * @param name 文件名
+	 * @return {@code JSONObject}
+	 */
 	private JSONObject getJsonByName(String name) {
 		InputStream inputStream = getClass().getResourceAsStream("/" + name + ".json");
 		return JsonUtil.toJsonObject(inputStream, JSONObject.class).getJSONObject("data");
 	}
 
+	/**
+	 * 切换拓扑模式
+	 *
+	 * @param mode 拓扑模式
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("系统-切换拓扑模式")
 	@GetMapping("/topo/mode/")
-	public BaseRsp<Boolean> changeTopoMode(@ApiParam(name = "mode", value = "Demo模式",
+	public BaseRsp<Boolean> changeTopoMode(@ApiParam(name = "mode", value = "拓扑模式",
 			required = false) @RequestParam(value = "mode", required = false) Boolean mode) {
 		demo = mode;
 		return new BaseRsp<>(mode);

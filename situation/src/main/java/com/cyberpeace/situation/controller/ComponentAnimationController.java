@@ -23,6 +23,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 组件管理-动画组件
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "组件管理-动画组件")
 @RestController
 @RequiresAuthentication
@@ -32,6 +38,12 @@ public class ComponentAnimationController {
 	@Autowired
 	private SituationComponentAnimationService situationComponentAnimationService;
 
+	/**
+	 * 动画组件-新增
+	 *
+	 * @param situationComponentsAnimationAddReq 动画组件新增请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("动画组件-新增")
 	@PostMapping()
 	public BaseRsp<String> addComponentAnimation(
@@ -41,6 +53,12 @@ public class ComponentAnimationController {
 				.addComponentAnimation(situationComponentsAnimationAddReq));
 	}
 
+	/**
+	 * 动画组件-修改
+	 *
+	 * @param situationComponentsAnimationUpdateReq 动画组件修改请求
+	 * @return {@code BaseRsp<SituationComponentsAnimationRes>}
+	 */
 	@ApiOperation("动画组件-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationComponentsAnimationRes> updateComponentAnimation(
@@ -49,6 +67,12 @@ public class ComponentAnimationController {
 				.updateComponentAnimation(situationComponentsAnimationUpdateReq));
 	}
 
+	/**
+	 * 动画组件-删除
+	 *
+	 * @param deleteReq 动画组件删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("动画组件-删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponentAnimation(
@@ -57,6 +81,12 @@ public class ComponentAnimationController {
 				.deleteComponentAnimation(deleteReq.getResourceIds()));
 	}
 
+	/**
+	 * 动画组件-列表查询
+	 *
+	 * @param req 动画组件列表查询请求
+	 * @return {@code BaseRsp<List<SituationComponentsAnimationRes>>}
+	 */
 	@ApiOperation("动画组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationComponentsAnimationRes>>
@@ -64,6 +94,12 @@ public class ComponentAnimationController {
 		return new BaseRsp<>(situationComponentAnimationService.getComponentAnimations(req));
 	}
 
+	/**
+	 * 动画组件-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationComponentsAnimation>}
+	 */
 	@ApiOperation("动画组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationComponentsAnimation> getComponentAnimation(@ApiParam(required = true,
@@ -71,6 +107,11 @@ public class ComponentAnimationController {
 		return new BaseRsp<>(situationComponentAnimationService.getComponentAnimation(resourceId));
 	}
 
+	/**
+	 * 获取二维组件详情
+	 *
+	 * @return {@code BaseRsp<List<SituationComponentsChartDetailsRes>>}
+	 */
 	@ApiOperation("获取二维组件详情")
 	@GetMapping("chart/detail")
 	public BaseRsp<List<SituationComponentsChartDetailsRes>> getChartDetails() {

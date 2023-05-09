@@ -24,8 +24,11 @@ import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 防抖
+ * 防抖过滤器
+ *
+ *
  * @author SN
+ * @date 2023/05/06
  */
 @Slf4j
 public class DebounceFilter implements Filter {
@@ -94,6 +97,12 @@ public class DebounceFilter implements Filter {
 	}
 }
 
+/**
+ * 内容缓存请求包装
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 class ContentCacheRequestWrapper extends HttpServletRequestWrapper {
 
 	private byte[] body;

@@ -26,6 +26,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 数据源管理-数据库
+ *
  * @Author xuxz
  * @Date 28/10/2022 上午9:22
  */
@@ -39,12 +41,24 @@ public class DataSourceDBController {
 	@Autowired
 	private DataSourceService dataSourceService;
 
+	/**
+	 * 测试数据库连接（详情页）
+	 *
+	 * @param dataSourceRecordReq 数据库记录请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("连接测试-详情页")
 	@GetMapping("connection/test")
 	public BaseRsp<String> testDBConnection(DataSourceRecordReq dataSourceRecordReq) {
 		return new BaseRsp<>(dataSourceService.testDBConnection(dataSourceRecordReq));
 	}
 
+	/**
+	 * 测试数据库连接（列表页）
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("连接测试-列表页")
 	@GetMapping("connection/resource/test")
 	public BaseRsp<String> testDBConnection(@RequestParam("resource_id") @ApiParam(required = true,
@@ -52,12 +66,23 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.testDBConnection(resourceId));
 	}
 
+	/**
+	 * 获取数据库类型选项
+	 *
+	 * @return {@code BaseRsp<List<String>>}
+	 */
 	@ApiOperation("获取数据库类型选项")
 	@GetMapping("type")
 	public BaseRsp<List<String>> getDataSourceType() {
 		return new BaseRsp<>(dataSourceService.getDataSourceType());
 	}
 
+	/**
+	 * 获取数据库记录列表
+	 *
+	 * @param dataSourceRecordPageReq 数据库记录分页请求
+	 * @return {@code BaseRsp<ListRsp<DataSourceRecordRes>>}
+	 */
 	@ApiOperation("数据库-列表查询")
 	@GetMapping("page")
 	public BaseRsp<ListRsp<DataSourceRecordRes>>
@@ -65,6 +90,12 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.getApiConnectPage(dataSourceRecordPageReq));
 	}
 
+	/**
+	 * 获取数据库记录详情
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<DataResourceRecordInfoRes>}
+	 */
 	@ApiOperation("数据库-单个查询")
 	@GetMapping("")
 	public BaseRsp<DataResourceRecordInfoRes>
@@ -73,6 +104,12 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.getDataSourceRecordInfo(resourceId));
 	}
 
+	/**
+	 * 删除数据库记录
+	 *
+	 * @param dataSourceRecordDelReq 数据库记录删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("数据库-删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDataSourceRecord(
@@ -80,6 +117,12 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.deleteDataSourceRecord(dataSourceRecordDelReq));
 	}
 
+	/**
+	 * 新增数据库记录
+	 *
+	 * @param dataSourceRecordReq 数据库记录请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("数据库-新增")
 	@PostMapping("")
 	public BaseRsp<String> createDataSourceRecord(
@@ -87,6 +130,12 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.createDataSourceRecord(dataSourceRecordReq));
 	}
 
+	/**
+	 * 修改数据库记录
+	 *
+	 * @param dataSourceRecordReq 数据库记录请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("数据库-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDataSourceRecord(
@@ -94,6 +143,13 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.updateDataSourceRecord(dataSourceRecordReq));
 	}
 
+	/**
+	 * 获取数据库表列表
+	 *
+	 * @param resourceId 资源id
+	 * @param name       数据库名称
+	 * @return {@code BaseRsp<List<String>>}
+	 */
 	@ApiOperation("获取数据库表列表")
 	@GetMapping("tables")
 	public BaseRsp<List<String>> getDBTables(
@@ -103,6 +159,12 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.getDBTables(resourceId, name));
 	}
 
+	/**
+	 * 获取数据库库列表
+	 *
+	 * @param resourceId 数据库连接ID
+	 * @return {@code BaseRsp<List<String>>}
+	 */
 	@ApiOperation("获取数据库库列表")
 	@GetMapping("database")
 	public BaseRsp<List<String>> getDBName(@RequestParam("resource_id") @ApiParam(required = true,
@@ -110,6 +172,16 @@ public class DataSourceDBController {
 		return new BaseRsp<>(dataSourceService.getDBName(resourceId));
 	}
 
+	/**
+	 * 获取数据库SQL执行结果
+	 *
+	 * @param sql          sql
+	 * @param resourceId   资源id
+	 * @param dbName       数据库名称
+	 * @param tableName    数据表名称
+	 * @param customParams 自定义参数
+	 * @return {@code BaseRsp<List<JSONObject>>}
+	 */
 	@ApiOperation("获取数据库SQL执行结果")
 	@GetMapping("get/data")
 	public BaseRsp<List<JSONObject>> getDataSourceData(

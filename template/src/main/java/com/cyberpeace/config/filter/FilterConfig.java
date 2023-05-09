@@ -9,6 +9,12 @@ import com.cyberpeace.config.auth.DebounceFilter;
 import com.cyberpeace.config.auth.ExceptionFilter;
 import com.cyberpeace.config.auth.MyFilter;
 
+/**
+ * 过滤器配置
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Configuration
 public class FilterConfig {
 

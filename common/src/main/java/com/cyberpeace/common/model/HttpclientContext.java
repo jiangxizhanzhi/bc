@@ -42,16 +42,16 @@ public class HttpclientContext {
 	}
 
 	/**
-	 * 设置错误味精
+	 * 设置错误信息
 	 *
-	 * @param msg 味精
+	 * @param msg 信息
 	 */
 	public static void setErrorMsg(String msg) {
 		errorMsg = msg;
 	}
 
 	/**
-	 * 得到错误味精
+	 * 得到错误信息
 	 *
 	 * @return {@link String}
 	 */

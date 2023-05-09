@@ -51,7 +51,7 @@ public class BaseRsp<T> {
 	/**
 	 * 设置信息
 	 *
-	 * @param msg 味精
+	 * @param msg 信息
 	 */
 	public void setMsg(String msg) {
 		this.message = msg;

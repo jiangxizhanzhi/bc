@@ -21,6 +21,8 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 组件管理-显示控件
+ *
  * @Author xuxz
  * @Date 4/1/2023 上午11:11
  */
@@ -33,6 +35,12 @@ public class ComponentDecorationController {
 	@Autowired
 	private SituationDecorationService situationDecorationService;
 
+	/**
+	 * 显示控件-新增
+	 *
+	 * @param situationDecorationReq 显示控件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("显示控件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDecoration(
@@ -41,6 +49,12 @@ public class ComponentDecorationController {
 				situationDecorationService.createSituationDecoration(situationDecorationReq));
 	}
 
+	/**
+	 * 显示控件-修改
+	 *
+	 * @param situationDecorationReq 显示控件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("显示控件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDecoration(
@@ -49,6 +63,12 @@ public class ComponentDecorationController {
 				situationDecorationService.updateSituationDecoration(situationDecorationReq));
 	}
 
+	/**
+	 * 显示控件-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationDecoration>}
+	 */
 	@ApiOperation("显示控件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDecoration>
@@ -57,6 +77,12 @@ public class ComponentDecorationController {
 		return new BaseRsp<>(situationDecorationService.getSituationDecorationInfo(resourceId));
 	}
 
+	/**
+	 * 显示控件-批量删除
+	 *
+	 * @param situationIconDelReq 显示控件删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("显示控件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDecoration(
@@ -65,6 +91,12 @@ public class ComponentDecorationController {
 				.deleteSituationDecoration(situationIconDelReq.getIdList()));
 	}
 
+	/**
+	 * 显示控件-列表查询
+	 *
+	 * @param situationDecorationPageReq 显示控件列表查询请求
+	 * @return {@code BaseRsp<ListRsp<SituationDecorationPageRes>>}
+	 */
 	@ApiOperation("显示控件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDecorationPageRes>>

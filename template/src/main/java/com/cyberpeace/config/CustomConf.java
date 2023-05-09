@@ -10,8 +10,11 @@ import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
 
 /**
+ *
  * 自定义配置项
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Configuration
 public class CustomConf {

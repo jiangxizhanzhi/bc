@@ -4,33 +4,64 @@ import java.util.Timer;
 
 /**
  * 定时任务，增加一个运行状态
+ *
  * @author SN
  */
 public class BsTimer extends Timer {
 
-	private String userName;
+    /**
+     * 用户名称
+     */
+    private String userName;
 
-	private Boolean isRunning = true;
+    /**
+     * 运行状态
+     */
+    private Boolean isRunning = true;
 
-	private Integer index;
+    /**
+     * 编号
+     */
+    private Integer index;
 
-	public void activate() {
-		this.isRunning = true;
-	}
+    /**
+     * 激活
+     */
+    public void activate() {
+        this.isRunning = true;
+    }
 
-	public void deactivate() {
-		this.isRunning = false;
-	}
+    /**
+     * 禁用
+     */
+    public void deactivate() {
+        this.isRunning = false;
+    }
 
-	public Boolean ifActive() {
-		return this.isRunning;
-	}
+    /**
+     * 获取运行状态
+     *
+     * @return {@code Boolean}
+     */
+    public Boolean ifActive() {
+        return this.isRunning;
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    /**
+     * 获取用户名称
+     *
+     * @return {@code String}
+     */
+    public String getUserName() {
+        return userName;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    /**
+     * 设置用户名称
+     *
+     * @param userName 用户名称
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

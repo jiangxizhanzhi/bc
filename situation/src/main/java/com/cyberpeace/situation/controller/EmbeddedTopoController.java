@@ -34,6 +34,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 嵌入服务-拓扑
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "嵌入服务-拓扑")
 @RestController
 @Slf4j
@@ -50,11 +56,18 @@ public class EmbeddedTopoController {
 	@Autowired
 	private SituationTopoService situationTopoService;
 
+	/**
+	 * 通过模板ID获取大屏ID
+	 *
+	 * @param templateId 模板id
+	 * @return {@code BaseRsp<DashboardIdRes>}
+	 */
 	@ApiOperation("拓扑编排-通过模板ID获取大屏ID")
 	@GetMapping("/template/dashboard/")
 	public BaseRsp<DashboardIdRes> getTopoByTemplateId(@RequestParam(value = "template_id",
 			required = false) @ApiParam(name = "template_id", value = "模板ID") String templateId) {
 
+		// 获取态势模板信息
 		DashboardTemplateContext dashboardTemplateContext = dashboardTemplateRefService
 				.getDashboardTemplateContext(templateId);
 
@@ -62,22 +75,31 @@ public class EmbeddedTopoController {
 			throw new BusinessException(SituationErrorCode.UNRELATED_TO_TOPO);
 		}
 
+		// 提取大屏ID
 		DashboardIdRes dashboardIdRes = new DashboardIdRes();
 		dashboardIdRes.setDashboardId(dashboardTemplateContext.getDashboardId());
 		return new BaseRsp<>(dashboardIdRes);
 	}
 
+	/**
+	 * 更新节点坐标
+	 *
+	 * @param req 节点坐标请求
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("拓扑编排-更新节点坐标")
 	@PostMapping("/template/topo/position/")
 	public BaseRsp<Boolean> updateNodePosition(@RequestBody @Validated NodePositionReq req) {
 
+		// 获取当前环境ID的拓扑配置
 		TopoConfig topoConfig = topoConfigMapper.selectByEnvId(req.getEnvId());
-
 		JSONObject json = JsonUtil.toJsonObject(topoConfig.getConfig(), JSONObject.class);
 
+		// 构造节点坐标map
 		Map<String, ElementSlimContext> elementSlimContextMap = JSONObject.parseObject(
 				json.toJSONString(), new TypeReference<Map<String, ElementSlimContext>>() {});
 
+		// 更新节点坐标
 		req.getPosition().forEach((id, value) -> {
 			elementSlimContextMap.get(id).setPosition(value);
 		});
@@ -87,6 +109,12 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 获取可视化编辑页面路径
+	 *
+	 * @param modelId 模型id
+	 * @return {@code BaseRsp<EditUrlRes>}
+	 */
 	@ApiOperation("拓扑编排-获取可视化编辑页面路径")
 	@GetMapping("/visualization/edit/url/")
 	public BaseRsp<EditUrlRes> getEditUrl(@RequestParam(value = "model_id",
@@ -95,6 +123,12 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(editUrlRes);
 	}
 
+	/**
+	 * 查询拓扑配置
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-单个查询")
 	@GetMapping("/config/get/")
 	public BaseRsp<ConfigContext>
@@ -102,6 +136,12 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(situationTopoService.getSituationTopoConfig(resourceId));
 	}
 
+	/**
+	 * 新增拓扑配置
+	 *
+	 * @param situationTopoReq 拓扑配置
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-新增")
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationTopoConfig(
@@ -109,6 +149,12 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(situationTopoService.createSituationTopoConfig(situationTopoReq));
 	}
 
+	/**
+	 * 修改拓扑配置
+	 *
+	 * @param situationTopoReq 拓扑配置
+	 * @return {@code BaseRsp<ConfigContext>}
+	 */
 	@ApiOperation("配置-修改")
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationTopoConfig(
@@ -116,6 +162,12 @@ public class EmbeddedTopoController {
 		return new BaseRsp<>(situationTopoService.updateSituationTopoConfig(situationTopoReq));
 	}
 
+	/**
+	 * 删除拓扑配置
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("配置-删除")
 	@PatchMapping("/config/delete/")
 	public BaseRsp<Integer>
@@ -124,6 +176,11 @@ public class EmbeddedTopoController {
 				situationTopoService.deleteSituationTopoConfig(batchDeleteReq.getIds()));
 	}
 
+	/**
+	 * 查询拓扑配置列表（全量）
+	 *
+	 * @return {@code BaseRsp<List<ConfigContext>>}
+	 */
 	@ApiOperation("配置-全量查询")
 	@GetMapping("/config/list/")
 	public BaseRsp<List<ConfigContext>> getAllConfig() {

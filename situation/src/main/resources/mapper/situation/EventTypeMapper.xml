@@ -14,12 +14,4 @@
             where parent_node is not null
         </if>
     </select>
-    <select id="selectBatchByName" resultType="com.cyberpeace.situation.dao.entity.EventType">
-        select `name`, min(`code`) `code` from situation_event_type
-        where name in
-        <foreach collection="types" open="(" close=")" separator="," item="type">
-            #{type}
-        </foreach>
-        group by `name`
-    </select>
 </mapper>

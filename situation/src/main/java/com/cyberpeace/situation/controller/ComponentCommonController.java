@@ -38,6 +38,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 组件管理-通用组件
+ *
  * @Author xuxz
  * @Date 16/11/2022 下午5:08
  */
@@ -56,6 +58,12 @@ public class ComponentCommonController {
 	@Autowired
 	private UtilService utilService;
 
+	/**
+	 * 通用组件-分页查询
+	 *
+	 * @param situationCommonComponentsPageReq 通用组件列表查询请求
+	 * @return {@code BaseRsp<ListRsp<SituationCommonComponentsPageRes>>}
+	 */
 	@ApiOperation("通用组件-列表查询")
 	@GetMapping
 	public BaseRsp<ListRsp<SituationCommonComponentsPageRes>>
@@ -64,6 +72,12 @@ public class ComponentCommonController {
 				.getComponentsPage(situationCommonComponentsPageReq));
 	}
 
+	/**
+	 * 通用组件-全量查询
+	 *
+	 * @param situationCommonComponentsPageReq 通用组件查询请求
+	 * @return {@code BaseRsp<List<SituationCommonComponentsPageRes>>}
+	 */
 	@ApiOperation("通用组件-全量查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationCommonComponentsPageRes>>
@@ -72,6 +86,12 @@ public class ComponentCommonController {
 				.getComponentsPages(situationCommonComponentsPageReq));
 	}
 
+	/**
+	 * 通用组件-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationCommonComponents>}
+	 */
 	@ApiOperation("通用组件-单个查询")
 	@GetMapping("/info")
 	public BaseRsp<SituationCommonComponents>
@@ -80,14 +100,26 @@ public class ComponentCommonController {
 		return new BaseRsp<>(situationCommonComponentsService.getComponentsInfo(resourceId));
 	}
 
+	/**
+	 * 通用组件-新增
+	 *
+	 * @param commonComponentsReq 通用组件新增请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("通用组件-新增")
 	@PostMapping("")
-	public BaseRsp<String> createComponents(
+	public BaseRsp<String> teComponents(
 			@RequestBody @Validated(Create.class) CommonComponentsReq commonComponentsReq) {
 		return new BaseRsp<>(
 				situationCommonComponentsService.createComponents(commonComponentsReq));
 	}
 
+	/**
+	 * 通用组件-修改
+	 *
+	 * @param commonComponentsReq 通用组件修改请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("通用组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateComponents(
@@ -96,24 +128,48 @@ public class ComponentCommonController {
 				situationCommonComponentsService.updateComponents(commonComponentsReq));
 	}
 
+	/**
+	 * 通用组件-删除
+	 *
+	 * @param idList id列表
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("通用组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponents(@RequestBody @Validated ColorThemeDelReq idList) {
 		return new BaseRsp<>(situationCommonComponentsService.deleteComponents(idList.getIdList()));
 	}
 
+	/**
+	 * 通用组件类型-列表查询
+	 *
+	 * @return {@code BaseRsp<Map<Integer, String>>}
+	 */
 	@ApiOperation("通用组件类型-列表查询")
 	@GetMapping("/type/list")
 	public BaseRsp<Map<Integer, String>> getComponentsType() {
 		return new BaseRsp<>(getCommonComponentsType());
 	}
 
+	/**
+	 * 海康摄像头-获取RTSP直播流
+	 *
+	 * @param hikVisionReq 海康摄像头请求
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("海康摄像头-获取RTSP直播流")
 	@GetMapping("/hik/rtsp/channels")
 	public BaseRsp<JSONObject> getHikVisionRtsp(HikVisionReq hikVisionReq) {
 		return new BaseRsp<>(situationCommonComponentsService.getHikVisionRtsp(hikVisionReq));
 	}
 
+	/**
+	 * 海康摄像头-获取FLV直播流
+	 *
+	 * @param rtspKey rtsp识别码
+	 * @param setpts  倍率
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("海康摄像头-获取FLV直播流")
 	@GetMapping("/hik/flv/channels")
 	public BaseRsp<JSONObject> getHikVisionFlv(@RequestParam("rtspKey") String rtspKey,
@@ -121,12 +177,24 @@ public class ComponentCommonController {
 		return new BaseRsp<>(situationCommonComponentsService.getHikVisionFLv(rtspKey, setpts));
 	}
 
+	/**
+	 * 海康摄像头-退出直播流
+	 *
+	 * @param rtspKey rtsp识别码
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("海康摄像头-退出直播流")
 	@PostMapping("/hik/flv/exit")
 	public BaseRsp<JSONObject> exitHikVisionFlv(@RequestParam("rtspKey") String rtspKey) {
 		return new BaseRsp<>(situationCommonComponentsService.exitHikVisionFLv(rtspKey));
 	}
 
+	/**
+	 * 文本组件-解析TXT内容
+	 *
+	 * @param fileCommonUploadReq TXT文件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("文本组件-解析TXT内容")
 	@PostMapping("/text_upload")
 	public BaseRsp<String> attachmentUpload(FileCommonUploadReq fileCommonUploadReq) {

@@ -25,6 +25,12 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 设备Service实现
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Service
 @Slf4j
 public class DeviceServiceImpl implements DeviceService {
@@ -41,11 +47,14 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public DeviceDistributionRes distribute(DeviceDistributionReq req) {
         DeviceDistributionRes res = new DeviceDistributionRes();
+        // 获取各类型的设备请求数
         List<Integer> types = req.getRequest().stream().filter(deviceTypeNum -> deviceTypeNum.getNum() > 0)
                 .map(DeviceTypeNum::getDeviceType).collect(Collectors.toList());
+        // 未请求设备
         if (CollectionUtils.isEmpty(types)) {
             return res;
         }
+        // 查询所请求类型的实体设备
         List<LcActualDevice> lcActualDeviceList = lcService.getActualDevices(types);
         // 没有查询到设备
         if (CollectionUtils.isEmpty(lcActualDeviceList)) {
@@ -58,7 +67,7 @@ public class DeviceServiceImpl implements DeviceService {
         // 未知设备
         Set<String> recordedIds = actualDeviceList.stream().map(ActualDevice::getDeviceId).collect(Collectors.toSet());
         Set<String> notRecordedIds = getNotRecorded(deviceIds, recordedIds);
-        if (notRecordedIds.size() > 0) {
+        if (!notRecordedIds.isEmpty()) {
             res.addMessage(String.format(BsMessage.UNKNOWN_DEVICE, notRecordedIds));
             lcActualDeviceList = lcActualDeviceList.stream().filter(device ->
                     !notRecordedIds.contains(device.getDeviceId())).collect(Collectors.toList());
@@ -70,6 +79,7 @@ public class DeviceServiceImpl implements DeviceService {
         Set<String> occupiedIds = deviceOccupationMapper.checkOccupation(deviceIds);
 
         List<String> allTypeSelected = Lists.newArrayList();
+        // 尝试分配当前空闲的实体设备
         boolean flag = true;
         for (DeviceTypeNum deviceTypeNum : req.getRequest()) {
             Integer type = deviceTypeNum.getDeviceType();
@@ -77,6 +87,7 @@ public class DeviceServiceImpl implements DeviceService {
             int size = deviceList.size();
             int num = deviceTypeNum.getNum();
             List<String> toDistribute = Lists.newArrayList();
+            // 去除已占用的设备
             for (LcActualDevice lcActualDevice : deviceList) {
                 if (occupiedIds.contains(lcActualDevice.getDeviceId())) {
                     size--;
@@ -90,6 +101,7 @@ public class DeviceServiceImpl implements DeviceService {
                         EnumUtils.getEnumDescByCode(type, UserModel.AccessOs.class), num, size));
                 flag = false;
             } else {
+                // 设备数充足，随机分配当前空闲设备
                 List<String> selectedIds = RandomUtil.randomSelect(toDistribute, num);
                 // 分配id
                 res.addSelectedIds(type, selectedIds);
@@ -126,6 +138,13 @@ public class DeviceServiceImpl implements DeviceService {
         actualDeviceMapper.insert(actualDevice);
     }
 
+    /**
+     * 获取本地未记录的设备id
+     *
+     * @param remote 远程id列表
+     * @param local  当地记录id列表
+     * @return {@code Set<String>}
+     */
     private Set<String> getNotRecorded(Collection<String> remote, Collection<String> local) {
         Set<String> notRecorded = Sets.newHashSet();
         for (String element : remote) {

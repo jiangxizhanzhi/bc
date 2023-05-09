@@ -8,6 +8,12 @@ import com.cyberpeace.integratation.service.RemoteManageService;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 服务工作
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Slf4j
 @Component
 public class ServiceJob {

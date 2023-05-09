@@ -42,6 +42,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 态势大屏-原始模板
+ *
  * @Author xuxz
  * @Date 10/11/2022 上午11:58
  */
@@ -58,6 +60,12 @@ public class DashboardTemplateController {
 	@Autowired
 	private CommonController commonController;
 
+	/**
+	 * 新建态势模板
+	 *
+	 * @param dashBoardTemplateReq 态势模板请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("原始模板-新增")
 	@PostMapping()
 	public BaseRsp<String> createDashboardTemplate(
@@ -66,6 +74,12 @@ public class DashboardTemplateController {
 				dashboardTemplateService.createDashboardTemplate(dashBoardTemplateReq));
 	}
 
+	/**
+	 * 修改态势模板
+	 *
+	 * @param dashBoardTemplateReq 态势模板请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("原始模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
@@ -74,6 +88,13 @@ public class DashboardTemplateController {
 				dashboardTemplateService.updateDashboardTemplate(dashBoardTemplateReq));
 	}
 
+	/**
+	 * 查看态势模板详情
+	 *
+	 * @param resourceId 资源id
+	 * @param type       视角类型
+	 * @return {@code BaseRsp<DashboardTemplateRes>}
+	 */
 	@ApiOperation("原始模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
@@ -85,6 +106,12 @@ public class DashboardTemplateController {
 				dashboardTemplateService.getDashboardTemplateInfo(resourceId, type, Boolean.FALSE));
 	}
 
+	/**
+	 * 删除态势模板
+	 *
+	 * @param dashboardTemplateDelReq 态势模板删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("原始模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(
@@ -93,6 +120,12 @@ public class DashboardTemplateController {
 				.deleteDashboardTemplate(dashboardTemplateDelReq.getDashboardTemplateIdList()));
 	}
 
+	/**
+	 * 查询态势模板列表
+	 *
+	 * @param dashboardTemplatePageReq 态势模板分页请求
+	 * @return {@code BaseRsp<ListRsp<DashboardTemplatePageRes>>}
+	 */
 	@ApiOperation("原始模板-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<DashboardTemplatePageRes>>
@@ -101,32 +134,57 @@ public class DashboardTemplateController {
 				dashboardTemplateService.getDashboardTemplatePage(dashboardTemplatePageReq));
 	}
 
+	/**
+	 * 获取组件类型
+	 *
+	 * @return {@code BaseRsp<Map<Integer, String>>}
+	 */
 	@ApiOperation("模板组件-获取组件类型")
 	@GetMapping("type/list")
 	public BaseRsp<Map<Integer, String>> getComponentType() {
 		return new BaseRsp<>(DashboardComponents.getComponentType());
 	}
 
+	/**
+	 * 获取模板等级列表
+	 *
+	 * @return {@code BaseRsp<Map<Integer, String>>}
+	 */
 	@ApiOperation("模板属性-获取模板等级列表")
 	@GetMapping("level/list")
 	public BaseRsp<Map<Integer, String>> getDashboardTemplateLevel() {
 		return new BaseRsp<>(DashboardTemplate.getDashboardTemplateLevel());
 	}
 
+	/**
+	 * 获取echarts数据
+	 *
+	 * @param componentsDataReq 组件数据请求
+	 * @return {@code BaseRsp<JSONArray>}
+	 */
 	@ApiOperation("模板组件-获取echarts数据")
 	@PostMapping("option/data")
 	public BaseRsp<JSONArray> getEchartsOption(@RequestBody ComponentsDataReq componentsDataReq) {
 		return new BaseRsp<>(dashboardTemplateService.getComponentsEchartsData(componentsDataReq));
 	}
 
+	/**
+	 * Base64截图上传
+	 *
+	 * @param imageReq 图片请求
+	 * @return {@code BaseRsp<AttachmentBo>}
+	 */
 	@ApiOperation("Base64截图上传")
 	@PostMapping("upload/image")
 	public BaseRsp<AttachmentBo> uploadBackgroundImage(@RequestBody @Validated ImageReq imageReq) {
+
+		// 获取图片base64
 		String base64 = imageReq.getBase64();
 		if (base64.contains("data:image")) {
 			base64 = base64.substring(base64.indexOf(",") + 1);
 		}
 		base64 = base64.replace("\r\n", "");
+
 		// 创建文件目录
 		String prefix = ".png";
 		BufferedOutputStream bos = null;
@@ -134,6 +192,8 @@ public class DashboardTemplateController {
 		InputStream input = null;
 		OutputStream os = null;
 		try {
+
+			// 创建临时文件
 			File file = File.createTempFile(IDGeneratorUtil.getID(), prefix);
 			byte[] bytes = Base64.decodeBase64(base64);
 			fos = new FileOutputStream(file);
@@ -188,6 +248,12 @@ public class DashboardTemplateController {
 		}
 	}
 
+	/**
+	 * 静态数据Json转换
+	 *
+	 * @param file 文件
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("静态数据Json转换")
 	@PutMapping("import")
 	public BaseRsp<JSONObject>

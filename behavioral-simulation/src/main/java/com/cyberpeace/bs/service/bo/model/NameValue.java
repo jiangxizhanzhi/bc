@@ -6,14 +6,24 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 饼状图键值对
+ * 键值对
+ * 用于饼状图
+ *
+ * @author SN
+ * @date 2023/05/08
  */
 @Data
 public class NameValue implements Serializable {
 
+	/**
+	 * 标签
+	 */
 	@ApiModelProperty(value = "标签")
 	private String name;
 
+	/**
+	 * 值
+	 */
 	@ApiModelProperty(value = "值")
 	private Integer value;
 

@@ -1,13 +1,16 @@
 package com.cyberpeace.situation.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.situation.dao.entity.ComponentLayer;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.situation.dao.entity.ComponentLayer;
 
 /**
+ * 组件图层映射器
+ *
  * @Author xuxz
  * @Date 30/12/2022 上午9:36
  */
@@ -15,7 +18,18 @@ import java.util.List;
 @Mapper
 public interface SituationComponentLayerMapper extends BaseMapper<ComponentLayer> {
 
-    void batchInsert(@Param("componentLayerList") List<ComponentLayer> componentLayerList);
+	/**
+	 * 批量插入
+	 *
+	 * @param componentLayerList 组件图层列表
+	 */
+	void batchInsert(@Param("componentLayerList") List<ComponentLayer> componentLayerList);
 
-    List<ComponentLayer> selectByTemplateId(@Param("templateId") String templateId);
+	/**
+	 * 通过模板id选择
+	 *
+	 * @param templateId 模板id
+	 * @return {@code List<ComponentLayer>}
+	 */
+	List<ComponentLayer> selectByTemplateId(@Param("templateId") String templateId);
 }

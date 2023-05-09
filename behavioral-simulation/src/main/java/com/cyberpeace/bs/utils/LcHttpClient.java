@@ -37,12 +37,17 @@ import com.cyberpeace.common.util.SystemPropUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 远程http客户端
  *
  * @author SN
+ * @date 2023/05/08
  */
 @Slf4j
 public class LcHttpClient {
 
+	/**
+	 * 远程请求令牌
+	 */
 	private static String ROOT_TOKEN = null;
 
 	/**
@@ -72,6 +77,7 @@ public class LcHttpClient {
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
 		HttpPost post = new HttpPost(url);
+		// 设置headers
 		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
@@ -155,6 +161,7 @@ public class LcHttpClient {
 			if (null == baseRsp.getData()) {
 				return null;
 			}
+			// 特殊处理要求返回类型为string的情形
 			String jsonString = BsUtil.handleStringData(baseRsp.getData().toString(), resultType);
 			return JsonUtil.toJsonObject(jsonString, resultType);
 		} catch (RemoteServiceException e) {
@@ -183,19 +190,30 @@ public class LcHttpClient {
 
 	/**
 	 * 判断请求码
-	 * @param rsp
+	 * @param rsp 响应
 	 * @return
 	 */
 	private static boolean isSuccess(LcResponse rsp) {
 		return rsp.getCode().equals("0");
 	}
 
+	/**
+	 * 设置令牌
+	 *
+	 * @param request 请求
+	 */
 	private static void setAuthorization(HttpUriRequest request) {
 		request.setHeader("Authorization", getToken());
 	}
 
+	/**
+	 * 获取令牌
+	 *
+	 * @return {@code String}
+	 */
 	private static String getToken() {
 		if (ROOT_TOKEN == null) {
+			// 系统配置中读取令牌
 			String token = SystemPropUtil.getProp("LC_PERMANENT_TOKEN");
 			if (StringUtils.isBlank(token)) {
 				throw new BusinessException(BsErrorCode.TOKEN_NOT_CONFIGURED);
@@ -214,6 +232,13 @@ public class LcHttpClient {
 		HttpclientContext.setContext(httpclientModel);
 	}
 
+	/**
+	 * 上传文件到远程服务
+	 *
+	 * @param url  url
+	 * @param file 文件
+	 * @return {@code String}
+	 */
 	public static String uploadFile2Lc(String url, MultipartFile file) {
 		// 1、设置请求线程数据
 		setContext(url);
@@ -236,6 +261,13 @@ public class LcHttpClient {
 		return rsp;
 	}
 
+	/**
+	 * 导出行为
+	 *
+	 * @param response      响应
+	 * @param lcBehaviorIds 远程行为id列表
+	 * @param url           url
+	 */
 	public static void exportBehavior(HttpServletResponse response, List<Long> lcBehaviorIds,
 			String url) {
 		ServletOutputStream out = null;
@@ -299,8 +331,9 @@ public class LcHttpClient {
 
 	/**
 	 * 尝试获取错误提示
-	 * @param rsp 
-	 * @return
+	 *
+	 * @param rsp 响应
+	 * @return {@code String}
 	 */
 	private static String getErrorMessage(String rsp) {
 		try {
@@ -311,6 +344,14 @@ public class LcHttpClient {
 		}
 	}
 
+	/**
+	 * 获取http响应，用于文件流处理
+	 *
+	 * @param httpClient http客户端
+	 * @param url        url
+	 * @param body       请求体
+	 * @return {@code CloseableHttpResponse}
+	 */
 	private static <T> CloseableHttpResponse
 			getClosableHttpRspByPost(CloseableHttpClient httpClient, String url, T body) {
 		CloseableHttpResponse res = null;

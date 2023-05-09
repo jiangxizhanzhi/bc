@@ -23,6 +23,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 数据库管理-访问日志
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "数据库管理-访问日志")
 @RestController
 @RequiresAuthentication
@@ -32,6 +38,12 @@ public class DbAccessLogController {
 	@Autowired
 	private SituationDbAccessMapper situationDbAccessMapper;
 
+	/**
+	 * 数据库访问日志-列表查询
+	 *
+	 * @param req 数据库访问日志请求
+	 * @return {@code BaseRsp<ListRsp<SituationDbAccess>>}
+	 */
 	@ApiOperation("访问日志-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDbAccess>>
@@ -42,6 +54,12 @@ public class DbAccessLogController {
 		return new BaseRsp<>(PageUtil.getListResult(situationDbAccessIPage));
 	}
 
+	/**
+	 * 数据库访问日志-新增
+	 *
+	 * @param req 新增数据库访问日志请求
+	 * @return {@code BaseRsp<SituationDbAccess>}
+	 */
 	@ApiOperation("访问日志-新增")
 	@GetMapping("/")
 	public BaseRsp<SituationDbAccess>

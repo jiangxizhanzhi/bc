@@ -21,6 +21,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 态势大屏-实例模板
+ *
  * @Author xuxz
  * @Date 30/11/2022 上午9:54
  */
@@ -33,6 +35,12 @@ public class DashboardTemplateRefController {
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;
 
+	/**
+	 * 新增态势模板副本
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<DashboardTemplateRefContext>}
+	 */
 	@ApiOperation("实例模板-新增")
 	@PostMapping()
 	public BaseRsp<DashboardTemplateRefContext>
@@ -44,6 +52,12 @@ public class DashboardTemplateRefController {
 				BeanUtils.copy(dashboardTemplateRef, DashboardTemplateRefContext.class));
 	}
 
+	/**
+	 * 修改态势模板副本
+	 *
+	 * @param dashBoardTemplateReq 态势模板请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("实例模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
@@ -52,6 +66,12 @@ public class DashboardTemplateRefController {
 				dashboardTemplateRefService.updateDashboardTemplate(dashBoardTemplateReq));
 	}
 
+	/**
+	 * 修改态势模板副本配置
+	 *
+	 * @param req 态势模板配置请求
+	 * @return {@code BaseRsp<DashboardTemplateRefContext>}
+	 */
 	@ApiOperation("实例模板-修改配置")
 	@PatchMapping("/config")
 	public BaseRsp<DashboardTemplateRefContext>
@@ -59,17 +79,30 @@ public class DashboardTemplateRefController {
 		return new BaseRsp<>(dashboardTemplateRefService.updateTemplateRefConfig(req));
 	}
 
+	/**
+	 * 查询态势模板副本
+	 *
+	 * @param resourceId 资源id
+	 * @param type       视角类型
+	 * @return {@code BaseRsp<DashboardTemplateRes>}
+	 */
 	@ApiOperation("实例模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
 			@RequestParam("resource_id") @ApiParam(required = true, name = "resource_id",
-					value = "api资源id") String resourceId,
+					value = "资源id") String resourceId,
 			@RequestParam(value = "type", required = false) @ApiParam(name = "type",
 					value = "视角类型") String type) {
 		return new BaseRsp<>(dashboardTemplateRefService.getDashboardTemplateInfo(resourceId, type,
 				Boolean.FALSE));
 	}
 
+	/**
+	 * 删除态势模板副本
+	 *
+	 * @param dashboardTemplateDelReq 态势模板删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("实例模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 静态资源过滤器
+ *
  * @Author xuxz
  * @Date 11/7/2022 上午10:29
  */

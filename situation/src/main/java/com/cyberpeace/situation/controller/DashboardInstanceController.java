@@ -30,9 +30,9 @@ import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.constant.TaskType;
 import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.dashboard.PublicStatus;
 import com.cyberpeace.situation.constant.dashboard.ReplayMode;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.dashboard.SituationInstanceStatus;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.*;
@@ -51,6 +51,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 态势大屏-实例
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "态势大屏-实例")
 @RestController
 @Slf4j
@@ -85,6 +91,12 @@ public class DashboardInstanceController {
 	@Autowired
 	private DashboardTemplateMapper dashboardTemplateMapper;
 
+	/**
+	 * 大屏实例-列表查询
+	 *
+	 * @param type 大屏类型 1-综合态势 2-任务态势
+	 * @return {@code BaseRsp<List<SituationCategoryRes>>}
+	 */
 	@ApiOperation("实例类型-列表查询")
 	@GetMapping("/category/list")
 	public BaseRsp<List<SituationCategoryRes>> getSituationPublishInstanceCategory(
@@ -106,6 +118,13 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 校验大屏类型
+	 *
+	 * @param situationCategory 态势类型
+	 * @param type              大屏类型
+	 * @return {@code Boolean}
+	 */
 	private Boolean checkCategoryType(SituationCategory situationCategory, Integer type) {
 		if (type == null) {
 			return true;
@@ -118,6 +137,13 @@ public class DashboardInstanceController {
 		return true;
 	}
 
+	/**
+	 * 态势类型设置是否包含定制化模板属性
+	 *
+	 * @param situationCategory 态势类型
+	 * @param categories        包含定制化模板的类型列表
+	 * @return {@code SituationCategoryRes}
+	 */
 	private SituationCategoryRes convertCategory(SituationCategory situationCategory,
 			List<String> categories) {
 		SituationCategoryRes situationCategoryRes = BeanUtils.copy(situationCategory,
@@ -126,9 +152,16 @@ public class DashboardInstanceController {
 		return situationCategoryRes;
 	}
 
+	/**
+	 * 实例状态-列表查询
+	 *
+	 * @return {@code BaseRsp<List<SituationInstanceStatusRes>>}
+	 */
 	@ApiOperation("实例状态-列表查询")
 	@GetMapping("/status/list")
 	public BaseRsp<List<SituationInstanceStatusRes>> getSituationPublishInstanceStatus() {
+
+		// 获取所有实例状态
 		List<SituationInstanceStatusRes> res = new ArrayList<>();
 		for (SituationInstanceStatus status : SituationInstanceStatus.values()) {
 			SituationInstanceStatusRes copy = BeanUtils.copy(status,
@@ -138,12 +171,23 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 重演实例类型-列表查询
+	 *
+	 * @return {@code BaseRsp<List<IntType>>}
+	 */
 	@ApiOperation("重演实例类型-列表查询")
 	@GetMapping("/replay/code/")
 	public BaseRsp<List<IntType>> getReplayMode() {
 		return new BaseRsp<>(ReplayMode.getList());
 	}
 
+	/**
+	 * 重演实例-新增
+	 *
+	 * @param replayInstanceReq 重演实例请求
+	 * @return {@code BaseRsp<SituationPublishInstance>}
+	 */
 	@ApiOperation("重演实例-新增")
 	@PostMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> addReplayInstance(
@@ -153,6 +197,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
+	/**
+	 * 重演实例-修改
+	 *
+	 * @param replayInstanceReq 重演实例请求
+	 * @return {@code BaseRsp<SituationPublishInstance>}
+	 */
 	@ApiOperation("重演实例-修改")
 	@PatchMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> updateReplayInstance(
@@ -162,6 +212,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
+	/**
+	 * 实例-新增
+	 *
+	 * @param situationPublishInstanceAddReq 实例新增请求
+	 * @return {@code BaseRsp<SituationPublishInstance>}
+	 */
 	@ApiOperation("实例-新增")
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
@@ -171,6 +227,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
+	/**
+	 * 实例-列表查询
+	 *
+	 * @param situationPublishInstanceFilterReq 实例过滤请求
+	 * @return {@code BaseRsp<ListRsp<SituationPublishInstancePageRes>>}
+	 */
 	@ApiOperation("实例-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationPublishInstancePageRes>> getSituationPublishInstance(
@@ -180,6 +242,12 @@ public class DashboardInstanceController {
 				.getSituationPublishInstancePage(situationPublishInstanceFilterReq));
 	}
 
+	/**
+	 * 获取实例预览
+	 *
+	 * @param situationPublishInstance 态势实例
+	 * @return {@code SituationPublishInstanceRes}
+	 */
 	private SituationPublishInstanceRes getSituationPublishInstancePreviewRes(
 			SituationPublishInstanceRes situationPublishInstance) {
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
@@ -189,25 +257,35 @@ public class DashboardInstanceController {
 		return situationPublishInstance;
 	}
 
+	/**
+	 * 实例-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationPublishInstanceRes>}
+	 */
 	@ApiOperation("实例-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationPublishInstanceRes> getSituationPublishInstanceDetail(
 			@RequestParam("resourceId") @NotBlank String resourceId) {
 
+		// 查询实例
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceMapper
 				.selectById(resourceId);
 		if (null == situationPublishInstance) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
+		// 查询实例对应的模板
 		String originTemplateId = dashboardTemplateRefMapper
 				.selectOriginTemplateId(situationPublishInstance.getTemplateId());
 		SituationPublishInstanceRes situationPublishInstanceRes = BeanUtils
 				.deepCopy(situationPublishInstance, SituationPublishInstanceRes.class);
 
+		// 查询实例对应的属性
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
 				.getByResourceId(situationPublishInstance.getAttributeId());
 
+		// 组装实例属性
 		situationPublishInstanceRes.setSchemeName(dashboardAttribute.getSchemeName());
 		situationPublishInstanceRes.setSchemeDesc(dashboardAttribute.getSchemeDesc());
 		TaskType type = Arrays.stream(TaskType.class.getEnumConstants())
@@ -219,6 +297,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstanceRes);
 	}
 
+	/**
+	 * 实例-删除
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("实例-删除")
 	@DeleteMapping("")
 	public BaseRsp
@@ -265,6 +349,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 实例-修改
+	 *
+	 * @param situationPublishInstanceUpdateReq 实例修改请求
+	 * @return {@code BaseRsp<SituationPublishInstance>}
+	 */
 	@ApiOperation("实例-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(
@@ -276,6 +366,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(situationPublishInstance);
 	}
 
+	/**
+	 * 实例-发布
+	 *
+	 * @param situationInstanceReleaseReq 实例发布请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("实例-发布")
 	@PostMapping("release")
 	public BaseRsp releaseSituationPublishInstance(
@@ -331,6 +427,12 @@ public class DashboardInstanceController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 实例-取消发布
+	 *
+	 * @param situationInstanceReleaseReq 实例发布请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("实例-取消发布")
 	@PostMapping("cancel_release")
 	public BaseRsp cancelReleaseSituationPublishInstance(
@@ -357,10 +459,18 @@ public class DashboardInstanceController {
 
 	}
 
+	/**
+	 * 实例-大屏预览
+	 *
+	 * @param situationInstanceReleaseReq 实例请求
+	 * @return {@code SituationPublishInstanceReviewRes}
+	 */
 	@ApiOperation("实例-大屏预览")
 	@PostMapping("preview")
 	public SituationPublishInstanceReviewRes previewSituationPublishInstance(
 			@RequestBody @Validated SituationInstanceReleaseReq situationInstanceReleaseReq) {
+
+		// 获取大屏实例
 		String resourceId = situationInstanceReleaseReq.getResourceId();
 		String type = situationInstanceReleaseReq.getType();
 		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
@@ -368,12 +478,15 @@ public class DashboardInstanceController {
 		if (null == situationPublishInstances) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+
+		// 获取大屏模板
 		String templateId = situationPublishInstances.getTemplateId();
 		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService
 				.getDashboardTemplateInfo(templateId, type, Boolean.TRUE);
+
+		// 组装大屏数据
 		SituationPublishInstanceReviewRes copy = BeanUtils.copy(situationPublishInstances,
 				SituationPublishInstanceReviewRes.class);
-		// TODO 大屏地址
 		List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService
 				.exchangeOptionDataSet(copy, new DynamicParameterContext());
 		dashboardTemplateInfo.setComponentsSetting(dashboardComponentsList);
@@ -381,6 +494,12 @@ public class DashboardInstanceController {
 		return copy;
 	}
 
+	/**
+	 * 实例-大屏数据
+	 *
+	 * @param query 查询请求
+	 * @return {@code BaseRsp<InstanceDataQueryRes>}
+	 */
 	@ApiOperation("实例-大屏数据")
 	@PostMapping("/query/")
 	public BaseRsp<InstanceDataQueryRes>
@@ -394,14 +513,13 @@ public class DashboardInstanceController {
 		context.setSubjectId(instance.getSubjectId());
 		context.setSubRangeId(instance.getSubRangeId());
 
-		// todo
 		// 依据context中实际参数，替换接口配置中的动态参数，执行请求后返回组件及其数据，动态参数参见situation.constant.DynamicParameter
 		String templateId = instance.getTemplateId();
 		DashboardTemplateRes dashboardTemplateInfo = dashboardTemplateRefService
 				.getDashboardTemplateInfo(templateId, query.getType(), Boolean.TRUE);
 		SituationPublishInstanceReviewRes copy = BeanUtils.copy(instance,
 				SituationPublishInstanceReviewRes.class);
-		// TODO 大屏地址
+
 		copy.setTemplateInfo(dashboardTemplateInfo);
 		List<DashboardComponents> dashboardComponentsList = dashboardTemplateRefService
 				.exchangeOptionDataSet(copy, context);
@@ -409,6 +527,13 @@ public class DashboardInstanceController {
 		return new BaseRsp<>(instanceDataQueryRes);
 	}
 
+	/**
+	 * 修改公共状态
+	 *
+	 * @param dashboardId  大屏ID
+	 * @param publicStatus 想定方案状态
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("实例-修改公共状态")
 	@GetMapping("/public/status/")
 	public BaseRsp<Boolean> changePublicStatus(

@@ -12,9 +12,11 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 
 /**
+ *
  * websocket配置项
- * 
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @EnableWebSocket
 @Configuration

@@ -11,7 +11,10 @@ import org.springframework.context.annotation.PropertySource;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * 数据源配置
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Slf4j
 @Configuration

@@ -32,6 +32,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 组件管理-图标组件
+ *
  * @Author xuxz
  * @Date 15/12/2022 上午10:34
  */
@@ -53,6 +55,12 @@ public class ComponentIconController {
 	@Autowired
 	private SituationIconCategoryService situationIconCategoryService;
 
+	/**
+	 * 图标组件-新增
+	 *
+	 * @param situationIconReq 图标组件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图标组件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationIcon(
@@ -60,6 +68,12 @@ public class ComponentIconController {
 		return new BaseRsp<>(situationIconService.createSituationIcon(situationIconReq));
 	}
 
+	/**
+	 * 图标组件-修改
+	 *
+	 * @param SituationIconReq 图标组件请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图标组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationIcon(
@@ -67,6 +81,12 @@ public class ComponentIconController {
 		return new BaseRsp<>(situationIconService.updateSituationIcon(SituationIconReq));
 	}
 
+	/**
+	 * 图标组件-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationIconRes>}
+	 */
 	@ApiOperation("图标组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationIconRes>
@@ -75,6 +95,12 @@ public class ComponentIconController {
 		return new BaseRsp<>(situationIconService.getSituationIconInfo(resourceId));
 	}
 
+	/**
+	 * 图标组件-批量删除
+	 *
+	 * @param SituationIconDelReq 图标组件删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("图标组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
@@ -83,6 +109,12 @@ public class ComponentIconController {
 				situationIconService.deleteSituationIcon(SituationIconDelReq.getIdList()));
 	}
 
+	/**
+	 * 图标组件-列表查询
+	 *
+	 * @param situationIconPageReq 图标组件请求
+	 * @return {@code BaseRsp<ListRsp<SituationIconRes>>}
+	 */
 	@ApiOperation("图标组件-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationIconRes>>
@@ -90,15 +122,22 @@ public class ComponentIconController {
 		return new BaseRsp<>(situationIconService.getSituationIconPage(situationIconPageReq));
 	}
 
+	/**
+	 * 图标组件-全量查询
+	 *
+	 * @return {@code BaseRsp<List<SituationIconRes>>}
+	 */
 	@ApiOperation("图标组件-全量查询")
 	@GetMapping("all")
-	public BaseRsp<List<SituationIconRes>>
-			getSituationIcon(SituationIconPageReq situationIconPageReq) {
+	public BaseRsp<List<SituationIconRes>> getSituationIcon() {
 
+		// 查询所有图标
 		List<SituationIcon> situationIcons = situationIconMapper.selectList(null);
 
 		List<SituationIconCategory> situationIconCategories = situationIconCategoryMapper
 				.selectList(null);
+
+		// 组装图标类别
 		Map<String, String> toMap = StreamApiUtils.toMap(situationIconCategories,
 				SituationIconCategory::getResourceId,
 				situationIconCategory -> situationIconCategory.getName());
@@ -114,6 +153,12 @@ public class ComponentIconController {
 		return new BaseRsp(situationIcons);
 	}
 
+	/**
+	 * 图标组件类型-列表查询
+	 *
+	 * @param name 类型名称模糊查询条件
+	 * @return {@code BaseRsp<List<SituationIconCategory>>}
+	 */
 	@ApiOperation("图标组件类型-列表查询")
 	@GetMapping("/category")
 	public BaseRsp<List<SituationIconCategory>>
@@ -122,6 +167,12 @@ public class ComponentIconController {
 		return new BaseRsp<>(situationIconCategoryService.getSituationCategoryList(name));
 	}
 
+	/**
+	 * 图标组件类型-修改
+	 *
+	 * @param situationIconCategoryReq 图标组件类型请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图标组件类型-修改")
 	@PatchMapping("/category")
 	public BaseRsp<String> updateituationIconCategory(
@@ -130,6 +181,12 @@ public class ComponentIconController {
 				situationIconCategoryService.updateSituationIconCategory(situationIconCategoryReq));
 	}
 
+	/**
+	 * 图标组件类型-批量删除
+	 *
+	 * @param SituationIconDelReq 图标组件类型删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("图标组件类型-批量删除")
 	@DeleteMapping("/category")
 	public BaseRsp<Integer> deleteituationIconCategory(
@@ -138,6 +195,12 @@ public class ComponentIconController {
 				.deleteSituationIconCategory(SituationIconDelReq.getIdList()));
 	}
 
+	/**
+	 * 图标组件类型-新增
+	 *
+	 * @param situationIconCategoryReq 图标组件类型请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("图标组件类型-新增")
 	@PostMapping("/category")
 	public BaseRsp<String> createituationIconCategory(
@@ -146,6 +209,12 @@ public class ComponentIconController {
 				situationIconCategoryService.createSituationIcon(situationIconCategoryReq));
 	}
 
+	/**
+	 * 图标组件类型-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationIconCategory>}
+	 */
 	@ApiOperation("图标组件类型-单个查询")
 	@GetMapping("/category/info")
 	public BaseRsp<SituationIconCategory>

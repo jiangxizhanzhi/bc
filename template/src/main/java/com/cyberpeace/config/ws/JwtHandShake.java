@@ -23,7 +23,10 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * jwt握手
+ *
  * @author yinqingrong
+ * @date 2023/05/06
  */
 @Slf4j
 @Component

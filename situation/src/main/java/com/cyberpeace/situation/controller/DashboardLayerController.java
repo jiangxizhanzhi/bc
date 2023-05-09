@@ -20,6 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 /**
+ * 态势大屏-组件图层管理
+ *
  * @Author xuxz
  * @Date 30/12/2022 上午9:34
  */
@@ -33,6 +35,12 @@ public class DashboardLayerController {
 	@Autowired
 	private SituationComponentLayerService situationComponentLayerService;
 
+	/**
+	 * 新增组件层
+	 *
+	 * @param componentLayerReqList 组件层请求列表
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("组件图层-新增")
 	@PostMapping()
 	public BaseRsp<String> addComponentLayer(
@@ -41,6 +49,12 @@ public class DashboardLayerController {
 		return new BaseRsp(situationComponentLayerService.addComponentLayer(componentLayerReqList));
 	}
 
+	/**
+	 * 更新组件层
+	 *
+	 * @param componentLayerReqList 组件层请求列表
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("组件图层-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateComponentLayer(
@@ -49,6 +63,12 @@ public class DashboardLayerController {
 				situationComponentLayerService.updateComponentLayer(componentLayerReqList));
 	}
 
+	/**
+	 * 删除组件层
+	 *
+	 * @param colorThemeDelReq 组件层删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("组件图层-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
@@ -57,6 +77,12 @@ public class DashboardLayerController {
 				situationComponentLayerService.deleteComponentLayer(colorThemeDelReq.getIdList()));
 	}
 
+	/**
+	 * 查询组件层
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<List<ComponentLayerRes>>}
+	 */
 	@ApiOperation("组件图层-列表查询")
 	@GetMapping("")
 	public BaseRsp<List<ComponentLayerRes>> getComponentLayer(@ApiParam(required = true,

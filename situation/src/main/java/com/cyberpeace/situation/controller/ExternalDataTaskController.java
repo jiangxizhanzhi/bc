@@ -30,6 +30,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 外部数据-任务信息
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "外部数据-任务信息")
 @RestController
 @RequiresAuthentication
@@ -39,6 +45,12 @@ public class ExternalDataTaskController {
 	@Autowired
 	private RemoteSituationService remoteSituationService;
 
+	/**
+	 * 获取任务类型字典
+	 *
+	 * @param all 是否返回全部类型
+	 * @return {@code BaseRsp<List<HashMap<String, String>>>}
+	 */
 	@ApiOperation("获取任务类型字典")
 	@GetMapping("/task_type/list/")
 	public BaseRsp<List<HashMap<String, String>>>
@@ -52,6 +64,11 @@ public class ExternalDataTaskController {
 		return new BaseRsp<>(TaskType.getTaskTypeMap(false));
 	}
 
+	/**
+	 * 获取任务状态字典
+	 *
+	 * @return {@code BaseRsp<List<HashMap<String, String>>>}
+	 */
 	@ApiOperation("获取任务状态字典")
 	@GetMapping("/task_status/list/")
 	public BaseRsp<List<HashMap<String, String>>> getTaskStatus() {
@@ -59,6 +76,12 @@ public class ExternalDataTaskController {
 		return new BaseRsp<>(TaskStatus.getTaskStatusMap());
 	}
 
+	/**
+	 * 获取任务列表
+	 *
+	 * @param taskListPageReq 任务列表分页请求
+	 * @return {@code BaseRsp<ListRsp<TaskContext>>}
+	 */
 	@ApiOperation("态势-获取任务列表")
 	@GetMapping("/task/list/")
 	public BaseRsp<ListRsp<TaskContext>> getTaskList(TaskListPageReq taskListPageReq) {
@@ -66,12 +89,24 @@ public class ExternalDataTaskController {
 				.getTaskList(BeanUtils.copy(taskListPageReq, TaskListReq.class)));
 	}
 
+	/**
+	 * 获取科目列表
+	 *
+	 * @param subjectListReq 科目列表请求
+	 * @return {@code BaseRsp<List<SubjectContext>>}
+	 */
 	@ApiOperation("态势-获取科目列表")
 	@GetMapping("/subject/list/")
 	public BaseRsp<List<SubjectContext>> getSubjectList(SubjectListReq subjectListReq) {
 		return new BaseRsp<>(remoteSituationService.getSubjectList(subjectListReq));
 	}
 
+	/**
+	 * 获取科目可视化方案列表
+	 *
+	 * @param req 任务信息请求
+	 * @return {@code BaseRsp<List<SchemeRspBo>>}
+	 */
 	@ApiOperation("想定-获取科目可视化方案列表")
 	@GetMapping("/scheme/list")
 	public BaseRsp<List<SchemeRspBo>> getSchemeList(SituationTaskReq req) {
@@ -79,6 +114,12 @@ public class ExternalDataTaskController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取科目可视化方案
+	 *
+	 * @param scheme_id 可视化方案id
+	 * @return {@code BaseRsp<SchemeVisualizationBo>}
+	 */
 	@ApiOperation("想定-获取科目可视化方案")
 	@GetMapping("/scheme/visualization")
 	public BaseRsp<SchemeVisualizationBo> getSchemeVisualization(
@@ -87,6 +128,12 @@ public class ExternalDataTaskController {
 		return new BaseRsp<>(scheme);
 	}
 
+	/**
+	 * 获取科目拓扑变更记录
+	 *
+	 * @param req 任务信息请求
+	 * @return {@code BaseRsp<List<TopoHistoryBo>>}
+	 */
 	@ApiOperation("配管-获取科目拓扑变更记录")
 	@GetMapping("/task/topo/history")
 	public BaseRsp<List<TopoHistoryBo>> getTopoHistory(SituationTaskReq req) {

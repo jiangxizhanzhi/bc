@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 外部形势控制器
+ * 外部接口-态势相关api
  *
  * @author cyberpeace
  * @date 2023/05/06
@@ -77,6 +77,12 @@ public class ExternalSituationController {
 	@Autowired
 	private SituationGisService situationGisService;
 
+	/**
+	 * 接收任务指挥命令
+	 *
+	 * @param controlCommandReq 指挥命令
+	 * @return {@code BaseRsp<ControlRes>}
+	 */
 	@CrossOrigin("*")
 	@ApiOperation("接收任务指挥命令")
 	@PostMapping("control")
@@ -102,13 +108,15 @@ public class ExternalSituationController {
 	}
 
 	/**
-	 * 发送消息
+	 * 推送消息至大屏
 	 *
-	 * @param orderType                订单类型
-	 * @param situationPublishInstance 情况发布实例
+	 * @param orderType                命令类型
+	 * @param situationPublishInstance 大屏实例
 	 */
 	private void sendMessage(OrderType orderType,
 			SituationPublishInstance situationPublishInstance) {
+
+		// 如果该命令类型需要推送消息弹窗，首先推送弹窗消息
 		if (orderType.getAction().equals("message")) {
 			WsMessage<DashboardMessage> message = new WsMessage<>(MessageType.Message.getDesc(),
 					new DashboardMessage(
@@ -117,6 +125,8 @@ public class ExternalSituationController {
 					situationPublishInstance.getResourceId());
 			return;
 		}
+
+		// 推送任务命令本身的消息
 		WsMessage<WsTaskStatus> wsMessage = new WsMessage<>(MessageType.TaskStatus.getDesc(),
 				new WsTaskStatus(orderType.getAction()));
 		situationHandlerService.pushDataToDashboard(wsMessage,
@@ -124,9 +134,9 @@ public class ExternalSituationController {
 	}
 
 	/**
-	 * 收到方案
+	 * 接收可视化方案的新建、编辑
 	 *
-	 * @param schemeBo 计划博
+	 * @param schemeBo 可视化方案信息
 	 * @return {@link BaseRsp}<{@link ScreenPathRes}>
 	 */
 	@CrossOrigin("*")
@@ -164,9 +174,9 @@ public class ExternalSituationController {
 	}
 
 	/**
-	 * 接收命令
+	 * 接收想定下发大屏指令
 	 *
-	 * @param statusOrderContextString 地位顺序上下文字符串
+	 * @param statusOrderContextString 想定下发大屏指令
 	 * @return {@link BaseRsp}<{@link ControlRes}>
 	 */
 	@CrossOrigin("*")
@@ -198,7 +208,7 @@ public class ExternalSituationController {
 	/**
 	 * 接收节点迁移信息
 	 *
-	 * @param req 请求
+	 * @param req 节点迁移信息
 	 * @return {@link BaseRsp}<{@link BooleanRes}>
 	 */
 	@CrossOrigin("*")
@@ -227,7 +237,7 @@ public class ExternalSituationController {
 	/**
 	 * 接收第三方大屏绑定
 	 *
-	 * @param thirdDashboardReq 第三指示板请求
+	 * @param thirdDashboardReq 第三方大屏信息
 	 * @return {@link BaseRsp}<{@link BooleanRes}>
 	 */
 	@CrossOrigin("*")
@@ -262,7 +272,7 @@ public class ExternalSituationController {
 	/**
 	 * 接收任务实时动效
 	 *
-	 * @param context 上下文
+	 * @param context 任务实时动效
 	 * @return {@link BaseRsp}<{@link Boolean}>
 	 */
 	@CrossOrigin("*")

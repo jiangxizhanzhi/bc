@@ -8,13 +8,25 @@ import org.apache.commons.compress.utils.Lists;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 带宽和报文数据
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 public class BandwidthAndPacket implements Serializable {
 
-    @ApiModelProperty(value = "实时带宽")
+	/**
+	 * 实时带宽
+	 */
+	@ApiModelProperty(value = "实时带宽")
     private List<Integer> bandwidth = Lists.newArrayList();
 
-    @ApiModelProperty(value = "报文数")
+	/**
+	 * 报文数
+	 */
+	@ApiModelProperty(value = "报文数")
     private List<Integer> packet = Lists.newArrayList();
 
 	/**

@@ -43,6 +43,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
 
 /**
+ * 嵌入服务-GIS标绘
+ *
  * @Author xuxz
  * @Date 17/12/2022 下午5:01
  */
@@ -68,14 +70,26 @@ public class EmbeddedGisMarkController {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
+	/**
+	 * 新增标绘图元
+	 *
+	 * @param situationPlotPixelReq 标绘图元请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("标绘图元-新增")
 	@PostMapping("/plot/pixel")
-	public BaseRsp<String> createColorTheme(
+	public BaseRsp<String> createPlotPixel(
 			@RequestBody @Validated(Create.class) SituationPlotPixelReq situationPlotPixelReq) {
 		return new BaseRsp<>(
 				situationPlotPixelService.createSituationPlotPixel(situationPlotPixelReq));
 	}
 
+	/**
+	 * 修改标绘图元
+	 *
+	 * @param situationPlotPixelReq 标绘图元请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("标绘图元-修改")
 	@PatchMapping("/plot/pixel")
 	public BaseRsp<String> updateSituationPlotPixel(
@@ -84,6 +98,12 @@ public class EmbeddedGisMarkController {
 				situationPlotPixelService.updateSituationPlotPixel(situationPlotPixelReq));
 	}
 
+	/**
+	 * 查询标绘图元
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<SituationPlotPixel>}
+	 */
 	@ApiOperation("标绘图元-单个查询")
 	@GetMapping("/plot/pixel")
 	public BaseRsp<SituationPlotPixel>
@@ -92,6 +112,12 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(situationPlotPixelService.getSituationPlotPixelInfo(resourceId));
 	}
 
+	/**
+	 * 删除标绘图元
+	 *
+	 * @param situationIconDelReq 标绘图元删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("标绘图元-批量删除")
 	@DeleteMapping("/plot/pixel")
 	public BaseRsp<Integer> deleteSituationPlotPixel(
@@ -100,6 +126,12 @@ public class EmbeddedGisMarkController {
 				.deleteSituationPlotPixel(situationIconDelReq.getIdList()));
 	}
 
+	/**
+	 * 标绘图元-列表查询
+	 *
+	 * @param SituationPlotPixelPageReq 标绘图元分页请求
+	 * @return {@code BaseRsp<ListRsp<SituationPlotPixel>>}
+	 */
 	@ApiOperation("标绘图元-列表查询")
 	@GetMapping("/plot/pixel/list")
 	public BaseRsp<ListRsp<SituationPlotPixel>>
@@ -108,12 +140,24 @@ public class EmbeddedGisMarkController {
 				situationPlotPixelService.getSituationPlotPixelPage(SituationPlotPixelPageReq));
 	}
 
+	/**
+	 * 新增标绘数据
+	 *
+	 * @param gisMarkContext 标绘数据
+	 * @return {@code BaseRsp<GisMarkContext>}
+	 */
 	@ApiOperation("标绘数据-新增")
 	@PostMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> setConfig(@RequestBody GisMarkContext gisMarkContext) {
 		return new BaseRsp<>(addGisMark(gisMarkContext));
 	}
 
+	/**
+	 * 查询标绘数据
+	 *
+	 * @param markId 标绘ID
+	 * @return {@code BaseRsp<GisMarkContext>}
+	 */
 	@ApiOperation("标绘数据-单个查询")
 	@GetMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> getConfig(@RequestParam("mark_id") @ApiParam(required = true,
@@ -122,6 +166,12 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(BeanUtils.copy(gisMark, GisMarkContext.class));
 	}
 
+	/**
+	 * 修改标绘数据
+	 *
+	 * @param gisMarkContext 标绘数据
+	 * @return {@code BaseRsp<GisMarkContext>}
+	 */
 	@ApiOperation("标绘数据-修改")
 	@PatchMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> updateConfig(@RequestBody GisMarkContext gisMarkContext) {
@@ -131,6 +181,12 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(addGisMark(gisMarkContext));
 	}
 
+	/**
+	 * 删除标绘数据
+	 *
+	 * @param markId 标绘ID
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("标绘数据-删除")
 	@DeleteMapping("/gis/mark/")
 	public BaseRsp<Boolean> deleteConfig(@RequestParam("mark_id") @ApiParam(required = true,
@@ -139,6 +195,13 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 标绘数据-列表查询
+	 *
+	 * @param dashboardId 大屏ID
+	 * @param endTime     结束时间
+	 * @return {@code BaseRsp<List<GisMarkContext>>}
+	 */
 	@ApiOperation("标绘数据-列表查询")
 	@GetMapping("/gis/mark/list/")
 	public BaseRsp<List<GisMarkContext>> getConfigList(
@@ -151,6 +214,12 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(gisMarkList);
 	}
 
+	/**
+	 * 清空大屏标绘数据
+	 *
+	 * @param ids 大屏ID列表
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("标绘数据-清空")
 	@DeleteMapping("/gis/dashboard/mark/")
 	public BaseRsp<Boolean>
@@ -172,6 +241,11 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp<>(true);
 	}
 
+	/**
+	 * 导出标绘数据
+	 *
+	 * @param dashboardId 大屏ID
+	 */
 	@ApiOperation("标绘数据-导出")
 	@GetMapping("/gis/mark/export/")
 	public void exportConfig(HttpServletResponse response,
@@ -201,6 +275,12 @@ public class EmbeddedGisMarkController {
 		}
 	}
 
+	/**
+	 * 导入标绘数据
+	 *
+	 * @param req {@code ImportMarkReq}
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("标绘数据-导入")
 	@PostMapping("/gis/mark/import")
 	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)
@@ -239,6 +319,12 @@ public class EmbeddedGisMarkController {
 		return new BaseRsp(true, "标绘文件导入成功");
 	}
 
+	/**
+	 * 添加标绘
+	 *
+	 * @param gisMarkContext 标绘数据
+	 * @return {@code GisMarkContext}
+	 */
 	public GisMarkContext addGisMark(GisMarkContext gisMarkContext) {
 		GisMark gisMark = new GisMark();
 		gisMark.setDashboardId(gisMarkContext.getDashboardId());
@@ -247,6 +333,11 @@ public class EmbeddedGisMarkController {
 		return BeanUtils.copy(gisMark, GisMarkContext.class);
 	}
 
+	/**
+	 * 删除标绘
+	 *
+	 * @param markId 标绘ID
+	 */
 	public void deleteMark(String markId) {
 		GisMark gisMark = gisMarkMapper.selectById(markId);
 		gisMark.setDeleteTime(new Date());

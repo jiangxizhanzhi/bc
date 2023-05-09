@@ -27,6 +27,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * 外部数据
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "外部数据")
 @RestController
 @RequiresAuthentication
@@ -45,12 +51,23 @@ public class ExternalDataController {
 	@Autowired
 	private SituationEnvService situationEnvService;
 
+	/**
+	 * 获取特定事件类型列表
+	 *
+	 * @return {@code BaseRsp<List<EventListRsp>>}
+	 */
 	@ApiOperation("态势-获取特定事件类型列表")
 	@GetMapping("/event/list/")
 	public BaseRsp<List<EventListRsp>> getEvents() {
 		return new BaseRsp<>(thirdPartyService.getTypicalEvents());
 	}
 
+	/**
+	 * 获取任务事件列表
+	 *
+	 * @param taskEventReq 任务事件请求
+	 * @return {@code BaseRsp<List<TaskEventContext>>}
+	 */
 	@ApiOperation("态势-获取任务事件列表")
 	@PostMapping("/event/task/")
 	public BaseRsp<List<TaskEventContext>>
@@ -58,6 +75,12 @@ public class ExternalDataController {
 		return new BaseRsp<>(remoteSituationService.getTaskEventList(taskEventReq, null));
 	}
 
+	/**
+	 * 获取节点状态列表
+	 *
+	 * @param eventReq 事件请求
+	 * @return {@code BaseRsp<List<NodeEventContext>>}
+	 */
 	@ApiOperation("态势-获取节点状态列表")
 	@PostMapping("/event/node/")
 	public BaseRsp<List<NodeEventContext>>
@@ -66,6 +89,11 @@ public class ExternalDataController {
 		return new BaseRsp<>(remoteSituationService.getNodeEventList(eventReq, null));
 	}
 
+	/**
+	 * 获取攻防事件类型列表
+	 *
+	 * @return {@code BaseRsp<List<EventTypeRes>>}
+	 */
 	@ApiOperation("态势-获取攻防事件类型列表")
 	@GetMapping("/event_type/list/")
 	public BaseRsp<List<EventTypeRes>> getEventTypes() {
@@ -73,6 +101,12 @@ public class ExternalDataController {
 		return new BaseRsp<>(thirdPartyService.getEventTypes());
 	}
 
+	/**
+	 * 获取攻防事件列表
+	 *
+	 * @param eventReq 事件请求
+	 * @return {@code BaseRsp<List<AdEventContext>>}
+	 */
 	@ApiOperation("态势-获取攻防事件列表")
 	@PostMapping("/event/ad/")
 	public BaseRsp<List<AdEventContext>>
@@ -81,6 +115,12 @@ public class ExternalDataController {
 		return new BaseRsp<>(remoteSituationService.getAdEventList(eventReq, null));
 	}
 
+	/**
+	 * 获取站点列表
+	 *
+	 * @param type 站点类型
+	 * @return {@code BaseRsp<List<BcContext>>}
+	 */
 	@ApiOperation("运维-获取站点列表")
 	@GetMapping("/bc/list/")
 	public BaseRsp<List<BcContext>>
@@ -89,6 +129,11 @@ public class ExternalDataController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取模型列表
+	 *
+	 * @return {@code BaseRsp<Map<String, ModelContext>>}
+	 */
 	@ApiOperation("运维-获取模型列表")
 	@GetMapping("/model/list/")
 	public BaseRsp<Map<String, ModelContext>> getModelList() {
@@ -96,6 +141,11 @@ public class ExternalDataController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取模型类型列表
+	 *
+	 * @return {@code BaseRsp<Map<String, ModelTypeContext>>}
+	 */
 	@ApiOperation("运维-获取模型类型列表")
 	@GetMapping("/model/type/list/")
 	public BaseRsp<Map<String, ModelTypeContext>> getModelTypeList() {
@@ -103,6 +153,13 @@ public class ExternalDataController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取评估页面链接
+	 *
+	 * @param subjectId 科目ID
+	 * @param role      角色
+	 * @return {@code BaseRsp<EvaluateUrlRes>}
+	 */
 	@ApiOperation("评估-获取评估页面链接")
 	@GetMapping("/evaluate/url/")
 	public BaseRsp<EvaluateUrlRes> getEvaluateUrl(
@@ -124,6 +181,12 @@ public class ExternalDataController {
 		return new BaseRsp<>(evaluateUrlRes);
 	}
 
+	/**
+	 * 切换日志模式
+	 *
+	 * @param mode 日志模式
+	 * @return {@code BaseRsp<Boolean>}
+	 */
 	@ApiOperation("系统-切换日志模式")
 	@GetMapping("/log/mode/")
 	public BaseRsp<Boolean> changeLogMode(@ApiParam(name = "mode", value = "日志模式",

@@ -8,17 +8,38 @@ import com.cyberpeace.common.util.HttpClientUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 命令执行器
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Slf4j
 public abstract class CommandExecutor {
 
+	/**
+	 * 默认错误消息
+	 */
 	final String defaultErrorMessage;
 
+	/**
+	 * url
+	 */
 	final String url;
 
+	/**
+	 * 任务id
+	 */
 	final String taskId;
 
+	/**
+	 * 状态
+	 */
 	private Integer state;
 
+	/**
+	 * 消息
+	 */
 	private String message;
 
 	protected CommandExecutor(String taskId, String url, String message) {
@@ -27,20 +48,29 @@ public abstract class CommandExecutor {
 		this.defaultErrorMessage = message;
 	}
 
+	/**
+	 * 具体执行函数
+	 */
 	public void execute() {
+		// 默认成功
 		state = 1;
 		message = "";
 		try {
 			doBusiness();
 		} catch (Exception e) {
+			// 错误代码2
 			state = 2;
+			// 输出默认错误信息
 			message = defaultErrorMessage;
+			// 捕获businessException，获取错误信息并覆盖
 			if (e instanceof BusinessException) {
 				message = ((BusinessException) e).getErrorMessage();
 			}
+			// 抛出错误
 			throw e;
 		} finally {
 			try {
+				// 不论执行是否成功，执行回调
 				callback();
 			} catch (Exception e1) {
 				log.error("failed to callback: ", e1);
@@ -49,10 +79,13 @@ public abstract class CommandExecutor {
 	}
 
 	/**
-	 * 具体业务
+	 * 具体业务接口
 	 */
 	protected abstract void doBusiness();
 
+	/**
+	 * 回调
+	 */
 	private void callback() {
 		CallbackBo callbackBo = new CallbackBo();
 		callbackBo.setTask_id(taskId);
@@ -62,6 +95,12 @@ public abstract class CommandExecutor {
 	}
 }
 
+/**
+ * 回调数据
+ *
+ * @author SN
+ * @date 2023/05/08
+ */
 @Data
 class CallbackBo implements Serializable {
 

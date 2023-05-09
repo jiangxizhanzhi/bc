@@ -22,9 +22,9 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.topo.Color;
 import com.cyberpeace.situation.constant.topo.LineType;
-import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.OptionsRes;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
@@ -40,6 +40,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 动效管理
+ *
+ * @author chenhy
+ * @date 2023/05/08
+ */
 @Api(tags = "动效管理")
 @RestController
 @Slf4j
@@ -62,16 +68,24 @@ public class DynamicEffectController {
 	@Autowired
 	private SituationDynamicEffectMappingService situationDynamicEffectMappingService;
 
+	/**
+	 * 新增动效
+	 *
+	 * @param dynamicEffectLibraryAddReq 动效新增请求
+	 * @return {@code BaseRsp<DynamicEffectsLibrary>}
+	 */
 	@ApiOperation("动效-新增")
 	@PostMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffectsLibrary> setDynamicEffectsLibrary(
 			@RequestBody @Validated(Create.class) DynamicEffectLibraryAddReq dynamicEffectLibraryAddReq) {
 
+		// 提取动效信息
 		DynamicEffectsLibrary dynamicEffectsLibrary = BeanUtils.copy(dynamicEffectLibraryAddReq,
 				DynamicEffectsLibrary.class);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		dynamicEffectsLibrary.setCreateUserId(userId);
 
+		// 判断动效类型是否存在
 		DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper
 				.selectById(dynamicEffectLibraryAddReq.getCategory());
 		if (null == category) {
@@ -90,16 +104,26 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibrary);
 	}
 
+	/**
+	 * 动效-列表查询
+	 *
+	 * @param dynamicEffectLibraryFilterReq 动效列表查询请求
+	 * @return {@code BaseRsp<List<DynamicEffectsLibrary>>}
+	 */
 	@ApiOperation("动效-列表查询")
 	@GetMapping("/dynamic_effect_library/list")
 	public BaseRsp<List<DynamicEffectsLibrary>>
 			getDynamicEffectsLibrary(DynamicEffectLibraryFilterReq dynamicEffectLibraryFilterReq) {
+
+		// 设置查询条件
 		LambdaQueryWrapper<DynamicEffectsLibrary> queryWrapper = new LambdaQueryWrapper<>();
 		String name = dynamicEffectLibraryFilterReq.getName();
 		if (null != name) {
 			queryWrapper.like(DynamicEffectsLibrary::getName, name);
 
 		}
+
+		// 判断动效类型是否存在
 		String type = dynamicEffectLibraryFilterReq.getCategory();
 		if (null != type && !type.equals("")) {
 			DynamicEffectsLibraryCategory category = dynamicEffectsLibraryCategoryMapper
@@ -116,6 +140,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 动效-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<DynamicEffectsLibrary>}
+	 */
 	@ApiOperation("动效-单个查询")
 	@GetMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffectsLibrary> getDynamicEffectsLibraryDetail(
@@ -129,6 +159,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibrary);
 	}
 
+	/**
+	 * 删除动效
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("动效-删除")
 	@DeleteMapping("/dynamic_effect_library")
 	public BaseRsp
@@ -145,10 +181,17 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 动效-修改
+	 *
+	 * @param dynamicEffectLibraryUpdateReq 动效修改请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("动效-修改")
 	@PatchMapping("/dynamic_effect_library")
 	public BaseRsp patchDynamicEffectsLibrary(
 			@Validated(Update.class) DynamicEffectLibraryUpdateReq dynamicEffectLibraryUpdateReq) {
+
 		DynamicEffectsLibrary patchObj = BeanUtils.copy(dynamicEffectLibraryUpdateReq,
 				DynamicEffectsLibrary.class);
 		DynamicEffectsLibrary dynamicEffectsLibrary = dynamicEffectsLibraryMapper
@@ -176,6 +219,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 动效类型-新增
+	 *
+	 * @param addCategoryReq 动效类型新增请求
+	 * @return {@code BaseRsp<DynamicEffectsLibraryCategory>}
+	 */
 	@ApiOperation("动效类型-新增")
 	@PostMapping("/dynamic_effect_library/category")
 	public BaseRsp<DynamicEffectsLibraryCategory> setDynamicEffectsLibraryCategory(
@@ -193,6 +242,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibraryCategory);
 	}
 
+	/**
+	 * 动效类型-列表查询
+	 *
+	 * @param name 名称
+	 * @return {@code BaseRsp<List<DynamicEffectsLibraryCategory>>}
+	 */
 	@ApiOperation("动效类型-列表查询")
 	@GetMapping("/dynamic_effect_library/category/list")
 	public BaseRsp<List<DynamicEffectsLibraryCategory>>
@@ -209,6 +264,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 动效类型-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<DynamicEffectsLibraryCategory>}
+	 */
 	@ApiOperation("动效类型-单个查询")
 	@GetMapping("/dynamic_effect_library/category")
 	public BaseRsp<DynamicEffectsLibraryCategory> getDynamicEffectsLibraryCategoryDetail(
@@ -222,6 +283,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(dynamicEffectsLibraryCategory);
 	}
 
+	/**
+	 * 动效类型-删除
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("动效类型-删除")
 	@DeleteMapping("/dynamic_effect_library/category")
 	public BaseRsp deleteDynamicEffectsLibraryCategory(
@@ -237,6 +304,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 动效类型-修改
+	 *
+	 * @param addCategoryReq 动效类型修改请求
+	 * @return {@code BaseRsp}
+	 */
 	@ApiOperation("动效类型-修改")
 	@PatchMapping("/dynamic_effect_library/category")
 	public BaseRsp patchDynamicEffectsLibraryCategory(
@@ -267,6 +340,11 @@ public class DynamicEffectController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 获取动效属性选项
+	 *
+	 * @return {@code BaseRsp<OptionsRes>}
+	 */
 	@ApiOperation("动效-获取动效属性选项")
 	@GetMapping("/dynamic_effect_library/option")
 	public BaseRsp<OptionsRes> getAllOption() {
@@ -276,6 +354,12 @@ public class DynamicEffectController {
 		return new BaseRsp<>(optionsRes);
 	}
 
+	/**
+	 * 解压文件
+	 *
+	 * @param zipPath zip路径
+	 * @return {@code String}
+	 */
 	private String unZipFile(String zipPath) {
 		String destPath = "/cpms/dynamic_effects/";
 		File zipFile = new File(zipPath);
@@ -286,6 +370,12 @@ public class DynamicEffectController {
 		return destPath;
 	}
 
+	/**
+	 * 动效映射-新增
+	 *
+	 * @param dynamicEffectMappingReq 动态映射新增请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("动效映射-新增")
 	@PostMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> setDynamicEffectsMapping(
@@ -295,6 +385,12 @@ public class DynamicEffectController {
 				.setDynamicEffectsMapping(dynamicEffectMappingReq));
 	}
 
+	/**
+	 * 动效映射-列表查询
+	 *
+	 * @param dynamicEffectMappingFilterReq 动态映射列表查询请求
+	 * @return {@code BaseRsp<ListRsp<DynamicEffectsMapping>>}
+	 */
 	@ApiOperation("动效映射-列表查询")
 	@GetMapping("/dynamic/effect/mapping/list")
 	public BaseRsp<ListRsp<DynamicEffectsMapping>>
@@ -304,6 +400,12 @@ public class DynamicEffectController {
 				.getDynamicEffectsMapping(dynamicEffectMappingFilterReq));
 	}
 
+	/**
+	 * 动效映射-单个查询
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code BaseRsp<DynamicEffectsMapping>}
+	 */
 	@ApiOperation("动效映射-单个查询")
 	@GetMapping("/dynamic/effect/mapping")
 	public BaseRsp<DynamicEffectsMapping> getDynamicEffectsMappingDetail(
@@ -313,6 +415,12 @@ public class DynamicEffectController {
 				situationDynamicEffectMappingService.getDynamicEffectsMappingDetail(resourceId));
 	}
 
+	/**
+	 * 动效映射-删除
+	 *
+	 * @param batchDeleteReq 批量删除请求
+	 * @return {@code BaseRsp<Integer>}
+	 */
 	@ApiOperation("动效映射-删除")
 	@DeleteMapping("/dynamic/effect/mapping")
 	public BaseRsp<Integer>
@@ -322,6 +430,12 @@ public class DynamicEffectController {
 				situationDynamicEffectMappingService.deleteDynamicEffectsMapping(batchDeleteReq));
 	}
 
+	/**
+	 * 动效映射-修改
+	 *
+	 * @param dynamicEffectMappingUpdateReq 动态映射修改请求
+	 * @return {@code BaseRsp<String>}
+	 */
 	@ApiOperation("动效映射-修改")
 	@PatchMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> patchDynamicEffectsMapping(

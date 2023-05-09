@@ -23,6 +23,12 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 
+/**
+ * mybatis配置
+ *
+ * @author cyberpeace
+ * @date 2023/05/06
+ */
 @Configuration
 @MapperScan(basePackages = { "com.cyberpeace.**.mapper" })
 public class MybatisConfig {

@@ -9,7 +9,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.CommonContext;
@@ -17,7 +16,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.SpringContextUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.rtks.service.UserRelateService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,9 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class BasicValidationRealm extends AuthorizingRealm {
-
-	@Autowired
-	private UserRelateService userRelateService;
 
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {

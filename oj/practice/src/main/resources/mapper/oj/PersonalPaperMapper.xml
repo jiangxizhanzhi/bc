@@ -35,6 +35,22 @@
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${SOLVED}) as `right`,
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start
         from oj_personal_paper as paper
+        <where>
+            <if test="userId != null and userId != ''">
+               user_id = #{userId}
+            </if>
+        </where>
         order by paper.create_time desc
+    </select>
+
+    <select id="getPaperRecordByPaper"
+            resultType="com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes">
+        <include refid="share_constant"/>
+        select paper.create_time as paper_time, `count`, is_finish,
+        (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${TRIED}) as wrong,
+        (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${SOLVED}) as `right`,
+        (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start
+        from oj_personal_paper as paper
+        where paper.resource_id = #{paperId}
     </select>
 </mapper>

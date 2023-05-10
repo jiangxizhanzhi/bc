@@ -5,21 +5,16 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
-import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
-import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
-import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
-import com.cyberpeace.oj.practice.controller.res.PracticeSolvedRes;
+import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PersonalPaperService;
+import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -166,7 +161,9 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 		if (paperRecordSummaryResList.size() > 40) {
 			paperRecordSummaryResList = paperRecordSummaryResList.subList(0, 40);
 		}
-		paperRecordSummaryResList = StreamApiUtils.filter(paperRecordSummaryResList, paperRecordSummaryRes -> paperRecordSummaryRes.getIsFinish() == isFinish);
+		if (isFinish != null) {
+			paperRecordSummaryResList = StreamApiUtils.filter(paperRecordSummaryResList, paperRecordSummaryRes -> paperRecordSummaryRes.getIsFinish() == isFinish);
+		}
 		for (PaperRecordSummaryRes paperRecordSummaryRes : paperRecordSummaryResList) {
 			String dayTime = TimeUtil.format6(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime()));
 			paperRecordSummaryRes.setPaperTime(TimeUtil.format9(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
@@ -182,6 +179,26 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 			}
 		}
 		return recordListMap;
+	}
+
+	@Override
+	public PaperRecordDetailRes getPaperRecordDetail(String paperId) {
+		PaperRecordSummaryRes paperRecordSummaryRes = personalPaperMapper.getPaperRecordByPaper(paperId);
+		paperRecordSummaryRes.setPaperTime(TimeUtil.format10(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
+		if (paperRecordSummaryRes.getIsFinish()) {
+			paperRecordSummaryRes.setAccuracyRate(paperRecordSummaryRes.getRight() * 100 / paperRecordSummaryRes.getCount());
+			paperRecordSummaryRes.setWrong(paperRecordSummaryRes.getWrong() + paperRecordSummaryRes.getNotStart());
+		}
+		PaperRecordDetailRes paperRecordDetailRes = BeanUtils.copy(paperRecordSummaryRes, PaperRecordDetailRes.class);
+		List<String> practiceRefIds = paperPracticeTheoryMapper.selectPracticeRefIdsByPaperId(paperId);
+		List<WebTheoryBo> webTheoryBoList = paperPracticeTheoryService.getPracticeDetail(practiceRefIds);
+		webTheoryBoList.forEach(webTheoryBo -> {
+			if (webTheoryBo.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode())) {
+				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
+			}
+		});
+		paperRecordDetailRes.setPracticeList(webTheoryBoList);
+		return paperRecordDetailRes;
 	}
 
 	/**

@@ -380,6 +380,16 @@ public class TimeUtil {
     }
 
     /**
+     * 格式化成2017-07-12 18:00的形式
+     * @param date
+     * @return
+     */
+    public static String format10(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return simpleDateFormat.format(date);
+    }
+
+    /**
      * 获取传入日期00:00:00的时间
      *
      * @param date

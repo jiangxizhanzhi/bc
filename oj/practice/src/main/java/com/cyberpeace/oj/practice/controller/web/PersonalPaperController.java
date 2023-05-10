@@ -4,10 +4,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
-import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
-import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
-import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
-import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
+import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.entity.PersonalPaper;
 import com.cyberpeace.oj.practice.dao.mapper.PersonalPaperMapper;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
@@ -59,8 +56,8 @@ public class PersonalPaperController {
 	}
 
 	@ApiOperation("组卷")
-	@GetMapping("/create")
-	public BaseRsp<PersonalPaper> create(PersonalPaperCreateReq personalPaperCreateReq) {
+	@PostMapping("/create")
+	public BaseRsp<PersonalPaper> create(@RequestBody @Validated PersonalPaperCreateReq personalPaperCreateReq) {
 		return new BaseRsp(personalPaperService.createPaper(personalPaperCreateReq));
 	}
 
@@ -122,8 +119,14 @@ public class PersonalPaperController {
 
 	@ApiOperation("组卷记录概要")
 	@GetMapping("/record_summary")
-	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary(@ApiParam("是否已结束") @RequestParam("is_finish") Boolean isFinish) {
+	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary(@ApiParam("是否已结束") @RequestParam(value = "is_finish" , required = false) Boolean isFinish) {
 		return new BaseRsp<>(personalPaperService.getAllPaperRecord(isFinish));
+	}
+
+	@ApiOperation("查看组卷详情")
+	@GetMapping("/record_detail")
+	public BaseRsp<PaperRecordDetailRes> getPaperRecordDetail(@ApiParam("试卷id") @RequestParam(value = "paper_id") String paperId) {
+		return new BaseRsp<>(personalPaperService.getPaperRecordDetail(paperId));
 	}
 
 }

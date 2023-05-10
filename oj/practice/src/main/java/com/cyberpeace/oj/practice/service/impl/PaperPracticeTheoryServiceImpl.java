@@ -7,6 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
@@ -33,6 +34,9 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeTheoryMapper, PaperPracticeTheory> implements PaperPracticeTheoryService {
@@ -161,4 +165,35 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		return resourceCollectionService.collectionResource(collectionContext,
 				collectionReq.getIsCollection());
 	}
+
+	@Override
+	public List<WebTheoryBo> getPracticeDetail(List<String> practiceRefIds) {
+		List<WebTheoryBo> webTheoryBoList = new ArrayList<>();
+		List<PaperPracticeTheory> paperPracticeTheories = paperPracticeTheoryMapper.selectBatchIds(practiceRefIds);
+		if (paperPracticeTheories == null) {
+			return new ArrayList<>();
+		}
+		Map<String, PaperPracticeTheory> refIdPaperPracticeMap = StreamApiUtils.toMap(paperPracticeTheories, PaperPracticeTheory::getResourceId, practice -> practice);
+		List<String> practiceIds = StreamApiUtils.map(paperPracticeTheories, PaperPracticeTheory::getOriginId);
+		Map<String, Boolean> collectMap = resourceCollectionService.selectCollectionBatchIds(UserInfoContext.getUserContext().getUserId(),
+				ResourceCollection.BusinessType.THEORY.getCode(), practiceIds);
+		List<PracticeTheory> practiceTheoryList = practiceTheoryMapper.selectBatchIds(practiceIds);
+		List<String> practiceTheoryIds = StreamApiUtils.map(practiceTheoryList, PracticeTheory::getResourceId);
+
+		for (String practiceRefId : practiceRefIds) {
+			PaperPracticeTheory paperPracticeTheory	= refIdPaperPracticeMap.get(practiceRefId);
+			PracticeTheory practiceTheory = JsonUtil.toJsonObject(paperPracticeTheory.getSnapshot(), PracticeTheory.class);
+			WebTheoryBo webTheoryBo = BeanUtils.copy(practiceTheory, WebTheoryBo.class);
+			webTheoryBo.setIsCollection(practiceTheoryIds.contains(practiceTheory.getResourceId()) && collectMap.get(practiceTheory.getResourceId()));
+			webTheoryBo.setResourceId(practiceRefId);
+			webTheoryBo.setAnswer(paperPracticeTheory.getSubmitAnswer());
+			webTheoryBo.setSolved(paperPracticeTheory.getSolved());
+			if (webTheoryBo.getTheoryType().equals(PracticeTheory.TheoryType.FILL_BLANK.getCode())) {
+				webTheoryBo.setBlankCount(JsonUtil.toJsonObjectArray(practiceTheory.getBlank(), BlankAnswer.class).size());
+			}
+			webTheoryBoList.add(webTheoryBo);
+		}
+		return webTheoryBoList;
+	}
+
 }

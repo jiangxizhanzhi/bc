@@ -14,4 +14,6 @@ import java.util.List;
 public interface PaperPracticeTheoryMapper extends BaseMapper<PaperPracticeTheory> {
 
 	List<PracticeSolvedRes> selectSolvedByPaperId(@Param("paperId") String paperId);
+
+	List<String> selectPracticeRefIdsByPaperId(@Param("paperId") String paperId);
 }

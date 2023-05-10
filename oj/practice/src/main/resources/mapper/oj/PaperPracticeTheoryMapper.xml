@@ -9,4 +9,10 @@
         from oj_paper_practice_theory
         where paper_id = #{paperId}
     </select>
+
+    <select id="selectPracticeRefIdsByPaperId" resultType="java.lang.String">
+        select resource_id
+        from oj_paper_practice_theory
+        where paper_id = #{paperId}
+    </select>
 </mapper>

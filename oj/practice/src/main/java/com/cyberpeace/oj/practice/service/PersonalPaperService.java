@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
+import com.cyberpeace.oj.practice.controller.res.PaperRecordDetailRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
 import com.cyberpeace.oj.practice.controller.res.PaperSummaryRes;
@@ -21,4 +22,6 @@ public interface PersonalPaperService extends IService<PersonalPaper> {
 	List<PaperRecordRes> getPaperRecord();
 
 	Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish);
+
+	PaperRecordDetailRes getPaperRecordDetail(String paperId);
 }

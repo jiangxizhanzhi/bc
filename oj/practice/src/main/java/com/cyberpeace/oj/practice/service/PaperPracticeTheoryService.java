@@ -6,6 +6,8 @@ import com.cyberpeace.oj.practice.dao.entity.PaperPracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 
+import java.util.List;
+
 public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory> {
 
 	WebTheoryBo getPracticeDetail(String practiceRefId);
@@ -13,4 +15,6 @@ public interface PaperPracticeTheoryService extends IService<PaperPracticeTheory
 	EvaluateResultTheory submitAnswer(String practiceId, String submitAnswer);
 
 	Boolean collection(CollectionReq collectionReq);
+
+	List<WebTheoryBo> getPracticeDetail(List<String> practiceRefIds);
 }

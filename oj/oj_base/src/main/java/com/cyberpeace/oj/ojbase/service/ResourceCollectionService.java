@@ -5,6 +5,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.ojbase.service.context.CollectionContext;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ResourceCollectionService extends IService<ResourceCollection> {
 
@@ -32,4 +33,13 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 	 * @return
 	 */
 	List<ResourceCollection> selectByType(String userId, Integer businessType);
+
+	/**
+	 * 批量查询资源没有被收藏
+	 * @param userId
+	 * @param businessType
+	 * @param businessIds
+	 * @return
+	 */
+	Map<String, Boolean> selectCollectionBatchIds(String userId, Integer businessType, List<String> businessIds);
 }

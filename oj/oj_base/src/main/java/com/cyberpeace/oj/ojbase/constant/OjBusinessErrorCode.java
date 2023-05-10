@@ -323,4 +323,16 @@ public interface OjBusinessErrorCode {
 
 	/** 原题目已删除，无法收藏 */
 	String CANT_COLLECT_DELETE_PRACTICE = "102126";
+
+	/** 题目状态未选 */
+	String QUESTION_STATUS_NOT_SELECTED = "102127";
+
+	/** 题目难度未选 */
+	String QUESTION_DIFFICULTY_NOT_SELECTED = "102128";
+
+	/** 题目类型未选 */
+	String QUESTION_TYPE_NOT_SELECTED = "102129";
+
+	/** 题目方向未选 */
+	String QUESTION_DIRECTION_NOT_SELECTED = "102130";
 }

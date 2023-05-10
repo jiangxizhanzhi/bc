@@ -1,32 +1,13 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.cyberpeace.integratation.model.scene.SceneDumpContext;
-import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.*;
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
@@ -46,12 +27,12 @@ import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
-import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -70,10 +51,27 @@ import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chenz
@@ -498,6 +496,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		if (!webOperationBo.getWriteupPublic()) {
 			webOperationBo.setWriteup(null);
 		}
+
+		PracticeSet practiceSet = practiceSetMapper.selectById(webOperationBo.getPracticeSetId());
+		webOperationBo.setPracticeSetName(practiceSet.getName());
+
 		return webOperationBo;
 	}
 

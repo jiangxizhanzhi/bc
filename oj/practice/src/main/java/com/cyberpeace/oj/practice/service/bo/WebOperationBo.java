@@ -15,4 +15,7 @@ public class WebOperationBo extends OperationBo {
 	@ApiModelProperty("场景数据")
 	private JSONObject sceneData;
 
+	@ApiModelProperty("习题集名称")
+	private String practiceSetName;
+
 }

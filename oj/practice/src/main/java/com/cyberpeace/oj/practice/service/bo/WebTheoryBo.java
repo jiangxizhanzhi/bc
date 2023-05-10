@@ -18,4 +18,7 @@ public class WebTheoryBo extends AdminTheoryBo {
 	@ApiModelProperty("解题状态：0=尝试过,1=已解出,2=未开始")
 	private Integer solved;
 
+	@ApiModelProperty("习题集名称")
+	private String practiceSetName;
+
 }

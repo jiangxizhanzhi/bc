@@ -229,6 +229,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		answerToNull(webTheoryBo, practiceSolved);
 
+		PracticeSet practiceSet = practiceSetMapper.selectById(webTheoryBo.getPracticeSetId());
+		webTheoryBo.setPracticeSetName(practiceSet.getName());
+
 		return webTheoryBo;
 	}
 

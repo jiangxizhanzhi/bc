@@ -31,7 +31,7 @@
         from situation_attack_message_history
         <where>
             attack_or_defense = 'defense'
-            scene_id = #{sceneId}
+            and scene_id = #{sceneId}
             and defense_type is not null
         </where>
         group by defense_type

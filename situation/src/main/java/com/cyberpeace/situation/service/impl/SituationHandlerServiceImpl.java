@@ -912,7 +912,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			linkStateList.add(linkStateRes);
 
 			totalLinkState.setUpLinkRate(totalLinkState.getUpLinkRate() + linkStateRes.getUpLinkRate());
-			totalLinkState.setDownLinkRate(totalLinkState.getUpLinkRate() + linkStateRes.getDownLinkRate());
+			totalLinkState.setDownLinkRate(totalLinkState.getDownLinkRate() + linkStateRes.getDownLinkRate());
 			totalLinkState.setBandwidth(totalLinkState.getBandwidth() + linkStateRes.getBandwidth());
 		}
 		totalSceneData.setLinkStateRes(totalLinkState);

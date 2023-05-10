@@ -84,7 +84,7 @@ public interface DashboardTemplateService {
      * @param layerShow
      * @return
      */
-    List<DashboardComponentsReq> sortComponent(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow);
+    List<DashboardComponentsReq> sortComponentByLayer(List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow);
 
     /**
      * 静态数据获取echarts数据

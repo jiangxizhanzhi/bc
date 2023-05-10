@@ -94,11 +94,17 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 		int size = practiceTheoryListByDirection.size();
 		for (List<PracticeTheory> practiceTheories : practiceTheoryListByDirection) {
 			int count = sum/size;
-			sum -= count;
-			size--;
 			Collections.shuffle(practiceTheories);
-			practiceTheoryList.addAll(practiceTheories.subList(0, count));
+			if (practiceTheories.size() < count) {
+				practiceTheoryList.addAll(practiceTheories);
+				sum -= practiceTheories.size();
+			}else {
+				practiceTheoryList.addAll(practiceTheories.subList(0, count));
+				sum -= count;
+			}
+			size--;
 		}
+		Collections.shuffle(practiceTheoryList);
 		personalPaper.setCount(personalPaperCreateReq.getCount());
 		personalPaper.setIsFinish(false);
 		personalPaper.setDifficulty(JsonUtil.toJsonString(personalPaperCreateReq.getDifficulty()));

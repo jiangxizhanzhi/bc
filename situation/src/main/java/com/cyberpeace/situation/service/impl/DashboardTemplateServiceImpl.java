@@ -28,7 +28,9 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
+import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
@@ -123,7 +125,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		checkTemplateName(dashBoardTemplateReq.getName(), null);
 
 		// 2.2、根据图层配置对组件配置进行排序
-		sortComponentByLayer(dashBoardTemplateReq.getComponentsSetting(), dashBoardTemplateReq.getLayerShow());
+		sortComponentByLayer(dashBoardTemplateReq.getComponentsSetting(),
+				dashBoardTemplateReq.getLayerShow());
 
 		// 2.3、转换配置数据为模板实体
 		DashboardTemplate dashboardTemplate = convertTemplate(dashBoardTemplateReq);
@@ -145,19 +148,72 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 		// 写入大屏配置
 		dashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
-
 		dashboardTemplate.setComponentsSetting(dashboardComponentsIdList.toString());
+		insertTemplate(dashboardTemplate, dashboardComponentsList);
+
+		return dashboardTemplate.getResourceId();
+	}
+
+	private void insertTemplate(DashboardTemplate dashboardTemplate,
+			List<DashboardComponents> dashboardComponentsList) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				// 写入大屏模板
 				dashboardTemplateMapper.insert(dashboardTemplate);
-				if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
+
+				// 如果组件列表不为空，写入组件数据
+				if (CollectionUtils.isNotEmpty(dashboardComponentsList)) {
 					dashboardComponentsMapper.batchInsert(dashboardComponentsList);
 				}
 			}
 		});
-		return dashboardTemplate.getResourceId();
+	}
+
+	@Override
+	public String copyDashboardTemplate(String templateId, String name) {
+
+		// 1、校验模板名称
+		checkTemplateName(name, null);
+
+		// 2、获取模板数据并构造新增模板数据
+		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(templateId, true);
+
+		// 3、清空原有模板ID并赋予新的模板名称
+		String newTemplateId = IDGeneratorUtil.getID();
+		dashboardTemplate.setId(null);
+		dashboardTemplate.setResourceId(newTemplateId);
+		dashboardTemplate.setName(name);
+
+		// 4、复制组件数据
+		List<String> componentIds = JsonUtil
+				.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class);
+		List<DashboardComponents> dashboardComponentsList = dashboardComponentsMapper
+				.selectBatchIds(componentIds);
+
+		// 4.1、如果组件ID列表和组件列表的大小不一致，抛出异常
+		if (componentIds.size() != dashboardComponentsList.size()) {
+			throw new BusinessException(SituationErrorCode.TEMPLATE_DATA_ERROR);
+		}
+
+		// 4.2、构造组件列表数据
+		for (DashboardComponents dashboardComponents : dashboardComponentsList) {
+			String resourceId = IDGeneratorUtil.getID();
+			// 替换组件ID列表中的原有组件ID
+			componentIds.set(componentIds.indexOf(dashboardComponents.getResourceId()), resourceId);
+			dashboardComponents.setResourceId(resourceId);
+		}
+
+		// 5、重写组件ID列表
+		dashboardTemplate.setComponentsSetting(JsonUtil.toJsonString(componentIds));
+
+		// 6、写入模板数据
+		insertTemplate(dashboardTemplate, dashboardComponentsList);
+
+		return newTemplateId;
+
 	}
 
 	@Override

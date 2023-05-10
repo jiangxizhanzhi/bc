@@ -269,6 +269,8 @@ public class SituationControlController {
 			return new BaseRsp<>(12);
 		} else if (type.equals(1)) {
 			return new BaseRsp<>(13);
+		} else if (type.equals(2)){
+			return new BaseRsp<>(11);
 		} else {
 			throw new BusinessException(SituationErrorCode.WRONG_TYPE);
 		}

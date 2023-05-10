@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -71,6 +72,11 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		evalIndicator.setAttribute(evalIndicatorReq.getAttribute());
 		evalIndicator.setAttributeValue(evalIndicatorReq.getAttributeValue());
 		evalIndicator.setConnlist(evalIndicatorReq.getConnlist());
+		// 聚合算法为层次分析法时 保存矩阵数据内容
+		List<EvalIndicatorContext> evalIndicators = evalIndicatorReq.getEvalIndicators();
+		if(!evalIndicators.isEmpty() && CrCommonConstants.AHP_ID.equals(evalIndicators.get(0).getAggregatingAlgorithmId())){
+			evalIndicator.setMatrixData(evalIndicators.get(0).getMatrixData());
+		}
 
 		if (evalIndicatorReq.getAttribute().equals(EvalIndexRef.DataAttr.COST.getCode())
 				|| evalIndicatorReq.getAttribute()

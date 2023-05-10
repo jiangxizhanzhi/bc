@@ -41,4 +41,7 @@ public class IndexContext {
 	@NotNull
 	private List<String> childrenIds;
 
+	@ApiModelProperty(value = "层次分析法json数组", required = false)
+	private String matrixData;
+
 }

@@ -34,4 +34,7 @@ public class EvalIndicatorContext {
 	@NotNull
 	private List<String> collectionIds;
 
+	@ApiModelProperty(value = "层次分析法json数组", required = false)
+	private String matrixData;
+
 }

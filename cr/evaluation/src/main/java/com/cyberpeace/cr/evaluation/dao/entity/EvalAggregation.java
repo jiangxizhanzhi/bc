@@ -48,4 +48,9 @@ public class EvalAggregation extends BaseTable {
 	 */
 	private String aggregatingAlgorithmParams;
 
+	/**
+	 * 矩阵内容
+	 */
+	private String matrixData;
+
 }

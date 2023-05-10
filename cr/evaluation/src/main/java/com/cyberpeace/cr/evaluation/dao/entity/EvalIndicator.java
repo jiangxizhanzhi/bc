@@ -71,4 +71,9 @@ public class EvalIndicator extends BaseTable {
 	 * 创建人
 	 */
 	private String createUserId;
+
+	/**
+	 * 矩阵内容
+	 */
+	private String matrixData;
 }

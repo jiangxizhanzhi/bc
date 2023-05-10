@@ -34,4 +34,7 @@ public class EvalAggregationContext {
 	@NotNull
 	private List<String> aggregationIds;
 
+	@ApiModelProperty(value = "层次分析法json数组", required = false)
+	private String matrixData;
+
 }

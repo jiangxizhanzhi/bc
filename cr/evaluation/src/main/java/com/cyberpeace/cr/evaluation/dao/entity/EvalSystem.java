@@ -52,4 +52,9 @@ public class EvalSystem extends BaseTable {
 	 */
 	@ApiModelProperty("创建者ID")
 	private String createUserId;
+
+	/**
+	 * 矩阵内容
+	 */
+	private String matrixData;
 }

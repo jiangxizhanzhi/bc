@@ -604,7 +604,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		ProgressProportion simple = new ProgressProportion();
 		simple.setCount((int) practiceTheoryListBoList.stream()
 													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())
-															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
+															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
 		simple.setSum((int) practiceTheoryListBoList.stream()
 													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())).count());
 		progressStatisticsRes.setSimple(simple);
@@ -612,7 +613,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		ProgressProportion medium = new ProgressProportion();
 		medium.setCount((int) practiceTheoryListBoList.stream()
 													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())
-															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
+															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
 		medium.setSum((int) practiceTheoryListBoList.stream()
 													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())).count());
 		progressStatisticsRes.setMedium(medium);
@@ -620,7 +622,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		ProgressProportion difficulty = new ProgressProportion();
 		difficulty.setCount((int) practiceTheoryListBoList.stream()
 													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())
-															  && practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count());
+															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
+															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
 		difficulty.setSum((int) practiceTheoryListBoList.stream()
 													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())).count());
 		progressStatisticsRes.setDifficulty(difficulty);

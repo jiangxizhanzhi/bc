@@ -643,9 +643,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		for (PracticeCategory practiceCategory : practiceCategoryList) {
 			categoryProgressResList.add(
 					new CategoryProgressRes(practiceCategory.getName(), practiceCategory.getResourceId(),
-					//该方向已解出的题目数
+					//该方向的题目数
 					(int) practiceTheoryListBoList.stream().filter(practiceTheoryListBo -> practiceTheoryListBo.getCategoryId().equals(practiceCategory.getResourceId())
-															&& practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())).count(),
+															&& (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
+																practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count(),
 					//该方向所有的题目数
 					(int) practiceTheoryListBoList.stream().filter(practiceTheoryListBo -> practiceTheoryListBo.getCategoryId().equals(practiceCategory.getResourceId())).count()));
 		}

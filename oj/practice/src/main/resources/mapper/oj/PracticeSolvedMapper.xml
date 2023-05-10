@@ -32,6 +32,9 @@
         inner join oj_practice_theory on oj_practice_solved.practice_id = oj_practice_theory.resource_id
         <where>
             oj_practice_solved.is_paper = 0
+            <if test="userId != null and userId != ''">
+                and submit_user_id = #{userId}
+            </if>
             <if test="practiceIds != null and practiceIds.size() != 0">
                 and oj_practice_theory.resource_id in
                 <foreach collection="practiceIds" separator="," open="(" close=")" item="practiceId">

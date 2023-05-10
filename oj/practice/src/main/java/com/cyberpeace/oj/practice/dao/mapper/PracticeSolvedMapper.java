@@ -22,7 +22,8 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	int updateSolved(@Param("solved") PracticeSolved practiceSolved);
 
-	List<PracticeTheoryListBo> selectPracticeTheoryRecord(@Param("practiceIds") List<String> practiceIds,
+	List<PracticeTheoryListBo> selectPracticeTheoryRecord(@Param("userId") String userId,
+														  @Param("practiceIds") List<String> practiceIds,
 														  @Param("startTime") Date startTime,
 														  @Param("endTime") Date endTime,
 														  @Param("solved") Integer solved);

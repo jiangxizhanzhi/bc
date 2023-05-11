@@ -24,4 +24,6 @@ public interface PracticePaperService extends IService<PracticePaper> {
 	Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish);
 
 	PaperRecordDetailRes getPaperRecordDetail(String paperId);
+
+	PracticePaper practiceAgain(String paperId);
 }

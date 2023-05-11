@@ -129,4 +129,10 @@ public class PracticePaperController {
 		return new BaseRsp<>(practicePaperService.getPaperRecordDetail(paperId));
 	}
 
+	@ApiOperation("再练一次")
+	@GetMapping("/practice_again")
+	public BaseRsp<PracticePaper> practiceAgain(@ApiParam("试卷id") @RequestParam(value = "paper_id") String paperId) {
+		return new BaseRsp<>(practicePaperService.practiceAgain(paperId));
+	}
+
 }

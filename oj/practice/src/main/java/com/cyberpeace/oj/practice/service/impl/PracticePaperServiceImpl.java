@@ -208,6 +208,38 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		return paperRecordDetailRes;
 	}
 
+	@Override
+	public PracticePaper practiceAgain(String paperId) {
+		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
+		practicePaper.setId(null);
+		practicePaper.setResourceId(null);
+		practicePaper.setIsFinish(false);
+		practicePaper.setUpdateTime(null);
+		practicePaper.setCreateTime(null);
+
+		LambdaQueryWrapper<PaperPracticeTheory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+		lambdaQueryWrapper.eq(PaperPracticeTheory::getPaperId, paperId);
+		List<PaperPracticeTheory> paperPracticeTheoryList = paperPracticeTheoryMapper.selectList(lambdaQueryWrapper);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				practicePaperMapper.insert(practicePaper);
+				for (PaperPracticeTheory paperPracticeTheory : paperPracticeTheoryList){
+					paperPracticeTheory.setResourceId(null);
+					paperPracticeTheory.setId(null);
+					paperPracticeTheory.setPaperId(practicePaper.getResourceId());
+					paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+					paperPracticeTheory.setSubmitAnswer(null);
+					paperPracticeTheory.setCreateTime(null);
+					paperPracticeTheory.setUpdateTime(null);
+				}
+				paperPracticeTheoryService.saveBatch(paperPracticeTheoryList);
+			}
+		});
+		return practicePaper;
+	}
+
 	/**
 	 * 根据解题状态和用户过滤习题
 	 * @param status

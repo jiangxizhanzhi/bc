@@ -81,4 +81,9 @@ public class EvalIndex extends BaseTable {
 		}
 
 	}
+
+	/**
+	 * 矩阵内容
+	 */
+	private String matrixData;
 }

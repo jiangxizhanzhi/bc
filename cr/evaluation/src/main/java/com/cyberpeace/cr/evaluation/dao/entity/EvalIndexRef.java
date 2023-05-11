@@ -88,6 +88,11 @@ public class EvalIndexRef extends BaseTable {
      */
     private Integer progress;
 
+    /**
+     * 矩阵内容
+     */
+    private String matrixData;
+
     public enum Type implements GenericEnum {
         SYSTEM(1, "系统评分"), SPECIALIST(2, "专家评分");
 

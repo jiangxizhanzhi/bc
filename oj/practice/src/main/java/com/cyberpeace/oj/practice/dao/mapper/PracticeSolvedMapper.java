@@ -27,4 +27,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 														  @Param("startTime") Date startTime,
 														  @Param("endTime") Date endTime,
 														  @Param("solved") Integer solved);
+
+	void deleteByPracticeIds(List<String> practiceIds);
 }

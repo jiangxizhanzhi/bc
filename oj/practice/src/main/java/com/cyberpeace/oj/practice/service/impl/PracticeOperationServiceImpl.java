@@ -152,6 +152,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	@Autowired
 	private PushMessageHandler pushMessageHandler;
 
+	@Autowired
+	private PracticeMistakeMapper practiceMistakeMapper;
+
 	private static final Logger EXPORT_LOG = LoggerFactory.getLogger("resourceImport");
 
 	@Override
@@ -853,6 +856,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
+				practiceMistakeMapper.deleteByPracticeIds(practiceIds);
+				practiceSolvedMapper.deleteByPracticeIds(practiceIds);
+
 				if (CollectionUtils.isNotEmpty(localSceneIds)) {
 					localSceneMapper.deleteBatchIds(localSceneIds);
 				}

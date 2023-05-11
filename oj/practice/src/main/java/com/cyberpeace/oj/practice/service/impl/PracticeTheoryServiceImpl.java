@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,14 +24,8 @@ import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSolvedMapper;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
+import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
@@ -48,6 +43,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -106,6 +102,9 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private PracticeMistakeMapper practiceMistakeMapper;
 
 	@Override
 	public IPage<PracticeTheoryListBo> pageByQuery(Page page, TheoryListQueryBo listQuery,
@@ -355,8 +354,29 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		practiceValidateHandler.validateSetType(practiceTheory.getPracticeSetId(),
 				PracticeSet.PracticeType.THEORY.getCode());
 		practiceValidateHandler.validateFillBlankKeyword(practiceTheory.getTheoryType() ,practiceTheory.getKeyword());
+		PracticeTheory originPractice = practiceTheoryMapper.selectById(practiceTheory.getResourceId());
+		String originChangeBo = BeanUtils.copy(originPractice, TheoryChangeBo.class).toString();
+		String changeBo = BeanUtils.copy(practiceTheory, TheoryChangeBo.class).toString();
 		// 数据更新
-		return practiceTheoryMapper.updateById(practiceTheory);
+		final int[] result = new int[1];
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
+				if (!changeBo.equals(originChangeBo)) {
+					LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
+					practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, practiceTheory.getResourceId());
+					practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
+					LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+					practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, practiceTheory.getResourceId());
+					practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
+				}
+				result[0] = practiceTheoryMapper.updateById(practiceTheory);
+			}
+		});
+
+		return result[0];
 	}
 
 	@Override
@@ -399,6 +419,8 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
+				practiceMistakeMapper.deleteByPracticeIds(resourceIds);
+				practiceSolvedMapper.deleteByPracticeIds(resourceIds);
 				practiceSetMapper.updateById(practiceSet);
 				return practiceTheoryMapper.deleteBatchIds(resourceIds);
 			}

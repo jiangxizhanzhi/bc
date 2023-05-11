@@ -6,9 +6,13 @@ import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 
 	Integer countByUserId(@Param("userId") String userId, @Param("practiceType") Integer practiceType);
+
+	void deleteByPracticeIds(List<String> practiceId);
 }

@@ -3,6 +3,18 @@
 
 <mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticeMistakeMapper">
 
+    <delete id="deleteByPracticeIds">
+        delete from oj_practice_mistake
+        <where>
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                practice_id in
+                <foreach collection="practiceIds" item="practiceId" separator="," open="(" close=")">
+                    #{practiceId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
     <select id="countByUserId" resultType="java.lang.Integer">
         select count(*)
         from oj_practice_mistake

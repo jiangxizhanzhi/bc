@@ -2,6 +2,9 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import com.cyberpeace.common.model.NameCount;
 
 public interface RtksRelatedService {
 
@@ -35,4 +38,20 @@ public interface RtksRelatedService {
 	 * @param relatedTechs
 	 */
 	void createAttackEngageRel(String btId, Collection<String> relatedTechs);
+
+	/**
+	 * 统计训练模板关联各attack类别下的技术数量
+	 * 用于训练列表页面
+	 * @param businessTemplateIds btId列表
+	 * @return map
+	 */
+	Map<String, List<NameCount>> countAttackRel(List<String> businessTemplateIds);
+
+	/**
+	 * 统计训练模板关联各engage类别下的技术数量
+	 * 用于训练列表页面
+	 * @param businessTemplateIds btId列表
+	 * @return map
+	 */
+	Map<String, List<NameCount>> countEngageRel(List<String> businessTemplateIds);
 }

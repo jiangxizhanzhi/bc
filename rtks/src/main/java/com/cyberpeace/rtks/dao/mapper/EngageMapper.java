@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.rtks.service.bo.career.EngageContext;
 import com.cyberpeace.rtks.service.bo.career.RelCount;
+import com.cyberpeace.rtks.service.bo.career.TechRelation;
 
 @Mapper
 @Repository
@@ -35,4 +36,7 @@ public interface EngageMapper {
 	Integer lockRel();
 
 	void loadRel(@Param("btId") String btId, @Param("engageIds") List<String> engageIds);
+
+	List<TechRelation>
+			selectRelsByBtIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
 }

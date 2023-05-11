@@ -136,6 +136,15 @@ public class EngageServiceImpl implements EngageService {
 		return res;
 	}
 
+	@Override
+	public List<EngageCategoryBo<FrameItemBase>> getCache() {
+		ensureEngageCache();
+		if (CommonContext.isChinese()) {
+			return cachedEngages.getZh();
+		}
+		return cachedEngages.getEn();
+	}
+
 	private void ensureEngageCache() {
 		if (null == cachedEngages) {
 			synchronized (lock) {

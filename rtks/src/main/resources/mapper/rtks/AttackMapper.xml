@@ -76,4 +76,15 @@
         from rtks_attack_train_relation
         where attack_id = #{resourceId}
     </select>
+    <select id="selectRelsByBtIds" resultType="com.cyberpeace.rtks.service.bo.career.TechRelation">
+        select
+        business_template_id,
+        attack_id as tech_id
+        from rtks_attack_train_relation
+        where business_template_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
+            #{businessTemplateId}
+        </foreach>
+    </select>
 </mapper>

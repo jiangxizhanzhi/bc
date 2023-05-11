@@ -80,5 +80,16 @@
         from rtks_engage_train_relation for
         update
     </select>
+    <select id="selectRelsByBtIds" resultType="com.cyberpeace.rtks.service.bo.career.TechRelation">
+        select
+        business_template_id,
+        engage_id as tech_id
+        from rtks_engage_train_relation
+        where business_template_id
+        in
+        <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
+            #{businessTemplateId}
+        </foreach>
+    </select>
 
 </mapper>

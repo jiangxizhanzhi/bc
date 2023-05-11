@@ -22,6 +22,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -35,6 +36,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -115,6 +117,9 @@ public class RbRoomController {
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
 
+	@Autowired
+	private RtksRelatedService rtksRelatedService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -137,7 +142,8 @@ public class RbRoomController {
 				.selectById(rbTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.CREATE, rbRoomReq.getName(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoomReq.getName()));
+				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_TRAIN_ROOM.getMsg(),
+						rbRoomReq.getName()));
 
 		return getRbRoom(rbRoom.getResourceId());
 	}
@@ -158,7 +164,6 @@ public class RbRoomController {
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		BaseRole baseRole = getSelfRoleUsers(crRoles, userId);
-
 
 		return new BaseRsp(baseRole);
 	}
@@ -204,10 +209,11 @@ public class RbRoomController {
 		// attack engage relation
 		List<String> businessTemplateIds = data.getRecords().stream()
 				.map(RbRoomData::getBusinessTemplateId).collect(Collectors.toList());
-		List<String> attackRelatedIds = businessTemplateService
-				.getAttackRelatedIds(businessTemplateIds);
-		List<String> engageRelatedIds = businessTemplateService
-				.getEngageRelatedIds(businessTemplateIds);
+
+		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
+				.countEngageRel(businessTemplateIds);
 
 		// 训练场景拓扑节点数量获取
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
@@ -233,9 +239,13 @@ public class RbRoomController {
 
 			// set attack engage relation
 			rbRoomRsp.setIsAttackRelated(
-					attackRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
+					attackRelCount.containsKey(rbRoomRsp.getBusinessTemplateId()));
+			rbRoomRsp.setAttackCount(attackRelCount.getOrDefault(rbRoomRsp.getBusinessTemplateId(),
+					Lists.newArrayList()));
 			rbRoomRsp.setIsEngageRelated(
-					engageRelatedIds.contains(rbRoomRsp.getBusinessTemplateId()));
+					engageRelCount.containsKey(rbRoomRsp.getBusinessTemplateId()));
+			rbRoomRsp.setEngageCount(engageRelCount.getOrDefault(rbRoomRsp.getBusinessTemplateId(),
+					Lists.newArrayList()));
 
 			return rbRoomRsp;
 		});
@@ -382,8 +392,8 @@ public class RbRoomController {
 
 		rbRoom = rbRoomMapper.selectById(rbTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.UPDATE, rbRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
+				OperationType.UPDATE, rbRoom.getName(), LogContent.CR_FORMAT.format(
+						OperationType.UPDATE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
 
 		return getRbRoom(rbTrainRoomModifyReq.getResourceId());
 	}
@@ -398,10 +408,11 @@ public class RbRoomController {
 		}
 
 		RbRoom rbRoom = rbRoomService.getById(roomId);
-//		String rbTemplateName = rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
+		// String rbTemplateName =
+		// rbRoomMapper.selectById(opsReq.getRoomId()).getTemplateName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-				OperationType.DELETE, rbRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
+				OperationType.DELETE, rbRoom.getName(), LogContent.CR_FORMAT.format(
+						OperationType.DELETE, LogContent.RB_TRAIN_ROOM.getMsg(), rbRoom.getName()));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

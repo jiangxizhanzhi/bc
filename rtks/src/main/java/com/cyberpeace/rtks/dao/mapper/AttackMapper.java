@@ -10,6 +10,7 @@ import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.rtks.dao.entity.AttackTrainRelation;
 import com.cyberpeace.rtks.service.bo.career.AttackContext;
 import com.cyberpeace.rtks.service.bo.career.RelCount;
+import com.cyberpeace.rtks.service.bo.career.TechRelation;
 
 @Mapper
 @Repository
@@ -36,4 +37,7 @@ public interface AttackMapper {
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
 	void loadRel(@Param("btId") String btId, @Param("attackIds") List<String> attackIds);
+
+	List<TechRelation>
+			selectRelsByBtIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
 }

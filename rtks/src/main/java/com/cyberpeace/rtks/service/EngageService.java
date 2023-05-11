@@ -6,6 +6,7 @@ import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.EngageBackBo;
 import com.cyberpeace.rtks.service.bo.career.EngageCategoryBo;
 import com.cyberpeace.rtks.service.bo.career.EngageFrontBo;
+import com.cyberpeace.rtks.service.bo.career.FrameItemBase;
 
 public interface EngageService {
 
@@ -34,4 +35,10 @@ public interface EngageService {
 	 * @return
 	 */
 	List<EngageCategoryBo<EngageFrontBo>> getEngagesByTraining(String resourceId);
+
+	/**
+	 * 获取engage缓存
+	 * @return
+	 */
+	List<EngageCategoryBo<FrameItemBase>> getCache();
 }

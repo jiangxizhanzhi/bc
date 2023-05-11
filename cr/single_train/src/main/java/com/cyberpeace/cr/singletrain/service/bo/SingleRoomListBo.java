@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.model.NameCount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
@@ -32,6 +33,12 @@ public class SingleRoomListBo extends SingleRoomBo implements Serializable {
 	@ApiModelProperty("是否关联 ATT&CK")
 	private Boolean isAttackRelated;
 
+    @ApiModelProperty(value = "关联 ATT&CK 计数")
+    private List<NameCount> attackCount;
+
 	@ApiModelProperty("是否关联 Engage")
 	private Boolean isEngageRelated;
+
+    @ApiModelProperty(value = "关联 Engage 计数")
+    private List<NameCount> engageCount;
 }

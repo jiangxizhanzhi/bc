@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -81,9 +82,15 @@ public class TeamRoomRsp implements Serializable {
 	@ApiModelProperty(value = "是否关联 ATT&CK")
 	private Boolean isAttackRelated;
 
+	@ApiModelProperty(value = "关联 ATT&CK 计数")
+	private List<NameCount> attackCount;
+
 	@ApiModelProperty(value = "是否关联 Engage")
 	private Boolean isEngageRelated;
 
 	@ApiModelProperty(value = "拓扑中占用的授权节点数量")
 	private Integer resourceOccupiedNums;
+
+	@ApiModelProperty(value = "关联 Engage 计数")
+	private List<NameCount> engageCount;
 }

@@ -126,6 +126,16 @@ public class AttackServiceImpl implements AttackService {
 		});
 	}
 
+	@Override
+	public List<AttackCategoryBo<FrameItemBase>> getCache() {
+		ensureAttackCache();
+		if (CommonContext.isChinese()) {
+			return cachedAttacks.getZh();
+		} else {
+			return cachedAttacks.getEn();
+		}
+	}
+
 	private void ensureAttackCache() {
 		if (null == cachedAttacks) {
 			synchronized (lock) {

@@ -22,6 +22,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -124,6 +125,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
+
+	@Autowired
+	private RtksRelatedService rtksRelatedService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
@@ -291,7 +295,8 @@ public class TeamTrainRoomController {
 				.selectById(teamTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamTrainRoomReq.getName()));
+				LogContent.CR_FORMAT.format(OperationType.CREATE,
+						LogContent.TEAM_TRAIN_ROOM.getMsg(), teamTrainRoomReq.getName()));
 
 		return getTeamRoom(teamRoom.getResourceId());
 	}
@@ -318,7 +323,8 @@ public class TeamTrainRoomController {
 		teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.UPDATE, teamRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE,
+						LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
 
 		return getTeamRoom(teamTrainRoomModifyReq.getResourceId());
 	}
@@ -376,7 +382,8 @@ public class TeamTrainRoomController {
 		TeamRoom teamRoom = teamRoomService.getById(roomId);
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.DELETE, teamRoom.getName(),
-				LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
+				LogContent.CR_FORMAT.format(OperationType.DELETE,
+						LogContent.TEAM_TRAIN_ROOM.getMsg(), teamRoom.getName()));
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -426,10 +433,11 @@ public class TeamTrainRoomController {
 		// attack engage relation
 		List<String> businessTemplateIds = data.getRecords().stream()
 				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
-		List<String> attackRelatedIds = businessTemplateService
-				.getAttackRelatedIds(businessTemplateIds);
-		List<String> engageRelatedIds = businessTemplateService
-				.getEngageRelatedIds(businessTemplateIds);
+
+		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
+				.countEngageRel(businessTemplateIds);
 
 		for (TeamRoomData teamRoomData : data.getRecords()) {
 			RoleQuery roleQuery = new RoleQuery();
@@ -449,17 +457,21 @@ public class TeamTrainRoomController {
 			teamRoomRsp.setRolesData(rolesData);
 			teamRoomRsp.setNodesCount(
 					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			teamRoomRsp.setResourceOccupiedNums(
-					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
+			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
+					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
 			// set attack engage relation
 			teamRoomRsp.setIsAttackRelated(
-					attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
+					attackRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setAttackCount(attackRelCount
+					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
 			teamRoomRsp.setIsEngageRelated(
-					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
+					engageRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setEngageCount(engageRelCount
+					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
 
 			teamRoomRspList.add(teamRoomRsp);
 		}

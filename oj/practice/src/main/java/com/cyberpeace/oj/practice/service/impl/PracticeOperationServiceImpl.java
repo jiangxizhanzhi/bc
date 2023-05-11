@@ -11,6 +11,7 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -33,6 +34,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
@@ -44,6 +46,7 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
@@ -69,6 +72,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -915,6 +919,41 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return dumpLoadBo;
 	}
 
+	@Override
+	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
+		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
+		List<AdminOperationListBo> practiceOptionListBoList = getAllPracticeTheoryByAuthAndSetId(practiceSetId);
+		ProgressProportion simple = new ProgressProportion();
+		simple.setCount((int) practiceOptionListBoList.stream()
+													  .filter(practiceOptionListBo -> practiceOptionListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())
+															  && practiceOptionListBo.getSolved()).count());
+		simple.setSum((int) practiceOptionListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())).count());
+		progressStatisticsRes.setSimple(simple);
+
+		ProgressProportion medium = new ProgressProportion();
+		medium.setCount((int) practiceOptionListBoList.stream()
+													  .filter(practiceOptionListBo -> practiceOptionListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())
+															  && practiceOptionListBo.getSolved()).count());
+		medium.setSum((int) practiceOptionListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())).count());
+		progressStatisticsRes.setMedium(medium);
+
+		ProgressProportion difficulty = new ProgressProportion();
+		difficulty.setCount((int) practiceOptionListBoList.stream()
+													  .filter(practiceOptionListBo -> practiceOptionListBo.getDifficulty().equals(Difficulty.HIGH.getCode())
+															  && practiceOptionListBo.getSolved()).count());
+		difficulty.setSum((int) practiceOptionListBoList.stream()
+													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())).count());
+		progressStatisticsRes.setDifficulty(difficulty);
+
+		ProgressProportion sum = new ProgressProportion();
+		sum.setSum(simple.getSum() + medium.getSum() + difficulty.getSum());
+		sum.setCount(simple.getCount() + medium.getCount() + difficulty.getCount());
+		progressStatisticsRes.setSum(sum);
+		return progressStatisticsRes;
+	}
+
 	/**
 	 * 导出附件列表 按顺序排序
 	 * @param operation
@@ -1374,5 +1413,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		}
 
 		return practiceOperationMapper.selectBatchIds(practiceIds);
+	}
+
+	private List<AdminOperationListBo> getAllPracticeTheoryByAuthAndSetId (String practiceSetId){
+		PageReqBase pageReqBase = new PageReqBase();
+		pageReqBase.setPer_page(2147483647);
+		OperationListQueryBo listQueryBo = new OperationListQueryBo();
+		listQueryBo.setPracticeSetId(practiceSetId);
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+		IPage<AdminOperationListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
+		if (practiceTheoryListBoIPage == null) {
+			return new ArrayList<>();
+		}
+		return practiceTheoryListBoIPage.getRecords();
 	}
 }

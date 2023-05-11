@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
@@ -198,4 +199,11 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
     ExternalOperationCountBo typeCount(AuthContext authContext, OperationListQueryBo listQueryBo);
+
+	/**
+	 * 获取实操题练习进度
+	 * @param practiceSetId
+	 * @return
+	 */
+	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
 }

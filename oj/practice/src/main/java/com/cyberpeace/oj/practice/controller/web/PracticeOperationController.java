@@ -23,6 +23,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
+import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -214,6 +215,13 @@ public class PracticeOperationController {
 				true);
 		TopoSceneDataBo topoScene = practiceOperationService.getTopoScene(operationId, authContext);
 		return new BaseRsp<>(topoScene);
+	}
+
+	@ApiOperation("获取进度统计")
+	@GetMapping("/progress")
+	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
+			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
+		return new BaseRsp<>(practiceOperationService.getProgressStatistics(practiceSetId));
 	}
 
 }

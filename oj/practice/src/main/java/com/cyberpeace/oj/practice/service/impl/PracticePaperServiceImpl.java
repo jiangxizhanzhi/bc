@@ -72,6 +72,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	@Override
 	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
+		//按条件获取所有可组卷的题目
 		PracticePaper practicePaper = new PracticePaper();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
 		List<String> practiceIds = getPracticeIdsByQueryAndSolved(practicePaperCreateReq.getStatus(), authContext);
@@ -80,6 +81,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		if (practiceTheorySumList.size() < practicePaperCreateReq.getCount()) {
 			throw new BusinessException(OjBusinessErrorCode.NOT_ENOUGH_PRACTICE);
 		}
+		//按方向进行统计并按每个方向的题目数量进行排序（产品要求组卷时各个方向的题目数量尽量一样）
 		Map<String, List<PracticeTheory>> directionMap = new HashMap<>();
 		for (PracticeTheory practiceTheory: practiceTheorySumList) {
 			if (directionMap.get(practiceTheory.getCategoryId()) == null) {
@@ -93,6 +95,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		List<PracticeTheory> practiceTheoryList = new ArrayList<>();
 		int sum = practicePaperCreateReq.getCount();
 		int size = practiceTheoryListByDirection.size();
+		//从题目数量少的方向依次拿题
 		for (List<PracticeTheory> practiceTheories : practiceTheoryListByDirection) {
 			int count = sum/size;
 			Collections.shuffle(practiceTheories);

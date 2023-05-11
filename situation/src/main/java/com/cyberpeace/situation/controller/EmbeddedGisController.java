@@ -178,8 +178,10 @@ public class EmbeddedGisController {
 	 */
 	@ApiOperation("配置-获取地图源选项")
 	@GetMapping("/map/source/list/")
-	public BaseRsp<List<StringType>> getMapSourceList() {
-		return new BaseRsp<>(MapSource.getList());
+	public BaseRsp<List<StringType>> getMapSourceList(
+			@RequestParam(value = "type", required = false) @ApiParam(required = false,
+					name = "type", value = "类型 1-影像 2-矢量") Integer type) {
+		return new BaseRsp<>(MapSource.getList(type));
 	}
 
 	/**

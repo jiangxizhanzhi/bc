@@ -1,18 +1,16 @@
 package com.cyberpeace.oj.practice.service;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.AdminPracticeSetBo;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
+
+import java.io.File;
+import java.util.List;
 
 public interface PracticeSetService extends IService<PracticeSet> {
 
@@ -110,5 +108,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
     void clearOrgAuth(String org);
 
     MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories);
+
+    List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType);
 
 }

@@ -171,4 +171,19 @@
             read_auth_ids like #{likeOrganization}
         </where>
     </select>
+
+    <select id="selectByIdsAndType" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        select * from oj_practice_set
+        <where>
+            <if test="setIds != null and setIds.size() >0">
+                resource_id in
+                <foreach collection="setIds" item="setId" separator="," close=")" open="(">
+                    #{setId}
+                </foreach>
+            </if>
+            <if test="setType != null and setType !=''">
+                practice_type = #{setType}
+            </if>
+        </where>
+    </select>
 </mapper>

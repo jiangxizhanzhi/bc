@@ -18,6 +18,7 @@ import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -27,6 +28,7 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
@@ -46,11 +48,12 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 @Api(tags = "oj-后台习题集相关api")
@@ -94,6 +97,12 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 
 		// 文件路径处理
 		practiceSet.setLogo(utilService.replaceFileUrl(setAddReq.getLogo()));
+
+		if (StringUtils.isBlank(practiceSet.getLogo())) {
+			List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
+			Collections.shuffle(practiceSetLogo);
+			practiceSet.setLogo(practiceSetLogo.get(0));
+		}
 
 		int result = practiceSetMapper.insert(practiceSet);
 

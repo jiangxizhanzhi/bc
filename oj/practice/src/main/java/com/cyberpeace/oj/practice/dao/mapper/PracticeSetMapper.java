@@ -1,16 +1,15 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.practice.dao.context.SetListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
@@ -71,4 +70,6 @@ public interface PracticeSetMapper extends BaseMapper<PracticeSet> {
 	List<PracticeSet> selectPracticeSetByUserId(String userId);
 
 	List<PracticeSet> selectPracticeSetByOrgId(String orgId);
+
+	List<PracticeSet> selectByIdsAndType(@Param("setIds") List<String> setIds,@Param("setType") Integer type);
 }

@@ -1,5 +1,8 @@
 package com.cyberpeace.oj.ojbase.constant;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 资源导入文件名称配置
  */
@@ -133,4 +136,6 @@ public interface ResourceImportConstant {
 	String SCRIPT = "script";
 
 	String WRITEUP_MD = "writeup.md";
+
+	List<String> PRACTICE_SET_LOGO = Arrays.asList("built_in/SetLogo1.png", "built_in/SetLogo2.png", "built_in/SetLogo3.png", "built_in/SetLogo4.png", "built_in/SetLogo5.png");
 }

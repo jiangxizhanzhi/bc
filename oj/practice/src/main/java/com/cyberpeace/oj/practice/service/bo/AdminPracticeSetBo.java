@@ -39,4 +39,7 @@ public class AdminPracticeSetBo extends AuthTable {
 	@ApiModelProperty("授权访问人数量")
 	private Integer readCount;
 
+	@ApiModelProperty("logo是否是内置的")
+	private Boolean LogoIsBuiltIn;
+
 }

@@ -1,21 +1,5 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import com.cyberpeace.cs.service.SystemPropertyService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,6 +15,7 @@ import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
@@ -50,8 +35,22 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -146,6 +145,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
+		setBo.setLogoIsBuiltIn(practiceSet.getLogo().startsWith("built_in"));
 		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
 		setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 
@@ -448,6 +448,17 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public MdTheoryPractice exportMdTheoryPractice(String path, List<PracticeTheory> theories) {
 		return practiceTheoryService.exportMdTheoryPractice(path, theories);
+	}
+
+	@Override
+	public List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType) {
+		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		authIds.remove(practiceSetId);
+		if (authIds.size() == 0) {
+			return new ArrayList<>();
+		}
+		List<PracticeSet> practiceSets = practiceSetMapper.selectByIdsAndType(authIds, setType);
+		return StreamApiUtils.map(practiceSets, practiceSet -> entityToSetBo(practiceSet, authContext));
 	}
 
 	private String doExportSet(String destPath, PracticeSet practiceSet) {

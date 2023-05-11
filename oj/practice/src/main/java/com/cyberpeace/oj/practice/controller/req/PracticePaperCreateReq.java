@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class PersonalPaperCreateReq implements Serializable {
+public class PracticePaperCreateReq implements Serializable {
 
 	@ApiModelProperty("题目状态")
 	@Size(min = 1, message = OjBusinessErrorCode.QUESTION_STATUS_NOT_SELECTED)

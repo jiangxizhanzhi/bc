@@ -7,8 +7,8 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 
 @Data
-@TableName("oj_personal_paper")
-public class PersonalPaper extends BaseTable {
+@TableName("oj_practice_paper")
+public class PracticePaper extends BaseTable {
 
 	@TableId(type = IdType.UUID, value = "resource_id")
 	private String resourceId;

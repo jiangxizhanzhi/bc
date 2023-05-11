@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PersonalPaperMapper">
+<mapper namespace="com.cyberpeace.oj.practice.dao.mapper.PracticePaperMapper">
 
     <sql id="share_constant">
         <bind name="TRIED" value="@com.cyberpeace.oj.practice.dao.entity.PracticeSolved$SolvedStatus@TRIED.code"/>
@@ -9,9 +9,9 @@
         <bind name="NOT_START" value="@com.cyberpeace.oj.practice.dao.entity.PracticeSolved$SolvedStatus@NOT_START.code"/>
     </sql>
 
-    <select id="getLastPaperByUserId" resultType="com.cyberpeace.oj.practice.dao.entity.PersonalPaper">
+    <select id="getLastPaperByUserId" resultType="com.cyberpeace.oj.practice.dao.entity.PracticePaper">
         select *
-        from oj_personal_paper
+        from oj_practice_paper
         <where>
             <if test="userId != null and userId != ''">
                 user_id = #{userId}
@@ -23,7 +23,7 @@
 
     <select id="getPaperRecord" resultType="com.cyberpeace.oj.practice.controller.res.PaperRecordRes">
         select create_time as paper_time, is_finish, resource_id as paper_id
-        from oj_personal_paper
+        from oj_practice_paper
         where user_id =#{userId} order by create_time desc
     </select>
 
@@ -34,7 +34,7 @@
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${TRIED}) as wrong,
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${SOLVED}) as `right`,
                (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start
-        from oj_personal_paper as paper
+        from oj_practice_paper as paper
         <where>
             <if test="userId != null and userId != ''">
                user_id = #{userId}
@@ -50,7 +50,7 @@
         (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${TRIED}) as wrong,
         (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${SOLVED}) as `right`,
         (select count(*) from oj_paper_practice_theory where paper_id = paper.resource_id and solved = ${NOT_START}) as not_start
-        from oj_personal_paper as paper
+        from oj_practice_paper as paper
         where paper.resource_id = #{paperId}
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -8,12 +9,12 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.controller.req.PersonalPaperCreateReq;
+import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
 import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
-import com.cyberpeace.oj.practice.service.PersonalPaperService;
+import com.cyberpeace.oj.practice.service.PracticePaperService;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.*;
 
 @Service
-public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, PersonalPaper> implements PersonalPaperService {
+public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, PracticePaper> implements PracticePaperService {
 
 	@Autowired
 	private PracticeTheoryMapper practiceTheoryMapper;
@@ -37,7 +38,7 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 	private PracticeSetMapper practiceSetMapper;
 
 	@Autowired
-	private PersonalPaperMapper personalPaperMapper;
+	private PracticePaperMapper practicePaperMapper;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -49,34 +50,34 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 	private PaperPracticeTheoryMapper paperPracticeTheoryMapper;
 
 	@Override
-	public PersonalPaperCreateReq getLastPaperSetting() {
+	public PracticePaperCreateReq getLastPaperSetting() {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		PersonalPaper personalPaper = personalPaperMapper.getLastPaperByUserId(userId);
-		PersonalPaperCreateReq personalPaperCreateReq = new PersonalPaperCreateReq();
-		if (personalPaper == null) {
-			personalPaperCreateReq.setCount(5);
-			personalPaperCreateReq.setDifficulty(Arrays.asList(Difficulty.PRIMARY.getCode()));
-			personalPaperCreateReq.setDirection(new ArrayList<>());
-			personalPaperCreateReq.setStatus(Arrays.asList(PracticeSolved.SolvedStatus.NOT_START.getCode()));
-			personalPaperCreateReq.setType(Arrays.asList(PracticeTheory.TheoryType.SINGLE.getCode()));
-			return personalPaperCreateReq;
+		PracticePaper practicePaper = practicePaperMapper.getLastPaperByUserId(userId);
+		PracticePaperCreateReq practicePaperCreateReq = new PracticePaperCreateReq();
+		if (practicePaper == null) {
+			practicePaperCreateReq.setCount(5);
+			practicePaperCreateReq.setDifficulty(Arrays.asList(Difficulty.PRIMARY.getCode()));
+			practicePaperCreateReq.setDirection(new ArrayList<>());
+			practicePaperCreateReq.setStatus(Arrays.asList(PracticeSolved.SolvedStatus.NOT_START.getCode()));
+			practicePaperCreateReq.setType(Arrays.asList(PracticeTheory.TheoryType.SINGLE.getCode()));
+			return practicePaperCreateReq;
 		}
-		personalPaperCreateReq.setType(JsonUtil.toJsonObjectArray(personalPaper.getType(), Integer.class));
-		personalPaperCreateReq.setCount(personalPaper.getCount());
-		personalPaperCreateReq.setDirection(JsonUtil.toJsonObjectArray(personalPaper.getDirection(), String.class));
-		personalPaperCreateReq.setDifficulty(JsonUtil.toJsonObjectArray(personalPaper.getDifficulty(), Integer.class));
-		personalPaperCreateReq.setStatus(JsonUtil.toJsonObjectArray(personalPaper.getPracticeStatus(), Integer.class));
-		return personalPaperCreateReq;
+		practicePaperCreateReq.setType(JsonUtil.toJsonObjectArray(practicePaper.getType(), Integer.class));
+		practicePaperCreateReq.setCount(practicePaper.getCount());
+		practicePaperCreateReq.setDirection(JsonUtil.toJsonObjectArray(practicePaper.getDirection(), String.class));
+		practicePaperCreateReq.setDifficulty(JsonUtil.toJsonObjectArray(practicePaper.getDifficulty(), Integer.class));
+		practicePaperCreateReq.setStatus(JsonUtil.toJsonObjectArray(practicePaper.getPracticeStatus(), Integer.class));
+		return practicePaperCreateReq;
 	}
 
 	@Override
-	public PersonalPaper createPaper(PersonalPaperCreateReq personalPaperCreateReq) {
-		PersonalPaper personalPaper = new PersonalPaper();
+	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
+		PracticePaper practicePaper = new PracticePaper();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
-		List<String> practiceIds = getPracticeIdsByQueryAndSolved(personalPaperCreateReq.getStatus(), authContext);
-		List<PracticeTheory> practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(personalPaperCreateReq.getDifficulty(),
-				personalPaperCreateReq.getType(), personalPaperCreateReq.getDirection(), practiceIds);
-		if (practiceTheorySumList.size() < personalPaperCreateReq.getCount()) {
+		List<String> practiceIds = getPracticeIdsByQueryAndSolved(practicePaperCreateReq.getStatus(), authContext);
+		List<PracticeTheory> practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(practicePaperCreateReq.getDifficulty(),
+				practicePaperCreateReq.getType(), practicePaperCreateReq.getDirection(), practiceIds);
+		if (practiceTheorySumList.size() < practicePaperCreateReq.getCount()) {
 			throw new BusinessException(OjBusinessErrorCode.NOT_ENOUGH_PRACTICE);
 		}
 		Map<String, List<PracticeTheory>> directionMap = new HashMap<>();
@@ -90,7 +91,7 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 		List<List<PracticeTheory>> practiceTheoryListByDirection = new ArrayList<>(directionMap.values());
 		practiceTheoryListByDirection.sort(Comparator.comparing(List::size));
 		List<PracticeTheory> practiceTheoryList = new ArrayList<>();
-		int sum = personalPaperCreateReq.getCount();
+		int sum = practicePaperCreateReq.getCount();
 		int size = practiceTheoryListByDirection.size();
 		for (List<PracticeTheory> practiceTheories : practiceTheoryListByDirection) {
 			int count = sum/size;
@@ -105,23 +106,23 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 			size--;
 		}
 		Collections.shuffle(practiceTheoryList);
-		personalPaper.setCount(personalPaperCreateReq.getCount());
-		personalPaper.setIsFinish(false);
-		personalPaper.setDifficulty(JsonUtil.toJsonString(personalPaperCreateReq.getDifficulty()));
-		personalPaper.setDirection(JsonUtil.toJsonString(personalPaperCreateReq.getDirection()));
-		personalPaper.setPracticeStatus(JsonUtil.toJsonString(personalPaperCreateReq.getStatus()));
-		personalPaper.setType(JsonUtil.toJsonString(personalPaperCreateReq.getType()));
-		personalPaper.setUserId(UserInfoContext.getUserContext().getUserId());
+		practicePaper.setCount(practicePaperCreateReq.getCount());
+		practicePaper.setIsFinish(false);
+		practicePaper.setDifficulty(JsonUtil.toJsonString(practicePaperCreateReq.getDifficulty()));
+		practicePaper.setDirection(JsonUtil.toJsonString(practicePaperCreateReq.getDirection()));
+		practicePaper.setPracticeStatus(JsonUtil.toJsonString(practicePaperCreateReq.getStatus()));
+		practicePaper.setType(JsonUtil.toJsonString(practicePaperCreateReq.getType()));
+		practicePaper.setUserId(UserInfoContext.getUserContext().getUserId());
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				personalPaperMapper.insert(personalPaper);
+				practicePaperMapper.insert(practicePaper);
 				List<PaperPracticeTheory> paperPracticeTheories = new ArrayList<>();
 				for (PracticeTheory practiceTheory : practiceTheoryList){
 					PaperPracticeTheory paperPracticeTheory = new PaperPracticeTheory();
-					paperPracticeTheory.setPaperId(personalPaper.getResourceId());
+					paperPracticeTheory.setPaperId(practicePaper.getResourceId());
 					paperPracticeTheory.setOriginId(practiceTheory.getResourceId());
 					paperPracticeTheory.setSnapshot(JsonUtil.toJsonString(practiceTheory));
 					paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
@@ -130,7 +131,7 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 				paperPracticeTheoryService.saveBatch(paperPracticeTheories);
 			}
 		});
-		return personalPaper;
+		return practicePaper;
 	}
 
 	@Override
@@ -157,13 +158,13 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 	@Override
 	public List<PaperRecordRes> getPaperRecord() {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		return personalPaperMapper.getPaperRecord(userId);
+		return practicePaperMapper.getPaperRecord(userId);
 	}
 
 	@Override
 	public Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish) {
 		Map<String, List<PaperRecordSummaryRes>> recordListMap = new HashMap<>();
-		List<PaperRecordSummaryRes> paperRecordSummaryResList = personalPaperMapper.getAllPaperRecord(UserInfoContext.getUserContext().getUserId());
+		List<PaperRecordSummaryRes> paperRecordSummaryResList = practicePaperMapper.getAllPaperRecord(UserInfoContext.getUserContext().getUserId());
 		if (paperRecordSummaryResList.size() > 40) {
 			paperRecordSummaryResList = paperRecordSummaryResList.subList(0, 40);
 		}
@@ -189,7 +190,7 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 
 	@Override
 	public PaperRecordDetailRes getPaperRecordDetail(String paperId) {
-		PaperRecordSummaryRes paperRecordSummaryRes = personalPaperMapper.getPaperRecordByPaper(paperId);
+		PaperRecordSummaryRes paperRecordSummaryRes = practicePaperMapper.getPaperRecordByPaper(paperId);
 		paperRecordSummaryRes.setPaperTime(TimeUtil.format10(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
 		if (paperRecordSummaryRes.getIsFinish()) {
 			paperRecordSummaryRes.setAccuracyRate(paperRecordSummaryRes.getRight() * 100 / paperRecordSummaryRes.getCount());
@@ -205,6 +206,38 @@ public class PersonalPaperServiceImpl extends ServiceImpl<PersonalPaperMapper, P
 		});
 		paperRecordDetailRes.setPracticeList(webTheoryBoList);
 		return paperRecordDetailRes;
+	}
+
+	@Override
+	public PracticePaper practiceAgain(String paperId) {
+		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
+		practicePaper.setId(null);
+		practicePaper.setResourceId(null);
+		practicePaper.setIsFinish(false);
+		practicePaper.setUpdateTime(null);
+		practicePaper.setCreateTime(null);
+
+		LambdaQueryWrapper<PaperPracticeTheory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+		lambdaQueryWrapper.eq(PaperPracticeTheory::getPaperId, paperId);
+		List<PaperPracticeTheory> paperPracticeTheoryList = paperPracticeTheoryMapper.selectList(lambdaQueryWrapper);
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				practicePaperMapper.insert(practicePaper);
+				for (PaperPracticeTheory paperPracticeTheory : paperPracticeTheoryList){
+					paperPracticeTheory.setResourceId(null);
+					paperPracticeTheory.setId(null);
+					paperPracticeTheory.setPaperId(practicePaper.getResourceId());
+					paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+					paperPracticeTheory.setSubmitAnswer(null);
+					paperPracticeTheory.setCreateTime(null);
+					paperPracticeTheory.setUpdateTime(null);
+				}
+				paperPracticeTheoryService.saveBatch(paperPracticeTheoryList);
+			}
+		});
+		return practicePaper;
 	}
 
 	/**

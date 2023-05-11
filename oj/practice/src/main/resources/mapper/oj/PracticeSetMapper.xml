@@ -182,7 +182,7 @@
                 </foreach>
             </if>
             <if test="setType != null and setType !=''">
-                practice_type = #{setType}
+                and practice_type = #{setType}
             </if>
         </where>
     </select>

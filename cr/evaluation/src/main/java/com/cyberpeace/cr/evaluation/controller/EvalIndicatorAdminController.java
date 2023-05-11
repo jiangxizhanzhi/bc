@@ -138,29 +138,29 @@ public class EvalIndicatorAdminController {
 				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 
 		// 层次分析法时 ahp参数格式矩阵数据校验
-		List<EvalIndicatorContext> evalIndicators = req.getEvalIndicators();
-		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
-		queryWrapper.eq(EvalAlgorithm::getMode, EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode());
-		List<EvalAlgorithm> ahpAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
-			List<String> ahpids = StreamApiUtils.getColumn(ahpAlgorithms, EvalAlgorithm::getResourceId);
-			if(!evalIndicators.isEmpty()){
-			EvalIndicatorContext evalIndicatorContext = evalIndicators.get(0);
-			String aggregatingAlgorithmId = evalIndicatorContext.getAggregatingAlgorithmId();
-			String matrixData = evalIndicatorContext.getMatrixData();
-			if(ahpids.contains(aggregatingAlgorithmId)){
-				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
-				// TODO 一致性校验
-			}
-		}
-		List<EvalAggregationContext> evalAggregations = req.getEvalAggregations();
-		for(EvalAggregationContext evalAggregation:evalAggregations){
-			String aggregatingAlgorithmId = evalAggregation.getAggregatingAlgorithmId();
-			String matrixData = evalAggregation.getMatrixData();
-			if(ahpids.contains(aggregatingAlgorithmId)) {
-				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
-				// TODO 一致性校验
-			}
-		}
+//		List<EvalIndicatorContext> evalIndicators = req.getEvalIndicators();
+//		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
+//		queryWrapper.eq(EvalAlgorithm::getMode, EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode());
+//		List<EvalAlgorithm> ahpAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
+//			List<String> ahpids = StreamApiUtils.getColumn(ahpAlgorithms, EvalAlgorithm::getResourceId);
+//			if(!evalIndicators.isEmpty()){
+//			EvalIndicatorContext evalIndicatorContext = evalIndicators.get(0);
+//			String aggregatingAlgorithmId = evalIndicatorContext.getAggregatingAlgorithmId();
+//			String matrixData = evalIndicatorContext.getMatrixData();
+//			if(ahpids.contains(aggregatingAlgorithmId)){
+//				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
+//				// TODO 一致性校验
+//			}
+//		}
+//		List<EvalAggregationContext> evalAggregations = req.getEvalAggregations();
+//		for(EvalAggregationContext evalAggregation:evalAggregations){
+//			String aggregatingAlgorithmId = evalAggregation.getAggregatingAlgorithmId();
+//			String matrixData = evalAggregation.getMatrixData();
+//			if(ahpids.contains(aggregatingAlgorithmId)) {
+//				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
+//				// TODO 一致性校验
+//			}
+//		}
 	}
 
 	@ApiOperation("编辑指标项")

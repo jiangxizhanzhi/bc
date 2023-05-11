@@ -3,7 +3,7 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordRes;
 import com.cyberpeace.oj.practice.controller.res.PaperRecordSummaryRes;
-import com.cyberpeace.oj.practice.dao.entity.PersonalPaper;
+import com.cyberpeace.oj.practice.dao.entity.PracticePaper;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
@@ -12,9 +12,9 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface PersonalPaperMapper extends BaseMapper<PersonalPaper> {
+public interface PracticePaperMapper extends BaseMapper<PracticePaper> {
 
-	PersonalPaper getLastPaperByUserId(String userId);
+	PracticePaper getLastPaperByUserId(String userId);
 
 	List<PaperRecordRes> getPaperRecord(String userId);
 

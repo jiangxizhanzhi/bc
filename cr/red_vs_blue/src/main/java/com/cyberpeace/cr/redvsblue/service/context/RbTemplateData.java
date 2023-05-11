@@ -23,6 +23,8 @@ public class RbTemplateData implements Serializable {
 
 	private Integer businessType;
 
+	private String businessTemplateId;
+
 	private String createUserId;
 
 	private Date createTime;

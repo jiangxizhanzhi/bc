@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.DeleteReq;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -29,6 +31,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
@@ -87,6 +90,8 @@ public class TeamTrainTemplateController {
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private RtksRelatedService rtksRelatedService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -115,7 +120,8 @@ public class TeamTrainTemplateController {
 		String teamTrainTemplateName = addReq.getBaseInfo().getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.CREATE,
+						LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -150,7 +156,8 @@ public class TeamTrainTemplateController {
 		String teamTrainTemplateName = modifyReq.getBaseInfo().getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.UPDATE, teamTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE,
+						LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -206,17 +213,22 @@ public class TeamTrainTemplateController {
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 
-		List<BusinessTemplate> businessTemplateList = businessTemplateService.listByIds(deleteReq.getIds());
+		List<BusinessTemplate> businessTemplateList = businessTemplateService
+				.listByIds(deleteReq.getIds());
 
 		teamTemplateService.batchDelete(deleteReq.getIds());
 
-		List<String> teamTrainTemplateName  = StreamApiUtils.getColumn(businessTemplateList,BusinessTemplate::getName);
+		List<String> teamTrainTemplateName = StreamApiUtils.getColumn(businessTemplateList,
+				BusinessTemplate::getName);
 
 		if (businessTemplateList != null) {
 			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
-					OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.TEAM_TRAIN_TEMPLATE.getMsg()),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.TEAM_TRAIN_TEMPLATE.getMsg(), teamTrainTemplateName.toString()));
-		};
+					OperationType.DELETE,
+					LogContent.BATCH_DELETE_FORMAT.format(LogContent.TEAM_TRAIN_TEMPLATE.getMsg()),
+					LogContent.CR_FORMAT.format(OperationType.DELETE,
+							LogContent.TEAM_TRAIN_TEMPLATE.getMsg(),
+							teamTrainTemplateName.toString()));
+		} ;
 
 		return new BaseRsp<>();
 	}
@@ -235,15 +247,24 @@ public class TeamTrainTemplateController {
 		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
 				data.getRecords().stream().map(teamTemplateData -> teamTemplateData.getTopoId())
 						.collect(Collectors.toList()));
+		// get attack engage relations
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(TeamTemplateData::getBusinessTemplateId).collect(Collectors.toList());
+		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
+				.countEngageRel(businessTemplateIds);
 
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
-				topologyNodesStats));
+				topologyNodesStats, attackRelCount, engageRelCount));
 
 		return new BaseRsp(data);
 	}
 
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
-			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats) {
+			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats,
+			Map<String, List<NameCount>> attackRelCount,
+			Map<String, List<NameCount>> engageRelCount) {
 
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
 
@@ -252,7 +273,8 @@ public class TeamTrainTemplateController {
 
 		List<BaseRole> teamTrainTemplateRoleList = JsonUtil.toJsonObjectArray(roleString,
 				BaseRole.class);
-		teamTrainTemplateRoleList.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
+		teamTrainTemplateRoleList
+				.forEach(role -> role.setRoleGroup(CrRole.TeamRoleGroup.STUDENT.getCode()));
 
 		BaseRole baseRole = new BaseRole();
 		baseRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
@@ -269,6 +291,16 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
+
+		// set attack engage relation
+		teamTrainTemplateRsp.setIsAttackRelated(
+				attackRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));
+		teamTrainTemplateRsp.setAttackCount(attackRelCount
+				.getOrDefault(teamTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
+		teamTrainTemplateRsp.setIsEngageRelated(
+				engageRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));
+		teamTrainTemplateRsp.setEngageCount(engageRelCount
+				.getOrDefault(teamTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
 
 		return teamTrainTemplateRsp;
 	}

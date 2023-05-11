@@ -26,6 +26,8 @@ public class TeamTemplateData implements Serializable {
 
 	private Integer businessType;
 
+	private String businessTemplateId;
+
 	private String createUserId;
 
 	private Date createTime;

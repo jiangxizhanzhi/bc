@@ -1,7 +1,7 @@
 package com.cyberpeace.common.constant;
 
 /**
- * 模式常量
+ * 正则匹配常用字符串
  *
  * @author cyberpeace
  * @date 2023/05/06

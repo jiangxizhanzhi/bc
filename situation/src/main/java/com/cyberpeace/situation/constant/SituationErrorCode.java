@@ -297,4 +297,9 @@ public interface SituationErrorCode {
 	 * 导入格式不正确
 	 */
 	String IMPORT_FORMAT_FAILED = "106017";
+
+	/**
+	 * 模板数据异常
+	 */
+	String TEMPLATE_DATA_ERROR = "106018";
 }

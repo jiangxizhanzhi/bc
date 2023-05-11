@@ -37,7 +37,7 @@ public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
 	 * @param name 名称
 	 * @return {@code String}
 	 */
-	String selectByNameString(@Param("name") String name);
+	String selectByName(@Param("name") String name);
 
 	/**
 	 * 通过类型查询

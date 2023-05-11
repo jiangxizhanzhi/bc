@@ -28,7 +28,9 @@ import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.*;
-import com.cyberpeace.situation.dao.mapper.*;
+import com.cyberpeace.situation.dao.mapper.DashboardComponentsMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
+import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.DashboardTemplateService;
@@ -55,19 +57,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	private ApiRequestService apiRequestService;
 
 	@Autowired
-	private TwoDimensionalComponentsMapper twoDimensionalComponentsMapper;
-
-	@Autowired
-	private ApiRequestMapper apiRequestMapper;
-
-	@Autowired
 	private DataSourceService dataSourceService;
 
 	@Autowired
 	private SituationCategoryMapper situationCategoryMapper;
 
 	// 获取模板数据
-	public DashboardTemplate selectDashboardTemplateById(String templateId, Boolean nullThrow){
+	public DashboardTemplate selectDashboardTemplateById(String templateId, Boolean nullThrow) {
 		DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
 		if (dashboardTemplate == null && nullThrow) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -76,7 +72,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	// 转换大屏组件配置（字符串 -> 列表）
-	public List<DashboardComponents> convertComponents(String components, String type){
+	public List<DashboardComponents> convertComponents(String components, String type) {
 
 		// 1、构建返回结构
 		List<DashboardComponents> dashboardComponents = Lists.newArrayList();
@@ -102,7 +98,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			dashboardComponents.forEach(dashboardComponent -> {
 				String componentType = dashboardComponent.getType();
 				// 3-3-2-1 过滤当前视角类型控件及全局控件
-				if (Objects.equals(componentType, type) || "all".equals(type)){
+				if (Objects.equals(componentType, type) || "all".equals(type)) {
 					sortDashboardComponents.add(dashboardComponent);
 				}
 			});
@@ -116,26 +112,29 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 	@Override
 	public String createDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
-		// 存在resourceId直接走更新
+
+		// 1、如果模板ID不为空，更新模板并返回模板ID
 		String templateReqResourceId = dashBoardTemplateReq.getResourceId();
 		if (StringUtils.isNotBlank(templateReqResourceId)) {
 			this.updateDashboardTemplate(dashBoardTemplateReq);
 			return templateReqResourceId;
 		}
-		// 校验模板名称
+
+		// 2、如果模板ID为空，创建模板并返回模板ID
+		// 2.1、校验模板名称
 		checkTemplateName(dashBoardTemplateReq.getName(), null);
 
-		// 处理图层和组件配置顺序
-		List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
-		List<DashboardComponentsReq> dashboardComponentsReqList = dashBoardTemplateReq
-				.getComponentsSetting();
-		List<DashboardComponentsReq> sortDashboardComponentsReqList = sortComponent(
-				dashboardComponentsReqList, layerShow);
-		dashBoardTemplateReq.setComponentsSetting(sortDashboardComponentsReqList);
+		// 2.2、根据图层配置对组件配置进行排序
+		sortComponentByLayer(dashBoardTemplateReq.getComponentsSetting(),
+				dashBoardTemplateReq.getLayerShow());
 
-		DashboardTemplate dashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
+		// 2.3、转换配置数据为模板实体
+		DashboardTemplate dashboardTemplate = convertTemplate(dashBoardTemplateReq);
 
+		// 2.4、构造模板ID
 		dashboardTemplate.setResourceId(IDGeneratorUtil.getID());
+
+		// 2.5、构造组件ID列表
 		String componentsSetting = dashboardTemplate.getComponentsSetting();
 		JSONArray dashboardComponentsIdList = new JSONArray();
 		List<DashboardComponents> dashboardComponentsList = JsonUtil
@@ -149,19 +148,72 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 		// 写入大屏配置
 		dashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
-
 		dashboardTemplate.setComponentsSetting(dashboardComponentsIdList.toString());
+		insertTemplate(dashboardTemplate, dashboardComponentsList);
+
+		return dashboardTemplate.getResourceId();
+	}
+
+	private void insertTemplate(DashboardTemplate dashboardTemplate,
+			List<DashboardComponents> dashboardComponentsList) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
+
+				// 写入大屏模板
 				dashboardTemplateMapper.insert(dashboardTemplate);
-				if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
+
+				// 如果组件列表不为空，写入组件数据
+				if (CollectionUtils.isNotEmpty(dashboardComponentsList)) {
 					dashboardComponentsMapper.batchInsert(dashboardComponentsList);
 				}
 			}
 		});
-		return dashboardTemplate.getResourceId();
+	}
+
+	@Override
+	public String copyDashboardTemplate(String templateId, String name) {
+
+		// 1、校验模板名称
+		checkTemplateName(name, null);
+
+		// 2、获取模板数据并构造新增模板数据
+		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(templateId, true);
+
+		// 3、清空原有模板ID并赋予新的模板名称
+		String newTemplateId = IDGeneratorUtil.getID();
+		dashboardTemplate.setId(null);
+		dashboardTemplate.setResourceId(newTemplateId);
+		dashboardTemplate.setName(name);
+
+		// 4、复制组件数据
+		List<String> componentIds = JsonUtil
+				.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class);
+		List<DashboardComponents> dashboardComponentsList = dashboardComponentsMapper
+				.selectBatchIds(componentIds);
+
+		// 4.1、如果组件ID列表和组件列表的大小不一致，抛出异常
+		if (componentIds.size() != dashboardComponentsList.size()) {
+			throw new BusinessException(SituationErrorCode.TEMPLATE_DATA_ERROR);
+		}
+
+		// 4.2、构造组件列表数据
+		for (DashboardComponents dashboardComponents : dashboardComponentsList) {
+			String resourceId = IDGeneratorUtil.getID();
+			// 替换组件ID列表中的原有组件ID
+			componentIds.set(componentIds.indexOf(dashboardComponents.getResourceId()), resourceId);
+			dashboardComponents.setResourceId(resourceId);
+		}
+
+		// 5、重写组件ID列表
+		dashboardTemplate.setComponentsSetting(JsonUtil.toJsonString(componentIds));
+
+		// 6、写入模板数据
+		insertTemplate(dashboardTemplate, dashboardComponentsList);
+
+		return newTemplateId;
+
 	}
 
 	@Override
@@ -182,7 +234,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		List<LayerShowReq> layerShow = dashBoardTemplateReq.getLayerShow();
 		if (CollectionUtils.isNotEmpty(componentsSetting)
 				&& CollectionUtils.isNotEmpty(layerShow)) {
-			List<DashboardComponentsReq> sortComponentsSettingList = sortComponent(
+			List<DashboardComponentsReq> sortComponentsSettingList = sortComponentByLayer(
 					componentsSetting, layerShow);
 			for (DashboardComponentsReq dashboardComponentsReq : sortComponentsSettingList) {
 				String newResourceId = IDGeneratorUtil.getID();
@@ -191,13 +243,13 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			}
 		}
 
-		DashboardTemplate toDashboardTemplate = changeToDashboardTemplate(dashBoardTemplateReq);
+		DashboardTemplate toDashboardTemplate = convertTemplate(dashBoardTemplateReq);
 		toDashboardTemplate.setComponentsSetting(newComponentsList.toString());
 		List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(
 				componentsSetting);
 
 		// 更新大屏配置
-        toDashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
+		toDashboardTemplate.setConfig(JsonUtil.toJsonString(dashBoardTemplateReq.getConfig()));
 
 		// 删除旧组件信息，插入新组件
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -288,10 +340,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		if (jsonString == null) {
 			JSONObject jsonObject = JSONObject.parseObject(dataSourceComponent);
 			String dataSource = jsonObject.getString("dataSource");
-            if(dataSource == null) {
-                JSONObject parseObject = JSONObject.parseObject(jsonObject.getString("data_source_component"));
-                dataSource = parseObject.getString("dataSource");
-            }
+			if (dataSource == null) {
+				JSONObject parseObject = JSONObject
+						.parseObject(jsonObject.getString("data_source_component"));
+				dataSource = parseObject.getString("dataSource");
+			}
 			echartsData = getEchartsData(dataSource, componentsDataReq);
 
 		} else {
@@ -308,9 +361,19 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		return this.getComponentsEchartsData(componentsDataReq);
 	}
 
-	private DashboardTemplate changeToDashboardTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
+	/**
+	 * 转换模板配置为模板实体
+	 *
+	 * @param dashBoardTemplateReq 仪表板模板要求
+	 * @return {@code DashboardTemplate}
+	 */
+	private DashboardTemplate convertTemplate(DashBoardTemplateReq dashBoardTemplateReq) {
+
+		// 1、复制基本信息
 		DashboardTemplate dashboardTemplate = BeanUtils.copy(dashBoardTemplateReq,
 				DashboardTemplate.class);
+
+		// 2、处理组件配置数据
 		JSONArray jsonArray = new JSONArray();
 		List<DashboardComponentsReq> componentsSetting = dashBoardTemplateReq
 				.getComponentsSetting();
@@ -598,11 +661,12 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 						ApiRequestParams.class);
 				parseRequestParams(apiRequestParams, componentsDataReq.getCustomParams(),
 						requestMapping);
-                InstanceDataQueryReq instanceDataQueryReq = componentsDataReq.getInstanceDataQueryReq();
-                if (instanceDataQueryReq != null) {
-                    parseParam(instanceDataQueryReq, apiRequestParams);
-                }
-                apiConnectReq.setRequestParams(apiRequestParams);
+				InstanceDataQueryReq instanceDataQueryReq = componentsDataReq
+						.getInstanceDataQueryReq();
+				if (instanceDataQueryReq != null) {
+					parseParam(instanceDataQueryReq, apiRequestParams);
+				}
+				apiConnectReq.setRequestParams(apiRequestParams);
 			}
 		} catch (Exception e) {
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
@@ -628,8 +692,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		String tableName = jsonObject.getString("databaseTable");
 		String customParams = jsonObject.getString("condition");
 		String requestCustomParams = componentsDataReq.getCustomParams();
-        InstanceDataQueryReq instanceDataQueryReq = componentsDataReq.getInstanceDataQueryReq();
-        String newCustomParams = parseDbCustomParams(customParams, requestCustomParams, instanceDataQueryReq);
+		InstanceDataQueryReq instanceDataQueryReq = componentsDataReq.getInstanceDataQueryReq();
+		String newCustomParams = parseDbCustomParams(customParams, requestCustomParams,
+				instanceDataQueryReq);
 		DataSourceReq dataSourceReq = new DataSourceReq(sql, resourceId, dbName, tableName,
 				newCustomParams);
 		// 获取数据库数据
@@ -640,7 +705,8 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		return getEchartsDataSet(jsonArray, componentsDataReq);
 	}
 
-	private String parseDbCustomParams(String customParams, String requestCustomParams, InstanceDataQueryReq instanceDataQueryReq) {
+	private String parseDbCustomParams(String customParams, String requestCustomParams,
+			InstanceDataQueryReq instanceDataQueryReq) {
 		List<CustomParamReq> customParamReqs = JsonUtil.toJsonObjectArray(requestCustomParams,
 				CustomParamReq.class);
 		try {
@@ -663,23 +729,33 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				}
 				jsonArray.add(customObject);
 			}
-            if (instanceDataQueryReq != null) {
-                parseDbParams(instanceDataQueryReq, jsonArray);
-            }
+			if (instanceDataQueryReq != null) {
+				parseDbParams(instanceDataQueryReq, jsonArray);
+			}
 			return jsonArray.toString();
 		} catch (Exception e) {
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
 		}
 	}
 
+	/**
+	 * 校验模板名称是否存在
+	 *
+	 * @param name       名称
+	 * @param resourceId 模板ID
+	 */
 	private void checkTemplateName(String name, String resourceId) {
-		String oldResourceId = dashboardTemplateMapper.selectByNameString(name);
-		if (StringUtils.isNotBlank(oldResourceId)) {
-			if ((StringUtils.isNotBlank(resourceId) && !Objects.equals(oldResourceId, resourceId))
-					|| StringUtils.isBlank(resourceId)) {
-				throw new BusinessException(ErrorCode.NAME_DUPLICATE);
-			}
+
+		// 1、通过名称查询已存在模板ID
+		String oldResourceId = dashboardTemplateMapper.selectByName(name);
+
+		// 2、如果已存在模板ID为空，或者已存在模板ID不为空，但是与当前模板ID相等，返回null
+		if (StringUtils.isBlank(oldResourceId) || Objects.equals(oldResourceId, resourceId)) {
+			return;
 		}
+
+		// 3、否则，抛出名称重复异常
+		throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 	}
 
 	@Override
@@ -695,80 +771,81 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	@Override
-	public List<DashboardComponentsReq> sortComponent(
+	public List<DashboardComponentsReq> sortComponentByLayer(
 			List<DashboardComponentsReq> componentsSettingList, List<LayerShowReq> layerShow) {
-		List<LayerShow> layerShowList = new ArrayList<>();
-		List<DashboardComponentsReq> sortComponentsSettingList = new ArrayList<>();
-		// 获取所有图层信息
+
+		List<Integer> sortComponentIndexs = new ArrayList<>();
+
+		// 获取所有有效图层列表
 		for (LayerShowReq layerShowReq : layerShow) {
-			List<LayerShowReq> children = layerShowReq.getChildren();
-			if (CollectionUtils.isNotEmpty(children)) {
-				layerShowList.addAll(children);
+			// 提取组件ID顺序
+			if (CollectionUtils.isNotEmpty(layerShowReq.getChildren())) {
+				// 如果当前图层下存在子图层，则将子图层的组件ID添加到组件ID列表中
+				for (LayerShowReq childLayerShowReq : layerShowReq.getChildren()) {
+					sortComponentIndexs.add(childLayerShowReq.getComponentIndex());
+				}
 			} else {
-				layerShowList.add(layerShowReq);
+				// 否则，将当前图层的组件ID添加到组件ID列表中
+				sortComponentIndexs.add(layerShowReq.getComponentIndex());
 			}
 		}
-		// 图层数量和控件数量保持一致
-		if (layerShowList.size() != componentsSettingList.size()) {
+
+		// 如果图层列表与控件列表长度不一致，抛出异常
+		if (sortComponentIndexs.size() != componentsSettingList.size()) {
 			throw new BusinessException(SituationErrorCode.LAYER_NUM_ERROR);
 		}
-		// 按图层顺序排列控件顺序
-		for (LayerShow show : layerShowList) {
-			Integer componentIndex = show.getComponentIndex();
-			DashboardComponentsReq dashboardComponentsReq = componentsSettingList.stream()
-					.filter(componentsSetting -> componentsSetting.getComponentIndex()
-							.equals(componentIndex))
-					.findFirst().orElse(null);
-			if (dashboardComponentsReq != null) {
-				sortComponentsSettingList.add(dashboardComponentsReq);
-			}
-		}
 
-		return sortComponentsSettingList;
+		// 根据控件索引值在列表中的位置对控件列表进行排序
+		componentsSettingList.sort(Comparator.comparingInt(
+				component -> sortComponentIndexs.indexOf(component.getComponentIndex())));
+
+		return componentsSettingList;
 	}
 
-    private void parseParam(InstanceDataQueryReq instanceDataQueryReq, List<ApiRequestParams> apiRequestParams) {
-        try {
-            Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                // 获取字段属性名称
-                String name = field.getName();
-                if (!StringUtils.equals(name, "dashboardId")) {
-                    Object value = field.get(instanceDataQueryReq);
-                    if (value != null) {
-                        ApiRequestParams requestParams = new ApiRequestParams();
-                        requestParams.setName(name);
-                        requestParams.setValue(value);
-                        apiRequestParams.add(requestParams);
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-    private void parseDbParams(InstanceDataQueryReq instanceDataQueryReq, JSONArray jsonArray) {
-        try {
-            Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                // 获取字段属性名称
-                String name = field.getName();
-                if (!StringUtils.equals(name, "dashboardId")) {
-                    Object value = field.get(instanceDataQueryReq);
-                    if (value != null) {
-                        JSONObject customObject = new JSONObject();
-                        customObject.put("name", name);
-                        customObject.put("value", value);
-                        jsonArray.add(customObject);
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+	private void parseParam(InstanceDataQueryReq instanceDataQueryReq,
+			List<ApiRequestParams> apiRequestParams) {
+		try {
+			Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
+			for (Field field : fields) {
+				field.setAccessible(true);
+				// 获取字段属性名称
+				String name = field.getName();
+				if (!StringUtils.equals(name, "dashboardId")) {
+					Object value = field.get(instanceDataQueryReq);
+					if (value != null) {
+						ApiRequestParams requestParams = new ApiRequestParams();
+						requestParams.setName(name);
+						requestParams.setValue(value);
+						apiRequestParams.add(requestParams);
+					}
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void parseDbParams(InstanceDataQueryReq instanceDataQueryReq, JSONArray jsonArray) {
+		try {
+			Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
+			for (Field field : fields) {
+				field.setAccessible(true);
+				// 获取字段属性名称
+				String name = field.getName();
+				if (!StringUtils.equals(name, "dashboardId")) {
+					Object value = field.get(instanceDataQueryReq);
+					if (value != null) {
+						JSONObject customObject = new JSONObject();
+						customObject.put("name", name);
+						customObject.put("value", value);
+						jsonArray.add(customObject);
+					}
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public JSONArray getComponentsEchartsData(String jsonString) {

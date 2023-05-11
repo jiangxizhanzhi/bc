@@ -75,6 +75,20 @@ public class DashboardTemplateController {
 	}
 
 	/**
+	 * 复制态势模板
+	 *
+	 * @param dashBoardTemplateCopyReq 复制态势模板请求
+	 * @return {@code BaseRsp<String>}
+	 */
+	@ApiOperation("原始模板-复制")
+	@PostMapping("/copy/")
+	public BaseRsp<String> copyDashboardTemplate(
+			@RequestBody @Validated DashBoardTemplateCopyReq dashBoardTemplateCopyReq) {
+		return new BaseRsp<>(dashboardTemplateService.copyDashboardTemplate(
+				dashBoardTemplateCopyReq.getTemplateId(), dashBoardTemplateCopyReq.getName()));
+	}
+
+	/**
 	 * 修改态势模板
 	 *
 	 * @param dashBoardTemplateReq 态势模板请求

@@ -140,7 +140,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
 		// 获取按图层排序后的控件
 		List<DashboardComponentsReq> sortDashboardComponentsReqList = dashboardTemplateService
-				.sortComponent(componentsSetting, layerShow);
+				.sortComponentByLayer(componentsSetting, layerShow);
 		dashBoardTemplateReq.setComponentsSetting(sortDashboardComponentsReqList);
 		if (CollectionUtils.isNotEmpty(sortDashboardComponentsReqList)) {
 			for (DashboardComponentsReq dashboardComponentsReq : sortDashboardComponentsReqList) {

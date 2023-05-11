@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.situation.constant.dashboard.CustomCode;
+import com.cyberpeace.situation.constant.dashboard.DashboardLevel;
 import com.cyberpeace.situation.constant.gis.MapView;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
@@ -25,9 +27,9 @@ import lombok.Data;
 public class DashBoardTemplateReq implements Serializable {
 
 	/**
-	 * 模板资源id
+	 * 模板ID
 	 */
-	@ApiModelProperty("模板资源id")
+	@ApiModelProperty("模板ID")
 	@NotBlank(groups = Update.class, message = ErrorCode.METHOD_ARG_NOT_VALID)
 	private String resourceId;
 
@@ -49,7 +51,7 @@ public class DashBoardTemplateReq implements Serializable {
 	 * 模板级别
 	 */
 	@ApiModelProperty("模板级别")
-	private Integer level;
+	private Integer level = DashboardLevel.RW.getCode();
 
 	/**
 	 * 缩略图
@@ -73,13 +75,13 @@ public class DashBoardTemplateReq implements Serializable {
 	/**
 	 * 背景类型
 	 */
-	@ApiModelProperty("背景类型")
+	@ApiModelProperty("背景类型 0-填充色 1-背景图片 2-背景模板")
 	private String bgType;
 
 	/**
 	 * 背景类型
 	 */
-	@ApiModelProperty("背景类型")
+	@ApiModelProperty("背景模板")
 	private String bgTemplate;
 
 	/**
@@ -97,7 +99,7 @@ public class DashBoardTemplateReq implements Serializable {
 	/**
 	 * 背景主题
 	 */
-	@ApiModelProperty("背景主题")
+	@ApiModelProperty("大屏主题")
 	private String topic;
 
 	/**
@@ -128,7 +130,7 @@ public class DashBoardTemplateReq implements Serializable {
 	 * 定制类型
 	 */
 	@ApiModelProperty("定制类型")
-	private Integer customCode;
+	private Integer customCode = CustomCode.ZB.getCode();
 
 	/**
 	 * 大屏参数配置

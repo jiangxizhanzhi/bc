@@ -95,4 +95,44 @@ public class EvalAlgorithm extends BaseTable {
 		}
 
 	}
+
+    @ApiModelProperty("算法模型")
+    private Integer mode;
+
+    public enum Mode implements GenericEnum {
+
+        SCORING_ALGORITHM(0, "其他算法"), FORMAT_ALGORITHM(1, "层次分析法");
+
+        @Getter
+        private Integer code;
+
+        @Getter
+        private String desc;
+
+        private Mode(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+    }
+
+    @ApiModelProperty("是否为内置算法")
+    private Integer builtin;
+
+    public enum Builtin implements GenericEnum {
+
+        SCORING_ALGORITHM(0, "内置算法"), FORMAT_ALGORITHM(1, "用户自定义算法");
+
+        @Getter
+        private Integer code;
+
+        @Getter
+        private String desc;
+
+        private Builtin(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+    }
 }

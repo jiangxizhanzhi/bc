@@ -74,9 +74,7 @@ public class EvalIndicatorServiceImpl extends ServiceImpl<EvalIndicatorMapper, E
 		evalIndicator.setConnlist(evalIndicatorReq.getConnlist());
 		// 聚合算法为层次分析法时 保存矩阵数据内容
 		List<EvalIndicatorContext> evalIndicators = evalIndicatorReq.getEvalIndicators();
-		if(!evalIndicators.isEmpty() && CrCommonConstants.AHP_ID.equals(evalIndicators.get(0).getAggregatingAlgorithmId())){
-			evalIndicator.setMatrixData(evalIndicators.get(0).getMatrixData());
-		}
+		evalIndicator.setMatrixData(evalIndicators.get(0).getMatrixData());
 
 		if (evalIndicatorReq.getAttribute().equals(EvalIndexRef.DataAttr.COST.getCode())
 				|| evalIndicatorReq.getAttribute()

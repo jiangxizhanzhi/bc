@@ -3,6 +3,8 @@ package com.cyberpeace.cr.evaluation.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -125,6 +127,8 @@ public class EvalAlgorithmAdminController {
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<String> editAlgorithm(@RequestBody EvalAlgorithmReq req) {
 
+		String evalAlgorithmId = req.getEvalAlgorithmId();
+		checkAlgorithmMode(evalAlgorithmId);
 		EvalAlgorithm originEvalAlgorithm = evalAlgorithmService.getById(req.getEvalAlgorithmId());
 
 		if (null == originEvalAlgorithm || originEvalAlgorithm.getState() == 1) {
@@ -159,6 +163,16 @@ public class EvalAlgorithmAdminController {
 		return new BaseRsp(evalAlgorithm);
 	}
 
+	private void checkAlgorithmMode(String evalAlgorithmId) {
+		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
+		queryWrapper.eq(EvalAlgorithm::getBuiltin, EvalAlgorithm.Builtin.SCORING_ALGORITHM.getCode());
+		List<EvalAlgorithm> evalAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
+		List<String> ids = StreamApiUtils.getColumn(evalAlgorithms, EvalAlgorithm::getResourceId);
+		if(ids.contains(evalAlgorithmId)){
+			throw new BusinessException(CrBusinessErrorCode.BUILTIN_ALGORITHM_FORBID_DELETE_ERROR);
+		}
+	}
+
 	/**
 	 * 删除算法
 	 * @param deleteReq
@@ -172,7 +186,15 @@ public class EvalAlgorithmAdminController {
 
 		List<String> selectUsedAlgorithmIds = evalAlgorithmService
 				.selectUsedAlgorithmIds(deleteReq.getIds());
-
+		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
+		queryWrapper.eq(EvalAlgorithm::getBuiltin, EvalAlgorithm.Builtin.SCORING_ALGORITHM.getCode());
+		List<EvalAlgorithm> evalAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
+		List<String> ids = StreamApiUtils.getColumn(evalAlgorithms, EvalAlgorithm::getResourceId);
+		List<String> deleteReqIds = deleteReq.getIds();
+		long count = deleteReqIds.stream().filter(ids::contains).count();
+		if(count > 0){
+			throw new BusinessException(CrBusinessErrorCode.BUILTIN_ALGORITHM_FORBID_DELETE_ERROR);
+		}
 		// 如果都是未使用，直接删除，存在已使用，则先修改已使用算法的状态，再删除其他所有算法
 		if (selectUsedAlgorithmIds.size() > 0) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {

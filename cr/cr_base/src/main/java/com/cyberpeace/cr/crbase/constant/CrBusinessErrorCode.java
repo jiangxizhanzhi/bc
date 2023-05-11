@@ -417,4 +417,10 @@ public interface CrBusinessErrorCode {
 
 	// 创建启动节点失败
 	String FAILED_TO_CREATE_NODE = "101126";
+
+	// 层次分析法 关联矩阵数据包含空数据 或非数字
+	String MATRIX_DATA_EMPTY_ERROR = "101127";
+
+	// 内置算法禁止编辑
+	String BUILTIN_ALGORITHM_FORBID_DELETE_ERROR = "101128";
 }

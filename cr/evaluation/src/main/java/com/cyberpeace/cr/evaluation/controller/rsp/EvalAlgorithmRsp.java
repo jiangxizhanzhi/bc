@@ -37,6 +37,14 @@ public class EvalAlgorithmRsp {
 	@NotNull
 	private String code;
 
+	@ApiModelProperty(value = "算法类型", required = true)
+	@NotNull
+	private Integer mode;
+
+	@ApiModelProperty(value = "是否为内置算法", required = true)
+	@NotNull
+	private Integer builtin;
+
 	@ApiModelProperty(value = "参数列表", required = true)
 	@NotNull
 	private List<AlgorithmParamContext> params = Lists.newArrayList();

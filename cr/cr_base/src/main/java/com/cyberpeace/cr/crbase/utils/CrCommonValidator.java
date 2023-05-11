@@ -1,13 +1,16 @@
 package com.cyberpeace.cr.crbase.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.StringUtils;
 
 public class CrCommonValidator {
 
@@ -129,4 +132,34 @@ public class CrCommonValidator {
 			throw new BusinessException(CrBusinessErrorCode.WRONG_IP_FORMAT);
 		}
 	}
+
+	public static List<String> validateAhpMatrixDataOrder(String matrixData){
+		JSONArray objects = JSONArray.parseArray(matrixData);
+		List<String> labels = new ArrayList<>();
+		for (int j = 0; j < objects.size(); j++) {
+			JSONObject temp = objects.getJSONObject(j);
+			String label = temp.getString("label");
+			if(!labels.contains(label)){
+				labels.add(label);
+			}
+		}
+		List<String> checkData = new ArrayList<>();
+		for (int j = 0; j < objects.size(); j++) {
+			JSONObject temp = objects.getJSONObject(j);
+			String details = temp.getString("data");
+			Object detailObjs = JSONObject.parse(details);
+			JSONObject parse = JsonUtil.toJsonObject(detailObjs.toString(), JSONObject.class);
+			List<String> currentList = new ArrayList<>();
+			for(String tmp:labels){
+				String val = parse.getString(tmp);
+				if(StringUtils.isEmpty(val) || StringUtils.isNumeric(val)){
+					throw new BusinessException(CrBusinessErrorCode.MATRIX_DATA_EMPTY_ERROR);
+				}
+				currentList.add(val);
+			}
+			checkData.addAll(currentList);
+		}
+		return checkData;
+	}
+
 }

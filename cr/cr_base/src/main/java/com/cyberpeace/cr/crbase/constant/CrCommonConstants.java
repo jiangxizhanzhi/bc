@@ -67,6 +67,6 @@ public interface CrCommonConstants {
 
 	Integer MAX_MISSION_WEIGHT = ConfigReader.readInt("rtks.mission.weight.max");
 
-	String AHP_ID = "230ced924ec485dd37c3945b4d4c13d4";
+	String AHP_CONSISTENCY_ID = "230ced924ec485dd37c3945b4d4c13d4";
 
 }

@@ -2,6 +2,13 @@ package com.cyberpeace.cr.evaluation.controller;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
+import com.cyberpeace.integratation.model.evaluation.FormatData;
+import com.cyberpeace.integratation.service.RemotePythonService;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -58,6 +65,12 @@ public class EvalIndicatorAdminController {
 	private EvalIndicatorMapper evalIndicatorMapper;
 
 	@Autowired
+	private RemotePythonService remotePythonService;
+
+	@Autowired
+	private EvalAlgorithmMapper evalAlgorithmMapper;
+
+	@Autowired
 	private EvalCollectionService evalCollectionService;
 
 	@Autowired
@@ -96,7 +109,20 @@ public class EvalIndicatorAdminController {
 		return new BaseRsp(evalIndicatorReq);
 	}
 
-	private void validateReq(EvalIndicatorReq req) {
+	@ApiOperation("校验矩阵数据一致性")
+	@PostMapping("/check_consistency")
+	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_INDICATOR)
+	public BaseRsp<String> checkMatrixDataConsistency(@RequestBody @Validated EvalAhpAlgorithmReq evalAhpAlgorithmReq) {
+		// TODO 待填入
+		List<String> ahpMatrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(evalAhpAlgorithmReq.getMatrixData());
+		FormatData data = new FormatData();
+		data.setData(ahpMatrixDataOrder);
+		List<String> res = remotePythonService.formatPerform(CrCommonConstants.AHP_CONSISTENCY_ID, null, data, null);
+		return new BaseRsp(res);
+	}
+
+
+		private void validateReq(EvalIndicatorReq req) {
 		String resourceId = req.getEvalIndicatorId();
 
 		// 校验名称长度
@@ -110,6 +136,31 @@ public class EvalIndicatorAdminController {
 		// 校验描述长度
 		CrCommonValidator.validateLength(req.getDescription(), CrCommonConstants.ZERO_STR_LEN,
 				CrCommonConstants.MAX_DESC_LEN, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+
+		// 层次分析法时 ahp参数格式矩阵数据校验
+		List<EvalIndicatorContext> evalIndicators = req.getEvalIndicators();
+		LambdaQueryWrapper<EvalAlgorithm> queryWrapper =  new LambdaQueryWrapper<>();
+		queryWrapper.eq(EvalAlgorithm::getMode, EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode());
+		List<EvalAlgorithm> ahpAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
+			List<String> ahpids = StreamApiUtils.getColumn(ahpAlgorithms, EvalAlgorithm::getResourceId);
+			if(!evalIndicators.isEmpty()){
+			EvalIndicatorContext evalIndicatorContext = evalIndicators.get(0);
+			String aggregatingAlgorithmId = evalIndicatorContext.getAggregatingAlgorithmId();
+			String matrixData = evalIndicatorContext.getMatrixData();
+			if(ahpids.contains(aggregatingAlgorithmId)){
+				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
+				// TODO 一致性校验
+			}
+		}
+		List<EvalAggregationContext> evalAggregations = req.getEvalAggregations();
+		for(EvalAggregationContext evalAggregation:evalAggregations){
+			String aggregatingAlgorithmId = evalAggregation.getAggregatingAlgorithmId();
+			String matrixData = evalAggregation.getMatrixData();
+			if(ahpids.contains(aggregatingAlgorithmId)) {
+				List<String> matrixDataOrder = CrCommonValidator.validateAhpMatrixDataOrder(matrixData);
+				// TODO 一致性校验
+			}
+		}
 	}
 
 	@ApiOperation("编辑指标项")

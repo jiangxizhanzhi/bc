@@ -51,6 +51,7 @@
         <if test="isPublic != null and isPublic">
             and `public` = #{isPublic}
         </if>
+        order by update_time desc
     </select>
 
     <select id="selectByCategoryIds" resultType="java.lang.String">

@@ -646,10 +646,15 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<String> selectPracticeIds(AuthContext authContext) {
-		List<String> setIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(setIds)) {
-			return Lists.newArrayList();
+	public List<String> selectPracticeIds(AuthContext authContext, String practiceSetId) {
+		List<String> setIds;
+		if (practiceSetId == null) {
+			setIds = practiceSetMapper.selectByAuthContext(authContext);
+			if (CollectionUtils.isEmpty(setIds)) {
+				return Lists.newArrayList();
+			}
+		}else {
+			setIds = Arrays.asList(practiceSetId);
 		}
 
 		return practiceOperationMapper.selectBySetIds(setIds, authContext.getIsWeb());

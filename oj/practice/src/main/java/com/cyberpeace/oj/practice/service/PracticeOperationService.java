@@ -8,7 +8,6 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 
@@ -80,7 +79,7 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @param authContext
 	 * @return
 	 */
-	List<String> selectPracticeIds(AuthContext authContext);
+	List<String> selectPracticeIds(AuthContext authContext, String practiceSetId);
 
 	/**
 	 * 启动场景

@@ -119,11 +119,11 @@ public class PracticeOperationController {
 	@ApiOperation("获取所有实操习题编号")
 	@GetMapping("/list/ids")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp<List<String>> getPracticeListIds() {
+	public BaseRsp<List<String>> getPracticeListIds(@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				CommonConstant.TRUE);
-		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext);
+		List<String> practiceIds = practiceOperationService.selectPracticeIds(authContext, practiceSetId);
 
 		return new BaseRsp<>(practiceIds);
 	}

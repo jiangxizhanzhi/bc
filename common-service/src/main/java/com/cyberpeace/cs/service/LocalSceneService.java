@@ -163,5 +163,30 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 */
 	Boolean unpauseScene(LocalScene localScene);
 
-    Boolean createNode(String localSceneId, String nodeId);
+	Boolean createNode(String localSceneId, String nodeId);
+
+	/**
+	 * 动态更新节点属性
+	 * @param mpSceneId 场景id
+	 * @param updateData 更新节点内容，详见 http://10.10.10.11/pages/viewpage.action?pageId=69587011
+	 * @return
+	 */
+	Boolean updateNode(String mpSceneId, JSONObject updateData);
+
+	/**
+	 * 删除节点
+	 *
+	 * @param mpSceneId 场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean deleteNode(String mpSceneId, String nodeId);
+
+	/**
+	 * 动态更新场景
+	 *
+	 * @param localScene 当地场景
+	 * @param updateScene  场景数据
+	 */
+	void updateScene(LocalScene localScene, JSONObject updateScene);
 }

@@ -164,4 +164,7 @@ public interface ErrorCode {
 
 	/** 压缩包中md文件不能大于%dM */
 	String MD_SIZE_TOO_LARGE = "100053";
+
+	/** 未知场景 */
+	String UNKNOWN_SCENE = "100054";
 }

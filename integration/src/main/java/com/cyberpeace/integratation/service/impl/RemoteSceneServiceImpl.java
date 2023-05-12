@@ -1,5 +1,17 @@
 package com.cyberpeace.integratation.service.impl;
 
+import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -15,17 +27,8 @@ import com.cyberpeace.integratation.model.mp.*;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Lists;
+
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
-
-import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
 @Slf4j
 @Service
@@ -96,6 +99,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_DUMP_URL;
 
+	private String NODE_UPDATE_URL;
+
+	private String NODE_DELETE_URL;
+
+	private String SCENE_UPDATE_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -164,6 +173,12 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		CONNECTION_STATUS_URL = mpEnvService.getMpHost()
 				+ ConfigUtil.getContextProperty("scene.node.connection.status");
 
+		NODE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.modify");
+
+		NODE_DELETE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.delete");
+
+		SCENE_UPDATE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.update");
+
 	}
 
 	@Override
@@ -200,9 +215,25 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		return HttpClientUtil.post(SCENE_UNPAUSE_URL, sceneOpContext, Boolean.class);
 
 	}
+
 	@Override
 	public Boolean createNode(NodeOpsContext nodeOpsContext) {
 		return HttpClientUtil.post(NODE_CREATE_URL, nodeOpsContext, Boolean.class);
+	}
+
+	@Override
+	public JSONObject updateNode(NodeUpdateContext context) {
+		return HttpClientUtil.post(NODE_UPDATE_URL, context, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject deleteNode(NodeOpsContext context) {
+		return HttpClientUtil.post(NODE_DELETE_URL, context, JSONObject.class);
+	}
+
+	@Override
+	public JSONObject updateScene(SceneUpdateContext context) {
+		return HttpClientUtil.post(SCENE_UPDATE_URL, context, JSONObject.class);
 	}
 
 	@Override
@@ -427,7 +458,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 			return null;
 		}
 		try {
-			JSONObject elementPorts = topoData.getJSONObject("scene").getJSONObject("plugins").getJSONObject("cpcloud").getJSONObject("element_ports");
+			JSONObject elementPorts = topoData.getJSONObject("scene").getJSONObject("plugins")
+					.getJSONObject("cpcloud").getJSONObject("element_ports");
 			replaceAccessIpExe(elementPorts);
 		} catch (Exception e) {
 			log.error("[getById] access ip replacement failed:", e);
@@ -441,7 +473,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		if (elementPorts == null) {
 			return;
 		}
-		for (String key: elementPorts.keySet()) {
+		for (String key : elementPorts.keySet()) {
 			JSONArray accessModes = elementPorts.getJSONObject(key).getJSONArray("access_modes");
 			if (!accessModes.isEmpty()) {
 				accessModes.toJavaList(JSONObject.class).forEach(item -> {
@@ -455,10 +487,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 						if (!StringUtils.isEmpty(internetProxyIp)) {
 							item.put("access_ip", internetProxyIp);
 							item.put("access_port", internetProxyPort);
-							log.debug(
-									"[replaceAccessIp] access ip replacement [{}:{}] -> [{}:{}]",
-									accessIp, accessPort, internetProxyIp, internetProxyPort
-							);
+							log.debug("[replaceAccessIp] access ip replacement [{}:{}] -> [{}:{}]",
+									accessIp, accessPort, internetProxyIp, internetProxyPort);
 						}
 					}
 				});

@@ -111,6 +111,7 @@ public class RbTemplateController {
 		rbTemplateListRsp.setResourceOccupiedNums(
 				topologyNodesStats.get(rbTemplateData.getTopoId()).getResourceOccupiedNums());
 		rbTemplateListRsp.setResourceId(rbTemplateData.getResourceId());
+		rbTemplateListRsp.setBusinessTemplateId(rbTemplateData.getBusinessTemplateId());
 		rbTemplateListRsp.setCrEventInfo(baseInfoRsp);
 		String roleString = rbTemplateData.getRoleConfig();
 

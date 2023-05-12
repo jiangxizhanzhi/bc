@@ -15,6 +15,9 @@ public class TeamTrainTemplateRsp implements Serializable {
 	@ApiModelProperty(value = "编号")
 	private String resourceId;
 
+	@ApiModelProperty(value = "基础业务模板id")
+	private String businessTemplateId;
+
 	@ApiModelProperty(value = "基础信息")
 	private BaseInfoRsp baseInfo;
 

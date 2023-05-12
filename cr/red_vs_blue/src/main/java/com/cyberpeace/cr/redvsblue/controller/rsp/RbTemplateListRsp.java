@@ -13,6 +13,9 @@ public class RbTemplateListRsp {
 	@ApiModelProperty(value = "模板id")
 	private String resourceId;
 
+	@ApiModelProperty(value = "基础业务模板id")
+	private String businessTemplateId;
+
 	@ApiModelProperty(value = "基本信息")
 	private BaseInfoRsp crEventInfo;
 

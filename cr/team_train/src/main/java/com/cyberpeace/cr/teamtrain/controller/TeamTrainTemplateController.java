@@ -289,6 +289,9 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setResourceOccupiedNums(
 				topologyNodesStats.get(teamTemplateData.getTopoId()).getResourceOccupiedNums());
 		teamTrainTemplateRsp.setResourceId(teamTemplateData.getResourceId());
+
+		teamTrainTemplateRsp.setBusinessTemplateId(teamTemplateData.getBusinessTemplateId());
+
 		teamTrainTemplateRsp.setBaseInfo(baseInfoRsp);
 		teamTrainTemplateRsp.setRoleStructure(teamTrainTemplateRoleList);
 

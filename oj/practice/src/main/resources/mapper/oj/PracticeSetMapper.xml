@@ -181,7 +181,7 @@
                     #{setId}
                 </foreach>
             </if>
-            <if test="setType != null and setType !=''">
+            <if test="setType != null">
                 and practice_type = #{setType}
             </if>
         </where>

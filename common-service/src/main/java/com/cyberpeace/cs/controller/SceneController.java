@@ -6,10 +6,6 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONArray;
@@ -22,11 +18,9 @@ import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
 import com.cyberpeace.cs.controller.req.scene.NodeDeleteReq;
 import com.cyberpeace.cs.controller.req.scene.NodeUpdateReq;
-import com.cyberpeace.cs.controller.req.scene.SceneUpdateReq;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.SceneDynamicService;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 
 import io.swagger.annotations.Api;
@@ -47,13 +41,6 @@ public class SceneController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
-
-	@Autowired
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	@Qualifier("baseRoleUpdateHandler")
-	private SceneDynamicService sceneDynamicService;
 
 	@PostMapping("/node/snapshot")
 	@ApiOperation("场景节点打快照")
@@ -118,30 +105,6 @@ public class SceneController {
 	public BaseRsp<Boolean> deleteNode(@Valid @RequestBody NodeDeleteReq req) {
 		Boolean result = localSceneService.deleteNode(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);
-	}
-
-	@PutMapping("/scene/update")
-	@ApiOperation("动态更新场景")
-	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
-			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
-			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<Boolean> updateScene(@Valid @RequestBody SceneUpdateReq req) {
-
-		LocalScene localScene = localSceneMapper.selectBySceneId(req.getMpSceneId());
-		if (null == localScene) {
-			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-		}
-
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				sceneDynamicService.updateTraining(localScene, req);
-				localSceneService.updateScene(localScene, req.getUpdateScene());
-			}
-		});
-
-		return new BaseRsp<>();
 	}
 
 }

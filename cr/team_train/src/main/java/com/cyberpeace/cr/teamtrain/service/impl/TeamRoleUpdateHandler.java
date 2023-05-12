@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.BaseRoleUpdateHandler;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.impl.BaseRoleUpdateHandler;
+import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cs.controller.req.scene.SceneUpdateReq;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**

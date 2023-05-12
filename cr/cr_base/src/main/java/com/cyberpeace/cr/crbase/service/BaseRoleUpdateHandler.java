@@ -1,34 +1,28 @@
-package com.cyberpeace.cr.crbase.service.impl;
+package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cs.controller.req.scene.RoleConfig;
-import com.cyberpeace.cs.controller.req.scene.SceneUpdateReq;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.SceneDynamicService;
+import com.cyberpeace.cr.crbase.service.context.role.RoleUpdateConfig;
+import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.google.common.collect.Maps;
 
 /**
- * 动态更新场景时，更新角色
- * 当前只支持修改角色的资产，不支持增加、删除角色、角色改名
+ * 更新角色
  *
  * @author SN
  * @date 2023/05/12
  */
-@Service
-public class BaseRoleUpdateHandler implements SceneDynamicService {
+public abstract class BaseRoleUpdateHandler {
 
 	private static Map<Integer, BaseRoleUpdateHandler> handlerMap = Maps.newHashMap();
 
-	public static Map<Integer, BaseRoleUpdateHandler> getHandlerMap() {
-		return handlerMap;
+	public static BaseRoleUpdateHandler getHandler(Integer type) {
+		return handlerMap.get(type);
 	}
 
 	protected Integer getCode() {
@@ -56,18 +50,10 @@ public class BaseRoleUpdateHandler implements SceneDynamicService {
 	/**
 	 * 更新角色
 	 *
-	 * @param businessInstanceId 业务实例id
+	 * @param roomId 业务实例id
 	 * @param req                请求体
 	 */
-	public void updateRoles(String businessInstanceId, SceneUpdateReq req) {}
-
-	@Override
-	public void updateTraining(LocalScene localScene, SceneUpdateReq req) {
-		BaseRoleUpdateHandler handler = getHandlerMap().get(localScene.getBusinessCode());
-		if (null != handler) {
-			handler.updateRoles(localScene.getBusinessInstanceId(), req);
-		}
-	}
+	public void updateRoles(String roomId, SceneUpdateReq req) {}
 
 	/**
 	 * 在角色配置列表中查找角色，并判断是否修改
@@ -76,9 +62,9 @@ public class BaseRoleUpdateHandler implements SceneDynamicService {
 	 * @param roleConfigList 角色配置列表
 	 * @param modified       修改角色列表
 	 */
-	public void filterModified(CrRole role, List<RoleConfig> roleConfigList,
+	protected void filterModified(CrRole role, List<RoleUpdateConfig> roleConfigList,
 			List<CrRole> modified) {
-		for (RoleConfig config : roleConfigList) {
+		for (RoleUpdateConfig config : roleConfigList) {
 			// identify role by name and type
 			if (config.getName().equals(role.getName())) {
 				String nodeJson = JsonUtil.toJsonString(config.getNodes());

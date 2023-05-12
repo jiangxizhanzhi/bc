@@ -73,8 +73,13 @@
     </select>
     <select id="getRelatedTemplates"
             resultType="com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple">
-        select business_template_id
+        select cr_business_template.resource_id,
+               cr_business_template.name,
+               cr_business_template.business_type as type,
+               cr_business_template.difficulty
         from rtks_attack_ics_train_relation
-        where attack_ics_id = #{resourceId}
+                 left join cr_business_template
+                           on rtks_attack_ics_train_relation.business_template_id = cr_business_template.resource_id
+        where rtks_attack_ics_train_relation.attack_ics_id = #{resourceId}
     </select>
 </mapper>

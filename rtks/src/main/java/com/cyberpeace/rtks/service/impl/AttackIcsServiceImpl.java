@@ -96,15 +96,13 @@ public class AttackIcsServiceImpl implements AttackIcsService {
 			cache = cachedAttacks.getEn();
 		}
 		// search
-		cache.forEach((category) -> {
-			category.getAttacks().forEach((attack) -> {
-				if (attack.getResourceId().equals(resourceId)) {
-					detail.setCategoryName(category.getCategoryName());
-					detail.setResourceId(attack.getResourceId());
-					detail.setName(attack.getName());
-				}
-			});
-		});
+		cache.forEach(category -> category.getAttacks().forEach(attack -> {
+			if (attack.getResourceId().equals(resourceId)) {
+				detail.setCategoryName(category.getCategoryName());
+				detail.setResourceId(attack.getResourceId());
+				detail.setName(attack.getName());
+			}
+		}));
 		// get related business templates
 		List<BusinessTemplateSimple> templates = attackIcsMapper.getRelatedTemplates(resourceId);
 		detail.setTemplates(templates);

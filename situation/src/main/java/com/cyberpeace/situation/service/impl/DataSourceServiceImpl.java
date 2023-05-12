@@ -1,9 +1,19 @@
 package com.cyberpeace.situation.service.impl;
 
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.symmetric.DES;
-import com.alibaba.fastjson.JSON;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -26,18 +36,10 @@ import com.cyberpeace.situation.dao.entity.DataSourceTemplate;
 import com.cyberpeace.situation.dao.mapper.DataSourceRecordMapper;
 import com.cyberpeace.situation.dao.mapper.DataSourceTemplateMapper;
 import com.cyberpeace.situation.service.DataSourceService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.sql.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.DES;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Author xuxz
@@ -56,6 +58,14 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
     private volatile Map<String, Connection> connectionCache = new HashMap<>();
 
     private static final Pattern PATTERN = Pattern.compile("\b(exec|insert|drop|grant|alter|delete|update|chr|mid|master|truncate|char|declare)|\b(;)");
+
+    private DataSourceRecord selectDataSourceRecordById(String resourceId, Boolean throwNull) {
+        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
+        if (dataSourceRecord == null && throwNull) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        return dataSourceRecord;
+    }
 
     @Override
     public String testDBConnection(DataSourceRecordReq dataSourceRecordReq) {
@@ -130,54 +140,93 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         return resourceId;
     }
 
+    /**
+     * 获取数据库表列表
+     *
+     * @param resourceId 数据源ID
+     * @param dbName     数据库名称
+     * @return {@code List<String>}
+     */
     @Override
-    public List<String> getDBTables(String resourceId, String dbName) {
-        if (StringUtils.isEmpty(resourceId)) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-        }
-        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
-        Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), dbName);
-        ResultSet resultSet = null;
-        List<String> tableList = new ArrayList<>();
-        if (connection != null) {
-            try {
-                DatabaseMetaData metaData = connection.getMetaData();
-                resultSet = metaData.getTables(dbName, null, null, new String[]{"TABLE"});
-                while (resultSet.next()) {
-                    tableList.add(resultSet.getString("TABLE_NAME"));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                closeDB(null, resultSet);
-            }
-        }
-        return tableList;
-    }
+	public List<String> getDBTables(String resourceId, String dbName) {
 
+		// 1、根据Id获取数据源信息
+		DataSourceRecord dataSourceRecord = selectDataSourceRecordById(resourceId, true);
+
+		// 2、获取数据库连接
+		Connection connection = getConnection(
+				dataSourceRecordToDataSourceRecordReq(dataSourceRecord), dbName);
+
+		// 3、获取数据库表名列表
+		ResultSet resultSet = null;
+		List<String> tableList = new ArrayList<>();
+		if (connection != null) {
+			try {
+				DatabaseMetaData metaData = connection.getMetaData();
+
+				// 提取数据库下表名列表
+				if (dataSourceRecord.getType().equals("IMPALA")) {
+					// IMPALA数据库处理
+					resultSet = metaData.getTables(null, dbName, null, new String[] { "TABLE" });
+				} else {
+					// 其他数据库处理
+					resultSet = metaData.getTables(dbName, null, null, new String[] { "TABLE" });
+				}
+
+				// 填充表名列表
+				while (resultSet.next()) {
+					tableList.add(resultSet.getString("TABLE_NAME"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				// 关闭数据库连接
+				closeDB(null, resultSet);
+			}
+		}
+		return tableList;
+	}
+
+    /**
+     * 获取数据库库列表
+     *
+     * @param resourceId 数据源Id
+     * @return {@code List<String>}
+     */
     @Override
     public List<String> getDBName(String resourceId) {
-        if (StringUtils.isEmpty(resourceId)) {
-            throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
-        }
-        DataSourceRecord dataSourceRecord = dataSourceRecordMapper.selectById(resourceId);
+
+        // 1、根据Id获取数据源信息
+        DataSourceRecord dataSourceRecord = selectDataSourceRecordById(resourceId, true);
+
+        // 2、获取数据库连接
         Connection connection = getConnection(dataSourceRecordToDataSourceRecordReq(dataSourceRecord), null);
-        String type = dataSourceRecord.getType();
+
+        // 3、获取数据库名称列表
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<String> list = new ArrayList<>();
+
         try {
+
+            // 3.1、获取sql执行结果
             String sql = "SHOW DATABASES";
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
+            String type = dataSourceRecord.getType();
+
+            // 3.2、根据不同的数据库类型，提取数据库名称
             while (resultSet.next()) {
                 String dbName = null;
                 if (type.equals("HIVE")) {
                     dbName = "database_name";
                 } else if (type.equals("MYSQL")) {
                     dbName = "Database";
+                } else if (type.equals("IMPALA")) {
+                    dbName = "name";
                 }
                 String database = resultSet.getString(dbName);
+
                 if (StringUtils.isNotEmpty(database)) {
                     list.add(database);
                 }
@@ -185,6 +234,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceRecordMapper, D
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            // 3.3、关闭数据库连接
             closeDB(preparedStatement, resultSet);
         }
         return list;

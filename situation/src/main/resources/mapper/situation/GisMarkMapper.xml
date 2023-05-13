@@ -36,6 +36,7 @@
         from situation_gis_mark
         where dashboard_id = #{dashboardId}
           and resource_id = #{markId}
+          and delete_time is null
     </select>
 
     <insert id="insertBatch">

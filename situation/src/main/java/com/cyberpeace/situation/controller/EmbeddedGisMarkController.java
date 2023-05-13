@@ -285,38 +285,48 @@ public class EmbeddedGisMarkController {
 	@PostMapping("/gis/mark/import")
 	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)
 			throws IOException, ZipException {
-		// 1. 临时存储导入文件
-		File localFile = FileUtil.saveFile(req.getFile(), ZipUtil.generatePath());
+
+		// 1. 临时存储导入上传的文件
+		File markFile = FileUtil.saveFile(req.getFile(), ZipUtil.generatePath());
+
 		// 2. 解压文件
-		String unZipPath = ZipUtil.unZipToTmpPath(localFile.getAbsolutePath());
+		String unZipPath = ZipUtil.unZipToTmpPath(markFile.getAbsolutePath());
+
 		// 3. 导入标绘
+		// 3.1 读取导入文件
 		String dataJson = FileUtil
 				.getContent(new File(unZipPath + File.separator + RESOURCE_FILE_NAME));
-		List<GisMarkContext> gisMarkContexts = JsonUtil.toJsonObjectArray(dataJson,
+
+		// 3.2 提取标绘数据
+		List<GisMarkContext> inputMarks = JsonUtil.toJsonObjectArray(dataJson,
 				GisMarkContext.class);
-		List<GisMark> gisMarks = Lists.newArrayList();
-		for (GisMarkContext gisMarkContext : gisMarkContexts) {
-			if (!req.getDashboardId().equals(gisMarkContext.getDashboardId())
-					|| Boolean.TRUE.equals(gisMarkMapper.checkMark(req.getDashboardId(),
-							gisMarkContext.getMarkId()))) {
-				continue;
-			} else {
+		List<GisMark> insertMarks = Lists.newArrayList();
+
+		// 3.3 如果当前大屏数据下不存在<拥有相同标绘ID的且未被软删除的记录>，插入标绘数据
+		for (GisMarkContext gisMarkContext : inputMarks) {
+			if (Boolean.FALSE.equals(
+					gisMarkMapper.checkMark(req.getDashboardId(), gisMarkContext.getMarkId()))) {
 				GisMark gisMark = new GisMark();
-				gisMark.setResourceId(gisMarkContext.getMarkId());
 				gisMark.setDashboardId(req.getDashboardId());
 				gisMark.setConfig(JsonUtil.toJsonString(gisMarkContext.getMarkConfig()));
-				gisMarks.add(gisMark);
+				insertMarks.add(gisMark);
 			}
 		}
 
-		if (!gisMarks.isEmpty()) {
-			gisMarkMapper.insertBatch(gisMarks);
+		// 4、批量插入标绘数据
+		if (!insertMarks.isEmpty()) {
+			gisMarkMapper.insertBatch(insertMarks);
 		}
-		// 4. 删除临时文件
+
+		// 5. 删除临时文件
 		if (!FileUtil.deleteDir(new File(unZipPath))) {
 			log.error("failed to delete temp dir");
 		}
-		return new BaseRsp(true, "标绘文件导入成功");
+
+		// 6、构造导入结果统计
+		String message = String.format("共检测到%d个标绘数据，成功导入%d个", inputMarks.size(),
+				insertMarks.size());
+		return new BaseRsp(true, message);
 	}
 
 	/**

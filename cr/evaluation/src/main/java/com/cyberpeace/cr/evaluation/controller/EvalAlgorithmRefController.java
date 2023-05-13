@@ -43,6 +43,9 @@ public class EvalAlgorithmRefController {
 		if(null == evalAlgorithmRef){
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
+			evalAlgorithmRef.setMatrixData(req.getMatrixData());
+		}
 		evalAlgorithmRef.setCode(req.getCode());
 		evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
 

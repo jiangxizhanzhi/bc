@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 
@@ -26,7 +27,7 @@ public class EvalAlgorithmRef extends BaseTable {
 
     private String code;
 
-    private List<Integer> matrixData;
+    private String matrixData;
 
     public enum Params implements GenericEnum {
         NUMBER(0, "Number"),
@@ -45,5 +46,25 @@ public class EvalAlgorithmRef extends BaseTable {
             this.desc = desc;
         }
     }
+    @ApiModelProperty("算法模型")
+    private Integer mode;
+
+    public enum Mode implements GenericEnum {
+
+        SCORING_ALGORITHM(0, "其他算法"), FORMAT_ALGORITHM(1, "层次分析法");
+
+        @Getter
+        private Integer code;
+
+        @Getter
+        private String desc;
+
+        private Mode(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+    }
+
 
 }

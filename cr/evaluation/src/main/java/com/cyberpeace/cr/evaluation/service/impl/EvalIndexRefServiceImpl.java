@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
+
+	@Autowired
+	private EvalAlgorithmMapper evalAlgorithmMapper;
 
 	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
 
@@ -106,8 +110,15 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 		Integer score;
 		try {
-			score = remotePythonService.indexPerform(evalAlgorithmRef.getResourceId(),
-					evalAlgorithmRef.getCode(), scoreList, otherArguments);
+			String algorithmId = evalAlgorithmRef.getResourceId();
+			EvalAlgorithm evalAlgorithm = evalAlgorithmMapper.selectById(algorithmId);
+			if(evalAlgorithm.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())){
+				score = remotePythonService.indexAhpPerform(algorithmId, evalAlgorithmRef.getMatrixData(),
+						evalAlgorithmRef.getCode(), scoreList, otherArguments);
+			} else {
+				score = remotePythonService.indexPerform(algorithmId,
+						evalAlgorithmRef.getCode(), scoreList, otherArguments);
+			}
 			EvalLog.debug(evalRecord, evalIndexRef,
 					String.format("system evaluation type index result: %s.", score));
 		} catch (RemoteServiceException e) {

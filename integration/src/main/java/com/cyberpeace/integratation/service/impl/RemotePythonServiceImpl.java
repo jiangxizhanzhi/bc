@@ -123,4 +123,20 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		}
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
+
+	@Override
+	public Integer indexAhpPerform(String algorithmId, List<Integer> matrixData, String algorithmCode, List<Integer> data,
+			List<Serializable> otherArguments) {
+		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
+		json.put("data", data);
+		json.put("matrix_data", matrixData);
+
+		String resp;
+		try {
+			resp = invoke(json);
+		} catch (RemoteServiceException e) {
+			throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
+		}
+		return JsonUtil.toJsonObject(resp, Integer.class);
+	}
 }

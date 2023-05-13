@@ -57,4 +57,16 @@ public interface RemotePythonService {
 	 */
 	Integer indexPerform(String algorithmId, String algorithmCode, List<Integer> data,
 			List<Serializable> otherArguments);
+
+	/**
+	 * 靶场测评聚合算法执行
+	 * @param algorithmId 算法id
+	 * @param matrixData 矩阵内容
+	 * @param algorithmCode 算法脚本内容
+	 * @param data 算法入参, 列表内元素均为0~100整数
+	 * @param otherArguments 算法可配置入参列表
+	 * @return 聚合算法执行结果, 为0~100整数
+	 */
+	Integer indexAhpPerform(String algorithmId, List<Integer> matrixData, String algorithmCode, List<Integer> data,
+						 List<Serializable> otherArguments);
 }

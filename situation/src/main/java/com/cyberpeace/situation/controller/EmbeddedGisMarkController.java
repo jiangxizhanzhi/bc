@@ -307,6 +307,7 @@ public class EmbeddedGisMarkController {
 			if (Boolean.FALSE.equals(
 					gisMarkMapper.checkMark(req.getDashboardId(), gisMarkContext.getMarkId()))) {
 				GisMark gisMark = new GisMark();
+				gisMark.setResourceId(IDGeneratorUtil.getID());
 				gisMark.setDashboardId(req.getDashboardId());
 				gisMark.setConfig(JsonUtil.toJsonString(gisMarkContext.getMarkConfig()));
 				insertMarks.add(gisMark);

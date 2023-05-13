@@ -62,8 +62,9 @@ public class Note extends AuthTable {
 
 		COURSE(1, "课程"),
 		LESSON(2, "课时"),
-		PRACTICE(3, "练习"),
-		LESSON_PAPER(4, "课后练习");
+		OPTION(3, "实操题"),
+		LESSON_PAPER(4, "课后练习"),
+		THEORY(5, "理论题");
 
 		@Getter
 		private Integer code;

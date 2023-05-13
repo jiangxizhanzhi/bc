@@ -1,15 +1,5 @@
 package com.cyberpeace.oj.person.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,8 +31,16 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -103,6 +101,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 			resourceIds.addAll(lessons);
 			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
 			resourceIds.addAll(personCenterMapper.selectAfterclassPracticeByAuth(lessons));
+			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
 		}
 		IPage<PersonNote> iPage = personCenterMapper.selectNoteByUser(page, userId, noteType,
 				resourceIds);

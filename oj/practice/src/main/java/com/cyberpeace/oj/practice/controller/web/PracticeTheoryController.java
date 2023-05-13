@@ -151,7 +151,7 @@ public class PracticeTheoryController {
 				PracticeCategory.PracticeType.THEORY.getCode()));
 		theoryStatisticsRes.setCollection(resourceCollectionService.selectByType(userId,
 				ResourceCollection.BusinessType.THEORY.getCode()).size());
-		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), Note.NoteResourceType.PRACTICE.getCode()));
+		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), Note.NoteResourceType.THEORY.getCode()));
 		return new BaseRsp<>(theoryStatisticsRes);
 	}
 

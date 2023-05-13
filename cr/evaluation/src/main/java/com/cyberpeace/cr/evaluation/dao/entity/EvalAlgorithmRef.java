@@ -8,6 +8,8 @@ import com.cyberpeace.common.model.BaseTable;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 @Data
 @TableName("cr_eval_algorithm_ref")
 public class EvalAlgorithmRef extends BaseTable {
@@ -23,6 +25,8 @@ public class EvalAlgorithmRef extends BaseTable {
     private Integer algorithmLanguage;
 
     private String code;
+
+    private List<Integer> matrixData;
 
     public enum Params implements GenericEnum {
         NUMBER(0, "Number"),

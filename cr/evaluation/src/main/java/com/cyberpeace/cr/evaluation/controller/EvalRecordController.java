@@ -203,4 +203,12 @@ public class EvalRecordController {
                                    @ApiParam(name = "task_id", value = "测评任务ID") @RequestParam("task_id")String taskId) {
         FileUtil.setResponse(new File(evalRecordService.dumpEvalRecordPath(resourceId, taskId)), true, httpServletResponse);
     }
+
+    @ApiOperation("评估任务结果-5轮评估记录")
+    @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
+    @GetMapping("/result/list")
+    // TODO 更新返回结果及获取方式
+    public BaseRsp<EvalSystemResultRsp> getRecordResultList(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId) {
+        return new BaseRsp<>(evalRecordService.getAllCycleResult(resourceId));
+    }
 }

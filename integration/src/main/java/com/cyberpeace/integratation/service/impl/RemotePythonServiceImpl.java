@@ -1,10 +1,13 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.alibaba.fastjson.JSONArray;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -129,7 +132,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 			List<Serializable> otherArguments) {
 		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
 		json.put("data", data);
-		json.put("matrix_data", matrixData);
+		json.put("matrix_data", getFormatMatrixData(matrixData));
 
 		String resp;
 		try {
@@ -138,5 +141,19 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 			throw new RemoteServiceException(ErrorCode.ALGORITHM_RETURN_NULL);
 		}
 		return JsonUtil.toJsonObject(resp, Integer.class);
+	}
+
+	public List<Integer> getFormatMatrixData(String matrixData){
+		JSONArray objects = JSONArray.parseArray(matrixData);
+		List<Integer> res = new ArrayList<>();
+		for (int i = 0; i < objects.size(); i++) {
+			JSONObject jsonObject = objects.getJSONObject(i);
+			String data = jsonObject.get("data").toString();
+			JSONObject dataJsonObj = JsonUtil.toJsonObject(data, JSONObject.class);
+			// TODO 获取值集合 格式化成数值
+			Collection<Object> values = dataJsonObj.values();
+
+		}
+		return res;
 	}
 }

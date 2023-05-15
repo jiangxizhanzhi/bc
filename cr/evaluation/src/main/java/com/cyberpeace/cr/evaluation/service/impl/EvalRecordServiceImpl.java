@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -126,6 +127,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private RemoteServerEnvService remoteServerEnvService;
 
+    @Autowired
+    private EvaResultMapper evaResultMapper;
+
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
@@ -170,7 +174,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (evalRecord == null) {
             throw new BusinessException("评估未找到");
         }
-        if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             throw new BusinessException("评估已启动");
         }
         return evalRecord;
@@ -583,10 +587,36 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         startIndexes(evalRecord, evalTask);
         EvalLog.info(evalRecord, "calculate indexes completed.");
 
+        // 添加当前执行结果到结果轮次表中
+        EvalLog.info(evalRecord, "calculate indexes start...");
+        addResToEvalResult(evalRecord);
+        EvalLog.info(evalRecord, "calculate indexes completed.");
+
         EvalLog.info(
                 evalRecord,
                 String.format("END, result: %s, cost: %s", evalRecord.getScore(), evalRecord.getEvalEndTime().getTime() - evalRecord.getEvalTime().getTime())
         );
+    }
+
+    private void addResToEvalResult(EvalRecord evalRecord) {
+        Integer exeCycle = 0;
+        EvalResult evalResult = new EvalResult();
+        evalResult.setExeCycle(exeCycle);
+        LambdaQueryWrapper<EvalResult> filter = new LambdaQueryWrapper<>();
+        filter.eq(EvalResult::getRecord, evalRecord.getResourceId());
+        filter.orderByDesc(EvalResult::getExeCycle);
+        filter.last("limit 1");
+        EvalResult evalResultQuery = evaResultMapper.selectOne(filter);
+        evalResult.setExeCycle(exeCycle);
+        if(null != evalResultQuery){
+            exeCycle += evalResultQuery.getExeCycle();
+            evalResult.setExeCycle(exeCycle);
+        }
+        // 保存各index_ref id：score 1-4
+
+        // 保存variable_ref id:score 5
+
+        evaResultMapper.insert(evalResult);
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
@@ -1012,6 +1042,112 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
         }
         return destPdfPath;
+    }
+
+    @Override
+    public EvalSystemResultRsp getAllCycleResult(String resourceId) {
+        LambdaQueryWrapper<EvalResult> filter = new LambdaQueryWrapper<>();
+        filter.eq(EvalResult::getRecord, resourceId);
+        filter.last("limit 5");
+        filter.orderByDesc(EvalResult::getExeCycle);
+        List<EvalResult> evalResults = evaResultMapper.selectList(filter);
+        EvalSystemResultRsp rsp = new EvalSystemResultRsp();
+
+        List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, resourceId).list();
+        evalIndexRefs.sort(Comparator.comparing(EvalIndexRef::getLevel));
+
+        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefs.stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+        Map<String, EvalVariableRef> evalVariableRefMap = evalVariableRefService.lambdaQuery().eq(EvalVariableRef::getRecordId, resourceId).list().stream().collect(Collectors.toMap(EvalVariableRef::getResourceId, evalVariableRef -> evalVariableRef));
+
+        for (EvalIndexRef evalIndexRef : evalIndexRefs) {
+            if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
+                rsp.setResourceId(evalIndexRef.getResourceId());
+                rsp.setName(evalIndexRef.getName());
+                for(int i = 0; i <= evalResults.size(); i++){
+                    EvalResult evalResult = evalResults.get(i);
+                    rsp.setExeCycle(evalResult.getExeCycle());
+                    Integer firstIndexRes = evalResult.getFirstIndexRes();
+                    setCycleResult(rsp, i, firstIndexRes);
+                }
+                rsp.setChildren(generateNextIndexesRes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, evalResults));
+            } else {
+                break;
+            }
+        }
+        return rsp;
+    }
+
+    private List<EvalSystemResultRsp> generateNextIndexesRes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> evalIndexRefMap, Map<String, EvalVariableRef> evalVariableRefMap, List<EvalResult> evalResults) {
+        List<EvalSystemResultRsp> res = new ArrayList<>();
+        List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
+        nextIds.forEach(nextId -> {
+            EvalSystemResultRsp rsp = new EvalSystemResultRsp();
+            EvalIndexRef evalIndexRef1 = evalIndexRefMap.get(nextId);
+            if (evalIndexRef1.getLevel().equals(EvalIndex.Level.SECOND.getCode())) {
+                rsp.setResourceId(evalIndexRef1.getResourceId());
+                rsp.setName(evalIndexRef1.getName());
+                for (int i = 0; i <= evalResults.size(); i++) {
+                    EvalResult evalResult = evalResults.get(i);
+                    String secondIndexRes = evalResult.getSecondIndexRes();
+                    JSONObject jsonObject = JsonUtil.toJsonObject(secondIndexRes, JSONObject.class);
+                    int score = Integer.parseInt(jsonObject.get(nextId).toString());
+                    setCycleResult(rsp, i, score);
+                }
+                rsp.setChildren(generateNextIndexesRes(evalIndexRef1, evalIndexRefMap, evalVariableRefMap, evalResults));
+                res.add(rsp);
+            } else if (evalIndexRef1.getLevel().equals(EvalIndex.Level.THIRD.getCode())) {
+                rsp.setResourceId(evalIndexRef1.getResourceId());
+                rsp.setName(evalIndexRef1.getName());
+                for (int i = 0; i <= evalResults.size(); i++) {
+                    EvalResult evalResult = evalResults.get(i);
+                    String thirdIndexRes = evalResult.getThirdIndexRes();
+                    JSONObject jsonObject = JsonUtil.toJsonObject(thirdIndexRes, JSONObject.class);
+                    int score = Integer.parseInt(jsonObject.get(nextId).toString());
+                    setCycleResult(rsp, i, score);
+                }
+                rsp.setChildren(generateNextIndexesRes(evalIndexRef1, evalIndexRefMap, evalVariableRefMap, evalResults));
+                res.add(rsp);
+            } else if (evalIndexRef1.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
+                rsp.setResourceId(evalIndexRef1.getResourceId());
+                rsp.setName(evalIndexRef1.getName());
+                for (int i = 0; i <= evalResults.size(); i++) {
+                    EvalResult evalResult = evalResults.get(i);
+                    String fourthIndexRes = evalResult.getFourthIndexRes();
+                    JSONObject jsonObject = JsonUtil.toJsonObject(fourthIndexRes, JSONObject.class);
+                    int score = Integer.parseInt(jsonObject.get(nextId).toString());
+                    setCycleResult(rsp, i, score);
+                }
+                rsp.setChildren(generateNextIndexesRes(evalIndexRef1, evalIndexRefMap, evalVariableRefMap, evalResults));
+                res.add(rsp);
+            } else {
+                EvalVariableRef evalVariableRef = evalVariableRefMap.get(nextId);
+                rsp.setResourceId(evalVariableRef.getResourceId());
+                rsp.setName(evalVariableRef.getName());
+                for (int i = 0; i <= evalResults.size(); i++) {
+                    EvalResult evalResult = evalResults.get(i);
+                    String fifthIndexRes = evalResult.getFifthIndexRes();
+                    JSONObject jsonObject = JsonUtil.toJsonObject(fifthIndexRes, JSONObject.class);
+                    int score = Integer.parseInt(jsonObject.get(nextId).toString());
+                    setCycleResult(rsp, i, score);
+                }
+            }
+        });
+
+        return res;
+    }
+
+    private void setCycleResult(EvalSystemResultRsp rsp, int i, int score) {
+        if(0 == i) {
+            rsp.setFirstScore(score);
+        } else if( i == 1 ) {
+            rsp.setSecondScore(score);
+        } else if(i == 2) {
+            rsp.setThirdScore(score);
+        } else if(i ==3) {
+            rsp.setFifthScore(score);
+        } else if(i ==4) {
+            rsp.setFifthScore(score);
+        }
     }
 
     private JSONObject getEvalRecordJsonObject(String resourceId, String taskId) {

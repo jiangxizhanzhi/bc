@@ -146,5 +146,13 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * 校验实例是否未关闭
 	 * @param roomId 红蓝对抗实例id
 	 */
-    void checkRoomUnclosed(String roomId);
+	void checkRoomUnclosed(String roomId);
+
+	/**
+	 * 获取学生角色
+	 *
+	 * @param roomId 训练id
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> getStudentsRoles(String roomId);
 }

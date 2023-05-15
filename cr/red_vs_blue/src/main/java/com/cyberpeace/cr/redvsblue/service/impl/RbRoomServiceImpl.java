@@ -146,8 +146,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		rbRoom.setCreateUserId(userId);
 		rbRoom.setCopyedTopoId(remoteTopoService.copyTopo(businessTemplate.getTopoId()));
 
-		//复制完topo后修改部分启动状态
-		remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),rbRoomContext.getSupportPartialStart());
+		// 复制完topo后修改部分启动状态
+		remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),
+				rbRoomContext.getSupportPartialStart());
 		rbRoom.setSupportPartialStart(rbRoomContext.getSupportPartialStart());
 
 		rbRoom.setTemplateName(businessTemplate.getName());
@@ -402,8 +403,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			rbRoom.setLogo(rbRoomContext.getLogo());
 		}
 		if (rbRoomContext.getSupportPartialStart() != null) {
-			//修改topo的部分启动状态
-			remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),rbRoomContext.getSupportPartialStart());
+			// 修改topo的部分启动状态
+			remoteTopoService.setSupportPartialStart(rbRoom.getCopyedTopoId(),
+					rbRoomContext.getSupportPartialStart());
 			rbRoom.setSupportPartialStart(rbRoomContext.getSupportPartialStart());
 		}
 
@@ -505,6 +507,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
 		}
+	}
+
+	@Override
+	public List<CrRole> getStudentsRoles(String roomId) {
+		return crRoleService.getRolesByRoomAndGroups(roomId, Lists
+				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()));
 	}
 
 	@Override

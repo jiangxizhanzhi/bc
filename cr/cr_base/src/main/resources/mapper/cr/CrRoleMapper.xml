@@ -112,6 +112,14 @@
         where room_id = #{roomId}
         and mission_scheme like #{mission_id}
     </select>
+    <select id="selectByRoomIdAndGroups" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select * from cr_role
+        where room_id = #{roomId}
+        and role_group in
+        <foreach collection="groups" separator="," item="group" open="(" close=")">
+            #{group}
+        </foreach>
+    </select>
 
 
 </mapper>

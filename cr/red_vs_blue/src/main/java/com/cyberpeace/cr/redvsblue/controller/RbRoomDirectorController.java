@@ -4,10 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.integratation.constant.OperationModule;
-import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.service.RemoteLogService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -37,9 +35,10 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
-import com.cyberpeace.cr.crbase.service.context.role.RoleData;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.TaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
 import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionDeleteReq;
@@ -53,6 +52,9 @@ import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
 import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
+import com.cyberpeace.integratation.constant.OperationModule;
+import com.cyberpeace.integratation.constant.OperationType;
+import com.cyberpeace.integratation.service.RemoteLogService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -221,7 +223,8 @@ public class RbRoomDirectorController {
 						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 					}
 
-					List<MissionStageScheme> missionStageSchemeList = crRole.getMissionStageSchemes();
+					List<MissionStageScheme> missionStageSchemeList = crRole
+							.getMissionStageSchemes();
 
 					for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
 
@@ -266,7 +269,8 @@ public class RbRoomDirectorController {
 			List<GroupRole> childRoleInfoList = Lists.newArrayList();
 			String roleGroupName = roleGroup.getDesc();
 
-			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id, roleGroup);
+			CrRoleContext<MissionContext> crRoleContext = crRoleService.getRoles(resource_id,
+					roleGroup);
 
 			crRbRoleContext.setMissionMapping(crRoleContext.getMissionMapping());
 			crRbRoleContext.setShowWriteupMapping(crRoleContext.getShowWriteupMapping());
@@ -306,8 +310,10 @@ public class RbRoomDirectorController {
 
 								// 如果下发，获取mission的用户列表
 								if (missionIds.contains(roleMission.getResourceId())) {
-									List<String> userIdList = JsonUtil.toJsonObjectArray(roleData.getUserIds(), String.class);
-									List<UserData> userDatas = crRoleService.getUserDatas(userIdList);
+									List<String> userIdList = JsonUtil
+											.toJsonObjectArray(roleData.getUserIds(), String.class);
+									List<UserData> userDatas = crRoleService
+											.getUserDatas(userIdList);
 
 									List<RbUserData> rbUserDatas = userDatas.stream()
 											.map(userData -> {
@@ -432,5 +438,70 @@ public class RbRoomDirectorController {
 				OperationType.STOP, room.getName());
 
 		return new BaseRsp();
+	}
+
+	@ApiOperation("红蓝对抗-任务导调-任务进度")
+	@GetMapping("/mission/progress")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<TaskReleaseProgress> getMissionStatistics(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		// get roles
+		List<CrRole> studentRoles = rbRoomService.getStudentsRoles(resource_id);
+		// parse mission and users
+		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
+				.collect(Collectors.toList());
+		// get tasks
+		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
+
+		TaskReleaseProgress progress = new TaskReleaseProgress();
+		// count
+		Integer released = crTaskList.size();
+		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
+		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+
+		progress.setTotal(total);
+		progress.setReleased(released);
+		progress.setUnreleased(total - released);
+		progress.setSubmitted(submitted);
+		progress.setUnsubmitted(released - submitted);
+
+		// 循环各个角色和阶段
+		for (CrRoleSimple role : roles) {
+			RoleTaskReleaseProgress roleProgress = new RoleTaskReleaseProgress();
+			roleProgress.setRoleId(role.getResourceId());
+			roleProgress.setRoleName(role.getName());
+			for (CrRoleMissionSchemeStage stage : role.getMissionScheme()) {
+				StageTaskReleaseProgress stageProgress = new StageTaskReleaseProgress();
+				stageProgress.setStageName(stage.getStage());
+				// 计算该阶段内任务下发数和任务总数*人数
+				Integer releasedTaskCount = crTaskList.stream()
+						.mapToInt(task -> stage.getMissions().contains(task.getMissionId()) ? 1 : 0)
+						.sum();
+				Integer taskCount = stage.getMissions().size() * role.getUserIds().size();
+				stageProgress.setTotal(taskCount);
+				stageProgress.setReleased(releasedTaskCount);
+				// 阶段加入角色之中
+				roleProgress.getStage().add(stageProgress);
+				roleProgress.addTotal(taskCount);
+				roleProgress.addReleased(releasedTaskCount);
+			}
+			// red role
+			if (role.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
+				progress.getRedRoles().getRole().add(roleProgress);
+				progress.getRedRoles().addTotal(roleProgress.getTotal());
+				progress.getRedRoles().addReleased(roleProgress.getReleased());
+			} else {
+				// blue role
+				progress.getBlueRoles().getRole().add(roleProgress);
+				progress.getBlueRoles().addTotal(roleProgress.getTotal());
+				progress.getBlueRoles().addReleased(roleProgress.getReleased());
+			}
+		}
+
+		return new BaseRsp<>(progress);
 	}
 }

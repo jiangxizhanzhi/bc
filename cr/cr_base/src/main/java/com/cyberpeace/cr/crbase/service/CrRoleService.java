@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -148,4 +149,13 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param userId 用户id
 	 */
 	void checkPermission(String roomId, String userId);
+
+	/**
+	 * 通过房间和组获取角色
+	 *
+	 * @param roomId 房间id
+	 * @param groups 组
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups);
 }

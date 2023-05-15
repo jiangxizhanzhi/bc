@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -39,6 +40,7 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 			@Param("code") Integer code);
 
 	List<CrRole> getRolesByRoom(String roomId, Integer businessType);
+
 	/**
 	 * 根据红方或蓝方自己的角色已经管理组角色
 	 * @param roomId
@@ -49,4 +51,14 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 
 	CrRole selectByRoomIdAndMissionId(@Param("roomId") String roomId,
 			@Param("missionId") String missionId);
+
+	/**
+	 * 通过房间id和组查询
+	 *
+	 * @param roomId 房间id
+	 * @param groups 组
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> selectByRoomIdAndGroups(@Param("roomId") String roomId,
+			@Param("groups") Collection<Integer> groups);
 }

@@ -1,9 +1,11 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -429,6 +431,14 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+	}
+
+	@Override
+	public List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups) {
+		if (CollectionUtils.isEmpty(groups)) {
+			return Lists.newArrayList();
+		}
+		return crRoleMapper.selectByRoomIdAndGroups(roomId, groups);
 	}
 
 }

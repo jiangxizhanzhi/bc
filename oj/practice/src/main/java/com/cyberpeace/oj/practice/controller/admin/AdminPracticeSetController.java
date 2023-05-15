@@ -28,7 +28,6 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
-import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.ojbase.controller.AuthAndPublicController;
 import com.cyberpeace.oj.practice.controller.req.*;
 import com.cyberpeace.oj.practice.controller.res.PracticeSetRes;
@@ -53,7 +52,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 @Api(tags = "oj-后台习题集相关api")
@@ -99,9 +97,7 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 		practiceSet.setLogo(utilService.replaceFileUrl(setAddReq.getLogo()));
 
 		if (StringUtils.isBlank(practiceSet.getLogo())) {
-			List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
-			Collections.shuffle(practiceSetLogo);
-			practiceSet.setLogo(practiceSetLogo.get(0));
+			practiceSet.setLogo(practiceSetService.createImg(practiceSet.getName()));
 		}
 
 		int result = practiceSetMapper.insert(practiceSet);
@@ -122,8 +118,13 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 				CommonConstant.FALSE);
 
 		PracticeSet practiceSet = BeanUtils.copy(updateReq, PracticeSet.class);
-		// 文件路径处理
-		practiceSet.setLogo(utilService.replaceFileUrl(updateReq.getLogo()));
+		PracticeSet originalPracticeSet = practiceSetMapper.selectById(updateReq.getResourceId());
+		if (StringUtils.isNotBlank(updateReq.getLogo())) {
+			// 文件路径处理
+			practiceSet.setLogo(utilService.replaceFileUrl(updateReq.getLogo()));
+		} else if (StringUtils.isNotBlank(updateReq.getName()) && originalPracticeSet.getLogo().startsWith("logo")) {
+			practiceSet.setLogo(practiceSetService.createImg(practiceSet.getName()));
+		}
 
 		Boolean result = practiceSetService.updateByAuth(practiceSet, authContext);
 

@@ -111,4 +111,6 @@ public interface PracticeSetService extends IService<PracticeSet> {
 
     List<AdminPracticeSetBo> getMorePracticeSet(AuthContext authContext, String practiceSetId, Integer setType);
 
+    String createImg(String setName);
+
 }

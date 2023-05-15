@@ -8,11 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class ImgUtil {
@@ -72,6 +75,77 @@ public class ImgUtil {
 			sb.append(hex.length() == 2 ? hex : ("0"+hex));
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * 将图片展示到图片上，最多展示三行
+	 * @param originalPicture 原图片路径
+	 * @param font 文字格式
+	 * @param text 文字内容
+	 * @param destPicture 目标图片路径
+	 * @return
+	 * @throws IOException
+	 */
+	public static String addTextToImage(String originalPicture, Font font, String text, String destPicture) throws IOException {
+		// Load the image
+		BufferedImage img = ImageIO.read(new File(originalPicture));
+
+		// Create a graphics context on the buffered image
+		Graphics2D g2d = img.createGraphics();
+
+		// Set the font and color for the text
+		Color color = Color.WHITE;
+		g2d.setFont(font);
+		g2d.setColor(color);
+
+		// Calculate the bounding box for the text
+		FontMetrics fm = g2d.getFontMetrics();
+		int lineHeight = fm.getHeight();
+		int y = ((img.getHeight() - lineHeight) + fm.getAscent()) / 2;
+
+		// Draw the text on the image with automatic line wrapping
+		drawString(g2d, text, y);
+
+		// Save the modified image
+		ImageIO.write(img, "png", new File(destPicture));
+		return destPicture;
+	}
+
+	private static void drawString(Graphics2D g2d, String text, int y) {
+		FontMetrics fm = g2d.getFontMetrics();
+		int lineHeight = fm.getHeight();
+		List<String> list = insertNewlines(fm, text, g2d.getDeviceConfiguration()
+														.getBounds().width - 150);
+		y = y - (list.size() - 2) * lineHeight / 2 - lineHeight / 8;
+
+		for (String line : list) {
+			int lineWidth = fm.stringWidth(line);
+			int lineX = (g2d.getDeviceConfiguration()
+							.getBounds().width - lineWidth) / 2;
+			g2d.drawString(line, lineX, y);
+			y += lineHeight;
+		}
+	}
+
+	private static List<String> insertNewlines(FontMetrics fm, String text, int lineLength) {
+		List<String> lines = new ArrayList<>();
+		StringBuilder currentLine = new StringBuilder();
+		for (int i = 0; i < text.length(); i++) {
+			char ch = text.charAt(i);
+			currentLine.append(ch);
+			if (fm.stringWidth(currentLine.toString()) >= lineLength) {
+				// Add the line to the output and start a new line.
+				lines.add(currentLine.toString());
+				currentLine.setLength(0);
+				if (lines.size() >= 3) {
+					break;
+				}
+			}
+		}
+		if (currentLine.length() > 0 && lines.size() < 3) {
+			lines.add(currentLine.toString());
+		}
+		return lines;
 	}
 
 }

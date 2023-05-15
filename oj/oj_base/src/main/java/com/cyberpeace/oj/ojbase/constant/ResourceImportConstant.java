@@ -137,5 +137,5 @@ public interface ResourceImportConstant {
 
 	String WRITEUP_MD = "writeup.md";
 
-	List<String> PRACTICE_SET_LOGO = Arrays.asList("built_in/SetLogo1.png", "built_in/SetLogo2.png", "built_in/SetLogo3.png", "built_in/SetLogo4.png", "built_in/SetLogo5.png");
+	List<String> PRACTICE_SET_LOGO = Arrays.asList("/cpms/built_in/SetLogo1.png", "/cpms/built_in/SetLogo2.png", "/cpms/built_in/SetLogo3.png", "/cpms/built_in/SetLogo4.png", "/cpms/built_in/SetLogo5.png");
 }

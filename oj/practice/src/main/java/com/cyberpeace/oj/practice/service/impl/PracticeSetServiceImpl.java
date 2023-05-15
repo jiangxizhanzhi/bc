@@ -12,6 +12,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
+import com.cyberpeace.common.model.CustomFont;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -46,11 +47,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -145,7 +146,6 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
-		setBo.setLogoIsBuiltIn(practiceSet.getLogo().startsWith("built_in"));
 		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
 		setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
 
@@ -459,6 +459,21 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		}
 		List<PracticeSet> practiceSets = practiceSetMapper.selectByIdsAndType(authIds, setType);
 		return StreamApiUtils.map(practiceSets, practiceSet -> entityToSetBo(practiceSet, authContext));
+	}
+
+	@Override
+	public String createImg(String setName) {
+		List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
+		int i = (int) Math.floor(Math.random() * 6);
+		CustomFont customFont = new CustomFont();
+		Font font = customFont.loadFonts("static/YouSheBiaoTiHei.ttf", Font.PLAIN, 47);
+		String id = IDGeneratorUtil.getID();
+		try {
+			return ImgUtil.addTextToImage(practiceSetLogo.get(i), font, setName, AttachmentPath.LOGO.getDesc() + id + ".png").replace("/cpms/", "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	private String doExportSet(String destPath, PracticeSet practiceSet) {

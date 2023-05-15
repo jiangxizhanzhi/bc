@@ -252,18 +252,20 @@ public class TeamTrainTemplateController {
 				.map(TeamTemplateData::getBusinessTemplateId).collect(Collectors.toList());
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
 				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
+				.countIcsRel(businessTemplateIds);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(businessTemplateIds);
 
 		data.convert(teamTemplateData -> getTeamTrainTemplateOutputByBaseInfoData(teamTemplateData,
-				topologyNodesStats, attackRelCount, engageRelCount));
+				topologyNodesStats, attackRelCount, icsRelCount, engageRelCount));
 
 		return new BaseRsp(data);
 	}
 
 	public TeamTrainTemplateRsp getTeamTrainTemplateOutputByBaseInfoData(
 			TeamTemplateData teamTemplateData, Map<String, TopoDigest> topologyNodesStats,
-			Map<String, List<NameCount>> attackRelCount,
+			Map<String, List<NameCount>> attackRelCount, Map<String, List<NameCount>> icsRelCount,
 			Map<String, List<NameCount>> engageRelCount) {
 
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(teamTemplateData);
@@ -299,6 +301,10 @@ public class TeamTrainTemplateController {
 		teamTrainTemplateRsp.setIsAttackRelated(
 				attackRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));
 		teamTrainTemplateRsp.setAttackCount(attackRelCount
+				.getOrDefault(teamTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
+		teamTrainTemplateRsp
+				.setIsIcsRelated(icsRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));
+		teamTrainTemplateRsp.setIcsCount(icsRelCount
 				.getOrDefault(teamTemplateData.getBusinessTemplateId(), Lists.newArrayList()));
 		teamTrainTemplateRsp.setIsEngageRelated(
 				engageRelCount.containsKey(teamTemplateData.getBusinessTemplateId()));

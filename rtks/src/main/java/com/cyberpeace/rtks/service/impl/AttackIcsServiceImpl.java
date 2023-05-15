@@ -127,6 +127,16 @@ public class AttackIcsServiceImpl implements AttackIcsService {
 		});
 	}
 
+	@Override
+	public List<AttackCategoryBo<FrameItemBase>> getCache() {
+		ensureAttackCache();
+		if (CommonContext.isChinese()) {
+			return cachedAttacks.getZh();
+		} else {
+			return cachedAttacks.getEn();
+		}
+	}
+
 	private void ensureAttackCache() {
 		if (null == cachedAttacks) {
 			synchronized (lock) {

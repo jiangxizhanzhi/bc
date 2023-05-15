@@ -348,6 +348,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// get attack engage relation
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
 				.countAttackRel(template_ids);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService.countIcsRel(template_ids);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(template_ids);
 
@@ -391,6 +392,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					attackRelCount.containsKey(singleRoomListBo.getResourceId()));
 			singleRoomListBo.setAttackCount(attackRelCount
 					.getOrDefault(singleRoomListBo.getResourceId(), Lists.newArrayList()));
+			singleRoomListBo
+					.setIsIcsRelated(icsRelCount.containsKey(singleRoomListBo.getResourceId()));
+			singleRoomListBo.setIcsCount(icsRelCount.getOrDefault(singleRoomListBo.getResourceId(),
+					Lists.newArrayList()));
 			singleRoomListBo.setIsEngageRelated(
 					engageRelCount.containsKey(singleRoomListBo.getResourceId()));
 			singleRoomListBo.setEngageCount(engageRelCount

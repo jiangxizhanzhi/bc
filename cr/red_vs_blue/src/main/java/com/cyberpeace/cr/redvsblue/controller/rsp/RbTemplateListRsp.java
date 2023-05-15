@@ -34,6 +34,12 @@ public class RbTemplateListRsp {
 	@ApiModelProperty(value = "关联 ATT&CK 计数")
 	private List<NameCount> attackCount;
 
+	@ApiModelProperty("是否关联 ATT&CK ICS")
+	private Boolean isIcsRelated;
+
+	@ApiModelProperty(value = "关联 ATT&CK ICS 计数")
+	private List<NameCount> icsCount;
+
 	@ApiModelProperty("是否关联 Engage")
 	private Boolean isEngageRelated;
 

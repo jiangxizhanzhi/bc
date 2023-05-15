@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.rtks.service.bo.career.TechRelation;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -36,4 +37,6 @@ public interface AttackIcsMapper {
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
 	void loadRel(@Param("btId") String btId, @Param("attackIcsIds") List<String> attackIcsIds);
+
+    List<TechRelation> selectRelsByBtIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
 }

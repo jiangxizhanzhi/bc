@@ -17,6 +17,7 @@ import com.cyberpeace.rtks.dao.mapper.AttackIcsMapper;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
 import com.cyberpeace.rtks.dao.mapper.EngageMapper;
 import com.cyberpeace.rtks.dao.mapper.SkillMissionRelationMapper;
+import com.cyberpeace.rtks.service.AttackIcsService;
 import com.cyberpeace.rtks.service.AttackService;
 import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.bo.career.*;
@@ -43,6 +44,9 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 
 	@Autowired
 	private AttackService attackService;
+
+	@Autowired
+	private AttackIcsService attackIcsService;
 
 	@Autowired
 	private EngageService engageService;
@@ -135,29 +139,7 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 			return res;
 		}
 		List<AttackCategoryBo<FrameItemBase>> cache = attackService.getCache();
-		for (TechRelation relation : relations) {
-			String btId = relation.getBusinessTemplateId();
-			if (!res.containsKey(btId)) {
-				// init attack category list
-				List<NameCount> initCountList = Lists.newArrayList();
-				for (AttackCategoryBo<FrameItemBase> categoryBo : cache) {
-					initCountList.add(new NameCount(categoryBo.getCategoryName(), 0));
-				}
-				res.put(btId, initCountList);
-			}
-			List<NameCount> countList = res.get(btId);
-			String relatedAttackId = relation.getTechId();
-			// 循环每个category，不同category下可能存在同一个attack
-			for (int i = 0; i < cache.size(); i++) {
-				// 循环attack技术，有匹配的+1计数
-				for (FrameItemBase attack : cache.get(i).getAttacks()) {
-					if (attack.getResourceId().equals(relatedAttackId)) {
-						countList.get(i).add();
-						break;
-					}
-				}
-			}
-		}
+		countAttackRel(res, relations, cache);
 		return res;
 	}
 
@@ -201,5 +183,48 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public Map<String, List<NameCount>> countIcsRel(List<String> businessTemplateIds) {
+		Map<String, List<NameCount>> res = Maps.newHashMap();
+		if (CollectionUtils.isEmpty(businessTemplateIds)) {
+			return res;
+		}
+		// query relations
+		List<TechRelation> relations = attackIcsMapper.selectRelsByBtIds(businessTemplateIds);
+		if (relations.isEmpty()) {
+			return res;
+		}
+		List<AttackCategoryBo<FrameItemBase>> cache = attackIcsService.getCache();
+		countAttackRel(res, relations, cache);
+		return res;
+	}
+
+	private void countAttackRel(Map<String, List<NameCount>> res, List<TechRelation> relations,
+			List<AttackCategoryBo<FrameItemBase>> cache) {
+		for (TechRelation relation : relations) {
+			String btId = relation.getBusinessTemplateId();
+			if (!res.containsKey(btId)) {
+				// init attack category list
+				List<NameCount> initCountList = Lists.newArrayList();
+				for (AttackCategoryBo<FrameItemBase> categoryBo : cache) {
+					initCountList.add(new NameCount(categoryBo.getCategoryName(), 0));
+				}
+				res.put(btId, initCountList);
+			}
+			List<NameCount> countList = res.get(btId);
+			String relatedAttackId = relation.getTechId();
+			// 循环每个category，不同category下可能存在同一个attack
+			for (int i = 0; i < cache.size(); i++) {
+				// 循环attack技术，有匹配的+1计数
+				for (FrameItemBase attack : cache.get(i).getAttacks()) {
+					if (attack.getResourceId().equals(relatedAttackId)) {
+						countList.get(i).add();
+						break;
+					}
+				}
+			}
+		}
 	}
 }

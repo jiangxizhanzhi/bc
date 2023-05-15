@@ -73,6 +73,8 @@ public class RbTemplateController {
 				.map(RbTemplateData::getBusinessTemplateId).collect(Collectors.toList());
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
 				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
+				.countIcsRel(businessTemplateIds);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(businessTemplateIds);
 
@@ -85,6 +87,9 @@ public class RbTemplateController {
 					.setIsAttackRelated(attackRelCount.containsKey(record.getBusinessTemplateId()));
 			rspElement.setAttackCount(attackRelCount.getOrDefault(record.getBusinessTemplateId(),
 					Lists.newArrayList()));
+			rspElement.setIsIcsRelated(icsRelCount.containsKey(record.getBusinessTemplateId()));
+			rspElement.setIcsCount(
+					icsRelCount.getOrDefault(record.getBusinessTemplateId(), Lists.newArrayList()));
 			rspElement
 					.setIsEngageRelated(engageRelCount.containsKey(record.getBusinessTemplateId()));
 			rspElement.setEngageCount(engageRelCount.getOrDefault(record.getBusinessTemplateId(),

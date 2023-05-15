@@ -436,6 +436,8 @@ public class TeamTrainRoomController {
 
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
 				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(businessTemplateIds);
 
@@ -468,6 +470,10 @@ public class TeamTrainRoomController {
 					attackRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
 			teamRoomRsp.setAttackCount(attackRelCount
 					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
+			teamRoomRsp
+					.setIsIcsRelated(icsRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setIcsCount(icsRelCount.getOrDefault(teamRoomRsp.getBusinessTemplateId(),
+					Lists.newArrayList()));
 			teamRoomRsp.setIsEngageRelated(
 					engageRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
 			teamRoomRsp.setEngageCount(engageRelCount

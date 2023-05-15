@@ -212,6 +212,8 @@ public class RbRoomController {
 
 		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
 				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
+				.countIcsRel(businessTemplateIds);
 		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
 				.countEngageRel(businessTemplateIds);
 
@@ -241,6 +243,9 @@ public class RbRoomController {
 			rbRoomRsp.setIsAttackRelated(
 					attackRelCount.containsKey(rbRoomRsp.getBusinessTemplateId()));
 			rbRoomRsp.setAttackCount(attackRelCount.getOrDefault(rbRoomRsp.getBusinessTemplateId(),
+					Lists.newArrayList()));
+			rbRoomRsp.setIsIcsRelated(icsRelCount.containsKey(rbRoomRsp.getBusinessTemplateId()));
+			rbRoomRsp.setIcsCount(icsRelCount.getOrDefault(rbRoomRsp.getBusinessTemplateId(),
 					Lists.newArrayList()));
 			rbRoomRsp.setIsEngageRelated(
 					engageRelCount.containsKey(rbRoomRsp.getBusinessTemplateId()));

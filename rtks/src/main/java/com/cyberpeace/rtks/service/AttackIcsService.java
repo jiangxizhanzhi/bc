@@ -2,10 +2,7 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.service.bo.career.AttackBackBo;
-import com.cyberpeace.rtks.service.bo.career.AttackCategoryBo;
-import com.cyberpeace.rtks.service.bo.career.AttackDetail;
-import com.cyberpeace.rtks.service.bo.career.AttackFrontBo;
+import com.cyberpeace.rtks.service.bo.career.*;
 
 public interface AttackIcsService {
 
@@ -35,4 +32,11 @@ public interface AttackIcsService {
 	 * @param businessTemplateIds
 	 */
 	void updateRelations(String resourceId, List<String> businessTemplateIds);
+
+	/**
+	 * 获取缓存
+	 *
+	 * @return {@code List<AttackCategoryBo<FrameItemBase>>}
+	 */
+	List<AttackCategoryBo<FrameItemBase>> getCache();
 }

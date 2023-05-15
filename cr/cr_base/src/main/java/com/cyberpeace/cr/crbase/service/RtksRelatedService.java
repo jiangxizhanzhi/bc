@@ -54,4 +54,12 @@ public interface RtksRelatedService {
 	 * @return map
 	 */
 	Map<String, List<NameCount>> countEngageRel(List<String> businessTemplateIds);
+
+	/**
+	 * 统计训练模板关联各attack ics类别下的技术数量
+	 * 用于训练列表页面
+	 * @param businessTemplateIds btId列表
+	 * @return map
+	 */
+	Map<String, List<NameCount>> countIcsRel(List<String> businessTemplateIds);
 }

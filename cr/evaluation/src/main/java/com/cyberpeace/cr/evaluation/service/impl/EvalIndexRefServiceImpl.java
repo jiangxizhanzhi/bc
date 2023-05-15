@@ -111,8 +111,8 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		Integer score;
 		try {
 			String algorithmId = evalAlgorithmRef.getResourceId();
-			EvalAlgorithm evalAlgorithm = evalAlgorithmMapper.selectById(algorithmId);
-			if(evalAlgorithm.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())){
+			EvalAlgorithmRef algorithmRef = evalAlgorithmRefService.getById(algorithmId);
+			if(algorithmRef.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())){
 				score = remotePythonService.indexAhpPerform(algorithmId, evalAlgorithmRef.getMatrixData(),
 						evalAlgorithmRef.getCode(), scoreList, otherArguments);
 			} else {

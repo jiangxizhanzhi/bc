@@ -8,6 +8,9 @@ import java.io.Serializable;
 @Data
 public class PaperRecordSummaryRes implements Serializable {
 
+	@ApiModelProperty("组卷id")
+	private String paperId;
+
 	@ApiModelProperty("组卷时间")
 	private String paperTime;
 

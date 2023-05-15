@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "oj-前台自由组卷相关api")
 @RestController
@@ -119,7 +118,7 @@ public class PracticePaperController {
 
 	@ApiOperation("组卷记录概要")
 	@GetMapping("/record_summary")
-	public BaseRsp<Map<String, List<PaperRecordSummaryRes>>> getRecordSummary(@ApiParam("是否已结束") @RequestParam(value = "is_finish" , required = false) Boolean isFinish) {
+	public BaseRsp<List<PaperRecordSummaryResByDay>> getRecordSummary(@ApiParam("是否已结束") @RequestParam(value = "is_finish" , required = false) Boolean isFinish) {
 		return new BaseRsp<>(practicePaperService.getAllPaperRecord(isFinish));
 	}
 

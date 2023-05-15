@@ -165,8 +165,9 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 	}
 
 	@Override
-	public Map<String, List<PaperRecordSummaryRes>> getAllPaperRecord(Boolean isFinish) {
+	public List<PaperRecordSummaryResByDay> getAllPaperRecord(Boolean isFinish) {
 		Map<String, List<PaperRecordSummaryRes>> recordListMap = new HashMap<>();
+		List<PaperRecordSummaryResByDay> sumRecordList = new ArrayList<>();
 		List<PaperRecordSummaryRes> paperRecordSummaryResList = practicePaperMapper.getAllPaperRecord(UserInfoContext.getUserContext().getUserId());
 		if (paperRecordSummaryResList.size() > 40) {
 			paperRecordSummaryResList = paperRecordSummaryResList.subList(0, 40);
@@ -188,7 +189,13 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 				recordListMap.get(dayTime).add(paperRecordSummaryRes);
 			}
 		}
-		return recordListMap;
+		for (String time : recordListMap.keySet()) {
+			PaperRecordSummaryResByDay paperRecordSummaryResByDay = new PaperRecordSummaryResByDay();
+			paperRecordSummaryResByDay.setTime(time);
+			paperRecordSummaryResByDay.setSummaryRes(recordListMap.get(time));
+			sumRecordList.add(paperRecordSummaryResByDay);
+		}
+		return sumRecordList;
 	}
 
 	@Override

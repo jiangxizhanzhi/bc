@@ -67,6 +67,6 @@ public interface RemotePythonService {
 	 * @param otherArguments 算法可配置入参列表
 	 * @return 聚合算法执行结果, 为0~100整数
 	 */
-	Integer indexAhpPerform(String algorithmId, List<Integer> matrixData, String algorithmCode, List<Integer> data,
+	Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
 						 List<Serializable> otherArguments);
 }

@@ -125,7 +125,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 	}
 
 	@Override
-	public Integer indexAhpPerform(String algorithmId, List<Integer> matrixData, String algorithmCode, List<Integer> data,
+	public Integer indexAhpPerform(String algorithmId, String matrixData, String algorithmCode, List<Integer> data,
 			List<Serializable> otherArguments) {
 		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
 		json.put("data", data);

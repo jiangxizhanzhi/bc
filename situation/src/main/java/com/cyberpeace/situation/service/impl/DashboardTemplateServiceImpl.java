@@ -63,9 +63,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	private SituationCategoryMapper situationCategoryMapper;
 
 	// 获取模板数据
-	public DashboardTemplate selectDashboardTemplateById(String templateId, Boolean nullThrow) {
+	public DashboardTemplate selectDashboardTemplateById(String templateId, Boolean throwNull) {
 		DashboardTemplate dashboardTemplate = dashboardTemplateMapper.selectById(templateId);
-		if (dashboardTemplate == null && nullThrow) {
+		if (dashboardTemplate == null && throwNull) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return dashboardTemplate;

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.situation.constant.gis.MapSource;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.google.common.collect.Lists;
 
@@ -25,7 +26,6 @@ public class DashboardBasicAttributeRes implements Serializable {
 	 */
 	@ApiModelProperty("大屏ID")
 	private String dashboardId;
-
 
 	@ApiModelProperty("大屏模式 1-GIS/TOPO 2-单GIS 3-单TOPO")
 	private Integer dashboardMode;
@@ -75,8 +75,8 @@ public class DashboardBasicAttributeRes implements Serializable {
 	@ApiModelProperty("初始视角")
 	private ViewAngle viewAngle;
 
-	@ApiModelProperty("地图数据源 1-谷歌 2-百度 3-高德")
-	private Integer mapSource = 1;
+	@ApiModelProperty("地图数据源")
+	private String mapSource = MapSource.GGIM.getName();
 
 	@ApiModelProperty("特定事件列表")
 	private List<String> eventList = Lists.newArrayList();
@@ -99,6 +99,10 @@ public class DashboardBasicAttributeRes implements Serializable {
 
 	public void setViewAngle(String viewAngle) {
 		this.viewAngle = JsonUtil.toJsonObject(viewAngle, ViewAngle.class);
+	}
+
+	public void setMapSource(Integer mapSource) {
+		this.mapSource = MapSource.getMapSourceByCode(mapSource).getName();
 	}
 
 }

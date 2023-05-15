@@ -1,6 +1,8 @@
 package com.cyberpeace.situation.dao.entity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,6 +37,10 @@ public class DashboardComponents {
 
     @ApiModelProperty("组件配置")
     private String componentSetting;
+
+    @ApiModelProperty("组件配置对象")
+    @TableField(exist = false)
+    private JSONObject componentSettingObject;
 
     @ApiModelProperty("图层顺序")
     private Integer componentIndex;

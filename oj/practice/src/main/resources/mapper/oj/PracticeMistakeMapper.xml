@@ -28,4 +28,13 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByPracticeId" resultType="com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes">
+        select practice_id, content, theory_type, correct, incorrect, category.name as direction, difficulty
+        from oj_practice_mistake as mistake
+        inner join oj_practice_theory as practice
+        on mistake.practice_id = practice.resource_id
+        inner join oj_practice_category as category
+        on practice.category_id and category.resource_id
+    </select>
 </mapper>

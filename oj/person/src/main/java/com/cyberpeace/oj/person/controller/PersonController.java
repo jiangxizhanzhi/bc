@@ -17,6 +17,8 @@ import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
+import com.cyberpeace.oj.practice.controller.res.PersonalMistakeRes;
+import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
@@ -60,6 +62,9 @@ public class PersonController {
 
 	@Autowired
 	RemoteUserService remoteUserService;
+
+	@Autowired
+	private PracticeMistakeService practiceMistakeService;
 
 	@ApiOperation("当前用户所有评论")
 	@GetMapping("/comments")
@@ -195,5 +200,17 @@ public class PersonController {
 		WebOperationBo theoryBo = practiceOperationService.selectById(resourceId, authContext,
 				Boolean.TRUE);
 		return new BaseRsp<>(theoryBo);
+	}
+
+	@ApiOperation("查看理论题错题页面")
+	@GetMapping("/mistake")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageReqBase pageReq) {
+		if (StringUtils.isNotBlank(pageReq.getSort())) {
+			pageReq.setSort("-update_time");
+		}
+		Page page = pageReq.toPageParam();
+		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
+		return new BaseRsp<>(PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size()));
 	}
 }

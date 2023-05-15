@@ -127,4 +127,6 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	 * @return
 	 */
 	List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq);
+
+	List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId);
 }

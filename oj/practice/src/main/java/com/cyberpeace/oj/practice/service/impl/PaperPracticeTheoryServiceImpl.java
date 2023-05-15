@@ -117,11 +117,9 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		if (evaluateResult.getSolved()) {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.SOLVED.getCode());
 			paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.SOLVED.getCode());
-			practiceMistakeService.addCorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
 		} else {
 			evaluateResultTheory.setStatus(PracticeSolved.SolvedStatus.TRIED.getCode());
 			paperPracticeTheory.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
-			practiceMistakeService.addIncorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
 		}
 
 		//修改原题目状态
@@ -134,6 +132,12 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				//更新错题集状态
+				if (evaluateResult.getSolved()) {
+					practiceMistakeService.addCorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
+				} else {
+					practiceMistakeService.addIncorrect(userId, paperPracticeTheory.getOriginId(), PracticeCategory.PracticeType.THEORY.getCode());
+				}
 				//当原题目为未开始或尝试过的状态时更新题目状态
 				if (originPracticeSolved == null || !originPracticeSolved.getSolved()) {
 					try {

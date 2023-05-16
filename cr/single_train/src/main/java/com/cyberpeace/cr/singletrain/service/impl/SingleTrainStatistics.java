@@ -15,6 +15,7 @@ import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
@@ -46,6 +47,20 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.SINGLE_TRAINING;
 	}
+
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		return trainRecordMapper.countFinishedByDate(userId,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return trainRecordMapper.countFinishedByDate(null,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+	}
+
 
 	@Override
 	public TrainingCount getTrainingCount(String userId) {

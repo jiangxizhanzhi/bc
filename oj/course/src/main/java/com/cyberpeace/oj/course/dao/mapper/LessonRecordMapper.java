@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.course.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -24,4 +25,6 @@ public interface LessonRecordMapper extends BaseMapper<LessonRecord> {
 
 	int updateLearnedTime(@Param("lessonId") String lessonId, @Param("courseId") String courseId,@Param("userId") String userId,
 						  @Param("learnedType") Integer learnedType, @Param("roomId") String roomId);
+
+	List<TrainingDateCount> getLessonRecordCountByDate(@Param("userId") String userId);
 }

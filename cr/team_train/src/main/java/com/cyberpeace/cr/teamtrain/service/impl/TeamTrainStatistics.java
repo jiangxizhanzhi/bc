@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
@@ -37,9 +38,30 @@ public class TeamTrainStatistics extends CrEventStatistics {
 	@Autowired
 	CrTaskMapper crTaskMapper;
 
+	@Autowired
+	TrainRecordMapper trainRecordMapper;
+
 	@Override
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.TEAM_TRAINING;
+	}
+
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (roomIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return trainRecordMapper.countFinishedByDatePerson(roomIds,
+				TeamRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return trainRecordMapper.countFinishedByDate(null,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 	}
 
 	@Override

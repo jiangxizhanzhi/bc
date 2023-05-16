@@ -119,6 +119,22 @@
         order_status
     </select>
 
+    <select id="getTrainingCountByDate"
+            resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
+        select
+        date_format(end_time, '%y-%m-%d') as `date`,
+        sum(case when training_status = 0 then 1 else 0 end) as completed
+        from cr_rb_room
+        where date_format(end_time, '%y-%m-%d') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 DAY),'%y-%m-%d') AND date_format(end_time, '%y-%m-%d') &lt;= date_format(NOW(), '%y-%m-%d')
+        <if test="roomIds.size != 0">
+            and resource_id in
+            <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
+                #{roomId}
+            </foreach>
+        </if>
+        group by date_format(end_time, '%y-%m-%d');
+    </select>
+
     <select id="getTrainingCount"
             resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount">
         select

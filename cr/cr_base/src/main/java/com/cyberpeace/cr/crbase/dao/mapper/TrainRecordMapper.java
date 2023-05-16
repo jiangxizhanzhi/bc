@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -30,4 +31,10 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	TrainRecord getByRoomId(String roomId);
 
 	void updateEndTimeByRoomId(@Param("roomId") String roomId, @Param("endTime") Date endTime);
+
+	List<TrainingDateCount> countFinishedByDate(@Param("userId") String userId,
+												@Param("type") Integer type);
+
+	List<TrainingDateCount> countFinishedByDatePerson(@Param("roomIds") List<String> roomIds,
+													  @Param("completedStatus") Integer completedStatus);
 }

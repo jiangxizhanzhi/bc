@@ -56,6 +56,39 @@
         set end_time = #{endTime}
         where room_id = #{roomId}
     </update>
+
+    <select id="countFinishedByDate" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
+        select
+        date_format(end_time, '%y-%m-%d') as `date`,
+        count(T1.id) as completed
+        from cr_train_record T1,cr_business_template T2
+        where T1.business_template_id = T2.resource_id
+        <if test="userId != null and userId != ''">
+            and T1.user_id = #{userId}
+        </if>
+        and T1.business_type = #{type}
+        and T1.end_time is not null
+        <if test="type == @com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate$BusinessType@TRAINING_SINGLE.code">
+            and T1.extra is not null
+        </if>
+        and date_format(end_time, '%y-%m-%d') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 DAY),'%y-%m-%d') AND date_format(end_time, '%y-%m-%d') &lt;= date_format(NOW(), '%y-%m-%d')
+        group by date_format(end_time, '%y-%m-%d')
+    </select>
+
+    <select id="countFinishedByDatePerson" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
+        select
+        date_format(end_time, '%y-%m-%d') as `date`,
+        sum(case when training_status = #{completedStatus} then 1 else 0 end) as completed
+        from cr_team_room
+        where resource_id
+        in
+        <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
+            #{roomId}
+        </foreach>
+        and date_format(end_time, '%y-%m-%d') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 DAY),'%y-%m-%d') AND date_format(end_time, '%y-%m-%d') &lt;= date_format(NOW(), '%y-%m-%d')
+        group by date_format(end_time, '%y-%m-%d')
+    </select>
+
     <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
         select count(T1.id)
         from cr_train_record T1,cr_business_template T2

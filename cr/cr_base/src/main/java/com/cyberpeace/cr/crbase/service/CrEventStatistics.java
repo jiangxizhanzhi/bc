@@ -10,6 +10,7 @@ import com.cyberpeace.cr.crbase.service.context.BarChartUnit;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,5 +70,13 @@ public class CrEventStatistics {
 	public Map<String, String> getMissionCategory() {
 		List<CrConstantsConfig> constants = crConstantsService.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
 		return 	StreamApiUtils.toMap(constants, CrConstantsConfig::getResourceId, SelectI18nName::selectI18nName);
+	}
+
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

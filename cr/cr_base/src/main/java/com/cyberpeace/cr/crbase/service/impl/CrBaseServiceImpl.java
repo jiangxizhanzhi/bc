@@ -52,6 +52,65 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
+	/**
+	 * @param userId
+	 * @return 各类训练总和
+	 */
+	@Override
+	public TrainingRecordRsp getTrainingRecords(String userId) {
+		TrainingRecordRsp trainingRecordRsp = new TrainingRecordRsp();
+		List<String> dates = new ArrayList<>();
+
+		List<TrainingDateCount> res = new ArrayList<>();
+		Map<String, TrainingDateCount> map = new HashMap<>();
+
+		for (Map.Entry<LocalScene.BusinessCode, CrEventStatistics> entry : register.entrySet()) {
+			CrEventStatistics statistics = entry.getValue();
+
+			List<TrainingDateCount> trainingCountByDate = statistics.getTrainingCountByDate(userId);
+			Map<String, TrainingDateCount> dataPersonMap = StreamApiUtils.toMap(trainingCountByDate, TrainingDateCount::getDate, tmp -> tmp);
+			List<TrainingDateCount> allTrainingCountByDate = statistics.getAllTrainingCountByDate();
+			for(TrainingDateCount tmp:allTrainingCountByDate){
+				String date = tmp.getDate();
+				if(!dates.contains(date)){
+					dates.add(date);
+					TrainingDateCount current = new TrainingDateCount();
+					current.setDate(date);
+					current.setAll(tmp.getCompleted());
+					if(dataPersonMap.containsKey(date)){
+						TrainingDateCount trainingDateCount = dataPersonMap.get(date);
+						current.setCompleted(trainingDateCount.getCompleted());
+					}
+					res.add(current);
+					map.put(date, current);
+				} else {
+					TrainingDateCount trainingDateCount = map.get(date);
+					Integer originalAll = trainingDateCount.getAll();
+					trainingDateCount.setAll(originalAll + tmp.getCompleted());
+					if(dataPersonMap.containsKey(date)){
+						TrainingDateCount personCount = dataPersonMap.get(date);
+						Integer originalPersonCompleted = personCount.getCompleted();
+						Integer personCompleted = trainingDateCount.getCompleted();
+						trainingDateCount.setCompleted(personCompleted + originalPersonCompleted);
+					}
+					res.set(res.indexOf(trainingDateCount), trainingDateCount);
+				}
+			}
+		}
+		res.sort(Comparator.comparing(TrainingDateCount::getDate));
+		dates = StreamApiUtils.getColumn(res, TrainingDateCount::getDate);
+		List<Integer> person = StreamApiUtils.getColumn(res, TrainingDateCount::getCompleted);
+		List<Integer> all = StreamApiUtils.getColumn(res, TrainingDateCount::getAll);
+		if(dates.isEmpty()){
+			return null;
+		}
+		trainingRecordRsp.setAll(all);
+		trainingRecordRsp.setDate(dates);
+		trainingRecordRsp.setPerson(person);
+		return trainingRecordRsp;
+	}
+
+
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page) {
 		// 1. define variables

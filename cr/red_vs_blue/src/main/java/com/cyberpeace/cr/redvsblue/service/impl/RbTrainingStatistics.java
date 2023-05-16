@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -42,6 +43,22 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.RED_VS_BLUE;
 	}
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		if (roomIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return rbRoomMapper.getTrainingCountByDate(roomIds ,RbRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return rbRoomMapper.getTrainingCountByDate(new ArrayList<>(),RbRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
 
 	@Override
 	public TrainingCount getTrainingCount(String userId) {

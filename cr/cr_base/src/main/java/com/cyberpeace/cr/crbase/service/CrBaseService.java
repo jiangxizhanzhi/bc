@@ -30,4 +30,6 @@ public interface CrBaseService {
 	ListRsp<TrainStatsOverviewRsp> getTrainingOverview(String userId, Page page);
 
 	HashMap<String, Integer> getScoreByAttackType(Integer businessType, String roomId);
+
+    TrainingRecordRsp getTrainingRecords(String userId);
 }

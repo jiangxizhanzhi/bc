@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

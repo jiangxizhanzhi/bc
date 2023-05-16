@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.WikiMapper">
+    <select id="page" resultType="com.cyberpeace.cr.crbase.service.context.wiki.WikiListRsp">
+        <if test="search != null and search != ''">
+            <bind name="title_search" value="'%' + search + '%'"/>
+        </if>
+        select * from wiki
+        <if test="search != null and search != ''">
+            where `title` like #{title_search}
+        </if>
+        order by id desc
+    </select>
+</mapper>

@@ -1,11 +1,11 @@
 package com.cyberpeace.oj.course.controller.admin;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +36,7 @@ import com.cyberpeace.oj.course.controller.req.*;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.dao.context.ClassRoomPageQuery;
 import com.cyberpeace.oj.course.dao.entity.Classroom;
+import com.cyberpeace.oj.course.dao.entity.TrainPlan;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
@@ -151,6 +152,10 @@ public class AdminClassroomController {
 
 		// 数据查询
 		IPage<ClassroomBo> iPage = classroomService.selectPage(roomListQuery, authContext);
+		Date now = new Date();
+		for (ClassroomBo bo : iPage.getRecords()) {
+			bo.setStatus(now);
+		}
 
 		return new BaseRsp<>(PageUtil.getListResult(iPage));
 	}

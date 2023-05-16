@@ -72,13 +72,10 @@ public class AdminTrainPlanController {
 				UserInfoContext.getUserContext());
 
 		ListRsp<TrainPlanRsp> listResult = PageUtil.getListResult(data);
-		Date now = new Date();
 		for (TrainPlanRsp trainPlanRsp : listResult.getList()) {
 			if (StringUtils.isEmpty(trainPlanRsp.getName())) {
 				trainPlanRsp.setName(TrainPlan.TASK_SET);
 			}
-			// set status
-			trainPlanRsp.setStatus(now);
 		}
 
 		return new BaseRsp(listResult);

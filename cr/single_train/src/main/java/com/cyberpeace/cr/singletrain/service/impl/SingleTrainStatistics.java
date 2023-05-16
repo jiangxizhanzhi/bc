@@ -41,6 +41,19 @@ public class SingleTrainStatistics extends CrEventStatistics {
 		return LocalScene.BusinessCode.SINGLE_TRAINING;
 	}
 
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		return trainRecordMapper.countFinishedByDate(userId,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return trainRecordMapper.countFinishedByDate(null,
+				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+	}
+
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		Integer completed = trainRecordMapper.countFinishedByUserIdAndType(userId,

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -33,6 +34,14 @@ public class CrEventStatistics {
 	}
 
 	public List<TrainingData> getRelatedTraining(String userId) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
+	}
+
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 }

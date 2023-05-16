@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.Date;
+import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -24,6 +26,9 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 
 	Integer countFinishedByUserIdAndType(@Param("userId") String userId,
 			@Param("type") Integer type);
+
+	List<TrainingDateCount> countFinishedByDate(@Param("userId") String userId,
+												@Param("type") Integer type);
 
 	void batchEnd(@Param("businessTemplateId") String businessTemplateId);
 

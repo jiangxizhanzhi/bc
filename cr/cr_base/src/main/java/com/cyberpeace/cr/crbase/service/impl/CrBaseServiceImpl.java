@@ -1,13 +1,10 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -91,6 +88,64 @@ public class CrBaseServiceImpl implements CrBaseService {
 
 
 		return rsp;
+	}
+
+	/**
+	 * @param userId
+	 * @return 各类训练总和
+	 */
+	@Override
+	public TrainingRecordRsp getTrainingRecords(String userId) {
+		TrainingRecordRsp trainingRecordRsp = new TrainingRecordRsp();
+		List<String> dates = new ArrayList<>();
+
+		List<TrainingDateCount> res = new ArrayList<>();
+		Map<String, TrainingDateCount> map = new HashMap<>();
+
+		for (Map.Entry<LocalScene.BusinessCode, CrEventStatistics> entry : register.entrySet()) {
+			CrEventStatistics statistics = entry.getValue();
+
+			List<TrainingDateCount> trainingCountByDate = statistics.getTrainingCountByDate(userId);
+			Map<String, TrainingDateCount> dataPersonMap = StreamApiUtils.toMap(trainingCountByDate, TrainingDateCount::getDate, tmp -> tmp);
+			List<TrainingDateCount> allTrainingCountByDate = statistics.getAllTrainingCountByDate();
+			for(TrainingDateCount tmp:allTrainingCountByDate){
+				String date = tmp.getDate();
+				if(!dates.contains(date)){
+					dates.add(date);
+					TrainingDateCount current = new TrainingDateCount();
+					current.setDate(date);
+					current.setCompleted(0);
+					current.setAll(tmp.getCompleted());
+					if(dataPersonMap.containsKey(date)){
+						TrainingDateCount trainingDateCount = dataPersonMap.get(date);
+						current.setCompleted(trainingDateCount.getCompleted());
+					}
+					res.add(current);
+					map.put(date, current);
+				} else {
+					TrainingDateCount trainingDateCount = map.get(date);
+					Integer originalAll = trainingDateCount.getAll();
+					trainingDateCount.setAll(originalAll + tmp.getCompleted());
+					if(dataPersonMap.containsKey(date)){
+						TrainingDateCount personCount = dataPersonMap.get(date);
+						Integer originalPersonCompleted = personCount.getCompleted();
+						Integer personCompleted = trainingDateCount.getCompleted();
+						personCount.setCompleted(personCompleted + originalPersonCompleted);
+					}
+				}
+			}
+		}
+		res.sort(Comparator.comparing(TrainingDateCount::getDate));
+		dates = StreamApiUtils.getColumn(res, TrainingDateCount::getDate);
+		List<Integer> person = StreamApiUtils.getColumn(res, TrainingDateCount::getCompleted);
+		List<Integer> all = StreamApiUtils.getColumn(res, TrainingDateCount::getAll);
+		if(dates.isEmpty()){
+			return null;
+		}
+		trainingRecordRsp.setAll(all);
+		trainingRecordRsp.setDate(dates);
+		trainingRecordRsp.setPerson(person);
+		return trainingRecordRsp;
 	}
 
 }

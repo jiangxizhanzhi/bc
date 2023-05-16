@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.RbSituation;
@@ -25,6 +26,8 @@ public interface RbRoomMapper extends BaseMapper<RbRoom> {
 	RbRoomData getRbRoomDataByRoomId(String resourceId);
 
 	IPage<RbRoomData> listRbRoom(Page page, ListQuery listQuery);
+
+	List<TrainingDateCount> getTrainingCountByDate(@Param("roomIds") List<String> roomIds, @Param("completedStatus") Integer completedStatus);
 
 	TrainingCount getTrainingCount(@Param("roomIds") List<String> roomIds,
 			@Param("completedStatus") Integer completedStatus);

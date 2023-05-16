@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingRecordRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -57,6 +58,17 @@ public class CrBaseController {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+
+		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("首页训练记录")
+	@GetMapping("/training_records")
+	public BaseRsp<TrainingRecordRsp>
+	getTrainingRecords(@ApiParam @Validated PageReqBase req) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		TrainingRecordRsp rsp = crBaseService.getTrainingRecords(userId);
 
 		return new BaseRsp<>(rsp);
 	}

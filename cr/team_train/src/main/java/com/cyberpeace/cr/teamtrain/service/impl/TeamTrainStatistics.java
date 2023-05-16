@@ -3,6 +3,8 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,9 @@ import com.google.common.collect.Maps;
 public class TeamTrainStatistics extends CrEventStatistics {
 
 	@Autowired
+	TrainRecordMapper trainRecordMapper;
+
+	@Autowired
 	TeamRoomMapper teamRoomMapper;
 
 	@Autowired
@@ -31,6 +36,18 @@ public class TeamTrainStatistics extends CrEventStatistics {
 	@Override
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.TEAM_TRAINING;
+	}
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		return trainRecordMapper.countFinishedByDate(userId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return trainRecordMapper.countFinishedByDate(null,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 	}
 
 	@Override

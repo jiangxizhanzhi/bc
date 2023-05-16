@@ -1,8 +1,10 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,21 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	@Override
 	public LocalScene.BusinessCode getCode() {
 		return LocalScene.BusinessCode.RED_VS_BLUE;
+	}
+
+	@Override
+	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
+				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		if (roomIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return rbRoomMapper.getTrainingCountByDate(roomIds ,RbRoom.TrainingStatusCode.ENDED.getCode());
+	}
+
+	@Override
+	public List<TrainingDateCount> getAllTrainingCountByDate() {
+		return rbRoomMapper.getTrainingCountByDate(new ArrayList<>(),RbRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
 	@Override

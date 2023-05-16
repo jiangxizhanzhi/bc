@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -127,9 +129,17 @@ public class MissionTemplateServiceImpl extends ServiceImpl<MissionTemplateMappe
 	@Override
 	public Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList) {
 		List<String> templateIds = new ArrayList<>();
-		for (String schemeJson: schemeJsonList){
+		for (String schemeJson : schemeJsonList) {
 			templateIds.addAll(getIdsByMissionsSchemeJson(schemeJson));
 		}
 		return getMappingByIds(templateIds);
+	}
+
+	@Override
+	public List<MissionTemplate> getBatchByIds(Collection<String> missionTemplateIds) {
+		if (CollectionUtils.isEmpty(missionTemplateIds)) {
+			return Lists.newArrayList();
+		}
+		return missionTemplateMapper.selectBatchIds(missionTemplateIds);
 	}
 }

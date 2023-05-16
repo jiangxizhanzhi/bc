@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -76,4 +77,12 @@ public interface MissionTemplateService extends IService<MissionTemplate> {
 	 * @return 任务模板集合
 	 */
 	Map<String, MissionTemplate> getMappingBySchemeJsonList(List<String> schemeJsonList);
+
+	/**
+	 * 通过ids获取批量
+	 *
+	 * @param missionTemplateIds 任务模板id列表
+	 * @return {@code List<MissionTemplate>}
+	 */
+	List<MissionTemplate> getBatchByIds(Collection<String> missionTemplateIds);
 }

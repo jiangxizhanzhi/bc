@@ -953,17 +953,19 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
 	}
 
+	/**
+	 * 通过业务模板id获取任务模板列表
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @return {@code List<MissionTemplate>}
+	 */
 	private List<MissionTemplate>
 			getMissionTemplateListByBusinessTemplateId(String businessTemplateId) {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(businessTemplateId);
 		List<String> missionTemplateIds = singleTemplateService
 				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
-		// 没有任务
-		if (missionTemplateIds.isEmpty()) {
-			return Lists.newArrayList();
-		}
-		return missionTemplateService.getBaseMapper().selectBatchIds(missionTemplateIds);
+		return missionTemplateService.getBatchByIds(missionTemplateIds);
 	}
 
 }

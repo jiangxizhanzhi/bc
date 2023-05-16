@@ -52,6 +52,7 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -830,30 +831,47 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	}
 
 	@Override
-	public List<TrainHistoryBo> getTrainHistory(String businessTemplateId) {
+	public List<TrainingRecordListBo> getTrainHistory(String businessTemplateId) {
+		// get records
 		List<TrainRecord> trainHistory = trainRecordService.lambdaQuery()
 				.eq(TrainRecord::getUserId, UserInfoContext.getUserContext().getUserId())
 				.eq(TrainRecord::getBusinessTemplateId, businessTemplateId)
 				.isNotNull(TrainRecord::getEndTime).isNotNull(TrainRecord::getExtra)
 				.orderByAsc(TrainRecord::getEndTime).list();
 
-		List<TrainHistoryBo> result = Lists.newArrayList();
+		// get total mission and total score
+		List<MissionTemplate> missionTemplateList = getMissionTemplateListByBusinessTemplateId(
+				businessTemplateId);
+		Integer missionCount = missionTemplateList.size();
+		Integer total = missionTemplateList.stream().mapToInt(MissionBase::getScore).sum();
+
+		List<TrainingRecordListBo> result = Lists.newArrayList();
 		for (int i = 0; i < trainHistory.size(); i++) {
-			TrainRecord item = trainHistory.get(i);
-			TrainHistoryBo trainHistoryBo = new TrainHistoryBo();
-			trainHistoryBo.setRoomId(item.getRoomId());
-			trainHistoryBo.setTrainTime(item.getEndTime());
-			trainHistoryBo.setTrainTimes(i + 1);
-
-			JSONObject trainExtraData = JsonUtil.toJsonObject(item.getExtra(), JSONObject.class);
+			TrainRecord record = trainHistory.get(i);
+			TrainingRecordListBo bo = new TrainingRecordListBo();
+			// roomId
+			bo.setRoomId(record.getRoomId());
+			// training time = end time
+			bo.setTrainingTime(record.getEndTime());
+			// duration
+			Long duration = TimeUtil.getIntervalSeconds(record.getStartTime(), record.getEndTime());
+			bo.setDuration(duration);
+			// index
+			bo.setIndex(i + 1);
+			// get score and finished mission count from extra
+			JSONObject trainExtraData = JsonUtil.toJsonObject(record.getExtra(), JSONObject.class);
 			if (trainExtraData.isEmpty()) {
-				trainHistoryBo.setScore(0d);
+				bo.setScore(0);
+				bo.setFinished(0);
 			} else {
-				trainHistoryBo
-						.setScore(trainExtraData.getDouble(SingleRoom.CrTrainRecordFields.SCORE));
+				bo.setScore(trainExtraData.getInteger(SingleRoom.CrTrainRecordFields.SCORE));
+				bo.setFinished(trainExtraData
+						.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD).size());
 			}
-
-			result.add(trainHistoryBo);
+			// set total
+			bo.setTotalScore(total);
+			bo.setMissionCount(missionCount);
+			result.add(bo);
 		}
 		Collections.reverse(result);
 		return result;
@@ -927,6 +945,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		return missionService.batchGet(missionIds).stream()
 				.collect(Collectors.toMap(MissionBase::getResourceId, mission -> mission));
+	}
+
+	private List<MissionTemplate>
+			getMissionTemplateListByBusinessTemplateId(String businessTemplateId) {
+		SingleTemplate singleTemplate = singleTemplateService
+				.getByBusinessTemplateId(businessTemplateId);
+		List<String> missionTemplateIds = singleTemplateService
+				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
+		return missionTemplateService.getBaseMapper().selectBatchIds(missionTemplateIds);
 	}
 
 }

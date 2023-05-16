@@ -2,13 +2,13 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
@@ -24,6 +24,7 @@ import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -190,7 +191,7 @@ public class SingleRoomController {
 	@ApiOperation("训练历史")
 	@GetMapping("/train_history")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp<List<TrainHistoryBo>>
+	public BaseRsp<List<TrainingRecordListBo>>
 			trainHistory(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainHistory(businessTemplateId));
 	}

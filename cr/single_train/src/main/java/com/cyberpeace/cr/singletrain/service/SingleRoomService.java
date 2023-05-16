@@ -9,6 +9,7 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 
 public interface SingleRoomService extends IService<SingleRoom> {
 
@@ -131,7 +132,7 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @param businessTemplateId 业务模板id
 	 * @return 训练历史记录
 	 */
-	List<TrainHistoryBo> getTrainHistory(String businessTemplateId);
+	List<TrainingRecordListBo> getTrainHistory(String businessTemplateId);
 
 	/**
 	 * 训练提交

@@ -184,6 +184,7 @@
             <if test="setType != null">
                 and practice_type = #{setType}
             </if>
+            and `public` = true
         </where>
     </select>
 </mapper>

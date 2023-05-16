@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,10 +72,13 @@ public class AdminTrainPlanController {
 				UserInfoContext.getUserContext());
 
 		ListRsp<TrainPlanRsp> listResult = PageUtil.getListResult(data);
+		Date now = new Date();
 		for (TrainPlanRsp trainPlanRsp : listResult.getList()) {
 			if (StringUtils.isEmpty(trainPlanRsp.getName())) {
 				trainPlanRsp.setName(TrainPlan.TASK_SET);
 			}
+			// set status
+			trainPlanRsp.setStatus(now);
 		}
 
 		return new BaseRsp(listResult);
@@ -135,9 +139,10 @@ public class AdminTrainPlanController {
 
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				//如果包括临时计划,添加该用户能够看到的临时任务
-				if(delReq.getIds().contains(TrainPlan.TASK_SET_ID)){
-					ids.addAll(classroomService.selectTempTaskIdsByUser(UserInfoContext.getUserContext())) ;
+				// 如果包括临时计划,添加该用户能够看到的临时任务
+				if (delReq.getIds().contains(TrainPlan.TASK_SET_ID)) {
+					ids.addAll(classroomService
+							.selectTempTaskIdsByUser(UserInfoContext.getUserContext()));
 				}
 				trainPlanService.removeByIds(delReq.getIds());
 

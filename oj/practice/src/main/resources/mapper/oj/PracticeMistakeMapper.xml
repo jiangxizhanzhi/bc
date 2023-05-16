@@ -35,6 +35,17 @@
         inner join oj_practice_theory as practice
         on mistake.practice_id = practice.resource_id
         inner join oj_practice_category as category
-        on practice.category_id and category.resource_id
+        on practice.category_id = category.resource_id
+        <where>
+            <if test="practiceIds != null and practiceIds.size() != 0">
+                practice_id in
+                <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">
+                    #{practiceId}
+                </foreach>
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+        </where>
     </select>
 </mapper>

@@ -14,9 +14,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeMistakeMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
-import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,6 +106,6 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 		if (CollectionUtils.isEmpty(practiceIds)) {
 			return new ArrayList<>();
 		}
-		return practiceMistakeMapper.selectByPracticeId(practiceIds);
+		return practiceMistakeMapper.selectByPracticeId(practiceIds, userInfo.getUserId());
 	}
 }

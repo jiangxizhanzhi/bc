@@ -1,17 +1,5 @@
 package com.cyberpeace.oj.course.controller.web;
 
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
@@ -27,10 +15,20 @@ import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;
 import com.cyberpeace.oj.course.service.bo.HelpStatusBo;
 import com.cyberpeace.oj.course.service.bo.TimeScheduleBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 @Api(tags = "oj-前台课程表相关")
 @RestController
@@ -68,16 +66,7 @@ public class WebClassroomController {
 		roomListQuery.setStartTime(startOfDay);
 		roomListQuery.setEndTime(endOfDay);
 
-		// 管理员查询自己创建和组织下的
-		if (authContext.getIsAdmin() && !authContext.getSuperAdmin()) {
-			roomListQuery.setUserId(authContext.getUserId());
-			roomListQuery.setOrgId(authContext.getOrganization());
-		}
-
-		// 普通用户仅查询组织下的
-		if (!authContext.getIsAdmin() && !authContext.getSuperAdmin()) {
-			roomListQuery.setOrgId(authContext.getOrganization());
-		}
+		roomListQuery.setOrgId(authContext.getOrganization());
 
 		List<TimeScheduleBo> boList = classroomService.selectTimeList(roomListQuery, authContext);
 

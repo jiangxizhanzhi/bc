@@ -23,6 +23,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ZipUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.topo.Color;
+import com.cyberpeace.situation.constant.topo.DynamicType;
 import com.cyberpeace.situation.constant.topo.LineType;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DynamicEffectMappingRes;
@@ -33,6 +34,7 @@ import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectMappingMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectsCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectsMapper;
+import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.service.DynamicEffectMappingService;
 import com.cyberpeace.situation.service.DynamicEffectsCategoryService;
 import com.cyberpeace.situation.service.DynamicEffectsService;
@@ -445,6 +447,18 @@ public class DynamicEffectController {
 
 		return new BaseRsp<>(
 				dynamicEffectMappingService.getDynamicEffectsMapping(resourceId, true));
+	}
+
+	/**
+	 * 动效分类-列表查询
+	 *
+	 * @return {@code BaseRsp<List<IntType>>}
+	 */
+	@ApiOperation("动效分类-列表查询")
+	@GetMapping("/dynamic/effect/type")
+	public BaseRsp<List<IntType>> getDynamicEffectType() {
+
+		return new BaseRsp<>(DynamicType.getList());
 	}
 
 }

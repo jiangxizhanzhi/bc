@@ -1,5 +1,11 @@
 package com.cyberpeace.situation.constant.topo;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.cyberpeace.situation.model.IntType;
+
 import lombok.Getter;
 
 /**
@@ -50,6 +56,11 @@ public enum DynamicType {
 			}
 		}
 		return null;
+	}
+
+	public static List<IntType> getList() {
+		return Arrays.stream(DynamicType.values()).map(e -> new IntType(e.getCode(), e.getDesc()))
+				.collect(Collectors.toList());
 	}
 
 }

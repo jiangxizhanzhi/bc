@@ -103,10 +103,10 @@ public class EvalVariableRef extends BaseTable {
      */
     private Date markEndTime;
 
-    /**
-     * 执行轮次
-     */
-    private Integer exeCycle;
+//    /**
+//     * 执行轮次
+//     */
+//    private Integer exeCycle;
 
     public enum Progress implements GenericEnum {
         NOT_START(1, "未开始"),

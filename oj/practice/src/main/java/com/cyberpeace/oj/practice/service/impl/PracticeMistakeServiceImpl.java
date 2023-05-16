@@ -34,8 +34,8 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 	private PracticeTheoryMapper practiceTheoryMapper;
 
 	@Override
-	public Integer getTheoryMistakeCount(String userId, Integer practiceType) {
-		return practiceMistakeMapper.countByUserId(userId, practiceType);
+	public Integer getTheoryMistakeCount(String userId, List<String> practiceIds) {
+		return practiceMistakeMapper.countByUserId(userId, practiceIds);
 	}
 
 	/**

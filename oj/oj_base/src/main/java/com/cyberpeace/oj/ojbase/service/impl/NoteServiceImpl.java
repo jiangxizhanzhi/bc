@@ -153,7 +153,7 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	}
 
 	@Override
-	public Integer getCount(String userId, Integer noteType, Integer resourceType) {
-		return noteMapper.countByUserId(userId, noteType, resourceType);
+	public Integer getCount(String userId, Integer noteType, List<String> resourceIds) {
+		return noteMapper.countByUserId(userId, noteType, resourceIds);
 	}
 }

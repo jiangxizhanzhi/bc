@@ -65,4 +65,10 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 		}
 		return collectionMap;
 	}
+
+	@Override
+	public Integer countCollectionByUserIdAndBusinessId(String userId, Integer businessType,
+														List<String> businessIds) {
+		return resourceCollectionMapper.selectByBusinessIds(userId, businessType, businessIds).size();
+	}
 }

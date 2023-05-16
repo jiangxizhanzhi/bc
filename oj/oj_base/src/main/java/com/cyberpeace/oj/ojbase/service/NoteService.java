@@ -11,6 +11,8 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 
+import java.util.List;
+
 public interface NoteService extends IService<Note> {
 
     /**
@@ -42,5 +44,5 @@ public interface NoteService extends IService<Note> {
      */
     Note addAndUpdateReport(ReportAddReq reportAddReq);
 
-    Integer getCount(String userId, Integer noteType, Integer resourceType);
+    Integer getCount(String userId, Integer noteType, List<String> resourceType);
 }

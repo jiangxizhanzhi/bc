@@ -22,7 +22,6 @@ import com.cyberpeace.oj.practice.controller.req.WebTheoryListReq;
 import com.cyberpeace.oj.practice.controller.req.WebTheoryRecordReq;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.controller.res.TheoryStatisticsRes;
-import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
@@ -146,12 +145,13 @@ public class PracticeTheoryController {
 	@GetMapping("/statistics")
 	public BaseRsp<TheoryStatisticsRes> getTheoryStatistics () {
 		TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
-		String userId = UserInfoContext.getUserContext().getUserId();
-		theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId,
-				PracticeCategory.PracticeType.THEORY.getCode()));
-		theoryStatisticsRes.setCollection(resourceCollectionService.selectByType(userId,
-				ResourceCollection.BusinessType.THEORY.getCode()).size());
-		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), Note.NoteResourceType.THEORY.getCode()));
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+		String userId = authContext.getUserId();
+		List<String> practiceIds = practiceTheoryService.getPracticeIdsByUserAndSet(authContext, null);
+		theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId,practiceIds));
+		theoryStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
+				ResourceCollection.BusinessType.THEORY.getCode(), practiceIds));
+		theoryStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), practiceIds));
 		return new BaseRsp<>(theoryStatisticsRes);
 	}
 

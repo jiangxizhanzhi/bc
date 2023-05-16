@@ -35,11 +35,20 @@ public interface ResourceCollectionService extends IService<ResourceCollection> 
 	List<ResourceCollection> selectByType(String userId, Integer businessType);
 
 	/**
-	 * 批量查询资源没有被收藏
+	 * 批量查询资源有没有被收藏
 	 * @param userId
 	 * @param businessType
 	 * @param businessIds
 	 * @return
 	 */
 	Map<String, Boolean> selectCollectionBatchIds(String userId, Integer businessType, List<String> businessIds);
+
+	/**
+	 * 查看有多少资源被收藏
+	 * @param userId
+	 * @param businessType
+	 * @param businessIds
+	 * @return
+	 */
+	Integer countCollectionByUserIdAndBusinessId(String userId, Integer businessType, List<String> businessIds);
 }

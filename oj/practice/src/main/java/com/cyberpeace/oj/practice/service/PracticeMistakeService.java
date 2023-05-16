@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PracticeMistakeService extends IService<PracticeMistake> {
 
-	Integer getTheoryMistakeCount(String userId, Integer practiceType);
+	Integer getTheoryMistakeCount(String userId, List<String> practiceIds);
 
 	void addIncorrect(String userId, String practiceId, Integer practiceType);
 

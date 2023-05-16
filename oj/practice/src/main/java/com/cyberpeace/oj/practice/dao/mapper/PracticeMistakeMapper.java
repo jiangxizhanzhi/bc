@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 
-	Integer countByUserId(@Param("userId") String userId, @Param("practiceType") Integer practiceType);
+	Integer countByUserId(@Param("userId") String userId, @Param("practiceIds") List<String> practiceIds);
 
 	void deleteByPracticeIds(List<String> practiceId);
 

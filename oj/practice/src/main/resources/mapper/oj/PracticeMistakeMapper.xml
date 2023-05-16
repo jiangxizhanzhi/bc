@@ -23,8 +23,11 @@
             <if test="userId != null and userId != ''">
                 and user_id = #{userId}
             </if>
-            <if test="practiceType != null and practiceType != ''">
-                and practice_type = #{practiceType}
+            <if test="practiceIds != null and practiceIds.size() > 0">
+                and practice_id in
+                <foreach collection="practiceIds" item="practiceId" open="(" close=")" separator=",">
+                    #{practiceId}
+                </foreach>
             </if>
         </where>
     </select>

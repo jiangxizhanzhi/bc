@@ -182,8 +182,11 @@
             <if test="noteType != null and noteType != ''">
                 and note_type = #{noteType}
             </if>
-            <if test="resourceType != null and resourceType != ''">
-                and business_type = #{resourceType}
+            <if test="resourceIds != null and resourceIds != ''">
+                and resource_id in
+                <foreach collection="resourceIds" open="(" close=")" item="resourceId" separator=",">
+                    #{resourceId}
+                </foreach>
             </if>
         </where>
     </select>

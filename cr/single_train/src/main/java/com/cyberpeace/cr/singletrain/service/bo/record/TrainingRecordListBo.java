@@ -25,7 +25,7 @@ public class TrainingRecordListBo implements Serializable {
 	private Integer index;
 
 	@ApiModelProperty(value = "训练时长")
-	private Long duration;
+	private String duration;
 
 	@ApiModelProperty(value = "任务总数")
 	private Integer missionCount;

@@ -858,7 +858,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			// training time = end time
 			bo.setTrainingTime(trainRecord.getEndTime());
 			// duration
-			Long duration = TimeUtil.getIntervalSeconds(trainRecord.getStartTime(),
+			String duration = TimeUtil.getTimeInterval(trainRecord.getStartTime(),
 					trainRecord.getEndTime());
 			bo.setDuration(duration);
 			// index

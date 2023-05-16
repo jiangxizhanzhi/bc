@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.model.CommonContext;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
@@ -9,6 +10,10 @@ import java.util.Date;
 import java.util.Random;
 
 public class TimeUtil {
+
+	private static final String DAY_ZH = "天";
+
+	private static final String DAY_EN = "Day";
 
     /**
      * 计算起始时间和结束时间相隔的秒数。
@@ -529,5 +534,28 @@ public class TimeUtil {
         SimpleDateFormat sd = new SimpleDateFormat("dd");
         return sd.format(new Date()).toString();
     }
+
+	/**
+	 * 获取时间间隔
+	 * 格式化为 a天 b:c:d 的样式
+	 *
+	 * @param start 开始
+	 * @param end   结束
+	 * @return {@code String}
+	 */
+	public static String getTimeInterval(Date start, Date end) {
+		long sec = getIntervalSeconds(start, end);
+		long min = sec / 60;
+		sec = sec % 60;
+		long hour = min / 60;
+		min = min % 60;
+		long day = hour / 24;
+		hour = hour % 24;
+		if (CommonContext.isChinese()) {
+			return String.format("%d%s %02d:%02d:%02d", day, DAY_ZH, hour, min, sec);
+		} else {
+			return String.format("%d%s %02d:%02d:%02d", day, DAY_EN, hour, min, sec);
+		}
+	}
 
 }

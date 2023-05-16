@@ -839,6 +839,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.isNotNull(TrainRecord::getEndTime).isNotNull(TrainRecord::getExtra)
 				.orderByAsc(TrainRecord::getEndTime).list();
 
+		if (trainHistory.isEmpty()) {
+			return Lists.newArrayList();
+		}
+
 		// get total mission and total score
 		List<MissionTemplate> missionTemplateList = getMissionTemplateListByBusinessTemplateId(
 				businessTemplateId);
@@ -847,19 +851,21 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		List<TrainingRecordListBo> result = Lists.newArrayList();
 		for (int i = 0; i < trainHistory.size(); i++) {
-			TrainRecord record = trainHistory.get(i);
+			TrainRecord trainRecord = trainHistory.get(i);
 			TrainingRecordListBo bo = new TrainingRecordListBo();
 			// roomId
-			bo.setRoomId(record.getRoomId());
+			bo.setRoomId(trainRecord.getRoomId());
 			// training time = end time
-			bo.setTrainingTime(record.getEndTime());
+			bo.setTrainingTime(trainRecord.getEndTime());
 			// duration
-			Long duration = TimeUtil.getIntervalSeconds(record.getStartTime(), record.getEndTime());
+			Long duration = TimeUtil.getIntervalSeconds(trainRecord.getStartTime(),
+					trainRecord.getEndTime());
 			bo.setDuration(duration);
 			// index
 			bo.setIndex(i + 1);
 			// get score and finished mission count from extra
-			JSONObject trainExtraData = JsonUtil.toJsonObject(record.getExtra(), JSONObject.class);
+			JSONObject trainExtraData = JsonUtil.toJsonObject(trainRecord.getExtra(),
+					JSONObject.class);
 			if (trainExtraData.isEmpty()) {
 				bo.setScore(0);
 				bo.setFinished(0);
@@ -953,6 +959,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.getByBusinessTemplateId(businessTemplateId);
 		List<String> missionTemplateIds = singleTemplateService
 				.getMissionTemplateIdsByMissionsScheme(singleTemplate.getMissionsScheme());
+		// 没有任务
+		if (missionTemplateIds.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		return missionTemplateService.getBaseMapper().selectBatchIds(missionTemplateIds);
 	}
 

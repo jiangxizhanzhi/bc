@@ -174,7 +174,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         if (evalRecord == null) {
             throw new BusinessException("评估未找到");
         }
-        if (evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+        if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             throw new BusinessException("评估已启动");
         }
         return evalRecord;

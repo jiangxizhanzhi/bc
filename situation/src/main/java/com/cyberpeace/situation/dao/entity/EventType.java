@@ -21,8 +21,4 @@ public class EventType extends BaseTable implements Serializable {
 	@ApiModelProperty("父节点")
 	private String parentNode;
 
-	private Integer sourceActionType;
-
-	private Integer targetActionType;
-
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicEffectsCategoryMapper">
+    <select id="checkCategoryName" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects_category
+        where name = #{name}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
+    </select>
+</mapper>

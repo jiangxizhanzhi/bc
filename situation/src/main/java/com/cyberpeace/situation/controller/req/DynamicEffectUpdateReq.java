@@ -15,7 +15,7 @@ import lombok.Data;
  * @date 2023/05/06
  */
 @Data
-public class DynamicEffectLibraryUpdateReq extends DynamicEffectLibraryAddReq {
+public class DynamicEffectUpdateReq extends DynamicEffectAddReq {
 
 	/**
 	 * 资源ID

@@ -4,10 +4,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.situation.constant.mp.Event;
-import com.cyberpeace.situation.constant.mp.EventStatus;
-import com.cyberpeace.situation.constant.mp.ProcessStatus;
-import com.cyberpeace.situation.constant.topo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +19,29 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
-import com.cyberpeace.situation.constant.*;
+import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.mp.Event;
+import com.cyberpeace.situation.constant.mp.EventStatus;
+import com.cyberpeace.situation.constant.mp.ProcessStatus;
+import com.cyberpeace.situation.constant.topo.*;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
 import com.cyberpeace.situation.controller.req.FlowLogReq;
-import com.cyberpeace.situation.dao.entity.DynamicEffectsLibrary;
+import com.cyberpeace.situation.dao.entity.DynamicEffect;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
-import com.cyberpeace.situation.dao.mapper.DynamicEffectsLibraryMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicEffectMappingMapper;
+import com.cyberpeace.situation.dao.mapper.DynamicEffectsMapper;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
-import com.cyberpeace.situation.dao.mapper.SituationDynamicEffectMappingMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
+import com.cyberpeace.situation.service.DynamicEffectsService;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.EventTypeContext;
@@ -61,13 +64,16 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 	private MyWebSocketHandler myWebSocketHandler;
 
 	@Autowired
-	private SituationDynamicEffectMappingMapper situationDynamicEffectMappingMapper;
+	private DynamicEffectMappingMapper dynamicEffectMappingMapper;
 
 	@Autowired
 	private EventTypeMapper eventTypeMapper;
 
 	@Autowired
-	private DynamicEffectsLibraryMapper dynamicEffectsLibraryMapper;
+	private DynamicEffectsMapper dynamicEffectsMapper;
+
+	@Autowired
+	private DynamicEffectsService dynamicEffectsService;
 
 	Cache<String, Date> lastTimeCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.DAYS).build();
@@ -731,6 +737,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
+	/**
+	 * 补充事件类型的父类型名称信息
+	 *
+	 * @param parentTypeMap 父类型映射
+	 * @param eventType     事件类型
+	 * @return {@code EventTypeContext}
+	 */
 	private EventTypeContext convertEventType(Map<String, String> parentTypeMap,
 			EventType eventType) {
 		EventTypeContext eventTypeContext = BeanUtils.deepCopy(eventType, EventTypeContext.class);
@@ -781,46 +794,54 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		}
 
 		// 3、提取所有涉及的攻防消息的事件类型
+		// 3.1、获取所有事件类型
 		List<EventType> eventTypeList = eventTypeMapper.selectList(new LambdaQueryWrapper<>());
+
+		// 3.2、提取所有父事件类型的编号-名称映射
 		Map<String, String> parentTypeMap = eventTypeList.stream()
 				.filter(eventType -> StringUtils.isEmpty(eventType.getParentNode()))
 				.collect(Collectors.toMap(EventType::getCode, EventType::getName));
+
+		// 3.3、补充事件类型的父类型名称信息
 		List<EventTypeContext> eventTypeContextList = eventTypeList.stream()
 				.map(eventType -> convertEventType(parentTypeMap, eventType))
 				.collect(Collectors.toList());
+
+		// 3.4、按照事件类型名称分组
 		Map<String, List<EventTypeContext>> eventTypeMap = eventTypeContextList.stream()
 				.collect(Collectors.groupingBy(EventType::getName));
+
+		// 3.5、提取所有涉及的事件类型编号
 		Set<String> typeCodeList = contextList.stream()
 				.map(context -> getEventTypeByAdEvent(eventTypeMap, context).getCode())
 				.collect(Collectors.toSet());
 
 		// 4、提取所有涉及的映射动效
-		List<DynamicEffectsMapping> mappingEffectList = situationDynamicEffectMappingMapper
-				.selectBatchByType(typeCodeList, SystemPropUtil.getProp("BC_CODE"));
-		Map<String, DynamicEffectsMapping> mappingEffectMap = StreamApiUtils
-				.toMap(mappingEffectList, DynamicEffectsMapping::getAttackType, effect -> effect);
+		List<DynamicEffectsMapping> mappingEffectList = dynamicEffectMappingMapper
+				.selectBatchByType(typeCodeList);
 
-		// 5、提取所有涉及的动效
-		List<String> dynamicEffectNames = Lists.newArrayList();
-		mappingEffectList.forEach(dynamicEffectsMapping -> {
-			dynamicEffectNames.add(dynamicEffectsMapping.getSourceNodeDynamic());
-			dynamicEffectNames.add(dynamicEffectsMapping.getTargetNodeDynamic());
+		// 4.1、按照攻击类型分组，并按照映射类型优先保留用户上传的映射
+		Map<String, DynamicEffectsMapping> mappingEffectMap = Maps.newHashMap();
+		mappingEffectList.forEach(mappingEffect -> {
+			if (mappingEffectMap.containsKey(mappingEffect.getAttackType())) {
+				// 如果已经存在映射，但当前映射为用户上传的映射，则进行覆盖写入
+				if (DynamicType.USER_UPLOAD.getCode().equals(mappingEffect.getType())) {
+					mappingEffectMap.put(mappingEffect.getAttackType(), mappingEffect);
+				}
+			} else {
+				mappingEffectMap.put(mappingEffect.getAttackType(), mappingEffect);
+			}
 		});
 
-		Map<String, DynamicEffectsLibrary> dynamicEffectsLibraryMap = Maps.newHashMap();
-		if (!dynamicEffectNames.isEmpty()) {
-			List<DynamicEffectsLibrary> dynamicEffectsLibraries = dynamicEffectsLibraryMapper
-					.selectByNames(dynamicEffectNames);
-			dynamicEffectsLibraries.forEach(dynamicEffectsLibrary -> {
-				dynamicEffectsLibraryMap.put(dynamicEffectsLibrary.getName(),
-						dynamicEffectsLibrary);
-			});
-		}
+		// 5、提取所有动效
+		Map<String, DynamicEffect> dynamicEffectMap = dynamicEffectsService.getIdEffectMap();
 
 		// 6、使用上述提取的数据，来进行攻防动效处理
 		contextList.forEach(context -> {
 			WsEventAd ad = new WsEventAd();
 			ad.load(context);
+
+			// 6.1、设置起止节点基本信息
 			ad.setSourceParentIds(
 					getElementById(elementSlimContextMap, ad.getSourceId()).getParentIds());
 			ad.setTargetParentIds(
@@ -830,27 +851,49 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			ad.setTargetPlatformId(
 					getElementById(elementSlimContextMap, ad.getTargetId()).getPlatformId());
 
-			// 获取动效事件类型的code
+			// 6.2、获取动效事件类型的code
 			EventTypeContext typeContext = getEventTypeByAdEvent(eventTypeMap, context);
 			String code = typeContext.getCode();
 
+			// 6.3、处理动效映射数据
 			if (mappingEffectMap.containsKey(code)) {
-				// 如果动效的事件类型存在映射记录，使用映射后的效果
-				ad.setDynamicType(2);
-				DynamicEffectsMapping effect = mappingEffectMap.get(code);
-				LineStyle lineStyle = new LineStyle(effect.getColor(), effect.getLineSize(),
-						effect.getLine());
-				ad.setSourceNodeDynamicDir(dynamicEffectsLibraryMap
-						.get(effect.getSourceNodeDynamic()).getSourceNodeDynamicDir());
-				ad.setTargetNodeDynamicDir(dynamicEffectsLibraryMap
-						.get(effect.getTargetNodeDynamic()).getSourceNodeDynamicDir());
-				ad.setLineStyle(lineStyle);
-				ad.setLookAtTarget(effect.getFocus());
+				// 理论上，所有动效都可以匹配到动效，因为默认有个“其它网络攻击”的动效
+				DynamicEffectsMapping mapping = mappingEffectMap.get(code);
+
+				// 设置映射类型
+				ad.setDynamicType(mapping.getType());
+
+				// 设置线型
+				ad.setLineStyle(new LineStyle(mapping.getColor(), mapping.getLineSize(),
+						mapping.getLine()));
+
+				// 设置是否聚焦
+				ad.setLookAtTarget(mapping.getFocus());
+
+				// 设置源节点动效
+				DynamicEffect sourceEffect = dynamicEffectMap.get(mapping.getSourceNodeDynamic());
+				if (DynamicType.PRESET.getCode().equals(sourceEffect.getType())) {
+					// 如果是预置动效，则使用预置动效的类型
+					ad.setSourceActionType(sourceEffect.getActionType());
+				} else {
+					// 如果是用户上传动效，则使用用户上传的动效类型
+					ad.setSourceNodeDynamicDir(sourceEffect.getDynamicDir());
+				}
+
+				// 设置目标节点动效
+				DynamicEffect targetEffect = dynamicEffectMap.get(mapping.getTargetNodeDynamic());
+				if (DynamicType.PRESET.getCode().equals(targetEffect.getType())) {
+					// 如果是预置动效，则使用预置动效的类型
+					ad.setTargetActionType(targetEffect.getActionType());
+				} else {
+					// 如果是用户上传动效，则使用用户上传的动效类型
+					ad.setTargetNodeDynamicDir(targetEffect.getDynamicDir());
+				}
 			} else {
-				// 否则，使用内置类型
-				ad.setDynamicType(1);
-				ad.setSourceActionType(typeContext.getSourceActionType());
-				ad.setTargetActionType(typeContext.getTargetActionType());
+				// 当有数据库数据异常时，使用内置类型
+				ad.setDynamicType(DynamicType.PRESET.getCode());
+				ad.setSourceActionType(ActionType.NORMAL.getCode());
+				ad.setTargetActionType(ActionType.NORMAL.getCode());
 				ad.setLineStyle(new LineStyle("#FF0000", 5, "dashed"));
 				ad.setLookAtTarget(false);
 			}

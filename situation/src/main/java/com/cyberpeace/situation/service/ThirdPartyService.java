@@ -55,6 +55,13 @@ public interface ThirdPartyService {
 	List<EventTypeRes> getEventTypes();
 
 	/**
+	 * 获取攻防事件类型映射
+	 *
+	 * @return {@code Map<String, String>}
+	 */
+	Map<String, String> getEventTypesMap();
+
+	/**
 	 * 获取特定事件类型列表
 	 * @return List<EventListRsp>
 	 */

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicEffectsMapper">
+    <select id="selectByNames" resultType="com.cyberpeace.situation.dao.entity.DynamicEffect">
+        select * from situation_dynamic_effects
+        where name in
+        <foreach collection="names" open="(" close=")" separator="," item="name">
+            #{name}
+        </foreach>
+    </select>
+    <select id="checkName" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects
+        where name = #{name}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.DynamicEffectMappingMapper">
+
+    <select id="selectPage" resultType="com.cyberpeace.situation.controller.res.DynamicEffectMappingRes">
+        select * from situation_dynamic_effects_mapping where 1 = 1
+        <if test="dynamicEffectMappingPageReq.name != null and dynamicEffectMappingPageReq.name != ''">
+            and name like concat('%', #{dynamicEffectMappingPageReq.name} ,'%')
+        </if>
+        <if test="dynamicEffectMappingPageReq.type != null and dynamicEffectMappingPageReq.type != ''">
+            and type = #{dynamicEffectMappingPageReq.type}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <select id="selectBatchByType" resultType="com.cyberpeace.situation.dao.entity.DynamicEffectsMapping">
+        select * from situation_dynamic_effects_mapping
+        where attack_type in
+        <foreach collection="types" open="(" close=")" separator="," item="type">
+            #{type}
+        </foreach>
+    </select>
+    <select id="checkEffectsMapExist" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects_mapping
+        where attack_type = #{attackType}
+        and type = #{type}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
+    </select>
+    <select id="checkMapNameExist" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects_mapping
+        where name = #{name}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>
+    </select>
+    <select id="checkEffectsStatus" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects_mapping
+        where source_node_dynamic in
+        <foreach collection="effectIds" open="(" close=")" separator="," item="effectId">
+            #{effectId}
+        </foreach>
+        or target_node_dynamic in
+        <foreach collection="effectIds" open="(" close=")" separator="," item="effectId">
+            #{effectId}
+        </foreach>
+    </select>
+</mapper>

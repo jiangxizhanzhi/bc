@@ -126,7 +126,7 @@ public interface SituationErrorCode {
 	/** 
 	 * 源节点动效文件不能为空 
 	 */
-	String SOURCE_NODE_DYNAMIC_FILE_EMPTY_ERROR = "104024";
+	String NODE_DYNAMIC_FILE_EMPTY_ERROR = "104024";
 
 	/** 
 	 * 目标节点动效文件不能为空 
@@ -302,4 +302,29 @@ public interface SituationErrorCode {
 	 * 模板数据异常
 	 */
 	String TEMPLATE_DATA_ERROR = "106018";
+
+	/**
+	 * 添加动效失败
+	 */
+	String ADD_DYNAMIC_EFFECT_FAILED = "106019";
+
+	/**
+	 * 部分动效正在使用
+	 */
+	String DYNAMIC_EFFECT_IN_USE = "106020";
+
+	/**
+	 * 预设映射不允许修改
+	 */
+	String PRESET_MAPPING_CAN_NOT_UPDATE = "106021";
+
+	/**
+	 * 预设映射不允许删除
+	 */
+	String PRESET_MAPPING_CAN_NOT_DELETE = "106022";
+
+	/**
+	 * 动效文件不存在
+	 */
+	String DYNAMIC_EFFECT_FILE_NOT_FOUND = "106023";
 }

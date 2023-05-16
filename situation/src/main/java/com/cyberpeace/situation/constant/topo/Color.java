@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.constant.topo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.cyberpeace.common.model.CommonContext;
@@ -105,5 +106,10 @@ public enum Color {
 	public static List<LocalType> getMsgList() {
 		return StreamApiUtils.map(Lists.newArrayList(Color.values()),
 				color -> new LocalType(color.getCode(), color.getMsg()));
+	}
+
+	public static Color getColorByCode(String code) {
+		return Arrays.stream(Color.class.getEnumConstants()).filter(t -> t.getCode().equals(code))
+				.findFirst().orElse(Color.WHITE);
 	}
 }

@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -206,6 +207,24 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 		List<EventTypeRes> eventTypeResList = new ArrayList<>();
 		eventTypeCache.forEach((key, value) -> eventTypeResList.add(value));
 		return eventTypeResList;
+	}
+
+	@Override
+	public Map<String, String> getEventTypesMap() {
+
+		Map<String, String> eventTypeMap = new HashMap<>();
+
+		// 提取事件类型
+		for (EventTypeRes eventTypeRes : getEventTypes()) {
+			eventTypeMap.put(eventTypeRes.getCode(), eventTypeRes.getName());
+			if (CollectionUtils.isNotEmpty(eventTypeRes.getSubTypes())) {
+				for (ThirdDictContext context : eventTypeRes.getSubTypes()) {
+					eventTypeMap.put(context.getCode(), context.getName());
+				}
+			}
+		}
+
+		return eventTypeMap;
 	}
 
 	private void traversalNode(String parentNode, EventTypeRes parentType,

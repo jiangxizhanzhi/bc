@@ -635,6 +635,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         for(EvalIndexRef first:firstIndexs){
             String nextIds = first.getNextIds();
             Integer score = first.getScore();
+            if(first.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                score = first.getSpecialistValue();
+            }
             evalResult.setFirstIndexRes(score);
             List<String> nextIdList = JsonUtil.toJsonObjectArray(nextIds, String.class);
             JSONObject secondObj = new JSONObject();
@@ -652,14 +655,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 for(String tmpNextIndex:nextRedIdList){
                     EvalIndexRef indexRef = thirdEvalIndexRefMap.get(tmpNextIndex);
                     if(null != indexRef){
-                        thirdObj.put(indexRef.getResourceId(), indexRef.getScore());
+                        Integer indexRefScore = indexRef.getScore();
+                        thirdObj.put(indexRef.getResourceId(), indexRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode()) ? indexRef.getSpecialistValue() : indexRefScore);
                     }
                     String ids = indexRef.getNextIds();
                     List<String> idList = JsonUtil.toJsonObjectArray(ids, String.class);
                     for(String currentNextId:idList){
                         EvalIndexRef current = fourthEvalIndexRefMap.get(currentNextId);
                         if(null != current){
-                            fourthObj.put(current.getResourceId(), current.getScore());
+                            Integer type = current.getType();
+                            Integer currentScore = current.getScore();
+                            if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                                currentScore = current.getSpecialistValue();
+                            }
+                            fourthObj.put(current.getResourceId(), currentScore);
                         }
                         getFifthObj(fifthEvalIndexRefMap, fifthObj, current);
                     }

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
@@ -135,7 +136,14 @@ public class EvalRecordController {
     @PostMapping("/start")
     public BaseRsp<Boolean> start(@RequestBody EvalRecordStartReq requestData) {
         // 评估对象
-        EvalRecord evalRecord = evalRecordService.getEntity(requestData.getResourceId());
+        EvalRecord evalRecord = evalRecordService.getById(requestData.getResourceId());
+        if (evalRecord == null) {
+            throw new BusinessException("评估未找到");
+        }
+        if (evalRecord.getStatus().equals(EvalRecord.Status.RUNNING.getCode())) {
+            throw new BusinessException("评估已启动");
+        }
+
         // 评估实例对象
         EvalTask evalTask = evalTaskService.getTask(evalRecord.getTaskId());
 
@@ -207,7 +215,6 @@ public class EvalRecordController {
     @ApiOperation("评估任务结果-5轮评估记录")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/list")
-    // TODO 更新返回结果及获取方式
     public BaseRsp<EvalSystemResultRsp> getRecordResultList(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId) {
         return new BaseRsp<>(evalRecordService.getAllCycleResult(resourceId));
     }

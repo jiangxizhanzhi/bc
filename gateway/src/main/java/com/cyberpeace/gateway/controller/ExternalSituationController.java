@@ -304,6 +304,7 @@ public class ExternalSituationController {
 			return new BaseRsp<>(true);
 		} else {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			log.error("地图静态资源鉴权失败,请求IP: {}", CommonContext.getIp());
 			return new BaseRsp<>(false);
 		}
 	}

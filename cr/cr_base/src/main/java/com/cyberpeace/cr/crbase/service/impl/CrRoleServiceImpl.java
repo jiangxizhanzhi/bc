@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,6 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -165,7 +165,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
 				crRole);
 		// 获取当前学员的每项总分
-		List<Integer> allPoints = getPoints();
+		List<Integer> allPoints = CrCommonUtil.getInitPoints();
 
 		for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
 			for (MissionContext mission : missionSchemeObject.getMissions()) {
@@ -179,7 +179,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 
 		// 获取当前学员成功的每项总分
-		List<Integer> successPoints = getPoints();
+		List<Integer> successPoints = CrCommonUtil.getInitPoints();
 
 		List<CrTask> finishedTasks = crTaskService.getFinishedByRoomIdAndUserId(roomId, userId);
 		for (CrTask finishedTask : finishedTasks) {
@@ -194,7 +194,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			}
 		}
 
-		List<Integer> radarPoints = getPoints();
+		List<Integer> radarPoints = CrCommonUtil.getInitPoints();
 
 		for (int i = 0; i < successPoints.size(); i++) {
 			int radarPoint = 0;
@@ -205,15 +205,6 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 
 		return radarPoints;
-	}
-
-	private List<Integer> getPoints() {
-		List<Integer> points = Lists.newArrayList();
-		int skillPointsSize = CrCommonConstants.SKILL_POINTS_SIZE;
-		for (int i = 0; i < skillPointsSize; i++) {
-			points.add(0);
-		}
-		return points;
 	}
 
 	@Override

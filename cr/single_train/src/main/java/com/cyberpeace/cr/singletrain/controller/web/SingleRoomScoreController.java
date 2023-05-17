@@ -7,8 +7,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.FileUtil;
 import com.cyberpeace.common.util.HtmlToPdfUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.CrScoreController;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
@@ -39,6 +41,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.integratation.service.impl.MpEnvService;
@@ -160,6 +163,18 @@ public class SingleRoomScoreController {
 			}
 		}
 
+	}
+
+	@ApiOperation("查询历史记录详情")
+	@GetMapping("/record/detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<RecordDetail> getRecordDetail(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		RecordDetail detail = singleRoomService.getRecordDetail(resource_id);
+		return new BaseRsp<>(detail);
 	}
 
 	private Object gettaskCount(MissionReport missionReport) {

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -95,5 +96,49 @@ public class CrCommonUtil {
 				i++;
 			}
 		}
+	}
+
+	/**
+	 * 获取雷达图初始点数列表
+	 *
+	 * @return {@code List<Integer>}
+	 */
+	public static List<Integer> getInitPoints() {
+		List<Integer> points = Lists.newArrayList();
+		int skillPointsSize = CrCommonConstants.SKILL_POINTS_SIZE;
+		for (int i = 0; i < skillPointsSize; i++) {
+			points.add(0);
+		}
+		return points;
+	}
+
+	/**
+	 * 技能点数加和
+	 *
+	 * @param sum    总和
+	 * @param addend 加数
+	 */
+	public static void integratePoints(List<Integer> sum, List<Integer> addend) {
+		if (sum.size() != addend.size()) {
+			return;
+		}
+		for (int i = 0; i < sum.size(); i++) {
+			sum.set(i, sum.get(i) + addend.get(i));
+		}
+	}
+
+	/**
+	 * 计算雷达图
+	 *
+	 * @param all 所有
+	 * @param get 获取
+	 * @return {@code List<Integer>}
+	 */
+	public static List<Integer> calculateRadar(List<Integer> all, List<Integer> get) {
+		List<Integer> res = Lists.newArrayList();
+		for (int i = 0; i < all.size(); i++) {
+			res.add(MathUtils.roundDivide(get.get(i) * 100, all.get(i)));
+		}
+		return res;
 	}
 }

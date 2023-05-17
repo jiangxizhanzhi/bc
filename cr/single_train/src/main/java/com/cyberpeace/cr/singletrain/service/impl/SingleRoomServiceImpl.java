@@ -28,6 +28,7 @@ import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -41,6 +42,7 @@ import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -52,7 +54,7 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
-import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
+import com.cyberpeace.cr.singletrain.service.bo.record.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -856,11 +858,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			// roomId
 			bo.setRoomId(trainRecord.getRoomId());
 			// training time = end time
-			bo.setTrainingTime(trainRecord.getEndTime());
+			bo.setTrainingTime(trainRecord.getStartTime());
 			// duration
 			String duration = TimeUtil.getTimeInterval(trainRecord.getStartTime(),
 					trainRecord.getEndTime());
-			bo.setDuration(duration);
+			bo.setTimeCost(duration);
 			// index
 			bo.setIndex(i + 1);
 			// get score and finished mission count from extra
@@ -939,6 +941,116 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		});
 
 		return singleRoom.getResourceId();
+	}
+
+	@Override
+	public RecordDetail getRecordDetail(String roomId) {
+		// init
+		RecordDetail detail = new RecordDetail();
+		List<Integer> pointsAll = CrCommonUtil.getInitPoints();
+		List<Integer> pointsGet = CrCommonUtil.getInitPoints();
+		Integer successful = 0;
+		Integer failed = 0;
+		RecordStatistics statistics = new RecordStatistics();
+
+		TrainRecord trainRecord = trainRecordService.getByRoomId(roomId);
+		// get template
+		String btId = trainRecord.getBusinessTemplateId();
+		BusinessTemplate bt = businessTemplateService.getById(btId);
+		SingleTemplate singleTemplate = singleTemplateService.getByBusinessTemplateId(btId);
+		// set template detail
+		detail.setTrainingName(bt.getName());
+		detail.setTraineeName(UserInfoContext.getUserContext().getName());
+		detail.setDurationTime(singleTemplate.getDurationTime());
+		detail.setSubType(singleTemplate.getSubType());
+		detail.setDifficulty(bt.getDifficulty());
+		detail.setTrainSkill(JsonUtil.toJsonObjectArray(singleTemplate.getTrainSkills(), String.class));
+		detail.setPreSkill(JsonUtil.toJsonObjectArray(singleTemplate.getPreSkills(), String.class));
+		detail.setDescription(bt.getDescription());
+		detail.setTrainingTime(trainRecord.getStartTime());
+		String duration = TimeUtil.getTimeInterval(trainRecord.getStartTime(),
+				trainRecord.getEndTime());
+		detail.setTimeCost(duration);
+		// get role -> get stages structure -> get missions
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, UserInfoContext.getUserContext().getUserId());
+		List<MissionStageScheme> missionStages = JsonUtil.toJsonObjectArray(role.getMissionScheme(), MissionStageScheme.class);
+		List<String> missionIds = missionService.getMissionIdsByScheme(missionStages);
+		List<Mission> missionList = missionService.batchGet(missionIds);
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionList, Mission::getResourceId, mission->mission);
+		// mission count
+		statistics.setMissionCount(missionList.size());
+		// get record extra -> get score -> get recorded user answer
+		JSONObject extra = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
+		if (extra.isEmpty()) {
+			detail.setScore(0);
+		} else {
+			detail.setScore(extra.getInteger(SingleRoom.CrTrainRecordFields.SCORE));
+		}
+		// 不包含任务
+		if(missionList.isEmpty()){
+			statistics.setSuccessful(0);
+			statistics.setFailed(0);
+			statistics.calculate();
+			detail.setRecordStatistics(statistics);
+			detail.setRadars(CrCommonUtil.getInitPoints());
+			return detail;
+		}
+		// get recorded user answer
+		JSONObject missionRecordCol = extra.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
+		for (MissionStageScheme stage : missionStages) {
+			RecordStageBo stageBo = new RecordStageBo();
+			stageBo.setStageName(stage.getStage());
+			for (String missionId : stage.getMissions()) {
+				// get mission
+				Mission mission = missionMap.get(missionId);
+				if(null == mission){
+					continue;
+				}
+				// collect radar
+				List<Integer> points = JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class);
+				CrCommonUtil.integratePoints(pointsAll, points);
+				
+				RecordMissionSimpleBo missionBo = new RecordMissionSimpleBo();
+				missionBo.setTitle(mission.getTitle());
+				missionBo.setDescription(mission.getDescription());
+				missionBo.setType(mission.getType());
+				// option
+				if(StringUtils.isNotBlank(mission.getOption())){
+					missionBo.setOption(JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
+				}
+				missionBo.setAnswer(mission.getAnswer());
+				// get user answer
+				JSONObject missionRecord = missionRecordCol.getJSONObject(missionId);
+				if(null == missionRecord){
+					// 未作答
+					missionBo.setAnswered(false);
+				} else {
+					missionBo.setAnswered(true);
+					String userAnswer = missionRecord
+							.getString(SingleRoom.MissionsRecordFields.ANSWER);
+					missionBo.setUserAnswer(userAnswer);
+					// judge
+					if (userAnswer.equals(mission.getAnswer())) {
+						CrCommonUtil.integratePoints(pointsGet, points);
+						successful += 1;
+					} else {
+						failed += 1;
+					}
+				}
+
+				stageBo.getMissions().add(missionBo);
+			}
+			detail.getStages().add(stageBo);
+		}
+		// radar
+		detail.setRadars(CrCommonUtil.calculateRadar(pointsAll, pointsGet));
+		// statistics
+		statistics.setSuccessful(successful);
+		statistics.setFailed(failed);
+		statistics.calculate();
+		detail.setRecordStatistics(statistics);
+
+		return detail;
 	}
 
 	private Map<String, Mission>

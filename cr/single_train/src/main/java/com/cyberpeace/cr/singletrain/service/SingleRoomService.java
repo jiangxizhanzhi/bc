@@ -9,6 +9,7 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 
 public interface SingleRoomService extends IService<SingleRoom> {
@@ -140,4 +141,12 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return 当前房间id
 	 */
 	String submitTrain(String businessTemplateId);
+
+	/**
+	 * 获取记录详情
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RecordDetail}
+	 */
+	RecordDetail getRecordDetail(String roomId);
 }

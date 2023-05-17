@@ -856,7 +856,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				practiceMistakeMapper.deleteByPracticeIds(practiceIds);
+				practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
 				practiceSolvedMapper.deleteByPracticeIds(practiceIds);
 
 				if (CollectionUtils.isNotEmpty(localSceneIds)) {
@@ -1224,6 +1224,42 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 						operation.getTitle());
 			}
 		}
+	}
+
+	@Override
+	public List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId) {
+		List<String> operationIds = new ArrayList<>();
+		// 过滤无权限习题集
+		List<String> authIds = practiceSetMapper.selectByAuthContext(authContext);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return operationIds;
+		}
+
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.OPERATION.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authIds.retainAll(setIds);
+		if (CollectionUtils.isEmpty(authIds)) {
+			return operationIds;
+		}
+
+		if (StringUtils.isNotBlank(practiceSetId)
+				&& !authIds.contains(practiceSetId)) {
+			return operationIds;
+		}
+
+		if (practiceSetId != null) {
+			authIds.clear();
+			authIds.add(practiceSetId);
+		}
+
+		operationIds = practiceOperationMapper.selectBySetIds(authIds,
+				authContext.getIsWeb());
+		if (CollectionUtils.isEmpty(operationIds)) {
+			return null;
+		}
+		return operationIds;
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

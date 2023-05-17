@@ -438,7 +438,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				practiceMistakeMapper.deleteByPracticeIds(resourceIds);
+				practiceMistakeMapper.deleteByPracticeIds(resourceIds, null);
 				practiceSolvedMapper.deleteByPracticeIds(resourceIds);
 				practiceSetMapper.updateById(practiceSet);
 				return practiceTheoryMapper.deleteBatchIds(resourceIds);

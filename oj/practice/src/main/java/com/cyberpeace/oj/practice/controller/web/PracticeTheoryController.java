@@ -136,6 +136,7 @@ public class PracticeTheoryController {
 
 	@ApiOperation("获取进度统计")
 	@GetMapping("/progress")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
 			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 		return new BaseRsp<>(practiceTheoryService.getProgressStatistics(practiceSetId));
@@ -143,6 +144,7 @@ public class PracticeTheoryController {
 
 	@ApiOperation("统计错题、收藏、笔记数量")
 	@GetMapping("/statistics")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<TheoryStatisticsRes> getTheoryStatistics () {
 		TheoryStatisticsRes theoryStatisticsRes = new TheoryStatisticsRes();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
@@ -157,6 +159,7 @@ public class PracticeTheoryController {
 
 	@ApiOperation("最近5条练习记录")
 	@GetMapping("/record")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<PracticeTheoryListBo>> getTheoryRecord() {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
 		if (practiceTheoryList.size() > 5) {
@@ -167,6 +170,7 @@ public class PracticeTheoryController {
 
 	@ApiOperation("练习记录")
 	@GetMapping("/record_page")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<ListRsp<PracticeTheoryListBo>> getTheoryRecordPage(WebTheoryRecordReq webTheoryRecordReq) {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(webTheoryRecordReq);
 		Page page = webTheoryRecordReq.toPageParam();

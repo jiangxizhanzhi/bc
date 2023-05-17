@@ -206,4 +206,12 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	ProgressStatisticsRes getProgressStatistics(String practiceSetId);
+
+	/**
+	 * 根据用户和习题集查询所有可以看见的实操题id
+	 * @param authContext
+	 * @param practiceSetId
+	 * @return
+	 */
+	List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId);
 }

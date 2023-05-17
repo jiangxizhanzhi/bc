@@ -9,6 +9,7 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 
@@ -149,4 +150,12 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return {@code RecordDetail}
 	 */
 	RecordDetail getRecordDetail(String roomId);
+
+	/**
+	 * 获取任务矩阵和进度
+	 *
+	 * @param room 房间
+	 * @return {@code SingleMatrixProgressRsp}
+	 */
+	SingleMatrixProgressRsp getMatrixProgress(SingleRoom room);
 }

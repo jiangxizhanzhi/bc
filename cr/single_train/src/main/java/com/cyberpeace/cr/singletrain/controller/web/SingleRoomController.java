@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
@@ -23,7 +26,9 @@ import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
+import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -45,6 +50,9 @@ public class SingleRoomController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private SingleTemplateService singleTemplateService;
 
 	@Autowired
 	private RemoteLogService remoteLogService;
@@ -202,6 +210,41 @@ public class SingleRoomController {
 	public BaseRsp<String>
 			submitTrain(@RequestBody @Validated SingleRoomTrainSubmitReq requestBody) {
 		return new BaseRsp<>(singleRoomService.submitTrain(requestBody.getResourceId()));
+	}
+
+	@ApiOperation("获取任务矩阵和训练进度")
+	@GetMapping("/mission/matrix")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<SingleMatrixProgressRsp> getMissionMatrix(
+			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		SingleMatrixProgressRsp rsp;
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = singleRoomService.getByBusinessTemplateIdAndUserId(resource_id, userId);
+		if (null == room) {
+			// training not started
+			rsp = singleTemplateService.getSingleMatrix(resource_id);
+			rsp.setSuccessful(0);
+			rsp.setFailed(0);
+			rsp.setFinished(0);
+			rsp.setScore(0);
+			// 训练时长为0
+			rsp.setTimeCost(TimeUtil.getTimeInterval(new Date(0), new Date(0)));
+			rsp.setStarted(false);
+		} else {
+			// training started
+			rsp = singleRoomService.getMatrixProgress(room);
+			rsp.setTimeCost(TimeUtil.getTimeInterval(room.getCreateTime(), new Date()));
+			rsp.setStarted(true);
+		}
+		// set user_info
+		rsp.setUserId(userId);
+		rsp.setUserName(UserInfoContext.getUserContext().getName());
+		rsp.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
+
+		return new BaseRsp(rsp);
 	}
 
 }

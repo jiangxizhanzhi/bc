@@ -54,11 +54,5 @@ public class EvalResult extends BaseTable {
 	 */
 	private Integer exeCycle;
 
-	/**
-	 * 创建人
-	 */
-	@ApiModelProperty("创建者ID")
-	private String createUserId;
-
 
 }

@@ -33,6 +33,18 @@ public class SingleRoom extends BaseTable {
 
 	/**
 	 * 训练记录(任务完成记录)
+	 * {
+	 *   "5e1de95e1efc475bbbfeacaa31d0cfb3": {
+	 *     "answer": "B",
+	 *     "record": "",
+	 *     "time": 1684312011951
+	 *   },
+	 *   "266966553e6f4c8a91591170b73dc51c": {
+	 *     "answer": "B",
+	 *     "record": "",
+	 *     "time": 1684312008977
+	 *   }
+	 * }
 	 */
 	private String trainingRecord;
 

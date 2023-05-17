@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.practice.controller.web;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.oj.ojbase.controller.req.CollectionReq;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
@@ -16,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,24 +46,28 @@ public class PracticePaperController {
 
 	@ApiOperation("统计所有方向的做题进度")
 	@GetMapping("/category/progress")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<CategoryProgressRes>> getProgressByCategory() {
 		return new BaseRsp<>(practiceTheoryService.getProgressByCategory());
 	}
 
 	@ApiOperation("获取上次的组卷信息")
 	@GetMapping("/paper_setting")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PracticePaperCreateReq> getPaperSetting() {
 		return new BaseRsp<>(practicePaperService.getLastPaperSetting());
 	}
 
 	@ApiOperation("组卷")
 	@PostMapping("/create")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PracticePaper> create(@RequestBody @Validated PracticePaperCreateReq practicePaperCreateReq) {
 		return new BaseRsp(practicePaperService.createPaper(practicePaperCreateReq));
 	}
 
 	@ApiOperation("知识技能Top6")
 	@GetMapping("/category_top6")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<CategoryProgressRes>> getCategoryTop6() {
 		List<CategoryProgressRes> categoryProgressResList = practiceTheoryService.getProgressByCategory();
 		categoryProgressResList.sort(Comparator.comparing(categoryProgressRes -> categoryProgressRes.getCount() * 1.0 / categoryProgressRes.getSum()));
@@ -74,30 +80,35 @@ public class PracticePaperController {
 
 	@ApiOperation("试卷概要")
 	@GetMapping("/summary")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PaperSummaryRes> getPaperSummary(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
 		return new BaseRsp(practicePaperService.getPaperSummaryRes(paperId));
 	}
 
 	@ApiOperation("查看练习详情")
 	@GetMapping("/practice_detail")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<WebTheoryBo> getWebTheoryBo(@ApiParam(value = "练习id") @RequestParam(value = "practice_id") String practiceId) {
 		return new BaseRsp<>(paperPracticeTheoryService.getPracticeDetail(practiceId));
 	}
 
 	@ApiOperation("提交答案")
 	@PostMapping("/submit_answer")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<EvaluateResultTheory> submitAnswer(@RequestBody @Validated SubmitAnswerReq answerReq) {
 		return new BaseRsp<>(paperPracticeTheoryService.submitAnswer(answerReq.getResourceId(), answerReq.getSubmitAnswer()));
 	}
 
 	@ApiOperation("(取消)收藏")
 	@PostMapping("/practice_collection")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<Boolean> collection(@RequestBody @Validated CollectionReq collectionReq) {
 		return new BaseRsp<>(paperPracticeTheoryService.collection(collectionReq));
 	}
 
 	@ApiOperation("交卷")
 	@GetMapping("/submit_paper")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<Boolean> submitPaper(@ApiParam(value = "试卷id") @RequestParam(value = "paper_id") String paperId) {
 		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
 		practicePaper.setIsFinish(true);
@@ -107,6 +118,7 @@ public class PracticePaperController {
 
 	@ApiOperation("最近5条组卷记录")
 	@GetMapping("/record")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<PaperRecordRes>> getLast5PaperRecord() {
 		List<PaperRecordRes> paperRecordResList = practicePaperService.getPaperRecord();
 		if (paperRecordResList.size() > 5) {
@@ -118,18 +130,21 @@ public class PracticePaperController {
 
 	@ApiOperation("组卷记录概要")
 	@GetMapping("/record_summary")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<PaperRecordSummaryResByDay>> getRecordSummary(@ApiParam("是否已结束") @RequestParam(value = "is_finish" , required = false) Boolean isFinish) {
 		return new BaseRsp<>(practicePaperService.getAllPaperRecord(isFinish));
 	}
 
 	@ApiOperation("查看组卷详情")
 	@GetMapping("/record_detail")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PaperRecordDetailRes> getPaperRecordDetail(@ApiParam("试卷id") @RequestParam(value = "paper_id") String paperId) {
 		return new BaseRsp<>(practicePaperService.getPaperRecordDetail(paperId));
 	}
 
 	@ApiOperation("再练一次")
 	@GetMapping("/practice_again")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<PracticePaper> practiceAgain(@ApiParam("试卷id") @RequestParam(value = "paper_id") String paperId) {
 		return new BaseRsp<>(practicePaperService.practiceAgain(paperId));
 	}

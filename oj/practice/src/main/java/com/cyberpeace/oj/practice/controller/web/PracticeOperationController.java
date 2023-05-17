@@ -9,6 +9,7 @@ import com.cyberpeace.common.constant.OrderNameConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
@@ -20,9 +21,14 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
+import com.cyberpeace.oj.ojbase.dao.entity.Note;
+import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.ojbase.service.NoteService;
+import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
+import com.cyberpeace.oj.practice.controller.res.OptionStatisticsRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
@@ -62,6 +68,12 @@ public class PracticeOperationController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private ResourceCollectionService resourceCollectionService;
+
+	@Autowired
+	private NoteService noteService;
 
 	@GetMapping()
 	@ApiOperation("获取单个实践操作")
@@ -219,9 +231,25 @@ public class PracticeOperationController {
 
 	@ApiOperation("获取进度统计")
 	@GetMapping("/progress")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<ProgressStatisticsRes> getProgressStatistics (
 			@ApiParam(name = "practice_set_id", value = "习题集id") @RequestParam(value = "practice_set_id", required = false) String practiceSetId) {
 		return new BaseRsp<>(practiceOperationService.getProgressStatistics(practiceSetId));
+	}
+
+	@ApiOperation("收藏数量和笔记数量")
+	@GetMapping("/statistics")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<OptionStatisticsRes> getOptionStatisticsRes() {
+		OptionStatisticsRes optionStatisticsRes = new OptionStatisticsRes();
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
+		String userId = userInfo.getUserId();
+		List<String> operationIds = practiceOperationService.getOptionIdsByAuth(authContext, null);
+		optionStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
+				ResourceCollection.BusinessType.OPERATION.getCode(), operationIds));
+		optionStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), operationIds));
+		return new BaseRsp<>(optionStatisticsRes);
 	}
 
 }

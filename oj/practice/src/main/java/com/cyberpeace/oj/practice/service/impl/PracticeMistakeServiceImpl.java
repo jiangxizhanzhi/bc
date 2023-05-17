@@ -108,4 +108,10 @@ public class PracticeMistakeServiceImpl extends ServiceImpl<PracticeMistakeMappe
 		}
 		return practiceMistakeMapper.selectByPracticeId(practiceIds, userInfo.getUserId());
 	}
+
+	@Override
+	public Boolean bathDelete(List<String> practiceIds, String userId) {
+		practiceMistakeMapper.deleteByPracticeIds(practiceIds, userId);
+		return true;
+	}
 }

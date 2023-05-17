@@ -15,4 +15,6 @@ public interface PracticeMistakeService extends IService<PracticeMistake> {
 	void addCorrect(String userId, String practiceId, Integer practiceType);
 
 	List<PersonalMistakeRes> getPracticeMistake();
+
+	Boolean bathDelete(List<String> practiceIds, String userId);
 }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
+import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 
 public interface SingleTemplateService extends IService<SingleTemplate> {
 
@@ -40,4 +41,12 @@ public interface SingleTemplateService extends IService<SingleTemplate> {
 	 * @return 任务模板id列表
 	 */
 	List<String> getMissionTemplateIdsByMissionsScheme(String missionsScheme);
+
+	/**
+	 * 获取任务矩阵
+	 *
+	 * @param btId 模板id
+	 * @return {@code SingleMatrixProgressRsp}
+	 */
+	SingleMatrixProgressRsp getSingleMatrix(String btId);
 }

@@ -195,7 +195,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 			paperRecordSummaryResByDay.setSummaryRes(recordListMap.get(time));
 			sumRecordList.add(paperRecordSummaryResByDay);
 		}
-		sumRecordList.sort(Comparator.comparing(PaperRecordSummaryResByDay::getTime));
+		sumRecordList.sort(Comparator.comparing(PaperRecordSummaryResByDay::getTime).reversed());
 		return sumRecordList;
 	}
 

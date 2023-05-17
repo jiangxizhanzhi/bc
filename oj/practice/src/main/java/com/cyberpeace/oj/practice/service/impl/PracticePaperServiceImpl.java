@@ -201,6 +201,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	@Override
 	public PaperRecordDetailRes getPaperRecordDetail(String paperId) {
+		PracticePaper practicePaper = practicePaperMapper.selectById(paperId);
 		PaperRecordSummaryRes paperRecordSummaryRes = practicePaperMapper.getPaperRecordByPaper(paperId);
 		paperRecordSummaryRes.setPaperTime(TimeUtil.format10(TimeUtil.toDate1(paperRecordSummaryRes.getPaperTime())));
 		if (paperRecordSummaryRes.getIsFinish()) {
@@ -210,11 +211,13 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		PaperRecordDetailRes paperRecordDetailRes = BeanUtils.copy(paperRecordSummaryRes, PaperRecordDetailRes.class);
 		List<String> practiceRefIds = paperPracticeTheoryMapper.selectPracticeRefIdsByPaperId(paperId);
 		List<WebTheoryBo> webTheoryBoList = paperPracticeTheoryService.getPracticeDetail(practiceRefIds);
-		webTheoryBoList.forEach(webTheoryBo -> {
-			if (webTheoryBo.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode())) {
-				webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
-			}
-		});
+		if (practicePaper.getIsFinish()) {
+			webTheoryBoList.forEach(webTheoryBo -> {
+				if (webTheoryBo.getSolved().equals(PracticeSolved.SolvedStatus.NOT_START.getCode())) {
+					webTheoryBo.setSolved(PracticeSolved.SolvedStatus.TRIED.getCode());
+				}
+			});
+		}
 		paperRecordDetailRes.setPracticeList(webTheoryBoList);
 		return paperRecordDetailRes;
 	}

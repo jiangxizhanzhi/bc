@@ -15,6 +15,7 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
@@ -27,6 +28,9 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.EventDataBo;
 import com.cyberpeace.cr.singletrain.service.bo.SingleTemplateBo;
+import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixMission;
+import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixStage;
+import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.google.common.collect.Lists;
 
@@ -137,7 +141,40 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		return missionTemplateIds;
 	}
 
-	private JSONObject getMissionTemplates(String missionsScheme) {
+	@Override
+	public SingleMatrixProgressRsp getSingleMatrix(String btId) {
+		SingleMatrixProgressRsp rsp = new SingleMatrixProgressRsp();
+		// get single template
+		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(btId);
+		CrRoleConfigMissionsScheme scheme = JsonUtil
+				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleConfigMissionsScheme.class);
+		// get mission templates
+		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
+				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
+		for (CrRoleConfigSchemeStage stage : scheme.getSchemeData()) {
+			MatrixStage matrixStage = new MatrixStage();
+			matrixStage.setStageName(stage.getStage());
+			for (CrRoleConfigMission mission : stage.getMissions()) {
+				MissionTemplate missionTemplate = missionTemplateMap.get(mission.getResourceId());
+				if (null == missionTemplate) {
+					continue;
+				}
+				MatrixMission matrixMission = new MatrixMission();
+				matrixMission.setResourceId(mission.getResourceId());
+				matrixMission.setTitle(missionTemplate.getTitle());
+				// 状态全部为“未提交”
+				matrixMission.setStatus(CrTask.SingleTaskStatus.RELEASED.getCode());
+
+				matrixStage.getMissions().add(matrixMission);
+			}
+			rsp.getMatrix().add(matrixStage);
+		}
+		// set mission count
+		rsp.setMissionCount(missionTemplateMap.size());
+		return rsp;
+	}
+
+    private JSONObject getMissionTemplates(String missionsScheme) {
 		// get missionTemplates mapping
 		Map<String, MissionTemplate> mapping = missionTemplateService
 				.getMappingBySchemeJson(missionsScheme);

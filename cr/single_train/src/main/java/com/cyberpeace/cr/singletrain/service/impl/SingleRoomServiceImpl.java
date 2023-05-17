@@ -54,6 +54,9 @@ import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
 import com.cyberpeace.cr.singletrain.service.SingleTemplateService;
 import com.cyberpeace.cr.singletrain.service.bo.*;
+import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixMission;
+import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixStage;
+import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.*;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -1053,7 +1056,68 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return detail;
 	}
 
-	private Map<String, Mission>
+	@Override
+	public SingleMatrixProgressRsp getMatrixProgress(SingleRoom room) {
+		SingleMatrixProgressRsp rsp = new SingleMatrixProgressRsp();
+		Integer score = 0;
+		Integer successful = 0;
+		Integer failed = 0;
+		// get role
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(room.getResourceId(),
+				UserInfoContext.getUserContext().getUserId());
+		// get mission scheme
+		List<MissionStageScheme> stages = JsonUtil.toJsonObjectArray(role.getMissionScheme(),
+				MissionStageScheme.class);
+		// get mission map
+		Map<String, Mission> missionMap = getMissionMapByScheme(stages);
+		// get tasks,单兵可重复提交，提交答案不影响crTask状态，答案从room的training_record获取
+		JSONObject recordMap = JsonUtil.toJsonObject(room.getTrainingRecord(), JSONObject.class);
+
+		for (MissionStageScheme stage : stages) {
+			MatrixStage matrixStage = new MatrixStage();
+			matrixStage.setStageName(stage.getStage());
+			for (String missionId : stage.getMissions()) {
+				Mission mission = missionMap.get(missionId);
+				if (null == mission) {
+					continue;
+				}
+				MatrixMission matrixMission = new MatrixMission();
+				matrixMission.setResourceId(missionId);
+				matrixMission.setTitle(mission.getTitle());
+
+				JSONObject missionRecord = recordMap.getJSONObject(missionId);
+				if (null == missionRecord) {
+					// not answered
+					matrixMission.setStatus(CrTask.SingleTaskStatus.RELEASED.getCode());
+				} else {
+					// get user answer
+					String userAnswer = missionRecord
+							.getString(SingleRoom.MissionsRecordFields.ANSWER);
+					if (userAnswer.equals(mission.getAnswer())) {
+						// right
+						matrixMission.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());
+						score += mission.getScore();
+						successful += 1;
+					} else {
+						// wrong
+						matrixMission.setStatus(CrTask.SingleTaskStatus.FAIL.getCode());
+						failed += 1;
+					}
+				}
+				matrixStage.getMissions().add(matrixMission);
+			}
+			rsp.getMatrix().add(matrixStage);
+		}
+
+		rsp.setScore(score);
+		rsp.setSuccessful(successful);
+		rsp.setFailed(failed);
+		rsp.setFinished(successful + failed);
+		rsp.setMissionCount(missionMap.size());
+		return rsp;
+	}
+
+    private Map<String, Mission>
 			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);
 

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.situation.service.ThirdPartyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,9 @@ import lombok.extern.slf4j.Slf4j;
 public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
+	private ThirdPartyService thirdPartyService;
+
+	@Autowired
 	private TopoHandlerService topoHandlerService;
 
 	@Autowired
@@ -65,12 +69,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	@Autowired
 	private DynamicEffectMappingMapper dynamicEffectMappingMapper;
-
-	@Autowired
-	private EventTypeMapper eventTypeMapper;
-
-	@Autowired
-	private DynamicEffectsMapper dynamicEffectsMapper;
 
 	@Autowired
 	private DynamicEffectsService dynamicEffectsService;
@@ -737,20 +735,6 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 	}
 
-	/**
-	 * 补充事件类型的父类型名称信息
-	 *
-	 * @param parentTypeMap 父类型映射
-	 * @param eventType     事件类型
-	 * @return {@code EventTypeContext}
-	 */
-	private EventTypeContext convertEventType(Map<String, String> parentTypeMap,
-			EventType eventType) {
-		EventTypeContext eventTypeContext = BeanUtils.deepCopy(eventType, EventTypeContext.class);
-		eventTypeContext.setParentType(parentTypeMap.get(eventTypeContext.getParentNode()));
-		return eventTypeContext;
-	}
-
 	private EventTypeContext getEventTypeByAdEvent(Map<String, List<EventTypeContext>> eventTypeMap,
 			AdEventContext context) {
 
@@ -794,24 +778,14 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		}
 
 		// 3、提取所有涉及的攻防消息的事件类型
-		// 3.1、获取所有事件类型
-		List<EventType> eventTypeList = eventTypeMapper.selectList(new LambdaQueryWrapper<>());
+		// 3.1、获取事件类型列表
+		List<EventTypeContext> eventTypeContextList = thirdPartyService.getEventSubTypeList();
 
-		// 3.2、提取所有父事件类型的编号-名称映射
-		Map<String, String> parentTypeMap = eventTypeList.stream()
-				.filter(eventType -> StringUtils.isEmpty(eventType.getParentNode()))
-				.collect(Collectors.toMap(EventType::getCode, EventType::getName));
-
-		// 3.3、补充事件类型的父类型名称信息
-		List<EventTypeContext> eventTypeContextList = eventTypeList.stream()
-				.map(eventType -> convertEventType(parentTypeMap, eventType))
-				.collect(Collectors.toList());
-
-		// 3.4、按照事件类型名称分组
+		// 3.2、按照事件类型名称分组
 		Map<String, List<EventTypeContext>> eventTypeMap = eventTypeContextList.stream()
 				.collect(Collectors.groupingBy(EventType::getName));
 
-		// 3.5、提取所有涉及的事件类型编号
+		// 3.3、提取所有涉及的事件类型编号
 		Set<String> typeCodeList = contextList.stream()
 				.map(context -> getEventTypeByAdEvent(eventTypeMap, context).getCode())
 				.collect(Collectors.toSet());

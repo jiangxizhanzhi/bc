@@ -182,8 +182,8 @@
             <if test="noteType != null and noteType != ''">
                 and note_type = #{noteType}
             </if>
-            <if test="resourceIds != null and resourceIds != ''">
-                and resource_id in
+            <if test="resourceIds != null and resourceIds.size() > 0">
+                and business_id in
                 <foreach collection="resourceIds" open="(" close=")" item="resourceId" separator=",">
                     #{resourceId}
                 </foreach>

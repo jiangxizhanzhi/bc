@@ -856,7 +856,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			@Override
 			public Integer doInTransaction(TransactionStatus status) {
-				practiceMistakeMapper.deleteByPracticeIds(practiceIds);
+				practiceMistakeMapper.deleteByPracticeIds(practiceIds, null);
 				practiceSolvedMapper.deleteByPracticeIds(practiceIds);
 
 				if (CollectionUtils.isNotEmpty(localSceneIds)) {

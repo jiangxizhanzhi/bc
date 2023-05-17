@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.model.*;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
 import com.cyberpeace.oj.person.dao.entity.*;
@@ -35,10 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -212,5 +207,21 @@ public class PersonController {
 		Page page = pageReq.toPageParam();
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		return new BaseRsp<>(PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size()));
+	}
+
+	@ApiOperation("批量移除错题")
+	@DeleteMapping("/mistake")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	public BaseRsp<Boolean> bathDelete(@RequestBody @Validated DeleteReq deleteReq) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		return new BaseRsp<>(practiceMistakeService.bathDelete(deleteReq.getIds(), userId));
+	}
+
+	@ApiOperation("获取错题集id列表")
+	@GetMapping("/mistake_ids")
+	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
+	public BaseRsp<List<String>> getPracticeMistakeIds() {
+		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
+		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));
 	}
 }

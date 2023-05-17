@@ -15,7 +15,7 @@ public interface PracticeMistakeMapper extends BaseMapper<PracticeMistake> {
 
 	Integer countByUserId(@Param("userId") String userId, @Param("practiceIds") List<String> practiceIds);
 
-	void deleteByPracticeIds(List<String> practiceId);
+	void deleteByPracticeIds(@Param("practiceIds") List<String> practiceIds, @Param("userId") String userId);
 
 	List<PersonalMistakeRes> selectByPracticeId(@Param("practiceIds") List<String> practiceIds, @Param("userId") String userId);
 }

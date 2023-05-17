@@ -47,7 +47,7 @@ public class ZipUtil {
 
 		try {
 			ZipFile zipFile = new ZipFile(zipPath);
-
+			zipFile.setFileNameCharset("GBK");
 			FileUtil.mkdirs(destPath);
 			zipFile.extractAll(destPath);
 

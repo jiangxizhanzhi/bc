@@ -174,7 +174,12 @@ public class UtilServiceImpl implements UtilService {
 		List<String> matchSrcList = LocalStringUtil.getMatchUrlStr(filterCodeContent,
 				PatternConstant.MARKDOWN_IMAGE_SRC_URL);
 
+		List<String> matchZipRarSrcList = LocalStringUtil.getMatchStr(filterCodeContent,
+				PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
+
 		realPathList.addAll(matchSrcList);
+
+		realPathList.addAll(matchZipRarSrcList);
 
 		List<String> nginxUrlList = StreamApiUtils.map(realPathList, realPath -> {
 			String fileUrl = replaceFileUrl(realPath);

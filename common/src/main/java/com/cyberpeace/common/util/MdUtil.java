@@ -30,6 +30,7 @@ import com.google.common.collect.Sets;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.util.CollectionUtils;
 
 /**
  * markdown操作工具类
@@ -174,7 +175,32 @@ public class MdUtil {
 	 */
 	public static String parseMarkdown(String markdownPath) {
 		Set<String> matchImgPath = getMatchImgPath(markdownPath);
-		return replaceImgContent(markdownPath, matchImgPath, "");
+
+		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
+
+		String imgReplaced = replaceImgContent(markdownPath, matchImgPath, "");
+		String matchZipRarPath = getMatchZipRarPath(markdownPath);
+		return replaceZipOrRarContent(currentDir, imgReplaced, matchZipRarPath, "");
+	}
+
+	/**
+	 * 匹配md文件中的压缩包相对路径地址
+	 * @param markdownPath
+	 * @return
+	 */
+	private static String getMatchZipRarPath(String markdownPath) {
+		// 获取markdown文件内容
+		File markdownFile = new File(markdownPath);
+		String withOutCode = getContentWithOutCode(markdownFile);
+
+		// 匹配文件路径
+		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+				PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
+
+		if(CollectionUtils.isEmpty(matchStrList)) {
+			return "";
+		}
+		return matchStrList.get(0);
 	}
 
 	/**
@@ -207,6 +233,29 @@ public class MdUtil {
 		// 获取md文件中的图片路径
 		Set<String> matchStrSet = getMatchImgPath(markdownPath);
 		return replaceImgContent(markdownPath, matchStrSet, handoutPath);
+	}
+
+	public static String replaceZipOrRarContent(String currentDir,
+												String content,
+												String matchStr,
+												String handoutPath) {
+		// 获取当前文件夹
+		String relativePath = matchStr;
+		if(matchStr.startsWith(CommonConstant.PERIOD)) {
+			relativePath = matchStr.replaceFirst(CommonConstant.PERIOD,
+					CommonConstant.EMPTY_STRING);
+		}
+
+		File replaceFile = new File(currentDir, relativePath);
+		if (!replaceFile.exists()) {
+			log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+			String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()
+					: handoutPath + CommonConstant.LEFT_OBLIQUE_LINE + matchStr;
+			throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, path);
+		}
+		content = content.replace(matchStr, replaceFile.getAbsolutePath());
+
+		return content;
 	}
 
 	/**

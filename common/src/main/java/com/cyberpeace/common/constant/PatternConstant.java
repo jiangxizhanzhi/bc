@@ -14,6 +14,9 @@ public interface PatternConstant {
 	/** 获取匹配到图片内容的路径*/
 	String MARKDOWN_IMAGE_URL = "(?<=\\()[^\\)]+";
 
+	/** 获取匹配到的压缩文件路径 */
+	String MARKDOWN_ZIP_RAR_URL = "(\\[[\\s\\S]+[\\.zip|\\.rar]\\])\\(([\\s\\S]+[\\.zip|\\.rar])\\)";
+
 	/** 动态flag匹配*/
 	String DYNAMIC_FLAG = "\\{FLAG\\[[0-9]+\\]\\}";
 

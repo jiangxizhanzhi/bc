@@ -603,7 +603,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalResult evalResult = new EvalResult();
         evalResult.setExeCycle(exeCycle);
         LambdaQueryWrapper<EvalResult> filter = new LambdaQueryWrapper<>();
-        filter.eq(EvalResult::getRecord, evalRecord.getResourceId());
+        String record = evalRecord.getResourceId();
+        filter.eq(EvalResult::getRecord, record);
         filter.orderByDesc(EvalResult::getExeCycle);
         filter.last("limit 1");
         EvalResult evalResultQuery = evaResultMapper.selectOne(filter);
@@ -613,10 +614,75 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalResult.setExeCycle(exeCycle);
         }
         // 保存各index_ref id：score 1-4
+        LambdaQueryWrapper<EvalIndexRef> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EvalIndexRef::getRecordId, record);
+        List<EvalIndexRef> evalIndexRefs = evalIndexRefService.getBaseMapper().selectList(queryWrapper);
 
         // 保存variable_ref id:score 5
+        List<EvalVariableRef> variableRefs = evalVariableRefMapper.getByRecordId(record);
+
+        List<EvalIndexRef> firstIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.FIRST.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> secondIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.SECOND.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> thirdIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.THIRD.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> fourthIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())).collect(Collectors.toList());
+
+        Map<String, EvalIndexRef> secondEvalIndexRefMap = StreamApiUtils.toMap(secondIndexs, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalIndexRef> thirdEvalIndexRefMap = StreamApiUtils.toMap(thirdIndexs, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalIndexRef> fourthEvalIndexRefMap = StreamApiUtils.toMap(fourthIndexs, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalVariableRef> fifthEvalIndexRefMap = StreamApiUtils.toMap(variableRefs, EvalVariableRef::getResourceId, s -> s);
+
+        for(EvalIndexRef first:firstIndexs){
+            String nextIds = first.getNextIds();
+            Integer score = first.getScore();
+            evalResult.setFirstIndexRes(score);
+            List<String> nextIdList = JsonUtil.toJsonObjectArray(nextIds, String.class);
+            JSONObject secondObj = new JSONObject();
+            JSONObject thirdObj = new JSONObject();
+            JSONObject fourthObj = new JSONObject();
+            JSONObject fifthObj = new JSONObject();
+
+            for(String tmpIndex:nextIdList){
+                EvalIndexRef evalIndexRef = secondEvalIndexRefMap.get(tmpIndex);
+                if(null != evalIndexRef){
+                    secondObj.put(evalIndexRef.getResourceId(), evalIndexRef.getScore());
+                }
+                String refNextIds = evalIndexRef.getNextIds();
+                List<String> nextRedIdList = JsonUtil.toJsonObjectArray(refNextIds, String.class);
+                for(String tmpNextIndex:nextRedIdList){
+                    EvalIndexRef indexRef = thirdEvalIndexRefMap.get(tmpNextIndex);
+                    if(null != indexRef){
+                        thirdObj.put(indexRef.getResourceId(), indexRef.getScore());
+                    }
+                    String ids = indexRef.getNextIds();
+                    List<String> idList = JsonUtil.toJsonObjectArray(ids, String.class);
+                    for(String currentNextId:idList){
+                        EvalIndexRef current = fourthEvalIndexRefMap.get(currentNextId);
+                        if(null != current){
+                            fourthObj.put(current.getResourceId(), current.getScore());
+                        }
+                        getFifthObj(fifthEvalIndexRefMap, fifthObj, current);
+                    }
+                }
+            }
+            evalResult.setSecondIndexRes(JsonUtil.toJsonString(secondObj));
+            evalResult.setThirdIndexRes(JsonUtil.toJsonString(thirdObj));
+            evalResult.setFourthIndexRes(JsonUtil.toJsonString(fourthObj));
+            evalResult.setFifthIndexRes(JsonUtil.toJsonString(fifthObj));
+
+        }
 
         evaResultMapper.insert(evalResult);
+    }
+
+    private void getFifthObj(Map<String, EvalVariableRef> fifthEvalIndexRefMap, JSONObject fifthObj, EvalIndexRef current) {
+        String fifthIds = current.getNextIds();
+        List<String> fifthIdsList = JsonUtil.toJsonObjectArray(fifthIds, String.class);
+        for(String fifthId:fifthIdsList){
+            EvalVariableRef fifthVariableRef = fifthEvalIndexRefMap.get(fifthId);
+            if(null != fifthVariableRef){
+                fifthObj.put(fifthId, fifthVariableRef.getScore());
+            }
+        }
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {

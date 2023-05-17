@@ -1,7 +1,5 @@
 package com.cyberpeace.situation.controller.req;
 
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -35,6 +33,19 @@ public class InstanceDataQueryReq {
 	private String featureId;
 
 	/**
+	 * 特征ID
+	 */
+	@ApiModelProperty(value = "任务ID")
+	private String taskId;
+
+	/**
+	 * 特征ID
+	 */
+	@ApiModelProperty(value = "科目ID")
+	private String subjectId;
+
+
+	/**
 	 * 大屏角色
 	 */
 	@ApiModelProperty(value = "大屏角色", required = true)
@@ -45,20 +56,20 @@ public class InstanceDataQueryReq {
 	 */
 	@ApiModelProperty(value = "开始时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date startTime;
+	private String startTime;
 
 	/**
 	 * 结束时间
 	 */
 	@ApiModelProperty(value = "结束时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date endTime;
+	private String endTime;
 
 	/**
 	 * 大屏当前天文时间
 	 */
 	@ApiModelProperty(value = "大屏当前天文时间")
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date currentTime;
+	private String currentTime;
 
 }

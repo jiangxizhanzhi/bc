@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.situation.controller.req.DynamicEffectMappingPageReq;
+import com.cyberpeace.situation.controller.res.DynamicEffectMappingRes;
 import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 
 /**
@@ -19,7 +20,7 @@ import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
  * @Date 26/11/2022 下午4:42
  */
 @Mapper
-public interface SituationDynamicEffectMappingMapper extends BaseMapper<DynamicEffectsMapping> {
+public interface DynamicEffectMappingMapper extends BaseMapper<DynamicEffectsMapping> {
 
 	/**
 	 * 分页查询
@@ -28,27 +29,35 @@ public interface SituationDynamicEffectMappingMapper extends BaseMapper<DynamicE
 	 * @param dynamicEffectMappingPageReq 查询条件
 	 * @return {@code IPage<DynamicEffectsMapping>}
 	 */
-	IPage<DynamicEffectsMapping> selectPage(@Param("page") Page page,
+	IPage<DynamicEffectMappingRes> selectPage(@Param("page") Page page,
 			@Param("dynamicEffectMappingPageReq") DynamicEffectMappingPageReq dynamicEffectMappingPageReq);
 
 	/**
 	 * 通过类型获取映射记录列表
 	 *
 	 * @param types      类型
-	 * @param subRangeId 分靶场ID
 	 * @return {@code List<DynamicEffectsMapping>}
 	 */
-	List<DynamicEffectsMapping> selectBatchByType(@Param("types") Collection<String> types,
-			@Param("subRangeId") String subRangeId);
+	List<DynamicEffectsMapping> selectBatchByType(@Param("types") Collection<String> types);
 
 	/**
 	 * 校验映射记录是否存在
 	 *
 	 * @param attackType 攻击类型
-	 * @param subRangeId 分靶场ID
+	 * @param type 		 映射类型
 	 * @param resourceId 资源id
 	 * @return {@code Boolean}
 	 */
 	Boolean checkEffectsMapExist(@Param("attackType") String attackType,
-			@Param("subRangeId") String subRangeId, @Param("resourceId") String resourceId);
+			@Param("type") Integer type, @Param("resourceId") String resourceId);
+
+	Boolean checkMapNameExist(@Param("name") String name, @Param("resourceId") String resourceId);
+
+	/**
+	 * 校验动效是否被使用
+	 *
+	 * @param effectIds 动效ID列表
+	 * @return {@code Boolean}
+	 */
+	Boolean checkEffectsStatus(@Param("effectIds") List<String> effectIds);
 }

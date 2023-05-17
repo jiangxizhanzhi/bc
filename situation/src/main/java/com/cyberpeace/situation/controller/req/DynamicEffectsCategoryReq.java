@@ -18,12 +18,12 @@ import lombok.Data;
  * @date 2023/05/06
  */
 @Data
-public class AddCategoryReq implements Serializable {
+public class DynamicEffectsCategoryReq implements Serializable {
 
 	/**
-	 * 分组
+	 * 分组名称
 	 */
-	@ApiModelProperty("分组")
+	@ApiModelProperty("分组名称")
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.NAME_EMPTY_ERROR)
 	String name;

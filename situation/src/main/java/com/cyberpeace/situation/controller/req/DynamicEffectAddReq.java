@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.topo.DynamicType;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,7 +19,7 @@ import lombok.Data;
  * @date 2023/05/06
  */
 @Data
-public class DynamicEffectLibraryAddReq implements Serializable {
+public class DynamicEffectAddReq implements Serializable {
 
 	/**
 	 * 动效名称
@@ -37,6 +38,12 @@ public class DynamicEffectLibraryAddReq implements Serializable {
 	private String category;
 
 	/**
+	 * 动效类别
+	 */
+	@ApiModelProperty("动效类别 1-预置 2-用户上传")
+	private Integer type = DynamicType.USER_UPLOAD.getCode();
+
+	/**
 	 * 缩略图
 	 */
 	@NotBlank(groups = { Create.class, Update.class },
@@ -48,8 +55,8 @@ public class DynamicEffectLibraryAddReq implements Serializable {
 	 * 源节点动效文件
 	 */
 	@NotBlank(groups = { Create.class, Update.class },
-			message = SituationErrorCode.SOURCE_NODE_DYNAMIC_FILE_EMPTY_ERROR)
-	@ApiModelProperty(value = "源节点动效文件", required = true)
+			message = SituationErrorCode.NODE_DYNAMIC_FILE_EMPTY_ERROR)
+	@ApiModelProperty(value = "节点动效文件", required = true)
 	private String sourceNodeDynamicFile;
 
 }

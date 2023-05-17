@@ -1,13 +1,14 @@
 package com.cyberpeace.situation.constant.topo;
 
-import com.cyberpeace.common.model.CommonContext;
+import java.util.Arrays;
+import java.util.List;
 
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.situation.model.LocalType;
 import com.google.common.collect.Lists;
-import lombok.Getter;
 
-import java.util.List;
+import lombok.Getter;
 
 /**
  * 线型
@@ -80,8 +81,13 @@ public enum LineType {
 	 *
 	 * @return {@code List<LocalType>}
 	 */
-	public static List<LocalType> getMsgList(){
+	public static List<LocalType> getMsgList() {
 		return StreamApiUtils.map(Lists.newArrayList(LineType.values()),
 				lineType -> new LocalType(lineType.getCode(), lineType.getMsg()));
+	}
+
+	public static LineType getLineTypeByCode(String code) {
+		return Arrays.stream(LineType.class.getEnumConstants())
+				.filter(t -> t.getCode().equals(code)).findFirst().orElse(LineType.FLY);
 	}
 }

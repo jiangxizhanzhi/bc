@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @TableName("situation_dynamic_effects_category")
-public class DynamicEffectsLibraryCategory extends BaseTable {
+public class DynamicEffectsCategory extends BaseTable {
 
 	@TableId(value = "resource_id")
 	private String resourceId;

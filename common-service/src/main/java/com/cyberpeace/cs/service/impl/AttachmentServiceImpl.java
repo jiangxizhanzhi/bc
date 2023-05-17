@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -374,5 +375,34 @@ public class AttachmentServiceImpl extends ServiceImpl<AttachmentMapper, Attachm
 		return !(attachment == null
 				|| !new File(ConfigUtil.getContextProperty("cr.local.upload.path") + "/"
 						+ attachment.getFilePath()).exists());
+	}
+
+	/**
+	 * 删除附件
+	 *
+	 * @param attachmentName 附件名称
+	 * @return {@code Boolean}
+	 */
+	@Override
+	public Boolean deleteAttachment(String attachmentName) {
+
+		// 通过压缩包名字匹配file_path字段模糊查询附件
+		Attachment attachment = attachmentMapper
+				.selectOne(new QueryWrapper<Attachment>().like("file_path", attachmentName));
+
+		if (attachment != null) {
+
+			// 删除文件
+			File file = new File(ConfigUtil.getContextProperty("cr.local.upload.path") + "/"
+					+ attachment.getFilePath());
+			if (file.exists()) {
+				file.delete();
+			}
+
+			// 删除文件记录
+			attachmentMapper.deleteById(attachment.getResourceId());
+			return true;
+		}
+		return false;
 	}
 }

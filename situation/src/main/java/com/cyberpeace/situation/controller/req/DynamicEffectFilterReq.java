@@ -12,7 +12,7 @@ import lombok.Data;
  * @date 2023/05/06
  */
 @Data
-public class DynamicEffectLibraryFilterReq implements Serializable {
+public class DynamicEffectFilterReq implements Serializable {
 
 	/**
 	 * 动效名称
@@ -25,11 +25,5 @@ public class DynamicEffectLibraryFilterReq implements Serializable {
 	 */
 	@ApiModelProperty(value = "动效类型")
 	private String category;
-
-	/**
-	 * 源节点动效文件
-	 */
-	@ApiModelProperty(value = "源节点动效文件")
-	private String sourceNodeDynamicFile;
 
 }

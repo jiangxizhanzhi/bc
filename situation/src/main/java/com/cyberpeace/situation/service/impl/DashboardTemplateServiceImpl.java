@@ -155,7 +155,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	private void insertTemplate(DashboardTemplate dashboardTemplate,
-			List<DashboardComponents> dashboardComponentsList) {
+								List<DashboardComponents> dashboardComponentsList) {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -270,7 +270,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 	@Override
 	public DashboardTemplateRes getDashboardTemplateInfo(String resourceId, String type,
-			Boolean isPreview) {
+														 Boolean isPreview) {
 		// 1、获取大屏模板数据
 		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(resourceId, true);
 
@@ -309,7 +309,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 	@Override
 	public ListRsp<DashboardTemplatePageRes>
-			getDashboardTemplatePage(DashboardTemplatePageReq dashboardTemplatePageReq) {
+	getDashboardTemplatePage(DashboardTemplatePageReq dashboardTemplatePageReq) {
 		Page page = dashboardTemplatePageReq.toPageParam();
 		return PageUtil
 				.getListResult(this.getBaseMapper().selectPage(page, dashboardTemplatePageReq));
@@ -397,7 +397,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	private List<DashboardComponents>
-			changeToDashboardComponents(List<DashboardComponentsReq> dashboardComponentsReqList) {
+	changeToDashboardComponents(List<DashboardComponentsReq> dashboardComponentsReqList) {
 		List<DashboardComponents> dashboardComponentsList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(dashboardComponentsReqList)) {
 			for (DashboardComponentsReq dashboardComponentsReq : dashboardComponentsReqList) {
@@ -469,7 +469,11 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			// 处理维度和度量数据集
 			List<String> measureList = new ArrayList<>();
 			if (StringUtils.isNotBlank(measure)) {
-				measureList.addAll(Arrays.asList(measure.split(",")));
+				if(measure.startsWith("[")&&measure.endsWith("]")){
+					measureList.addAll(JsonUtil.toJsonObjectArray(measure,String.class));
+				}else{
+					measureList.addAll(Arrays.asList(measure.split(",")));
+				}
 			}
 			for (JSONObject jsonObject : dataJsonList) {
 				JSONObject finallyObject = new JSONObject(new LinkedHashMap());
@@ -526,6 +530,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			}
 
 		} catch (Exception e) {
+			log.error("json type error!: ", e);
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
 		}
 	}
@@ -537,7 +542,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	 * @param customParams
 	 */
 	private void parseRequestParams(List<ApiRequestParams> apiRequestParams, String customParams,
-			String requestMapping) {
+									String requestMapping) {
 		if (CollectionUtils.isNotEmpty(apiRequestParams)) {
 			apiRequestParams.clear();
 		}
@@ -552,7 +557,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 					ApiRequestParams.class);
 			if (StringUtils.isNotBlank(apiRequestMapping.getType())
 					&& Objects.equals("constant", apiRequestMapping.getType())) {
-				String value = apiRequestMapping.getValue();
+				String value = apiRequestMapping.getName();
 				customParamReqs.forEach(customParamReq -> {
 					if (customParamReq != null && customParamReq.getName().equals(value)) {
 						String paramReqValue = customParamReq.getValue();
@@ -573,7 +578,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	 * @return
 	 */
 	private JSONArray parseResponseParams(String resourceData, String response,
-			String responseKey) {
+										  String responseKey) {
 		JSONArray data = new JSONArray();
 		// 处理接口调用返回结果
 		List<ApiResponseParams> apiResponseParams;
@@ -594,6 +599,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			// 获取需要的参数列表
 			apiResponseParams = JsonUtil.toJsonObjectArray(response, ApiResponseParams.class);
 		} catch (Exception e) {
+			log.error("json type error!: ", e);
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
 		}
 		// 筛选参数列表中包含的数据
@@ -619,7 +625,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	private ComponentsDataReq changeToComponentsDataReq(String componentsData,
-			String customParams) {
+														String customParams) {
 		try {
 			ComponentsDataReq componentsDataReq = new ComponentsDataReq();
 			JSONObject componentsDataJson = JSONObject.parseObject(componentsData);
@@ -669,6 +675,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				apiConnectReq.setRequestParams(apiRequestParams);
 			}
 		} catch (Exception e) {
+			log.error("json type error!: ", e);
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
 		}
 		// 调用api接口
@@ -681,6 +688,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 			echartsDataSet = getEchartsDataSet(jsonArray, componentsDataReq);
 			return echartsDataSet;
 		} catch (Exception e) {
+			log.error("json type error!: ", e);
 			throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);
 		}
 	}
@@ -706,7 +714,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	private String parseDbCustomParams(String customParams, String requestCustomParams,
-			InstanceDataQueryReq instanceDataQueryReq) {
+									   InstanceDataQueryReq instanceDataQueryReq) {
 		List<CustomParamReq> customParamReqs = JsonUtil.toJsonObjectArray(requestCustomParams,
 				CustomParamReq.class);
 		try {
@@ -803,7 +811,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 	}
 
 	private void parseParam(InstanceDataQueryReq instanceDataQueryReq,
-			List<ApiRequestParams> apiRequestParams) {
+							List<ApiRequestParams> apiRequestParams) {
 		try {
 			Field[] fields = instanceDataQueryReq.getClass().getDeclaredFields();
 			for (Field field : fields) {

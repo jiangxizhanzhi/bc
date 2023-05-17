@@ -70,7 +70,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 	@Autowired
 	private DashboardAttributeMapper dashboardAttributeMapper;
 
-	public DashboardTemplateRef getDashboardTemplateRefById(String resourceId){
+	public DashboardTemplateRef getDashboardTemplateRefById(String resourceId) {
 		DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper
 				.selectById(resourceId);
 		if (dashboardTemplateRef == null) {
@@ -312,8 +312,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 					JSONObject jsonObject = JSONObject.parseObject(componentSetting);
 					String componentType = jsonObject.getString("component_type");
 					if (componentType == null) {
-						String option = jsonObject.getString("option");
-						JSONObject optionObject = JSONObject.parseObject(option);
+						JSONObject optionObject = jsonObject.getJSONObject("option");
 						JSONObject dataset = optionObject.getJSONObject("dataset");
 						JSONArray echartsOption = dashboardTemplateService
 								.getEchartsOption(componentSetting, jsonArray.toJSONString());
@@ -331,6 +330,9 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 						}
 
 					}
+					dashboardComponent.setComponentSetting(JsonUtil.toJsonString(jsonObject));
+					dashboardComponent.setComponentSettingObject(jsonObject);
+
 				}
 			}
 		}
@@ -486,7 +488,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 				.toJsonObject(dashboardTemplateRef.getConfig(), DashboardConfigContext.class);
 
 		// 当大屏实例没有初始配置时，创建初始数据
-		if (dashboardConfigContext == null){
+		if (dashboardConfigContext == null) {
 			dashboardConfigContext = new DashboardConfigContext();
 		}
 

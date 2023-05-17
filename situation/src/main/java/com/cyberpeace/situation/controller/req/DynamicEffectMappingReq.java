@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.constant.topo.DynamicType;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,18 +23,17 @@ import lombok.Data;
 public class DynamicEffectMappingReq implements Serializable {
 
 	/**
-	 * 动效名称
+	 * 映射名称
 	 */
 	@NotBlank(groups = { Create.class }, message = SituationErrorCode.NAME_EMPTY_ERROR)
 	@ApiModelProperty(value = "动效名称", required = true)
 	private String name;
 
 	/**
-	 * 分靶场类型
+	 * 映射类型
 	 */
-	@NotBlank(groups = { Create.class }, message = SituationErrorCode.TYPE_EMPTY_ERROR)
-	@ApiModelProperty(value = "分靶场类型", required = true)
-	private String category;
+	@ApiModelProperty(value = "映射类型", required = false)
+	private Integer type = DynamicType.USER_UPLOAD.getCode();
 
 	/**
 	 * 攻击类型
@@ -45,8 +45,7 @@ public class DynamicEffectMappingReq implements Serializable {
 	/**
 	 * 源节点动效
 	 */
-	@NotBlank(groups = { Create.class },
-			message = SituationErrorCode.SOURCE_NODE_DYNAMIC_FILE_EMPTY_ERROR)
+	@NotBlank(groups = { Create.class }, message = SituationErrorCode.NODE_DYNAMIC_FILE_EMPTY_ERROR)
 	@ApiModelProperty(value = "源节点动效", required = true)
 	private String sourceNodeDynamic;
 
@@ -61,9 +60,8 @@ public class DynamicEffectMappingReq implements Serializable {
 	/**
 	 * 聚焦
 	 */
-	@NotBlank(groups = { Create.class }, message = SituationErrorCode.FOCUS_EMPTY_ERROR)
 	@ApiModelProperty(value = "聚焦", required = true)
-	private String focus;
+	private Boolean focus;
 
 	/**
 	 * 颜色
@@ -85,16 +83,5 @@ public class DynamicEffectMappingReq implements Serializable {
 	@NotNull(groups = { Create.class }, message = SituationErrorCode.LINE_SIZE_DOC_EMPTY_ERROR)
 	@ApiModelProperty(value = "线形大小", required = true)
 	private Integer lineSize;
-
-	/**
-	 * 设置聚焦
-	 *
-	 * @param focus 聚焦
-	 */
-	public void setFocus(String focus) {
-
-		// 如果聚焦值为1，则设置为true，否则设置为false
-		this.focus = "1".equals(focus) ? "true" : "false";
-	}
 
 }

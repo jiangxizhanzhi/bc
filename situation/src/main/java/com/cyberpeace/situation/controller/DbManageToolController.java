@@ -101,7 +101,7 @@ public class DbManageToolController {
 	@ApiOperation("管理工具类型-新增")
 	@PostMapping("/category/")
 	public BaseRsp<SituationDbToolCategory>
-			addSituationDbToolCategory(@RequestBody @Validated AddCategoryReq req) {
+			addSituationDbToolCategory(@RequestBody @Validated DynamicEffectsCategoryReq req) {
 		SituationDbToolCategory situationDbToolCategory = new SituationDbToolCategory();
 		situationDbToolCategory.setName(req.getName());
 		situationDbToolCategoryMapper.insert(situationDbToolCategory);
@@ -136,7 +136,8 @@ public class DbManageToolController {
 	 */
 	@ApiOperation("管理工具类型-修改")
 	@PatchMapping("/category/")
-	public BaseRsp updateSituationDbToolCategory(@RequestBody @Validated AddCategoryReq req) {
+	public BaseRsp
+			updateSituationDbToolCategory(@RequestBody @Validated DynamicEffectsCategoryReq req) {
 
 		// 获取管理工具类型
 		String resourceId = req.getResourceId();

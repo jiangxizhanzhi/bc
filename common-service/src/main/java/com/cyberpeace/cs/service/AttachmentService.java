@@ -105,4 +105,12 @@ public interface AttachmentService extends IService<Attachment> {
 	 */
 	Boolean isExist(String attachmentId);
 
+	/**
+	 * 通过附件名称（非原始名称）删除附件
+	 *
+	 * @param attachmentName 附件名称
+	 * @return {@code Boolean}
+	 */
+	Boolean deleteAttachment(String attachmentName);
+
 }

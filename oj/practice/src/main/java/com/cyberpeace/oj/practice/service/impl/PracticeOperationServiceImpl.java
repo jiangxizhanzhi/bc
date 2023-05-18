@@ -73,10 +73,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chenz
@@ -1264,10 +1261,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	}
 
 	@Override
-	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo) {
+	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime) {
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
 		List<String> operationIds = getOptionIdsByAuth(authContext, null);
-		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true);
+		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

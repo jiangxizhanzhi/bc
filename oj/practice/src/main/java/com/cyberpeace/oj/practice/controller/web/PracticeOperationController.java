@@ -253,7 +253,7 @@ public class PracticeOperationController {
 	@GetMapping("/record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<List<OperationRecordRes>> getOperationRecordTop5() {
-		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext());
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext(), null, null);
 		if (operationRecordResList.size() > 5){
 			return new BaseRsp<>(operationRecordResList.subList(0, 5));
 		}
@@ -263,9 +263,12 @@ public class PracticeOperationController {
 	@ApiOperation("所有解出记录")
 	@GetMapping("/all_record")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp<List<OperationRecordResByDay>> getAllOperationRecord() {
+	public BaseRsp<List<OperationRecordResByDay>> getAllOperationRecord(
+			@ApiParam(name = "start_time", value = "开始时间") @RequestParam(name = "start_time", required = false) String startTime,
+			@ApiParam(name = "end_time", value = "开始时间") @RequestParam(name = "end_time", required = false) String endTime) {
 		Map<String, List<OperationRecordRes>> operationRecordMap = new HashMap<>();
-		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext());
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
+				UserInfoContext.getUserContext(), TimeUtil.toDate2(startTime), TimeUtil.toDate2(endTime));
 		for (OperationRecordRes operationRecordRes : operationRecordResList) {
 			String time = TimeUtil.format6(TimeUtil.toDate1(operationRecordRes.getTime()));
 			if (operationRecordMap.get(time) == null) {

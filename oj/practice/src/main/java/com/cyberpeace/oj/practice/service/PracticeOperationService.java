@@ -14,6 +14,7 @@ import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -217,5 +218,5 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 */
 	List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId);
 
-	List<OperationRecordRes> getOperationRecord(UserInfo userInfo);
+	List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime);
 }

@@ -31,5 +31,9 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 
 	void deleteByPracticeIds(List<String> practiceIds);
 
-	List<OperationRecordRes> getOperationRecord(@Param("userId") String userId, @Param("operationIds") List<String> operationIds, @Param("solved") Boolean solved);
+	List<OperationRecordRes> getOperationRecord(@Param("userId") String userId,
+												@Param("operationIds") List<String> operationIds,
+												@Param("solved") Boolean solved,
+												@Param("startTime") Date startTime,
+												@Param("endTime") Date endTime);
 }

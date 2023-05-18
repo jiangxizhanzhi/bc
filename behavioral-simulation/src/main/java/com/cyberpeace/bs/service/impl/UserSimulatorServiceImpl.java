@@ -1,23 +1,5 @@
 package com.cyberpeace.bs.service.impl;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -41,6 +23,7 @@ import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
 import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
 import com.cyberpeace.bs.service.bo.lc.LcMonitorRsp;
+import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
 import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
@@ -56,8 +39,23 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 用户仪表Service实现
@@ -380,6 +378,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 					BehaviorInstance behaviorInstance = BeanUtils.deepCopy(behavior,
 							BehaviorInstance.class);
 					behaviorInstance.setUserName(userName);
+					behaviorInstance.setUserModelId(userModelId);
 					detail.getBehaviors().add(behaviorInstance);
 				}
 			}
@@ -837,6 +836,36 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		if (!simulatorIds.isEmpty()) {
 			deleteSimulatorByIds(simulatorIds);
 		}
+	}
+
+	@Override
+	public void startSingle(String simulatorId, String userModelId, String behaviorId) {
+		// 查询仪表
+		UserSimulator simulator = getOrException(simulatorId);
+		// get user instance
+		UserInstance instance = userInstanceMapper.getBySimulatorIdAndUserModelId(simulatorId, userModelId);
+		// 组装任务下发请求体
+		ReleaseTaskReq taskReq = new ReleaseTaskReq();
+		// 区分实体设备和虚拟设备
+		taskReq.setIsUsingIp(!simulator.getIsEntity());
+		if (taskReq.getIsUsingIp()) {
+			taskReq.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+		} else {
+			taskReq.setDeviceId(simulator.getDeviceId());
+		}
+		taskReq.setIp(simulator.getDeviceIp());
+		taskReq.setFlowChart(behaviorId);
+		// 设置行为变量
+		Map<String, String> behaviorVariableMap = BsUtil
+				.getVariableMap(instance.getBehaviorVariable());
+		String variableJson = behaviorVariableMap.get(behaviorId);
+		if (StringUtils.isNotBlank(variableJson)) {
+			List<VariableBo> variableBos = JsonUtil.toJsonObjectArray(variableJson, VariableBo.class);
+			variableBos.forEach(
+					variableBo -> taskReq.addVariable(variableBo.getName(), variableBo.getValue()));
+		}
+		// 下发行为任务
+		lcService.startBehavior(taskReq);
 	}
 
 	private void deleteSimulatorByIds(Collection<String> simulatorIds) {

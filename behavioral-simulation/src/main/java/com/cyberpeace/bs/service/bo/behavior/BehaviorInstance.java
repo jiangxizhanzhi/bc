@@ -19,4 +19,7 @@ public class BehaviorInstance extends LcBehavior implements Serializable {
      */
     @ApiModelProperty(value = "用户名")
     private String userName;
+
+    @ApiModelProperty(value = "用户模型id")
+    private String userModelId;
 }

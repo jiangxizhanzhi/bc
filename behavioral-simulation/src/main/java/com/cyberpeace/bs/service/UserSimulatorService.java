@@ -162,4 +162,13 @@ public interface UserSimulatorService {
      * @param nodeIds 节点id列表
      */
     void deleteByNodeId(List<String> nodeIds);
+
+    /**
+     * 立即启动仪表包含的单个行为
+     *
+     * @param simulatorId 仪表id
+     * @param userModelId 用户模型id
+     * @param behaviorId  行为id
+     */
+    void startSingle(String simulatorId, String userModelId, String behaviorId);
 }

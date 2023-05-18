@@ -231,6 +231,19 @@ public class UserSimulatorController {
     }
 
     /**
+     * 启动单个行为
+     *
+     * @param req 请求体
+     * @return {@code BaseRsp}
+     */
+    @ApiOperation("启动单个行为")
+    @PostMapping("/start/single")
+    public BaseRsp startSingle(@Validated @RequestBody StartSingleReq req) {
+        userSimulatorService.startSingle(req.getSimulatorId(), req.getUserModelId(), req.getBehaviorId());
+        return new BaseRsp<>();
+    }
+
+    /**
      * 关闭场景时删除场景相关仪表
      * 关闭场景时，由配管触发
      *

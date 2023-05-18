@@ -55,4 +55,13 @@ public interface UserInstanceMapper {
      */
     List<UserInstance>
     getBatchBySimulatorIds(@Param("simulatorIds") Collection<String> simulatorIds);
+
+    /**
+     * 通过仪表id和用户模型id获取
+     *
+     * @param simulatorId 仪表id
+     * @param userModelId 用户模型id
+     * @return {@code UserInstance}
+     */
+    UserInstance getBySimulatorIdAndUserModelId(@Param("simulatorId") String simulatorId, @Param("userModelId") String userModelId);
 }

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,7 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+@Slf4j
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
 
@@ -121,6 +122,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// 已存在运行中训练, 返回
 		SingleRoomBo singleRoomBo = getRoomInfo(businessTemplateId);
 		if (singleRoomBo.getRoomInfo() != null) {
+			log.error("scene start repeat: businessTemplateId = [{}]",businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 		}
 
@@ -486,6 +488,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom roomObject = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (roomObject == null) {
+			log.error("room_not_exist_submit_mission: businessTemplateId = [{}]",businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION);
 		}
 
@@ -495,11 +498,13 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.eq(MissionBase::getResourceId, requestData.getMissionResourceId())
 				.eq(MissionBase::getCreateUserId, userId).one();
 		if (mission == null) {
+			log.error("mission is null: RoomId = [{}],ResourceId= [{}]",roomObject.getResourceId(), requestData.getMissionResourceId());
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 		// 多选题答案校验
 		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
 			if (requestData.getAnswer().equals(CommonConstant.EMPTY_LIST_JSON)) {
+				log.error("answer not nullable");
 				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 			}
 		}
@@ -716,6 +721,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
+			log.error("role not exist error: ResourceId = [{}]",singleRoom.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionStageSchemes());
@@ -894,6 +900,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		// 无运行中训练、训练已完成
 		if (singleRoom == null || singleRoom.getIsFinish()) {
+			log.error("room not exist error: businessTemplateId = [{}]",businessTemplateId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -916,6 +923,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
 		if (crRole == null) {
+			log.error("crRole not exist error: ResourceId = [{}]",singleRoom.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 

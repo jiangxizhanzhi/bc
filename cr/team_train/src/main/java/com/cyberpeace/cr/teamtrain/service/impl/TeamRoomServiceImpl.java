@@ -374,6 +374,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		List<UserInfo> userInfoList = remoteUserService.getByIdList(userList);
 		if (userInfoList.size() != userList.size()) {
+			log.error("user_info_missing！userList=[{}]", JsonUtil.toJsonString(userList));
 			throw new BusinessException(ErrorCode.USER_INFO_MISSING);
 		}
 
@@ -516,6 +517,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 
 			if (!roleGroup.equals(crRole.getRoleGroup())) {
+				log.error("permission denied！roomId=[{}]", roomId);
 				throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 			}
 
@@ -578,6 +580,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private void validateName(String name) {
 		// check if duplicate
 		if (teamRoomMapper.existByName(name)) {
+			log.error("training name duplicate！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
 	}

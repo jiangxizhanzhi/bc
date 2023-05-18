@@ -212,11 +212,13 @@ public class TeamTrainRoomController {
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、开启流量
 		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
+			log.error("start flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
 		return new BaseRsp();
@@ -233,11 +235,13 @@ public class TeamTrainRoomController {
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、停止流量
 		Boolean result = localSceneService.stopFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
+			log.error("stop flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
 		return new BaseRsp();
@@ -249,11 +253,13 @@ public class TeamTrainRoomController {
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		TeamRoom room = teamRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error("scene not started,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("failed to restart node,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp();
@@ -270,6 +276,7 @@ public class TeamTrainRoomController {
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("failed to recreate node,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
@@ -687,6 +694,7 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		// 获取该房间的角色信息

@@ -146,6 +146,7 @@ public class SingleRoomScoreController {
 		if (!directory.exists()) {
 			boolean isCreated = directory.mkdirs();
 			if (!isCreated) {
+				log.error("failed_to_make_dir: Path = [{}]", directory.getPath());
 				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
 			}
 		}

@@ -1,6 +1,8 @@
 package com.cyberpeace.cr.tool.controller.admin;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import com.cyberpeace.cs.constant.FileTypeContant;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
+@Slf4j
 @Api(tags = "工具附件")
 @RestController
 @RequestMapping("cr/tools/file")
@@ -44,6 +46,7 @@ public class ToolFileController {
 
 		// 限制上传附件大小为500M
 		if(file.getSize() > CommonConstant.TOOL_ATTACHMENT_FILE_SIZE){
+			log.error("file > 500M");
 			throw new BusinessException(ErrorCode.FILE_SIZE_EXCEED_UPPER_LIMIT);
 		}
 

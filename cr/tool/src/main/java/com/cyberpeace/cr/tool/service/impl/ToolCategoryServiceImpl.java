@@ -7,6 +7,7 @@ import com.cyberpeace.common.constant.CacheConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
@@ -97,6 +98,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		// 名称重复性校验
 		ToolCategory toolCategoryObject = toolCategoryMapper.getByCnName(toolCategory.getCnName(), toolCategory.getResourceId());
 		if (toolCategoryObject != null) {
+			log.error("toolCategoryObject is not null,toolCategoryObject =[{}]", JsonUtil.toJsonString(toolCategoryObject));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_NAME);
 		}
 		// 英文名称重复性校验

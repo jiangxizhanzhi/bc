@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.controller.web;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -38,7 +39,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
+@Slf4j
 @Api(tags = "单兵训练")
 @RestController
 @RequiresAuthentication
@@ -168,11 +169,13 @@ public class SingleRoomController {
 		SingleRoom room = singleRoomService
 				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
 		if (room == null) {
+			log.error("scene not started: ResourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("failed_to_restart_node: LocalSceneId = [{}]", room.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp();
@@ -186,11 +189,13 @@ public class SingleRoomController {
 		SingleRoom room = singleRoomService
 				.getByBusinessTemplateIdAndUserId(nodeOpsReq.getResourceId(), userId);
 		if (room == null) {
+			log.error("scene not started: ResourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("failed_to_restart_node: LocalSceneId = [{}]", room.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();

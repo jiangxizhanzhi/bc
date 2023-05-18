@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.controller.admin;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
+@Slf4j
 @Api(tags = "单兵训练模板")
 @RestController
 @RequiresAuthentication
@@ -116,6 +117,7 @@ public class SingleTemplateController {
 		SingleTemplate singleTemplate = singleTemplateService
 				.getByBusinessTemplateId(requestData.getResourceId());
 		if(singleTemplate == null){
+			log.error("template_not_exist: ResourceId = [{}]", requestData.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 
 		}

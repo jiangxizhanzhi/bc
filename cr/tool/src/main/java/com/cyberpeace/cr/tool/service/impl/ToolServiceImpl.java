@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.cyberpeace.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ import com.cyberpeace.integratation.service.RemoteTerminalService;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+@Slf4j
 @Service
 public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements ToolService {
 
@@ -137,6 +139,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		// 名称重复性校验
 		Tool toolObject = toolMapper.selectByName(tool.getName());
 		if (toolObject != null) {
+			log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
 	}
@@ -146,6 +149,7 @@ public class ToolServiceImpl extends ServiceImpl<ToolMapper, Tool> implements To
 		// 名称重复性校验
 		Tool toolObject = toolMapper.selectOtherByName(tool.getName(),tool.getResourceId());
 		if (toolObject != null) {
+			log.error("toolObject is  null,tool =[{}]", JsonUtil.toJsonString(tool));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_NAME);
 		}
 	}

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.tool.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.CacheConstant;
@@ -21,11 +21,21 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
 import com.cyberpeace.cr.tool.dao.entity.Tool;
 import com.cyberpeace.cr.tool.dao.entity.ToolCategory;
 import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -103,6 +113,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		// 英文名称重复性校验
 		toolCategoryObject = toolCategoryMapper.getByEnName(toolCategory.getEnName(), toolCategory.getResourceId());
 		if (toolCategoryObject != null) {
+			log.error("Tool category english name duplicate, enter again! enName = [{}]", toolCategory.getEnName());
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_TOOL_CATEGORY_ENNAME);
 		}
 	}

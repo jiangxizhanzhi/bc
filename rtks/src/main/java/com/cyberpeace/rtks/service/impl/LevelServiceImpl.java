@@ -1,19 +1,10 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
 import com.cyberpeace.rtks.dao.entity.Level;
@@ -21,8 +12,15 @@ import com.cyberpeace.rtks.dao.mapper.LevelMapper;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.LevelService;
 import com.google.common.collect.Lists;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -215,6 +213,7 @@ public class LevelServiceImpl extends ServiceImpl<LevelMapper, Level> implements
 		List<Level> childLevels = levelMapper.getChildLevels("default");
 		String maxSize = ConfigUtil.getContextProperty("rtks.level.size");
 		if(childLevels.size() >= Integer.parseInt(maxSize)){
+			log.error("The second-floor frame is full of [{}] floors! floors = [{}]", ConfigUtil.getContextProperty("rtks.level.size"), childLevels.size());
 			throw new BusinessException(CrBusinessErrorCode.SECOND_FLOOR_FRAME_IS_FULL,maxSize);
 		}
 	}

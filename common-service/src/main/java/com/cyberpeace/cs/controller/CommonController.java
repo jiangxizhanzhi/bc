@@ -3,18 +3,9 @@ package com.cyberpeace.cs.controller;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.common.util.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.constant.UploadAttachmentPermission;
@@ -23,14 +14,20 @@ import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Date;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -127,11 +124,13 @@ public class CommonController {
 		// 获取解压的文件
 		mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
 		if (StringUtils.isBlank(mdFilePath)) {
+			log.error("The md file could not be found in the archive. mdFilePath = [{}]", mdFilePath);
 			throw new BusinessException(ErrorCode.CANT_FIND_MD_FILE);
 		}
 		// md文件内容
 		File mdFile = new File(mdFilePath);
 		if (mdFile.length() > Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))) {
+			log.error("The markdown file in the archive cannot be larger than [{}] m! mdFile.length = [{}]",ConfigUtil.getContextProperty("md.max.size"), mdFile.length());
 			throw new BusinessException(ErrorCode.MD_SIZE_TOO_LARGE, Long.parseLong(ConfigUtil.getContextProperty("md.max.size"))/1048576);
 		}
 		String content = MdUtil.parseMarkdown(mdFilePath);

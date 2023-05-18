@@ -25,6 +25,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
 import com.cyberpeace.integratation.model.scene.SceneDumpContext;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 		List<BusinessTemplate> businessTemplateList = businessTemplateMapper.getAllByIds(resourceIds, type);
 		if(businessTemplateList.size() == 0){
+			log.error("IDs do not exist! ids = [{}]", StringUtils.join(resourceIds, ","));
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ID_NOT_EXIST);
 		}
 		if(businessTemplateList.size() < resourceIds.size()){
@@ -157,6 +159,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 				if(missionTemplate != null){
 					String taskName = missionTemplate.getTitle();
 					if(titleList.contains(taskName)){
+						log.error("Many tasks' name in train [{}] both are [{}]!", trainName, taskName);
 						throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_DUPLICATED_TASK_TITLE,
 								trainName, taskName);
 					}

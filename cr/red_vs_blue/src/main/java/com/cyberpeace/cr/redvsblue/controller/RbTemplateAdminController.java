@@ -36,6 +36,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 @Api(tags = "红蓝对抗模板后台")
 @RestController
+@Slf4j
 @RequiresAuthentication
 @RequestMapping("/cr/admin/red_vs_blue/red_vs_blue_templates/")
 public class RbTemplateAdminController {

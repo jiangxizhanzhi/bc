@@ -1,24 +1,5 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
-import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
-import com.cyberpeace.cr.evaluation.service.context.EvalAggregationContext;
-import com.cyberpeace.integratation.model.evaluation.FormatData;
-import com.cyberpeace.integratation.service.RemotePythonService;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -34,22 +15,36 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAggregationService;
 import com.cyberpeace.cr.evaluation.service.EvalCollectionService;
 import com.cyberpeace.cr.evaluation.service.EvalIndicatorService;
 import com.cyberpeace.cr.evaluation.service.context.EvalIndicatorContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
+import com.cyberpeace.integratation.model.evaluation.FormatData;
+import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "后台-测试靶场-指标项管理")
 @RestController
@@ -130,6 +125,7 @@ public class EvalIndicatorAdminController {
 
 		// 校验名称重复
 		if (evalIndicatorMapper.existByName(req.getName(), resourceId)) {
+			log.error("Name duplicate! name = [{}], resourceId = [{}]", req.getName(), resourceId);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

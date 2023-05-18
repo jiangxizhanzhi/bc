@@ -330,6 +330,7 @@ public class EvalVariableRefServiceImpl extends ServiceImpl<EvalVariableRefMappe
     public EvalRecordResultVariableRsp resultVariable(String variableId) {
         EvalVariableRef evalVariableRef = getById(variableId);
         if (evalVariableRef == null) {
+            log.error("Resource not found! variableId = [{}]", variableId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 

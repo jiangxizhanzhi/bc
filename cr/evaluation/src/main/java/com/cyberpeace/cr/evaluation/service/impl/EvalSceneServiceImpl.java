@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.cyberpeace.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTaskFlowListQuery;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
+@Slf4j
 @Service
 public class EvalSceneServiceImpl implements EvalSceneService {
 
@@ -60,6 +63,7 @@ public class EvalSceneServiceImpl implements EvalSceneService {
 
 		// 停止场景失败时的处理
 		if (!stopResult) {
+			log.error("Failed to stop scene! localScene = [{}]", JsonUtil.toJsonString(localScene));
 			throw new BusinessException(ErrorCode.FAILED_TO_STOP_SCENE);
 		}
 

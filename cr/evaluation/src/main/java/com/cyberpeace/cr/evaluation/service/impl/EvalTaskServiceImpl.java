@@ -1,18 +1,5 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import com.cyberpeace.cr.evaluation.service.EvalRecordService;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
@@ -28,6 +15,7 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTaskStep;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTemplateMapper;
+import com.cyberpeace.cr.evaluation.service.EvalRecordService;
 import com.cyberpeace.cr.evaluation.service.EvalSceneService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
@@ -38,8 +26,18 @@ import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -76,12 +74,14 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		// 校验任务是否存在
 		if (evalTask == null) {
+			log.error("The evaluation task does not exist! taskId = [{}]", taskId);
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
 		}
 
 		// 校验用户权限
 		if (!Objects.equals(evalTask.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
+			log.error("Permission denied! CreateUserId = [{}], UserId = [{}]", evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
@@ -95,6 +95,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		if (evalTask.getEndTime() != null) {
 			// 校验任务状态
+			log.error("The evaluation task is not running! taskId = [{}]", taskId);
 			throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_RUNNING);
 		}
 
@@ -312,6 +313,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 
 		// 校验名称重复
 		if (evalTaskMapper.existByNameAndTemplateId(taskName, templateId, taskId)) {
+			log.error("Name duplicate! taskName = [{}], templateId = [{}], taskId = [{}]", taskName, templateId, taskId);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 

@@ -25,9 +25,14 @@ import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.*;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvaResultMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.*;
-import com.cyberpeace.cr.evaluation.service.context.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
+import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.mp.MpCollectionEvent;
@@ -48,7 +53,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -141,6 +145,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         if (SqlHelper.retBool(querySet.count())) {
+            log.error("Name duplicate! requestData = [{}]", JsonUtil.toJsonString(requestData));
             throw new BusinessException(ErrorCode.NAME_DUPLICATE);
         }
     }
@@ -156,11 +161,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 校验任务是否存在
         if (evalTask == null) {
+            log.error("The evaluation task does not exist! taskId = [{}]", taskId);
             throw new BusinessException(CrBusinessErrorCode.EVAL_TASK_NOT_EXIST);
         }
 
         // 校验用户权限
         if (!Objects.equals(evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId())) {
+            log.error("Permission denied! CreateUserId = [{}], UserId = [{}]", evalTask.getCreateUserId(), UserInfoContext.getUserContext().getUserId());
             throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
         }
 
@@ -172,9 +179,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 非法请求
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
         if (evalRecord == null) {
+            log.error("评估未找到! resourceId = [{}]", resourceId);
             throw new BusinessException("评估未找到");
         }
         if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
+            log.error("评估已启动! resourceId = [{}]", resourceId);
             throw new BusinessException("评估已启动");
         }
         return evalRecord;
@@ -250,6 +259,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 请求体变量项数量与db获取体系下变量项数量一致
         if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
+            log.error("Index system variable data is invalid! evalCollections = [{}], keySet = [{}]", JsonUtil.toJsonString(evalCollections), JsonUtil.toJsonString(evalRecordVariableContextMap.keySet()));
             throw new BusinessException(CrBusinessErrorCode.SYSTEM_INDEX_IS_FAILED);
         }
 
@@ -357,6 +367,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 if (evalIndicator == null) {
+                    log.error("The three-level index [{}] is invalid!", evalIndex.getName());
                     throw new BusinessException(CrBusinessErrorCode.THIRD_INDEX_IS_FAILED, evalIndex.getName());
                 }
 
@@ -1245,12 +1256,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalTask evalTask = evalTaskMapper.selectById(taskId);
 
         if (StringUtils.isEmpty(evalRecord.getTaskId()) || StringUtils.isEmpty(templateId)) {
+            log.error("Task not exist! taskId is empty or templateId is empty");
             throw new BusinessException(CrBusinessErrorCode.TASK_NOT_EXIST_ERROR);
         }
         data.put("title", getTitle(template.getName()));
         JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
         String topoLogo = topoData.getString("logo");
         if (StringUtils.isEmpty(topoLogo)) {
+            log.error("The logo file does not exist! topoLogo is empty, topoId = [{}]", template.getTopoId());
             throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
         }
         data.put("topoLogo", remoteServerEnvService.getFileServerHost() + topoLogo);

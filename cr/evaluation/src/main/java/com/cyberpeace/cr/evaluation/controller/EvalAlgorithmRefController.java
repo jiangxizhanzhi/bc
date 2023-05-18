@@ -41,6 +41,7 @@ public class EvalAlgorithmRefController {
 		String evalAlgorithmId = req.getResourceId();
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(evalAlgorithmId);
 		if(null == evalAlgorithmRef){
+			log.error("Resource not found! evalAlgorithmId = [{}]", evalAlgorithmId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
@@ -62,6 +63,7 @@ public class EvalAlgorithmRefController {
 
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(resourceId);
 		if(null == evalAlgorithmRef){
+			log.error("Resource not found! resourceId = [{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		return new BaseRsp(evalAlgorithmRef);

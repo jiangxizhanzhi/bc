@@ -1,16 +1,24 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import com.cyberpeace.integratation.service.RemotePythonService;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -18,22 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRecordResultIndexRsp;
-import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
-import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
-import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
-import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
-import com.cyberpeace.integratation.service.RemotePythonService;
-import com.google.common.collect.Sets;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -165,6 +163,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			// 非指标项id, 查询变量项
 			EvalVariableRef evalVariableRef = evalVariableRefService.getById(indexId);
 			if (evalVariableRef == null) {
+				log.error("Resource not found! indexId = [{}]",indexId);
 				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			}
 			EvalRoomPairRsp evalRoomPairRsp = new EvalRoomPairRsp();
@@ -286,6 +285,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	public EvalRecordResultIndexRsp resultIndex(String indexId) {
 		EvalIndexRef evalIndexRef = getById(indexId);
 		if (evalIndexRef == null) {
+			log.error("Resource not found! indexId = [{}]",indexId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -306,6 +306,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		} else if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
 			firstIndex.setChildren(collectionIndexes(firstIndex, 2, evalRecordResultIndexRspMap));
 		} else {
+			log.error("Invalid parameter! level = [{}]",evalIndexRef.getLevel());
 			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 		return firstIndex;

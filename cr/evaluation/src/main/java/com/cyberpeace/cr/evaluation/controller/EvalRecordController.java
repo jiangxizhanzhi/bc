@@ -138,9 +138,11 @@ public class EvalRecordController {
         // 评估对象
         EvalRecord evalRecord = evalRecordService.getById(requestData.getResourceId());
         if (evalRecord == null) {
+            log.error("评估未找到! resourceId = [{}]", requestData.getResourceId());
             throw new BusinessException("评估未找到");
         }
         if (evalRecord.getStatus().equals(EvalRecord.Status.RUNNING.getCode())) {
+            log.error("评估已启动! resourceId = [{}]", requestData.getResourceId());
             throw new BusinessException("评估已启动");
         }
 

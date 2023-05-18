@@ -1,5 +1,7 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "靶场测评-场景")
+@Slf4j
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/scene")
@@ -41,6 +44,7 @@ public class EvalTaskSceneController {
 		Boolean result = localSceneService.restartNode(evalTask.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("Node restart failure! nodeOpsReq = [{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp<>(result);
@@ -54,6 +58,7 @@ public class EvalTaskSceneController {
 		Boolean result = localSceneService.recreateNode(evalTask.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("Node recreate failure! nodeOpsReq = [{}]", JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp<>(result);

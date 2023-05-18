@@ -1,22 +1,12 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-
-import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -36,8 +26,17 @@ import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
 import com.cyberpeace.cs.dao.entity.Attachment;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
-
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -71,12 +70,14 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		// 校验模板是否存在
 		if (evalTemplate == null) {
+			log.error("Training not exists! templateId = [{}]", templateId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
 		// 校验用户权限
 		if (!Objects.equals(evalTemplate.getCreateUserId(),
 				UserInfoContext.getUserContext().getUserId())) {
+			log.error("Permission denied! userId = [{}]", UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
@@ -171,6 +172,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		// 校验名称重复
 		if (evalTemplateMapper.existByNameAndUserIdAndId(templateName,
 				UserInfoContext.getUserContext().getUserId(), templateId)) {
+			log.error("Name duplicate! templateName = [{}]", templateName);
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
@@ -181,6 +183,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		// 校验LOGO文件是否存在
 		if (!attachmentService.isExist(evalTemplateBaseInfoContext.getLogoId())) {
+			log.error("The logo file does not exist! logoId = [{}]", evalTemplateBaseInfoContext.getLogoId());
 			throw new BusinessException(CrBusinessErrorCode.LOGO_NOT_EXIST);
 		}
 
@@ -188,6 +191,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		if (!crConstantsService.validateType(
 				CrConstantsConfig.ConstantsType.EVALUATION_CATEGORY.getCode(),
 				evalTemplateBaseInfoContext.getCategoryCode())) {
+			log.error("The evaluation type does not exist! categoryCode = [{}]", evalTemplateBaseInfoContext.getCategoryCode());
 			throw new BusinessException(CrBusinessErrorCode.EVAL_CATEGORY_NOT_EXIST);
 		}
 
@@ -213,6 +217,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 
 		// 校验步骤标题是否重复
 		if (new HashSet<>(titleList).size() != titleList.size()) {
+			log.error("Title duplicate! titleList = [{}]", StringUtils.join(titleList, ","));
 			throw new BusinessException(CrBusinessErrorCode.TITLE_DUPLICATE);
 		}
 
@@ -220,6 +225,7 @@ public class EvalTemplateServiceImpl extends ServiceImpl<EvalTemplateMapper, Eva
 		List<Integer> expectStageList = ListUtil.listRangeInt(1, stageList.size());
 		if (new HashSet<>(stageList).size() != expectStageList.size()
 				|| !ListUtil.compare2List(stageList, expectStageList)) {
+			log.error("The configuration of the evaluation step is incorrect! expectStageList = [{}]", JsonUtil.toJsonString(stageList));
 			throw new BusinessException(CrBusinessErrorCode.EVAL_STEP_ILLEGAL);
 		}
 

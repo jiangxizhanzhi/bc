@@ -1,21 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.cyberpeace.common.util.StreamApiUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -26,6 +11,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
@@ -40,11 +26,23 @@ import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalListQuery;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "后台-测试靶场-算法管理")
@@ -101,6 +99,7 @@ public class EvalAlgorithmAdminController {
 
 		// 校验名称重复
 		if (evalAlgorithmMapper.existByName(req.getName(), resourceId)) {
+			log.error("Name duplicate! name = [{}]", req.getName());
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
@@ -169,6 +168,7 @@ public class EvalAlgorithmAdminController {
 		List<EvalAlgorithm> evalAlgorithms = evalAlgorithmMapper.selectList(queryWrapper);
 		List<String> ids = StreamApiUtils.getColumn(evalAlgorithms, EvalAlgorithm::getResourceId);
 		if(ids.contains(evalAlgorithmId)){
+			log.error("The built-in algorithm forbids deletion! evalAlgorithmId = [{}]", evalAlgorithmId);
 			throw new BusinessException(CrBusinessErrorCode.BUILTIN_ALGORITHM_FORBID_DELETE_ERROR);
 		}
 	}
@@ -193,6 +193,7 @@ public class EvalAlgorithmAdminController {
 		List<String> deleteReqIds = deleteReq.getIds();
 		long count = deleteReqIds.stream().filter(ids::contains).count();
 		if(count > 0){
+			log.error("The built-in algorithm forbids deletion! deleteReqIds = [{}]", JsonUtil.toJsonString(deleteReqIds));
 			throw new BusinessException(CrBusinessErrorCode.BUILTIN_ALGORITHM_FORBID_DELETE_ERROR);
 		}
 		// 如果都是未使用，直接删除，存在已使用，则先修改已使用算法的状态，再删除其他所有算法

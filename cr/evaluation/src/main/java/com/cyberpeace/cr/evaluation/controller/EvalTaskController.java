@@ -1,24 +1,15 @@
 package com.cyberpeace.cr.evaluation.controller;
 
-import java.util.Date;
-import java.util.List;
-
-import com.cyberpeace.cr.crbase.service.context.TrainingReport;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.evaluation.controller.req.*;
+import com.cyberpeace.cr.crbase.service.context.TrainingReport;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTaskDeleteReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStartReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStepReq;
+import com.cyberpeace.cr.evaluation.controller.req.EvalTaskStopReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskIdRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalTaskTimeLineRsp;
@@ -33,12 +24,24 @@ import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTimeLineContext;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 @Api(tags = "靶场测评-任务")
+@Slf4j
 @RestController
 @RequiresAuthentication
 @RequestMapping("/cr/eval/task")
@@ -99,6 +102,7 @@ public class EvalTaskController {
 
 		// 启动前校验当前模板下是否存在运行中任务
 		if (evalTemplateService.validateExistTask(templateId, EvalTask.Status.RUNNING)) {
+			log.error("The evaluation range has running task! templateId = [{}]",templateId);
 			throw new BusinessException(CrBusinessErrorCode.RUNNING_EVAL_TASK_EXIST);
 		}
 

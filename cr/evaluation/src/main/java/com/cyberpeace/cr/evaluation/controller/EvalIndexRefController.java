@@ -32,6 +32,7 @@ public class EvalIndexRefController {
     public BaseRsp<EvalIndexRef> update(@RequestBody EvalIndexRefReq requestData) {
         EvalIndexRef evalIndexRef = evalIndexRefMapper.selectById(requestData.getResourceId());
         if(null == evalIndexRef){
+            log.error("Resource not found! resourceId = [{}]", requestData.getResourceId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         evalIndexRef.setType(requestData.getType());
@@ -45,6 +46,7 @@ public class EvalIndexRefController {
     public BaseRsp<EvalIndexRef> get(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId) {
         EvalIndexRef evalIndexRef = evalIndexRefMapper.selectById(resourceId);
         if(null == evalIndexRef){
+            log.error("Resource not found! resourceId = [{}]", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         return new BaseRsp<>(evalIndexRef);

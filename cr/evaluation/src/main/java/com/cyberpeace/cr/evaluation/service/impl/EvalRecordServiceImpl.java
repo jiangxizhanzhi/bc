@@ -1143,7 +1143,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 rsp.setName(evalIndexRef.getName());
                 for(int i = 0; i < evalResults.size(); i++){
                     EvalResult evalResult = evalResults.get(i);
-                    rsp.setExeCycle(evalResult.getExeCycle());
+                    if(i == 0){
+                        rsp.setExeCycle(evalResult.getExeCycle());
+                    }
                     Integer firstIndexRes = evalResult.getFirstIndexRes();
                     setCycleResult(rsp, i, firstIndexRes);
                 }
@@ -1228,7 +1230,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         } else if(i == 2) {
             rsp.setThirdScore(score);
         } else if(i ==3) {
-            rsp.setFifthScore(score);
+            rsp.setFourthScore(score);
         } else if(i ==4) {
             rsp.setFifthScore(score);
         }

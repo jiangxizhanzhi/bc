@@ -1,15 +1,8 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.*;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
@@ -18,6 +11,11 @@ import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service("theory")
 public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
@@ -134,14 +132,15 @@ public class TheoryEvaluateHandler implements PracticeEvaluateHandler {
 			}
 
 			List<String> submits = Lists.newArrayList(submitAnswer.values());
-			List<String> corrects = StreamApiUtils.getColumn(correctAnswer, BlankAnswer::getValue);
 
-			boolean solved = CollectionUtils.isEqualCollection(submits, corrects);
+			boolean solved = true;
 			Double score = CommonConstant.ZERO.doubleValue();
-			for (BlankAnswer blankAnswer : correctAnswer) {
-				if (submits.contains(blankAnswer.getValue())) {
-					score += MathUtils.divide(blankAnswer.getWeight() * totalScore,
+			for (int i = 0; i < correctAnswer.size(); i++) {
+				if (correctAnswer.get(i).getValue().equals(submits.get(i))) {
+					score += MathUtils.divide(correctAnswer.get(i).getWeight() * totalScore,
 							CommonConstant.HUNDRED.doubleValue(), CommonConstant.ONE);
+				} else {
+					solved = false;
 				}
 			}
 

@@ -133,6 +133,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void release(String missionId, String roleId, String currentUserId) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
+			log.error("mission does not exist！missionId=[{}]", missionId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
@@ -689,6 +690,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void batchRelease(List<String> missionIds, String roleId, String currentUserId) {
 		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
 		if (CollectionUtils.isEmpty(missions)) {
+			log.error("missions does not exist！missionIds=[{}]", JsonUtil.arrayToString(missionIds));
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 

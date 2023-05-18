@@ -91,7 +91,7 @@ public class RbRoomRefereeController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
 		// 鉴权
-		rbRoomService.checkRefereePermission(req.getRoomId(),
+		rbRoomService.checkRefereePermission(req.getRoom_id(),
 				UserInfoContext.getUserContext().getUserId());
 		// get evaluation list
 		List<EvaluationListRsp> res = rbRefereeService.getEvaluationList(req);
@@ -105,7 +105,7 @@ public class RbRoomRefereeController {
 	 * @param missionEvaluationListReq 任务评价列表请求体
 	 * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
 	 */
-	@ApiOperation("获取学员的评估提交记录")
+	@ApiOperation("获取学员的评估提交记录-弃用")
 	@GetMapping("/mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MissionEvaluationRsp>>

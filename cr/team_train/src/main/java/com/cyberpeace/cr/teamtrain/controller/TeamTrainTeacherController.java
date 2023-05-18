@@ -2,17 +2,21 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -21,7 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@Api(tags = "团队训练实例")
+@Api(tags = "团队训练实例-教员")
 @RestController
 @RequestMapping("/cr/training_team/training_team_teacher")
 public class TeamTrainTeacherController {
@@ -45,5 +49,17 @@ public class TeamTrainTeacherController {
 		}
 		return new BaseRsp<>(
 				crCommonService.getMonitorSessions(room.getLocalSceneId(), student_id));
+	}
+
+	@ApiOperation("获取学员的评估提交记录")
+	@GetMapping("/evaluation/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
+		// 鉴权
+		teamRoomService.checkTeacherPermission(req.getRoom_id(),
+				UserInfoContext.getUserContext().getUserId());
+		// get evaluation list
+		List<EvaluationListRsp> res = teamRoomService.getEvaluationList(req);
+		return new BaseRsp<>(res);
 	}
 }

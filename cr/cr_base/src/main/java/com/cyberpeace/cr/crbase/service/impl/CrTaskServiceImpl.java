@@ -16,6 +16,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
@@ -33,9 +34,13 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListBo;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -56,18 +61,27 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			CrTaskLog.ActionCode.MAN_FAILURE.getCode(),
 			CrTaskSubmit.EvaluateStatus.REJECT.getCode(),
 			CrTaskLog.ActionCode.MAN_REJECT.getCode());
+
 	@Autowired
 	private CrTaskMapper crTaskMapper;
+
 	@Autowired
 	private MissionMapper missionMapper;
+
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
+
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
 	@Autowired
 	private CrTaskLogMapper crTaskLogMapper;
+
 	@Autowired
 	private MyWebSocketHandler webSocketHandler;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@Override
 	public CrTask getById(String taskId) {
@@ -335,7 +349,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			List<String> choices = JsonUtil.toJsonObjectArray(missionAnswer, String.class);
 			Set<String> choiceSet = Sets.newHashSet(choices);
 			return userChoiceSet.equals(choiceSet);
-		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())){
+		} else if (missionType.equals(MissionBase.MissionType.FILE.getCode())) {
 			return userAnswer.equalsIgnoreCase(missionAnswer);
 		} else {
 			return userAnswer.equals(missionAnswer);
@@ -583,6 +597,27 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	@Override
 	public Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds) {
 		return crTaskMapper.countByRoomIdAndRoleIds(roomId, crRoleIds);
+	}
+
+	@Override
+	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
+		// get task_submit list
+		List<EvaluationListBo> boList = crTaskSubmitMapper.list(req.getRoom_id(), req.getRole_id(),
+				req.getUser_id(), req.getStatus());
+		List<EvaluationListRsp> rspList = BeanUtils.deepCopyList(boList, EvaluationListRsp.class);
+		List<String> userIds = rspList.stream().map(EvaluationListBo::getSubmitUser)
+				.collect(Collectors.toList());
+		// get user info
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		for (EvaluationListRsp rsp : rspList) {
+			UserInfo userInfo = userInfoMap.get(rsp.getSubmitUser());
+			if (userInfo == null) {
+				continue;
+			}
+			rsp.setSubmitUserAvatar(userInfo.getAvatarUrl());
+			rsp.setSubmitUserName(userInfo.getName());
+		}
+		return rspList;
 	}
 
 }

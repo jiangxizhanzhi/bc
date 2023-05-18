@@ -271,6 +271,13 @@ public class TeamTrainScoreController {
 		return new BaseRsp<>();
 	}
 
+	/**
+	 * 弃用
+	 * 更换为不分页的接口
+	 *
+	 * @param missionEvaluationListReq 任务评估列表请求体
+	 * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
+	 */
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/scene_mission_evaluations")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

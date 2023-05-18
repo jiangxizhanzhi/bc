@@ -14,14 +14,14 @@ public class EvaluationListReq implements Serializable {
 
     @NotNull
     @ApiModelProperty(value = "训练ID")
-    private String roomId;
+    private String room_id;
 
     @ApiModelProperty(value = "学员ID")
-    private String userId;
+    private String user_id;
 
     @ApiModelProperty(value = "角色id")
-    private String roleId;
+    private String role_id;
 
     @ApiModelProperty(value = "评估状态")
-    private Integer evaluateStatus;
+    private Integer status;
 }

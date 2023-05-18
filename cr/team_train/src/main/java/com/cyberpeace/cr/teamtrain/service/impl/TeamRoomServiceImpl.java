@@ -33,6 +33,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -473,8 +475,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public List<CrRole> getStudentsRoles(String roomId) {
-		return crRoleService.getRolesByRoomAndGroups(roomId, Lists
-				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+		return crRoleService.getRolesByRoomAndGroups(roomId,
+				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+	}
+
+	@Override
+	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
+		return crTaskService.getEvaluationList(req);
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 
 public interface CrTaskService {
 
@@ -313,4 +315,12 @@ public interface CrTaskService {
 	 * @return 任务个数
 	 */
 	Integer countByRoomIdAndRoleIds(String roomId, List<String> crRoleIds);
+
+	/**
+	 * 获取评估列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<EvaluationListRsp>}
+	 */
+	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
 }

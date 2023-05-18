@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
@@ -98,5 +100,19 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 */
 	void checkStudentPermission(String roomId, String userId);
 
-    List<CrRole> getStudentsRoles(String roomId);
+	/**
+	 * 获取学员角色
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> getStudentsRoles(String roomId);
+
+	/**
+	 * 获取评估列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<EvaluationListRsp>}
+	 */
+	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
 }

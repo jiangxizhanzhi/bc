@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper">
+    <insert id="batchInsert" parameterType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
+        insert into cr_task_log
+        (resource_id, room_id, mission_id, action_code,
+        user_id, task_id, create_time, update_time)
+        values
+        <foreach collection="taskLogs" item="taskLost" separator=",">
+            (#{taskLost.resourceId}, #{taskLost.roomId}, #{taskLost.missionId}, #{taskLost.actionCode},
+            #{taskLost.userId}, #{taskLost.taskId}, now(),now())
+        </foreach>
+    </insert>
     <select id="selectReleaseByRoomIdAndActionCodes" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
         select *
         from cr_task_log

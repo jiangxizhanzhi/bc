@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
@@ -96,4 +97,6 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param userId 用户id
 	 */
 	void checkStudentPermission(String roomId, String userId);
+
+    List<CrRole> getStudentsRoles(String roomId);
 }

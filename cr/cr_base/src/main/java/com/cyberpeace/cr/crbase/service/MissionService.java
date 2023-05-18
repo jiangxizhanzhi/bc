@@ -259,4 +259,13 @@ public interface MissionService extends IService<Mission> {
 	 * @param title 任务名称
 	 */
 	void updateMissionValidate(String missionId, String roomId, String title);
+
+
+	/**
+	 * 批量下发任务
+	 * @param missionIds 任务ids
+	 * @param roleId 角色id
+	 * @param currentUserId 用户id
+	 */
+	void batchRelease(List<String> missionIds, String roleId, String currentUserId);
 }

@@ -472,6 +472,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
+	public List<CrRole> getStudentsRoles(String roomId) {
+		return crRoleService.getRolesByRoomAndGroups(roomId, Lists
+				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+	}
+
+	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
 		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER.getCode());
 	}

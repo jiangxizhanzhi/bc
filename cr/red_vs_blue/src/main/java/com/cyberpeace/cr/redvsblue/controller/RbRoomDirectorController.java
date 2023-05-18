@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -457,7 +458,7 @@ public class RbRoomDirectorController {
 		// get tasks
 		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
 
-		TaskReleaseProgress progress = new TaskReleaseProgress();
+		RedBlueTaskReleaseProgress progress = new RedBlueTaskReleaseProgress();
 		// count
 		Integer released = crTaskList.size();
 		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
@@ -503,5 +504,31 @@ public class RbRoomDirectorController {
 		}
 
 		return new BaseRsp<>(progress);
+	}
+
+	@ApiOperation("批量任务下发")
+	@PostMapping("/batchMissions")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<String>
+	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+
+		rbRoomService.checkDirectorPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		rbRoomService.checkRoomOpening(crRole.getRoomId());
+
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+
+		missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
+				releaseMissionReq.getRoleResourceId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+
+		return new BaseRsp<>();
 	}
 }

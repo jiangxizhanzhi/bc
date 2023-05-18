@@ -6,6 +6,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.TaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.TeamTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -39,10 +45,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
@@ -658,5 +660,80 @@ public class TeamTrainRoomController {
 
 		return baseRole;
 	}
+	@ApiOperation("批量任务下发")
+	@PostMapping("/batchMissions")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<String>
+	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
+		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		teamRoomService.checkRoomOpening(crRole.getRoomId());
+		if (crRole == null) {
+			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
+				releaseMissionReq.getRoleResourceId(),
+				UserInfoContext.getUserContext().getUserId());
+		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		return new BaseRsp<>();
+	}
 
+	@ApiOperation("团队对抗-任务导调-任务进度")
+	@GetMapping("/mission/progress")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TeamTaskReleaseProgress> getMissionStatistics(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		// 获取该房间的角色信息
+		List<CrRole> studentRoles = teamRoomService.getStudentsRoles(resource_id);
+		// parse mission and users
+		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
+				.collect(Collectors.toList());
+		// 获取该房间已下发的任务
+		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
+
+		TeamTaskReleaseProgress progress = new TeamTaskReleaseProgress();
+		// count
+		Integer released = crTaskList.size();
+		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
+		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+
+		progress.setTotal(total);
+		progress.setReleased(released);
+		progress.setUnreleased(total - released);
+		progress.setSubmitted(submitted);
+		progress.setUnsubmitted(released - submitted);
+
+		// 循环各个角色和阶段
+		for (CrRoleSimple role : roles) {
+			RoleTaskReleaseProgress roleProgress = new RoleTaskReleaseProgress();
+			roleProgress.setRoleId(role.getResourceId());
+			roleProgress.setRoleName(role.getName());
+			for (CrRoleMissionSchemeStage stage : role.getMissionScheme()) {
+				StageTaskReleaseProgress stageProgress = new StageTaskReleaseProgress();
+				stageProgress.setStageName(stage.getStage());
+				// 计算该阶段内任务下发数和任务总数*人数
+				Integer releasedTaskCount = crTaskList.stream()
+						.mapToInt(task -> stage.getMissions().contains(task.getMissionId()) ? 1 : 0)
+						.sum();
+				Integer taskCount = stage.getMissions().size() * role.getUserIds().size();
+				stageProgress.setTotal(taskCount);
+				stageProgress.setReleased(releasedTaskCount);
+				// 阶段加入角色之中
+				roleProgress.getStage().add(stageProgress);
+				roleProgress.addTotal(taskCount);
+				roleProgress.addReleased(releasedTaskCount);
+			}
+			progress.getRoles().getRole().add(roleProgress);
+			progress.getRoles().addTotal(roleProgress.getTotal());
+			progress.getRoles().addReleased(roleProgress.getReleased());
+		}
+
+		return new BaseRsp<>(progress);
+	}
 }

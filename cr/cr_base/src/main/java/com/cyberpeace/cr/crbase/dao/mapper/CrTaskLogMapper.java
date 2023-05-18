@@ -19,4 +19,6 @@ public interface CrTaskLogMapper extends BaseMapper<CrTaskLog> {
 			List<String> ids, List<Integer> actionCodes);
 
 	List<String> getReleaseIdsByRoomIdAndUserId(String roomId, String studentId);
+
+	void batchInsert(List<CrTaskLog> taskLogs);
 }

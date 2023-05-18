@@ -5,10 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author yinqingrong
@@ -684,6 +683,69 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		if (checkNameDuplicate(title, missionIds)) {
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
 		}
+	}
+
+	@Override
+	public void batchRelease(List<String> missionIds, String roleId, String currentUserId) {
+		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
+		if (CollectionUtils.isEmpty(missions)) {
+			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
+		}
+
+		CrRole role = crRoleMapper.selectById(roleId);
+		if (role == null) {
+			log.error("role does not exist！roleId=[{}]", roleId);
+			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+		}
+		//已下发的任务
+		List<CrTask> crTasks = crTaskMapper.selectByMissionIds(missionIds);
+
+		//过滤已下发的任务
+		if (crTasks.size() > 0) {
+			Set<String> existMissionIds = crTasks.stream().map(a -> a.getMissionId()).collect(Collectors.toSet());
+			missions=missions.stream().filter(a->!existMissionIds.contains(a.getResourceId())).collect(Collectors.toList());
+			if (CollectionUtils.isEmpty(missions)) {
+				return;
+			}
+		}
+
+		Date releaseTime = new Date();
+
+		List<CrTask> tasks = new ArrayList<>();
+		List<CrTaskLog> taskLogs = new ArrayList<>();
+		//根据任务和user列表创建任务
+		for (Mission mission : missions) {
+			for (String userId : role.getUserIdList()) {
+				CrTask task = new CrTask();
+				task.setMissionId(mission.getResourceId());
+				task.setUserId(userId);
+				task.setStatus(CrTask.TaskStatus.RELEASED.getCode());
+				task.setReleaseTime(releaseTime);
+				task.setRoomId(mission.getRoomId());
+				task.setRoleId(role.getResourceId());
+				task.setBusinessType(role.getBusinessType());
+				task.setMissionTemplateId(mission.getMissionTemplateId());
+
+				tasks.add(task);
+			}
+			CrTaskLog taskLog = new CrTaskLog();
+			taskLog.setRoomId(mission.getRoomId());
+			taskLog.setMissionId(mission.getResourceId());
+			taskLog.setActionCode(CrTaskLog.ActionCode.RELEASE.getCode());
+			taskLog.setUserId(currentUserId);
+			taskLogs.add(taskLog);
+		}
+
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskMapper.batchInsert(tasks);
+				crTaskLogMapper.batchInsert(taskLogs);
+
+			}
+		});
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

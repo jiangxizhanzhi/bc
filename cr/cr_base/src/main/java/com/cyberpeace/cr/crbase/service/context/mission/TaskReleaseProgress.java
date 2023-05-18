@@ -23,9 +23,4 @@ public class TaskReleaseProgress extends ReleaseProgress implements Serializable
 	@ApiModelProperty(value = "待提交数")
 	private Integer unsubmitted = 0;
 
-	@ApiModelProperty(value = "红方")
-	private GroupTaskReleaseProgress redRoles = new GroupTaskReleaseProgress();
-
-	@ApiModelProperty(value = "蓝方")
-	private GroupTaskReleaseProgress blueRoles = new GroupTaskReleaseProgress();
 }

@@ -74,6 +74,13 @@ public class SingleRoomScoreController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	/**
+	 * 5.4弃用
+	 * /single_train/single_train/record/detail 替代
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("查询评分")
 	@GetMapping("/history_detail")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)

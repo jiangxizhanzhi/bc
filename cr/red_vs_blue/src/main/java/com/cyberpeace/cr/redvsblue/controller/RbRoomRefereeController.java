@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -25,16 +23,21 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
@@ -59,6 +62,9 @@ public class RbRoomRefereeController {
 	@Autowired
 	private CrCommonService crCommonService;
 
+	@Autowired
+	private RbRefereeService rbRefereeService;
+
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -80,6 +86,25 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("获取学员的评估提交记录")
+	@GetMapping("/evaluation/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
+		// 鉴权
+		rbRoomService.checkRefereePermission(req.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+		// get evaluation list
+		List<EvaluationListRsp> res = rbRefereeService.getEvaluationList(req);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 5.4弃用
+	 * 更换为不分页的评估列表接口
+	 *
+	 * @param missionEvaluationListReq 任务评价列表请求体
+	 * @return {@code BaseRsp<List<MissionEvaluationRsp>>}
+	 */
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

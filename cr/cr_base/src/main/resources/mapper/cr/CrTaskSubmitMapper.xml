@@ -12,7 +12,8 @@
         select *
         from cr_task_submit
         where task_id = #{taskId}
-        order by evaluate_time desc limit 1
+        order by evaluate_time desc
+        limit 1
     </select>
 
 
@@ -76,6 +77,34 @@
         <foreach collection="userIds" item="userId" separator="," open="(" close=")">
             #{userId}
         </foreach>
+    </select>
+    <select id="list" resultType="com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListBo">
+        select
+        cr_task_submit.resource_id,
+        cr_task_submit.evaluate_time,
+        cr_task.last_submit_time as submit_time,
+        cr_task.user_id as submit_user,
+        cr_task.role_id,
+        cr_role.name as role_name,
+        cr_role.role_group,
+        cr_mission.title as mission_title,
+        cr_task_submit.evaluate_status,
+        if(cr_task_submit.evaluator_id, 1, 0) as evaluate_type,
+        cr_task_submit.score
+        from cr_task_submit
+        left join cr_task on cr_task_submit.task_id = cr_task.resource_id
+        left join cr_mission on cr_task.mission_id = cr_mission.resource_id
+        left join cr_role on cr_task.role_id = cr_role.resource_id
+        where cr_task_submit.room_id = #{roomId}
+        <if test="roleId != null and roleId != ''">
+            and cr_task.role_id = #{roleId}
+        </if>
+        <if test="userId != null and userId != ''">
+            and cr_task.user_id = #{userId}
+        </if>
+        <if test="evaluateStatus != null">
+            and cr_task_submit.evaluate_status = #{evaluateStatus}
+        </if>
     </select>
 
 </mapper>

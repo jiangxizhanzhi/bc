@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListBo;
 
 @Mapper
 @Repository
@@ -30,4 +31,7 @@ public interface CrTaskSubmitMapper extends BaseMapper<CrTaskSubmit> {
 	List<CrTaskSubmit> selectOrderedSubmitsByTask(String resourceId);
 
 	List<CrTaskSubmit> selectByRoomIdAndUsers(String roomId, List<String> userIds);
+
+	List<EvaluationListBo> list(@Param("roomId") String roomId, @Param("roleId") String roleId,
+			@Param("userId") String userId, @Param("evaluateStatus") Integer evaluateStatus);
 }

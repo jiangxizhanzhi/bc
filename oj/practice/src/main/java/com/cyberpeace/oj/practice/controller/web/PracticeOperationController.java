@@ -288,5 +288,16 @@ public class PracticeOperationController {
 		return new BaseRsp<>(operationRecordResByDays);
 	}
 
-
+	@ApiOperation("知识技能Top6")
+	@GetMapping("/category_top6")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<List<CategoryProgressRes>> getCategoryTop6() {
+		List<CategoryProgressRes> categoryProgressResList = practiceOperationService.getOperationCategoryProgress();
+		categoryProgressResList.sort(Comparator.comparing(categoryProgressRes -> categoryProgressRes.getCount() * 1.0 / categoryProgressRes.getSum()));
+		Collections.reverse(categoryProgressResList);
+		if (categoryProgressResList.size() > 6) {
+			return new BaseRsp<>(categoryProgressResList.subList(0, 6));
+		}
+		return new BaseRsp<>(categoryProgressResList);
+	}
 }

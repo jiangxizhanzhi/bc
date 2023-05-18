@@ -46,6 +46,7 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
@@ -1265,6 +1266,23 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
 		List<String> operationIds = getOptionIdsByAuth(authContext, null);
 		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true, startTime, endTime);
+	}
+
+	@Override
+	public List<CategoryProgressRes> getOperationCategoryProgress() {
+		List<AdminOperationListBo> operationList = getAllPracticeTheoryByAuthAndSetId(null);
+		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.OPERATION.getCode(), null);
+		List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
+		for (PracticeCategory practiceCategory : practiceCategoryList) {
+			categoryProgressResList.add(
+					new CategoryProgressRes(practiceCategory.getName(), practiceCategory.getResourceId(),
+							//该方向的题目数
+							(int) operationList.stream().filter(adminOperationListBo -> adminOperationListBo.getCategoryId().equals(practiceCategory.getResourceId())
+									&& adminOperationListBo.getSolved()).count(),
+							//该方向所有的题目数
+							(int) operationList.stream().filter(adminOperationListBo -> adminOperationListBo.getCategoryId().equals(practiceCategory.getResourceId())).count()));
+		}
+		return categoryProgressResList;
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

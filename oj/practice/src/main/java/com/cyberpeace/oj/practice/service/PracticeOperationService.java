@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
+import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
@@ -218,5 +219,18 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 */
 	List<String> getOptionIdsByAuth(AuthContext authContext, String practiceSetId);
 
+	/**
+	 * 根据用户和起止时间获取实操题解出记录
+	 * @param userInfo
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	List<OperationRecordRes> getOperationRecord(UserInfo userInfo, Date startTime, Date endTime);
+
+	/**
+	 * 获取各方向的解题进度
+	 * @return
+	 */
+	List<CategoryProgressRes> getOperationCategoryProgress();
 }

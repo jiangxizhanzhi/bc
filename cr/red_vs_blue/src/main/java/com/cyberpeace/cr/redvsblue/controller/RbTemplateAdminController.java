@@ -107,7 +107,8 @@ public class RbTemplateAdminController {
 		String rbTrainTemplateName = addReq.getBaseInfo().getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.CREATE, rbTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.CREATE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.CREATE,
+						LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -120,6 +121,7 @@ public class RbTemplateAdminController {
 		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
 		if (businessTemplate == null) {
+			log.error("the business template is not exist, id:{}", resourceId);
 			throw new ResourceNotFoundException(resourceId);
 		}
 		String oldRoleConfig = rbTemplate.getRoleConfig();
@@ -142,7 +144,8 @@ public class RbTemplateAdminController {
 		String rbTrainTemplateName = modifyReq.getBaseInfo().getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.UPDATE, rbTrainTemplateName,
-				LogContent.CR_FORMAT.format(OperationType.UPDATE, LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
+				LogContent.CR_FORMAT.format(OperationType.UPDATE,
+						LogContent.RB_ROOM_TEMPLATE.getMsg(), rbTrainTemplateName));
 
 		return new BaseRsp<>();
 	}
@@ -151,14 +154,18 @@ public class RbTemplateAdminController {
 	@DeleteMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
-		List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectBatchIds(deleteReq.getIds());
+		List<BusinessTemplate> businessTemplates = businessTemplateMapper
+				.selectBatchIds(deleteReq.getIds());
 		rbTemplateService.batchDelete(deleteReq.getIds());
 
 		if (null != businessTemplates) {
-			List<String> columns = StreamApiUtils.getColumn(businessTemplates, BusinessTemplate::getName);
+			List<String> columns = StreamApiUtils.getColumn(businessTemplates,
+					BusinessTemplate::getName);
 			remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
-					OperationType.DELETE, LogContent.BATCH_DELETE_FORMAT.format(LogContent.RB_ROOM_TEMPLATE.getMsg()),
-					LogContent.CR_FORMAT.format(OperationType.DELETE, LogContent.RB_ROOM_TEMPLATE.getMsg(), columns.toString()));
+					OperationType.DELETE,
+					LogContent.BATCH_DELETE_FORMAT.format(LogContent.RB_ROOM_TEMPLATE.getMsg()),
+					LogContent.CR_FORMAT.format(OperationType.DELETE,
+							LogContent.RB_ROOM_TEMPLATE.getMsg(), columns.toString()));
 		}
 		return new BaseRsp<>();
 	}

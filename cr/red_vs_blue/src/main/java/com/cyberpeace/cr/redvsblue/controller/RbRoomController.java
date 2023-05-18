@@ -382,6 +382,8 @@ public class RbRoomController {
 		RbRoom rbRoom = rbRoomService.getById(rbTrainRoomModifyReq.getResourceId());
 
 		if (rbRoom == null) {
+			log.error("change red vs blue room error, room not exist, room_id: {}",
+					rbTrainRoomModifyReq.getResourceId());
 			throw new ResourceNotFoundException(rbTrainRoomModifyReq.getResourceId());
 		}
 		RbRoomContext rbRoomContext = BeanUtils.copy(rbTrainRoomModifyReq, RbRoomContext.class);
@@ -409,6 +411,7 @@ public class RbRoomController {
 	public BaseRsp<String> batchDelete(@RequestBody @Validated SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (StringUtils.isBlank(roomId)) {
+			log.error("delete red vs blue room error, room id is blank");
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 

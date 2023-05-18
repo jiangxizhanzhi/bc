@@ -136,13 +136,13 @@ public class RbRoomUserController {
 				missionInfoRsp.setWriteUp("");
 			}
 
- 			missionInfoRsp.setMissionStatus(0);
+			missionInfoRsp.setMissionStatus(0);
 			missionInfoRsp.setCategory(taskContext.getMission().getCategoryId());
 			missionInfoRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
 			missionInfoRsp.setUserAnswer(taskContext.getUserAnswer());
 			// 未答题，显示得分为0分
 			Integer score = taskContext.getScore();
-			if(score == null){
+			if (score == null) {
 				score = 0;
 			}
 			missionInfoRsp.setScore(score);
@@ -226,6 +226,7 @@ public class RbRoomUserController {
 		// check training status
 		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
 		if (management == null || !management.isRunning()) {
+			log.error("training is not running, room_id is {}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NOT_RUNNING);
 		}
 		// check if machine occupied

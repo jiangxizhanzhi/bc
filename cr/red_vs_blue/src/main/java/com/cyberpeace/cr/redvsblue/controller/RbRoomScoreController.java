@@ -98,6 +98,7 @@ public class RbRoomScoreController {
 			data.put("user_logo",
 					mpEnvService.getMpHost() + UserInfoContext.getUserContext().getAvatarUrl());
 		} catch (Exception e) {
+			log.error("failed to get user logo", e);
 			throw new RemoteServiceException();
 		}
 

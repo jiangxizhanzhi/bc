@@ -56,16 +56,18 @@ public class RbSituationServiceImpl implements RbSituationService {
 	public List<RbSituationServer> getRbServerByResourceId(String resourceId) {
 		nodeMap.clear();
 		List<RbSituationServer> rbSituationServerList = new ArrayList<>();
-		resourceId = resourceId.substring(0,resourceId.length()-1);
+		resourceId = resourceId.substring(0, resourceId.length() - 1);
 		RbRoom room = rbRoomService.getById(resourceId);
-		if(room == null){
+		if (room == null) {
+			log.error("room is null, room id:{}", resourceId);
 			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
 		}
 		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
 
 		JSONObject scene = remoteSceneService.getById(localScene.getMpSceneId(), null);
-		List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology").getObject("elements",List.class);
-		for(JSONObject jsonObject : elements){
+		List<JSONObject> elements = scene.getJSONObject("scene").getJSONObject("topology")
+				.getObject("elements", List.class);
+		for (JSONObject jsonObject : elements) {
 			RbSituationServer rbSituationServer = new RbSituationServer();
 			rbSituationServer.setServerId(jsonObject.getString("id"));
 			rbSituationServer.setServerName(jsonObject.getString("name"));
@@ -77,12 +79,13 @@ public class RbSituationServiceImpl implements RbSituationService {
 		roleQuery.setRoomId(room.getResourceId());
 		roleQuery.setRoleGroup(CrRole.RbRoleGroup.RED.getCode());
 		List<CrRole> redRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
-		for(CrRole redRole: redRoleList){
-			List<JSONObject> visibleNodes = JSONObject.parseObject(redRole.getNodes()).getObject("visibleNodes",List.class);
-			for(JSONObject visibleNode: visibleNodes){
+		for (CrRole redRole : redRoleList) {
+			List<JSONObject> visibleNodes = JSONObject.parseObject(redRole.getNodes())
+					.getObject("visibleNodes", List.class);
+			for (JSONObject visibleNode : visibleNodes) {
 				String nodeId = visibleNode.getString("id");
-				for (RbSituationServer rbSituationServer: rbSituationServerList){
-					if(rbSituationServer.getServerId().equals(nodeId)){
+				for (RbSituationServer rbSituationServer : rbSituationServerList) {
+					if (rbSituationServer.getServerId().equals(nodeId)) {
 						rbSituationServer.setRole("red");
 						nodeMap.put(nodeId, "red");
 					}
@@ -91,12 +94,13 @@ public class RbSituationServiceImpl implements RbSituationService {
 		}
 		roleQuery.setRoleGroup(CrRole.RbRoleGroup.BLUE.getCode());
 		List<CrRole> blueRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
-		for(CrRole blueRole: blueRoleList){
-			List<JSONObject> visibleNodes = JSONObject.parseObject(blueRole.getNodes()).getObject("visibleNodes",List.class);
-			for(JSONObject visibleNode: visibleNodes){
+		for (CrRole blueRole : blueRoleList) {
+			List<JSONObject> visibleNodes = JSONObject.parseObject(blueRole.getNodes())
+					.getObject("visibleNodes", List.class);
+			for (JSONObject visibleNode : visibleNodes) {
 				String nodeId = visibleNode.getString("id");
-				for (RbSituationServer rbSituationServer: rbSituationServerList){
-					if(rbSituationServer.getServerId().equals(nodeId)){
+				for (RbSituationServer rbSituationServer : rbSituationServerList) {
+					if (rbSituationServer.getServerId().equals(nodeId)) {
 						rbSituationServer.setRole("blue");
 						nodeMap.put(nodeId, "blue");
 					}
@@ -109,17 +113,17 @@ public class RbSituationServiceImpl implements RbSituationService {
 	}
 
 	@Override
-	public String getSceneId(){
+	public String getSceneId() {
 		return sceneId;
 	}
 
 	@Override
-	public Map<String, String> getNodeMap(){
+	public Map<String, String> getNodeMap() {
 		return nodeMap;
 	}
 
 	@Override
-	public String getMpSceneId(){
+	public String getMpSceneId() {
 		return mpSceneId;
 	}
 }

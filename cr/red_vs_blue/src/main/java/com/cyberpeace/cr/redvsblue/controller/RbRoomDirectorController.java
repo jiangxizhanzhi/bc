@@ -409,10 +409,12 @@ public class RbRoomDirectorController {
 	public BaseRsp stop(@RequestBody SceneOpsReq opsReq) {
 		String roomId = opsReq.getRoomId();
 		if (roomId == null) {
+			log.error("room_id is null");
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		RbRoom room = rbRoomService.getById(roomId);
 		if (room == null) {
+			log.error("room is null, room_id:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		// 需要导演权限
@@ -421,9 +423,11 @@ public class RbRoomDirectorController {
 
 		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
 		if (management == null) {
+			log.error("time management is null, room_id:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 		}
 		if (management.isStopped()) {
+			log.error("time management is stopped, room_id:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		// 更改时间管理状态
@@ -448,6 +452,7 @@ public class RbRoomDirectorController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
+			log.error("room_id is null");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		// get roles
@@ -510,7 +515,7 @@ public class RbRoomDirectorController {
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
-	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+			releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 

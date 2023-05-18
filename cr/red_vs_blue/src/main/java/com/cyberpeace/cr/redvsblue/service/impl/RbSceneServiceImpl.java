@@ -84,6 +84,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 训练暂停状态不能启动场景
 		RbTimeManagement management = rbTimeManagementService.getByRoomId(roomId);
 		if (management != null && management.isPaused()) {
+			log.error("The training is paused, can not start scene, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
 		}
 		// 2、如果已经有启动的场景，不能重复启动; 如果有脏数据，清除脏数据
@@ -92,6 +93,8 @@ public class RbSceneServiceImpl implements RbSceneService {
 			if (StringUtils.isBlank(localSceneExisted.getMpSceneId())) {
 				clearLocal(room);
 			} else {
+				log.error("The scene has already started, can not start scene again, roomId:{}",
+						roomId);
 				throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 			}
 		}
@@ -154,6 +157,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		ret.setRoomId(roomId);
 		RbRoom room = rbRoomService.getById(roomId);
 		if (room == null) {
+			log.error("Room not exist, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		// 1. 获取用户可见节点
@@ -188,6 +192,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 		// 训练已暂停，不能删除场景
 		if (room.isPaused()) {
+			log.error("The training is paused, can not delete scene, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_PAUSED);
 		}
 		// 2、如果场景已经停止，返回成功
@@ -229,6 +234,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 2、 场景开启的状态下发送mp暂停请求
 		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
 				&& !localSceneService.pauseScene(room.getLocalSceneId())) {
+			log.error("Failed to pause scene, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_PAUSE_SCENE);
 		}
 		// 3. 更新时间管理
@@ -252,6 +258,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 2、 如果mp场景存在，发送mp解除暂停请求
 		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
 				&& !localSceneService.unpauseScene(room.getLocalSceneId())) {
+			log.error("Failed to unpause scene, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UNPAUSE_SCENE);
 		}
 		// 3. 更新时间管理
@@ -269,6 +276,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	private void checkBeforePauseOps(RbRoom room, Integer flag) {
 		if (room == null) {
+			log.error("Room not exist, roomId:{}", room);
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 
@@ -279,15 +287,19 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 校验当前状态
 		RbTimeManagement management = rbTimeManagementService.getByRoomId(room.getResourceId());
 		if (management == null) {
+			log.error("Time management not exist, roomId:{}", room.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 		}
 		if (management.isStopped()) {
+			log.error("Train is over, roomId:{}", room.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 		}
 		if (flag.equals(PAUSE_FLAG) && management.isPaused()) {
+			log.error("Train is already paused, roomId:{}", room.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.ALREADY_PAUSED);
 		}
 		if (flag.equals(UNPAUSE_FLAG) && !management.isPaused()) {
+			log.error("Train is not paused, roomId:{}", room.getResourceId());
 			throw new BusinessException(ErrorCode.NOT_PAUSED);
 		}
 	}

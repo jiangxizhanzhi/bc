@@ -139,11 +139,13 @@ public class RbSceneController {
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene is not started, room id is {}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、开启流量
 		Boolean result = localSceneService.startFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
+			log.error("start flow failed, room id is {}, flow id is {}", roomId, req.getFlowId());
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
 		return new BaseRsp();
@@ -160,11 +162,13 @@ public class RbSceneController {
 		// 2、确认场景已开启
 		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
 		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene is not started, room id is {}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、停止流量
 		Boolean result = localSceneService.stopFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
+			log.error("stop flow failed, room id is {}, flow id is {}", roomId, req.getFlowId());
 			throw new BusinessException(CrBusinessErrorCode.STOP_FLOW_FAILURE);
 		}
 		return new BaseRsp();
@@ -175,11 +179,14 @@ public class RbSceneController {
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error("scene is not started, room id is {}", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("restart node failed, room id is {}, node id is {}",
+					nodeOpsReq.getResourceId(), nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp();
@@ -190,11 +197,14 @@ public class RbSceneController {
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error("scene is not started, room id is {}", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("recreate node failed, room id is {}, node id is {}",
+					nodeOpsReq.getResourceId(), nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
@@ -205,11 +215,14 @@ public class RbSceneController {
 	public BaseRsp createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		RbRoom room = rbRoomService.getById(nodeOpsReq.getResourceId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
+			log.error("scene is not started, room id is {}", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.createNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("create node failed, room id is {}, node id is {}",
+					nodeOpsReq.getResourceId(), nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
 		return new BaseRsp();

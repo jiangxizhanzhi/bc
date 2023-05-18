@@ -57,6 +57,7 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 
 		RbTemplate template = rbTemplateMapper.selectByBusinessTemplateId(resourceId);
 		if (template == null) {
+			log.error("business template not found, businessId:{}", resourceId);
 			throw new ResourceNotFoundException(resourceId);
 		}
 
@@ -125,7 +126,7 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 		listQuery.setIds(businessTemplateService
 				.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));
 
-        return rbTemplateMapper.listRbTemplate(page, listQuery);
+		return rbTemplateMapper.listRbTemplate(page, listQuery);
 	}
 
 	@Override

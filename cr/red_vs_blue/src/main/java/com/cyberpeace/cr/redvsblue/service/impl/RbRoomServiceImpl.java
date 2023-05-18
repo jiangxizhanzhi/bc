@@ -136,6 +136,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		RbTemplate template = rbTemplateService.getById(rbRoomContext.getTemplate());
 		if (template == null) {
+			log.error("create room failed, template not found, template id is {}",
+					rbRoomContext.getTemplate());
 			throw new ResourceNotFoundException(rbRoomContext.getTemplate());
 		}
 
@@ -194,6 +196,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public RbRoomData getRbRoomDataByRoomId(String resourceId) {
 		RbRoomData rbRoomData = rbRoomMapper.getRbRoomDataByRoomId(resourceId);
 		if (rbRoomData == null) {
+			log.error("get room data failed, room not found, room id is {}", resourceId);
 			throw new ResourceNotFoundException(resourceId);
 		}
 
@@ -657,6 +660,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	public void checkTeacherPermission(String roomId, String userId) {
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		if (role.isRvbStudent()) {
+			log.error("user does not have RbRoom teacher Permission！roomId=[{}], userId=[{}]",
+					roomId, userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
@@ -760,6 +765,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// check if duplicate
 		Integer roomExist = rbRoomMapper.countByName(name);
 		if (roomExist > 0) {
+			log.error("room name [{}] already exist", name);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
 	}

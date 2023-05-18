@@ -106,4 +106,6 @@ public interface CommonConstant {
 
 	int TWO_HUNDRED_AND_FIFTY_FIVE = 255;
 
+	String BACKSLASH = "\\";
+
 }

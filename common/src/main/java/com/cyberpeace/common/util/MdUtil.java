@@ -3,6 +3,7 @@ package com.cyberpeace.common.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -179,7 +180,7 @@ public class MdUtil {
 		String currentDir = new File(markdownPath).getParentFile().getAbsolutePath();
 
 		String imgReplaced = replaceImgContent(markdownPath, matchImgPath, "");
-		String matchZipRarPath = getMatchZipRarPath(markdownPath);
+		List<String> matchZipRarPath = getMatchZipRarPath(markdownPath);
 		return replaceZipOrRarContent(currentDir, imgReplaced, matchZipRarPath, "");
 	}
 
@@ -188,19 +189,16 @@ public class MdUtil {
 	 * @param markdownPath
 	 * @return
 	 */
-	private static String getMatchZipRarPath(String markdownPath) {
+	private static List<String> getMatchZipRarPath(String markdownPath) {
 		// 获取markdown文件内容
 		File markdownFile = new File(markdownPath);
 		String withOutCode = getContentWithOutCode(markdownFile);
 
 		// 匹配文件路径
-		List<String> matchStrList = LocalStringUtil.getMatchUrlStr(withOutCode,
+		List<String> matchStrList = LocalStringUtil.getMatchStr(withOutCode,
 				PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
 
-		if(CollectionUtils.isEmpty(matchStrList)) {
-			return "";
-		}
-		return matchStrList.get(0);
+		return matchStrList;
 	}
 
 	/**
@@ -237,23 +235,25 @@ public class MdUtil {
 
 	public static String replaceZipOrRarContent(String currentDir,
 												String content,
-												String matchStr,
+												List<String> matchStrList,
 												String handoutPath) {
 		// 获取当前文件夹
-		String relativePath = matchStr;
-		if(matchStr.startsWith(CommonConstant.PERIOD)) {
-			relativePath = matchStr.replaceFirst(CommonConstant.PERIOD,
-					CommonConstant.EMPTY_STRING);
-		}
+		for(String matchStr : matchStrList) {
+			String relativePath = matchStr;
+			if(matchStr.startsWith(CommonConstant.PERIOD)) {
+				relativePath = matchStr.replaceFirst(CommonConstant.BACKSLASH + CommonConstant.PERIOD,
+						CommonConstant.EMPTY_STRING);
+			}
 
-		File replaceFile = new File(currentDir, relativePath);
-		if (!replaceFile.exists()) {
-			log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
-			String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()
-					: handoutPath + CommonConstant.LEFT_OBLIQUE_LINE + matchStr;
-			throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, path);
+			File replaceFile = new File(currentDir, relativePath);
+			if (!replaceFile.exists()) {
+				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
+				String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()
+						: handoutPath + CommonConstant.LEFT_OBLIQUE_LINE + matchStr;
+				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, path);
+			}
+			content = content.replace(matchStr, replaceFile.getAbsolutePath());
 		}
-		content = content.replace(matchStr, replaceFile.getAbsolutePath());
 
 		return content;
 	}
@@ -277,7 +277,7 @@ public class MdUtil {
 			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
 			String relativePath = imagePath;
 			if (imagePath.startsWith(CommonConstant.PERIOD)) {
-				relativePath = imagePath.replaceFirst(CommonConstant.PERIOD,
+				relativePath = imagePath.replaceFirst(CommonConstant.BACKSLASH + CommonConstant.PERIOD,
 						CommonConstant.EMPTY_STRING);
 			}
 

@@ -126,18 +126,6 @@ public class LocalStringUtil {
 		return strList;
 	}
 
-	public static List<String> getMatchUrlStr(String content, String regex, int groupIndex) {
-
-		List<String> strList = Lists.newArrayList();
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(content);
-
-		while (matcher.find()) {
-			strList.add(matcher.group(groupIndex).trim());
-		}
-		return strList;
-	}
-
 	/**
 	 * 根据正则表达是获取内容中的匹配数据
 	 * @param content 内容

@@ -399,6 +399,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public JSONArray snapshotHistory(String sceneId, String imageId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
 		if (null == localScene) {
+			log.error("localScene is null,sceneId =[{}]", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -409,6 +410,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public JSONObject mergeSnapshot(String sceneId, MergeSnapshotContext snapshotContext) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
 		if (null == localScene) {
+			log.error("localScene is null,sceneId =[{}]", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -419,6 +421,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean deleteSnapshot(String sceneId, String nodeId, String snapshotId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(sceneId);
 		if (null == localScene) {
+			log.error("localScene is null,sceneId =[{}]", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 

@@ -70,6 +70,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			if (StringUtils.isBlank(localSceneExisted.getMpSceneId())) {
 				clearLocal(room);
 			} else {
+				log.error("MpSceneId is null,MpSceneId =[{}]", localSceneExisted.getMpSceneId());
 				throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 			}
 		}
@@ -185,6 +186,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 2、如果场景不存在
 		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			log.error("LocalSceneId is null,LocalSceneId =[{}]", teamRoom.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
 		}
 		// 3、 发送mp暂停请求
@@ -201,6 +203,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 2、如果场景不存在
 		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
+			log.error("LocalSceneId is null,LocalSceneId =[{}]", teamRoom.getLocalSceneId());
 			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
 		}
 		// 3、 发送mp恢复暂停请求

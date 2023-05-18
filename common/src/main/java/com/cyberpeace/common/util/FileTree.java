@@ -7,6 +7,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -18,6 +19,7 @@ import com.cyberpeace.common.exception.BusinessException;
  * fileMap 子文件名:子文件
  * dirMap 子文件夹名:子文件夹
  * */
+@Slf4j
 public class FileTree {
 
 	public static final String SEPARATOR = "/";
@@ -98,6 +100,7 @@ public class FileTree {
 		File file = getFileMap().get(name);
 
 		if (file == null) {
+			log.error("file is null,name =[{}]", name);
 			throw new BusinessException(ErrorCode.FILE_NOT_EXIST);
 		}
 

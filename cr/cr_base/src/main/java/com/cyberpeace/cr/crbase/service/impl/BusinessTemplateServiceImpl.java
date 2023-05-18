@@ -141,6 +141,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		if (!businessIds.contains(businessId)&&!UserInfoContext.getUserContext()
 															   .isSuperuser()) {
+			log.error("businessId is illegal,businessId =[{}],userId =[{}]", businessId,userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
@@ -503,6 +504,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
 			return LocalScene.BusinessCode.SYSTEM_TEST;
 		}
+		log.error("模板类型不支持, code [{}]", code);
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}
 

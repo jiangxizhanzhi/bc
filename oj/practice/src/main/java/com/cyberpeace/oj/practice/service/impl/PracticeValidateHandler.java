@@ -304,12 +304,14 @@ public class PracticeValidateHandler {
 		List<String> answers;
 		if (StringUtils.isBlank(flags) || CollectionUtils
 				.isEmpty(answers = JsonUtil.toJsonObjectArray(flags, String.class))) {
+			log.error("flags is illegal , flags = [{}]", flags);
 			throw new BusinessException(OjBusinessErrorCode.ANSWER_NOT_NULL);
 		}
 
 		for (String answer : answers) {
 			if (answer.length() < CommonConstant.ONE
 					|| answer.length() > CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE) {
+				log.error("answer is illegal , answer = [{}]", answer);
 				throw new BusinessException(OjBusinessErrorCode.ANSWER_TOO_LONG, CommonConstant.ONE,
 						CommonConstant.TWO_HUNDRED_AND_FIFTY_FIVE);
 			}

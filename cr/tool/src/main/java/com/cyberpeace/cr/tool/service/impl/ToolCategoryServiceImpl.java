@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.tool.controller.res.WebToolCategoryRsp;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -26,6 +27,7 @@ import com.cyberpeace.cr.tool.dao.mapper.ToolCategoryMapper;
 import com.cyberpeace.cr.tool.dao.mapper.ToolMapper;
 import com.cyberpeace.cr.tool.service.ToolCategoryService;
 
+@Slf4j
 @Service
 @CacheConfig(cacheNames = { CacheConstant.CR_TOOL_CATEGORY })
 public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, ToolCategory> implements ToolCategoryService {
@@ -84,6 +86,7 @@ public class ToolCategoryServiceImpl extends ServiceImpl<ToolCategoryMapper, Too
 		for (String resourceId : resourceIds) {
 			List<Tool> tools = toolMapper.selectByCategory(resourceId);
 			if (CollectionUtils.isNotEmpty(tools)) {
+				log.error("resourceId is null,resourceId =[{}]", resourceId);
 				throw new BusinessException(CrBusinessErrorCode.TOOL_CATEGORY_IN_USE);
 			}
 		}

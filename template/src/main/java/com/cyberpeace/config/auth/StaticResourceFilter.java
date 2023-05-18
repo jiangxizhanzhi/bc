@@ -64,6 +64,7 @@ public class StaticResourceFilter implements Filter {
                     }
                 }
                 if (StringUtils.isEmpty(cookie)) {
+                    log.error("cookie is null , cookie = [{}]", cookie);
                     throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
                 }
             }

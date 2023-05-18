@@ -7,10 +7,7 @@ import com.cyberpeace.common.constant.MdConstant;
 import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.mdparser.MdParser;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
@@ -105,6 +102,7 @@ public class ExportTrainMDServiceImpl implements ExportTrainMDService {
 
 	@Override
 	public void exportTrainMD(List<BusinessTemplate> businessTemplateList, String path, String sceneNumber, Boolean disableImageExport) {
+		log.error("Method not implemented! businessTemplateList = [{}], path = [{}], sceneNumber = [{}], disableImageExport = [{}]", JsonUtil.toJsonString(businessTemplateList), path , sceneNumber, disableImageExport);
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 

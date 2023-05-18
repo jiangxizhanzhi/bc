@@ -1,19 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -41,9 +27,22 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yinqingrong
@@ -145,7 +144,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		List<CrTask> crTasks = crTaskMapper.selectByMissionId(missionId);
 
 		if (crTasks.size() > 0) {
-
+			log.error("Mission released! missionId = [{}]",missionId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
 		}
 
@@ -223,6 +222,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			missionIds.addAll(scheme.getMissions());
 		}
 		if (checkNameDuplicate(mission.getTitle(), missionIds)) {
+			log.error("Mission name duplicates with existed missions! title = [{}]", mission.getTitle());
 			throw new BusinessException(CrBusinessErrorCode.DYNAMIC_MISSION_TITLE_DUPLICATE);
 		}
 		// 保存
@@ -546,6 +546,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			stage.getJSONArray("missions").toJavaList(JSONObject.class).forEach(mission -> {
 				String missionId = mission.getString("resource_id");
 				if (missionId == null || missionId.isEmpty()) {
+					log.error("Mission Template is empty! missionId is empty");
 					throw new BusinessException(CrBusinessErrorCode.EMPTY_MISSION_TEMPLATE);
 				}
 				trainMissions.add(missionId);
@@ -567,6 +568,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 						CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
 
 				if (trainMissions.size() != missions.size()) {
+					log.error("Mission id duplicate  or part of missions miss! trainMissions = [{}], missions = [{}]",
+							StringUtils.join(trainMissions, ","), JsonUtil.toJsonString(missions));
 					throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
 				}
 			}
@@ -577,6 +580,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public String makeDumpFile(List<String> templateIds, String tempDir) throws IOException {
 		if (templateIds.isEmpty()) {
+			log.error("Resource id list is empty!");
 			throw new BusinessException(CrBusinessErrorCode.EMPTY_RESOURCE_ID_LIST);
 		}
 		// 1. make temp dir
@@ -603,6 +607,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			// validate
 			if (template.getDescription() == null || template.getTitle() == null
 					|| template.getTemplateData() == null || template.getTemplateConfig() == null) {
+				log.error("Resource zip invalid! template = [{}]", JsonUtil.toJsonString(template));
 				throw new BusinessException(CrBusinessErrorCode.INVALID_RESOURCE_ZIP);
 			}
 			template.setId(null);
@@ -634,6 +639,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	@Override
 	public void checkSchemeTemplateTitleDuplicate(String title) {
 		if (missionSchemeTemplateMapper.existByTitle(title)) {
+			log.error("Mission solution name duplicate! title = [{}]", title);
 			throw new BusinessException(
 					CrBusinessErrorCode.DUPLICATED_MISSION_SCHEME_TEMPLATE_TITLE);
 		}
@@ -669,6 +675,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	public void updateMissionValidate(String missionId, String roomId, String title) {
 		CrRole role = crRoleMapper.selectByRoomIdAndMissionId(roomId, missionId);
 		if (role == null) {
+			log.error("Role not exist!, roomId = [{}], missionId = [{}]", roomId, missionId);
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
 		// 校验是否和角色既存任务重名
@@ -682,6 +689,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			}
 		}
 		if (checkNameDuplicate(title, missionIds)) {
+			log.error("Duplicated mission names in one stage! title = [{}], missionIds = [{}]", title, StringUtils.join(missionIds));
 			throw new BusinessException(CrBusinessErrorCode.DUPLICATED_MISSION_NAME);
 		}
 	}

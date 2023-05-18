@@ -1,26 +1,5 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -57,12 +36,30 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Api(tags = "基础模板")
 @RestController
@@ -223,6 +220,7 @@ public class BusinessTemplateController {
 		// 增加重复性校验
 		LocalScene instanceId = localSceneService.getByBusinessInstanceId(templateId);
 		if (null != instanceId) {
+			log.error("Scene start repeat! templateId = [{}]", templateId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_START_REPEAT);
 		}
 
@@ -301,11 +299,13 @@ public class BusinessTemplateController {
 	public BaseRsp restartNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.restartNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("Node restart failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RESTART_NODE);
 		}
 		return new BaseRsp();
@@ -318,11 +318,13 @@ public class BusinessTemplateController {
 	public BaseRsp recreateNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.recreateNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
@@ -335,11 +337,13 @@ public class BusinessTemplateController {
 	public BaseRsp createNode(@RequestBody SceneNodeOpsReq nodeOpsReq) {
 		BusinessTemplate template = businessTemplateService.getById(nodeOpsReq.getResourceId());
 		if (template == null || StringUtils.isBlank(template.getLocalSceneId())) {
+			log.error("Scene not start! resourceId = [{}]", nodeOpsReq.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		Boolean result = localSceneService.createNode(template.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
+			log.error("Node recreate failure! noteId = [{}]", nodeOpsReq.getNodeId());
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
 		return new BaseRsp();
@@ -409,6 +413,7 @@ public class BusinessTemplateController {
 	private BusinessTemplate ensureTemplateExist(String templateId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(templateId);
 		if (businessTemplate == null) {
+			log.error("Template does not exist! templateId = [{}]", templateId);
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_NOT_EXIST);
 		}
 

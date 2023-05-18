@@ -1,12 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-import java.util.concurrent.*;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.WebConstant;
@@ -33,10 +26,18 @@ import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  *
  */
+@Slf4j
 @Service
 public class CrSceneServiceImpl implements CrSceneService {
 
@@ -69,6 +70,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowId);
 
 		if (mpFlow == null) {
+			log.error("Flow does not exist! flowId = [{}]", flowId);
 			throw new BusinessException(CrBusinessErrorCode.FLOW_NOT_EXIST);
 		}
 
@@ -88,6 +90,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	public List<ElementFlow> getNodeFlowList(String mpSceneId, String topoId, String nodeId) {
 
 		if (StringUtils.isEmpty(nodeId)) {
+			log.error("No node is specified! nodeId is empty");
 			throw new BusinessException(CrBusinessErrorCode.NOT_SPECIFY_NODE);
 		}
 
@@ -170,11 +173,13 @@ public class CrSceneServiceImpl implements CrSceneService {
 		Integer taskStatus = getFlowTaskStatus(mpSceneId, nodeId);
 
 		if (taskStatus.equals(ElementFlow.TaskStatusEnum.UNDEFINED.getCode())) {
+			log.error("Failed to judge flow task status! mpSceneId = [{}], nodeId = [{}]", mpSceneId, nodeId);
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_JUDGE_FLOW_TASK_STATUS);
 		}
 
 		if (!taskStatus.equals(ElementFlow.TaskStatusEnum.STOPPED.getCode())
 				&& !taskStatus.equals(ElementFlow.TaskStatusEnum.ZERO.getCode())) {
+			log.error("Uncompleted flow task exist on the node! mpSceneId = [{}], nodeId = [{}]", mpSceneId, nodeId);
 			throw new BusinessException(CrBusinessErrorCode.FLOW_TASK_EXISTS);
 		}
 
@@ -226,6 +231,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		MpFlow mpFlow = remoteSceneService.getFlowById(flowOpsContext.getFlowId());
 
 		if (!mpFlow.getInteractiveType().equals(MpFlow.interactiveTypeEnum.BACKGROUND.getCode())) {
+			log.error("Non-background flow is not allowed to modify the source ip! mpFlowId = [{}]", flowOpsContext.getFlowId());
 			throw new BusinessException(
 					CrBusinessErrorCode.NON_BACKGROUND_FLOW_NOT_ALLOWED_TO_MODIFY_SOURCE_IP);
 		}
@@ -233,6 +239,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		Boolean result = remoteSceneService.updateFlowParam(flowOpsContext);
 
 		if (!result) {
+			log.error("Failed to update the flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowOpsContext));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_UPDATE_FLOW);
 		}
 
@@ -264,6 +271,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 			Boolean result = remoteSceneService.startFlow(flowOpsContext);
 
 			if (!result) {
+				log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowContext));
 				throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 			}
 		}
@@ -292,6 +300,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 		Boolean result = remoteSceneService.batchStartFlow(flowBatchOpsContext);
 
 		if (!result) {
+			log.error("Failed to start flow! flowOpsContext = [{}]", JsonUtil.toJsonString(flowBatchOpsContext));
 			throw new BusinessException(CrBusinessErrorCode.START_FLOW_FAILURE);
 		}
 

@@ -1,8 +1,5 @@
 package com.cyberpeace.cr.crbase.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
@@ -10,8 +7,15 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@Slf4j
 public class CrCommonValidator {
 
 	/**
@@ -23,6 +27,7 @@ public class CrCommonValidator {
 			if (minLen == 0) {
 				return;
 			} else {
+				log.error("target = null and minLen != 0");
 				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		}
@@ -30,6 +35,7 @@ public class CrCommonValidator {
 			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
 			int len = targetStr.length();
 			if (len < minLen || len > maxLen) {
+				log.error("string's length = [{}], it < [{}] or it > [{}]", len, minLen, maxLen);
 				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -39,6 +45,7 @@ public class CrCommonValidator {
 
 	public static <T> void validateListIfEmpty(List<T> target, String errorCode) {
 		if (target.isEmpty()) {
+			log.error("target is empty");
 			throw new BusinessException(errorCode);
 		}
 	}
@@ -46,36 +53,42 @@ public class CrCommonValidator {
 	public static void checkStringListDuplicate(List<String> target, String errorCode) {
 		Set<String> stringSet = Sets.newHashSet(target);
 		if (target.size() != stringSet.size()) {
+			log.error("Duplicate target! target = [{}]", StringUtils.join(target, ","));
 			throw new BusinessException(errorCode);
 		}
 	}
 
 	public static void checkStringExist(String target, String errorCode) {
 		if (target == null || target.isEmpty()) {
+			log.error("target is null or target is empty");
 			throw new BusinessException(errorCode);
 		}
 	}
 
 	public static void validateScore(int target, int maxValue, String errorCode) {
 		if (target < 0 || target > maxValue) {
+			log.error("target = [{}], maxValue = [{}]", target, maxValue);
 			throw new BusinessException(errorCode);
 		}
 	}
 
 	public static <T> void validateSize(List<T> target, int size, String errorCode) {
 		if (target.size() != size) {
+			log.error("target = [{}], size = [{}], target.size != size", StringUtils.join(target, ","), size);
 			throw new BusinessException(errorCode, size, target.size());
 		}
 	}
 
 	public static <T> void validateSize(List<T> target, int min, int max, String errorCode) {
 		if (target.size() < min || target.size() > max) {
+			log.error("target = [{}], mix = [{}], max = [{}], target.size < min or target.size > max", StringUtils.join(target, ","), min, max);
 			throw new BusinessException(errorCode);
 		}
 	}
 
 	public static void validateRange(int target, int minValue, int maxValue, String errorCode) {
 		if (target < minValue || target > maxValue) {
+			log.error("target = [{}], minValue = [{}], maxValue = [{}], target < minValue || target > maxValue", target, minValue, maxValue);
 			throw new BusinessException(errorCode, minValue, maxValue);
 		}
 	}
@@ -129,6 +142,7 @@ public class CrCommonValidator {
 				+ "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
 
 		if (!ip.matches(regex)) {
+			log.error("Wrong ip format! ip = [{}]",ip);
 			throw new BusinessException(CrBusinessErrorCode.WRONG_IP_FORMAT);
 		}
 	}
@@ -153,6 +167,7 @@ public class CrCommonValidator {
 			for(String tmp:labels){
 				String val = parse.getString(tmp);
 				if(StringUtils.isEmpty(val) || StringUtils.isNumeric(val)){
+					log.error("The matrix contains error data! matrix = [{}]", matrixData);
 					throw new BusinessException(CrBusinessErrorCode.MATRIX_DATA_EMPTY_ERROR);
 				}
 				currentList.add(val);

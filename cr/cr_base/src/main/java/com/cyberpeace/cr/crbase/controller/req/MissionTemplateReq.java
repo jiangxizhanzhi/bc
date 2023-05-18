@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.crbase.controller.req;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -14,11 +8,17 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Data
+@Slf4j
 public class MissionTemplateReq implements Serializable {
 
 	@ApiModelProperty(value = "标题", required = true)
@@ -71,14 +71,17 @@ public class MissionTemplateReq implements Serializable {
 
 		// validate answer
 		if (MissionBase.MissionType.ANSWER_NULLABLE_TYPE_LIST.contains(type) && answer == null) {
+			log.error("Answer cannot be empty!");
 			throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 		}
 		// validate choice
 		if (MissionBase.MissionType.HAS_OPTION_TYPE_LIST.contains(type)) {
 			if (answer.equals(CommonConstant.EMPTY_LIST_JSON) || answer.isEmpty()) {
+				log.error("Answer cannot be empty!");
 				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 			}
 			if (option.equals(CommonConstant.EMPTY_LIST_JSON) || option.isEmpty()) {
+				log.error("Options cannot be empty!");
 				throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 			}
 			// validate option
@@ -87,6 +90,7 @@ public class MissionTemplateReq implements Serializable {
 			for (JSONObject option : options) {
 				String optionValue = option.getString("optionValue");
 				if (optionValue == null) {
+					log.error("Options cannot be empty!");
 					throw new BusinessException(CrBusinessErrorCode.OPTIONS_NOT_NULLABLE);
 				}
 				String realOption = StringUtils.strip(optionValue);

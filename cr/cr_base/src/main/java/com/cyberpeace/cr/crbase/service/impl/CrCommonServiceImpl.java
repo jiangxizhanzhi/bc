@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
@@ -28,8 +22,13 @@ import com.cyberpeace.cs.service.context.scene.SceneElement;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -49,6 +48,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 		// 1. 查询localScene
 		LocalScene localScene = localSceneService.getById(localSceneId);
 		if (localScene == null) {
+			log.error("Scene not exist! localSceneId = [{}]", localSceneId);
 			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
 		}
 		// 2. 获取中台会话数据
@@ -121,6 +121,7 @@ public class CrCommonServiceImpl implements CrCommonService {
 				.getMappingByIds(missionTemplateIds);
 		// 校验任务id数量和查询到的任务数量是否匹配
 		if (missionTemplateIds.size() != missionTemplateMap.size()) {
+			log.error("Mission id duplicate  or part of missions miss! missionTemplateIds = [{}]", StringUtils.join(missionTemplateIds, ","));
 			throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
 		}
 

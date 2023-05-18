@@ -1,34 +1,11 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
-import com.cyberpeace.common.constant.*;
-import com.cyberpeace.common.model.ExtractBase;
-import com.cyberpeace.cs.controller.CommonController;
-import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.*;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ExtractBase;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -52,17 +29,36 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.controller.CommonController;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "任务相关接口")
 @RestController
@@ -129,6 +125,7 @@ public class MissionController {
 		// 只有超级用户有权修改
 		UserInfo user = UserInfoContext.getUserContext();
 		if (!user.isSuperuser()) {
+			log.error("Only superuser can edit radar labels! userId = [{}]", user.getUserId());
 			throw new BusinessException(CrBusinessErrorCode.SUPERUSER_CAN_EDIT_RADAR);
 		}
 
@@ -185,6 +182,7 @@ public class MissionController {
 	public BaseRsp<MissionTemplateRsp>
 			updateMissionTemplate(@RequestBody @Validated MissionTemplateModifyReq modifyReq) {
 		if (StringUtils.isBlank(modifyReq.getResourceId())) {
+			log.error("Resource id missing! modifyReq = [{}]", JsonUtil.toJsonString(modifyReq));
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		modifyReq.validate();
@@ -207,6 +205,7 @@ public class MissionController {
 			updateMissions(@RequestBody @Validated MissionModifyReq missionModifyReq) {
 		missionModifyReq.validate();
 		if (StringUtils.isBlank(missionModifyReq.getResourceId())) {
+			log.error("Resource id missing! modifyReq = [{}]", JsonUtil.toJsonString(missionModifyReq));
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		Mission toUpdateMission = requestToMission(missionModifyReq);
@@ -372,6 +371,7 @@ public class MissionController {
 		String suffix = FileUtil.getFileSuffix(md.getOriginalFilename());
 		suffix = suffix.toLowerCase();
 		if (!suffix.equals(FileSunffixConstant.ZIP.getDesc()) && !suffix.equals(FileSunffixConstant.RAR.getDesc())){
+			log.error("Unsupported file types. Only [{}] is supported! suffix = [{}]", FileSunffixConstant.ZIP.getDesc() + "," + FileSunffixConstant.RAR.getDesc(),suffix );
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE,
 					"" + FileSunffixConstant.ZIP.getDesc() + "," + FileSunffixConstant.RAR.getDesc());
 		}
@@ -446,6 +446,7 @@ public class MissionController {
 	private MissionSchemeTemplate
 			requestToSchemeTemplate(MissionSchemeTemplateModifyReq templateModifyReq) {
 		if (StringUtils.isBlank(templateModifyReq.getResourceId())) {
+			log.error("Resource id missing! templateModifyReq = [{}]", JsonUtil.toJsonString(templateModifyReq));
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 

@@ -1,11 +1,5 @@
 package com.cyberpeace.cr.crbase.service.context.resource;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.PatternConstant;
@@ -19,9 +13,13 @@ import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.*;
 
 interface ZiguanConstants {
 
@@ -285,6 +283,7 @@ public class MDParser {
 		Integer difficulty = ZiguanConstants.DIFFICULTY_CHOICE
 				.get(data.get(ZiguanConstants.DIFFICULTY));
 		if (difficulty == null) {
+			log.error("Invalid difficulty! difficulty = [{}]", difficulty);
 			throw new BusinessException(CrBusinessErrorCode.INVALID_DIFFICULTY);
 		}
 		businessTemplate.setDifficulty(difficulty);
@@ -292,6 +291,7 @@ public class MDParser {
 		Integer category = ZiguanConstants.BUSINESS_CATEGORIES
 				.get(data.get(ZiguanConstants.CATEGORY));
 		if (category == null) {
+			log.error("Invalid training category! category is null");
 			throw new BusinessException(CrBusinessErrorCode.INVALID_TRAINING_CATEGORY);
 		}
 		templateContext.setSubType(category);
@@ -393,6 +393,7 @@ public class MDParser {
 	 */
 	private GroupRoles parseRoles(String roleInfo) {
 		if (StringUtils.isBlank(roleInfo)) {
+			log.error("Invalid role configuration info! roleInfo is blank");
 			throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 		}
 		// 逐行读取
@@ -400,6 +401,7 @@ public class MDParser {
 		Iterator<String> iter = Arrays.stream(lines).iterator();
 		String line = iter.next();
 		if (!line.startsWith(ENTRY_HEAD)) {
+			log.error("Invalid role configuration info! line = [{}]", line);
 			throw new BusinessException(CrBusinessErrorCode.INVALID_ROLE_INFO);
 		}
 		GroupRoles groupRoles = new GroupRoles();

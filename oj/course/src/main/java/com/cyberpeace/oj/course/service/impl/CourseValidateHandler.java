@@ -74,6 +74,7 @@ public class CourseValidateHandler {
 				newName);
 		if (StringUtils.isNotBlank(nameExistLesson)
 				&& !nameExistLesson.equals(existLesson.getResourceId())) {
+			log.error("lesson name [{}] is duplicate with [{}]", newName, existLesson.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 	}
@@ -92,6 +93,7 @@ public class CourseValidateHandler {
 
 		// 无场景 不校验
 		if (CollectionUtils.isNotEmpty(webScenes) || CollectionUtils.isNotEmpty(adminScenes)) {
+			log.error("lesson:[{}] has bind scene", courseLesson.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
@@ -107,6 +109,7 @@ public class CourseValidateHandler {
 		// 查询授权
 		List<String> authIds = courseMapper.selectByAuth(authContext);
 		if (CollectionUtils.isEmpty(authIds)) {
+			log.error("course:[{}] hasn't been auth", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
@@ -114,10 +117,12 @@ public class CourseValidateHandler {
 		List<String> publicIds = courseMapper.selectIdsByCategory(authIds, null,
 				authContext.getIsWeb());
 		if (CollectionUtils.isEmpty(publicIds)) {
+			log.error("course:[{}] is non public", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 
 		if (!publicIds.contains(courseId)) {
+			log.error("course:[{}] is non public", courseId);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_PERMISSION);
 		}
 	}
@@ -166,6 +171,7 @@ public class CourseValidateHandler {
 	public void validateCourseUpdateNameExist(String existCourse, String newName) {
 		String existNameId = courseMapper.selectByName(newName);
 		if (StringUtils.isNotBlank(existNameId) && !existCourse.equals(existNameId)) {
+			log.error("[{}] is exist", newName);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 	}
@@ -262,6 +268,7 @@ public class CourseValidateHandler {
 
 		List<String> courseIds = courseMapper.selectIdsByCategory(null, categoryIds, false);
 		if (CollectionUtils.isNotEmpty(courseIds)) {
+			log.error("can't delete used resource:[{}]", courseIds);
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 		}
 
@@ -289,6 +296,7 @@ public class CourseValidateHandler {
 	 */
 	public void categoryNameLengthValidate(String name) {
 		if (name.length() > 64) {
+			log.error("[{}] is too long over 64", name);
 			throw new BusinessException(OjBusinessErrorCode.FIELD_TOO_LONG);
 		}
 	}
@@ -300,6 +308,7 @@ public class CourseValidateHandler {
 	 */
 	public void validateLessonType(Integer lessonType, Integer accessType) {
 		if (lessonType.intValue() != accessType) {
+			log.error("error lesson type [{}]", lessonType);
 			throw new BusinessException(OjBusinessErrorCode.ACCESS_LESSON_TYPE,
 					EnumUtils.getEnumDescByCode(lessonType, CourseLesson.LessonType.class));
 		}
@@ -311,17 +320,20 @@ public class CourseValidateHandler {
 	 */
 	public void validateBuiltin(Course course) {
 		if (course.getBuiltin()) {
+			log.error("built in course [{}] can't be export", course.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, course.getName());
 		}
 		List<CourseLesson> courseLessonList = courseLessonMapper.listByCourses(Arrays.asList(course.getResourceId()), null);
 		courseLessonList.forEach(courseLesson -> {
 			if (courseLesson.getBuiltin()) {
+				log.error("built in lesson [{}] can't be export", courseLesson.getResourceId());
 				throw new BusinessException(OjBusinessErrorCode.COURSE_CONTAIN_BUILTIN_LESSON, course.getName(), courseLesson.getName());
 			}
 			Paper paper = paperMapper.selectById(courseLesson.getPaperId());
 			List<TheoryLessonBo> theoryLessonBos = practiceTheoryRefService.selectByPaper(paper.getResourceId(), true);
 			theoryLessonBos.forEach(theoryLessonBo -> {
 				if (theoryLessonBo.getBuiltin()) {
+					log.error("built in practice [{}] can't be export", theoryLessonBo.getResourceId());
 					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), theoryLessonBo.getTitle());
 				}
 			});
@@ -329,6 +341,7 @@ public class CourseValidateHandler {
 					.selectByPaperId(courseLesson.getResourceId(), paper.getResourceId(), true, true, null);
 			operationLessonBos.forEach(operationLessonBo -> {
 				if (operationLessonBo.getBuiltin()) {
+					log.error("built in practice [{}] can't be export", operationLessonBo.getResourceId());
 					throw new BusinessException(OjBusinessErrorCode.LESSON_CONTAIN_BUILTIN_PRACTICE, course.getName(), courseLesson.getName(), operationLessonBo.getTitle());
 				}
 			});

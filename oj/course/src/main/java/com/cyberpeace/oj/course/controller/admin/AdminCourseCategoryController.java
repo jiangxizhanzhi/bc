@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.controller.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -43,6 +44,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/oj/admin/course/direction")
 @RequiresAuthentication
+@Slf4j
 public class AdminCourseCategoryController {
 
 	@Autowired
@@ -102,6 +104,7 @@ public class AdminCourseCategoryController {
 		// 名称校验
 		CourseCategory existCategory = courseCategoryMapper.selectByName(categoryReq.getName());
 		if (null != existCategory) {
+			log.error("[{}] is exist", existCategory.getName());
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 

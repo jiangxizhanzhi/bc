@@ -76,6 +76,7 @@ public class PracticeGateWayInterceptor implements HandlerInterceptor {
 	private void validateKey(HttpServletRequest request) {
 		String key = request.getHeader(WebConstant.OJ_HEADER_KEY);
 		if (StringUtils.isBlank(key) || !key.equals(WebConstant.OJ_HEADER_KEY_VALUE)) {
+			log.error("key [{}] is not authenticated", key);
 			throw new UnauthenticatedException();
 		}
 	}

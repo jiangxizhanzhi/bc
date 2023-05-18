@@ -1170,6 +1170,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		//过滤实验报告为空的情况
 		List<ClassroomReportBo> filterData = StreamApiUtils.filter(data, classroomReportBo -> classroomReportBo.getContent()!=null);
 		if (filterData.size() == 0){
+			log.error("[{}] report is empty", classroomId);
 			throw new BusinessException(OjBusinessErrorCode.NO_REPORT_CAN_BE_EXPORTED);
 		}
 		for(ClassroomReportBo classroomReportBo: filterData){
@@ -1274,6 +1275,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	private void validateTime(List<Classroom> classrooms) {
 		for(Classroom cls:classrooms){
 			if(cls.getStartTime().equals(cls.getEndTime()) || cls.getStartTime().after(cls.getEndTime())){
+				log.error("[{}] endTime is over starTime", cls.getResourceId());
 				throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
 			}
 		}
@@ -1306,6 +1308,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Classroom previous = sort.get(i - 1);
 			Classroom current = sort.get(i);
 			if (previous.getEndTime().after(current.getStartTime())) {
+				log.error("The endTime [{}] is after starTime [{}]", previous.getEndTime(), current.getStartTime());
 				throw new BusinessException(OjBusinessErrorCode.TIME_INTERSECTION_UNDER_ORG);
 			}
 		}
@@ -1320,6 +1323,8 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<Classroom> distinct = StreamApiUtils.distinctByColumn(classrooms,
 				classroom -> classroom.getOrganizationId() + classroom.getLessonId());
 		if (distinct.size() < classrooms.size()) {
+			List<String> ids = StreamApiUtils.getColumn(classrooms, Classroom::getResourceId);
+			log.error("classrooms ids:[{}] is duplicate", ids.toString());
 			throw new BusinessException(OjBusinessErrorCode.DUPLICATE_DATA_ORG_LESSON);
 		}
 	}
@@ -1336,12 +1341,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			}
 
 			if (sheetData.get(i).size() <= CommonConstant.FIVE) {
+				log.error("sheet data line [{}] is missing", i);
 				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
 						i + CommonConstant.TWO);
 			}
 
 			if (sheetData.get(i).size() == CommonConstant.SIX
 					&& sheetData.get(i).contains(CommonConstant.EMPTY_STRING)) {
+				log.error("sheet data line [{}] is empty", i);
 				throw new BusinessException(OjBusinessErrorCode.FILE_CONTENT_MISSING,
 						i + CommonConstant.TWO);
 			}
@@ -1354,11 +1361,13 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		List<Classroom> classroomList = classroomMapper.selectByPlan(planId);
 
 		if (!cover && CollectionUtils.isNotEmpty(classroomList)) {
+			log.error("[{}] have bind classroom", planId);
 			throw new BusinessException(OjBusinessErrorCode.LINE_TRAIN_PLAN_EXIST, rowIndex);
 		}
 
 		classroomList.forEach(classroom -> {
 			if (classroom.getStartTime().before(new Date())) {
+				log.error("classroom start time:[{}] before now",classroom.getStartTime());
 				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_START_NOT_COVER,
 						planName);
 			}
@@ -1402,6 +1411,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		CourseLesson lesson = courseLessonMapper.selectById(classroom.getLessonId());
 		if (null == lesson) {
+			log.error("classroom binds lesson:[{}] doesn't exist", classroom.getLessonId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -1439,6 +1449,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 		classroomList = classroomMapper.selectByPlan(trainPlan.getResourceId());
 		if (CollectionUtils.isNotEmpty(classroomList) && !cover) {
+			log.error("tran plan:[{}] exist", planName);
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_EXIST);
 		}
 
@@ -1470,12 +1481,14 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 			Map<String, String> orgMap) {
 		String courseName = roomData.get(CommonConstant.ONE);
 		if (StringUtils.isBlank(courseName)) {
+			log.error("courseName:[{}] is blank", courseName);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_IS_NULL, rowIndex);
 		}
 
 		String courseId = courseMapper.selectByName(courseName);
 
 		if (StringUtils.isBlank(courseId)) {
+			log.error("courseId:[{}] is blank", courseId);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NOT_EXIST, rowIndex);
 		}
 
@@ -1486,50 +1499,60 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 
 
 		if(!authCourseIds.contains(courseId)){
+			log.error("authCourseIds doesn't :[{}] is blank", courseId);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_COURSE_NO_PERMISSION, rowIndex);
 		}
 
 		String lessonName = roomData.get(CommonConstant.TWO);
 		if (StringUtils.isBlank(lessonName)) {
+			log.error("lessonName :[{}] is blank", lessonName);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_IS_NULL, rowIndex);
 		}
 
 		String lessonId = courseLessonMapper.selectByCourseAndName(courseId, lessonName);
 		if (StringUtils.isBlank(lessonId)) {
+			log.error("lessonId :[{}] is blank", lessonId);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_EXIST, rowIndex);
 		}
 
 		CourseLesson courseLesson = courseLessonMapper.selectById(lessonId);
 		if (!courseLesson.getIsPublic()) {
+			log.error("courseLesson :[{}] isn't public", courseLesson.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.PLAN_LESSON_NOT_PUBLIC, rowIndex);
 		}
 
 		String startTime = roomData.get(CommonConstant.THREE);
 		String endTime = roomData.get(CommonConstant.FOUR);
 		if (StringUtils.isBlank(startTime)) {
+			log.error("startTime :[{}] is blank", startTime);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
 		if (StringUtils.isBlank(endTime)) {
+			log.error("endTime :[{}] is blank", endTime);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_TIME_IS_NULL, rowIndex);
 		}
 
 		// 时间格式校验
 		if (null == TimeUtil.toDate1(endTime) || null == TimeUtil.toDate1(startTime)) {
+			log.error("startTime :[{}] endTime :[{}] isn't format", startTime ,endTime);
 			throw new BusinessException(OjBusinessErrorCode.TIME_FORMAT_ERROR, rowIndex);
 		}
 
 		if (TimeUtil.toDate1(endTime).before(TimeUtil.toDate1(startTime))) {
+			log.error("startTime :[{}] endTime :[{}] isn't reasonable", startTime ,endTime);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_END_GT_START_TIME, rowIndex);
 		}
 
 		String orgTree = roomData.get(CommonConstant.FIVE);
 		if (StringUtils.isBlank(orgTree)) {
+			log.error("sheet data line [{}] org name :[{}] is blank", rowIndex, orgTree);
 			throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_IS_NULL, rowIndex);
 		}
 		// 组织数据获取
 		if (StringUtils.isBlank(orgMap.get(orgTree))) {
 			String orgId = remoteOrganizationService.getOrgIdByTree(orgTree);
 			if (StringUtils.isBlank(orgId)) {
+				log.error("orgId :[{}] is blank", orgId);
 				throw new BusinessException(OjBusinessErrorCode.PLAN_ORG_NOT_EXIST, rowIndex);
 			} else {
 				orgMap.put(orgTree, orgId);
@@ -1576,6 +1599,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 					&& endTime.equals(classroom.getEndTime());
 
 			if (startIn || endIn || startAndEndEq) {
+				log.error("start time:[{}] end time:[{}] isn't reasonable", startTime.getTime(), endTime.getTime());
 				throw new BusinessException(OjBusinessErrorCode.IMPORT_CLASS_IN_SCHEDULES, rowIndex);
 			}
 		}
@@ -1594,6 +1618,7 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 		// 数据校验
 		String planName = rowData.get(CommonConstant.ZERO);
 		if (StringUtils.isBlank(planName)) {
+			log.error("planName :[{}] is blank", planName);
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NAME_IS_NULL, rowIndex);
 		}
 

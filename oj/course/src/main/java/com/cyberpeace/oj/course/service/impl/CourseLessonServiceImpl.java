@@ -657,6 +657,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		Course course = courseValidateHandler.validateCourseExist(courseId);
 		List<CourseLesson> courseLessons = courseLessonMapper.selectBatchIds(lessonIds);
 		if (CollectionUtils.isEmpty(courseLessons)) {
+			log.error("error lessonIds [{}]", lessonIds);
 			throw new BusinessException(OjBusinessErrorCode.NOT_SELECT_LESSON_INFORMATION);
 		}
 
@@ -671,6 +672,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		}
 		Set<String> lessonNameSet = courseLessons.stream().map(CourseLesson::getName).collect(Collectors.toSet());
 		if (courseLessons.size() != lessonNameSet.size()) {
+			log.error("repeat import same lesson name [{}]", StreamApiUtils.getColumn(courseLessons, CourseLesson::getName).toString());
 			throw new BusinessException(OjBusinessErrorCode.REPEAT_IMPORT_SAME_LESSON_NAME);
 		}
 
@@ -1038,6 +1040,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 			// 获取解压的讲义文件
 			String mdFilePath = FileUtil.getOneFile(unzipPath, FileSunffixConstant.MD.getDesc());
 			if (StringUtils.isBlank(mdFilePath)) {
+				log.error("error lesson handout content [{}]", unzipPath);
 				throw new BusinessException(OjBusinessErrorCode.LESSON_HANDOUT_CONTENT_ERROR);
 			}
 			courseLesson.setHandoutType(CourseLesson.HandoutType.MD.getCode());

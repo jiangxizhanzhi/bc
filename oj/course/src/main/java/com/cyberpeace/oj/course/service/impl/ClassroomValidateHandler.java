@@ -61,6 +61,7 @@ public class ClassroomValidateHandler {
 	public TrainPlan validatePlanExistById(String planId) {
 		TrainPlan trainPlan = trainPlanMapper.selectById(planId);
 		if (null == trainPlan) {
+			log.error("[{}] doesn't bind a tranPlan", planId);
 			throw new BusinessException(OjBusinessErrorCode.TRAIN_PLAN_NOT_FOUND);
 		}
 
@@ -76,6 +77,7 @@ public class ClassroomValidateHandler {
 	public ClassroomSign validateSign(String classroomId, String userId) {
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(classroomId, userId);
 		if (null == classroomSign) {
+			log.error("classroomId:[{}] user:[{}] doesn't sign",classroomId, userId);
 			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
 		}
 
@@ -90,6 +92,7 @@ public class ClassroomValidateHandler {
 	public Classroom validateClassroomLessonExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
 		if (null != classroom) {
+			log.error("lessonId:[{}]orgId:[{}] has existed", lessonId, orgId);
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
 
@@ -105,6 +108,7 @@ public class ClassroomValidateHandler {
 	public Classroom validateClassroomLessonExistExcludeItself(String lessonId, String orgId, Classroom itself) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
 		if (null != classroom && !classroom.getResourceId().equals(itself.getResourceId())) {
+			log.error("lessonId:[{}] orgId:[{}] has existed", lessonId, orgId);
 			throw new BusinessException(OjBusinessErrorCode.CLASS_LESSON_ORG_SAME);
 		}
 
@@ -119,6 +123,7 @@ public class ClassroomValidateHandler {
 	public void validateClassroomStartAndEnd(Date startTime, Date endTime) {
 
 		if (startTime.after(endTime) || startTime.getTime() == endTime.getTime()) {
+			log.error("[{}] is greater than or equal to [{}]", endTime, startTime);
 			throw new BusinessException(OjBusinessErrorCode.END_GT_START_TIME);
 		}
 	}
@@ -158,6 +163,7 @@ public class ClassroomValidateHandler {
 	public Classroom validateClassroomExist(String lessonId, String orgId) {
 		Classroom classroom = classroomMapper.selectByOrgAndLesson(orgId, lessonId);
 		if (classroom == null) {
+			log.error("lessonId:[{}] orgId:[{}] doesn't bind classroom", lessonId, orgId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -177,6 +183,7 @@ public class ClassroomValidateHandler {
 
 			if (!(startTime.getTime() >= classroom.getEndTime().getTime()
 					|| endTime.getTime() <= classroom.getStartTime().getTime())) {
+				log.error("starTime:[{}]  endTime:[{}] doesn't reasonable", startTime.getTime(), endTime.getTime());
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
 
@@ -200,6 +207,7 @@ public class ClassroomValidateHandler {
 			}
 			if (!(startTime.getTime() >= classroom.getEndTime().getTime()
 					|| endTime.getTime() <= classroom.getStartTime().getTime())) {
+				log.error("starTime:[{}]  endTime:[{}] doesn't reasonable", startTime.getTime(), endTime.getTime());
 				throw new BusinessException(OjBusinessErrorCode.CLASS_IN_SCHEDULES);
 			}
 		}
@@ -216,6 +224,7 @@ public class ClassroomValidateHandler {
 		if (!is_superuser) {
 			Classroom classroom = classroomMapper.selectById(classroomId);
 			if (null == classroom) {
+				log.error("classroomId:[{}] doesn't exist", classroomId);
 				throw new BusinessException(OjBusinessErrorCode.CLASSROOM_NOT_FOUNT);
 			}
 			if (!classroom.getCreateUserId().equals(authContext.getUserId())) {

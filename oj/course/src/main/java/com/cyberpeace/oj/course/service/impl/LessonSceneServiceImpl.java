@@ -258,6 +258,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 			ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(roomId,
 					authContext.getUserId());
 			if (null == groupInfo) {
+				log.error("roomId group [{}] doesn't contains user [{}]", roomId, authContext.getUserId());
 				throw new BusinessException(OjBusinessErrorCode.USER_CLASS_GROUP_NOT_FOUND);
 			}
 			

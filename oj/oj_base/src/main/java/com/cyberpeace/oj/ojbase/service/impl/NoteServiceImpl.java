@@ -25,6 +25,7 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.NoteListBo;
 import com.cyberpeace.oj.ojbase.service.context.AdminNoteListQuery;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements NoteService {
 
@@ -138,11 +140,13 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 			Note report = noteMapper.selectByUnique(note.getUserId(), note.getNoteType(), note.getBusinessType(), note.getBusinessId());
 			//已经提交过的无法再存草稿
 			if (report.getIsSubmit() != null && report.getIsSubmit() && !reportAddReq.getOperate()) {
+				log.error("report [{}] can't be duplicate submit", report.getContent());
 				throw new BusinessException(OjBusinessErrorCode.CANT_SAVE_SUBMIT_REPORT);
 			}
 			//已经通过的无法再提交
 			NoteEvaluate noteEvaluate = noteEvaluateMapper.selectByNote(report.getResourceId());
 			if (noteEvaluate != null && noteEvaluate.getPassed()) {
+				log.error("[{}] can't be duplicate submit", noteEvaluate.getResourceId());
 				throw new BusinessException(OjBusinessErrorCode.CANT_SUBMIT_EVALUATE_REPORT);
 			}
 			note.setIsSubmit(reportAddReq.getOperate());

@@ -92,7 +92,6 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		evaluateResultTheory.setScore(0d);
 		evaluateResultTheory.setTotalScore(0d);
 		if (null == paperPracticeTheory) {
-			log.error("paperPracticeTheory is null ,practiceRefId =[{}]，submitAnswer=[{}]", practiceRefId, submitAnswer);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 

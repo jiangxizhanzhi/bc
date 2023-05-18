@@ -6,6 +6,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.oj.course.controller.req.TrainPlanReq;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import com.cyberpeace.oj.course.dao.mapper.TrainPlanMapper;
 import com.cyberpeace.oj.course.service.TrainPlanService;
 import com.cyberpeace.oj.course.service.bo.TrainPlanBo;
 
+@Slf4j
 @Service
 public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan> implements TrainPlanService {
 
@@ -76,6 +78,7 @@ public class TrainPlanServiceImpl extends ServiceImpl<TrainPlanMapper, TrainPlan
 		}
 		List<TrainPlan> assessModel = trainPlanMapper.selectList(queryWrapper);
 		if (null != assessModel && assessModel.size()>0) {
+			log.error("[{}] name repeat", StreamApiUtils.getColumn(assessModel, TrainPlan::getName).toString());
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 	}

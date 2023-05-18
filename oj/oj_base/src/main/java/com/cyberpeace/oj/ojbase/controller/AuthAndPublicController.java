@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -30,6 +31,7 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+@Slf4j
 public abstract class AuthAndPublicController<T extends IService<E>, E> extends PublicController {
 
 	@PatchMapping("/batch-auth")
@@ -113,6 +115,7 @@ public abstract class AuthAndPublicController<T extends IService<E>, E> extends 
 
 		List<Integer> listCode = EnumUtils.getListCode(AuthTable.AuthType.class);
 		if (!listCode.contains(requestData.getOperationAuthType())) {
+			log.error("type doesn't contains [{}]", requestData.getOperationAuthType());
 			throw new BusinessException(OjBusinessErrorCode.TYPE_ERROR,requestData.getOperationAuthType());
 		}
 		Boolean result = updateData(requestData.getResourceIds(), resourceId -> {

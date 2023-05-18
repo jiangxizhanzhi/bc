@@ -114,35 +114,41 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		// 课堂数据校验
 		Classroom classroom = classroomMapper.selectById(roomId);
 		if (classroom == null) {
+			log.error("classroom with resourceId [{}] isn't exist", roomId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		ClassroomSign classroomSign = classroomSignMapper.selectByRoomAndUser(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 		if (null == classroomSign) {
+			log.error("classroom:[{}] userId[{}]  doesn't sign", classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(OjBusinessErrorCode.CLASS_NOT_SIGN);
 		}
 
 		// 不能同时两台虚拟机都远程协助
 		if (StringUtils.isNotBlank(classroomSign.getNodeId())
 				&& !classroomSign.getNodeId().equals(nodeId)) {
+			log.error("nodeId:[{}] classroomSign-nodeId[{}] can't both assistance", classroomSign.getNodeId(), nodeId);
 			throw new BusinessException(OjBusinessErrorCode.OTHER_NODE_IN_ASSISTANCE);
 		}
 
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(
 				classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 		if (null == groupInfo) {
+			log.error("classroom:[{}] user:[{}] doesn't bind classroom group", classroom.getResourceId(), UserInfoContext.getUserContext().getUserId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 		if (null == ojLocalScene) {
+			log.error("[{}] doesn't bind scene", groupInfo.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 		}
 
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode()
 				.intValue()) {
+			log.error("[{}] is pause", localScene.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_PAUSE);
 		}
 
@@ -230,22 +236,26 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 						.getCode().intValue()
 				|| classroomSign.getNeedHelp().intValue() == ClassroomSign.NEED_HELP.NO_HELP
 						.getCode().intValue()) {
+			log.error("node:[{}] no need help", classroomSign.getNodeId());
 			throw new BusinessException(OjBusinessErrorCode.USER_NO_NEED_HELP);
 		}
 
 		ClassroomGroupInfo groupInfo = classroomGroupInfoMapper.selectByRoomAndUser(classroomId,
 				userId);
 		if (null == groupInfo) {
+			log.error("[{}] doesn't bind classroom", userId);
 			throw new BusinessException(OjBusinessErrorCode.USER_CLASS_GROUP_NOT_FOUND);
 		}
 
 		OjLocalScene ojLocalScene = ojLocalSceneMapper.selectGroupScene(groupInfo.getResourceId());
 		if (null == ojLocalScene) {
+			log.error("scene:[{}] is not running", ojLocalScene.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 		}
 
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
 		if (null == localScene) {
+			log.error("scene:[{}] is not running", ojLocalScene.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -253,6 +263,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 				Lists.newArrayList(localScene.getMpSceneId()),
 				Lists.newArrayList(classroomSign.getNodeId()), Lists.newArrayList(userId));
 		if (StringUtils.isBlank(assistanceMap.get(userId))) {
+			log.error("user:[{}] is unplugged machine", userId);
 			throw new BusinessException(OjBusinessErrorCode.HELP_URL_NOT_FOUND);
 		}
 

@@ -54,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
 				: comment.getReplyId();
 		// 被回复的评论已被删除
 		if (replyCommentId != null && commentMapper.selectById(replyCommentId) == null) {
+			log.error("comment [{}] hasn't been deleted", replyCommentId);
 			throw new BusinessException(OjBusinessErrorCode.COMMENT_NOT_EXIST);
 		}
 		return commentMapper.insert(comment);
@@ -185,6 +186,7 @@ public class CommentServiceImpl implements CommentService {
 	public ListRsp<CommentBo> pageChildrenComment(Page page, String resourceId) {
 		IPage<Comment> iPage = commentMapper.selectAllByParent(page, resourceId);
 		if (commentMapper.selectById(resourceId) == null) {
+			log.error("comment [{}] doesn't exists", resourceId);
 			throw new BusinessException(OjBusinessErrorCode.COMMENT_NOT_EXIST);
 		}
 

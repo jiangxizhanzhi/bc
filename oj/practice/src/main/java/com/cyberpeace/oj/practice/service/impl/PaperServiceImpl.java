@@ -221,6 +221,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 习题集下数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("practiceIds.size() < practiceQuery.getCount() ,PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 
@@ -233,6 +234,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 其他条件下数据量判断
 			if (theories.size() < practiceQuery.getCount()) {
+				log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 
@@ -247,6 +249,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 习题集下数据量判断
 			if (practiceIds.size() < practiceQuery.getCount()) {
+				log.error("theories.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 
@@ -258,6 +261,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
 
 			// 其他条件下数据量判断
 			if (operations.size() < practiceQuery.getCount()) {
+				log.error("operations.size() < practiceQuery.getCount(),PracticeSetId =[{}]",practiceQuery.getPracticeSetId());
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_COUNT_NOT_ENOUGH);
 			}
 

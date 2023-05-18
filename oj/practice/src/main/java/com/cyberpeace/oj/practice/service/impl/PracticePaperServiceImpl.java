@@ -16,6 +16,7 @@ import com.cyberpeace.oj.practice.dao.mapper.*;
 import com.cyberpeace.oj.practice.service.PaperPracticeTheoryService;
 import com.cyberpeace.oj.practice.service.PracticePaperService;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
-
+@Slf4j
 @Service
 public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, PracticePaper> implements PracticePaperService {
 
@@ -79,6 +80,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		List<PracticeTheory> practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(practicePaperCreateReq.getDifficulty(),
 				practicePaperCreateReq.getType(), practicePaperCreateReq.getDirection(), practiceIds);
 		if (practiceTheorySumList.size() < practicePaperCreateReq.getCount()) {
+			log.error("practiceTheorySumList.size() < practicePaperCreateReq.getCount()! practicePaperCreateReq=[{}]", JsonUtil.toJsonString(practicePaperCreateReq));
 			throw new BusinessException(OjBusinessErrorCode.NOT_ENOUGH_PRACTICE);
 		}
 		//按方向进行统计并按每个方向的题目数量进行排序（产品要求组卷时各个方向的题目数量尽量一样）

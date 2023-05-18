@@ -14,6 +14,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.baseinterface.Create;
@@ -24,6 +25,7 @@ import lombok.Data;
 
 import static com.cyberpeace.cr.crbase.utils.CrCommonValidator.validateLength;
 
+@Slf4j
 @Data
 @ApiModel
 public class OperationAddReq implements Serializable, CustomValidate {
@@ -147,6 +149,7 @@ public class OperationAddReq implements Serializable, CustomValidate {
 					file -> StringUtils.isNotBlank(file));
 
 			if (answers.size() != notEmptyFile.size()) {
+				log.error("answers.size() != notEmptyFile.size(),answers.size() ={}，notEmptyFile.size()={}", answers.size(), notEmptyFile.size());
 				throw new BusinessException(
 						OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
 			}

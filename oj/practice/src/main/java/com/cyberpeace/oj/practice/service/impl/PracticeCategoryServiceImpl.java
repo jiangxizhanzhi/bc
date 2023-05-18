@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.JsonUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 					category.getName());
 			if (StringUtils.isNotBlank(categoryId)
 					&& !categoryId.equals(category.getResourceId())) {
+				log.error("name is exist,categoryId =[{}]",categoryId);
 				throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 			}
 		}
@@ -112,6 +114,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		String categoryId = practiceCategoryMapper.selectByName(practiceCategory.getPracticeType(),
 				practiceCategory.getName());
 		if (StringUtils.isNotBlank(categoryId)) {
+			log.error("name is exist,categoryId =[{}]",categoryId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 
@@ -125,6 +128,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		if (StringUtils.isNotBlank(parentId)) {
 			PracticeCategory parentCategory = practiceCategoryMapper.selectById(parentId);
 			if (null == parentCategory) {
+				log.error("parentCategory is null,parentId =[{}]",parentId);
 				throw new BusinessException(OjBusinessErrorCode.PARENT_CATEGORY_NOT_EXIST);
 			}
 			return parentCategory.getCode() + CommonConstant.CODE_COMMA
@@ -183,6 +187,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<String> theoryIds = practiceTheoryMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(theoryIds)) {
+			log.error("theoryIds is Not Empty,allDeleteIds =[{}]", JsonUtil.arrayToString(allDeleteIds));
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 		}
 
@@ -190,6 +195,7 @@ public class PracticeCategoryServiceImpl extends ServiceImpl<PracticeCategoryMap
 		List<String> operationIds = practiceOperationMapper.selectByCategoryIds(allDeleteIds,
 				CommonConstant.FALSE);
 		if (CollectionUtils.isNotEmpty(operationIds)) {
+			log.error("operationIds is Not Empty,operationIds =[{}]", JsonUtil.arrayToString(operationIds));
 			throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 		}
 

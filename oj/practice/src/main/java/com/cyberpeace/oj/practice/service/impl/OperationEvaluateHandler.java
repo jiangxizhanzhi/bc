@@ -6,6 +6,7 @@ import java.util.Map;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.dao.entity.PracticeRandomFlag;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import com.cyberpeace.oj.practice.service.PracticeEvaluateService;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+@Slf4j
 @Service("operation")
 public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 
@@ -76,6 +77,7 @@ public class OperationEvaluateHandler implements PracticeEvaluateHandler {
 					practiceOperation.getResourceId(),
 					PracticeRandomFlag.FlagType.PRACTICE.getCode());
 			if (null == randomFlag) {
+				log.error("randomFlag is null ,userId =[{}]，ResourceId=[{}]", userId, practiceOperation.getResourceId());
 				throw new BusinessException(OjBusinessErrorCode.RELOAD_PRACTICE);
 			}
 			return JsonUtil.arrayToString(Lists.newArrayList(randomFlag.getFlag()));

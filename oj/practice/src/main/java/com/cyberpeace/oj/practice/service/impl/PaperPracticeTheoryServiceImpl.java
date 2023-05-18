@@ -26,6 +26,7 @@ import com.cyberpeace.oj.practice.service.bo.BlankAnswer;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResultTheory;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 @Service
 public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeTheoryMapper, PaperPracticeTheory> implements PaperPracticeTheoryService {
 
@@ -91,6 +92,7 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 		evaluateResultTheory.setScore(0d);
 		evaluateResultTheory.setTotalScore(0d);
 		if (null == paperPracticeTheory) {
+			log.error("paperPracticeTheory is null ,practiceRefId =[{}]，submitAnswer=[{}]", practiceRefId, submitAnswer);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -161,6 +163,7 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 
 		PracticeTheory practiceTheory = practiceTheoryMapper.selectById(paperPracticeTheory.getOriginId());
 		if (practiceTheory == null) {
+			log.error("practiceTheory is null ,BusinessId =[{}]",collectionReq.getBusinessId());
 			throw new BusinessException(OjBusinessErrorCode.CANT_COLLECT_DELETE_PRACTICE);
 		}
 

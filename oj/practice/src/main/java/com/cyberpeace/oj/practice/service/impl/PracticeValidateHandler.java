@@ -70,11 +70,13 @@ public class PracticeValidateHandler {
 	 */
 	public void validateChoiceAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 <= index) {
+			log.error("choice option too little!excelRowData=[{}] ", JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_LITTLE);
 		}
 
 		if (StringUtils.isBlank(excelRowData.get(index))
 				|| StringUtils.isBlank(excelRowData.get(index + 1))) {
+			log.error("choice option too little!excelRowData=[{}] ", JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_LITTLE);
 		}
 
@@ -86,9 +88,11 @@ public class PracticeValidateHandler {
 	 */
 	public void validateFillBlankAnswerLength(List<String> excelRowData, int index) {
 		if (CollectionUtils.isEmpty(excelRowData) || excelRowData.size() - 1 < index) {
+			log.error("fill blank too little!excelRowData=[{}] ", JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
 		}
 		if (StringUtils.isBlank(excelRowData.get(index + 1))) {
+			log.error("fill blank too little!excelRowData=[{}] ", JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.FILL_BLANK_TOO_LITTLE);
 		}
 	}
@@ -343,6 +347,7 @@ public class PracticeValidateHandler {
 				newTitle);
 		if (StringUtils.isNotBlank(existTitleId)
 				&& !operation.getResourceId().equals(existTitleId)) {
+			log.error("name is exist!PracticeSetId=[{}] ", operation.getPracticeSetId());
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 	}
@@ -365,6 +370,7 @@ public class PracticeValidateHandler {
 
 		// topo结构一致性校验
 		if (!remoteTopoService.equalTopo(topoData, operation.getTopoId())) {
+			log.error("scene is running!topoData=[{}],topoId=[{}] ", JsonUtil.toJsonString(topoData),operation.getTopoId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
@@ -373,6 +379,7 @@ public class PracticeValidateHandler {
 			List<String> attachments) {
 		if (dynamicFlag.intValue() != PracticeOperation.DynamicFlag.RANDOM.getCode()
 				&& attachments.size() > CommonConstant.ONE) {
+			log.error("practice attachment is too many!practiceName=[{}],attachments.size()=[{}] ", attachments.size());
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_ATTACHMENT_IS_TOO_MANY,
 					practiceName);
 		}
@@ -394,6 +401,7 @@ public class PracticeValidateHandler {
 			JSONArray objects = JSON.parseArray(keyword);
 			for (Object obj : objects) {
 				if (StringUtils.isBlank(obj.toString())) {
+					log.error("keyword empty error!theoryType=[{}],keyword.size()=[{}] ",theoryType,keyword);
 					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
 				}
 			}
@@ -418,6 +426,7 @@ public class PracticeValidateHandler {
 		List<String> authIds = JsonUtil.toJsonObjectArray(practiceSet.getOperationAuthIds(),
 				String.class);
 		if (!authIds.contains(userId)) {
+			log.error("practice set is exist!userId=[{}]",userId);
 			throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_IS_EXIST);
 		}
 	}
@@ -437,6 +446,7 @@ public class PracticeValidateHandler {
 		if (CollectionUtils.isEmpty(adminScenes) && CollectionUtils.isEmpty(webScenes)) {
 			return;
 		} else {
+			log.error("scene is running!adminScenes=[{}]，webScenes=[{}]",adminScenes,webScenes);
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_RUNNING);
 		}
 	}
@@ -447,11 +457,13 @@ public class PracticeValidateHandler {
 	 */
 	public void validateBuiltin(PracticeSet practiceSet) {
 		if (practiceSet.isBuiltin()) {
+			log.error("unable to export builtin resource!practiceSet=[{}]",JsonUtil.toJsonString(practiceSet));
 			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, practiceSet.getName());
 		}
 		if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.THEORY.getCode())) {
 			String practiceTheoryName = practiceTheoryMapper.searchBuiltinBySetIds(Arrays.asList(practiceSet.getResourceId()));
 			if (practiceTheoryName != null) {
+				log.error("practiceTheoryName is not null!practiceTheoryName=[{}]",practiceTheoryName);
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE, practiceSet.getName(), practiceTheoryName);
 			}
 		}else if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.OPERATION.getCode())) {

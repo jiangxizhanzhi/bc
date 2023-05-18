@@ -236,6 +236,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeCategory category = practiceCategoryMapper.selectById(categoryId);
 		if (null == category) {
+			log.error("category is null,categoryId =[{}]", categoryId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -272,6 +273,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
 		if(null == practiceOperation){
+			log.error("practiceOperation is null,ResourceId =[{}]", updateOperation.getResourceId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		if (updateOperation.getDynamicEnv() && null != ojSceneConfig) {
@@ -364,6 +366,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 附件数量判断
 		if (attachments.size() != attachmentIds.size()) {
+			log.error("attachments.size() != attachmentIds.size(),attachmentId =[{}]",attachmentId);
 			throw new BusinessException(OjBusinessErrorCode.ATTACHMENT_MISSION);
 		}
 
@@ -1432,6 +1435,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		String[] files = attachmentId.split(CommonConstant.CODE_COMMA);
 
 		if (files.length != answers.size()) {
+			log.error("files.length != answers.size()! attachmentId=[{}]", attachmentId);
 			throw new BusinessException(
 					OjBusinessErrorCode.PRACTICE_ATTACHMENT_ANSWER_INCONSISTENT);
 		}
@@ -1442,6 +1446,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 			File file = new File(realPath);
 			if (!file.exists()) {
+				log.error("file is not exists! realPath=[{}]", realPath);
 				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
 			}
 

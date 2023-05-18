@@ -206,6 +206,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		String categoryId = practiceSetMapper.selectByName(practiceSet.getName());
 		// 名称校验
 		if (StringUtils.isNotBlank(categoryId) && !categoryId.equals(existSet.getResourceId())) {
+			log.error("categoryId not permission! categoryId=[{}]",
+					categoryId);
 			throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
 		}
 
@@ -213,6 +215,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		if (null != practiceSet.getPracticeType()) {
 			if (existSet.getPracticeType().intValue() != practiceSet.getPracticeType().intValue()
 					&& existSet.getPracticeCount().intValue() != CommonConstant.ZERO.intValue()) {
+				log.error("set under exist practice! existSet=[{}]",
+						JsonUtil.toJsonString(existSet));
 				throw new BusinessException(OjBusinessErrorCode.SET_UNDER_EXIST_PRACTICE);
 			}
 		}
@@ -231,6 +235,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			PracticeSet practiceSet = practiceSetMapper.selectById(setId);
 			List<String> practiceIds = hasPractice(practiceSet, authContext);
 			if (CollectionUtils.isNotEmpty(practiceIds)) {
+				log.error("practiceIds isNotEmpty! practiceIds=[{}]",
+						JsonUtil.toJsonString(practiceIds));
 				throw new BusinessException(OjBusinessErrorCode.RESOURCE_USED_NOT_DELETED);
 			}
 		}
@@ -483,6 +489,8 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 				log.warn("use default logo [{}]", ResourceDumpConstant.DEFAULT_LOGO_PATH);
 				practiceSet.setLogo(ResourceDumpConstant.DEFAULT_LOGO_PATH);
 			} else {
+				log.error("file is not exist ! path=[{}]",
+						ResourceDumpConstant.DEFAULT_LOGO_PATH);
 				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_NO_LOGO,
 						practiceSet.getName());
 			}

@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.cyberpeace.oj.ojbase.constant.ResourceDumpConstant;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
@@ -144,6 +145,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				rowsRead.add(1);
 				return excelDataToEntity(data, practiceSet, userId);
 			} catch (NumberFormatException e) {
+				log.error("import theory invalid ! ", e);
 				throw new BusinessException(OjBusinessErrorCode.IMPORT_THEORY_INVALID, rowsRead.size());
 			}
 		});
@@ -342,6 +344,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				.getCode().intValue()) {
 			String shortAnswer = excelRowData.get(4);
 			if (StringUtils.isBlank(shortAnswer)) {
+				log.error("shortAnswer isBlank !excelRowData=[{}] ", excelRowData);
 				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
 			}
 			practiceTheory.setAnswer(shortAnswer);
@@ -471,6 +474,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 				.getCode().intValue()) {
 			String shortAnswer = excelRowData.get(4);
 			if (StringUtils.isBlank(shortAnswer)) {
+				log.error("shortAnswer isBlank !excelRowData=[{}] ", excelRowData);
 				throw new BusinessException(OjBusinessErrorCode.SHORT_ANSWER_ANSWER_EMPTY_ERROR);
 			}
 			practiceTheory.setAnswer(shortAnswer);
@@ -542,6 +546,7 @@ public class PracticeTheoryImportServiceImpl extends ServiceImpl<PracticeTheoryM
 
 		practiceValidateHandler.validateChoiceAnswerLength(excelRowData, start);
 		if (excelRowData.size() - CommonConstant.FIVE > 26) {
+			log.error("excelRowData.size() - CommonConstant.FIVE > 26 !excelRowData=[{}] ", JsonUtil.toJsonString(excelRowData));
 			throw new BusinessException(OjBusinessErrorCode.CHOICE_OPTION_TOO_MANY);
 		}
 

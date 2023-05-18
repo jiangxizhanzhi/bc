@@ -967,7 +967,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		detail.setDurationTime(singleTemplate.getDurationTime());
 		detail.setSubType(singleTemplate.getSubType());
 		detail.setDifficulty(bt.getDifficulty());
-		detail.setTrainSkill(JsonUtil.toJsonObjectArray(singleTemplate.getTrainSkills(), String.class));
+		detail.setTrainSkill(
+				JsonUtil.toJsonObjectArray(singleTemplate.getTrainSkills(), String.class));
 		detail.setPreSkill(JsonUtil.toJsonObjectArray(singleTemplate.getPreSkills(), String.class));
 		detail.setDescription(bt.getDescription());
 		detail.setTrainingTime(trainRecord.getStartTime());
@@ -975,11 +976,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				trainRecord.getEndTime());
 		detail.setTimeCost(duration);
 		// get role -> get stages structure -> get missions
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, UserInfoContext.getUserContext().getUserId());
-		List<MissionStageScheme> missionStages = JsonUtil.toJsonObjectArray(role.getMissionScheme(), MissionStageScheme.class);
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		List<MissionStageScheme> missionStages = JsonUtil.toJsonObjectArray(role.getMissionScheme(),
+				MissionStageScheme.class);
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStages);
 		List<Mission> missionList = missionService.batchGet(missionIds);
-		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionList, Mission::getResourceId, mission->mission);
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missionList, Mission::getResourceId,
+				mission -> mission);
 		// mission count
 		statistics.setMissionCount(missionList.size());
 		// get record extra -> get score -> get recorded user answer
@@ -990,7 +994,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			detail.setScore(extra.getInteger(SingleRoom.CrTrainRecordFields.SCORE));
 		}
 		// 不包含任务
-		if(missionList.isEmpty()){
+		if (missionList.isEmpty()) {
 			statistics.setSuccessful(0);
 			statistics.setFailed(0);
 			statistics.calculate();
@@ -999,36 +1003,38 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return detail;
 		}
 		// get recorded user answer
-		JSONObject missionRecordCol = extra.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
+		JSONObject missionRecordCol = extra
+				.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
 		for (MissionStageScheme stage : missionStages) {
 			RecordStageBo stageBo = new RecordStageBo();
 			stageBo.setStageName(stage.getStage());
 			for (String missionId : stage.getMissions()) {
 				// get mission
 				Mission mission = missionMap.get(missionId);
-				if(null == mission){
+				if (null == mission) {
 					continue;
 				}
 				// collect radar
-				List<Integer> points = JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class);
+				List<Integer> points = JsonUtil.toJsonObjectArray(mission.getSkillPoints(),
+						Integer.class);
 				CrCommonUtil.integratePoints(pointsAll, points);
-				
+
 				RecordMissionSimpleBo missionBo = new RecordMissionSimpleBo();
 				missionBo.setTitle(mission.getTitle());
 				missionBo.setDescription(mission.getDescription());
 				missionBo.setType(mission.getType());
 				// option
-				if(StringUtils.isNotBlank(mission.getOption())){
-					missionBo.setOption(JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
+				if (StringUtils.isNotBlank(mission.getOption())) {
+					missionBo.setOption(
+							JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
 				}
 				missionBo.setAnswer(mission.getAnswer());
 				// get user answer
 				JSONObject missionRecord = missionRecordCol.getJSONObject(missionId);
-				if(null == missionRecord){
+				if (null == missionRecord) {
 					// 未作答
-					missionBo.setAnswered(false);
+					missionBo.setStatus(CrTask.SingleTaskStatus.RELEASED.getCode());
 				} else {
-					missionBo.setAnswered(true);
 					String userAnswer = missionRecord
 							.getString(SingleRoom.MissionsRecordFields.ANSWER);
 					missionBo.setUserAnswer(userAnswer);
@@ -1036,8 +1042,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					if (userAnswer.equals(mission.getAnswer())) {
 						CrCommonUtil.integratePoints(pointsGet, points);
 						successful += 1;
+						missionBo.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());
 					} else {
 						failed += 1;
+						missionBo.setStatus(CrTask.SingleTaskStatus.FAIL.getCode());
 					}
 				}
 
@@ -1117,7 +1125,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return rsp;
 	}
 
-    private Map<String, Mission>
+	private Map<String, Mission>
 			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);
 

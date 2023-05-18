@@ -29,7 +29,7 @@ public class RecordMissionSimpleBo implements Serializable {
 	@ApiModelProperty(value = "任务类型")
 	private Integer type;
 
-	@ApiModelProperty(value = "是否作答")
-	private Boolean answered;
+	@ApiModelProperty(value = "答题状态，11：未作答，1：成功，2：失败")
+	private Integer status;
 
 }

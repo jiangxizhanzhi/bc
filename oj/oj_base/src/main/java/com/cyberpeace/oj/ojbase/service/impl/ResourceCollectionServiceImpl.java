@@ -54,7 +54,7 @@ public class ResourceCollectionServiceImpl extends ServiceImpl<ResourceCollectio
 	@Override
 	public Map<String, Boolean> selectCollectionBatchIds(String userId, Integer businessType, List<String> businessIds) {
 		List<ResourceCollection> resourceCollections = resourceCollectionMapper.selectByBusinessIds(userId, businessType, businessIds);
-		List<String> collectionBusinessIds = StreamApiUtils.map(resourceCollections, ResourceCollection::getResourceId);
+		List<String> collectionBusinessIds = StreamApiUtils.map(resourceCollections, ResourceCollection::getBusinessId);
 		Map<String, Boolean> collectionMap = new HashMap<>();
 		for (String businessId : businessIds) {
 			if (collectionBusinessIds.contains(businessId)) {

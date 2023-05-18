@@ -12,6 +12,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
@@ -175,6 +176,14 @@ public class PracticeTheoryController {
 		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(webTheoryRecordReq);
 		Page page = webTheoryRecordReq.toPageParam();
 		return new BaseRsp<>(PageUtil.getListResult(practiceTheoryList, page, practiceTheoryList.size()));
+	}
+
+	@ApiOperation("获取练习记录练习id列表")
+	@GetMapping("/record_practice_ids")
+	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
+	public BaseRsp<List<String>> getRecordIds() {
+		List<PracticeTheoryListBo> practiceTheoryList = practiceTheoryService.getPracticeRecord(new WebTheoryRecordReq());
+		return new BaseRsp<>(StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getResourceId));
 	}
 
 }

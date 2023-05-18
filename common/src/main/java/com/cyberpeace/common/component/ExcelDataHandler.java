@@ -96,7 +96,7 @@ public class ExcelDataHandler {
 			} catch (IOException ioException) {
 				// 关不掉这个没办法了
 			}
-
+			log.error("excel fileInputStream close failed!  filePath =[{}],sheetName=[{}]",filePath,sheetName);
 			throw new BusinessException(ErrorCode.FILE_READ_FAIL);
 		}
 	}
@@ -193,6 +193,7 @@ public class ExcelDataHandler {
 		String fileSuffix = FileUtil.getFileSuffix(filePath);
 
 		if (StringUtils.isBlank(fileSuffix)) {
+			log.error("fileSuffix is blank! fileSuffix=[{}]",fileSuffix);
 			throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 		}
 
@@ -203,7 +204,7 @@ public class ExcelDataHandler {
 		if (fileSuffix.equals(FileSunffixConstant.XLS.getDesc())) {
 			return new HSSFWorkbook();
 		}
-
+		log.error("createWorkbook fail! fileSuffix=[{}]",fileSuffix);
 		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 	}
 
@@ -337,6 +338,7 @@ public class ExcelDataHandler {
 		if (!parentFile.exists()) {
 			boolean isCreated = parentFile.mkdirs();
 			if (!isCreated) {
+				log.error("exportExcel fail! filePath=[{}]",filePath);
 				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, parentFile.getPath());
 			}
 		}

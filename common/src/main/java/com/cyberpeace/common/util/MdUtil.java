@@ -133,6 +133,7 @@ public class MdUtil {
             String realPath = getRealPath(imagePath);
             File source = new File(realPath);
             if (!source.exists()) {
+				log.error("source is not   exist! realPath = [{}]",realPath);
                 throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, realPath);
             }
 

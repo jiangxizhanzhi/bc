@@ -33,6 +33,7 @@ public class FileUtil {
 	 */
 	public static void validateSuffix(MultipartFile file, String... fileSuffix) {
 		if (null == file) {
+			log.error("file is null! fileSuffix=[{}]",fileSuffix);
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		}
 
@@ -43,7 +44,7 @@ public class FileUtil {
 				return;
 			}
 		}
-
+		log.error("filename is illegal! filename=[{}]",filename);
 		throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 	}
 
@@ -54,12 +55,14 @@ public class FileUtil {
 	 */
 	public static void validateNotAccessFile(MultipartFile file, String... fileSuffix) {
 		if (null == file) {
+			log.error("file is null! fileSuffix=[{}]",fileSuffix);
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		}
 
 		String filename = file.getOriginalFilename();
 		for (String suffix : fileSuffix) {
 			if (filename.endsWith(CommonConstant.PERIOD + suffix)) {
+				log.error("filename is illegal! filename=[{}]",filename);
 				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 			}
 		}
@@ -544,6 +547,7 @@ public class FileUtil {
 	public static void validateFileSuffix(String destFilePath, String fileTypeStr) {
 
 		if (StringUtils.isBlank(destFilePath)) {
+			log.error("destFilePath is bank!");
 			throw new BusinessException(ErrorCode.FILE_CONTENT_INVALID);
 		}
 
@@ -555,6 +559,7 @@ public class FileUtil {
 			if (StringUtils.isBlank(fileSuffix)) {
 				return;
 			} else {
+				log.error("fileSuffix is not  bank! fileSuffix = [{}]",fileSuffix);
 				throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE,
 						fileTypeStr.toLowerCase());
 			}
@@ -562,6 +567,7 @@ public class FileUtil {
 
 		// 如果类型不为空 但后缀为空 则校验不通过
 		if (StringUtils.isBlank(fileSuffix)) {
+			log.error("fileSuffix is  bank! fileTypeStr = [{}]",fileTypeStr);
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, fileTypeStr.toLowerCase());
 		}
 

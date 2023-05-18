@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -16,6 +17,7 @@ import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.google.common.collect.Maps;
 
 @Service
+@Slf4j
 public class BusinessTemplateHandler {
 
 	private static Map<BusinessTemplate.BusinessType, BusinessTemplateHandler> register = Maps
@@ -71,6 +73,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public ResourceDumpContext realDumpBusiness(BusinessTemplate template) {
+		log.error("method not implemented, plz do not use it");
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -80,6 +83,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public void realLoadBusinessResource(ResourceDumpContext resource) {
+		log.error("method not implemented, plz do not use it");
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -88,6 +92,7 @@ public class BusinessTemplateHandler {
 	 * @param businessTemplate
 	 */
 	public void deleteTemplateRelated(BusinessTemplate businessTemplate) {
+		log.error("method not implemented, plz do not use it");
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 
@@ -96,6 +101,7 @@ public class BusinessTemplateHandler {
 	 * @param templateContext
 	 */
 	public void loadTrainTemplate(TrainingTemplateContext templateContext) {
+		log.error("method not implemented, plz do not use it");
 		throw new BusinessException(CrBusinessErrorCode.NOT_IMPLEMENTED_EXCEPTION);
 	}
 

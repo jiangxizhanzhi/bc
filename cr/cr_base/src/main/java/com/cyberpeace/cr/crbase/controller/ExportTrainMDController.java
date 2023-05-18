@@ -46,6 +46,7 @@ public class ExportTrainMDController {
 		List<Integer> sceneTypeList = EnumUtils.getListCode(BusinessTypeConvert.class);
 		if (!sceneTypeList.contains(type)) {
 			String typeString = StringUtils.join(sceneTypeList, ",");
+			log.error("Type is error,only sustain [{}]! type = [{}]", typeString, type);
 			throw new BusinessException(CrBusinessErrorCode.EXPORT_TRAIN_ERROR_TYPE,typeString);
 		}
 		//导出路径

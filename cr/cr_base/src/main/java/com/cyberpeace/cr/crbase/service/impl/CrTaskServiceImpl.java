@@ -361,18 +361,21 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			String answerExtension) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
+			log.error("mission does not exist, id=[{}]", missionId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_NOT_EXIST);
 		}
 
 		// 多选题答案校验
 		if (mission.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
 			if (answer.equals(CommonConstant.EMPTY_LIST_JSON)) {
+				log.error("answer of multi choice question cant be empty");
 				throw new BusinessException(CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 			}
 		}
 
 		CrTask task = crTaskMapper.selectByUserIdAndMissionId(userId, missionId);
 		if (task == null) {
+			log.error("mission is not released, id = [{}]",missionId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_UNRELEASED);
 		}
 
@@ -380,6 +383,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		CrTaskSubmit lastSubmit = crTaskSubmitMapper.selectLastByTaskId(task.getResourceId());
 		if (lastSubmit != null && !lastSubmit.getEvaluateStatus()
 				.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+			log.error("task is finished, taskId=[{}]", task.getResourceId());
 			throw new BusinessException(CrBusinessErrorCode.CANNOT_SUBMIT_FINISHED_TASK);
 		}
 
@@ -446,9 +450,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		// check permission??
 		CrTaskSubmit taskSubmit = crTaskSubmitMapper.selectById(taskSubmitId);
 		if (taskSubmit == null) {
+			log.error("task_submit not found, id=[{}]", taskSubmitId);
 			throw new BusinessException(CrBusinessErrorCode.MISSION_SUBMIT_NOT_FOUND);
 		}
 		if (taskSubmit.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+			log.error("task has been rejected, id=[{}]", taskSubmitId);
 			throw new BusinessException(CrBusinessErrorCode.TASK_REJECTED);
 		}
 
@@ -464,6 +470,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 		// 校验分数
 		if (taskSubmit.getMissionScore() < score || score < 0) {
+			log.error("score out of range:[{}]", score);
 			throw new BusinessException(CrBusinessErrorCode.SCORE_RANGE_ERROR);
 		}
 

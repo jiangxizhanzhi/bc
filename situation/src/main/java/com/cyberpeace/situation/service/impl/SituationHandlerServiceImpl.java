@@ -182,8 +182,9 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 
 			// 处理坐标数据
 			JSONObject position2 = element.getJSONObject("position2");
-			if(position2 == null){
-				log.error("Failed to get node coordinates！Scene_id is [{}]", sceneData.getSceneId());
+			if (position2 == null) {
+				log.error("Failed to get node coordinates！Scene_id is [{}]",
+						sceneData.getSceneId());
 				throw new BusinessException(SituationErrorCode.NODE_HAS_NO_COORDINATES);
 			}
 			Float x = position2.getFloat("x");
@@ -517,6 +518,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		} else if (elements.size() >= 2) {
 			wsEvent = getRandomWsMultiElementDynamic(elements);
 		} else {
+			log.error("no enough scene node, scene_id:{}", sceneId);
 			throw new BusinessException(ErrorCode.LACK_OF_SCENE_NODE);
 		}
 
@@ -588,12 +590,13 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			Integer interval) {
 
 		// 无推送消息时，直接结束
-		if (datas.isEmpty()){
+		if (datas.isEmpty()) {
 			return;
 		}
 
 		// 推送中台动效时打印日志
-		log.info(String.format("Push mp flow event successfully, content is %s", JsonUtil.arrayToString(datas)));
+		log.info(String.format("Push mp flow event successfully, content is %s",
+				JsonUtil.arrayToString(datas)));
 
 		Integer circle = (int) Math.ceil((double) datas.size() / number);
 

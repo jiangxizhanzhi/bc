@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势拓扑")
+@Slf4j
 @RestController
 @RequiresAuthentication
 @RequestMapping("/situation")
@@ -111,6 +113,7 @@ public class SituationController {
 
 		// 场景未启动时返回false
 		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			log.error("scene is not running, scene_id is:{}", flowAutoRunReq.getSceneId());
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -169,6 +172,7 @@ public class SituationController {
 			setSceneConfig(@RequestBody @Validated SceneConfigReq sceneConfigReq) {
 
 		if (sceneConfigReq.getIsInstance() != null && !sceneConfigReq.getIsInstance()) {
+			log.error("scene is not instance, scene_id is {}", sceneConfigReq.getSceneId());
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
@@ -177,12 +181,14 @@ public class SituationController {
 
 		// 校验场景状态
 		if (!topoHandlerService.checkSceneStatus(mpSceneData)) {
+			log.error("scene is not running, scene_id is {}", sceneId);
 			throw new BusinessException(ErrorCode.SCENE_NOT_RUNNING);
 		}
 
 		// 场景配置不在时报错
 		SceneConfig sceneConfig = sceneConfigMapper.selectBySceneId(sceneId);
 		if (sceneConfig == null) {
+			log.error("scene_config is not exist, scene_id is {}", sceneId);
 			throw new BusinessException(SituationErrorCode.NO_VALID_SCENE_CONFIG);
 		}
 
@@ -194,11 +200,13 @@ public class SituationController {
 		// 校验场景是否允许流量事件推送
 		if (sceneConfigReq.getFlowAnalysis()
 				&& !topoHandlerService.enableFlowCollect(mpSceneData)) {
+			log.error("scene is not configured to collect flow, scene_id is {}", sceneId);
 			throw new BusinessException(SituationErrorCode.FLOW_COLLECTION_IS_NOT_CONFIGURED);
 		}
 
 		// 校验场景是否允许流量自动运行
 		if (sceneConfigReq.getFlowAutoRun() && !topoHandlerService.enableFlowAutoRun(mpSceneData)) {
+			log.error("scene is not configured to run flow, scene_id is {}", sceneId);
 			throw new BusinessException(SituationErrorCode.FLOW_SIMULATION_IS_NOT_CONFIGURED);
 		}
 

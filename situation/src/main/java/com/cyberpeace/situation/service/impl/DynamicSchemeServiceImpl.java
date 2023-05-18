@@ -112,6 +112,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public DynamicSchemeRes getDynamicSchemeById(String resourceId) {
 		DynamicScheme dynamicScheme = dynamicSchemeMapper.selectById(resourceId);
 		if (dynamicScheme == null) {
+			log.error("get dynamic scheme by id ({}) error, dynamic scheme not found", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		DynamicSchemeRes dynamicSchemeRes = BeanUtils.copy(dynamicScheme, DynamicSchemeRes.class);
@@ -125,13 +126,16 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (dynamicStageBo.getAttackMessageIds().size() > 0) {
 				List<AttackMessage> attackMessageList = attackMessageMapper
 						.selectBatchIds(dynamicStageBo.getAttackMessageIds());
-				if(attackMessageList.size() < dynamicStageBo.getAttackMessageIds().size()){
+				if (attackMessageList.size() < dynamicStageBo.getAttackMessageIds().size()) {
+					log.error(
+							"Messages of dynamic scheme do not match the data in the database, scheme id: {}",
+							resourceId);
 					throw new BusinessException(SituationErrorCode.CANNOT_FIND_DYNAMIC);
 				}
-				for (String attackMessageId : dynamicStageBo.getAttackMessageIds()){
+				for (String attackMessageId : dynamicStageBo.getAttackMessageIds()) {
 					AttackMessage attackMessage = new AttackMessage();
-					for (AttackMessage message : attackMessageList){
-						if(message.getResourceId().equals(attackMessageId)){
+					for (AttackMessage message : attackMessageList) {
+						if (message.getResourceId().equals(attackMessageId)) {
 							attackMessage = message;
 							break;
 						}
@@ -175,6 +179,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							.getAttackMessageReqList().stream()
 							.map(AttackMessageReq::getDescription).collect(Collectors.toList()));
 					if (description.size() < dynamicStage.getAttackMessageReqList().size()) {
+						log.error("description of dynamic stage is duplicated, stage name: {}",
+								dynamicStage.getName());
 						throw new BusinessException(
 								SituationErrorCode.DUPLICATED_DYNAMIC_DESCRIPTION);
 					}
@@ -263,6 +269,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public void getRemoteOption(OptionsRes optionsRes, String sceneId, Boolean isInstance) {
 
 		if (StringUtils.isEmpty(sceneId)) {
+			log.error("sceneId is null");
 			throw new BusinessException(SituationErrorCode.UNAVAILABLE_FOR_NON_SCENE_SITUATION);
 		}
 
@@ -318,6 +325,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			} else if (videoTypeList.contains(fileSuffix)) {
 				attackEffect.setMediaType(VIDEO_CODE);
 			} else {
+				log.error("media type error, fileSuffix:{}", fileSuffix);
 				throw new BusinessException(ErrorCode.FILE_TYPE_ERROR);
 			}
 
@@ -472,6 +480,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 		DynamicScheme dynamicScheme = dynamicSchemeMapper
 				.selectByName(addDynamicSchemeReq.getName(), addDynamicSchemeReq.getSceneId());
 		if (dynamicScheme != null) {
+			log.error("dynamic scheme name is duplicated, name:{}", addDynamicSchemeReq.getName());
 			throw new BusinessException(SituationErrorCode.DUPLICATED_DYNAMIC_SCHEME_NAME);
 
 		}
@@ -528,6 +537,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public void validStage(DynamicSchemeReq dynamicSchemeReq) {
 		for (DynamicStage dynamicStage : dynamicSchemeReq.getSchemeData()) {
 			if (dynamicStage.getName() == null || dynamicStage.getName().equals("")) {
+				log.error("dynamic stage name is empty, dynamic name is {}",
+						dynamicSchemeReq.getName());
 				throw new BusinessException(SituationErrorCode.EMPTY_STAGE_NAME);
 			}
 			validateNameLen(dynamicStage.getName(), SituationErrorCode.INVALID_STAGE_NAME);
@@ -543,6 +554,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				if (!(isSingleNode || attackMessageReq.getType()
 						.equals(AttackType.MEDIA_ANIMATION.getKeyWord()))
 						&& attackMessageReq.getSourceId().equals("")) {
+					log.error("dynamic source node is empty, dynamic name is {}",
+							dynamicSchemeReq.getName());
 					throw new BusinessException(SituationErrorCode.EMPTY_SOURCE_NODE,
 							attackMessageReq.getDescription());
 				}
@@ -614,16 +627,22 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 					for (MediaAnimation mediaAnimation : attackMessageReq.getMediaAnimationList()) {
 						if (!areaAndElementIds.contains(mediaAnimation.getSourceId())) {
+							log.error("some nodes not exist, dynamic name is {}",
+									dynamicSchemeReq.getName());
 							throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 						}
 					}
 				} else {
 					if (StringUtils.isNotEmpty(attackMessageReq.getTargetId())
 							&& !areaAndElementIds.contains(attackMessageReq.getTargetId())) {
+						log.error("some nodes not exist, dynamic name is {}",
+								dynamicSchemeReq.getName());
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
 					if (StringUtils.isNotEmpty(attackMessageReq.getSourceId())
 							&& !areaAndElementIds.contains(attackMessageReq.getSourceId())) {
+						log.error("some nodes not exist, dynamic name is {}",
+								dynamicSchemeReq.getName());
 						throw new BusinessException(SituationErrorCode.SOME_NODES_NOT_EXIST);
 					}
 				}
@@ -641,6 +660,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 							.map(AttackMessageReq::getDescription)
 							.collect(Collectors.toCollection(HashSet::new));
 					if (description.size() < dynamicStage.getAttackMessageReqList().size()) {
+						log.error("dynamic scheme name is duplicated, dynamic name is {}",
+								dynamicSchemeReq.getName());
 						throw new BusinessException(
 								SituationErrorCode.DUPLICATED_DYNAMIC_SCHEME_NAME);
 					}
@@ -689,6 +710,8 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			for (AttackMessageReq attackMessageReq : dynamicStage.getAttackMessageReqList()) {
 				if (attackMessageReq.getType().equals(AttackType.MEDIA_ANIMATION.getKeyWord())) {
 					if (startTime <= endTime) {
+						log.error("media animation have time overlap, dynamic name is {}",
+								dynamicSchemeReq.getName());
 						throw new BusinessException(
 								SituationErrorCode.MULTIMEDIA_MEDIA_ANIMATION_HAVE_TIME_OVERLAP);
 					}
@@ -703,7 +726,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 	public List<String> getElementIds(String sceneId, Boolean isInstance) {
 
 		SceneData sceneData;
-		if (isInstance != null && !isInstance){
+		if (isInstance != null && !isInstance) {
 			sceneData = topoHandlerService.getSceneData(null, sceneId);
 		} else {
 			sceneData = topoHandlerService.getSceneData(sceneId, null);
@@ -729,6 +752,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			if (minLen == 0) {
 				return;
 			} else {
+				log.error("length of name is null, minLen is {}, maxLen is {}", minLen, maxLen);
 				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		}
@@ -736,6 +760,7 @@ public class DynamicSchemeServiceImpl extends ServiceImpl<DynamicSchemeMapper, D
 			String targetStr = new String(target.getBytes("GBK"), "iso-8859-1");
 			int len = targetStr.length();
 			if (len < minLen || len > maxLen) {
+				log.error("length of name is {}, minLen is {}, maxLen is {}", len, minLen, maxLen);
 				throw new BusinessException(errorCode, minLen, maxLen);
 			}
 		} catch (UnsupportedEncodingException e) {

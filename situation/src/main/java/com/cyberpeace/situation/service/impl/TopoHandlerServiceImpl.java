@@ -249,7 +249,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 		// 请求中台数据
 		JSONObject jsonObject = remoteSceneService.getFlowLogs(flowLogsPageContext);
 
-		return JsonUtil.toJsonObjectArray(jsonObject.getJSONArray("list").toString(), JSONObject.class);
+		return JsonUtil.toJsonObjectArray(jsonObject.getJSONArray("list").toString(),
+				JSONObject.class);
 	}
 
 	@Override

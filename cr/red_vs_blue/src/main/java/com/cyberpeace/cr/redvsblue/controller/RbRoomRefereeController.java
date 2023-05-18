@@ -1,10 +1,12 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -55,6 +58,27 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@ApiOperation("获取角色列表")
+	@GetMapping("/roles")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbRoleIdNameType>> getRoleList(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+		List<CrRole> roles = rbRoomService.getStudentsRoles(resource_id);
+		List<RbRoleIdNameType> res = Lists.newArrayList();
+		for (CrRole role : roles) {
+			RbRoleIdNameType rbRole = new RbRoleIdNameType();
+			rbRole.setId(role.getResourceId());
+			rbRole.setName(role.getName());
+			rbRole.setType(role.getRoleGroup());
+			rbRole.setPrefix();
+
+			res.add(rbRole);
+		}
+		// 红方角色放在前面
+		res.sort(Comparator.comparing(RbRoleIdNameType::getType));
+		return new BaseRsp<>(res);
+	}
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/mission_evaluation")

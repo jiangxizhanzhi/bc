@@ -46,6 +46,7 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
@@ -1260,6 +1261,13 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			return null;
 		}
 		return operationIds;
+	}
+
+	@Override
+	public List<OperationRecordRes> getOperationRecord(UserInfo userInfo) {
+		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
+		List<String> operationIds = getOptionIdsByAuth(authContext, null);
+		return practiceSolvedMapper.getOperationRecord(userInfo.getUserId(), operationIds, true);
 	}
 
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {

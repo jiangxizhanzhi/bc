@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSolved;
 import com.cyberpeace.oj.practice.service.bo.PracticeTheoryListBo;
 import org.apache.ibatis.annotations.Mapper;
@@ -29,4 +30,6 @@ public interface PracticeSolvedMapper extends BaseMapper<PracticeSolved> {
 														  @Param("solved") Integer solved);
 
 	void deleteByPracticeIds(List<String> practiceIds);
+
+	List<OperationRecordRes> getOperationRecord(@Param("userId") String userId, @Param("operationIds") List<String> operationIds, @Param("solved") Boolean solved);
 }

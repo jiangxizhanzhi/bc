@@ -11,9 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.AuthContextUtils;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -28,8 +26,7 @@ import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.SubmitAnswerReq;
 import com.cyberpeace.oj.practice.controller.req.WebOperationListReq;
-import com.cyberpeace.oj.practice.controller.res.OptionStatisticsRes;
-import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
+import com.cyberpeace.oj.practice.controller.res.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
@@ -48,7 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -240,7 +237,7 @@ public class PracticeOperationController {
 	@ApiOperation("收藏数量和笔记数量")
 	@GetMapping("/statistics")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
-	public BaseRsp<OptionStatisticsRes> getOptionStatisticsRes() {
+	public BaseRsp<OptionStatisticsRes> getOperationStatisticsRes() {
 		OptionStatisticsRes optionStatisticsRes = new OptionStatisticsRes();
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
@@ -251,5 +248,42 @@ public class PracticeOperationController {
 		optionStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), operationIds));
 		return new BaseRsp<>(optionStatisticsRes);
 	}
+
+	@ApiOperation("解出记录Top5")
+	@GetMapping("/record")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<List<OperationRecordRes>> getOperationRecordTop5() {
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext());
+		if (operationRecordResList.size() > 5){
+			return new BaseRsp<>(operationRecordResList.subList(0, 5));
+		}
+		return new BaseRsp<>(operationRecordResList);
+	}
+
+	@ApiOperation("所有解出记录")
+	@GetMapping("/all_record")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<List<OperationRecordResByDay>> getAllOperationRecord() {
+		Map<String, List<OperationRecordRes>> operationRecordMap = new HashMap<>();
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(UserInfoContext.getUserContext());
+		for (OperationRecordRes operationRecordRes : operationRecordResList) {
+			String time = TimeUtil.format6(TimeUtil.toDate1(operationRecordRes.getTime()));
+			if (operationRecordMap.get(time) == null) {
+				List<OperationRecordRes> recordRes = new ArrayList<>();
+				recordRes.add(operationRecordRes);
+				operationRecordMap.put(time, recordRes);
+			} else {
+				operationRecordMap.get(time).add(operationRecordRes);
+			}
+		}
+		List<OperationRecordResByDay> operationRecordResByDays = new ArrayList<>();
+		for (String time : operationRecordMap.keySet()) {
+			OperationRecordResByDay operationRecordResByDay = new OperationRecordResByDay(time, operationRecordMap.get(time));
+			operationRecordResByDays.add(operationRecordResByDay);
+		}
+		operationRecordResByDays.sort(Comparator.comparing(OperationRecordResByDay::getTime).reversed());
+		return new BaseRsp<>(operationRecordResByDays);
+	}
+
 
 }

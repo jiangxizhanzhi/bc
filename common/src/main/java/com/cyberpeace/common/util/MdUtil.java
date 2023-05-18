@@ -198,8 +198,29 @@ public class MdUtil {
 		// 匹配文件路径
 		List<String> matchStrList = LocalStringUtil.getMatchStr(withOutCode,
 				PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
+		// 递归匹配
+		List<String> finalMatchList = new ArrayList<>();
+		for(String matchStr : matchStrList) {
+			finalMatchList.addAll(matchZipRarPath(matchStr));
+		}
 
-		return matchStrList;
+		return finalMatchList;
+	}
+
+	private static List<String> matchZipRarPath(String content) {
+		if(!content.startsWith(CommonConstant.PERIOD)
+				&& !content.startsWith(File.separator)) {
+			List<String> matchPathList = LocalStringUtil.getMatchStr(content,
+					PatternConstant.MARKDOWN_ZIP_RAR_URL, 2);
+			for(String matchPath : matchPathList) {
+				matchZipRarPath(matchPath);
+			}
+		} else {
+			List<String> matchPathList = new ArrayList<>();
+			matchPathList.add(content);
+			return matchPathList;
+		}
+		return new ArrayList<>();
 	}
 
 	/**

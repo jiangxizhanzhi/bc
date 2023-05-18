@@ -1285,6 +1285,17 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		return categoryProgressResList;
 	}
 
+	@Override
+	public EvaluateResult submitAnswerAgain(String userId, String resourceId, String submitAnswer) {
+		PracticeOperation operation = practiceOperationMapper.selectById(resourceId);
+		if (null == operation) {
+			log.error("Operation practice not found! practice_id=[{}]", resourceId);
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		return practiceEvaluateHandler.evaluateByBusiness(userId,
+				operation, submitAnswer);
+	}
+
 	private void doExport(String setPath, PracticeOperation operation, Boolean disableImageExport) {
 		EXPORT_LOG.info("Start export practice {}....", operation.getTitle());
 

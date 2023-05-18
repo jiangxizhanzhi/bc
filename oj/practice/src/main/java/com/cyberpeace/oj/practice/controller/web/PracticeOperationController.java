@@ -300,4 +300,25 @@ public class PracticeOperationController {
 		}
 		return new BaseRsp<>(categoryProgressResList);
 	}
+
+	@ApiOperation("再练一次状态下的提交")
+	@GetMapping("/submit_answer_again")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<EvaluateResult> submitAnswerAgain(@RequestBody @Validated SubmitAnswerReq answerReq) {
+
+		EvaluateResult evaluateResult = practiceOperationService.submitAnswerAgain(
+				UserInfoContext.getUserContext().getUserId(), answerReq.getResourceId(),
+				answerReq.getSubmitAnswer());
+
+		return new BaseRsp<>(evaluateResult);
+	}
+
+	@ApiOperation("解题记录题目id列表")
+	@GetMapping("/record_all_id")
+	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
+	public BaseRsp<List<String>> getRecordPracticeIds() {
+		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
+				UserInfoContext.getUserContext(), null, null);
+		return new BaseRsp<>(StreamApiUtils.map(operationRecordResList, OperationRecordRes::getPracticeId));
+	}
 }

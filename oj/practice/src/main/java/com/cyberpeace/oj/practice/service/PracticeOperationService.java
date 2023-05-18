@@ -233,4 +233,13 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	List<CategoryProgressRes> getOperationCategoryProgress();
+
+	/**
+	 * 再练一次状态的提交
+	 * @param userId
+	 * @param resourceId
+	 * @param submitAnswer
+	 * @return
+	 */
+	EvaluateResult submitAnswerAgain(String userId, String resourceId, String submitAnswer);
 }

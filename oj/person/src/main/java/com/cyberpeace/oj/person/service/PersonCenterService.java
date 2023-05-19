@@ -29,7 +29,7 @@ public interface PersonCenterService {
 	 * @param userId 用户ID
 	 * @return
 	 */
-	IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext);
+	IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext, Integer businessType);
 
 	/**
 	 * 分页查询用户所有收藏

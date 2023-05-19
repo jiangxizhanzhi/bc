@@ -103,6 +103,9 @@
                 #{businessId}
             </foreach>
         </if>
+        <if test="businessType != null">
+            and business_type = #{businessType}
+        </if>
         order by oj_note.create_time desc
     </select>
 

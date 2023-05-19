@@ -12,6 +12,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.person.controller.req.PageNoteReq;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
 import com.cyberpeace.oj.person.service.bo.CollectionPracticeBo;
@@ -94,13 +95,13 @@ public class PersonController {
 	@ApiOperation("当前用户所有笔记")
 	@GetMapping("/notes")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
-	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageReqBase pageReq) {
+	public BaseRsp<ListRsp<PersonNote>> listNotes(@ApiParam @Validated PageNoteReq pageReq) {
 		Page page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		IPage<PersonNote> comments = personCenterService.pageNotes(page, userId, authContext);
+		IPage<PersonNote> comments = personCenterService.pageNotes(page, userId, authContext, pageReq.getBusinessType());
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 

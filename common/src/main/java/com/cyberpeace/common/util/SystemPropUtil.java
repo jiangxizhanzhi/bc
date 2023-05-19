@@ -23,15 +23,4 @@ public class SystemPropUtil {
 
 		return value;
 	}
-
-	/**
-	 * 是否可以导出内置资源
-	 * @return
-	 */
-	public static Boolean getExportBuiltin() {
-		if (SystemPropUtil.getProp("EXPORT_BUILTIN") == null || !Boolean.parseBoolean(SystemPropUtil.getProp("EXPORT_BUILTIN"))) {
-			return false;
-		}
-		return true;
-	}
 }

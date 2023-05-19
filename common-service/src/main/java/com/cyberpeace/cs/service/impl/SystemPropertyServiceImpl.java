@@ -15,7 +15,7 @@ public class SystemPropertyServiceImpl extends ServiceImpl<SystemPropertyMapper,
 
 	@Override
 	public boolean getExportBuiltin() {
-		SystemProperty systemProperty = systemPropertyMapper.selectByName("export_builtin");
+		SystemProperty systemProperty = systemPropertyMapper.selectByName(SystemProperty.NameEnum.EXPORT_BUILTIN.getDesc());
 		return systemProperty != null && Boolean.parseBoolean(systemProperty.getContent());
 	}
 }

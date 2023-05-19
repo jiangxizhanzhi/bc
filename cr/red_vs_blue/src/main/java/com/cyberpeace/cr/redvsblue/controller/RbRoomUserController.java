@@ -1,24 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
-import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
-import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
-import com.cyberpeace.cr.crbase.service.CrTrainActionService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -26,8 +7,14 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.RoomDeviceApplyReq;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
+import com.cyberpeace.cr.crbase.controller.rsp.CrLabelGroup;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.CrRoomDeviceApplyService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.CrTrainActionService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -35,6 +22,7 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDevice;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
@@ -42,11 +30,20 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗学员")
 @RestController
@@ -325,7 +322,7 @@ public class RbRoomUserController {
 			@ApiParam(value = "训练实例id", required = true) @RequestParam("room_id") String roomId,
 			@ApiParam(value = "场景节点id", required = true) @RequestParam("device_id") String deviceId) {
 
-		Map<String, String> nodeMap = rbRoomService.missionEventDevice(roomId).stream().collect(Collectors.toMap(CrLabelGroup::getLabel, CrLabelGroup::getValue));
+		Map<String, String> nodeMap = rbRoomService.missionEventDevice(roomId).stream().collect(Collectors.toMap(CrLabelGroup::getValue, CrLabelGroup::getLabel));
 
 		return new BaseRsp<>(
 				crTrainActionService.saveTeamAction(

@@ -53,7 +53,7 @@ public class TeamTrainTeacherController {
 
 	@ApiOperation("获取学员的评估提交记录")
 	@GetMapping("/evaluation/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
 		// 鉴权
 		teamRoomService.checkTeacherPermission(req.getRoom_id(),

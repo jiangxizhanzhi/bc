@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.utils;
 
+import java.util.Comparator;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -10,6 +13,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
@@ -20,6 +24,8 @@ import com.google.common.collect.Lists;
  * 一些靶场工具
  */
 public class CrCommonUtil {
+
+	private static final String NULL = "null";
 
 	/**
 	 * 控制最终存入数据库的 role_config 和 missions_scheme json 只包含哪些字段
@@ -140,5 +146,32 @@ public class CrCommonUtil {
 			res.add(MathUtils.roundDivide(get.get(i) * 100, all.get(i)));
 		}
 		return res;
+	}
+
+	/**
+	 * 解析选项
+	 *
+	 * @param optionString 选项字符串
+	 * @return {@code List<MissionOption>}
+	 */
+	public static List<MissionOption> parseOption(String optionString) {
+		if (StringUtils.isBlank(optionString) || optionString.equals(NULL)) {
+			return Lists.newArrayList();
+		}
+		List<MissionOption> res = JsonUtil.toJsonObjectArray(optionString, MissionOption.class);
+		return res;
+	}
+
+	/**
+	 * 给多选题的答案排序
+	 *
+	 * @param answerString 回答字符串
+	 * @return {@code String}
+	 */
+	public static String handleMultiAnswer(String answerString) {
+		List<String> characterList = JsonUtil.toJsonObjectArray(answerString, String.class);
+		// natural order
+		characterList.sort(Comparator.naturalOrder());
+		return String.join(",", characterList);
 	}
 }

@@ -1,5 +1,14 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,26 +34,18 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
-import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListBo;
-import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
-import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.evaluation.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author SN
@@ -624,6 +625,31 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			rsp.setSubmitUserName(userInfo.getName());
 		}
 		return rspList;
+	}
+
+	@Override
+	public EvaluationMissionRsp getEvaluationById(String taskSubmitId) {
+		EvaluationMissionRsp rsp = new EvaluationMissionRsp();
+		EvaluationMissionBo bo = crTaskSubmitMapper.getMissionBoById(taskSubmitId);
+		if (null == bo) {
+			return rsp;
+		}
+		rsp.setResourceId(bo.getResourceId());
+		rsp.setTitle(bo.getTitle());
+		rsp.setDescription(bo.getDescription());
+		rsp.setType(bo.getType());
+		rsp.setOption(CrCommonUtil.parseOption(bo.getOption()));
+		if (bo.getType().equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
+			rsp.setAnswer(CrCommonUtil.handleMultiAnswer(bo.getAnswer()));
+			rsp.setUserAnswer(CrCommonUtil.handleMultiAnswer(bo.getUserAnswer()));
+		} else {
+			rsp.setAnswer(bo.getAnswer());
+			rsp.setUserAnswer(bo.getUserAnswer());
+		}
+		rsp.setSkillPoints(JsonUtil.toJsonObjectArray(bo.getSkillPoints(), Integer.class));
+		rsp.setWriteUp(bo.getWriteUp());
+		rsp.setScore(bo.getScore());
+		return rsp;
 	}
 
 }

@@ -106,5 +106,22 @@
             and cr_task_submit.evaluate_status = #{evaluateStatus}
         </if>
     </select>
+    <select id="getMissionBoById"
+            resultType="com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionBo">
+        select cr_task_submit.resource_id,
+               cr_mission.title,
+               cr_mission.description,
+               cr_task_submit.answer as user_answer,
+               cr_mission.answer,
+               cr_mission.type,
+               cr_mission.`option`,
+               cr_mission.skill_points,
+               cr_mission.write_up,
+               cr_mission.score
+        from cr_task_submit
+                 left join cr_task on cr_task_submit.task_id = cr_task.resource_id
+                 left join cr_mission on cr_task.mission_id = cr_mission.resource_id
+        where cr_task_submit.resource_id = #{taskSubmitId}
+    </select>
 
 </mapper>

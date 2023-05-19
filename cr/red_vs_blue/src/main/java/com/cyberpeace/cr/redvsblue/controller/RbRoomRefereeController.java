@@ -31,6 +31,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
@@ -86,7 +87,7 @@ public class RbRoomRefereeController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("获取学员的评估提交记录")
+	@ApiOperation("获取学员的评估列表")
 	@GetMapping("/evaluation/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<EvaluationListRsp>> getEvaluationList(@Validated EvaluationListReq req) {
@@ -96,6 +97,15 @@ public class RbRoomRefereeController {
 		// get evaluation list
 		List<EvaluationListRsp> res = rbRefereeService.getEvaluationList(req);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
+	@GetMapping("/evaluation/detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
+			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resource_id) {
+		EvaluationMissionRsp res = crTaskService.getEvaluationById(resource_id);
+		return new BaseRsp(res);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 
 public interface CrTaskService {
 
@@ -323,4 +324,12 @@ public interface CrTaskService {
 	 * @return {@code List<EvaluationListRsp>}
 	 */
 	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
+
+	/**
+	 * 通过id获取评估
+	 *
+	 * @param taskSubmitId 任务提交id
+	 * @return {@code EvaluationMissionBo}
+	 */
+	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
 }

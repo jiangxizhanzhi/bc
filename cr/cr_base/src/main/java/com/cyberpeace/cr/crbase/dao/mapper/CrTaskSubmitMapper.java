@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionBo;
 import org.apache.ibatis.annotations.Param;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Repository;
@@ -34,4 +35,6 @@ public interface CrTaskSubmitMapper extends BaseMapper<CrTaskSubmit> {
 
 	List<EvaluationListBo> list(@Param("roomId") String roomId, @Param("roleId") String roleId,
 			@Param("userId") String userId, @Param("evaluateStatus") Integer evaluateStatus);
+
+	EvaluationMissionBo getMissionBoById(@Param("taskSubmitId") String taskSubmitId);
 }

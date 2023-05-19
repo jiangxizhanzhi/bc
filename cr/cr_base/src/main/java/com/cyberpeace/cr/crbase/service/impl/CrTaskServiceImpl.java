@@ -624,6 +624,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			rsp.setSubmitUserAvatar(userInfo.getAvatarUrl());
 			rsp.setSubmitUserName(userInfo.getName());
 		}
+		rspList.sort(new EvaluationListRsp.EvaluationListComparator());
 		return rspList;
 	}
 

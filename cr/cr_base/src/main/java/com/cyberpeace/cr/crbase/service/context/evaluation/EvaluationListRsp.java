@@ -1,6 +1,9 @@
 package com.cyberpeace.cr.crbase.service.context.evaluation;
 
 import java.io.Serializable;
+import java.util.Comparator;
+
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,5 +25,26 @@ public class EvaluationListRsp extends EvaluationListBo implements Serializable 
 
 	// @ApiModelProperty(value = "任务id")
 	// private String missionId;
+
+	private boolean notEvaluated() {
+		return this.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+	}
+
+	public static class EvaluationListComparator implements Comparator<EvaluationListRsp> {
+
+		@Override
+		public int compare(EvaluationListRsp o1, EvaluationListRsp o2) {
+			// 待评估的排前面
+			if (o1.notEvaluated() && !o2.notEvaluated()) {
+				return -1;
+			} else if (!o1.notEvaluated() && o2.notEvaluated()) {
+				return 1;
+			} else {
+				// 再按提交时间倒序
+				return (int) (o2.getSubmitTime().getTime() / 1000
+						- o1.getSubmitTime().getTime() / 1000);
+			}
+		}
+	}
 
 }

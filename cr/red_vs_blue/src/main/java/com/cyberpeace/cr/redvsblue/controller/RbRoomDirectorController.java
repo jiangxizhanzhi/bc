@@ -448,7 +448,7 @@ public class RbRoomDirectorController {
 	@ApiOperation("红蓝对抗-任务导调-任务进度")
 	@GetMapping("/mission/progress")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<TaskReleaseProgress> getMissionStatistics(
+	public BaseRsp<RedBlueTaskReleaseProgress> getMissionStatistics(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {

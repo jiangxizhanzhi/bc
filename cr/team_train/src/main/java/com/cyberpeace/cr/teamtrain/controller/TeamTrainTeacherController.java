@@ -2,6 +2,8 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +38,9 @@ public class TeamTrainTeacherController {
 	@Autowired
 	private TeamRoomService teamRoomService;
 
+	@Autowired
+	private CrTaskService crTaskService;
+
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -61,5 +66,14 @@ public class TeamTrainTeacherController {
 		// get evaluation list
 		List<EvaluationListRsp> res = teamRoomService.getEvaluationList(req);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取学员单个评估和任务详情，用于裁决页面")
+	@GetMapping("/evaluation/detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<EvaluationMissionRsp> getEvaluationDetail(
+			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resource_id) {
+		EvaluationMissionRsp res = crTaskService.getEvaluationById(resource_id);
+		return new BaseRsp(res);
 	}
 }

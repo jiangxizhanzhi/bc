@@ -302,7 +302,7 @@ public class PracticeOperationController {
 	}
 
 	@ApiOperation("再练一次状态下的提交")
-	@GetMapping("/submit_answer_again")
+	@PostMapping("/submit_answer_again")
 	@RequiresPermissions(MenuConstant.WEB_OJ_PRACTICE_OPERATION)
 	public BaseRsp<EvaluateResult> submitAnswerAgain(@RequestBody @Validated SubmitAnswerReq answerReq) {
 

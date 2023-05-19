@@ -504,7 +504,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
 			return LocalScene.BusinessCode.SYSTEM_TEST;
 		}
-		log.error("模板类型不支持, code [{}]", code);
+		log.error("template type not supported, code [{}]", code);
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 	}
 

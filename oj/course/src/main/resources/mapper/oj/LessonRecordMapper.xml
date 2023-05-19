@@ -66,5 +66,17 @@
         and user_id = #{userId}
     </update>
 
+    <select id="getLessonRecordCountByDate" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
+        select
+        date_format(create_time, '%m-%d') as `date`,
+        count(distinct lesson_id) as completed
+        from oj_lesson_record
+        where create_time BETWEEN DATE_SUB(NOW(), INTERVAL 10 DAY) AND NOW()
+        <if test="userId != null and userId != ''">
+            and user_Id = #{userId}
+        </if>
+        group by date_format(create_time, '%m-%d');
+    </select>
+
 
 </mapper>

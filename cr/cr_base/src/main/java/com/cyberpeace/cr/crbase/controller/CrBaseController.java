@@ -62,16 +62,7 @@ public class CrBaseController {
 		return new BaseRsp<>(rsp);
 	}
 
-	@ApiOperation("首页训练记录")
-	@GetMapping("/training_records")
-	public BaseRsp<TrainingRecordRsp>
-	getTrainingRecords(@ApiParam @Validated PageReqBase req) {
-		String userId = UserInfoContext.getUserContext().getUserId();
 
-		TrainingRecordRsp rsp = crBaseService.getTrainingRecords(userId);
-
-		return new BaseRsp<>(rsp);
-	}
 
 	@ApiOperation("获取常量配置")
 	@GetMapping("/constants_config")

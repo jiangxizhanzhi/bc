@@ -26,6 +26,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -34,6 +35,7 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
@@ -65,6 +67,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private RbRefereeService rbRefereeService;
+
+	@Autowired
+	private CrScoreService crScoreService;
 
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
@@ -262,6 +267,17 @@ public class RbRoomRefereeController {
 			return new BaseRsp<>(Lists.newArrayList());
 		}
 		return new BaseRsp<>(crCommonService.getMonitorSessions(room.getLocalSceneId(), null));
+	}
+
+	@ApiOperation("获取评分列表")
+	@GetMapping("/score/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<StudentScoreListRsp>> getScoreList(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
+		rbRoomService.checkRefereePermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+		List<StudentScoreListRsp> res = rbRefereeService.getScoreList(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 }

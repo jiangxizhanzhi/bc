@@ -38,5 +38,10 @@
             #{userId}
         </foreach>
     </select>
+    <select id="selectByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrScore">
+        select *
+        from cr_score
+        where room_id = #{roomId}
+    </select>
 
 </mapper>

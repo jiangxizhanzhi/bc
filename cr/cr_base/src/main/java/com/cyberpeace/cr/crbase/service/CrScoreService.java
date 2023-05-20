@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 
 /**
  *
@@ -42,4 +43,21 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @return 任务类别统计
 	 */
 	Map<String, Integer> getMissionsCategory(String roomId, List<CrRole> crRoleList);
+
+	/**
+	 * 获取得分列表
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<StudentScoreListRsp>}
+	 */
+	List<CrScore> getScoreByRoomId(String roomId);
+
+	/**
+	 * 获取评分列表
+	 *
+	 * @param roomId   房间id
+	 * @param roleList 角色列表
+	 * @return {@code List<StudentScoreListRsp>}
+	 */
+	List<StudentScoreListRsp> getScoreListRsp(String roomId, List<CrRole> roleList);
 }

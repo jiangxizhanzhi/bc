@@ -2,8 +2,6 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -17,11 +15,15 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
+import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +42,9 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private TeamTeacherService teamTeacherService;
 
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
@@ -75,5 +80,16 @@ public class TeamTrainTeacherController {
 			@ApiParam(name = "resource_id", value = "评估编号", required = true) String resource_id) {
 		EvaluationMissionRsp res = crTaskService.getEvaluationById(resource_id);
 		return new BaseRsp(res);
+	}
+
+	@ApiOperation("获取评分列表")
+	@GetMapping("/score/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<StudentScoreListRsp>> getScoreList(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
+		teamRoomService.checkTeacherPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+		List<StudentScoreListRsp> res = teamTeacherService.getScoreList(resource_id);
+		return new BaseRsp<>(res);
 	}
 }

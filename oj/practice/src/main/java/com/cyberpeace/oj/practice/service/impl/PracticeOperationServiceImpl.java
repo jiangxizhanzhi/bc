@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -285,6 +286,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()
 				&& !operation.getAttachmentId().equals(updateOperation.getAttachmentId());
 
+		String originalChange = BeanUtils.copy(practiceOperation, PracticeOperation.class).toString();
+		String change = BeanUtils.copy(updateOperation, PracticeOperation.class).toString();
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override
@@ -294,6 +298,19 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				if (updateRandom) {
 					practiceRandomFlagMapper.deleteByPractice(updateOperation.getResourceId(),
 							PracticeRandomFlag.FlagType.PRACTICE.getCode());
+				}
+
+				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
+				if(!originalChange.equals(change)) {
+					// 删除解题记录
+					LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
+					practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, updateOperation.getResourceId());
+					practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
+
+					// 删除错题记录
+					LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+					practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, updateOperation.getResourceId());
+					practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
 				}
 			}
 		});

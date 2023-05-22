@@ -15,11 +15,10 @@ import lombok.Data;
  */
 @Data
 public class DynamicEffectMappingUpdateReq extends DynamicEffectMappingReq {
-    
+
 	/**
 	 * 资源ID
 	 */
-    @NotBlank(groups = {Update.class},
-            message = ErrorCode.RESOURCE_NOT_FOUND)
-    private String resourceId;
+	@NotBlank(groups = { Update.class }, message = ErrorCode.RESOURCE_NOT_FOUND)
+	private String resourceId;
 }

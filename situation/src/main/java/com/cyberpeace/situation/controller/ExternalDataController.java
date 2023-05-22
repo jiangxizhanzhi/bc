@@ -21,6 +21,7 @@ import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.TaskEventMsgReq;
 import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 
 import io.swagger.annotations.Api;
@@ -50,6 +51,9 @@ public class ExternalDataController {
 
 	@Autowired
 	private SituationEnvService situationEnvService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 获取特定事件类型列表

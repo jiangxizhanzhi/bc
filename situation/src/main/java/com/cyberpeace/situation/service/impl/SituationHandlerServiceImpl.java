@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.situation.service.ThirdPartyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WsPath;
@@ -23,6 +21,8 @@ import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.integratation.model.situation.AdEventContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
 import com.cyberpeace.situation.constant.SituationErrorCode;
@@ -38,12 +38,11 @@ import com.cyberpeace.situation.dao.entity.DynamicEffectsMapping;
 import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.DynamicEffectMappingMapper;
-import com.cyberpeace.situation.dao.mapper.DynamicEffectsMapper;
-import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;
 import com.cyberpeace.situation.service.DynamicEffectsService;
 import com.cyberpeace.situation.service.SituationHandlerService;
+import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.TopoHandlerService;
 import com.cyberpeace.situation.service.context.EventTypeContext;
 import com.google.common.cache.Cache;
@@ -903,6 +902,26 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 		});
 		batchPushDataToDashboard(MessageType.Message.getDesc(), dashboardId, featureId, messages,
 				null, null);
+	}
+
+	/**
+	 * 检查字段长度
+	 *
+	 * @param name 名称
+	 * @param desc 描述
+	 */
+	@Override
+	public void checkFieldLen(String name, String desc) {
+
+		if (StringUtils.isNotEmpty(name)) {
+			// 校验名称长度
+			CrCommonValidator.validateNameLen(name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
+
+		if (StringUtils.isNotEmpty(desc)) {
+			// 校验描述长度
+			CrCommonValidator.validateDescLen(desc, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
 	}
 
 }

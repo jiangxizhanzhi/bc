@@ -14,6 +14,7 @@ import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardTemplateRef;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.context.DashboardTemplateRefContext;
 
 import io.swagger.annotations.Api;
@@ -34,6 +35,9 @@ public class DashboardTemplateRefController {
 
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 新增态势模板副本
@@ -62,6 +66,10 @@ public class DashboardTemplateRefController {
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
 			@RequestBody @Validated(Update.class) DashBoardTemplateReq dashBoardTemplateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dashBoardTemplateReq.getName(), null);
+
 		return new BaseRsp<>(
 				dashboardTemplateRefService.updateDashboardTemplate(dashBoardTemplateReq));
 	}

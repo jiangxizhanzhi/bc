@@ -11,6 +11,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.service.RemoteSituationService;
 import com.cyberpeace.integratation.service.bo.situation.PlatformReq;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
@@ -37,6 +38,9 @@ public class ExternalDataGisController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 获取LG中心列表

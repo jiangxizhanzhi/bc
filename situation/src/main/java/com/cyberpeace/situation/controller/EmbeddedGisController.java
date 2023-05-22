@@ -24,6 +24,7 @@ import com.cyberpeace.situation.model.StringType;
 import com.cyberpeace.situation.model.ViewAngle;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import com.cyberpeace.situation.service.SituationGisService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.context.ConfigContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 
@@ -56,6 +57,9 @@ public class EmbeddedGisController {
 
 	@Autowired
 	private SituationGisService situationGisService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 通过模板ID获取平台列表
@@ -131,6 +135,10 @@ public class EmbeddedGisController {
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationGisConfig(
 			@RequestBody @Validated(Create.class) SituationGisReq situationGisReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationGisReq.getName(), null);
+
 		return new BaseRsp<>(situationGisService.createSituationGisConfig(situationGisReq));
 	}
 
@@ -144,6 +152,10 @@ public class EmbeddedGisController {
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationGisConfig(
 			@RequestBody @Validated(Update.class) SituationGisReq situationGisReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationGisReq.getName(), null);
+
 		return new BaseRsp<>(situationGisService.updateSituationGisConfig(situationGisReq));
 	}
 

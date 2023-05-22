@@ -25,6 +25,7 @@ import com.cyberpeace.situation.controller.res.EditUrlRes;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationTopoService;
 import com.cyberpeace.situation.service.context.ConfigContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateContext;
@@ -49,6 +50,9 @@ public class EmbeddedTopoController {
 
 	@Autowired
 	private DashboardTemplateRefService dashboardTemplateRefService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
@@ -146,6 +150,10 @@ public class EmbeddedTopoController {
 	@PostMapping("/config/create/")
 	public BaseRsp<ConfigContext> createSituationTopoConfig(
 			@RequestBody @Validated(Create.class) SituationTopoReq situationTopoReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationTopoReq.getName(), null);
+
 		return new BaseRsp<>(situationTopoService.createSituationTopoConfig(situationTopoReq));
 	}
 
@@ -159,6 +167,10 @@ public class EmbeddedTopoController {
 	@PatchMapping("/config/update/")
 	public BaseRsp<ConfigContext> updateSituationTopoConfig(
 			@RequestBody @Validated(Update.class) SituationTopoReq situationTopoReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationTopoReq.getName(), null);
+
 		return new BaseRsp<>(situationTopoService.updateSituationTopoConfig(situationTopoReq));
 	}
 

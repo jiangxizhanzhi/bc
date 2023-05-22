@@ -24,6 +24,7 @@ import com.cyberpeace.situation.dao.entity.SituationDrawingCategory;
 import com.cyberpeace.situation.dao.mapper.SituationDrawingCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDrawingMapper;
 import com.cyberpeace.situation.service.SituationDrawingService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,6 +53,9 @@ public class ComponentDrawingController {
 	@Autowired
 	private SituationDrawingCategoryMapper situationDrawingCategoryMapper;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 样式组件-新增
 	 *
@@ -62,6 +66,10 @@ public class ComponentDrawingController {
 	@PostMapping()
 	public BaseRsp<String> createSituationDrawing(
 			@RequestBody @Validated(Create.class) SituationDrawingReq situationDrawingReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationDrawingReq.getName(), null);
+
 		return new BaseRsp<>(situationDrawingService.createSituationDrawing(situationDrawingReq));
 	}
 
@@ -75,6 +83,10 @@ public class ComponentDrawingController {
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDrawing(
 			@RequestBody @Validated(Update.class) SituationDrawingReq situationDrawingReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationDrawingReq.getName(), null);
+
 		return new BaseRsp<>(situationDrawingService.updateSituationDrawing(situationDrawingReq));
 	}
 

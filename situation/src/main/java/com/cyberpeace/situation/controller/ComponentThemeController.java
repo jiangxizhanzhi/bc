@@ -15,6 +15,7 @@ import com.cyberpeace.situation.controller.req.ColorThemePageReq;
 import com.cyberpeace.situation.controller.req.ColorThemeReq;
 import com.cyberpeace.situation.dao.entity.ColorTheme;
 import com.cyberpeace.situation.service.SituationColorThemeService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,9 @@ public class ComponentThemeController {
 	@Autowired
 	private SituationColorThemeService situationColorThemeService;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 图表主题-新增
 	 *
@@ -45,20 +49,28 @@ public class ComponentThemeController {
 	@PostMapping()
 	public BaseRsp<ColorThemeReq>
 			createColorTheme(@RequestBody @Validated(Create.class) ColorThemeReq colorThemeReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(colorThemeReq.getName(), null);
+
 		return new BaseRsp<>(situationColorThemeService.createColorTheme(colorThemeReq));
 	}
 
 	/**
 	 * 图表主题-修改
 	 *
-	 * @param ColorThemeReq 图表主题请求
+	 * @param colorThemeReq 图表主题请求
 	 * @return {@code BaseRsp<String>}
 	 */
 	@ApiOperation("图表主题-修改")
 	@PatchMapping("")
 	public BaseRsp<String>
-			updateColorTheme(@RequestBody @Validated(Update.class) ColorThemeReq ColorThemeReq) {
-		return new BaseRsp<>(situationColorThemeService.updateColorTheme(ColorThemeReq));
+			updateColorTheme(@RequestBody @Validated(Update.class) ColorThemeReq colorThemeReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(colorThemeReq.getName(), null);
+
+		return new BaseRsp<>(situationColorThemeService.updateColorTheme(colorThemeReq));
 	}
 
 	/**

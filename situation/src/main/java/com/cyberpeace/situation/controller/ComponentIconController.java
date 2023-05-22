@@ -24,6 +24,7 @@ import com.cyberpeace.situation.dao.entity.SituationIcon;
 import com.cyberpeace.situation.dao.entity.SituationIconCategory;
 import com.cyberpeace.situation.dao.mapper.SituationIconCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationIconMapper;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationIconCategoryService;
 import com.cyberpeace.situation.service.SituationIconService;
 
@@ -55,6 +56,9 @@ public class ComponentIconController {
 	@Autowired
 	private SituationIconCategoryService situationIconCategoryService;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 图标组件-新增
 	 *
@@ -65,20 +69,28 @@ public class ComponentIconController {
 	@PostMapping()
 	public BaseRsp<String> createSituationIcon(
 			@RequestBody @Validated(Create.class) SituationIconReq situationIconReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationIconReq.getName(), null);
+
 		return new BaseRsp<>(situationIconService.createSituationIcon(situationIconReq));
 	}
 
 	/**
 	 * 图标组件-修改
 	 *
-	 * @param SituationIconReq 图标组件请求
+	 * @param situationIconReq 图标组件请求
 	 * @return {@code BaseRsp<String>}
 	 */
 	@ApiOperation("图标组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationIcon(
-			@RequestBody @Validated(Update.class) SituationIconReq SituationIconReq) {
-		return new BaseRsp<>(situationIconService.updateSituationIcon(SituationIconReq));
+			@RequestBody @Validated(Update.class) SituationIconReq situationIconReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationIconReq.getName(), null);
+
+		return new BaseRsp<>(situationIconService.updateSituationIcon(situationIconReq));
 	}
 
 	/**
@@ -177,6 +189,10 @@ public class ComponentIconController {
 	@PatchMapping("/category")
 	public BaseRsp<String> updateituationIconCategory(
 			@RequestBody @Validated(Update.class) SituationIconCategoryReq situationIconCategoryReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationIconCategoryReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationIconCategoryService.updateSituationIconCategory(situationIconCategoryReq));
 	}
@@ -205,6 +221,10 @@ public class ComponentIconController {
 	@PostMapping("/category")
 	public BaseRsp<String> createituationIconCategory(
 			@RequestBody @Validated(Create.class) SituationIconCategoryReq situationIconCategoryReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationIconCategoryReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationIconCategoryService.createSituationIcon(situationIconCategoryReq));
 	}

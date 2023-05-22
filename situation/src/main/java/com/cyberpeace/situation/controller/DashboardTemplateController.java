@@ -36,6 +36,7 @@ import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
 import com.cyberpeace.situation.dao.entity.DashboardComponents;
 import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 import com.cyberpeace.situation.service.DashboardTemplateService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,6 +61,9 @@ public class DashboardTemplateController {
 	@Autowired
 	private CommonController commonController;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 新建态势模板
 	 *
@@ -70,6 +74,10 @@ public class DashboardTemplateController {
 	@PostMapping()
 	public BaseRsp<String> createDashboardTemplate(
 			@RequestBody @Validated(Create.class) DashBoardTemplateReq dashBoardTemplateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dashBoardTemplateReq.getName(), null);
+
 		return new BaseRsp<>(
 				dashboardTemplateService.createDashboardTemplate(dashBoardTemplateReq));
 	}
@@ -84,6 +92,10 @@ public class DashboardTemplateController {
 	@PostMapping("/copy/")
 	public BaseRsp<String> copyDashboardTemplate(
 			@RequestBody @Validated DashBoardTemplateCopyReq dashBoardTemplateCopyReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dashBoardTemplateCopyReq.getName(), null);
+
 		return new BaseRsp<>(dashboardTemplateService.copyDashboardTemplate(
 				dashBoardTemplateCopyReq.getTemplateId(), dashBoardTemplateCopyReq.getName()));
 	}
@@ -98,6 +110,10 @@ public class DashboardTemplateController {
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
 			@RequestBody @Validated(Update.class) DashBoardTemplateReq dashBoardTemplateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dashBoardTemplateReq.getName(), null);
+
 		return new BaseRsp<>(
 				dashboardTemplateService.updateDashboardTemplate(dashBoardTemplateReq));
 	}

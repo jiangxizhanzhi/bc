@@ -38,6 +38,7 @@ import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.service.DynamicEffectMappingService;
 import com.cyberpeace.situation.service.DynamicEffectsCategoryService;
 import com.cyberpeace.situation.service.DynamicEffectsService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -74,6 +75,9 @@ public class DynamicEffectController {
 	@Autowired
 	private DynamicEffectMappingMapper dynamicEffectMappingMapper;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 动效类型-新增
 	 *
@@ -84,6 +88,9 @@ public class DynamicEffectController {
 	@PostMapping("/dynamic_effect_library/category")
 	public BaseRsp<DynamicEffectsCategory> createDynamicEffectsCategory(
 			@RequestBody @Validated(Create.class) DynamicEffectsCategoryReq dynamicEffectsCategoryReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dynamicEffectsCategoryReq.getName(), null);
 
 		// 1、构造动效类型对象
 		DynamicEffectsCategory dynamicEffectsCategory = new DynamicEffectsCategory();
@@ -137,6 +144,9 @@ public class DynamicEffectController {
 	@PatchMapping("/dynamic_effect_library/category")
 	public BaseRsp modifyDynamicEffectsCategory(
 			@RequestBody @Validated(Update.class) DynamicEffectsCategoryReq dynamicEffectsCategoryReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dynamicEffectsCategoryReq.getName(), null);
 
 		// 1、提取更新信息
 		String resourceId = dynamicEffectsCategoryReq.getResourceId();
@@ -205,6 +215,9 @@ public class DynamicEffectController {
 	@PostMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffect> setDynamicEffectsLibrary(
 			@RequestBody @Validated(Create.class) DynamicEffectAddReq dynamicEffectAddReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dynamicEffectAddReq.getName(), null);
 
 		// 1、提取动效信息
 		DynamicEffect dynamicEffect = BeanUtils.copy(dynamicEffectAddReq, DynamicEffect.class);
@@ -385,6 +398,9 @@ public class DynamicEffectController {
 	public BaseRsp<String> setDynamicEffectsMapping(
 			@RequestBody @Validated(Create.class) DynamicEffectMappingReq dynamicEffectMappingReq) {
 
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dynamicEffectMappingReq.getName(), null);
+
 		return new BaseRsp<>(
 				dynamicEffectMappingService.createDynamicEffectsMapping(dynamicEffectMappingReq));
 	}
@@ -414,6 +430,9 @@ public class DynamicEffectController {
 	@PatchMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> patchDynamicEffectsMapping(
 			@RequestBody @Validated(Update.class) DynamicEffectMappingUpdateReq dynamicEffectMappingUpdateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dynamicEffectMappingUpdateReq.getName(), null);
 
 		return new BaseRsp<>(dynamicEffectMappingService
 				.patchDynamicEffectsMapping(dynamicEffectMappingUpdateReq));

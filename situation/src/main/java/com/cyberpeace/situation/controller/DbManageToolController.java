@@ -32,6 +32,7 @@ import com.cyberpeace.situation.dao.entity.SituationDbTool;
 import com.cyberpeace.situation.dao.entity.SituationDbToolCategory;
 import com.cyberpeace.situation.dao.mapper.SituationDbToolCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.SituationDbToolMapper;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +55,9 @@ public class DbManageToolController {
 
 	@Autowired
 	private SituationDbToolCategoryMapper situationDbToolCategoryMapper;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 管理工具类型-列表查询
@@ -102,6 +106,10 @@ public class DbManageToolController {
 	@PostMapping("/category/")
 	public BaseRsp<SituationDbToolCategory>
 			addSituationDbToolCategory(@RequestBody @Validated DynamicEffectsCategoryReq req) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(req.getName(), null);
+
 		SituationDbToolCategory situationDbToolCategory = new SituationDbToolCategory();
 		situationDbToolCategory.setName(req.getName());
 		situationDbToolCategoryMapper.insert(situationDbToolCategory);
@@ -138,6 +146,9 @@ public class DbManageToolController {
 	@PatchMapping("/category/")
 	public BaseRsp
 			updateSituationDbToolCategory(@RequestBody @Validated DynamicEffectsCategoryReq req) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(req.getName(), null);
 
 		// 获取管理工具类型
 		String resourceId = req.getResourceId();
@@ -190,6 +201,10 @@ public class DbManageToolController {
 	@PostMapping("")
 	public BaseRsp<SituationDbTool> setSituationDbTool(
 			@RequestBody @Validated(Create.class) SituationDbToolAddReq dbToolAddReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dbToolAddReq.getName(),
+				dbToolAddReq.getDescription());
 
 		// 提取工具信息
 		SituationDbTool situationDbTool = BeanUtils.copy(dbToolAddReq, SituationDbTool.class);
@@ -277,6 +292,10 @@ public class DbManageToolController {
 	@PatchMapping("")
 	public BaseRsp patchSituationDbTool(
 			@RequestBody @Validated(Update.class) SituationDbToolUpdateReq situationDbToolUpdateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationDbToolUpdateReq.getName(),
+				situationDbToolUpdateReq.getDescription());
 
 		// 判断工具是否存在
 		SituationDbTool patchObj = BeanUtils.copy(situationDbToolUpdateReq, SituationDbTool.class);

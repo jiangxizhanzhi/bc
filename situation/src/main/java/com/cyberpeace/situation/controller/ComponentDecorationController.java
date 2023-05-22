@@ -14,6 +14,7 @@ import com.cyberpeace.situation.controller.req.SituationIconDelReq;
 import com.cyberpeace.situation.controller.res.SituationDecorationPageRes;
 import com.cyberpeace.situation.dao.entity.SituationDecoration;
 import com.cyberpeace.situation.service.SituationDecorationService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,9 @@ public class ComponentDecorationController {
 	@Autowired
 	private SituationDecorationService situationDecorationService;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 显示控件-新增
 	 *
@@ -45,6 +49,10 @@ public class ComponentDecorationController {
 	@PostMapping()
 	public BaseRsp<String> createSituationDecoration(
 			@RequestBody @Validated(Create.class) SituationDecorationReq situationDecorationReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationDecorationReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationDecorationService.createSituationDecoration(situationDecorationReq));
 	}
@@ -59,6 +67,10 @@ public class ComponentDecorationController {
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDecoration(
 			@RequestBody @Validated(Update.class) SituationDecorationReq situationDecorationReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationDecorationReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationDecorationService.updateSituationDecoration(situationDecorationReq));
 	}

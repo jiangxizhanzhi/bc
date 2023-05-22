@@ -32,6 +32,7 @@ import com.cyberpeace.situation.dao.entity.GisMark;
 import com.cyberpeace.situation.dao.entity.SituationPlotPixel;
 import com.cyberpeace.situation.dao.mapper.GisMarkMapper;
 import com.cyberpeace.situation.dao.mapper.SituationPublishInstanceMapper;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPlotPixelService;
 import com.cyberpeace.situation.service.context.GisMarkContext;
 import com.google.common.collect.Lists;
@@ -65,6 +66,9 @@ public class EmbeddedGisMarkController {
 	@Autowired
 	private SituationPublishInstanceMapper situationPublishInstanceMapper;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	public static final String RESOURCE_FILE_NAME = "data.json";
 
 	@Autowired
@@ -80,6 +84,10 @@ public class EmbeddedGisMarkController {
 	@PostMapping("/plot/pixel")
 	public BaseRsp<String> createPlotPixel(
 			@RequestBody @Validated(Create.class) SituationPlotPixelReq situationPlotPixelReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationPlotPixelReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationPlotPixelService.createSituationPlotPixel(situationPlotPixelReq));
 	}
@@ -94,6 +102,10 @@ public class EmbeddedGisMarkController {
 	@PatchMapping("/plot/pixel")
 	public BaseRsp<String> updateSituationPlotPixel(
 			@RequestBody @Validated(Update.class) SituationPlotPixelReq situationPlotPixelReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationPlotPixelReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationPlotPixelService.updateSituationPlotPixel(situationPlotPixelReq));
 	}

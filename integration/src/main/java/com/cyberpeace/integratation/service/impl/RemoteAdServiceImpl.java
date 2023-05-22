@@ -40,10 +40,11 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 
 	@PostConstruct
 	public void init() {
-		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
+		PRACTICE_COUNT_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.practice.count");
 
-		PRACTICE_COUNT_URL = adEnvService.getAdHost()
+
+		EXAM_USER_FINISH_COUNT_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.theory_race.statistic");
 		COMPETITION_LIST_URL = adEnvService.getAdHost()
 				+ ConfigUtil.getContextProperty("ad.competition.list");
@@ -118,7 +119,7 @@ public class RemoteAdServiceImpl implements RemoteAdService {
 		}
 
 		// 接口请求
-		JSONObject jsonObject = HttpClientUtil.rawGet(EXAM_USER_FINISH_COUNT_URL, JSONObject.class);
+		JSONObject jsonObject = HttpClientUtil.rawGet(PRACTICE_COUNT_URL, JSONObject.class);
 		return Integer.parseInt(jsonObject.get("ques_num").toString());
 
 	}

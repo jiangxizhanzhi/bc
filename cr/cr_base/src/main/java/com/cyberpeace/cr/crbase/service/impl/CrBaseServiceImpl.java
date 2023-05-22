@@ -114,7 +114,6 @@ public class CrBaseServiceImpl implements CrBaseService {
 					dates.add(date);
 					TrainingDateCount current = new TrainingDateCount();
 					current.setDate(date);
-					current.setCompleted(0);
 					current.setAll(tmp.getCompleted());
 					if(dataPersonMap.containsKey(date)){
 						TrainingDateCount trainingDateCount = dataPersonMap.get(date);
@@ -130,8 +129,9 @@ public class CrBaseServiceImpl implements CrBaseService {
 						TrainingDateCount personCount = dataPersonMap.get(date);
 						Integer originalPersonCompleted = personCount.getCompleted();
 						Integer personCompleted = trainingDateCount.getCompleted();
-						personCount.setCompleted(personCompleted + originalPersonCompleted);
+						trainingDateCount.setCompleted(personCompleted + originalPersonCompleted);
 					}
+					res.set(res.indexOf(trainingDateCount), trainingDateCount);
 				}
 			}
 		}

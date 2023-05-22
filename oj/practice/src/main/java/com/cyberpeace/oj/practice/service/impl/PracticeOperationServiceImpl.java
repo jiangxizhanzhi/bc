@@ -286,8 +286,12 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				.intValue() == PracticeOperation.DynamicFlag.RANDOM.getCode().intValue()
 				&& !operation.getAttachmentId().equals(updateOperation.getAttachmentId());
 
-		String originalChange = BeanUtils.copy(practiceOperation, PracticeOperation.class).toString();
-		String change = BeanUtils.copy(updateOperation, PracticeOperation.class).toString();
+		PracticeOperation originalBean = BeanUtils.copy(practiceOperation, PracticeOperation.class);
+		PracticeOperation changeBean = BeanUtils.copy(updateOperation, PracticeOperation.class);
+		originalBean.setBuiltin(null);
+		originalBean.setCreateUserId(null);
+		changeBean.setBuiltin(null);
+		changeBean.setCreateUserId(null);
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -301,7 +305,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 				}
 
 				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
-				if(!originalChange.equals(change)) {
+				if(!originalBean.toString().equals(changeBean.toString())) {
 					// 删除解题记录
 					LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
 					practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, updateOperation.getResourceId());

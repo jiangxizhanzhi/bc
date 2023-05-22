@@ -24,6 +24,9 @@ public class TimeLineEvent {
 	@ApiModelProperty(value = "用户名")
 	private String userName;
 
+	@ApiModelProperty(value = "头像地址")
+	private String avatarUrl;
+
 	@ApiModelProperty(value = "类型")
 	private Integer type;
 

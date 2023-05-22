@@ -1,17 +1,15 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.TaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.TeamTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTaskReleaseInfoRsp;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -131,6 +129,8 @@ public class TeamTrainRoomController {
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -743,5 +743,59 @@ public class TeamTrainRoomController {
 		}
 
 		return new BaseRsp<>(progress);
+	}
+
+	@ApiOperation("团队对抗-任务导调-任务列表")
+	@GetMapping("/mission/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<TeamTrainTaskReleaseInfoRsp>> getMissionList(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		// 获取该房间的角色信息
+		List<CrRole> studentRoles = teamRoomService.getStudentsRoles(resource_id);
+
+		// parse mission and users
+		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
+				.collect(Collectors.toList());
+		// 获取该房间已下发的任务
+		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
+		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
+		List<TeamTrainTaskReleaseInfoRsp> res = new ArrayList<>();
+
+		Set<String> missionIds = roles.stream().map(CrRoleSimple::getMissionIds).flatMap(Collection::stream).collect(Collectors.toSet());
+		List<Mission> allMissions = missionService.listByIds(missionIds);
+
+		List<String> allUserIds = roles.stream().map(CrRoleSimple::getUserIds).flatMap(Collection::stream).collect(Collectors.toList());
+		List<UserInfo> allUserInfos = remoteUserService.getByIdList(allUserIds);
+
+		//按角色分组
+		for (CrRoleSimple roleSimple : roles) {
+			TeamTrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TeamTrainTaskReleaseInfoRsp();
+			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
+			//获取用户列表
+			List<UserInfo> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
+					&&roleSimple.getUserIds().contains(a.getUserId())).collect(Collectors.toList());
+			taskReleaseInfoRsp.setUserInfoList(userInfoList);
+			List<Mission> missions = allMissions.stream().filter(a->roleSimple.getMissionIds()!=null
+					&&roleSimple.getMissionIds().contains(a.getResourceId())).collect(Collectors.toList());
+			List<MissionReleaseInfo>  missionReleaseInfos = new ArrayList<>();
+			for (Mission mission : missions) {
+				MissionReleaseInfo missionReleaseInfo = BeanUtils.copy(mission, MissionReleaseInfo.class);
+				List<CrTask> crTasks = taskMap.getOrDefault(mission.getResourceId(),new ArrayList<>());
+				Set<String> userIds = crTasks.stream().filter(CrTask::isSubmitted).map(CrTask::getUserId).collect(Collectors.toSet());
+				missionReleaseInfo.setFinishUserList(userInfoList.stream().filter(a->userIds.contains(a.getUserId())).collect(Collectors.toList()));
+				missionReleaseInfo.setNotFinishUserList(userInfoList.stream().filter(a -> !userIds.contains(a.getUserId())).collect(Collectors.toList()));
+				missionReleaseInfo.setIsRelease(crTasks.size()>0);
+				missionReleaseInfos.add(missionReleaseInfo);
+			}
+			taskReleaseInfoRsp.setMissions(missionReleaseInfos);
+
+			res.add(taskReleaseInfoRsp);
+		}
+		return new BaseRsp<>(res);
 	}
 }

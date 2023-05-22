@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -580,7 +581,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		TimeLineData timeLineData = new TimeLineData();
 
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-		List<String> userList = Lists.newArrayList();
+
 
 		// 构造角色分组map
 		RoleQuery roleQuery = new RoleQuery();
@@ -592,7 +593,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
 
 		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomId(roomId);
-
+		List<String> userIds = crTasks.stream().filter(a ->StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId()).collect(Collectors.toList());
+		List<UserInfo> userList = remoteUserService.getByIdList(userIds);
+		Map<String, UserInfo> userInfoMap = userList.stream().collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
 		for (TaskContext crTask : crTasks) {
 
 			CrTaskSubmit crTaskSubmit = crTaskSubmitMapper
@@ -600,12 +603,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 			if (crTaskSubmit != null) {
 				// 获取任务下发用户id
-				userList.add(crTask.getUserId());
-
+				UserInfo userInfo = userInfoMap.get(crTask.getUserId());
 				TimeLineEvent timeLineEvent = new TimeLineEvent();
 				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getRoleId()));
 				timeLineEvent.setTitle(crTask.getMission().getTitle());
-				timeLineEvent.setUserName(crTask.getUserId());
+				timeLineEvent.setUserName(userInfo.getUserName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 
 				if (crTask.isFinished()) {
 					timeLineEvent.setType(
@@ -622,17 +625,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		}
 
-		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userList);
-		Iterator<TimeLineEvent> eventIterator = timeLineEventList.iterator();
-		while (eventIterator.hasNext()) {
-			TimeLineEvent timeLineEvent = eventIterator.next();
-			String userName = idNameMap.get(timeLineEvent.getUserName());
-			if (userName == null) {
-				eventIterator.remove();
-			} else {
-				timeLineEvent.setUserName(userName);
-			}
-		}
 
 		timeLineData.setData(timeLineEventList);
 

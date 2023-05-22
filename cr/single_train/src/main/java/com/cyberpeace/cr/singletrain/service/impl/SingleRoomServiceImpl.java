@@ -734,6 +734,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			JSONObject val = (JSONObject) stringObjectEntry.getValue();
 			missionEvent.put("time", simpleDateFormat.format(new Date(val.getLong("time"))));
 			missionEvent.put("title", missionMap.get(stringObjectEntry.getKey()).getTitle());
+			missionEvent.put("userName",UserInfoContext.getUserContext().getUserName());
+			missionEvent.put("avatarUrl",UserInfoContext.getUserContext().getAvatarUrl());
 
 			missionRecord.add(missionEvent);
 		}

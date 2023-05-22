@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -399,7 +401,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
 				UserInfoContext.getUserContext().getUserId());
-
+		List<String> missionIds = taskList.stream().map(a -> a.getMissionId()).collect(Collectors.toList());
+		List<Mission> missions = missionService.listByIds(missionIds);
+		Map<String, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
 		for (TaskContext task : taskList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
@@ -408,8 +412,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			if (null != lastSubmitTime) {
 
 				timeLineEvent.setTime(lastSubmitTime);
-				timeLineEvent.setTitle(missionService.getById(task.getMissionId()).getTitle());
+				timeLineEvent.setTitle(missionMap.get(task.getMissionId()).getTitle());
 				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
+				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
 
 				timeLineEventList.add(timeLineEvent);
 			}
@@ -451,14 +456,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
 		List<CrTaskLog> crTaskLogList = crTaskLogMapper.selectReleaseByRoomIdAndActionCodes(roomId,
 				actionCodes);
-
+		List<String> userIds = crTaskLogList.stream().filter(a ->StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId()).collect(Collectors.toList());
+		List<UserInfo> userList = remoteUserService.getByIdList(userIds);
+		Map<String, UserInfo> userInfoMap = userList.stream().collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
 		for (CrTaskLog crTaskLog : crTaskLogList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
-
+			UserInfo userInfo = userInfoMap.get(crTaskLog.getUserId());
 			timeLineEvent.setResourceId(roomId);
 			timeLineEvent.setTime(crTaskLog.getCreateTime());
 			timeLineEvent.setTitle(missionService.getById(crTaskLog.getMissionId()).getTitle());
-			timeLineEvent.setUserName("");
+			timeLineEvent.setUserName(userInfo.getUserName());
+			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 			timeLineEvent.setType(TimeLineEvent.SendDataType.SEND_DATA_IS_MISSION.getCode());
 
 			timeLineEventList.add(timeLineEvent);

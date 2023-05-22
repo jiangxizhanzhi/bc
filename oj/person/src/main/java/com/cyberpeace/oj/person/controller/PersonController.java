@@ -25,6 +25,7 @@ import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -36,6 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -174,7 +177,16 @@ public class PersonController {
 						ResourceCollection.BusinessType.OPERATION.getCode());
 
 		theoryCollection.addAll(operationCollection);
-		return new BaseRsp<>(theoryCollection);
+
+		// 重新排序
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		// 权限数据获取
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				true);
+		List<String> resourceIds = personCenterService.selectCollectionResourceIds(userId, authContext);
+		List<CollectionPracticeBo> sortedCollections = resortCollections(theoryCollection, resourceIds);
+		return new BaseRsp<>(sortedCollections);
 
 	}
 
@@ -224,5 +236,23 @@ public class PersonController {
 	public BaseRsp<List<String>> getPracticeMistakeIds() {
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		return new BaseRsp<>(StreamApiUtils.map(personalMistakeResList, PersonalMistakeRes::getPracticeId));
+	}
+
+	private List<CollectionPracticeBo> resortCollections(List<CollectionPracticeBo> collectionPracticeBos, List<String> resourceIds) {
+		if(CollectionUtils.isEmpty(collectionPracticeBos) ||
+				CollectionUtils.isEmpty(resourceIds)) {
+			return new ArrayList<>();
+		}
+		List<CollectionPracticeBo> resortedCollections = new ArrayList<>();
+		for(String resourceId : resourceIds) {
+			for(CollectionPracticeBo collectionPracticeBo : collectionPracticeBos) {
+				if(!resourceId.equals(collectionPracticeBo.getResourceId())) {
+					continue;
+				}
+				resortedCollections.add(collectionPracticeBo);
+				break;
+			}
+		}
+		return resortedCollections;
 	}
 }

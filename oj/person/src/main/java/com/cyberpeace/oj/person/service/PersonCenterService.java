@@ -67,4 +67,6 @@ public interface PersonCenterService {
 	 * @return
 	 */
 	List<CollectionPracticeBo> selectCollectionPractice(String userId, Integer practiceType);
+
+	List<String> selectCollectionResourceIds(String userId, AuthContext authContext);
 }

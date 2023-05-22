@@ -278,6 +278,20 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 		return Lists.newArrayList();
 	}
 
+	@Override
+	public List<String> selectCollectionResourceIds(String userId, AuthContext authContext) {
+		List<String> resourceIds = new ArrayList<>();
+		if (null != authContext) {
+			List<String> courseIds = courseMapper.selectByAuth(authContext);
+			List<String> publicCourses = personCenterMapper.selectPublicCourse(courseIds);
+			resourceIds.addAll(publicCourses);
+			resourceIds.addAll(personCenterMapper.selectLessonByAuth(publicCourses));
+			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
+			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
+		}
+		return personCenterMapper.selectResourceIdByUser(userId, null, resourceIds);
+	}
+
 	/**
 	 * 数据格式转换
 	 *

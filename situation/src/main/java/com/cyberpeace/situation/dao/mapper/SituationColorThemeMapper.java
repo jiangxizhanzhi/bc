@@ -27,4 +27,6 @@ public interface SituationColorThemeMapper extends BaseMapper<ColorTheme> {
 	 */
 	IPage<ColorTheme> selectPage(@Param("page") Page page,
 			@Param("colorThemePageReq") ColorThemePageReq colorThemePageReq);
+
+	Boolean checkName(@Param("name") String name, @Param("resourceId") String resourceId);
 }

@@ -38,7 +38,7 @@ public class ComponentThemeController {
 	/**
 	 * 图表主题-新增
 	 *
-	 * @param colorThemeReq 图表主题要求
+	 * @param colorThemeReq 图表主题请求
 	 * @return {@code BaseRsp<ColorThemeReq>}
 	 */
 	@ApiOperation("图表主题-新增")
@@ -51,7 +51,7 @@ public class ComponentThemeController {
 	/**
 	 * 图表主题-修改
 	 *
-	 * @param ColorThemeReq 图表主题要求
+	 * @param ColorThemeReq 图表主题请求
 	 * @return {@code BaseRsp<String>}
 	 */
 	@ApiOperation("图表主题-修改")
@@ -78,7 +78,7 @@ public class ComponentThemeController {
 	/**
 	 * 图表主题-批量删除
 	 *
-	 * @param ColorThemeDelReq 图表主题删除要求
+	 * @param ColorThemeDelReq 图表主题删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
 	@ApiOperation("图表主题-批量删除")

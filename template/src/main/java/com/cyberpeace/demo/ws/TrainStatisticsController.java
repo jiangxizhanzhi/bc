@@ -3,7 +3,9 @@ package com.cyberpeace.demo.ws;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingRecordRsp;
@@ -39,6 +41,20 @@ public class TrainStatisticsController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 
 		TrainingRecordRsp rsp = crBaseService.getTrainingRecords(userId);
+		List<String> defaultDates = new ArrayList<>();
+		Date date1 = new Date();
+		String now = DateUtil.DateToString(date1, "MM-dd");
+		defaultDates.add(now);
+		for(int i=1; i< 9 ;i++){
+			Date date2 = TimeUtil.reduceDates(date1, i);
+			String currentDate = DateUtil.DateToString(date2, "MM-dd");
+			defaultDates.add(currentDate);
+		}
+		TrainingRecordRsp result = new TrainingRecordRsp();
+		result.setDate(defaultDates);
+		if(null == rsp){
+			return new BaseRsp<>(result);
+		}
 		List<TrainingDateCount> lessonRecordCountByDate = lessonRecordMapper.getLessonRecordCountByDate("");
 		List<TrainingDateCount> lessonRecordCountByDatePerson = lessonRecordMapper.getLessonRecordCountByDate(userId);
 		Map<String, TrainingDateCount> stringTrainingDateCountMap = StreamApiUtils.toMap(lessonRecordCountByDatePerson, TrainingDateCount::getDate, s -> s);
@@ -87,7 +103,7 @@ public class TrainStatisticsController {
 		List<Integer> person = StreamApiUtils.getColumn(res, TrainingDateCount::getCompleted);
 		List<Integer> all = StreamApiUtils.getColumn(res, TrainingDateCount::getAll);
 		if(dates.isEmpty()){
-			return null;
+			return new BaseRsp<>(result);
 		}
 		rsp.setAll(all);
 		rsp.setDate(dates);

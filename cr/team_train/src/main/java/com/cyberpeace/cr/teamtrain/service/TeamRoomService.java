@@ -115,4 +115,12 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code List<EvaluationListRsp>}
 	 */
 	List<EvaluationListRsp> getEvaluationList(EvaluationListReq req);
+
+	/**
+	 * 获取推荐训练时长
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Integer}
+	 */
+	Integer getDuration(String roomId);
 }

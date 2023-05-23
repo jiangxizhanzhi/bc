@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
 
+import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

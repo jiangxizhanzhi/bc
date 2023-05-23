@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
@@ -60,4 +61,13 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @return {@code List<StudentScoreListRsp>}
 	 */
 	List<StudentScoreListRsp> getScoreListRsp(String roomId, List<CrRole> roleList);
+
+	/**
+	 * 获取学员评分
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code StudentScoreRsp}
+	 */
+	StudentScoreRsp getStudentScore(String roomId, String userId);
 }

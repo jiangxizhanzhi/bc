@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
@@ -491,6 +491,24 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
 		return crTaskService.getEvaluationList(req);
+	}
+
+	/**
+	 * 获取持续时间
+	 * 取模板里的设置时长，模板被删除则取创建房间时设置的小时数
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Integer}
+	 */
+	@Override
+	public Integer getDuration(String roomId) {
+		TeamRoom room = getById(roomId);
+		TeamTemplate template = teamTemplateService.getById(room.getTeamTemplateId());
+		if (null != template) {
+			return template.getDurationTime();
+		} else {
+			return (int) ((room.getEndTime().getTime() - room.getStartTime().getTime()) / 3600000);
+		}
 	}
 
 	@Override

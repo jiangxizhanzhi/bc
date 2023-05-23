@@ -108,11 +108,11 @@ public class SingleRoomScoreController {
 		data.put("task_count", gettaskCount(missionReport));
 		data.put("radar", radars);
 		data.put("stages", StageExports);
-		data.put("total_score", studentScoreRsp.getTrainingScore().getSumScoreObjective());
+		data.put("total_score", studentScoreRsp.getTrainingSummary().getSumScoreObjective());
 		data.put("create_time", trainRecord.getEndTime());
 		data.put("title", crScoreController.getTitle(trainRecord.getRoomName()));
 		data.put("resource_id", resource_id);
-		data.put("score", studentScoreRsp.getTrainingScore().getGetScoreObjective());
+		data.put("score", studentScoreRsp.getTrainingSummary().getGetScoreObjective());
 
 		// 用户信息
 		UserInfo userInfo = remoteUserService.getById(user_hash);

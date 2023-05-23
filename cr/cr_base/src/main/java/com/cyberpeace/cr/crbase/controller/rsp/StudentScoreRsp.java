@@ -3,7 +3,9 @@ package com.cyberpeace.cr.crbase.controller.rsp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.TrainingScore;
+import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
+import com.cyberpeace.cr.crbase.service.context.score.TaskStatistics;
+import com.cyberpeace.cr.crbase.service.context.score.TrainingScore;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,6 +29,12 @@ public class StudentScoreRsp {
 	private String trainingPercentage = "";
 
 	@ApiModelProperty(value = "训练分数")
-	private TrainingScore trainingScore = new TrainingScore();
+	private TrainingSummary trainingSummary;
+
+	@ApiModelProperty(value = "任务统计")
+	private TaskStatistics taskStatistics;
+
+	@ApiModelProperty(value = "阶段统计")
+	private TrainingScore trainingScore;
 
 }

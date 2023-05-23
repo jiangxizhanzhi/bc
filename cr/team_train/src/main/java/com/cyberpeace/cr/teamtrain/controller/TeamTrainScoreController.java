@@ -35,7 +35,9 @@ import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.crbase.service.context.UserReport;
@@ -69,10 +71,16 @@ public class TeamTrainScoreController {
 	private CrScoreController crScoreController;
 
 	@Autowired
+	private CrScoreService crScoreService;
+
+	@Autowired
 	private MissionService missionService;
 
 	@Autowired
 	private MpEnvService mpEnvService;
+	
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
@@ -176,59 +184,6 @@ public class TeamTrainScoreController {
 		return jsonObject;
 	}
 
-	private String getDuration(Integer trainingTime) {
-		String duration = "";
-		// 几天几小时
-		if (trainingTime > 86400) {
-
-			duration = trainingTime / 86400 + EnumUtils.getEnumDescByCode(
-					TrainingReport.TIME.DAY.getCode(), TrainingReport.TIME.class);
-			int i = trainingTime % 86400 / 3600;
-			if (i > 0) {
-				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
-						TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
-			}
-		}
-		// 几小时几分钟
-		else if (trainingTime > 3600) {
-			duration = trainingTime / 3600 + EnumUtils.getEnumDescByCode(
-					TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
-			int i = trainingTime % 3600 / 60;
-			if (i > 0) {
-				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
-						TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
-			}
-		} // 几分钟几秒
-		else if (trainingTime > 60) {
-			duration = trainingTime / 60 + EnumUtils.getEnumDescByCode(
-					TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
-			int i = trainingTime % 60;
-			if (i > 0) {
-				duration += " " + trainingTime % 60 + EnumUtils.getEnumDescByCode(
-						TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
-			}
-		} // 几秒
-		else {
-			duration = trainingTime + EnumUtils.getEnumDescByCode(
-					TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
-		}
-
-		return duration;
-
-	}
-
-	private List<StageExport>
-			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
-		List<StageExport> stageExports = Lists.newArrayList();
-
-		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {
-			StageExport stageExport = new StageExport(missionSchemeObject);
-
-			stageExports.add(stageExport);
-		}
-
-		return stageExports;
-	}
 
 	@ApiOperation("查询学员评分")
 	@GetMapping("/student_score")
@@ -239,9 +194,13 @@ public class TeamTrainScoreController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		teamRoomService.checkTeacherPermission(resource_id, userId);
 
-		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
-
-		return new BaseRsp<>(studentScoreRsp);
+		StudentScoreRsp rsp = crScoreService.getStudentScore(resource_id, user_hash);
+		// 训练时间
+		Integer duration = teamRoomService.getDuration(resource_id);
+		String timeCost = trainRecordService.getTimeCost(resource_id);
+		rsp.getTrainingSummary().setDuration(duration);
+		rsp.getTrainingSummary().setTimeCost(timeCost);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("提交学员评分")
@@ -391,6 +350,60 @@ public class TeamTrainScoreController {
 		trainingReport.setUsers(userReportList);
 
 		return new BaseRsp<>(trainingReport);
+	}
+
+	private String getDuration(Integer trainingTime) {
+		String duration = "";
+		// 几天几小时
+		if (trainingTime > 86400) {
+
+			duration = trainingTime / 86400 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.DAY.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 86400 / 3600;
+			if (i > 0) {
+				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
+			}
+		}
+		// 几小时几分钟
+		else if (trainingTime > 3600) {
+			duration = trainingTime / 3600 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.HOUR.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 3600 / 60;
+			if (i > 0) {
+				duration += " " + trainingTime % 86400 / 3600 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
+			}
+		} // 几分钟几秒
+		else if (trainingTime > 60) {
+			duration = trainingTime / 60 + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.MINUTE.getCode(), TrainingReport.TIME.class);
+			int i = trainingTime % 60;
+			if (i > 0) {
+				duration += " " + trainingTime % 60 + EnumUtils.getEnumDescByCode(
+						TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
+			}
+		} // 几秒
+		else {
+			duration = trainingTime + EnumUtils.getEnumDescByCode(
+					TrainingReport.TIME.SECOND.getCode(), TrainingReport.TIME.class);
+		}
+
+		return duration;
+
+	}
+
+	private List<StageExport>
+	getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
+		List<StageExport> stageExports = Lists.newArrayList();
+
+		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {
+			StageExport stageExport = new StageExport(missionSchemeObject);
+
+			stageExports.add(stageExport);
+		}
+
+		return stageExports;
 	}
 
 }

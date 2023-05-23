@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
@@ -72,6 +73,16 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	@Override
 	public TrainRecord getByRoomId(String roomId) {
 		return trainRecordMapper.getByRoomId(roomId);
+	}
+
+	@Override
+	public String getTimeCost(String roomId) {
+		TrainRecord trainRecord = trainRecordMapper.getByRoomId(roomId);
+		if (trainRecord.getEndTime() != null) {
+			return TimeUtil.getTimeInterval(trainRecord.getStartTime(), trainRecord.getEndTime());
+		} else {
+			return TimeUtil.getTimeInterval(trainRecord.getStartTime(), new Date());
+		}
 	}
 
 }

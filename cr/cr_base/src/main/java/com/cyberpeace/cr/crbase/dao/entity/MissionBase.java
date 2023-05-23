@@ -74,4 +74,21 @@ public class MissionBase extends BaseTable {
 			this.desc = desc;
 		}
 	}
+
+	public Boolean isObjective() {
+		Integer missionType = getType();
+		return isObjective(missionType);
+	}
+
+	public static Boolean isObjective(Integer type) {
+		if (type == null) {
+			return false;
+		}
+		boolean result = type.intValue() == MissionType.JUDGE.getCode();
+		result = result || (type.intValue() == MissionType.SINGLE_CHOICE.getCode());
+		result = result || (type.intValue() == MissionType.MULTIPLE_CHOICE.getCode());
+		result = result || (type.intValue() == MissionType.FILE.getCode());
+
+		return result;
+	}
 }

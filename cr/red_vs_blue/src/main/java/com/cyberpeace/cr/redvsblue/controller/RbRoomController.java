@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -120,6 +123,8 @@ public class RbRoomController {
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	@Autowired
+	private RemoteUserService remoteUserService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -316,8 +321,9 @@ public class RbRoomController {
 			roleUsers.setRoleGroup(crRole.getRoleGroup());
 			String userNamesByRoleUsers = crRoleService
 					.getUserNamesByRoleUsers(crRole.getUserIdList());
+			List<UserData> userInfoList = crRoleService.getUserDatas(crRole.getUserIdList());
 			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
-
+			roleUsers.setUserInfos(userInfoList);
 			roleUsersList.add(roleUsers);
 
 		});

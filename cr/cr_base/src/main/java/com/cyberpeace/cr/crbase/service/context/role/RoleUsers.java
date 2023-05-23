@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,5 +19,7 @@ public class RoleUsers {
 
 	@ApiModelProperty(value = "用户列表")
 	private List<String> users;
+
+	private List<UserData> userInfos;
 
 }

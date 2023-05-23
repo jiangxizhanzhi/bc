@@ -52,14 +52,16 @@ public class TrainStatisticsController {
 		}
 		TrainingRecordRsp result = new TrainingRecordRsp();
 		result.setDate(defaultDates);
-		if(null == rsp){
-			return new BaseRsp<>(result);
-		}
 		List<TrainingDateCount> lessonRecordCountByDate = lessonRecordMapper.getLessonRecordCountByDate("");
 		List<TrainingDateCount> lessonRecordCountByDatePerson = lessonRecordMapper.getLessonRecordCountByDate(userId);
 		Map<String, TrainingDateCount> stringTrainingDateCountMap = StreamApiUtils.toMap(lessonRecordCountByDatePerson, TrainingDateCount::getDate, s -> s);
 
-
+		if(null == rsp){
+			rsp = new TrainingRecordRsp();
+			rsp.setDate(new ArrayList<>());
+			rsp.setPerson(new ArrayList<>());
+			rsp.setAll(new ArrayList<>());
+		}
 		List<String> dateList = rsp.getDate();
 		List<Integer> allList = rsp.getAll();
 		List<Integer> personList = rsp.getPerson();

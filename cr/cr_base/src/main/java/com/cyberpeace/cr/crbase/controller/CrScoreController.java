@@ -79,7 +79,7 @@ public class CrScoreController {
 
 		Integer sumScoreSubjective = 0;
 
-		TrainingScore trainingScore = new TrainingScore();
+		TrainingSummary trainingSummary = new TrainingSummary();
 
 		for (TaskContext task : taskList) {
 			Mission mission = task.getMission();
@@ -94,10 +94,10 @@ public class CrScoreController {
 
 		}
 
-		trainingScore.setSumScoreSubjective(sumScoreSubjective);
-		trainingScore.setSumScoreObjective(sumScoreObjective);
-		trainingScore.setGetScoreSubjective(getScoreSubjective);
-		trainingScore.setGetScoreObjective(getScoreObjective);
+		trainingSummary.setSumScoreSubjective(sumScoreSubjective);
+		trainingSummary.setSumScoreObjective(sumScoreObjective);
+		trainingSummary.setGetScoreSubjective(getScoreSubjective);
+		trainingSummary.setGetScoreObjective(getScoreObjective);
 
 		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_hash);
 		StudentScoreRsp studentScoreRsp = new StudentScoreRsp();
@@ -108,7 +108,7 @@ public class CrScoreController {
 			studentScoreRsp.setAbilityPercentage(crScore.getSkillPercentage());
 		}
 
-		studentScoreRsp.setTrainingScore(trainingScore);
+		studentScoreRsp.setTrainingSummary(trainingSummary);
 
 		return studentScoreRsp;
 	}

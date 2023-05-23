@@ -14,17 +14,21 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.score.*;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Maps;
 
@@ -45,6 +49,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private CrTaskMapper crTaskMapper;
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -165,5 +172,81 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			}
 		}
 		return res;
+	}
+
+	@Override
+	public StudentScoreRsp getStudentScore(String roomId, String userId) {
+		// get task score
+		List<TaskScoreContext> taskList = crTaskMapper.selectScoreContextByRoomIdAndUserId(roomId,
+				userId);
+		Map<String, TaskScoreContext> scoreContextMap = StreamApiUtils.toMap(taskList,
+				TaskScoreContext::getMissionId, context -> context);
+
+		// get role
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		// get stages
+		List<CrRoleMissionSchemeStage> stageList = JsonUtil
+				.toJsonObjectArray(role.getMissionScheme(), CrRoleMissionSchemeStage.class);
+		TrainingScore trainingScore = new TrainingScore();
+		TrainingSummary trainingSummary = new TrainingSummary();
+
+		for (CrRoleMissionSchemeStage stage : stageList) {
+			StageNameScore stageNameScore = new StageNameScore();
+			stageNameScore.setName(stage.getStage());
+			for (String missionId : stage.getMissions()) {
+				TaskScoreContext context = scoreContextMap.get(missionId);
+				if (null == context) {
+					// 任务未下发
+					continue;
+				}
+				NameScore missionScore = new NameScore();
+				missionScore.setName(context.getMissionTitle());
+				// 未提交、未评估分数设为0，
+				if (null != context.getTaskScore()) {
+					missionScore.setScore(context.getTaskScore());
+					// 统计得分
+					trainingScore.addScore(context.getTaskScore());
+					trainingSummary.addScore(context.getTaskScore(), context.getMissionType());
+				}
+				// 统计总分
+				trainingScore.addTotal(context.getMissionScore());
+				trainingSummary.addTotal(context.getMissionScore(), context.getMissionType());
+
+				stageNameScore.getMissions().add(missionScore);
+			}
+			if (!stageNameScore.getMissions().isEmpty()) {
+				stageNameScore.sum();
+				trainingScore.getStages().add(stageNameScore);
+			}
+		}
+
+		// get score
+		CrScore crScore = getByRoomIdAndUser(roomId, userId);
+		StudentScoreRsp rsp = new StudentScoreRsp();
+		if (crScore != null) {
+			// 已被评分过
+			rsp.setAbilityPercentage(crScore.getSkillPercentage());
+			rsp.setAbilityScore(JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class));
+			rsp.setComment(crScore.getComment());
+			rsp.setFinalScore(crScore.getFinalScore());
+			rsp.setTrainingPercentage(crScore.getTrainingPercentage());
+		}
+		// 任务统计
+		TaskStatistics taskStatistics = new TaskStatistics();
+		long successful = taskList.stream().filter(TaskScoreContext::isSuccessful).count();
+		long failed = taskList.stream().filter(TaskScoreContext::isFailed).count();
+		long notEvaluated = taskList.stream().filter(TaskScoreContext::isNotEvaluated).count();
+		taskStatistics.setSuccessful((int) successful);
+		taskStatistics.setFailed((int) failed);
+		taskStatistics.setNotEvaluated((int) notEvaluated);
+		taskStatistics.setMissionCount(taskList.size());
+		taskStatistics.calculate();
+
+		// 组装返回
+		rsp.setTrainingSummary(trainingSummary);
+		rsp.setTaskStatistics(taskStatistics);
+		rsp.setTrainingScore(trainingScore);
+
+		return rsp;
 	}
 }

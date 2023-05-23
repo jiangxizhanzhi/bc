@@ -17,17 +17,4 @@ public class Mission extends MissionBase {
 
 	@ApiModelProperty(value = "任务模板id")
 	private String missionTemplateId;
-
-	public Boolean isObjective() {
-		Integer type = getType();
-		if (type == null) {
-			return false;
-		}
-		boolean result = type.intValue() == MissionType.JUDGE.getCode();
-		result = result || (type.intValue() == MissionType.SINGLE_CHOICE.getCode());
-		result = result || (type.intValue() == MissionType.MULTIPLE_CHOICE.getCode());
-		result = result || (type.intValue() == MissionType.FILE.getCode());
-
-		return result;
-	}
 }

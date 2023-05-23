@@ -19,7 +19,8 @@ public class SystemProperty implements Serializable {
 
 	public enum NameEnum implements GenericEnum {
 
-		EXPORT_BUILTIN(1, "export_builtin");
+		EXPORT_BUILTIN(1, "export_builtin"),
+		IS_SHOW_SITUATION(2, "isShowSituation");
 
 		@Getter
 		private final Integer code;

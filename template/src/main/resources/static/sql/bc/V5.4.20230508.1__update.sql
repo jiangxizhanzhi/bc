@@ -117,3 +117,5 @@ UPDATE `cr_constants_config`
 SET `cn_name` = '困难', `en_name` = 'Difficult'
 WHERE code = 2
   AND type = 10;
+
+INSERT INTO `system_property`(`id`, `name`, `desc`, `content`) VALUES (2, 'isShowSituation', '是否显示态势导调', 'false');

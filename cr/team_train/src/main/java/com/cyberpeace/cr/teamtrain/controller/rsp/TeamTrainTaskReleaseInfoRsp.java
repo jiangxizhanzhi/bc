@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller.rsp;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseInfo;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,5 +15,5 @@ public class TeamTrainTaskReleaseInfoRsp implements Serializable {
 
     private List<UserInfo> userInfoList;
 
-    private List<MissionReleaseInfo>  missions;
+    private List<MissionReleaseStageInfo>  missionStages;
 }

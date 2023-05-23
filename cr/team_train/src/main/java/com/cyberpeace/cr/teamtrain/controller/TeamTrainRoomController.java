@@ -766,11 +766,9 @@ public class TeamTrainRoomController {
 		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
 		List<TeamTrainTaskReleaseInfoRsp> res = new ArrayList<>();
 
-		Set<String> missionIds = roles.stream().map(CrRoleSimple::getMissionIds).flatMap(Collection::stream).collect(Collectors.toSet());
-		List<Mission> allMissions = missionService.listByIds(missionIds);
+		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
 
-		List<String> allUserIds = roles.stream().map(CrRoleSimple::getUserIds).flatMap(Collection::stream).collect(Collectors.toList());
-		List<UserInfo> allUserInfos = remoteUserService.getByIdList(allUserIds);
+		List<UserInfo> allUserInfos = remoteUserService.getByIdList(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
 
 		//按角色分组
 		for (CrRoleSimple roleSimple : roles) {
@@ -780,19 +778,11 @@ public class TeamTrainRoomController {
 			List<UserInfo> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
 					&&roleSimple.getUserIds().contains(a.getUserId())).collect(Collectors.toList());
 			taskReleaseInfoRsp.setUserInfoList(userInfoList);
-			List<Mission> missions = allMissions.stream().filter(a->roleSimple.getMissionIds()!=null
-					&&roleSimple.getMissionIds().contains(a.getResourceId())).collect(Collectors.toList());
-			List<MissionReleaseInfo>  missionReleaseInfos = new ArrayList<>();
-			for (Mission mission : missions) {
-				MissionReleaseInfo missionReleaseInfo = BeanUtils.copy(mission, MissionReleaseInfo.class);
-				List<CrTask> crTasks = taskMap.getOrDefault(mission.getResourceId(),new ArrayList<>());
-				Set<String> userIds = crTasks.stream().filter(CrTask::isSubmitted).map(CrTask::getUserId).collect(Collectors.toSet());
-				missionReleaseInfo.setFinishUserList(userInfoList.stream().filter(a->userIds.contains(a.getUserId())).collect(Collectors.toList()));
-				missionReleaseInfo.setNotFinishUserList(userInfoList.stream().filter(a -> !userIds.contains(a.getUserId())).collect(Collectors.toList()));
-				missionReleaseInfo.setIsRelease(crTasks.size()>0);
-				missionReleaseInfos.add(missionReleaseInfo);
+			List<MissionReleaseStageInfo>  missionReleaseStageInfos = new ArrayList<>();
+			for (CrRoleMissionSchemeStage stage : roleSimple.getMissionScheme()) {
+				missionReleaseStageInfos.add(new MissionReleaseStageInfo(stage,allMissions,taskMap,userInfoList));
 			}
-			taskReleaseInfoRsp.setMissions(missionReleaseInfos);
+			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
 
 			res.add(taskReleaseInfoRsp);
 		}

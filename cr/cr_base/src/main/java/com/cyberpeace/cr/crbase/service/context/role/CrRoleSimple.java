@@ -1,13 +1,18 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * 角色简要信息
@@ -44,5 +49,13 @@ public class CrRoleSimple implements Serializable {
 	public Integer getTaskCount() {
 		return this.userIds.size()
 				* missionScheme.stream().mapToInt(stage -> stage.getMissions().size()).sum();
+	}
+	//属性
+	public static List<String> getFieldList(Function<CrRoleSimple,List<String>> function,List<CrRoleSimple>  list) {
+		if (CollectionUtils.isEmpty(list)){
+			return new ArrayList<>();
+		}
+		List<String> res = list.stream().map(function).flatMap(Collection::stream).collect(Collectors.toList());
+		return res;
 	}
 }

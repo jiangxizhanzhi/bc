@@ -30,6 +30,9 @@ public interface TrainRecordMapper extends BaseMapper<TrainRecord> {
 	List<TrainingDateCount> countFinishedByDate(@Param("userId") String userId,
 												@Param("type") Integer type);
 
+	List<TrainingDateCount> countFinishedByDatePerson(@Param("roomIds") List<String> roomIds,
+													  @Param("completedStatus") Integer completedStatus);
+
 	void batchEnd(@Param("businessTemplateId") String businessTemplateId);
 
 	TrainRecord getByRoomId(String roomId);

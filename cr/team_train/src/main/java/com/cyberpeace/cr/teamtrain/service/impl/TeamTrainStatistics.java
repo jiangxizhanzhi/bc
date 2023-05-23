@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +41,13 @@ public class TeamTrainStatistics extends CrEventStatistics {
 
 	@Override
 	public List<TrainingDateCount> getTrainingCountByDate(String userId) {
-		return trainRecordMapper.countFinishedByDate(userId,
+		List<String> roomIds = crRoleMapper.getRoomIdsByUserIdAndType(userId,
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		if (roomIds.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return trainRecordMapper.countFinishedByDatePerson(roomIds,
+				TeamRoom.TrainingStatusCode.ENDED.getCode());
 	}
 
 	@Override

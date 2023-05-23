@@ -75,6 +75,20 @@
         group by date_format(end_time, '%y-%m-%d')
     </select>
 
+    <select id="countFinishedByDatePerson" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
+        select
+        date_format(end_time, '%y-%m-%d') as `date`,
+        sum(case when training_status = #{completedStatus} then 1 else 0 end) as completed
+        from cr_team_room
+        where resource_id
+        in
+        <foreach collection="roomIds" item="roomId" separator="," close=")" open="(">
+            #{roomId}
+        </foreach>
+        and date_format(end_time, '%y-%m-%d') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 DAY),'%y-%m-%d') AND date_format(end_time, '%y-%m-%d') &lt;= date_format(NOW(), '%y-%m-%d')
+        group by date_format(end_time, '%y-%m-%d')
+    </select>
+
     <select id="countFinishedByUserIdAndType" resultType="java.lang.Integer">
         select count(T1.id)
         from cr_train_record T1,cr_business_template T2

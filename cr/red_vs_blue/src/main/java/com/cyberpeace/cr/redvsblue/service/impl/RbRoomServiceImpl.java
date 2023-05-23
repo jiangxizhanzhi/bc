@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -290,7 +291,14 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dashboardUser.setId(userId);
 				dashboardUser.setStatus("online");
 				dashboardUser.setSign("");
-				dashboardUser.setRole(getFullRoleName(crRole));
+				// dashboardUser.setRole(getFullRoleName(crRole));
+				String fullRoleName = getFullRoleName(crRole);
+				if(StringUtils.isNotEmpty(fullRoleName) && fullRoleName.contains(CommonConstant.LEFT_OBLIQUE_LINE)) {
+					String[] split = fullRoleName.split(CommonConstant.LEFT_OBLIQUE_LINE);
+					dashboardUser.setRole(split[0]);
+					dashboardUser.setRoleType(split[1]);
+				}
+
 
 				// 找到当前用户角色
 				if (userId.equals(currentUserId)) {

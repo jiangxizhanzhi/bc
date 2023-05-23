@@ -17,6 +17,9 @@ public class DashboardUser implements Serializable {
 	@ApiModelProperty("角色")
 	private String role;
 
+	@ApiModelProperty("角色类型")
+	private String roleType;
+
 	@ApiModelProperty("编号")
 	private String id;
 

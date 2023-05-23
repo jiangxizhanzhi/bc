@@ -18,6 +18,7 @@ import com.cyberpeace.situation.controller.res.SituationComponentsAnimationRes;
 import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
 import com.cyberpeace.situation.dao.entity.SituationComponentsAnimation;
 import com.cyberpeace.situation.service.SituationComponentAnimationService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,9 @@ public class ComponentAnimationController {
 	@Autowired
 	private SituationComponentAnimationService situationComponentAnimationService;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 动画组件-新增
 	 *
@@ -48,6 +52,10 @@ public class ComponentAnimationController {
 	@PostMapping()
 	public BaseRsp<String> addComponentAnimation(
 			@RequestBody @Validated(Create.class) SituationComponentsAnimationAddReq situationComponentsAnimationAddReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationComponentsAnimationAddReq.getName(),
+				situationComponentsAnimationAddReq.getDescription());
 
 		return new BaseRsp(situationComponentAnimationService
 				.addComponentAnimation(situationComponentsAnimationAddReq));
@@ -63,6 +71,11 @@ public class ComponentAnimationController {
 	@PatchMapping("")
 	public BaseRsp<SituationComponentsAnimationRes> updateComponentAnimation(
 			@RequestBody @Validated(Update.class) SituationComponentsAnimationUpdateReq situationComponentsAnimationUpdateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationComponentsAnimationUpdateReq.getName(),
+				situationComponentsAnimationUpdateReq.getDescription());
+
 		return new BaseRsp<>(situationComponentAnimationService
 				.updateComponentAnimation(situationComponentsAnimationUpdateReq));
 	}

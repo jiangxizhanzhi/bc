@@ -199,4 +199,6 @@ public interface SituationHandlerService {
 	 */
 	Boolean pushEventAds(List<WsEventAd> eventAds, String dashboardId, String featureId);
 
+	void checkFieldLen(String name, String desc);
+
 }

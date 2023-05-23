@@ -43,6 +43,7 @@ import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
 import com.cyberpeace.situation.dao.mapper.*;
 import com.cyberpeace.situation.model.IntType;
 import com.cyberpeace.situation.service.DashboardTemplateRefService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
 
@@ -90,6 +91,9 @@ public class DashboardInstanceController {
 
 	@Autowired
 	private DashboardTemplateMapper dashboardTemplateMapper;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 大屏实例-列表查询
@@ -192,6 +196,11 @@ public class DashboardInstanceController {
 	@PostMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> addReplayInstance(
 			@RequestBody @Validated(Create.class) ReplayInstanceReq replayInstanceReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(replayInstanceReq.getName(),
+				replayInstanceReq.getDescription());
+
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
 				.addReplayInstance(replayInstanceReq);
 		return new BaseRsp<>(situationPublishInstance);
@@ -222,6 +231,11 @@ public class DashboardInstanceController {
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
 			@RequestBody @Validated(Create.class) SituationPublishInstanceAddReq situationPublishInstanceAddReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationPublishInstanceAddReq.getName(),
+				situationPublishInstanceAddReq.getDescription());
+
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
 				.insertOne(situationPublishInstanceAddReq, false);
 		return new BaseRsp<>(situationPublishInstance);
@@ -359,6 +373,10 @@ public class DashboardInstanceController {
 	@PatchMapping("")
 	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(
 			@RequestBody @Validated(Update.class) SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(situationPublishInstanceUpdateReq.getName(),
+				situationPublishInstanceUpdateReq.getDescription());
 
 		SituationPublishInstance situationPublishInstance = situationPublishInstanceService
 				.updateOne(situationPublishInstanceUpdateReq);

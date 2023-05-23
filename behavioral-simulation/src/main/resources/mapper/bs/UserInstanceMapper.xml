@@ -39,4 +39,10 @@
             #{simulatorId}
         </foreach>
     </select>
+    <select id="getBySimulatorIdAndUserModelId" resultType="com.cyberpeace.bs.dao.entity.UserInstance">
+        select *
+        from bs_user_instance
+        where user_simulator_id = #{simulatorId}
+          and user_model_id = #{userModelId}
+    </select>
 </mapper>

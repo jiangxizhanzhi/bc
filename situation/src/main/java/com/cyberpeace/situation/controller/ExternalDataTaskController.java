@@ -25,6 +25,7 @@ import com.cyberpeace.integratation.service.bo.situation.SchemeVisualizationBo;
 import com.cyberpeace.integratation.service.bo.situation.SituationTaskReq;
 import com.cyberpeace.integratation.service.bo.situation.TopoHistoryBo;
 import com.cyberpeace.situation.controller.req.TaskListPageReq;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +45,9 @@ public class ExternalDataTaskController {
 
 	@Autowired
 	private RemoteSituationService remoteSituationService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 获取任务类型字典

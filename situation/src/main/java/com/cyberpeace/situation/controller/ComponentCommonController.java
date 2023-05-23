@@ -32,6 +32,7 @@ import com.cyberpeace.situation.controller.req.SituationCommonComponentsPageReq;
 import com.cyberpeace.situation.controller.res.SituationCommonComponentsPageRes;
 import com.cyberpeace.situation.dao.entity.SituationCommonComponents;
 import com.cyberpeace.situation.service.SituationCommonComponentsService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,6 +58,9 @@ public class ComponentCommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 通用组件-分页查询
@@ -110,6 +114,10 @@ public class ComponentCommonController {
 	@PostMapping("")
 	public BaseRsp<String> teComponents(
 			@RequestBody @Validated(Create.class) CommonComponentsReq commonComponentsReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(commonComponentsReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationCommonComponentsService.createComponents(commonComponentsReq));
 	}
@@ -124,6 +132,10 @@ public class ComponentCommonController {
 	@PatchMapping("")
 	public BaseRsp<String> updateComponents(
 			@RequestBody @Validated(Update.class) CommonComponentsReq commonComponentsReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(commonComponentsReq.getName(), null);
+
 		return new BaseRsp<>(
 				situationCommonComponentsService.updateComponents(commonComponentsReq));
 	}

@@ -34,4 +34,12 @@ public interface DynamicEffectsMapper extends BaseMapper<DynamicEffect> {
 	 */
 	Boolean checkName(@Param("resourceId") String resourceId, @Param("name") String name);
 
+	/**
+	 * 校验动效类型是否被使用
+	 *
+	 * @param categories 类型ID列表
+	 * @return {@code Boolean}
+	 */
+	Boolean checkCategory(@Param("categories") List<String> categories);
+
 }

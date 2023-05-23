@@ -44,7 +44,6 @@ public class InstanceDataQueryReq {
 	@ApiModelProperty(value = "科目ID")
 	private String subjectId;
 
-
 	/**
 	 * 大屏角色
 	 */

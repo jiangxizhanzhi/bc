@@ -26,6 +26,7 @@ import com.cyberpeace.situation.controller.req.NodeActionPageReq;
 import com.cyberpeace.situation.controller.req.NodePageReq;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
 import com.cyberpeace.situation.dao.mapper.TopoConfigMapper;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +49,9 @@ public class ExternalDataTopoController {
 
 	@Autowired
 	private TopoConfigMapper topoConfigMapper;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	private volatile Boolean demo = false;
 

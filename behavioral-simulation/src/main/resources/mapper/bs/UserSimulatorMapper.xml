@@ -44,7 +44,6 @@
     <select id="getSceneList" resultType="com.cyberpeace.bs.service.bo.simulator.SceneIdName">
         select distinct scene_id, scene_name
         from bs_user_simulator
-        order by id desc
     </select>
     <select id="getIdsBySceneIdList" resultType="java.lang.String">
         select resource_id

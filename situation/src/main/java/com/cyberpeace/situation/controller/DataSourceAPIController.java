@@ -20,6 +20,7 @@ import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
 import com.cyberpeace.situation.controller.res.ApiRequestRes;
 import com.cyberpeace.situation.dao.entity.ApiRequest;
 import com.cyberpeace.situation.service.ApiRequestService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,6 +43,9 @@ public class DataSourceAPIController {
 	@Autowired
 	private ApiRequestService apiRequestService;
 
+	@Autowired
+	private SituationHandlerService situationHandlerService;
+
 	/**
 	 * 创建api连接
 	 *
@@ -52,6 +56,11 @@ public class DataSourceAPIController {
 	@PostMapping("message")
 	public BaseRsp<String>
 			createApiConnect(@RequestBody @Validated(Create.class) ApiConnectReq apiConnectReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(apiConnectReq.getName(),
+				apiConnectReq.getDescription());
+
 		return new BaseRsp<>(apiRequestService.createApiRequest(apiConnectReq));
 	}
 
@@ -65,6 +74,11 @@ public class DataSourceAPIController {
 	@PatchMapping("message")
 	public BaseRsp<String>
 			updateApiConnect(@RequestBody @Validated(Update.class) ApiConnectReq apiConnectReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(apiConnectReq.getName(),
+				apiConnectReq.getDescription());
+
 		return new BaseRsp<>(apiRequestService.updateApiConnect(apiConnectReq));
 	}
 

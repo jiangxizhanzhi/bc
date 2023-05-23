@@ -4,6 +4,7 @@ import com.cyberpeace.bs.service.MeterService;
 import com.cyberpeace.bs.service.UserSimulatorService;
 import com.cyberpeace.bs.service.bo.demo.SingleBehaviorReq;
 import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
+import com.cyberpeace.bs.service.bo.simulator.SimulatorAddBo;
 import com.cyberpeace.common.model.BaseRsp;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +23,6 @@ import java.util.List;
 @Api(tags = "行为模拟-辅助测试")
 @RestController
 @RequestMapping("/bs/meter")
-// @RequiresAuthentication
 public class MeterController {
 
     @Autowired
@@ -71,4 +71,20 @@ public class MeterController {
         List<SimulatorTimer> res = userSimulatorService.showTimers();
         return new BaseRsp<>(res);
     }
+
+
+    /**
+     * 创建仪表
+     * 测试接口，没有回调机制
+     *
+     * @param addBo 新增请求体
+     * @return {@code BaseRsp}
+     */
+    @ApiOperation("创建仪表")
+    @PostMapping("/create/simulator")
+    public BaseRsp batchCreate(@RequestBody @Validated SimulatorAddBo addBo) {
+        userSimulatorService.batchCreate(addBo);
+        return new BaseRsp();
+    }
+
 }

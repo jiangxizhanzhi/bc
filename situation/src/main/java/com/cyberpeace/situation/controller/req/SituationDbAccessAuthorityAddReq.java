@@ -25,7 +25,7 @@ public class SituationDbAccessAuthorityAddReq implements Serializable {
 	 */
 	@NotBlank(groups = { Create.class, Update.class },
 			message = SituationErrorCode.NAME_EMPTY_ERROR)
-	@ApiModelProperty(value = "动画名称", required = true)
+	@ApiModelProperty(value = "系统名称", required = true)
 	private String name;
 
 	/**
@@ -37,7 +37,7 @@ public class SituationDbAccessAuthorityAddReq implements Serializable {
 	/**
 	 * 系统ip
 	 */
-	@ApiModelProperty(value = "系统ip")
+	@ApiModelProperty(value = "白名单IP")
 	private String sysIp;
 
 }

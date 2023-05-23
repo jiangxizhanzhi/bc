@@ -43,6 +43,7 @@ import com.cyberpeace.situation.dao.entity.TwoDimensionalComponentsCategory;
 import com.cyberpeace.situation.dao.mapper.SituationDbAccessMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
+import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.TwoDimensionalComponentsService;
 
 import io.swagger.annotations.Api;
@@ -77,6 +78,9 @@ public class ComponentChartController {
 
 	@Autowired
 	private SituationDbAccessMapper situationDbAccessMapper;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 图表组件类型-列表查询
@@ -132,6 +136,10 @@ public class ComponentChartController {
 	@PostMapping("")
 	public BaseRsp<TwoDimensionalComponents> setTwoDimensionalComponents(
 			@RequestBody @Validated(Create.class) TwoDimensionalComponentsAddReq twoDimensionalComponentsAddReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(twoDimensionalComponentsAddReq.getName(),
+				twoDimensionalComponentsAddReq.getDescription());
 
 		// 判断图表组件类型是否存在
 		TwoDimensionalComponents twoDimensionalComponents = BeanUtils
@@ -257,6 +265,10 @@ public class ComponentChartController {
 	@PatchMapping("")
 	public BaseRsp patchTwoDimensionalComponents(
 			@RequestBody @Validated(Update.class) TwoDimensionalComponentsUpdateReq twoDimensionalComponentsUpdateReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(twoDimensionalComponentsUpdateReq.getName(),
+				twoDimensionalComponentsUpdateReq.getDescription());
 
 		// 判断需要修改的图表组件是否存在
 		TwoDimensionalComponents patchObj = BeanUtils.copy(twoDimensionalComponentsUpdateReq,

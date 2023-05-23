@@ -19,6 +19,7 @@ import com.cyberpeace.situation.controller.req.DataSourceReq;
 import com.cyberpeace.situation.controller.res.DataResourceRecordInfoRes;
 import com.cyberpeace.situation.controller.res.DataSourceRecordRes;
 import com.cyberpeace.situation.service.DataSourceService;
+import com.cyberpeace.situation.service.SituationHandlerService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +41,9 @@ public class DataSourceDBController {
 
 	@Autowired
 	private DataSourceService dataSourceService;
+
+	@Autowired
+	private SituationHandlerService situationHandlerService;
 
 	/**
 	 * 测试数据库连接（详情页）
@@ -127,6 +131,10 @@ public class DataSourceDBController {
 	@PostMapping("")
 	public BaseRsp<String> createDataSourceRecord(
 			@RequestBody @Validated(Create.class) DataSourceRecordReq dataSourceRecordReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dataSourceRecordReq.getName(), null);
+
 		return new BaseRsp<>(dataSourceService.createDataSourceRecord(dataSourceRecordReq));
 	}
 
@@ -140,6 +148,10 @@ public class DataSourceDBController {
 	@PatchMapping("")
 	public BaseRsp<String> updateDataSourceRecord(
 			@RequestBody @Validated(Update.class) DataSourceRecordReq dataSourceRecordReq) {
+
+		// 校验字段长度是否合法
+		situationHandlerService.checkFieldLen(dataSourceRecordReq.getName(), null);
+
 		return new BaseRsp<>(dataSourceService.updateDataSourceRecord(dataSourceRecordReq));
 	}
 

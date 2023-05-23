@@ -45,22 +45,34 @@ public class SituationColorThemeServiceImpl extends ServiceImpl<SituationColorTh
 
     @Override
     public ColorThemeReq createColorTheme(ColorThemeReq colorThemeReq) {
+
+        // 1、校验主题名称是否重复
+        if (situationColorThemeMapper.checkName(colorThemeReq.getName(), null)) {
+            throw new BusinessException(SituationErrorCode.COLOR_THEME_NAME_EXIST);
+        }
+
+        // 2、解析并插入数据
         ColorTheme colorTheme = parseReqToColorTheme(colorThemeReq);
-        String userId = UserInfoContext.getUserContext().getUserId();
-        String resourceId = IDGeneratorUtil.getID();
-        colorTheme.setCreateUserId(userId);
-        colorTheme.setResourceId(resourceId);
+        colorTheme.setResourceId(IDGeneratorUtil.getID());
         situationColorThemeMapper.insert(colorTheme);
         return colorThemeReq;
     }
 
     @Override
     public String updateColorTheme(ColorThemeReq colorThemeReq) {
+
+        // 1、提取主题id
         String resourceId = colorThemeReq.getResourceId();
-        ColorTheme colorTheme = situationColorThemeMapper.selectById(resourceId);
-        if (colorTheme == null) {
-            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+
+        // 2、校验主题是否存在
+        getColorThemeInfo(resourceId);
+
+        // 3、校验主题名称是否重复
+        if (situationColorThemeMapper.checkName(colorThemeReq.getName(), resourceId)) {
+            throw new BusinessException(SituationErrorCode.COLOR_THEME_NAME_EXIST);
         }
+
+        // 4、解析并更新数据
         ColorTheme reqToColorTheme = parseReqToColorTheme(colorThemeReq);
         situationColorThemeMapper.updateById(reqToColorTheme);
         return null;

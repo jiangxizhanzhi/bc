@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class NodeDeleteReq implements Serializable {
+public class NodeOpsReq implements Serializable {
 
 	@ApiModelProperty(value = "场景id")
 	private String mpSceneId;

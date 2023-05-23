@@ -16,7 +16,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cs.controller.req.NodeSnapShotReq;
 import com.cyberpeace.cs.controller.req.NodeSnapshotDeleteReq;
-import com.cyberpeace.cs.controller.req.scene.NodeDeleteReq;
+import com.cyberpeace.cs.controller.req.scene.NodeOpsReq;
 import com.cyberpeace.cs.controller.req.scene.NodeUpdateReq;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
@@ -102,8 +102,40 @@ public class SceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
 			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
-	public BaseRsp<Boolean> deleteNode(@Valid @RequestBody NodeDeleteReq req) {
+	public BaseRsp<Boolean> deleteNode(@Valid @RequestBody NodeOpsReq req) {
 		Boolean result = localSceneService.deleteNode(req.getMpSceneId(), req.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
+	@DeleteMapping("/node/start")
+	@ApiOperation("单个节点开机")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> startNode(@Valid @RequestBody NodeOpsReq req) {
+		Boolean result = localSceneService.startNode(req.getMpSceneId(), req.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
+
+	@DeleteMapping("/node/stop")
+	@ApiOperation("单个节点关机")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> stopNode(@Valid @RequestBody NodeOpsReq req) {
+		Boolean result = localSceneService.stopNode(req.getMpSceneId(), req.getNodeId());
+		return new BaseRsp<>(result);
+	}
+
+
+	@DeleteMapping("/node/restart")
+	@ApiOperation("单个节点重启")
+	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
+			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
+			MenuConstant.CMS_CR_TEAM_TRAIN }, logical = Logical.OR)
+	public BaseRsp<Boolean> restartNode(@Valid @RequestBody NodeOpsReq req) {
+		Boolean result = localSceneService.restartNodeBySceneId(req.getMpSceneId(), req.getNodeId());
 		return new BaseRsp<>(result);
 	}
 

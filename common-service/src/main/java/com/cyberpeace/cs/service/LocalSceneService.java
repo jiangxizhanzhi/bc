@@ -189,4 +189,31 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param updateScene  场景数据
 	 */
 	void updateScene(LocalScene localScene, JSONObject updateScene);
+
+	/**
+	 * 启动单个节点
+	 *
+	 * @param mpSceneId 国会议员场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean startNode(String mpSceneId, String nodeId);
+
+	/**
+	 * 单个节点关机
+	 *
+	 * @param mpSceneId 国会议员场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean stopNode(String mpSceneId, String nodeId);
+
+	/**
+	 * 通过场景id重新启动节点
+	 *
+	 * @param mpSceneId 国会议员场景id
+	 * @param nodeId    节点id
+	 * @return {@code Boolean}
+	 */
+	Boolean restartNodeBySceneId(String mpSceneId, String nodeId);
 }

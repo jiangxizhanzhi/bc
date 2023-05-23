@@ -555,11 +555,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public Boolean updateNode(String mpSceneId, JSONObject updateData) {
 
-		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
-		if (null == localScene) {
-			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);
-			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-		}
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
 		NodeUpdateContext context = getNodeUpdateContext(localScene, updateData);
 		remoteSceneService.updateNode(context);
 		return true;
@@ -567,11 +563,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public Boolean deleteNode(String mpSceneId, String nodeId) {
-		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
-		if (null == localScene) {
-			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);
-			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-		}
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
 		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
 		remoteSceneService.deleteNode(context);
 		return true;
@@ -582,6 +574,27 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		SceneUpdateContext context = getSceneUpdateContext(localScene);
 		context.setUpdate_scene(updateScene);
 		remoteSceneService.updateScene(context);
+	}
+
+	@Override
+	public Boolean startNode(String mpSceneId, String nodeId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
+		return remoteSceneService.startNode(context);
+	}
+
+	@Override
+	public Boolean stopNode(String mpSceneId, String nodeId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
+		return remoteSceneService.stopNode(context);
+	}
+
+	@Override
+	public Boolean restartNodeBySceneId(String mpSceneId, String nodeId) {
+		LocalScene localScene = getOrExceptionByMpSceneId(mpSceneId);
+		NodeOpsContext context = getNodeOpsContext(localScene, nodeId);
+		return remoteSceneService.restartNode(context);
 	}
 
 	private SceneUpdateContext getSceneUpdateContext(LocalScene localScene) {
@@ -601,5 +614,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		// set update data
 		context.setUpdate(updateData);
 		return context;
+	}
+
+	private LocalScene getOrExceptionByMpSceneId(String mpSceneId){
+		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
+		if (null == localScene) {
+			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		return localScene;
 	}
 }

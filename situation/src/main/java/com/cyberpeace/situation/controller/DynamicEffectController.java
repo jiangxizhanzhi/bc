@@ -114,7 +114,7 @@ public class DynamicEffectController {
 	 */
 	@ApiOperation("动效类型-删除")
 	@DeleteMapping("/dynamic_effect_library/category")
-	public BaseRsp
+	public BaseRsp<Boolean>
 			deleteDynamicEffectsCategory(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
 
 		// 1、提取待删除的动效类型id
@@ -125,13 +125,19 @@ public class DynamicEffectController {
 				.selectBatchIds(resourceIds);
 
 		// 3、校验动效类型是否存在
-		if (dynamicEffectsCategory.isEmpty()) {
+		if (dynamicEffectsCategory.isEmpty()
+				|| dynamicEffectsCategory.size() != resourceIds.size()) {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		// 4、校验动效类型是否被使用
+		if (Boolean.TRUE.equals(dynamicEffectsMapper.checkCategory(resourceIds))) {
+			throw new BusinessException(SituationErrorCode.DYNAMIC_EFFECTS_CATEGORY_USED);
 		}
 
 		// 4、删除动效类型
 		dynamicEffectsCategoryMapper.deleteBatchIds(resourceIds);
-		return new BaseRsp<>();
+		return new BaseRsp<>(true);
 	}
 
 	/**
@@ -142,7 +148,7 @@ public class DynamicEffectController {
 	 */
 	@ApiOperation("动效类型-修改")
 	@PatchMapping("/dynamic_effect_library/category")
-	public BaseRsp modifyDynamicEffectsCategory(
+	public BaseRsp<Boolean> modifyDynamicEffectsCategory(
 			@RequestBody @Validated(Update.class) DynamicEffectsCategoryReq dynamicEffectsCategoryReq) {
 
 		// 校验字段长度是否合法
@@ -157,14 +163,14 @@ public class DynamicEffectController {
 				.getCategory(resourceId, true);
 
 		// 3、校验名称是否重复
-		if (dynamicEffectsCategoryMapper.checkCategoryName(resourceId, name)) {
+		if (Boolean.TRUE.equals(dynamicEffectsCategoryMapper.checkCategoryName(resourceId, name))) {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
 		// 4、更新数据库
 		dynamicEffectsCategory.setName(name);
 		dynamicEffectsCategoryMapper.updateById(dynamicEffectsCategory);
-		return new BaseRsp<>();
+		return new BaseRsp<>(true);
 	}
 
 	/**

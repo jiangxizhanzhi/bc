@@ -18,4 +18,12 @@
             and resource_id != #{resourceId}
         </if>
     </select>
+    <select id="checkCategory" resultType="java.lang.Boolean">
+        select count(1)
+        from situation_dynamic_effects
+        where category in
+        <foreach collection="categories" open="(" close=")" separator="," item="category">
+            #{category}
+        </foreach>
+    </select>
 </mapper>

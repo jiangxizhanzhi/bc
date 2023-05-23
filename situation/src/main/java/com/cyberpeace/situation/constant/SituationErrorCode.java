@@ -332,4 +332,9 @@ public interface SituationErrorCode {
 	 * 图表主题名称已存在
 	 */
 	String COLOR_THEME_NAME_EXIST = "106024";
+
+	/**
+	 * 动效分组正在使用
+	 */
+	String DYNAMIC_EFFECTS_CATEGORY_USED = "106025";
 }

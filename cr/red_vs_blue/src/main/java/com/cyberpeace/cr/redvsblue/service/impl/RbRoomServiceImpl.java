@@ -520,6 +520,18 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
+	public Integer getDuration(String roomId) {
+		RbRoom rbRoom = getById(roomId);
+		RbTemplate template = rbTemplateService.getById(rbRoom.getTemplateId());
+		if (null != template) {
+			return template.getDurationTime();
+		} else {
+			return (int) ((rbRoom.getEndTime().getTime() - rbRoom.getStartTime().getTime())
+					/ 3600000);
+		}
+	}
+
+    @Override
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {

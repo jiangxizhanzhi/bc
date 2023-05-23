@@ -155,4 +155,12 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code List<CrRole>}
 	 */
 	List<CrRole> getStudentsRoles(String roomId);
+
+	/**
+	 * 获取推荐训练时长
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Integer}
+	 */
+	Integer getDuration(String roomId);
 }

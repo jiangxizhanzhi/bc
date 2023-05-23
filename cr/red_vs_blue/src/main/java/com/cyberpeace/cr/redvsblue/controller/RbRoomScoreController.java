@@ -32,6 +32,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskCounter;
@@ -43,6 +44,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
 import com.cyberpeace.cr.redvsblue.service.context.mission.RoleScore;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -82,6 +84,12 @@ public class RbRoomScoreController {
 
 	@Autowired
 	private MpEnvService mpEnvService;
+
+	@Autowired
+	private CrScoreService crScoreService;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@ApiOperation("训练记录导出为PDF")
 	@GetMapping("/train2pdf")
@@ -180,9 +188,13 @@ public class RbRoomScoreController {
 		rbRoomService.checkRefereePermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());
 
-		StudentScoreRsp studentScoreRsp = crScoreController.getStudentScore(resource_id, user_hash);
+		StudentScoreRsp rsp = crScoreService.getStudentScore(resource_id, user_hash);
+		Integer duration = rbRoomService.getDuration(resource_id);
+		String timeCost = rbTimeManagementService.getTimeCost(resource_id);
+		rsp.getTrainingSummary().setTimeCost(timeCost);
+		rsp.getTrainingSummary().setDuration(duration);
 
-		return new BaseRsp<>(studentScoreRsp);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("提交学员评分")

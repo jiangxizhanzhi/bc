@@ -57,4 +57,12 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 * @param userId 用户id
 	 */
 	void addTimeManagement(RbTimeManagement timeManagement, RbRoom room, Integer status, String userId);
+
+	/**
+	 * 获取时间成本
+	 *
+	 * @param roomId 房间id
+	 * @return {@code String}
+	 */
+	String getTimeCost(String roomId);
 }

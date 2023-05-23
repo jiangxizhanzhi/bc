@@ -10,6 +10,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
@@ -105,6 +106,17 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 
 			}
 		});
+	}
+
+	@Override
+	public String getTimeCost(String roomId) {
+		RbTimeManagement timeManagement = getByRoomId(roomId);
+		if (timeManagement.isStopped()) {
+			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(),
+					timeManagement.getUpdateTime());
+		} else {
+			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(), new Date());
+		}
 	}
 
 }

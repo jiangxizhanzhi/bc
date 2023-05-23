@@ -68,14 +68,14 @@
 
     <select id="getLessonRecordCountByDate" resultType="com.cyberpeace.cr.crbase.service.context.statistics.TrainingDateCount">
         select
-        date_format(create_time, '%m-%d') as `date`,
-        count(distinct lesson_id) as completed
+        date_format(create_time, '%y-%m-%d') as `date`,
+        count(distinct course_id) as completed
         from oj_lesson_record
-        where create_time BETWEEN DATE_SUB(NOW(), INTERVAL 10 DAY) AND NOW()
+        where  date_format(create_time, '%y-%m-%d') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 10 DAY),'%y-%m-%d') AND date_format(create_time, '%y-%m-%d') &lt;= date_format(NOW(), '%y-%m-%d')
         <if test="userId != null and userId != ''">
             and user_Id = #{userId}
         </if>
-        group by date_format(create_time, '%m-%d');
+        group by date_format(create_time, '%y-%m-%d');
     </select>
 
 

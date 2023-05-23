@@ -76,7 +76,7 @@ public class TrainStatisticsController {
 			TrainingDateCount trainingDateCount = new TrainingDateCount();
 			String date = s.getDate();
 			trainingDateCount.setDate(date);
-			Integer all = s.getAll();
+			Integer all = s.getCompleted();
 			if(!dateList.contains(date)){
 				trainingDateCount.setAll(all);
 				if(stringTrainingDateCountMap.containsKey(date)){

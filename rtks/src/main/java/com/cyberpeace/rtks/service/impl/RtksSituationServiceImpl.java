@@ -3,6 +3,10 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -45,6 +49,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 
 	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
+
+	@Autowired
+	private RoleMapper roleMapper;
 
 	@Override
 	public RtksSituationRankings getRankings() {
@@ -291,6 +298,90 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// 填充不足
 		result.fill(2, startTime);
 		return result;
+	}
+
+    @Override
+    public List<TalentReleaseRes> getTalentReleaseRanking() {
+		List<Role> roles = roleMapper.selectList(null);
+		List<TalentReleaseRes> res = new ArrayList<>();
+
+		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
+		Map<String, List<RoleMatchRecordContext>> matchGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getRoleId);
+
+		roles.forEach(role -> {
+			TalentReleaseRes talentReleaseRes = new TalentReleaseRes();
+			talentReleaseRes.setAppName(role.getName());
+			String roleId = role.getResourceId();
+			if(matchGroup.containsKey(roleId)){
+				// 设置匹配度等级初始值
+				int excellent = 0;
+				int qualified = 0;
+				int other = 0;
+				List<RoleMatchRecordContext> roleMatchRecordContexts = matchGroup.get(roleId);
+				for(RoleMatchRecordContext tmp:roleMatchRecordContexts){
+					Integer match = tmp.getMatch();
+					if ( match >= RtksCommonConstants.EXCELLENT_MATCH) {
+						excellent += 1;
+
+					} else if (match>= RtksCommonConstants.QUALIFIED_MATCH) {
+						qualified += 1;
+					} else {
+						other += 1;
+					}
+				}
+				// 更新当前岗位得 各等级匹配度数量
+				talentReleaseRes.setCount(excellent);
+				talentReleaseRes.setCount1(qualified);
+				talentReleaseRes.setCount2(other);
+			}
+			res.add(talentReleaseRes);
+		});
+
+		return res;
+    }
+
+	@Override
+	public List<TalentPersonReleaseRes> getTalentPersonRanking() {
+		List<TalentPersonReleaseRes> res = new ArrayList<>();
+		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
+		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		// get existing users
+		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
+				.distinct().collect(Collectors.toList());
+
+		List<UserInfo> users = remoteUserService.getByIdList(userIds);
+		Map<String, String> userMap = StreamApiUtils.toMap(users, UserInfo::getUserId, UserInfo::getName);
+		for(Map.Entry<String, List<RoleMatchRecordContext>> entry : userGroup.entrySet()){
+			TalentPersonReleaseRes personReleaseRes = new TalentPersonReleaseRes();
+			String key = entry.getKey();
+			String username = userMap.get(key);
+			List<RoleMatchRecordContext> value = entry.getValue();
+			int excellent = 0;
+			int qualified = 0;
+			int other = 0;
+			for(RoleMatchRecordContext val:value){
+				Integer match = val.getMatch();
+				if ( match >= RtksCommonConstants.EXCELLENT_MATCH) {
+					excellent += 1;
+
+				} else if (match>= RtksCommonConstants.QUALIFIED_MATCH) {
+					qualified += 1;
+				} else {
+					other += 1;
+				}
+			}
+			personReleaseRes.setUserName(username);
+			personReleaseRes.setExcellent(excellent);
+			personReleaseRes.setQualified(qualified);
+			personReleaseRes.setOther(other);
+			res.add(personReleaseRes);
+		}
+		// 多个字段排序
+		res.sort(Comparator.comparing(TalentPersonReleaseRes::getExcellent).reversed());
+
+		return res;
 	}
 
 	@Override

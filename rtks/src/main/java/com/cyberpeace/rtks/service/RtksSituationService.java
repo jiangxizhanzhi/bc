@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
+import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
 import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
 import com.cyberpeace.rtks.service.bo.situation.NewsBo;
 import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
@@ -51,4 +53,11 @@ public interface RtksSituationService {
 	 */
 	SituationTrendBo getTrends();
 
+	/**
+	 * 网安人才发布
+	 * @return
+	 */
+	List<TalentReleaseRes> getTalentReleaseRanking();
+
+	List<TalentPersonReleaseRes> getTalentPersonRanking();
 }

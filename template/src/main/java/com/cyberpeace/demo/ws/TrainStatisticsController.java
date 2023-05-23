@@ -92,8 +92,7 @@ public class TrainStatisticsController {
 				if(stringTrainingDateCountMap.containsKey(date)){
 					TrainingDateCount dateCount = stringTrainingDateCountMap.get(date);
 					Integer completed = dateCount.getCompleted();
-					completed += person;
-					trainingDateCount.setCompleted(completed);
+					person += completed;
 				}
 				trainingDateCount.setDate(date);
 				trainingDateCount.setAll(all);

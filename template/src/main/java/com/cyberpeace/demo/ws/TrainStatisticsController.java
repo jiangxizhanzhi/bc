@@ -88,14 +88,16 @@ public class TrainStatisticsController {
 				res.add(trainingDateCount);
 			} else {
 				all += allList.get(dateList.indexOf(date));
+				Integer person = personList.get(dateList.indexOf(date));
 				if(stringTrainingDateCountMap.containsKey(date)){
 					TrainingDateCount dateCount = stringTrainingDateCountMap.get(date);
 					Integer completed = dateCount.getCompleted();
-					completed += personList.get(dateList.indexOf(date));
+					completed += person;
 					trainingDateCount.setCompleted(completed);
 				}
 				trainingDateCount.setDate(date);
 				trainingDateCount.setAll(all);
+				trainingDateCount.setCompleted(person);
 				res.set(dateList.indexOf(date), trainingDateCount);
 			}
 

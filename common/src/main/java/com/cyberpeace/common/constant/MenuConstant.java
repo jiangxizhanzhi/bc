@@ -184,4 +184,7 @@ public interface MenuConstant {
 
     //红蓝对抗统计
     String CMS_CR_RB_TRAIN_STATISTICS = "red-vs-blue-statistics";
+
+    //网安人才统计
+    String CMS_TALENT_STATISTICS = "talent-statistics";
 }

@@ -2,6 +2,8 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,20 @@ public class RtksSituationController {
 	public BaseRsp<SituationTrendBo> getTrend() {
 		SituationTrendBo result = rtksSituationService.getTrends();
 		return new BaseRsp<>(result);
+	}
+
+	@ApiOperation("网安人才发布")
+	@GetMapping("/talent/ranking")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<TalentReleaseRes>> getTalentReleaseRanking() {
+		return new BaseRsp<>(rtksSituationService.getTalentReleaseRanking());
+	}
+
+	@ApiOperation("网安个人排名Top5")
+	@GetMapping("/person/ranking")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<TalentPersonReleaseRes>> getTalentPersonRanking() {
+		return new BaseRsp<>(rtksSituationService.getTalentPersonRanking());
 	}
 
 }

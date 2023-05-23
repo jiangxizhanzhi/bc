@@ -557,18 +557,6 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		// 3. 获取拓扑
 		JSONObject topoData = localSceneService.getTopoData(template.getTopoId());
-		if (topoData.get("id") != null) {
-			topoData.remove("id");
-		}
-		if (topoData.getJSONObject("scene_config") != null) {
-			JSONObject sceneConfig = topoData.getJSONObject("scene_config");
-			if (sceneConfig.getJSONObject("topology") != null) {
-				JSONObject topology = sceneConfig.getJSONObject("topology");
-				if (topology.getJSONObject("scene") != null) {
-					topology.getJSONObject("scene").remove("eid");
-				}
-			}
-		}
 		context.setSceneData(topoData);
 		// 4. 获取文件
 		Map<String, String> fileMap = Maps.newHashMap();

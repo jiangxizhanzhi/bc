@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -13,9 +14,11 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.Getter;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @TableName cr_role
@@ -89,6 +92,13 @@ public class CrRole extends BaseTable {
 
 	}
 
+	public static List<CrRoleSimple> getSimpleRoles(List<CrRole> studentRoles) {
+		if (CollectionUtils.isEmpty(studentRoles)) {
+			return new ArrayList<>();
+		}
+		return studentRoles.stream().map(CrRoleSimple::new)
+				.collect(Collectors.toList());
+	}
 	public void setRoleGroup(Integer roleGroup) {
 		this.roleGroup = roleGroup;
 	}

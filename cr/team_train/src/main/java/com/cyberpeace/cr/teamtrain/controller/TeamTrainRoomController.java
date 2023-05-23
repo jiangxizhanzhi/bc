@@ -8,7 +8,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamTrainTaskReleaseInfoRsp;
+import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -748,44 +748,15 @@ public class TeamTrainRoomController {
 	@ApiOperation("团队对抗-任务导调-任务列表")
 	@GetMapping("/mission/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<TeamTrainTaskReleaseInfoRsp>> getMissionList(
+	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getMissionList(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		// 获取该房间的角色信息
-		List<CrRole> studentRoles = teamRoomService.getStudentsRoles(resource_id);
 
-		// parse mission and users
-		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
-				.collect(Collectors.toList());
-		// 获取该房间已下发的任务
-		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
-		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
-		List<TeamTrainTaskReleaseInfoRsp> res = new ArrayList<>();
-
-		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
-
-		List<UserInfo> allUserInfos = remoteUserService.getByIdList(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
-
-		//按角色分组
-		for (CrRoleSimple roleSimple : roles) {
-			TeamTrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TeamTrainTaskReleaseInfoRsp();
-			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
-			//获取用户列表
-			List<UserInfo> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
-					&&roleSimple.getUserIds().contains(a.getUserId())).collect(Collectors.toList());
-			taskReleaseInfoRsp.setUserInfoList(userInfoList);
-			List<MissionReleaseStageInfo>  missionReleaseStageInfos = new ArrayList<>();
-			for (CrRoleMissionSchemeStage stage : roleSimple.getMissionScheme()) {
-				missionReleaseStageInfos.add(new MissionReleaseStageInfo(stage,allMissions,taskMap,userInfoList));
-			}
-			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
-
-			res.add(taskReleaseInfoRsp);
-		}
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
 }

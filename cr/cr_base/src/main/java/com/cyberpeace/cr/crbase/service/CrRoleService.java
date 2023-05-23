@@ -5,10 +5,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.context.MissionContext;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.TaskCounter;
-import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 
@@ -158,4 +155,6 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return {@code List<CrRole>}
 	 */
 	List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups);
+
+	List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code);
 }

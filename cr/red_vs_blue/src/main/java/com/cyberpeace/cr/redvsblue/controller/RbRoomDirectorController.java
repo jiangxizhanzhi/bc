@@ -1,10 +1,13 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,9 +39,6 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.TaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
 import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
@@ -535,5 +535,24 @@ public class RbRoomDirectorController {
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
 
 		return new BaseRsp<>();
+	}
+
+	@ApiOperation("红蓝对抗-任务导调-任务列表")
+	@GetMapping("/mission/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<TrainTaskReleaseInfoContext>> getMissionList(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<TrainTaskReleaseInfoContext> list = new ArrayList<>();
+		// 获取该房间的角色信息
+		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.RbRoleGroup.RED.getCode());
+		list.add(new TrainTaskReleaseInfoContext("red",red));
+		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.RbRoleGroup.BLUE.getCode());
+		list.add(new TrainTaskReleaseInfoContext("blue",blue));
+		return new BaseRsp<>(list);
 	}
 }

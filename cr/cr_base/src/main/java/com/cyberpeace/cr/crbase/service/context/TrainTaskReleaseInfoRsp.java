@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.controller.rsp;
+package com.cyberpeace.cr.crbase.service.context;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseInfo;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class TeamTrainTaskReleaseInfoRsp implements Serializable {
+public class TrainTaskReleaseInfoRsp implements Serializable {
 
     private String roleName;
 

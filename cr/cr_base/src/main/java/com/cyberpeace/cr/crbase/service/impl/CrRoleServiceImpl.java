@@ -18,6 +18,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -28,9 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -429,6 +428,40 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			return Lists.newArrayList();
 		}
 		return crRoleMapper.selectByRoomIdAndGroups(roomId, groups);
+	}
+
+	@Override
+	public List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code) {
+		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>();
+		// 获取该房间的角色信息
+		List<CrRoleSimple> roles =CrRole.getSimpleRoles(this.getRolesByRoomAndGroups(roomId, Collections.singletonList(code)));
+
+		// 获取该房间已下发的任务
+		List<CrTask> crTaskList = crTaskService.getByRoomId(roomId);
+		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
+
+
+		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
+
+		List<UserInfo> allUserInfos = remoteUserService.getByIdList(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
+
+		//按角色分组
+		for (CrRoleSimple roleSimple : roles) {
+			TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
+			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
+			//获取用户列表
+			List<UserInfo> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
+					&&roleSimple.getUserIds().contains(a.getUserId())).collect(Collectors.toList());
+			taskReleaseInfoRsp.setUserInfoList(userInfoList);
+			List<MissionReleaseStageInfo>  missionReleaseStageInfos = new ArrayList<>();
+			for (CrRoleMissionSchemeStage stage : roleSimple.getMissionScheme()) {
+				missionReleaseStageInfos.add(new MissionReleaseStageInfo(stage,allMissions,taskMap,userInfoList));
+			}
+			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
+
+			res.add(taskReleaseInfoRsp);
+		}
+		return res;
 	}
 
 }

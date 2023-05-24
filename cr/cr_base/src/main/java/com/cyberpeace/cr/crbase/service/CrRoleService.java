@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
@@ -157,4 +158,6 @@ public interface CrRoleService extends IService<CrRole> {
 	List<CrRole> getRolesByRoomAndGroups(String roomId, Collection<Integer> groups);
 
 	List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code);
+
+	void combineRoleConst(DashboardInfo dashboardInfo);
 }

@@ -5,6 +5,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardRole;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -462,6 +464,36 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			res.add(taskReleaseInfoRsp);
 		}
 		return res;
+	}
+
+	@Override
+	public void combineRoleConst(DashboardInfo dashboardInfo) {
+		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
+			DashboardRole red = new DashboardRole();
+			red.setRoleType(CrRole.RbRoleGroup.RED.getEnglish());
+			red.setRole(CrRole.RbRoleGroup.RED.getMsg());
+			red.setRoleCode(CrRole.RbRoleGroup.RED.getCode());
+			add(red);
+
+			DashboardRole blue = new DashboardRole();
+			blue.setRoleType(CrRole.RbRoleGroup.BLUE.getEnglish());
+			blue.setRole(CrRole.RbRoleGroup.BLUE.getMsg());
+			blue.setRoleCode(CrRole.RbRoleGroup.BLUE.getCode());
+			add(blue);
+
+			DashboardRole white = new DashboardRole();
+			white.setRoleType(CrRole.RbRoleGroup.WHITE.getEnglish());
+			white.setRole(CrRole.RbRoleGroup.WHITE.getMsg());
+			white.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
+			add(white);
+
+			DashboardRole team = new DashboardRole();
+			team.setRoleType(CrRole.RbRoleGroup.TEAM.getEnglish());
+			team.setRole(CrRole.RbRoleGroup.TEAM.getMsg());
+			team.setRoleCode(CrRole.RbRoleGroup.TEAM.getCode());
+			add(team);
+		}};
+		dashboardInfo.setRoleConst(roleConst);
 	}
 
 }

@@ -23,11 +23,24 @@ public class DashboardGroup implements Serializable {
 
 	@ApiModelProperty("组员编号")
 	private List<String> members;
+	@ApiModelProperty("角色英文")
+	private String roleType;
+	@ApiModelProperty("角色code")
+	private Integer roleCode;
 
 	public DashboardGroup(String role) {
 		this.role = role;
 		this.avatar = "";
 		this.groupname = role;
 		this.id = role;
+	}
+
+	public DashboardGroup(String role, String roleType, Integer roleCode) {
+		this.role = role;
+		this.avatar = "";
+		this.groupname = role;
+		this.id = role;
+		this.roleType = roleType;
+		this.roleCode = roleCode;
 	}
 }

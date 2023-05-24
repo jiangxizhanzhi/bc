@@ -252,7 +252,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		DashboardInfo dashboardInfo = new DashboardInfo();
 
-		combineRoleConst(dashboardInfo);
+		crRoleService.combineRoleConst(dashboardInfo);
 
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
@@ -331,9 +331,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		List<DashboardGroup> groups = Lists.newArrayList();
 
-		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED.getDesc());
-		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE.getDesc());
-		DashboardGroup whiteGroup = new DashboardGroup(CrRole.RbRoleGroup.WHITE.getDesc());
+		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED.getMsg(), CrRole.RbRoleGroup.RED.getEnglish(), CrRole.RbRoleGroup.RED.getCode());
+		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE.getMsg(), CrRole.RbRoleGroup.BLUE.getEnglish(), CrRole.RbRoleGroup.BLUE.getCode());
+		DashboardGroup whiteGroup = new DashboardGroup(CrRole.RbRoleGroup.WHITE.getMsg(), CrRole.RbRoleGroup.WHITE.getEnglish(), CrRole.RbRoleGroup.WHITE.getCode());
 
 		redGroup.setMembers(redMembers);
 		redGroup.setId(roomId + "_" + CrRole.RbRoleGroup.RED.getCode().toString());
@@ -387,35 +387,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		dashboardInfo.setGroup(groups);
 
 		return dashboardInfo;
-	}
-
-	private void combineRoleConst(DashboardInfo dashboardInfo) {
-		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
-			DashboardRole red = new DashboardRole();
-			red.setRoleType(CrRole.RbRoleGroup.RED.getEnglish());
-			red.setRole(CrRole.RbRoleGroup.RED.getMsg());
-			red.setRoleCode(CrRole.RbRoleGroup.RED.getCode());
-			add(red);
-
-			DashboardRole blue = new DashboardRole();
-			blue.setRoleType(CrRole.RbRoleGroup.BLUE.getEnglish());
-			blue.setRole(CrRole.RbRoleGroup.BLUE.getMsg());
-			blue.setRoleCode(CrRole.RbRoleGroup.BLUE.getCode());
-			add(blue);
-
-			DashboardRole white = new DashboardRole();
-			white.setRoleType(CrRole.RbRoleGroup.WHITE.getEnglish());
-			white.setRole(CrRole.RbRoleGroup.WHITE.getMsg());
-			white.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
-			add(white);
-
-			DashboardRole team = new DashboardRole();
-			team.setRoleType(CrRole.RbRoleGroup.TEAM.getEnglish());
-			team.setRole(CrRole.RbRoleGroup.TEAM.getMsg());
-			team.setRoleCode(CrRole.RbRoleGroup.TEAM.getCode());
-			add(team);
-		}};
-		dashboardInfo.setRoleConst(roleConst);
 	}
 
 	private String getFullRoleName(CrRole crRole) {

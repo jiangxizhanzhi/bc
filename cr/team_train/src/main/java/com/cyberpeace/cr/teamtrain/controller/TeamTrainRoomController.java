@@ -1,16 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.cr.crbase.service.context.mission.*;
-import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -41,9 +36,16 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.TeamTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
@@ -70,6 +72,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -713,12 +716,15 @@ public class TeamTrainRoomController {
 		Integer released = crTaskList.size();
 		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
 		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+		long waiting = crTaskList.stream()
+				.filter(task -> task.getStatus().equals(CrTask.TaskStatus.WAIT.getCode())).count();
 
 		progress.setTotal(total);
 		progress.setReleased(released);
 		progress.setUnreleased(total - released);
 		progress.setSubmitted(submitted);
 		progress.setUnsubmitted(released - submitted);
+		progress.setWaiting((int) waiting);
 
 		// 循环各个角色和阶段
 		for (CrRoleSimple role : roles) {

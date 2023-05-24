@@ -23,4 +23,7 @@ public class TaskReleaseProgress extends ReleaseProgress implements Serializable
 	@ApiModelProperty(value = "待提交数")
 	private Integer unsubmitted = 0;
 
+	@ApiModelProperty(value = "待评估")
+	private Integer waiting = 0;
+
 }

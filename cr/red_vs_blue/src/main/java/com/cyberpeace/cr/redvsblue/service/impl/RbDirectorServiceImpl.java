@@ -51,12 +51,15 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 		Integer released = crTaskList.size();
 		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
 		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
+		long waiting = crTaskList.stream()
+				.filter(task -> task.getStatus().equals(CrTask.TaskStatus.WAIT.getCode())).count();
 
 		progress.setTotal(total);
 		progress.setReleased(released);
 		progress.setUnreleased(total - released);
 		progress.setSubmitted(submitted);
 		progress.setUnsubmitted(released - submitted);
+		progress.setWaiting((int) waiting);
 
 		// 循环各个角色和阶段
 		for (CrRoleSimple role : roles) {

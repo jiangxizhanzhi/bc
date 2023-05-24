@@ -106,7 +106,8 @@ public class TrainStatisticsController {
 		List<Integer> person = StreamApiUtils.getColumn(res, TrainingDateCount::getCompleted);
 		List<Integer> all = StreamApiUtils.getColumn(res, TrainingDateCount::getAll);
 		if(dates.isEmpty()){
-			return new BaseRsp<>(result);
+			rsp.setDate(defaultDates);
+			return new BaseRsp<>(rsp);
 		}
 		rsp.setAll(all);
 		rsp.setDate(dates);

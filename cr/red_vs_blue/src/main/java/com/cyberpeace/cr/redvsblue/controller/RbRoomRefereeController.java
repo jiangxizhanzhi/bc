@@ -68,27 +68,12 @@ public class RbRoomRefereeController {
 	@Autowired
 	private RbRefereeService rbRefereeService;
 
-	@Autowired
-	private CrScoreService crScoreService;
-
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbRoleIdNameType>> getRoleList(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
-		List<CrRole> roles = rbRoomService.getStudentsRoles(resource_id);
-		List<RbRoleIdNameType> res = Lists.newArrayList();
-		for (CrRole role : roles) {
-			RbRoleIdNameType rbRole = new RbRoleIdNameType();
-			rbRole.setId(role.getResourceId());
-			rbRole.setName(role.getName());
-			rbRole.setType(role.getRoleGroup());
-			rbRole.setPrefix();
-
-			res.add(rbRole);
-		}
-		// 红方角色放在前面
-		res.sort(Comparator.comparing(RbRoleIdNameType::getType));
+		List<RbRoleIdNameType> res = rbRefereeService.getRoleList(resource_id);
 		return new BaseRsp<>(res);
 	}
 

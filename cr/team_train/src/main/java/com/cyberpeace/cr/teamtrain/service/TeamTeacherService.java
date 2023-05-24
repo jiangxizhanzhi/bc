@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service;
 import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cs.service.context.IdNameType;
 
 public interface TeamTeacherService {
 
@@ -13,4 +14,12 @@ public interface TeamTeacherService {
 	 * @return {@code List<StudentScoreListRsp>}
 	 */
 	List<StudentScoreListRsp> getScoreList(String roomId);
+
+	/**
+	 * 获取角色列表，用以评估列表角色下拉单
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<IdNameType>}
+	 */
+	List<IdNameType> getRoleList(String roomId);
 }

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
 
 import java.util.List;
 
@@ -28,4 +29,12 @@ public interface RbRefereeService {
      * @return {@code List<StudentScoreListRsp>}
      */
     List<StudentScoreListRsp> getScoreList(String roomId);
+
+    /**
+     * 获取角色列表，用以评估列表角色下拉单
+     *
+     * @param roomId 房间id
+     * @return {@code List<RbRoleIdNameType>}
+     */
+    List<RbRoleIdNameType> getRoleList(String roomId);
 }

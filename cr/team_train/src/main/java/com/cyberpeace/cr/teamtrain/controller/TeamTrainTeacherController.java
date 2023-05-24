@@ -1,7 +1,10 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.util.Comparator;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cs.service.context.IdNameType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -59,6 +62,15 @@ public class TeamTrainTeacherController {
 		}
 		return new BaseRsp<>(
 				crCommonService.getMonitorSessions(room.getLocalSceneId(), student_id));
+	}
+
+	@ApiOperation("获取角色列表")
+	@GetMapping("/roles")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<IdNameType>> getRoleList(
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
+		List<IdNameType> res = teamTeacherService.getRoleList(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取学员的评估提交记录")

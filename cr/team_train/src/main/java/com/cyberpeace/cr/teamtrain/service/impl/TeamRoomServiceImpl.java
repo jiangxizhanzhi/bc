@@ -26,6 +26,7 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
@@ -37,6 +38,7 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -401,9 +403,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
 		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
 				UserInfoContext.getUserContext().getUserId());
-		List<String> missionIds = taskList.stream().map(a -> a.getMissionId()).collect(Collectors.toList());
+		List<String> missionIds = taskList.stream().map(a -> a.getMissionId())
+				.collect(Collectors.toList());
 		List<Mission> missions = missionService.listByIds(missionIds);
-		Map<String, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
+		Map<String, Mission> missionMap = missions.stream()
+				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
+		// get dynamic missions
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		List<MissionStageScheme> stages = JsonUtil.toJsonObjectArray(role.getMissionScheme(),
+				MissionStageScheme.class);
+		List<String> dynamicMissionIds = StreamApiUtils.flatMap(stages,
+				MissionStageScheme::getDynamic);
 		for (TaskContext task : taskList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
@@ -415,6 +426,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				timeLineEvent.setTitle(missionMap.get(task.getMissionId()).getTitle());
 				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
 				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
+				timeLineEvent.setStatus(task.getStatus());
+				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
 
 				timeLineEventList.add(timeLineEvent);
 			}
@@ -456,9 +469,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
 		List<CrTaskLog> crTaskLogList = crTaskLogMapper.selectReleaseByRoomIdAndActionCodes(roomId,
 				actionCodes);
-		List<String> userIds = crTaskLogList.stream().filter(a ->StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId()).collect(Collectors.toList());
+		List<String> userIds = crTaskLogList.stream()
+				.filter(a -> StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId())
+				.collect(Collectors.toList());
 		List<UserInfo> userList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userList.stream().collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
+		Map<String, UserInfo> userInfoMap = userList.stream()
+				.collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
 		for (CrTaskLog crTaskLog : crTaskLogList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			UserInfo userInfo = userInfoMap.get(crTaskLog.getUserId());

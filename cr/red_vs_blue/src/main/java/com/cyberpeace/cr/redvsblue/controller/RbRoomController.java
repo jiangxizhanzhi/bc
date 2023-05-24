@@ -57,10 +57,7 @@ import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
-import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
-import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
-import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
-import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
+import com.cyberpeace.cr.redvsblue.service.context.*;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -542,5 +539,14 @@ public class RbRoomController {
 				standard_device);
 
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("获取时间轴数据")
+	@GetMapping("/timeline")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<RbTimeLineData> getMissionTimeline(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+		RbTimeLineData data = rbRoomService.getMissionTimeline(resource_id);
+		return new BaseRsp<>(data);
 	}
 }

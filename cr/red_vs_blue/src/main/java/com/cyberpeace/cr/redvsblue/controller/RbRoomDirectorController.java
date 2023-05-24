@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,7 +52,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
-import com.cyberpeace.cr.redvsblue.service.context.TimeLineData;
+import com.cyberpeace.cr.redvsblue.service.context.RbTimeLineData;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -381,30 +380,10 @@ public class RbRoomDirectorController {
 	@ApiOperation("查询红蓝对抗导演时间线")
 	@GetMapping("/mission_timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<TimeLineData> getMissionTimeline(
+	public BaseRsp<RbTimeLineData> getMissionTimeline(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RbRoom rbRoom = rbRoomService.getById(resource_id);
-		Date startTime = rbRoom.getStartTime();
-		Date endTime = rbRoom.getEndTime();
-
-		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(resource_id);
-		if (rbTimeManagement != null) {
-			startTime = rbTimeManagement.getCreateTime();
-
-			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
-					.equals(rbTimeManagement.getStatus())) {
-				endTime = rbTimeManagement.getUpdateTime();
-			} else {
-				endTime = new Date();
-			}
-		}
-
-		TimeLineData data = rbRoomService.getMissionTimeline(resource_id);
-
-		data.setStartTime(startTime);
-		data.setEndTime(endTime);
-
-		return new BaseRsp(data);
+		RbTimeLineData data = rbRoomService.getMissionTimeline(resource_id);
+		return new BaseRsp<>(data);
 	}
 
 	@ApiOperation("停止演习")

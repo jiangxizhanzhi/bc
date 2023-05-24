@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.teamtrain.service.context;
+package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.util.Date;
 
@@ -27,8 +27,14 @@ public class TimeLineEvent {
 	@ApiModelProperty(value = "头像地址")
 	private String avatarUrl;
 
-	@ApiModelProperty(value = "类型")
+	@ApiModelProperty(value = "类型， 1：下发任务，2：下发流量")
 	private Integer type;
+
+	@ApiModelProperty(value = "任务事件类型， 0：待评估，1：成功，2:失败")
+	private Integer status;
+
+	@ApiModelProperty(value = "任务是否动态新增")
+	private Boolean isDynamic;
 
 	public enum SendDataType {
 

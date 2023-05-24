@@ -1,14 +1,8 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.CommonConstant;
-import com.cyberpeace.common.model.room.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +19,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.EnumUtils;
@@ -34,23 +32,20 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
+import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.*;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -79,6 +74,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
+
+	@Autowired
+	private RbTimeManagementService rbTimeManagementService;
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
@@ -621,58 +619,76 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
-	public TimeLineData getMissionTimeline(String roomId) {
-		TimeLineData timeLineData = new TimeLineData();
+	public RbTimeLineData getMissionTimeline(String roomId) {
+		RbTimeLineData rbTimeLineData = new RbTimeLineData();
+		// get start time and endtime
+		RbRoom rbRoom = getById(roomId);
+		Date startTime = rbRoom.getStartTime();
+		Date endTime = rbRoom.getEndTime();
 
-		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
+		if (rbTimeManagement != null) {
+			startTime = rbTimeManagement.getCreateTime();
 
+			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
+					.equals(rbTimeManagement.getStatus())) {
+				endTime = rbTimeManagement.getUpdateTime();
+			} else {
+				endTime = new Date();
+			}
+		}
+		rbTimeLineData.setStartTime(startTime);
+		rbTimeLineData.setEndTime(endTime);
+
+		List<RbTimeLineEvent> rbTimeLineEventList = new ArrayList<>();
 
 		// 构造角色分组map
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		// collect dynamic missions
+		List<String> dynamicMissionIds = Lists.newArrayList();
+		for (CrRole role : crRoles) {
+			if (role.isRvbStudent()) {
+				List<CrRoleMissionSchemeStage> stages = JsonUtil
+						.toJsonObjectArray(role.getMissionScheme(), CrRoleMissionSchemeStage.class);
+				dynamicMissionIds.addAll(
+						StreamApiUtils.flatMap(stages, CrRoleMissionSchemeStage::getDynamic));
+			}
+		}
 
 		Map<String, Integer> crRoleMap = crRoles.stream()
 				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
 
 		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomId(roomId);
-		List<String> userIds = crTasks.stream().filter(a ->StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId()).collect(Collectors.toList());
-		List<UserInfo> userList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userList.stream().collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
-		for (TaskContext crTask : crTasks) {
+		List<String> userIds = crTasks.stream().filter(a -> StringUtils.isNotBlank(a.getUserId()))
+				.map(a -> a.getUserId()).collect(Collectors.toList());
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 
-			CrTaskSubmit crTaskSubmit = crTaskSubmitMapper
-					.selectLastByTaskId(crTask.getResourceId());
+		for (TaskContext task : crTasks) {
 
-			if (crTaskSubmit != null) {
+			if (task.getLastSubmitTime() != null) {
 				// 获取任务下发用户id
-				UserInfo userInfo = userInfoMap.get(crTask.getUserId());
-				TimeLineEvent timeLineEvent = new TimeLineEvent();
-				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getRoleId()));
-				timeLineEvent.setTitle(crTask.getMission().getTitle());
-				timeLineEvent.setUserName(userInfo.getUserName());
-				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-
-				if (crTask.isFinished()) {
-					timeLineEvent.setType(
-							MissionsStatistic.MissionStatisticalState.MISSION_COMPLETED.getCode());
-					timeLineEvent.setTime(crTaskSubmit.getEvaluateTime());
-				} else {
-					timeLineEvent.setType(
-							MissionsStatistic.MissionStatisticalState.MISSION_ONGOING.getCode());
-					timeLineEvent.setTime(crTask.getLastSubmitTime());
+				UserInfo userInfo = userInfoMap.get(task.getUserId());
+				RbTimeLineEvent rbTimeLineEvent = new RbTimeLineEvent();
+				rbTimeLineEvent.setRoleGroup(crRoleMap.get(task.getRoleId()));
+				rbTimeLineEvent.setTitle(task.getMission().getTitle());
+				if (null != userInfo) {
+					rbTimeLineEvent.setUserName(userInfo.getName());
+					rbTimeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 				}
+				rbTimeLineEvent.setTime(task.getLastSubmitTime());
+				rbTimeLineEvent.setStatus(task.getStatus());
+				rbTimeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
 
-				timeLineEventList.add(timeLineEvent);
+				rbTimeLineEventList.add(rbTimeLineEvent);
 			}
 
 		}
+		rbTimeLineData.setData(rbTimeLineEventList);
 
-
-		timeLineData.setData(timeLineEventList);
-
-		return timeLineData;
+		return rbTimeLineData;
 	}
 
 	@Override

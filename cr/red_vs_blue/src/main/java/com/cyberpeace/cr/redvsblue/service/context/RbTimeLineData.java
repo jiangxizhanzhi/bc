@@ -10,10 +10,10 @@ import lombok.Data;
  * 红蓝时间线数据
  */
 @Data
-public class TimeLineData {
+public class RbTimeLineData {
 
 	@ApiModelProperty(value = "时间线事件")
-	private List<TimeLineEvent> data;
+	private List<RbTimeLineEvent> data;
 
 	@ApiModelProperty(value = "当前时间")
 	private Date currentTime;

@@ -263,6 +263,7 @@ public class RbRoomRefereeController {
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
 		RbRoom room = rbRoomService.getById(room_id);
+		rbRoomService.checkTeacherPermission(room_id, UserInfoContext.getUserContext().getUserId());
 		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
 			return new BaseRsp<>(Lists.newArrayList());
 		}

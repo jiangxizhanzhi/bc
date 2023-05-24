@@ -179,12 +179,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 非法请求
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
         if (evalRecord == null) {
-            log.error("评估未找到! resourceId = [{}]", resourceId);
-            throw new BusinessException("Evaluation not found");
+            log.error("Evaluation not found! resourceId = [{}]", resourceId);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
-            log.error("评估已启动! resourceId = [{}]", resourceId);
-            throw new BusinessException("Evaluation has been initiated");
+            log.error("Evaluation has been initiated! resourceId = [{}]", resourceId);
+            throw new BusinessException(CrBusinessErrorCode.EVALUATION_HAS_BEEN_INITIATED_ERROR);
         }
         return evalRecord;
     }

@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordListReq;
@@ -138,12 +140,12 @@ public class EvalRecordController {
         // 评估对象
         EvalRecord evalRecord = evalRecordService.getById(requestData.getResourceId());
         if (evalRecord == null) {
-            log.error("评估未找到! resourceId = [{}]", requestData.getResourceId());
-            throw new BusinessException("评估未找到");
+            log.error("Evaluation not found! resourceId = [{}]", requestData.getResourceId());
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         if (evalRecord.getStatus().equals(EvalRecord.Status.RUNNING.getCode())) {
-            log.error("评估已启动! resourceId = [{}]", requestData.getResourceId());
-            throw new BusinessException("评估已启动");
+            log.error("Evaluation has been initiated! resourceId = [{}]", requestData.getResourceId());
+            throw new BusinessException(CrBusinessErrorCode.EVALUATION_HAS_BEEN_INITIATED_ERROR);
         }
 
         // 评估实例对象

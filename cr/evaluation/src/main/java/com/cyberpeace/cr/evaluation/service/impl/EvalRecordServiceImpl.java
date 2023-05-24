@@ -180,11 +180,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         EvalRecord evalRecord = this.getBaseMapper().selectById(resourceId);
         if (evalRecord == null) {
             log.error("评估未找到! resourceId = [{}]", resourceId);
-            throw new BusinessException("评估未找到");
+            throw new BusinessException("Evaluation not found");
         }
         if (!evalRecord.getStatus().equals(EvalRecord.Status.NOT_START.getCode())) {
             log.error("评估已启动! resourceId = [{}]", resourceId);
-            throw new BusinessException("评估已启动");
+            throw new BusinessException("Evaluation has been initiated");
         }
         return evalRecord;
     }

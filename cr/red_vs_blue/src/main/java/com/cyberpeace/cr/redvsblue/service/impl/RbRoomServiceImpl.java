@@ -297,6 +297,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					String[] split = fullRoleName.split(CommonConstant.LEFT_OBLIQUE_LINE);
 					dashboardUser.setRole(split[0]);
 					dashboardUser.setRoleType(split[1]);
+				} else {
+					dashboardUser.setRole(fullRoleName);
 				}
 
 

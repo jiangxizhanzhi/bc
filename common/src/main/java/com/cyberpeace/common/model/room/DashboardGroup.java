@@ -35,12 +35,11 @@ public class DashboardGroup implements Serializable {
 		this.id = role;
 	}
 
-	public DashboardGroup(String role, String roleType, Integer roleCode) {
+	public DashboardGroup(String role, Integer roleCode) {
 		this.role = role;
 		this.avatar = "";
 		this.groupname = role;
 		this.id = role;
-		this.roleType = roleType;
 		this.roleCode = roleCode;
 	}
 }

@@ -218,6 +218,10 @@ public class CrRole extends BaseTable {
 		RED_BLUE(6, "红方蓝方", "RedBlue"),
 		WHITE(7, "白方", "White"),
 		TEAM(8, "团队", "Team"),
+		RED_GROUP(4, "红方群", "Red Group"),
+		BLUE_GROUP(5, "蓝方群", "Blue Group"),
+		WHITE_GROUP(7, "白方群", "White Group"),
+		TEAM_GROUP(8, "团队群", "Team Group"),
 		;
 
 		@Getter

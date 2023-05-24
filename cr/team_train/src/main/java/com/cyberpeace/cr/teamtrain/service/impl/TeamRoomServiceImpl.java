@@ -1,12 +1,14 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
+import com.cyberpeace.common.util.StreamApiUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -495,7 +497,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Override
 	public void checkStudentPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.STUDENT.getCode());
+		permissionCheck(roomId, userId);
+
+
 	}
 
 	@Override
@@ -528,8 +532,125 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
+	public DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId) {
+		DashboardInfo dashboardInfo = new DashboardInfo();
+		// 添加常量供前端使用
+		crRoleService.combineRoleConst(dashboardInfo);
+
+		RoleQuery roleQuery = new RoleQuery();
+		roleQuery.setRoomId(roomId);
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+		List<String> userIds = Lists.newArrayList();
+		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
+		// 获取全部用户
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+
+		// 自己
+		final DashboardUser[] mineArr = new DashboardUser[1];
+		// 好友列表
+	 	final List<DashboardUser> friend = Lists.newArrayList();
+		// 团队群组
+		List<String> teamMembers = Lists.newArrayList();
+
+		crRoles.forEach(role -> {
+			List<String> userIdList = role.getUserIdList();
+			// 过滤不存在用户
+			userIdList = userIdList.stream()
+					.filter(userInfoMap::containsKey)
+					.collect(Collectors.toList());
+
+			// 添加所有人作为好友列表
+			friend.addAll(buildDashboardUser(role, userInfoMap));
+
+			// 只添加自己角色类型的用户作为群组
+			if(myRole.isTeamStudent() && role.isTeamStudent() ||
+					myRole.isTeamTeacher() && role.isTeamTeacher()) {
+
+				teamMembers.addAll(userIdList);
+
+				// 将自己的信息单独列出来
+				Optional<String> first = userIdList.stream()
+						.filter(userId -> userId.equals(currentUserId))
+						.findFirst();
+				String myUserId = first.get();
+				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
+			}
+
+			userIds.addAll(role.getUserIdList());
+		});
+
+		DashboardUser mine = mineArr[0];
+		mine.username(userInfoMap.get(mine.getId()).getName())
+				.avatar(userInfoMap.get(mine.getId()).getAvatarUrl());
+
+		// 好友列表封装
+		DashboardFriend dashboardFriend = new DashboardFriend();
+		dashboardFriend.setId(1);
+		dashboardFriend.setGroupname(DashboardFriend.GROUP_NAME.FRIEND_LIST.getDesc());
+		dashboardFriend.setList(friend);
+
+		// 群组封装
+		List<DashboardGroup> groups = Lists.newArrayList();
+		DashboardGroup teamGroup = new DashboardGroup(CrRole.RbRoleGroup.TEAM_GROUP.getMsg(), CrRole.RbRoleGroup.TEAM.getCode());
+		teamGroup.setMembers(teamMembers);
+		teamGroup.setId(roomId + "_" + CrRole.RbRoleGroup.TEAM.getCode().toString());
+		groups.add(teamGroup);
+
+
+		dashboardInfo.setMine(mine);
+		dashboardInfo.setFriend(Lists.newArrayList(dashboardFriend));
+		dashboardInfo.setGroup(groups);
+
+		return dashboardInfo;
+	}
+
+	@Override
+	public CrRole checkRoomPermission(String roomId, String userId) {
+		TeamRoom rbRoom = getById(roomId);
+		if (rbRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (crRole == null) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		return crRole;
+	}
+
+	private List<DashboardUser> buildDashboardUser(CrRole role, Map<String, UserInfo> userInfoMap) {
+		return role.getUserIdList().stream()
+				.map(userId -> buildDashboardUser(role, userId, userInfoMap))
+				.collect(Collectors.toList());
+	}
+
+	private DashboardUser buildDashboardUser(CrRole role, String userId, Map<String, UserInfo> userInfoMap) {
+		UserInfo userInfo = userInfoMap.get(userId);
+
+		DashboardUser dashboardUser = new DashboardUser();
+		dashboardUser
+				.id(userId)
+				.status("online")
+				.sign("")
+				.avatar(userInfo.getAvatarUrl())
+				.username(userInfo.getName());
+		if(role.isTeamTeacher()) {
+			dashboardUser.role(CrRole.TeamRoleGroup.TEACHER.getMsg());
+		}
+		if(role.isTeamStudent()) {
+			dashboardUser.role(CrRole.TeamRoleGroup.STUDENT.getMsg());
+		}
+		return dashboardUser;
+	}
+
+	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
 		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER.getCode());
+
 	}
 
 	@Override
@@ -545,6 +666,22 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			log.error("teamTrain is over! roomId=[{}]", roomId);
 			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
 
+		}
+	}
+
+	private void permissionCheck(String roomId, String userId) {
+		TeamRoom teamRoom = getById(roomId);
+		if (teamRoom == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+
+		try {
+			crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		} catch (Exception e) {
+			log.error("user does not have TeamRoom Permission！roomId=[{}], userId=[{}]", roomId,
+					userId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 	}
 

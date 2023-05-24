@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
@@ -123,4 +124,16 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code Integer}
 	 */
 	Integer getDuration(String roomId);
+
+
+	/**
+	 * 获取聊天框用户列表
+	 * @param myRole
+	 * @param roomId
+	 * @param currentUserId
+	 * @return
+	 */
+	DashboardInfo getDashboardInfo(CrRole myRole, String roomId, String currentUserId);
+
+    CrRole checkRoomPermission(String resourceId, String userId);
 }

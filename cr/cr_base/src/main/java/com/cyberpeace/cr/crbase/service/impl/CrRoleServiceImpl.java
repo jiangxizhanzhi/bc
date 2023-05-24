@@ -487,11 +487,16 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			white.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
 			add(white);
 
-			DashboardRole team = new DashboardRole();
-			team.setRoleType(CrRole.RbRoleGroup.TEAM.getEnglish());
-			team.setRole(CrRole.RbRoleGroup.TEAM.getMsg());
-			team.setRoleCode(CrRole.RbRoleGroup.TEAM.getCode());
-			add(team);
+			DashboardRole teamTeacher = new DashboardRole();
+			teamTeacher.setRoleType(CrRole.TeamRoleGroup.TEACHER.getEnglish());
+			teamTeacher.setRole(CrRole.TeamRoleGroup.TEACHER.getMsg());
+			teamTeacher.setRoleCode(CrRole.TeamRoleGroup.TEACHER.getCode());
+			add(teamTeacher);
+
+			DashboardRole teamStudent = new DashboardRole();
+			teamStudent.setRoleType(CrRole.TeamRoleGroup.STUDENT.getEnglish());
+			teamStudent.setRole(CrRole.TeamRoleGroup.STUDENT.getMsg());
+			teamStudent.setRoleCode(CrRole.TeamRoleGroup.STUDENT.getCode());
 		}};
 		dashboardInfo.setRoleConst(roleConst);
 	}

@@ -6,6 +6,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
+import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -767,5 +776,18 @@ public class TeamTrainRoomController {
 
 		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("获取聊天框用户列表")
+	@GetMapping("/dashboard_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<DashboardInfo> getDashboardInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+
+		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
+
+		return new BaseRsp(data);
 	}
 }

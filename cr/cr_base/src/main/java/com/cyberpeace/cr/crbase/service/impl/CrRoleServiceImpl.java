@@ -445,15 +445,15 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
 
-		List<UserInfo> allUserInfos = remoteUserService.getByIdList(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
+		List<UserData> allUserInfos = this.getUserDatas(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
 
 		//按角色分组
 		for (CrRoleSimple roleSimple : roles) {
 			TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
 			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
 			//获取用户列表
-			List<UserInfo> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
-					&&roleSimple.getUserIds().contains(a.getUserId())).collect(Collectors.toList());
+			List<UserData> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
+					&&roleSimple.getUserIds().contains(a.getResourceId())).collect(Collectors.toList());
 			taskReleaseInfoRsp.setUserInfoList(userInfoList);
 			List<MissionReleaseStageInfo>  missionReleaseStageInfos = new ArrayList<>();
 			for (CrRoleMissionSchemeStage stage : roleSimple.getMissionScheme()) {

@@ -19,4 +19,18 @@ public class TalentPersonReleaseRes implements Serializable {
 
 	@ApiModelProperty("其他")
 	private Integer other;
+
+	public void addQualified() {
+		this.qualified++;
+	}
+
+	public void addExcellent() {
+		this.excellent++;
+	}
+
+	public void addOther() {
+		this.other++;
+	}
+
+
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
 import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentUserReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentUserRoleInfoRes;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,16 +66,39 @@ public class RtksSituationController {
 
 	@ApiOperation("网安人才发布")
 	@GetMapping("/talent/ranking")
-	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+//	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
 	public BaseRsp<List<TalentReleaseRes>> getTalentReleaseRanking() {
 		return new BaseRsp<>(rtksSituationService.getTalentReleaseRanking());
 	}
 
 	@ApiOperation("网安个人排名Top5")
 	@GetMapping("/person/ranking")
-	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+//	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
 	public BaseRsp<List<TalentPersonReleaseRes>> getTalentPersonRanking() {
 		return new BaseRsp<>(rtksSituationService.getTalentPersonRanking());
 	}
+
+	@ApiOperation("网安组织排名Top5")
+	@GetMapping("/org/ranking")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<TalentPersonReleaseRes>> getTalentOrgRanking() {
+		return new BaseRsp<>(rtksSituationService.getTalentOrgRanking());
+	}
+
+	@ApiOperation("网安统计数据")
+	@GetMapping("/user/ranking")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<TalentUserReleaseRes>> getTalentUserRanking() {
+		return new BaseRsp<>(rtksSituationService.getTalentUserRanking());
+	}
+
+
+	@ApiOperation("网安个人岗位数据")
+	@GetMapping("/user/roleInfos")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<TalentUserRoleInfoRes>> getTalentUserRoleInfos() {
+		return new BaseRsp<>(rtksSituationService.getTalentUserRoleInfos());
+	}
+
 
 }

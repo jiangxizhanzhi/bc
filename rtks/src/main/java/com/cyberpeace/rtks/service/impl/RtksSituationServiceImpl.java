@@ -3,8 +3,11 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
 import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentUserReleaseRes;
+import com.cyberpeace.rtks.controller.res.TalentUserRoleInfoRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import org.apache.commons.compress.utils.Lists;
@@ -304,7 +307,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
     public List<TalentReleaseRes> getTalentReleaseRanking() {
 		List<Role> roles = roleMapper.selectList(null);
 		List<TalentReleaseRes> res = new ArrayList<>();
-
+		// TODO 用户删除处理逻辑
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
 		Map<String, List<RoleMatchRecordContext>> matchGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getRoleId);
@@ -350,7 +353,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// get existing users
 		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
 				.distinct().collect(Collectors.toList());
-
+		// TODO 用户删除处理逻辑
 		List<UserInfo> users = remoteUserService.getByIdList(userIds);
 		Map<String, String> userMap = StreamApiUtils.toMap(users, UserInfo::getUserId, UserInfo::getName);
 		for(Map.Entry<String, List<RoleMatchRecordContext>> entry : userGroup.entrySet()){
@@ -372,6 +375,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 					other += 1;
 				}
 			}
+			if(null == username){
+				continue;
+			}
 			personReleaseRes.setUserName(username);
 			personReleaseRes.setExcellent(excellent);
 			personReleaseRes.setQualified(qualified);
@@ -379,9 +385,84 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			res.add(personReleaseRes);
 		}
 		// 多个字段排序
-		res.sort(Comparator.comparing(TalentPersonReleaseRes::getExcellent).reversed());
+		res.sort(Comparator.comparing(TalentPersonReleaseRes::getExcellent).reversed().thenComparing(TalentPersonReleaseRes::getQualified).reversed().thenComparing(TalentPersonReleaseRes::getOther).reversed());
+		res.subList(0, 5);
+		return res;
+	}
+
+	@Override
+	public List<TalentPersonReleaseRes> getTalentOrgRanking() {
+		List<TalentPersonReleaseRes> res = new ArrayList<>();
+		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
+
+		Map<String, UserInfo> allUsers = remoteUserService.allUsers();
+		List<RtksMatch> matches = Lists.newArrayList();
+
+		for (RoleMatchRecordContext recordContext : recordContextList) {
+			String userId = recordContext.getUserId();
+			if (allUsers.containsKey(userId)) {
+				// get orgName
+				RtksMatch rtksMatch = new RtksMatch(allUsers.get(userId));
+				rtksMatch.setMatch(recordContext.getMatch());
+				matches.add(rtksMatch);
+			}
+		}
+
+		Map<String, List<RtksMatch>> mapByOrg = StreamApiUtils.groupBy(matches,
+				RtksMatch::getOrgId);
+		for (Map.Entry<String, List<RtksMatch>> entry : mapByOrg.entrySet()) {
+			TalentPersonReleaseRes orgRankingBo = new TalentPersonReleaseRes();
+			// count
+			for (RtksMatch match : entry.getValue()) {
+				if (match.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
+					orgRankingBo.addExcellent();
+				} else if (match.getMatch() >= RtksCommonConstants.QUALIFIED_MATCH) {
+					orgRankingBo.addQualified();
+				} else {
+					orgRankingBo.addOther();
+				}
+			}
+			res.add(orgRankingBo);
+		}
+
 
 		return res;
+	}
+
+	@Override
+	public List<TalentUserReleaseRes> getTalentUserRanking() {
+		List<TalentUserReleaseRes> res = new ArrayList<>();
+		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
+		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		// get existing users
+		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
+				.distinct().collect(Collectors.toList());
+		List<UserInfo> users = remoteUserService.getByIdList(userIds);
+		Map<String, UserInfo> userMap = StreamApiUtils.toMap(users, UserInfo::getUserId, s->s);
+		// TODO 排名添加
+		for(Map.Entry<String, List<RoleMatchRecordContext>> entry : userGroup.entrySet()){
+			TalentUserReleaseRes tmp = new TalentUserReleaseRes();
+			String userId = entry.getKey();
+			List<RoleMatchRecordContext> roles = entry.getValue();
+			List<String> roleNames = StreamApiUtils.getColumn(roles, RoleMatchRecordContext::getRoleName);
+			String roleNameStr = String.join(",", roleNames);
+			UserInfo userInfo = userMap.get(userId);
+			BeanUtils.copyProperties(userInfo, tmp);
+			tmp.setRoleName(roleNameStr);
+			res.add(tmp);
+		}
+//		res.sort(Comparator.comparing(TalentPersonReleaseRes::getExcellent).reversed().thenComparing(TalentPersonReleaseRes::getQualified).reversed().thenComparing(TalentPersonReleaseRes::getOther).reversed());
+
+		return res;
+	}
+
+	@Override
+	public List<TalentUserRoleInfoRes> getTalentUserRoleInfos() {
+
+
+		return null;
 	}
 
 	@Override

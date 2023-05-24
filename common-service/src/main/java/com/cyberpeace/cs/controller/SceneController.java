@@ -107,7 +107,7 @@ public class SceneController {
 		return new BaseRsp<>(result);
 	}
 
-	@DeleteMapping("/node/start")
+	@PostMapping("/node/start")
 	@ApiOperation("单个节点开机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
@@ -118,7 +118,7 @@ public class SceneController {
 	}
 
 
-	@DeleteMapping("/node/stop")
+	@PostMapping("/node/stop")
 	@ApiOperation("单个节点关机")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,
@@ -129,7 +129,7 @@ public class SceneController {
 	}
 
 
-	@DeleteMapping("/node/restart")
+	@PostMapping("/node/restart")
 	@ApiOperation("单个节点重启")
 	@RequiresPermissions(value = { MenuConstant.CMS_COURSES, MenuConstant.CMS_PRACTICE_OPERATION,
 			MenuConstant.CMS_CR_SINGLE_TRAIN, MenuConstant.CMS_RED_VS_BLUE,

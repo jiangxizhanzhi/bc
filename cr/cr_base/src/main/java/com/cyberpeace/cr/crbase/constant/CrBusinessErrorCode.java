@@ -423,4 +423,7 @@ public interface CrBusinessErrorCode {
 
 	// 内置算法禁止编辑
 	String BUILTIN_ALGORITHM_FORBID_DELETE_ERROR = "101128";
+
+	// 评估已启动
+	String EVALUATION_HAS_BEEN_INITIATED_ERROR = "101129";
 }

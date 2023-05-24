@@ -316,7 +316,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				if(!crRole.isBlueStudent() && !crRole.isRedStudent()) {
 					dashboardUser.setRoleType(CrRole.RbRoleGroup.WHITE.getEnglish());
 					dashboardUser.setRole(crRole.getName());
-					dashboardUser.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
+					// dashboardUser.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
 				}
 
 				// 找到当前用户角色

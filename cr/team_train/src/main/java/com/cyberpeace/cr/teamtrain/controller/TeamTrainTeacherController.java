@@ -3,16 +3,20 @@ package com.cyberpeace.cr.teamtrain.controller;
 import java.util.Comparator;
 import java.util.List;
 
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomMissionReq;
 import com.cyberpeace.cs.service.context.IdNameType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -49,6 +53,11 @@ public class TeamTrainTeacherController {
 	@Autowired
 	private TeamTeacherService teamTeacherService;
 
+	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
+	private MissionService missionService;
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -103,5 +112,26 @@ public class TeamTrainTeacherController {
 				UserInfoContext.getUserContext().getUserId());
 		List<StudentScoreListRsp> res = teamTeacherService.getScoreList(resource_id);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("动态任务新增")
+	@PostMapping("/mission_info_create")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean>
+	addMissionInfo(@RequestBody @Validated TeamRoomMissionReq rbRoomMissionReq) {
+		// validate
+		teamRoomService.checkTeacherPermission(rbRoomMissionReq.getRoomId(),
+				UserInfoContext.getUserContext().getUserId());
+
+		// new mission
+		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
+		mission.setCategoryId(rbRoomMissionReq.getCategory());
+		mission.setSkillPoints(JsonUtil.toJsonString(rbRoomMissionReq.getSkillPoints()));
+		mission.setCategoryId(rbRoomMissionReq.getCategory());
+		mission.setShowWriteup(false);
+
+		CrRole crRole = crRoleService.getById(rbRoomMissionReq.getRoleResourceId());
+		return new BaseRsp<>(
+				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
 	}
 }

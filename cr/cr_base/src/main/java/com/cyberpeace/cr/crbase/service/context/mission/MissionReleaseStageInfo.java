@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Data
@@ -28,32 +29,26 @@ public class MissionReleaseStageInfo {
     }
 
     public MissionReleaseStageInfo(CrRoleMissionSchemeStage stage, List<Mission> allMissions, Map<String, List<CrTask>> taskMap, List<UserData> userInfoList) {
-        List<Mission> missions = allMissions.stream().filter(a -> stage.getMissions() != null
-                && stage.getMissions().contains(a.getResourceId())).collect(Collectors.toList());
+        Map<String,Mission> missionMaps = allMissions.stream().filter(a -> stage.getMissions() != null
+                && stage.getMissions().contains(a.getResourceId())).collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
         List<Mission> dynamicMissions = allMissions.stream().filter(a -> stage.getDynamic() != null
                 && stage.getDynamic().contains(a.getResourceId())).collect(Collectors.toList());
         List<MissionReleaseInfo> missionReleaseInfos = new ArrayList<>();
 
-        for (Mission mission : missions) {
-            MissionReleaseInfo missionReleaseInfo = BeanUtils.copy(mission, MissionReleaseInfo.class);
-            List<CrTask> crTasks = taskMap.getOrDefault(mission.getResourceId(), new ArrayList<>());
-            Set<String> userIds = crTasks.stream().filter(CrTask::isSubmitted).map(CrTask::getUserId).collect(Collectors.toSet());
-            missionReleaseInfo.setFinishUserList(userInfoList.stream().filter(a -> userIds.contains(a.getResourceId())).collect(Collectors.toList()));
-            missionReleaseInfo.setNotFinishUserList(userInfoList.stream().filter(a -> !userIds.contains(a.getResourceId())).collect(Collectors.toList()));
-            missionReleaseInfo.setIsRelease(crTasks.size() > 0);
-            missionReleaseInfo.setIsDynamic(false);
-            missionReleaseInfos.add(missionReleaseInfo);
+        for (String missionId : stage.getMissions()) {
+            Mission mission = missionMaps.get(missionId);
+            if (mission!=null) {
+                MissionReleaseInfo missionReleaseInfo = BeanUtils.copy(mission, MissionReleaseInfo.class);
+                List<CrTask> crTasks = taskMap.getOrDefault(mission.getResourceId(), new ArrayList<>());
+                Set<String> userIds = crTasks.stream().filter(CrTask::isSubmitted).map(CrTask::getUserId).collect(Collectors.toSet());
+                missionReleaseInfo.setFinishUserList(userInfoList.stream().filter(a -> userIds.contains(a.getResourceId())).collect(Collectors.toList()));
+                missionReleaseInfo.setNotFinishUserList(userInfoList.stream().filter(a -> !userIds.contains(a.getResourceId())).collect(Collectors.toList()));
+                missionReleaseInfo.setIsRelease(crTasks.size() > 0);
+                missionReleaseInfo.setIsDynamic(dynamicMissions.contains(mission.getResourceId()));
+                missionReleaseInfos.add(missionReleaseInfo);
+            }
         }
-        for (Mission mission : dynamicMissions) {
-            MissionReleaseInfo missionReleaseInfo = BeanUtils.copy(mission, MissionReleaseInfo.class);
-            List<CrTask> crTasks = taskMap.getOrDefault(mission.getResourceId(), new ArrayList<>());
-            Set<String> userIds = crTasks.stream().filter(CrTask::isSubmitted).map(CrTask::getUserId).collect(Collectors.toSet());
-            missionReleaseInfo.setFinishUserList(userInfoList.stream().filter(a -> userIds.contains(a.getResourceId())).collect(Collectors.toList()));
-            missionReleaseInfo.setNotFinishUserList(userInfoList.stream().filter(a -> !userIds.contains(a.getResourceId())).collect(Collectors.toList()));
-            missionReleaseInfo.setIsRelease(crTasks.size() > 0);
-            missionReleaseInfo.setIsDynamic(true);
-            missionReleaseInfos.add(missionReleaseInfo);
-        }
+        this.stage = stage.getStage();
         this.setMissionInfos(missionReleaseInfos);
     }
 }

@@ -410,17 +410,17 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 			// 客观题，可机评
 			if (isCorrect(answer, mission.getAnswer(), mission.getType())) {
 				task.setScore(mission.getScore());
-				task.setStatus(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode());
+				task.setStatus(CrTask.TaskStatus.SUCCESS.getCode());
 				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_SUCCESS.getCode());
 			} else {
 				task.setScore(0);
-				task.setStatus(CrTaskSubmit.EvaluateStatus.FAIL.getCode());
+				task.setStatus(CrTask.TaskStatus.FAIL.getCode());
 				evaluateLog.setActionCode(CrTaskLog.ActionCode.ROBOT_FAILURE.getCode());
 			}
 		} else {
 			// 主观题
 			task.setScore(0);
-			task.setStatus(CrTaskSubmit.EvaluateStatus.WAIT.getCode());
+			task.setStatus(CrTask.TaskStatus.WAIT.getCode());
 		}
 
 		task.setUserAnswer(answer);

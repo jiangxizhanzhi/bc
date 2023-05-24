@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.A;
 
 @Data
 public class DashboardInfo implements Serializable {
@@ -17,4 +18,7 @@ public class DashboardInfo implements Serializable {
 
 	@ApiModelProperty("群组信息")
 	private List<DashboardGroup> group;
+
+	@ApiModelProperty("角色常量")
+	private List<DashboardRole> roleConst;
 }

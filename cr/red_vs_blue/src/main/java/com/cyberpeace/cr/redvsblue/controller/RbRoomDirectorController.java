@@ -197,7 +197,7 @@ public class RbRoomDirectorController {
 
 		CrRole crRole = crRoleService.getById(rbRoomMissionReq.getRoleResourceId());
 		return new BaseRsp<>(
-				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage()));
+				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
 	}
 
 	@ApiOperation("任务删除")

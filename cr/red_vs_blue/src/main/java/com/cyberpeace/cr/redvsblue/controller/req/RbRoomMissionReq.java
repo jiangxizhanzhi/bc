@@ -16,6 +16,9 @@ public class RbRoomMissionReq extends MissionTemplateReq implements Serializable
 	@ApiModelProperty(value = "角色id", required = true)
 	private String roleResourceId;
 
-	@ApiModelProperty(value = "阶段", required = true)
+	@ApiModelProperty(value = "阶段下标", required = true)
 	private Integer missionStage;
+
+	@ApiModelProperty(value = "后一个任务id", required = true)
+	private String afterMissionId;
 }

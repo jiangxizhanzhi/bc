@@ -214,7 +214,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public Boolean addDynamic(Mission mission, CrRole role, Integer stage) {
+	public Boolean addDynamic(Mission mission, CrRole role, Integer stage,String afterMissionId) {
 		// 校验是否和角色既存任务重名
 		List<MissionStageScheme> missionStageSchemeList = role.getMissionStageSchemes();
 		List<String> missionIds = Lists.newArrayList();
@@ -231,7 +231,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				save(mission);
-				addDynamicMissionInfo(missionStageSchemeList, stage, mission.getResourceId());
+				addDynamicMissionInfo(missionStageSchemeList, stage, mission.getResourceId(),afterMissionId);
 				role.setMissionStageSchemes(missionStageSchemeList);
 				crRoleMapper.updateById(role);
 			}
@@ -444,7 +444,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	private void addDynamicMissionInfo(List<MissionStageScheme> missionStageSchemeList,
-			Integer stage, String missionId) {
+			Integer stage, String missionId,String afterMissionId) {
 
 		if (stage == null) {
 			stage = 0;
@@ -457,7 +457,12 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 				List<String> missions = missionStageScheme.getMissions();
 
 				if (index++ == stage) {
-					missions.add(missionId);
+					int i = missions.indexOf(afterMissionId);
+					if (StringUtils.isNotBlank(afterMissionId)&&i!=-1) {
+						missions.add(i,missionId);
+					}else {
+						missions.add(missionId);
+					}
 					missionStageScheme.setDynamic(getDynamicIds(missionStageScheme, missionId));
 					missionStageScheme.setMissions(missions);
 				}

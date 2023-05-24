@@ -81,7 +81,7 @@ public interface MissionService extends IService<Mission> {
 	 * @param stage 阶段
 	 * @return 结果（布尔值）
 	 */
-	Boolean addDynamic(Mission mission, CrRole role, Integer stage);
+	Boolean addDynamic(Mission mission, CrRole role, Integer stage,String afterMissionId);
 
 	/**
 	 * 获取任务类别列表

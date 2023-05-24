@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -37,9 +34,9 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -109,9 +106,6 @@ public class RbRoomController {
 	private RemoteLogService remoteLogService;
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private RbTemplateMapper rbTemplateMapper;
 
 	@Autowired
@@ -123,8 +117,6 @@ public class RbRoomController {
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
-	@Autowired
-	private RemoteUserService remoteUserService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

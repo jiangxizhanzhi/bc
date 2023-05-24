@@ -3,11 +3,8 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.crbase.service.context.mission.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -39,7 +36,10 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
+import com.cyberpeace.cr.crbase.service.context.role.RoleData;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
 import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionDeleteReq;
@@ -47,6 +47,7 @@ import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.service.RbDirectorService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
@@ -84,6 +85,9 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private RbDirectorService rbDirectorService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -450,65 +454,8 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<RedBlueTaskReleaseProgress> getMissionStatistics(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-
-		if (StringUtils.isBlank(resource_id)) {
-			log.error("room_id is null");
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		// get roles
-		List<CrRole> studentRoles = rbRoomService.getStudentsRoles(resource_id);
-		// parse mission and users
-		List<CrRoleSimple> roles = studentRoles.stream().map(CrRoleSimple::new)
-				.collect(Collectors.toList());
-		// get tasks
-		List<CrTask> crTaskList = crTaskService.getByRoomId(resource_id);
-
-		RedBlueTaskReleaseProgress progress = new RedBlueTaskReleaseProgress();
-		// count
-		Integer released = crTaskList.size();
-		Integer total = roles.stream().mapToInt(CrRoleSimple::getTaskCount).sum();
-		Integer submitted = crTaskList.stream().mapToInt(task -> task.isSubmitted() ? 1 : 0).sum();
-
-		progress.setTotal(total);
-		progress.setReleased(released);
-		progress.setUnreleased(total - released);
-		progress.setSubmitted(submitted);
-		progress.setUnsubmitted(released - submitted);
-
-		// 循环各个角色和阶段
-		for (CrRoleSimple role : roles) {
-			RoleTaskReleaseProgress roleProgress = new RoleTaskReleaseProgress();
-			roleProgress.setRoleId(role.getResourceId());
-			roleProgress.setRoleName(role.getName());
-			for (CrRoleMissionSchemeStage stage : role.getMissionScheme()) {
-				StageTaskReleaseProgress stageProgress = new StageTaskReleaseProgress();
-				stageProgress.setStageName(stage.getStage());
-				// 计算该阶段内任务下发数和任务总数*人数
-				Integer releasedTaskCount = crTaskList.stream()
-						.mapToInt(task -> stage.getMissions().contains(task.getMissionId()) ? 1 : 0)
-						.sum();
-				Integer taskCount = stage.getMissions().size() * role.getUserIds().size();
-				stageProgress.setTotal(taskCount);
-				stageProgress.setReleased(releasedTaskCount);
-				// 阶段加入角色之中
-				roleProgress.getStage().add(stageProgress);
-				roleProgress.addTotal(taskCount);
-				roleProgress.addReleased(releasedTaskCount);
-			}
-			// red role
-			if (role.getRoleGroup().equals(CrRole.RbRoleGroup.RED.getCode())) {
-				progress.getRedRoles().getRole().add(roleProgress);
-				progress.getRedRoles().addTotal(roleProgress.getTotal());
-				progress.getRedRoles().addReleased(roleProgress.getReleased());
-			} else {
-				// blue role
-				progress.getBlueRoles().getRole().add(roleProgress);
-				progress.getBlueRoles().addTotal(roleProgress.getTotal());
-				progress.getBlueRoles().addReleased(roleProgress.getReleased());
-			}
-		}
-
-		return new BaseRsp<>(progress);
+		RedBlueTaskReleaseProgress res = rbDirectorService.getTaskReleaseProgress(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("批量任务下发")
@@ -549,10 +496,12 @@ public class RbRoomDirectorController {
 		}
 		List<TrainTaskReleaseInfoContext> list = new ArrayList<>();
 		// 获取该房间的角色信息
-		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.RbRoleGroup.RED.getCode());
-		list.add(new TrainTaskReleaseInfoContext("red",red));
-		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.RbRoleGroup.BLUE.getCode());
-		list.add(new TrainTaskReleaseInfoContext("blue",blue));
+		List<TrainTaskReleaseInfoRsp> red = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+				CrRole.RbRoleGroup.RED.getCode());
+		list.add(new TrainTaskReleaseInfoContext("red", red));
+		List<TrainTaskReleaseInfoRsp> blue = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+				CrRole.RbRoleGroup.BLUE.getCode());
+		list.add(new TrainTaskReleaseInfoContext("blue", blue));
 		return new BaseRsp<>(list);
 	}
 }

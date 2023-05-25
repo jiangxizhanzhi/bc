@@ -569,6 +569,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			// 添加所有人作为好友列表
 			friend.addAll(buildDashboardUser(role, userInfoMap));
 
+			teamMembers.addAll(userIdList);
+
+			/*
 			// 只添加自己角色类型的用户作为群组
 			if(myRole.isTeamStudent() && role.isTeamStudent() ||
 					myRole.isTeamTeacher() && role.isTeamTeacher()) {
@@ -582,6 +585,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				String myUserId = first.get();
 				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
 			}
+			*/
 
 			userIds.addAll(role.getUserIdList());
 		});

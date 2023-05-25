@@ -513,9 +513,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			log.error("corresponding user can't be found by current userId [{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		List<String> roleNames = new ArrayList<>();
-		List<Integer> roleMatchs = new ArrayList<>();
 		if(userGroup.containsKey(resourceId)){
+			List<TalentUserReleaseModelRes> result = new ArrayList<>();
 			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(resourceId);
 			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
 			int i = 3;
@@ -526,25 +525,29 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			if (roleMatchRecordContexts.size() == i) {
 				RoleMatchRecordContext top3 = roleMatchRecordContexts.get(index);
-				roleMatchs.add(top3.getMatch());
-				roleNames.add(top3.getRoleName());
+				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
+				tmp.setPercent(top3.getMatch());
+				tmp.setName(top3.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index);
+				result.add(tmp);
 			}
 			if (roleMatchRecordContexts.size() == index) {
 				RoleMatchRecordContext top2 = roleMatchRecordContexts.get(index1);
-				roleMatchs.add(top2.getMatch());
-				roleNames.add(top2.getRoleName());
+				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
+				tmp.setPercent(top2.getMatch());
+				tmp.setName(top2.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index1);
+				result.add(tmp);
 			}
 			if (roleMatchRecordContexts.size() == index1) {
 				RoleMatchRecordContext top1 = roleMatchRecordContexts.get(0);
-				roleMatchs.add(top1.getMatch());
-				roleNames.add(top1.getRoleName());
+				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
+				tmp.setPercent(top1.getMatch());
+				tmp.setName(top1.getRoleName());
+				result.add(tmp);
 			}
-			Collections.reverse(roleNames);
-			Collections.reverse(roleMatchs);
-			res.setRoleNames(roleNames);
-			res.setRoleMatchs(roleMatchs);
+			Collections.reverse(result);
+			res.setRoleInfos(result);
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();
 			List<String> roleList = new ArrayList<>();

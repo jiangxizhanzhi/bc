@@ -361,6 +361,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		groups.add(whiteGroup);
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
+		/*
 		if (myRole.isRvbStudent()) {
 			DashboardGroup selfGroup = new DashboardGroup(
 					groups.get(0).getGroupname() + "/" + myRole.getName());
@@ -368,6 +369,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);
 		}
+		*/
 		// 获取全部用户
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 

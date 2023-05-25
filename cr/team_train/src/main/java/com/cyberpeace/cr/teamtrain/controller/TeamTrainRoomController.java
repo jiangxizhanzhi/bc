@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -789,5 +791,25 @@ public class TeamTrainRoomController {
 		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
 
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("获取聊天框群组成员列表")
+	@GetMapping("/members_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<JSONObject> getMembersInfo(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+											  @ApiParam(name = "id", value = "角色id", required = true) String id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+
+		if (id.contains("_")) {
+			String[] strings = id.split("_");
+			id = strings[strings.length - 1];
+		}
+
+		List<DashboardUser> data = teamRoomService.getMembersInfo(id, resource_id);
+		JSONObject json = new JSONObject();
+		json.put("list", data);
+
+		return new BaseRsp(json);
 	}
 }

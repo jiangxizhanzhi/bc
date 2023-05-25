@@ -564,6 +564,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			userIdList = userIdList.stream()
 					.filter(userInfoMap::containsKey)
 					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
 
 			// 添加所有人作为好友列表
 			friend.addAll(buildDashboardUser(role, userInfoMap));
@@ -601,7 +602,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				CrRole.RbRoleGroup.TEAM.getCode(),
 				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
 		teamGroup.setMembers(teamMembers);
-		teamGroup.setId(roomId + "_" + CrRole.RbRoleGroup.TEAM.getCode().toString());
+		teamGroup.setId(roomId + "_" + myRole.getRoleGroup());
 		groups.add(teamGroup);
 
 
@@ -627,6 +628,32 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 		return crRole;
+	}
+
+	@Override
+	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
+		List<DashboardUser> friend = Lists.newArrayList();
+
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+		final List<String> userIds = new ArrayList<>();
+		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
+
+		// 获取全部用户
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+
+		crRoles.forEach(role -> {
+			List<String> userIdList = role.getUserIdList();
+			// 过滤不存在用户
+			userIdList = userIdList.stream()
+					.filter(userInfoMap::containsKey)
+					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
+
+			List<DashboardUser> dashboardUsers = buildDashboardUser(role, userInfoMap);
+			friend.addAll(dashboardUsers);
+		});
+
+		return friend;
 	}
 
 	private String confirmAvatarFile(String filePath, String jarFilePath) {

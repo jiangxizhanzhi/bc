@@ -99,4 +99,8 @@
             #{businessTemplateId}
         </foreach>
     </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(id)
+        from rtks_attack
+    </select>
 </mapper>

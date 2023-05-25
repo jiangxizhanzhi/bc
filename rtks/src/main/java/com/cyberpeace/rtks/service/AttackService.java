@@ -1,7 +1,13 @@
 package com.cyberpeace.rtks.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.cyberpeace.rtks.service.bo.career.AttackBackBo;
+import com.cyberpeace.rtks.service.bo.career.AttackCategoryBo;
+import com.cyberpeace.rtks.service.bo.career.AttackDetail;
+import com.cyberpeace.rtks.service.bo.career.AttackFrontBo;
+import com.cyberpeace.rtks.service.bo.situation.SkillProgressBo;
 import com.cyberpeace.rtks.service.bo.career.*;
 
 public interface AttackService {
@@ -38,4 +44,26 @@ public interface AttackService {
 	 * @return
 	 */
 	List<AttackCategoryBo<FrameItemBase>> getCache();
+
+	/**
+	 * 获取所有relation
+	 *
+	 * @return {@code Map<String, List<String>>}
+	 */
+	Map<String, List<String>> getAllRel();
+
+	/**
+	 * 计数所有
+	 *
+	 * @return {@code Integer}
+	 */
+	Integer countAll();
+
+	/**
+	 * 获取attack进展
+	 *
+	 * @param userId 用户id
+	 * @return {@code SkillProgressBo}
+	 */
+	SkillProgressBo getAttackProgress(String userId);
 }

@@ -36,6 +36,8 @@ public interface AttackMapper {
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
 
+	Integer countAll();
+
 	void loadRel(@Param("btId") String btId, @Param("attackIds") List<String> attackIds);
 
 	List<TechRelation>

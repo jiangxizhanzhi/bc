@@ -90,5 +90,9 @@
             </if>
         </where>
     </select>
+    <select id="selectAll" resultType="com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase">
+        select *
+        from rtks_knowledge
+    </select>
 
 </mapper>

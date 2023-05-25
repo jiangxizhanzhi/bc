@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -14,6 +15,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -21,6 +24,7 @@ import com.cyberpeace.rtks.dao.entity.AttackTrainRelation;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
 import com.cyberpeace.rtks.service.AttackService;
 import com.cyberpeace.rtks.service.bo.career.*;
+import com.cyberpeace.rtks.service.bo.situation.SkillProgressBo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -36,6 +40,9 @@ public class AttackServiceImpl implements AttackService {
 
 	@Autowired
 	private AttackMapper attackMapper;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
@@ -142,6 +149,48 @@ public class AttackServiceImpl implements AttackService {
 		} else {
 			return cachedAttacks.getEn();
 		}
+	}
+
+	@Override
+	public Map<String, List<String>> getAllRel() {
+		List<AttackTrainRelation> attackTrainRelationList = attackMapper.getAllRel();
+		Map<String, List<String>> map = Maps.newHashMap();
+		for (AttackTrainRelation relation : attackTrainRelationList) {
+			String skillId = relation.getAttackId();
+			String btId = relation.getBusinessTemplateId();
+			if (!map.containsKey(skillId)) {
+				map.put(skillId, Lists.newArrayList());
+			}
+			map.get(skillId).add(btId);
+		}
+		return map;
+	}
+
+	@Override
+	public Integer countAll() {
+		return attackMapper.countAll();
+	}
+
+	@Override
+	public SkillProgressBo getAttackProgress(String userId) {
+		Map<String, List<String>> attackRel = getAllRel();
+		// related btIds
+		List<String> btIds = StreamApiUtils.distinctFlatMap(attackRel.values(), list -> list);
+		// 该用户所有已结束的训练的模板id
+		Set<String> finishedBtIds = trainRecordService.getFinishedBtIds(btIds, userId);
+		Integer finishedAttackCount = 0;
+		for (Map.Entry<String, List<String>> entry : attackRel.entrySet()) {
+			if (CrCommonUtil.contain(finishedBtIds, entry.getValue())) {
+				finishedAttackCount += 1;
+			}
+		}
+		// 总数
+		Integer attackCount = countAll();
+		SkillProgressBo attackProgress = new SkillProgressBo();
+		attackProgress.setTotal(attackCount);
+		attackProgress.setFinished(finishedAttackCount);
+		attackProgress.setNotFinished(attackCount - finishedAttackCount);
+		return attackProgress;
 	}
 
 	private void ensureAttackCache() {

@@ -43,6 +43,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
@@ -120,6 +121,15 @@ public class RbRoomController {
     @Autowired
     private RbRoomMapper rbRoomMapper;
 
+	@Autowired
+	private TrainRecordService trainRecordService;
+
+	@ApiOperation("新增")
+	@PostMapping()
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp create(@RequestBody @Validated RbRoomReq rbRoomReq) {
+		// 校验
+		rbRoomReq.validate();
     @Autowired
     private CrScoreService crScoreService;
 
@@ -328,6 +338,14 @@ public class RbRoomController {
 
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				rbSceneService.stopScene(roomId);
+				crRoleService.clearRoomRoles(roomId);
+				rbRoomService.removeById(roomId);
+				trainRecordService.updateEndTimeByRoomId(roomId, new Date());
+			}
+		});
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 rbSceneService.stopScene(roomId);
@@ -600,11 +618,11 @@ public class RbRoomController {
             }
             Date o1Time = o1.getMissionInfos().get(0).getCreateTime();
             Date o2Time = o2.getMissionInfos().get(0).getCreateTime();
-            
+
             if (o1Time.equals(o2Time)) {
                 return 0;
             }
-            
+
             return o1Time.before(o2Time) ? 1 : -1;
         };
 

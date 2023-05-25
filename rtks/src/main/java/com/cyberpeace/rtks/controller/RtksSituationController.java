@@ -2,11 +2,6 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
-import com.cyberpeace.rtks.controller.res.*;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
+import com.cyberpeace.rtks.controller.res.*;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import com.cyberpeace.rtks.service.RtksSituationService;
-import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
-import com.cyberpeace.rtks.service.bo.situation.NewsBo;
-import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
-import com.cyberpeace.rtks.service.bo.situation.SituationTrendBo;
+import com.cyberpeace.rtks.service.RtksStatisticService;
+import com.cyberpeace.rtks.service.bo.situation.*;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @Api(tags = "RTKS-人才培养态势")
 @RestController
@@ -37,6 +37,9 @@ public class RtksSituationController {
 
 	@Autowired
 	private RoleMapper roleMapper;
+
+	@Autowired
+	private RtksStatisticService rtksStatisticService;
 
 	@ApiOperation("网安排名：个人-组织-复合")
 	@GetMapping("/ranking")
@@ -97,11 +100,11 @@ public class RtksSituationController {
 		return new BaseRsp<>(rtksSituationService.getTalentUserRanking(req));
 	}
 
-
 	@ApiOperation("网安个人岗位数据")
 	@GetMapping("/user/roleInfos")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
-	public BaseRsp<TalentUserReleaseRes> getTalentUserRanking(@RequestParam("resource_id") String resourceId) {
+	public BaseRsp<TalentUserReleaseRes>
+			getTalentUserRanking(@RequestParam("resource_id") String resourceId) {
 		return new BaseRsp<>(rtksSituationService.getTalentUserRoleInfos(resourceId));
 	}
 
@@ -112,5 +115,33 @@ public class RtksSituationController {
 		return new BaseRsp<>(roleMapper.selectList(null));
 	}
 
+	@ApiOperation("岗位能力完成进度")
+	@GetMapping("/user/progress")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<SituationProgressBo> getProgress() {
+		SituationProgressBo res = rtksSituationService
+				.getProgress(UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("岗位满足度趋势")
+	@GetMapping("/user/match/trend")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<UserTrend> getUserTrend() {
+		UserTrend res = rtksSituationService
+				.getUserTrend(UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("个人岗位统计数据")
+	@GetMapping("/user/statistics")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<UserStatisticsBo>> getUserStatistics(
+			@ApiParam(value = "sort", name = "排序字段") String sort,
+			@ApiParam(value = "asc", name = "是否正序， 默认倒序") Boolean asc) {
+		List<UserStatisticsBo> res = rtksStatisticService
+				.getUserStatistics(UserInfoContext.getUserContext().getUserId(), sort, asc);
+		return new BaseRsp<>(res);
+	}
 
 }

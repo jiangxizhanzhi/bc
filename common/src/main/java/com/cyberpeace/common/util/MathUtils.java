@@ -226,4 +226,31 @@ public class MathUtils {
 	
 	private MathUtils() {}
 
+	/**
+	 * double四舍五入成整数
+	 *
+	 * @param digit 双精度浮点数，可为负
+	 * @return 整型
+	 */
+	public static Integer round(double digit) {
+		boolean negative = false;
+		// 负数处理为正数
+		if (digit < 0) {
+			digit = -digit;
+			negative = true;
+		}
+		// 乘以2之后再除以2
+		int tmp = (int) (digit * 2);
+		int ret = tmp / 2;
+		int mod = tmp % 2;
+		// 余数为1，则进1
+		if (mod == 1) {
+			ret++;
+		}
+		if (negative) {
+			ret = -ret;
+		}
+		return ret;
+	}
+
 }

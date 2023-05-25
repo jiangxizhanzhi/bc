@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -15,6 +16,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -23,6 +26,7 @@ import com.cyberpeace.rtks.dao.mapper.EngageMapper;
 import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.*;
+import com.cyberpeace.rtks.service.bo.situation.SkillProgressBo;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -40,6 +44,9 @@ public class EngageServiceImpl implements EngageService {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	private volatile EngageCache cachedEngages;
 
@@ -142,6 +149,48 @@ public class EngageServiceImpl implements EngageService {
 			}));
 		}));
 		return res;
+	}
+
+	@Override
+	public Map<String, List<String>> getAllRel() {
+
+		List<EngageTrainRelation> engageTrainRelations = engageMapper.getAllRel();
+		Map<String, List<String>> map = Maps.newHashMap();
+		for (EngageTrainRelation relation : engageTrainRelations) {
+			String skillId = relation.getEngageId();
+			String btId = relation.getBusinessTemplateId();
+			if (!map.containsKey(skillId)) {
+				map.put(skillId, com.google.common.collect.Lists.newArrayList());
+			}
+			map.get(skillId).add(btId);
+		}
+		return map;
+	}
+
+	@Override
+	public SkillProgressBo getEngageProgress(String userId) {
+		Map<String, List<String>> engageRel = getAllRel();
+		// related btIds
+		List<String> btIds = StreamApiUtils.distinctFlatMap(engageRel.values(), list -> list);
+		// 该用户所有已结束的训练的模板id
+		Set<String> finishedBtIds = trainRecordService.getFinishedBtIds(btIds, userId);
+		Integer finishedEngageCount = 0;
+		for (Map.Entry<String, List<String>> entry : engageRel.entrySet()) {
+			if (CrCommonUtil.contain(finishedBtIds, entry.getValue())) {
+				finishedEngageCount += 1;
+			}
+		}
+		// 总数
+		Integer engageCount = countAll();
+		SkillProgressBo engageProgress = new SkillProgressBo();
+		engageProgress.setTotal(engageCount);
+		engageProgress.setFinished(finishedEngageCount);
+		engageProgress.setNotFinished(engageCount - finishedEngageCount);
+		return engageProgress;
+	}
+
+	private Integer countAll() {
+		return engageMapper.countAll();
 	}
 
 	@Override

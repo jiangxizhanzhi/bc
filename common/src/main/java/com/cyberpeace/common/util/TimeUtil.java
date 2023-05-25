@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import com.cyberpeace.common.model.CommonContext;
 
@@ -555,6 +556,17 @@ public class TimeUtil {
 	 */
 	public static String duration2String(long sec) {
 		return duration2String(sec, null);
+	}
+
+	/**
+	 * 判断两个date是不是属于同一天
+	 *
+	 * @param d1 d1
+	 * @param d2 d2
+	 * @return {@code Boolean}
+	 */
+	public static Boolean sameDay(Date d1, Date d2) {
+		return DateUtils.isSameDay(d1, d2);
 	}
 
 	public static String duration2String(long sec, TimeUnitI18n unitI18n) {

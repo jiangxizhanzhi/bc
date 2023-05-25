@@ -36,6 +36,10 @@ public interface EngageMapper {
 
 	Integer lockRel();
 
+	List<EngageTrainRelation> getAllRel();
+
+	Integer countAll();
+
 	void loadRel(@Param("btId") String btId, @Param("engageIds") List<String> engageIds);
 
 	List<TechRelation>

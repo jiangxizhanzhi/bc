@@ -35,4 +35,6 @@ public class TrainRecord implements Serializable {
 
 	private String extra;
 
+	private String trainee;
+
 }

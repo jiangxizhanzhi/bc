@@ -29,23 +29,11 @@ public class TalentUserReleaseRes implements Serializable {
 	@ApiModelProperty("角色")
 	private String roleStr;
 
-	@ApiModelProperty("第一岗位名称")
-	private String roleNameTop1;
+	@ApiModelProperty("岗位名称")
+	private List<String> roleNames;
 
-	@ApiModelProperty("第一岗位匹配度")
-	private Integer roleTop1Match=0;
-
-	@ApiModelProperty("第二岗位名称")
-	private String roleNameTop2;
-
-	@ApiModelProperty("第二岗位匹配度")
-	private Integer roleTop2Match=0;
-
-	@ApiModelProperty("第三岗位名称")
-	private String roleNameTop3;
-
-	@ApiModelProperty("第三岗位匹配度")
-	private Integer roleTop3Match=0;
+	@ApiModelProperty("岗位匹配度")
+	private List<Integer> roleMatchs;
 
 
 }

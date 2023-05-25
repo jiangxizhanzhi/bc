@@ -19,7 +19,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.cache.RtksMatch;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.integratation.model.UserPageContext;
@@ -566,10 +565,10 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		if (logList.isEmpty()) {
 			return trend;
 		}
-		Map<String, List<DailyMatchLog>> roleMap = StreamApiUtils.groupBy(logList,
-				DailyMatchLog::getRoleId);
+		Set<String> roleIds = logList.stream().map(DailyMatchLog::getRoleId)
+				.collect(Collectors.toSet());
 		// get roles
-		List<Role> roleList = roleMapper.selectBatchIds(roleMap.keySet());
+		List<Role> roleList = roleMapper.selectBatchIds(roleIds);
 		if (roleList.isEmpty()) {
 			return trend;
 		}

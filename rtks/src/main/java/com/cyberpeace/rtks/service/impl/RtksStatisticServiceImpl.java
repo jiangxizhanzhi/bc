@@ -154,6 +154,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			UserStatisticsBo bo = new UserStatisticsBo();
 			bo.setRoleName(role.getName());
 			bo.setRolePath(levelService.getFullPathById(role.getLevelId()));
+			bo.setRoleId(role.getResourceId());
 			// course count
 			List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 					String.class);
@@ -448,7 +449,7 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Override
 	public Integer getKnowledgeProgress(SkillAndKnowledgeBase knowledge, String userId) {
-		ValueDataBo bo = calculateKnowledgeScore(knowledge, userId, true);
+		ValueDataBo bo = calculateKnowledgeScore(knowledge, userId, false);
 		return MathUtils.round(bo.getProcess());
 	}
 

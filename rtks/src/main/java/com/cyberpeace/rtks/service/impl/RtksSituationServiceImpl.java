@@ -315,7 +315,14 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 
     @Override
     public List<TalentReleaseRes> getTalentReleaseRanking() {
+		// 获取所有岗位 并按创建时间排序
 		List<Role> roles = roleMapper.selectList(null);
+		roles.sort(Comparator.comparing(Role::getCreateTime).reversed());
+
+		// 岗位数超过20时 仅取20个
+		if(roles.size() > 20){
+			roles = roles.subList(0, 20);
+		}
 		List<TalentReleaseRes> res = new ArrayList<>();
 		// TODO 用户删除处理逻辑
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
@@ -511,7 +518,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			if(roleMatchRecordContexts.size() == index1){
 				RoleMatchRecordContext top1 = roleMatchRecordContexts.get(0);
 				res.setRoleTop1Match(top1.getMatch());
-				res.setRoleNameTop3(top1.getRoleName());
+				res.setRoleNameTop1(top1.getRoleName());
 			}
 
 			BeanUtils.copyProperties(userInfo, res);

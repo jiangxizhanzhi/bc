@@ -34,6 +34,9 @@ public class TalentReleasePersonRankingRes implements Serializable {
 	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;
 
+	@ApiModelProperty("最高匹配度")
+	private Integer maxMatch;
+
 	@ApiModelProperty("岗位名称")
 	private List<String> jobs;
 

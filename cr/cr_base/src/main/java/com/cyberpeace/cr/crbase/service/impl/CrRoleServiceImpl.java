@@ -460,7 +460,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				missionReleaseStageInfos.add(new MissionReleaseStageInfo(stage,allMissions,taskMap,userInfoList));
 			}
 			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
-
+			taskReleaseInfoRsp.initCount();
 			res.add(taskReleaseInfoRsp);
 		}
 		return res;

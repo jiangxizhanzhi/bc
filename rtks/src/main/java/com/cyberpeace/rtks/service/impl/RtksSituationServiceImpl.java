@@ -404,7 +404,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				continue;
 			}
 			value.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
-
+			if(!value.isEmpty()){
+				personReleaseRes.setMaxMatch(value.get(0).getMatch());
+			}
 			for (RoleMatchRecordContext val : value) {
 				if (val.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
 					personReleaseRes.addExcellent();
@@ -441,10 +443,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			personReleaseRes.setJobs(jobs);
 			res.add(personReleaseRes);
 		}
-		// TODO 多个字段排序待修改
-		res.sort(Comparator.comparing(TalentReleasePersonRankingRes::getExcellent).reversed()
-				.thenComparing(TalentReleasePersonRankingRes::getQualified).reversed()
-				.thenComparing(TalentReleasePersonRankingRes::getExcellentMatchSum).reversed());
+		// 先按复合人才逻辑排序 若无合格或优秀岗位 按最高匹配度排序
+		res.sort(Comparator.comparing(TalentReleasePersonRankingRes::getExcellent).reversed().thenComparing(TalentReleasePersonRankingRes::getQualified).reversed()
+				.thenComparing(TalentReleasePersonRankingRes::getExcellentMatchSum).reversed().thenComparing(TalentReleasePersonRankingRes::getMaxMatch).reversed());
 		if (res.size() > 5) {
 			res = res.subList(0, 5);
 		}
@@ -491,7 +492,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			res.add(orgRankingBo);
 		}
-		res.sort(new MultiRoleDerivativeComparator());
+		res.sort(Comparator.comparing(TalentReleaseRankingRes::getExcellent).reversed().
+				thenComparing(TalentReleaseRankingRes::getQualified).reversed().
+				thenComparing(TalentReleaseRankingRes::getOther).reversed());
 		// 取前5名用户
 		int i = 5;
 		if (res.size() > i) {
@@ -505,18 +508,15 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		TalentUserReleaseRes res = new TalentUserReleaseRes();
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils
-				.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
-		String userId = UserInfoContext.getUserContext().getUserId();
+		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
 		UserInfo userInfo = remoteUserService.getById(resourceId);
-		if (null == userInfo) {
+		if(null == userInfo){
 			log.error("corresponding user can't be found by current userId [{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		if (userGroup.containsKey(userId)) {
-			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(userId);
-			roleMatchRecordContexts
-					.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
+		if(userGroup.containsKey(resourceId)){
+			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(resourceId);
+			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
 			int i = 3;
 			int index = 2;
 			int index1 = 1;
@@ -634,11 +634,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			recordContextList = recordContextList.stream()
 					.filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
 		}
-		// if(recordContextList.isEmpty()){
-		// return new ListRsp<>();
-		// }
-		Map<String, List<RoleMatchRecordContext>> userRoles = StreamApiUtils
-				.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		Map<String, List<RoleMatchRecordContext>> userRoles = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
 		int index = 1;
 		for (Map.Entry<String, List<RoleMatchRecordContext>> entry : userRoles.entrySet()) {
 			String userId = entry.getKey();
@@ -802,19 +798,6 @@ class MultiRoleComparator implements Comparator<MultiRoleRankingBo> {
 	}
 }
 
-class MultiRoleDerivativeComparator implements Comparator<TalentReleaseRankingRes> {
-
-	@Override
-	public int compare(TalentReleaseRankingRes o1, TalentReleaseRankingRes o2) {
-		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
-			return o2.getExcellent() - o1.getExcellent();
-		}
-		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
-			return o2.getQualified() - o1.getQualified();
-		}
-		return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
-	}
-}
 
 class TalentUserRoleInfoComparator implements Comparator<TalentUserRoleInfoRes> {
 

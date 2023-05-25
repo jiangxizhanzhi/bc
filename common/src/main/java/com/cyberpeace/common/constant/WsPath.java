@@ -38,6 +38,8 @@ public class WsPath {
 
 	public static final String SITUATION = "/ws/situation/scene";
 
+	public static final String NOTICE = "/ws/cr/ce_base/notice";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {

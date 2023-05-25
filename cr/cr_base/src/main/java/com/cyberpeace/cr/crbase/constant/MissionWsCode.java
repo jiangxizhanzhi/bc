@@ -10,4 +10,6 @@ public interface MissionWsCode {
 	Integer TEAM_MISSION_CODE = 2;
 
 	Integer MISSION_WS_UPDATE_STATUS = 3;
+
+	Integer NOTICE_Code = 4;
 }

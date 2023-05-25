@@ -1,5 +1,9 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,6 +13,7 @@ import com.cyberpeace.common.model.room.DashboardGroup;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -592,7 +597,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		// 群组封装
 		List<DashboardGroup> groups = Lists.newArrayList();
-		DashboardGroup teamGroup = new DashboardGroup(CrRole.RbRoleGroup.TEAM_GROUP.getMsg(), CrRole.RbRoleGroup.TEAM.getCode());
+		DashboardGroup teamGroup = new DashboardGroup(CrRole.RbRoleGroup.TEAM_GROUP.getMsg(),
+				CrRole.RbRoleGroup.TEAM.getCode(),
+				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
 		teamGroup.setMembers(teamMembers);
 		teamGroup.setId(roomId + "_" + CrRole.RbRoleGroup.TEAM.getCode().toString());
 		groups.add(teamGroup);
@@ -620,6 +627,33 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 		return crRole;
+	}
+
+	private String confirmAvatarFile(String filePath, String jarFilePath) {
+		File file = new File(filePath);
+		if(file.exists()) {
+			return filePath;
+		}
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+
+		try(
+				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(jarFilePath);
+				OutputStream outputStream = new FileOutputStream(file);
+		) {
+			int read = 0;
+			byte[] bytes = new byte[2048];
+			while((read = inputStream.read(bytes)) > 0) {
+				outputStream.write(bytes, 0, read);
+			}
+		} catch (Exception e) {
+			log.error("file not found in directory{}",
+					filePath);
+			throw new BusinessException(
+					CrBusinessErrorCode.NOT_PATH);
+		}
+		return filePath;
 	}
 
 	private List<DashboardUser> buildDashboardUser(CrRole role, Map<String, UserInfo> userInfoMap) {

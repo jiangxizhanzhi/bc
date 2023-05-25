@@ -35,9 +35,9 @@ public class DashboardGroup implements Serializable {
 		this.id = role;
 	}
 
-	public DashboardGroup(String role, Integer roleCode) {
+	public DashboardGroup(String role, Integer roleCode, String avatar) {
 		this.role = role;
-		this.avatar = "";
+		this.avatar = avatar;
 		this.groupname = role;
 		this.id = role;
 		this.roleCode = roleCode;

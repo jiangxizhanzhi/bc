@@ -69,4 +69,20 @@ public interface CrCommonConstants {
 
 	String AHP_CONSISTENCY_ID = "230ced924ec485dd37c3945b4d4c13d4";
 
+	String TEAM_GROUP_AVATAR = "/cpms/upload/images/e4abbc7f396c46958f5b599a3750645a.png";
+
+	String RED_GROUP_AVATAR = "/cpms/upload/images/1421794ca18b48c5a968cac38c1fbb34.png";
+
+	String BLUE_GROUP_AVATAR = "/cpms/upload/images/bca4dfd40ca4446e8db80311f377c3a1.png";
+
+	String WHITE_GROUP_AVATAR = "/cpms/upload/images/6df60173476149e9b26f11d84a64db1e.png";
+
+	String TEAM_GROUP_JAR_AVATAR = "teamtrain/team_group_avatar.png";
+
+	String RED_GROUP_JAR_AVATAR = "redvsblue/red_group_avatar.png";
+
+	String BLUE_GROUP_JAR_AVATAR = "redvsblue/blue_group_avatar.png";
+
+	String WHITE_GROUP_JAR_AVATAR = "redvsblue/white_group_avatar.png";
+
 }

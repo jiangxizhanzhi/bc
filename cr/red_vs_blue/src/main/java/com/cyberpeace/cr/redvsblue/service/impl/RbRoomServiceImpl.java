@@ -1,8 +1,10 @@
 package com.cyberpeace.cr.redvsblue.service.impl;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -329,9 +331,15 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		List<DashboardGroup> groups = Lists.newArrayList();
 
-		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED_GROUP.getMsg(), CrRole.RbRoleGroup.RED.getCode());
-		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE_GROUP.getMsg(), CrRole.RbRoleGroup.BLUE.getCode());
-		DashboardGroup whiteGroup = new DashboardGroup(CrRole.RbRoleGroup.WHITE_GROUP.getMsg(), CrRole.RbRoleGroup.WHITE.getCode());
+		DashboardGroup redGroup = new DashboardGroup(CrRole.RbRoleGroup.RED_GROUP.getMsg(),
+				CrRole.RbRoleGroup.RED.getCode(),
+				confirmAvatarFile(CrCommonConstants.RED_GROUP_AVATAR, CrCommonConstants.RED_GROUP_JAR_AVATAR));
+		DashboardGroup blueGroup = new DashboardGroup(CrRole.RbRoleGroup.BLUE_GROUP.getMsg(),
+				CrRole.RbRoleGroup.BLUE.getCode(),
+				confirmAvatarFile(CrCommonConstants.BLUE_GROUP_AVATAR, CrCommonConstants.BLUE_GROUP_JAR_AVATAR));
+		DashboardGroup whiteGroup = new DashboardGroup(CrRole.RbRoleGroup.WHITE_GROUP.getMsg(),
+				CrRole.RbRoleGroup.WHITE.getCode(),
+				confirmAvatarFile(CrCommonConstants.WHITE_GROUP_AVATAR, CrCommonConstants.WHITE_GROUP_JAR_AVATAR));
 
 		redGroup.setMembers(redMembers);
 		redGroup.setId(roomId + "_" + CrRole.RbRoleGroup.RED.getCode().toString());
@@ -385,6 +393,33 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		dashboardInfo.setGroup(groups);
 
 		return dashboardInfo;
+	}
+
+	private String confirmAvatarFile(String filePath, String jarFilePath) {
+		File file = new File(filePath);
+		if(file.exists()) {
+			return filePath;
+		}
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+
+		try(
+				InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(jarFilePath);
+				OutputStream outputStream = new FileOutputStream(file);
+				) {
+			int read = 0;
+			byte[] bytes = new byte[2048];
+			while((read = inputStream.read(bytes)) > 0) {
+				outputStream.write(bytes, 0, read);
+			}
+		} catch (Exception e) {
+			log.error("file not found in directory{}",
+					filePath);
+			throw new BusinessException(
+					CrBusinessErrorCode.NOT_PATH);
+		}
+		return filePath;
 	}
 
 	private String getFullRoleName(CrRole crRole) {

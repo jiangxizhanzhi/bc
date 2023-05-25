@@ -101,7 +101,7 @@
         where room_id = #{roomId}
         and (role_group like #{roleId}
         or resource_id = #{roleId}
-        <if test="roleId == '4'.toString() or roleId =='5'.toString()">
+        <if test="roleId == '7'.toString()">
             or role_group in (1,2,3)
         </if>
         )

@@ -14,15 +14,15 @@ import lombok.Data;
 public class UserTrend implements Serializable {
 
 	@ApiModelProperty(value = "岗位列表")
-	List<UserTrendRole> roles = Lists.newArrayList();
+	private List<UserTrendRole> roles = Lists.newArrayList();
+
 	@ApiModelProperty(value = "x轴日期")
 	private List<String> xDates = Lists.newArrayList();
 
 	public void addRole(String name, List<Integer> matches) {
 		UserTrendRole userTrendRole = new UserTrendRole();
 		userTrendRole.setRoleName(name);
-		CrCommonUtil.fill(matches, xDates.size(), 0);
-		userTrendRole.setYMatch(matches);
+		userTrendRole.setYMatch(CrCommonUtil.fill(matches, xDates.size(), 0));
 		this.roles.add(userTrendRole);
 	}
 }

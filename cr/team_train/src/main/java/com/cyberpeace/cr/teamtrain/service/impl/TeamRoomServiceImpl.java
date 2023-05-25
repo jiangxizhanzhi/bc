@@ -586,6 +586,12 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
 			}
 			*/
+			// 将自己的信息单独列出来
+			Optional<String> first = userIdList.stream()
+					.filter(userId -> userId.equals(currentUserId))
+					.findFirst();
+			String myUserId = first.get();
+			mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
 
 			userIds.addAll(role.getUserIdList());
 		});

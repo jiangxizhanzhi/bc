@@ -159,5 +159,7 @@ public interface CrRoleService extends IService<CrRole> {
 
 	List<TrainTaskReleaseInfoRsp> getTrainTaskReleaseInfoList(String roomId, Integer code);
 
+	List<TrainTaskReleaseInfoRsp> getTrainManual(String roomId, Integer code);
+
 	void combineRoleConst(DashboardInfo dashboardInfo);
 }

@@ -780,6 +780,21 @@ public class TeamTrainRoomController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("团队对抗-训练手册")
+	@GetMapping("/manual")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, crRole.getRoleGroup());
+		return new BaseRsp<>(res);
+	}
+
 	@ApiOperation("获取聊天框用户列表")
 	@GetMapping("/dashboard_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

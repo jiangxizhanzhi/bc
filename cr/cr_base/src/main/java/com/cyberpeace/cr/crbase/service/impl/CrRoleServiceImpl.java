@@ -467,6 +467,38 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
+	public List<TrainTaskReleaseInfoRsp> getTrainManual(String roomId, Integer code) {
+		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>();
+		// 获取该房间的角色信息
+		List<CrRoleSimple> roles = CrRole.getSimpleRoles(this.getRolesByRoomAndGroups(roomId, Collections.singletonList(code)));
+		// 获取该房间已下发的任务
+		List<CrTask> crTaskList = crTaskService.getByRoomId(roomId);
+		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
+
+		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
+
+		List<UserData> allUserInfos = this.getUserDatas(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
+
+		//按角色分组
+		for (CrRoleSimple roleSimple : roles) {
+			TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
+			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
+			//获取用户列表
+			List<UserData> userInfoList = allUserInfos.stream().filter(a->roleSimple.getUserIds()!=null
+					&&roleSimple.getUserIds().contains(a.getResourceId())).collect(Collectors.toList());
+			taskReleaseInfoRsp.setUserInfoList(userInfoList);
+			List<MissionReleaseStageInfo>  missionReleaseStageInfos = new ArrayList<>();
+			for (CrRoleMissionSchemeStage stage : roleSimple.getMissionScheme()) {
+				missionReleaseStageInfos.add(new MissionReleaseStageInfo(stage,allMissions,taskMap,userInfoList));
+			}
+			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
+			taskReleaseInfoRsp.initCount();
+			res.add(taskReleaseInfoRsp);
+		}
+		return res;
+	}
+
+	@Override
 	public void combineRoleConst(DashboardInfo dashboardInfo) {
 		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
 			DashboardRole red = new DashboardRole();

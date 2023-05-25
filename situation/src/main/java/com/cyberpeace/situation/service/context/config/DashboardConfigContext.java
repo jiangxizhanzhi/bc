@@ -20,4 +20,8 @@ public class DashboardConfigContext implements Serializable {
 	@ApiModelProperty(value = "拓扑配置")
 	private TopoConfigContext topoConfig;
 
+	@ApiModelProperty(value = "角色配置")
+	private RoleConfigContext roleConfig;
+
+
 }

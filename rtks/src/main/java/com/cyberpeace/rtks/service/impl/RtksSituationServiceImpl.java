@@ -514,6 +514,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			log.error("corresponding user can't be found by current userId [{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		List<String> roleNames = new ArrayList<>();
+		List<Integer> roleMatchs = new ArrayList<>();
 		if(userGroup.containsKey(resourceId)){
 			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(resourceId);
 			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
@@ -525,22 +527,25 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			if (roleMatchRecordContexts.size() == i) {
 				RoleMatchRecordContext top3 = roleMatchRecordContexts.get(index);
-				res.setRoleTop3Match(top3.getMatch());
-				res.setRoleNameTop3(top3.getRoleName());
+				roleMatchs.add(top3.getMatch());
+				roleNames.add(top3.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index);
 			}
 			if (roleMatchRecordContexts.size() == index) {
 				RoleMatchRecordContext top2 = roleMatchRecordContexts.get(index1);
-				res.setRoleTop2Match(top2.getMatch());
-				res.setRoleNameTop2(top2.getRoleName());
+				roleMatchs.add(top2.getMatch());
+				roleNames.add(top2.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index1);
 			}
 			if (roleMatchRecordContexts.size() == index1) {
 				RoleMatchRecordContext top1 = roleMatchRecordContexts.get(0);
-				res.setRoleTop1Match(top1.getMatch());
-				res.setRoleNameTop1(top1.getRoleName());
+				roleMatchs.add(top1.getMatch());
+				roleNames.add(top1.getRoleName());
 			}
-
+			Collections.reverse(roleNames);
+			Collections.reverse(roleMatchs);
+			res.setRoleNames(roleNames);
+			res.setRoleMatchs(roleMatchs);
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();
 			List<String> roleList = new ArrayList<>();

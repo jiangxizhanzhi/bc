@@ -9,6 +9,11 @@ import javax.validation.Valid;
 
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import org.apache.commons.lang3.StringUtils;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.CrBaseService;
+import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +72,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
+
+	@Autowired
+	private CrCommonService crCommonService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -268,6 +276,14 @@ public class RbRoomUserController {
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
 		return new BaseRsp<>(rbTaskMatrix);
+	}
+
+	@ApiModelProperty("新增标记")
+	@PostMapping("/mark")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
+		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		return new BaseRsp();
 	}
 
 }

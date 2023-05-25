@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
+import io.swagger.annotations.ApiModelProperty;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
@@ -49,6 +53,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import javax.validation.Valid;
+
 /**
  * 
  */
@@ -78,6 +84,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+	@Autowired
+	private CrCommonService crCommonService;
+
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -264,6 +273,14 @@ public class TeamTrainStudentsController {
 		StudentsTimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
 
 		return new BaseRsp(data);
+	}
+
+	@ApiModelProperty("新增标记")
+	@PostMapping("/mark")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
+		crCommonService.addMark(req, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		return new BaseRsp();
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息

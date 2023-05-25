@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
@@ -44,4 +45,12 @@ public interface CrCommonService {
 	 * @param roleConfigRb 红蓝角色配置
 	 */
 	void validateRbRoleConfig(CrRoleConfigRb roleConfigRb);
+
+	/**
+	 * 新增标记
+	 *
+	 * @param req  请求体
+	 * @param code 代码
+	 */
+	void addMark(MarkAddReq req, Integer code);
 }

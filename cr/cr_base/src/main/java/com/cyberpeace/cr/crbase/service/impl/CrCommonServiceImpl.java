@@ -1,15 +1,26 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.dao.entity.MissionTemplate;
+import com.cyberpeace.cr.crbase.dao.mapper.CrMarkMapper;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -22,13 +33,8 @@ import com.cyberpeace.cs.service.context.scene.SceneElement;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -42,6 +48,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 
 	@Autowired
 	private MissionTemplateService missionTemplateService;
+
+	@Autowired
+	private CrMarkMapper crMarkMapper;
 
 	@Override
 	public List<MonitorSession> getMonitorSessions(String localSceneId, String studentId) {
@@ -121,7 +130,8 @@ public class CrCommonServiceImpl implements CrCommonService {
 				.getMappingByIds(missionTemplateIds);
 		// 校验任务id数量和查询到的任务数量是否匹配
 		if (missionTemplateIds.size() != missionTemplateMap.size()) {
-			log.error("Mission id duplicate  or part of missions miss! missionTemplateIds = [{}]", StringUtils.join(missionTemplateIds, ","));
+			log.error("Mission id duplicate  or part of missions miss! missionTemplateIds = [{}]",
+					StringUtils.join(missionTemplateIds, ","));
 			throw new BusinessException(CrBusinessErrorCode.MISSION_LESS);
 		}
 
@@ -159,5 +169,19 @@ public class CrCommonServiceImpl implements CrCommonService {
 		// validate mission template ids
 		CrCommonValidator.checkStringListDuplicate(missionTemplateIds,
 				CrBusinessErrorCode.MISSION_LESS);
+	}
+
+	@Override
+	public void addMark(MarkAddReq req, Integer code) {
+		req.validate();
+		CrMark mark = new CrMark();
+		mark.setName(req.getName());
+		mark.setDescription(req.getDescription());
+		mark.setRoomId(req.getRoomId());
+		mark.setUserId(UserInfoContext.getUserContext().getUserId());
+		mark.setType(code);
+		mark.setEvidence(JsonUtil.arrayToString(req.getEvidence()));
+
+		crMarkMapper.insert(mark);
 	}
 }

@@ -14,6 +14,9 @@ public class EvalRecordIndexContext implements Serializable {
     @ApiModelProperty(value = "三级指标项评分类型", required = true)
     private Integer type;
 
+    @ApiModelProperty(value = "评分", required = false)
+    private Integer score;
+
     @ApiModelProperty("指标项下关联变量项")
     private List<EvalRecordVariableContext> variables;
 

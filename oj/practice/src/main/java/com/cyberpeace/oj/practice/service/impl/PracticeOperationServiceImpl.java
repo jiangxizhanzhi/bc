@@ -47,6 +47,7 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
+import com.cyberpeace.oj.practice.controller.req.OperationUpdateReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -273,6 +274,23 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// topo更新
 
 		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
+
+		// 如果删除额定字段，删除本题，改为新增
+		if(isModifySpecify(updateOperation, practiceOperation)) {
+			List<String> resourceIds = new ArrayList<String>() {{ add(updateOperation.getResourceId()); }};
+			AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+					false);
+			// 删除本题
+			batchDelete(resourceIds, authContext);
+			// 删除题解和错题集
+			delMappedSolvedAndMistake(updateOperation);
+			// 新增一道题
+			updateOperation.setResourceId(null);
+			addPracticeOperation(updateOperation, ojSceneConfig, authContext);
+
+			return null;
+		}
+
 		if(null == practiceOperation){
 			log.error("practiceOperation is null,ResourceId =[{}]", updateOperation.getResourceId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -306,21 +324,52 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
 				if(!originalBean.toString().equals(changeBean.toString())) {
-					// 删除解题记录
-					LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
-					practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, updateOperation.getResourceId());
-					practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
-
-					// 删除错题记录
-					LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
-					practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, updateOperation.getResourceId());
-					practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
+					delMappedSolvedAndMistake(updateOperation);
 				}
 			}
 		});
 
 		return null;
 
+	}
+
+	/**
+	 * 是否修改了特殊字段
+	 * @param reqOperation 请求
+	 * @param dbOperation 数据源
+	 * @return 是否修改
+	 */
+	private boolean isModifySpecify(PracticeOperation reqOperation, PracticeOperation dbOperation) {
+		if(!reqOperation.getDynamicEnv().equals(dbOperation.getDynamicEnv())) {
+			return true;
+		}
+		if(!reqOperation.getDynamicFlag().equals(dbOperation.getDynamicFlag())) {
+			return true;
+		}
+		if(reqOperation.getDynamicFlag().equals(dbOperation.getDynamicFlag()) &&
+		!reqOperation.getAnswer().equals(dbOperation.getAnswer())) {
+			return true;
+		}
+		if(!reqOperation.getAttachmentId().equals(dbOperation.getAttachmentId())) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 如果对应的几个字段被修改则删除对应的错题记录和做题记录
+	 * @param updateOperation
+	 */
+	private void delMappedSolvedAndMistake(PracticeOperation updateOperation) {
+		// 删除解题记录
+		LambdaQueryWrapper<PracticeSolved> practiceSolvedLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		practiceSolvedLambdaQueryWrapper.eq(PracticeSolved::getPracticeId, updateOperation.getResourceId());
+		practiceSolvedMapper.delete(practiceSolvedLambdaQueryWrapper);
+
+		// 删除错题记录
+		LambdaQueryWrapper<PracticeMistake> practiceMistakeLambdaQueryWrapper = new LambdaQueryWrapper<>();
+		practiceMistakeLambdaQueryWrapper.eq(PracticeMistake::getPracticeId, updateOperation.getResourceId());
+		practiceMistakeMapper.delete(practiceMistakeLambdaQueryWrapper);
 	}
 
 	@Override

@@ -295,6 +295,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			}
 			if(!crRole.isBlueStudent() && !crRole.isRedStudent()) {
 				whiteMembers.addAll(roleUserIds);
+				// 红蓝群需要把白方的人加入
+				blueMembers.addAll(roleUserIds);
+				redMembers.addAll(roleUserIds);
 			}
 
 			for (String userId : roleUserIds) {
@@ -358,10 +361,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			groups.add(redGroup);
 		}
 
-		groups.add(whiteGroup);
+		// 如果既不是红方也不是蓝方
+		if(!myRole.isRedStudent() && !myRole.isBlueStudent()) {
+			groups.add(whiteGroup);
+		}
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
-		/*
 		if (myRole.isRvbStudent()) {
 			DashboardGroup selfGroup = new DashboardGroup(
 					groups.get(0).getGroupname() + "/" + myRole.getName());
@@ -369,7 +374,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);
 		}
-		*/
+
 		// 获取全部用户
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 

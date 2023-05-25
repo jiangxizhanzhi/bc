@@ -2,6 +2,7 @@ package com.cyberpeace.rtks.controller;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
 import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.dao.entity.Role;
@@ -118,18 +120,24 @@ public class RtksSituationController {
 	@ApiOperation("岗位能力完成进度")
 	@GetMapping("/user/progress")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
-	public BaseRsp<SituationProgressBo> getProgress() {
-		SituationProgressBo res = rtksSituationService
-				.getProgress(UserInfoContext.getUserContext().getUserId());
+	public BaseRsp<SituationProgressBo> getProgress(
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+		if (StringUtils.isBlank(user_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		SituationProgressBo res = rtksSituationService.getProgress(user_id);
 		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("岗位满足度趋势")
 	@GetMapping("/user/match/trend")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
-	public BaseRsp<UserTrend> getUserTrend() {
-		UserTrend res = rtksSituationService
-				.getUserTrend(UserInfoContext.getUserContext().getUserId());
+	public BaseRsp<UserTrend> getUserTrend(
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+		if (StringUtils.isBlank(user_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		UserTrend res = rtksSituationService.getUserTrend(user_id);
 		return new BaseRsp<>(res);
 	}
 
@@ -137,10 +145,13 @@ public class RtksSituationController {
 	@GetMapping("/user/statistics")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
 	public BaseRsp<List<UserStatisticsBo>> getUserStatistics(
-			@ApiParam(value = "sort", name = "排序字段") String sort,
-			@ApiParam(value = "asc", name = "是否正序， 默认倒序") Boolean asc) {
-		List<UserStatisticsBo> res = rtksStatisticService
-				.getUserStatistics(UserInfoContext.getUserContext().getUserId(), sort, asc);
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id,
+			@ApiParam(name = "sort", value = "排序字段") String sort,
+			@ApiParam(name = "asc", value = "是否正序， 默认倒序") Boolean asc) {
+		if (StringUtils.isBlank(user_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<UserStatisticsBo> res = rtksStatisticService.getUserStatistics(user_id, sort, asc);
 		return new BaseRsp<>(res);
 	}
 

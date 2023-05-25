@@ -683,7 +683,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		knowledgeProgressBo.setLt60((int) (knowledgeProgressBo.getTotal() - ge60));
 		knowledgeProgressBo.setGe90((int) ge90);
 		knowledgeProgressBo.setGe80((int) (ge80 - ge90));
-		knowledgeProgressBo.setGe60((int) (ge60 - ge80 - ge90));
+		knowledgeProgressBo.setGe60((int) (ge60 - ge80));
 
 		// attack progress
 		SkillProgressBo attackProgress = attackService.getAttackProgress(userId);

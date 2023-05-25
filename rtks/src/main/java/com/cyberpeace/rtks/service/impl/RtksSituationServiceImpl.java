@@ -3,22 +3,6 @@ package com.cyberpeace.rtks.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.integratation.model.UserPageContext;
-import com.cyberpeace.integratation.service.RemoteOrganizationService;
-import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
-import com.cyberpeace.rtks.controller.res.*;
-import com.cyberpeace.rtks.dao.entity.Role;
-import com.cyberpeace.rtks.dao.mapper.RoleMapper;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,16 +11,34 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.cache.RtksMatch;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.integratation.model.UserPageContext;
+import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.rtks.constant.RtksCommonConstants;
+import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
+import com.cyberpeace.rtks.controller.res.*;
+import com.cyberpeace.rtks.dao.entity.DailyMatchLog;
+import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.SituationLog;
-import com.cyberpeace.rtks.dao.mapper.RtksRoleMatchRecordMapper;
-import com.cyberpeace.rtks.dao.mapper.RtksSituationMapper;
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
+import com.cyberpeace.rtks.dao.mapper.*;
+import com.cyberpeace.rtks.service.AttackService;
+import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.RtksSituationService;
 import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.situation.*;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -58,13 +60,25 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	private RtksStatisticService rtksStatisticService;
 
 	@Autowired
+	private KnowledgeMapper knowledgeMapper;
+
+	@Autowired
 	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
 
 	@Autowired
 	private RoleMapper roleMapper;
 
 	@Autowired
+	private AttackService attackService;
+
+	@Autowired
+	private EngageService engageService;
+
+	@Autowired
 	private RemoteOrganizationService remoteOrganizationService;
+
+	@Autowired
+	private DailyMatchLogMapper dailyMatchLogMapper;
 
 	@Override
 	public RtksSituationRankings getRankings() {
@@ -313,8 +327,8 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		return result;
 	}
 
-    @Override
-    public List<TalentReleaseRes> getTalentReleaseRanking() {
+	@Override
+	public List<TalentReleaseRes> getTalentReleaseRanking() {
 		// 获取所有岗位 并按创建时间排序
 		List<Role> roles = roleMapper.selectList(null);
 		roles.sort(Comparator.comparing(Role::getCreateTime).reversed());
@@ -327,24 +341,25 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		// TODO 用户删除处理逻辑
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		Map<String, List<RoleMatchRecordContext>> matchGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getRoleId);
+		Map<String, List<RoleMatchRecordContext>> matchGroup = StreamApiUtils
+				.groupBy(recordContextList, RoleMatchRecordContext::getRoleId);
 
 		roles.forEach(role -> {
 			TalentReleaseRes talentReleaseRes = new TalentReleaseRes();
 			talentReleaseRes.setAppName(role.getName());
 			String roleId = role.getResourceId();
-			if(matchGroup.containsKey(roleId)){
+			if (matchGroup.containsKey(roleId)) {
 				// 设置匹配度等级初始值
 				int excellent = 0;
 				int qualified = 0;
 				int other = 0;
 				List<RoleMatchRecordContext> roleMatchRecordContexts = matchGroup.get(roleId);
-				for(RoleMatchRecordContext tmp:roleMatchRecordContexts){
+				for (RoleMatchRecordContext tmp : roleMatchRecordContexts) {
 					Integer match = tmp.getMatch();
-					if ( match >= RtksCommonConstants.EXCELLENT_MATCH) {
+					if (match >= RtksCommonConstants.EXCELLENT_MATCH) {
 						excellent += 1;
 
-					} else if (match>= RtksCommonConstants.QUALIFIED_MATCH) {
+					} else if (match >= RtksCommonConstants.QUALIFIED_MATCH) {
 						qualified += 1;
 					} else {
 						other += 1;
@@ -359,36 +374,38 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		});
 
 		return res;
-    }
+	}
 
 	@Override
 	public List<TalentReleasePersonRankingRes> getTalentPersonRanking() {
 		List<TalentReleasePersonRankingRes> res = new ArrayList<>();
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		if(recordContextList.isEmpty()){
+		if (recordContextList.isEmpty()) {
 			return res;
 		}
-		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils
+				.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
 		// get existing users
 		List<String> userIds = recordContextList.stream().map(RoleMatchRecordContext::getUserId)
 				.distinct().collect(Collectors.toList());
 
 		List<UserInfo> users = remoteUserService.getByIdList(userIds);
-		Map<String, String> userMap = StreamApiUtils.toMap(users, UserInfo::getUserId, UserInfo::getName);
-		for(Map.Entry<String, List<RoleMatchRecordContext>> entry : userGroup.entrySet()){
+		Map<String, String> userMap = StreamApiUtils.toMap(users, UserInfo::getUserId,
+				UserInfo::getName);
+		for (Map.Entry<String, List<RoleMatchRecordContext>> entry : userGroup.entrySet()) {
 			TalentReleasePersonRankingRes personReleaseRes = new TalentReleasePersonRankingRes();
 			String key = entry.getKey();
 			String username = userMap.get(key);
 			List<String> jobs = new ArrayList<>();
 			List<RoleMatchRecordContext> value = entry.getValue();
 
-			if(null == username){
+			if (null == username) {
 				continue;
 			}
 			value.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
 
-			for(RoleMatchRecordContext val:value){
+			for (RoleMatchRecordContext val : value) {
 				if (val.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
 					personReleaseRes.addExcellent();
 					personReleaseRes.addMatchSum(val.getMatch());
@@ -400,22 +417,22 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			personReleaseRes.setUserName(username);
 			int i = 3;
-			if(value.size() > i){
+			if (value.size() > i) {
 				value = value.subList(0, i);
 			}
-			if(value.size() == i){
+			if (value.size() == i) {
 				RoleMatchRecordContext top3 = value.get(2);
 				jobs.add(top3.getRoleName());
 				personReleaseRes.setMatchThree(top3.getMatch());
-				value = value.subList(0,2);
+				value = value.subList(0, 2);
 			}
-			if(value.size() == 2){
+			if (value.size() == 2) {
 				RoleMatchRecordContext top2 = value.get(1);
 				personReleaseRes.setMatchTwo(top2.getMatch());
-				value = value.subList(0,1);
+				value = value.subList(0, 1);
 				jobs.add(top2.getRoleName());
 			}
-			if(value.size() == 1){
+			if (value.size() == 1) {
 				RoleMatchRecordContext top1 = value.get(0);
 				personReleaseRes.setMatchOne(top1.getMatch());
 				jobs.add(top1.getRoleName());
@@ -425,9 +442,10 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			res.add(personReleaseRes);
 		}
 		// TODO 多个字段排序待修改
-		res.sort(Comparator.comparing(TalentReleasePersonRankingRes::getExcellent).reversed().thenComparing(TalentReleasePersonRankingRes::getQualified).reversed()
+		res.sort(Comparator.comparing(TalentReleasePersonRankingRes::getExcellent).reversed()
+				.thenComparing(TalentReleasePersonRankingRes::getQualified).reversed()
 				.thenComparing(TalentReleasePersonRankingRes::getExcellentMatchSum).reversed());
-		if(res.size() > 5){
+		if (res.size() > 5) {
 			res = res.subList(0, 5);
 		}
 		return res;
@@ -476,7 +494,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		res.sort(new MultiRoleDerivativeComparator());
 		// 取前5名用户
 		int i = 5;
-		if(res.size() > i){
+		if (res.size() > i) {
 			res = res.subList(0, i);
 		}
 		return res;
@@ -487,35 +505,37 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		TalentUserReleaseRes res = new TalentUserReleaseRes();
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		Map<String, List<RoleMatchRecordContext>> userGroup = StreamApiUtils
+				.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
 		String userId = UserInfoContext.getUserContext().getUserId();
 		UserInfo userInfo = remoteUserService.getById(resourceId);
-		if(null == userInfo){
+		if (null == userInfo) {
 			log.error("corresponding user can't be found by current userId [{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		if(userGroup.containsKey(userId)){
+		if (userGroup.containsKey(userId)) {
 			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(userId);
-			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
+			roleMatchRecordContexts
+					.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
 			int i = 3;
 			int index = 2;
 			int index1 = 1;
-			if(roleMatchRecordContexts.size() > i){
+			if (roleMatchRecordContexts.size() > i) {
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, i);
 			}
-			if(roleMatchRecordContexts.size() == i){
+			if (roleMatchRecordContexts.size() == i) {
 				RoleMatchRecordContext top3 = roleMatchRecordContexts.get(index);
 				res.setRoleTop3Match(top3.getMatch());
 				res.setRoleNameTop3(top3.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index);
 			}
-			if(roleMatchRecordContexts.size() == index){
+			if (roleMatchRecordContexts.size() == index) {
 				RoleMatchRecordContext top2 = roleMatchRecordContexts.get(index1);
 				res.setRoleTop2Match(top2.getMatch());
 				res.setRoleNameTop2(top2.getRoleName());
 				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index1);
 			}
-			if(roleMatchRecordContexts.size() == index1){
+			if (roleMatchRecordContexts.size() == index1) {
 				RoleMatchRecordContext top1 = roleMatchRecordContexts.get(0);
 				res.setRoleTop1Match(top1.getMatch());
 				res.setRoleNameTop1(top1.getRoleName());
@@ -524,7 +544,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();
 			List<String> roleList = new ArrayList<>();
-			for(JSONObject role:roles){
+			for (JSONObject role : roles) {
 				String roleName = role.get("name").toString();
 				roleList.add(roleName);
 			}
@@ -534,53 +554,107 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 	}
 
 	@Override
+	public UserTrend getUserTrend(String userId) {
+		UserTrend trend = new UserTrend();
+		// 获取当前用户所有匹配度日度记录, 插入时间正序
+		List<DailyMatchLog> logList = dailyMatchLogMapper.selectByUserId(userId);
+		if (logList.isEmpty()) {
+			return trend;
+		}
+		Map<String, List<DailyMatchLog>> roleMap = StreamApiUtils.groupBy(logList,
+				DailyMatchLog::getRoleId);
+		// get roles
+		List<Role> roleList = roleMapper.selectBatchIds(roleMap.keySet());
+		if (roleList.isEmpty()) {
+			return trend;
+		}
+		// earliest date
+		int length = logList.size();
+		Date start = logList.get(0).getCreateTime();
+		Date end = logList.get(length - 1).getCreateTime();
+
+		Date date = start;
+		Map<String, List<Integer>> roleMatchMap = Maps.newHashMap();
+		int index = 0;
+		while (date.before(TimeUtil.getEndOfDay(end))) {
+			trend.getXDates().add(TimeUtil.format6(date));
+			while (index < length) {
+				DailyMatchLog matchLog = logList.get(index);
+				if (!roleMatchMap.containsKey(matchLog.getRoleId())) {
+					roleMatchMap.put(matchLog.getRoleId(), Lists.newArrayList());
+				}
+				if (TimeUtil.sameDay(matchLog.getCreateTime(), date)) {
+					roleMatchMap.get(matchLog.getRoleId()).add(matchLog.getMatch());
+					index++;
+				} else {
+					break;
+				}
+			}
+			date = TimeUtil.addDates(date, 1);
+		}
+
+		for (Role role : roleList) {
+			trend.addRole(role.getName(), roleMatchMap.get(role.getResourceId()));
+		}
+
+		return trend;
+	}
+
+	@Override
 	public ListRsp<TalentUserRoleInfoRes> getTalentUserRanking(TalentStatistuicReq req) {
 		List<TalentUserRoleInfoRes> res = new ArrayList<>();
 		String orgId = req.getOrgId();
 		String roleId = req.getRoleId();
 		String userName = req.getUserName();
-		if(StringUtils.isEmpty(req.getSort())){
+		if (StringUtils.isEmpty(req.getSort())) {
 			req.setSort("ranking");
 		}
 		Map<String, UserInfo> allUsers = remoteUserService.allUsers();
 		List<RoleMatchRecordContext> recordContextList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
-		if(StringUtils.isNotBlank(orgId)){
+		if (StringUtils.isNotBlank(orgId)) {
 			JSONObject userJsons = remoteUserService.getList(null, 0L, null, orgId);
 			List<UserInfo> users = userJsons.getJSONArray("list").toJavaList(UserInfo.class);
 			List<String> userIds = StreamApiUtils.getColumn(users, UserInfo::getUserId);
-			recordContextList = recordContextList.stream().filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
+			recordContextList = recordContextList.stream()
+					.filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
 		}
-		if(StringUtils.isNotBlank(roleId)){
+		if (StringUtils.isNotBlank(roleId)) {
 			Role role = roleMapper.selectById(roleId);
-			recordContextList = recordContextList.stream().filter(tmp -> role.getResourceId().equals(tmp.getRoleId())).collect(Collectors.toList());
+			recordContextList = recordContextList.stream()
+					.filter(tmp -> role.getResourceId().equals(tmp.getRoleId()))
+					.collect(Collectors.toList());
 		}
-		if(StringUtils.isNotBlank(userName)){
-			UserPageContext pageContext = UserPageContext.builder()
-					.username(userName).build();
-			List<UserInfo> fuzzyQueryUserList = remoteUserService.getFuzzyQueryUserList(pageContext);
-			List<String> userIds = StreamApiUtils.getColumn(fuzzyQueryUserList, UserInfo::getUserId);
-			recordContextList = recordContextList.stream().filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
+		if (StringUtils.isNotBlank(userName)) {
+			UserPageContext pageContext = UserPageContext.builder().username(userName).build();
+			List<UserInfo> fuzzyQueryUserList = remoteUserService
+					.getFuzzyQueryUserList(pageContext);
+			List<String> userIds = StreamApiUtils.getColumn(fuzzyQueryUserList,
+					UserInfo::getUserId);
+			recordContextList = recordContextList.stream()
+					.filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
 		}
-//		if(recordContextList.isEmpty()){
-//			return new ListRsp<>();
-//		}
-		Map<String, List<RoleMatchRecordContext>> userRoles = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
+		// if(recordContextList.isEmpty()){
+		// return new ListRsp<>();
+		// }
+		Map<String, List<RoleMatchRecordContext>> userRoles = StreamApiUtils
+				.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
 		int index = 1;
-		for(Map.Entry<String, List<RoleMatchRecordContext>> entry : userRoles.entrySet()){
+		for (Map.Entry<String, List<RoleMatchRecordContext>> entry : userRoles.entrySet()) {
 			String userId = entry.getKey();
 			List<RoleMatchRecordContext> roleMatchInfo = entry.getValue();
 			UserInfo userInfo = allUsers.get(userId);
-			if(null == userInfo){
+			if (null == userInfo) {
 				continue;
 			}
 			String name = userInfo.getName();
-			if(null == name){
+			if (null == name) {
 				continue;
 			}
 			TalentUserRoleInfoRes current = new TalentUserRoleInfoRes();
 			BeanUtils.copyProperties(userInfo, current);
-			List<String> roleNames = StreamApiUtils.getColumn(roleMatchInfo, RoleMatchRecordContext::getRoleName);
+			List<String> roleNames = StreamApiUtils.getColumn(roleMatchInfo,
+					RoleMatchRecordContext::getRoleName);
 			String roleNameStr = String.join(",", roleNames);
 			current.setRoleStr(roleNameStr);
 			current.setRanking(index);
@@ -590,8 +664,42 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 		res.sort(new TalentUserRoleInfoComparator(req.getSort()));
 		IPage<TalentUserRoleInfoRes> dataPage = new Page<>(req.getPage(), req.getPerPage(),
 				res.size());
-		dataPage.setRecords(ListUtil.pageList(res, req.getPage(), req.getPerPage(), (int) dataPage.getTotal()));
+		dataPage.setRecords(
+				ListUtil.pageList(res, req.getPage(), req.getPerPage(), (int) dataPage.getTotal()));
 		return PageUtil.getListResult(dataPage);
+	}
+
+	@Override
+	public SituationProgressBo getProgress(String userId) {
+		// knowledge progress
+		KnowledgeProgressBo knowledgeProgressBo = new KnowledgeProgressBo();
+		List<SkillAndKnowledgeBase> allKnowledgeList = knowledgeMapper.selectAll();
+		List<Integer> knowledgeProgressList = Lists.newArrayList();
+		// calculate
+		for (SkillAndKnowledgeBase knowledge : allKnowledgeList) {
+			knowledgeProgressList.add(rtksStatisticService.getKnowledgeProgress(knowledge, userId));
+		}
+		// count
+		knowledgeProgressBo.setTotal(allKnowledgeList.size());
+		long ge60 = knowledgeProgressList.stream().filter(p -> p >= 60).count();
+		long ge80 = knowledgeProgressList.stream().filter(p -> p >= 80).count();
+		long ge90 = knowledgeProgressList.stream().filter(p -> p >= 90).count();
+		knowledgeProgressBo.setLt60((int) (knowledgeProgressBo.getTotal() - ge60));
+		knowledgeProgressBo.setGe90((int) ge90);
+		knowledgeProgressBo.setGe80((int) (ge80 - ge90));
+		knowledgeProgressBo.setGe60((int) (ge60 - ge80 - ge90));
+
+		// attack progress
+		SkillProgressBo attackProgress = attackService.getAttackProgress(userId);
+		// engage progress
+		SkillProgressBo engageProgress = engageService.getEngageProgress(userId);
+
+		SituationProgressBo progressBo = new SituationProgressBo();
+		progressBo.setAttack(attackProgress);
+		progressBo.setEngage(engageProgress);
+		progressBo.setKnowledge(knowledgeProgressBo);
+
+		return progressBo;
 	}
 
 	@Override
@@ -708,7 +816,6 @@ class MultiRoleDerivativeComparator implements Comparator<TalentReleaseRankingRe
 	}
 }
 
-
 class TalentUserRoleInfoComparator implements Comparator<TalentUserRoleInfoRes> {
 
 	private final String asc;
@@ -721,7 +828,7 @@ class TalentUserRoleInfoComparator implements Comparator<TalentUserRoleInfoRes> 
 	public int compare(TalentUserRoleInfoRes o1, TalentUserRoleInfoRes o2) {
 		if ("ranking".equals(asc)) {
 			return Long.compare(o1.getRanking(), o2.getRanking());
-		} else if("-ranking".equals(asc)) {
+		} else if ("-ranking".equals(asc)) {
 			return Long.compare(o2.getRanking(), o1.getRanking());
 		} else {
 			throw new BusinessException(CrBusinessErrorCode.SORT_FIELD_ERROR);

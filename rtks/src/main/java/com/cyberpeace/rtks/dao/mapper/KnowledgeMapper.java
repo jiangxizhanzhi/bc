@@ -12,6 +12,7 @@ import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
 import com.cyberpeace.rtks.controller.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
 
 @Mapper
 @Repository
@@ -24,4 +25,6 @@ public interface KnowledgeMapper extends BaseMapper<Knowledge> {
 	KnowledgeRes getKnowledgeByResourceId(String id);
 
 	List<CourseRelatedRes> getKnowledgeByCourseId(List<String> ids);
+
+	List<SkillAndKnowledgeBase> selectAll();
 }

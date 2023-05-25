@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.utils;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -95,5 +96,52 @@ public class CrCommonUtil {
 				i++;
 			}
 		}
+	}
+
+	/**
+	 * c1是否包含c2的所有元素
+	 *
+	 * @param c1 c1
+	 * @param c2 c2
+	 * @return boolean
+	 */
+	public static <T> boolean contain(Collection<T> c1, Collection<T> c2) {
+		for (T t : c2) {
+			if (!c1.contains(t)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 将列表从前方填充到指定长度
+	 *
+	 * @param raw    原始列表
+	 * @param length 指定长度
+	 * @param e      指定填0元素
+	 * @param <E>    元素类型
+	 * @return
+	 */
+	public static <E> List<E> fill(List<E> raw, Integer length, E e) {
+		if (raw == null) {
+			raw = org.apache.commons.compress.utils.Lists.newArrayList();
+		}
+		// 原始列表元素个数不足
+		if (raw.size() < length) {
+			List<E> out = org.apache.commons.compress.utils.Lists.newArrayList();
+			for (int i = 0; i < length - raw.size(); i++) {
+				// 填充指定元素
+				out.add(e);
+			}
+			// 填充完之后，将原始列表整体加入
+			out.addAll(raw);
+			return out;
+		}
+		// 原始列表长度超过指定长度
+		if (raw.size() > length) {
+			return raw.subList(raw.size() - length, raw.size());
+		}
+		return raw;
 	}
 }

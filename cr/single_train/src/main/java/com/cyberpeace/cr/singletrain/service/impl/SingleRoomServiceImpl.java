@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.constant.TrainI18n;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
@@ -154,7 +154,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId,
 							room.getResourceId(), userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+							Lists.newArrayList());
 				}
 			});
 		} catch (Exception e) {

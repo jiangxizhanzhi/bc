@@ -22,10 +22,9 @@ import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.dao.entity.*;
 import com.cyberpeace.rtks.dao.mapper.*;
-import com.cyberpeace.rtks.service.RtksStatisticService;
-import com.cyberpeace.rtks.service.SkillService;
-import com.cyberpeace.rtks.service.TreeService;
+import com.cyberpeace.rtks.service.*;
 import com.cyberpeace.rtks.service.bo.*;
+import com.cyberpeace.rtks.service.bo.situation.UserStatisticsBo;
 import com.cyberpeace.rtks.service.bo.skill.*;
 import com.cyberpeace.rtks.util.WeightedCalculation;
 import com.google.common.collect.Lists;
@@ -72,6 +71,21 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 
 	@Autowired
 	private SkillTrainingMapper skillTrainingMapper;
+
+	@Autowired
+	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
+
+	@Autowired
+	private LevelService levelService;
+
+	@Autowired
+	private KnowledgeService knowledgeService;
+
+	@Autowired
+	private CourseNameService courseNameService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@Override
 	public Integer roleMatchPercent(String roleId, String userId) {
@@ -121,6 +135,80 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public List<UserStatisticsBo> getUserStatistics(String userId, String sort, Boolean asc) {
+		List<UserStatisticsBo> res = org.apache.commons.compress.utils.Lists.newArrayList();
+		// 获取当前用户所有参与过的岗位
+		List<String> roleIds = rtksRoleMatchRecordMapper.selectRoleIdsByUserId(userId);
+		List<Role> roles = roleMapper.selectBatchIds(roleIds);
+		if (roles.isEmpty()) {
+			return res;
+		}
+		// search skills missions
+		Map<String, RoleSkillRes> mapping = roleService.mapRoleSkillCount(roleIds);
+
+		// 按岗位计算各项统计
+		for (Role role : roles) {
+			UserStatisticsBo bo = new UserStatisticsBo();
+			bo.setRoleName(role.getName());
+			bo.setRolePath(levelService.getFullPathById(role.getLevelId()));
+			// course count
+			List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
+					String.class);
+			List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+			List<String> existingCourseIds = courseNameService.filterId(courseIds);
+			bo.setCourseCount(existingCourseIds.size());
+			// mission count
+			RoleSkillRes roleSkillRes = mapping.get(role.getResourceId());
+			if (roleSkillRes != null) {
+				bo.setMissionCount(roleSkillRes.getMissionCount());
+			} else {
+				bo.setMissionCount(0);
+			}
+			// course progress
+			Integer knowledgeScore = calculateKnowledgeScore(role.getResourceId(), userId);
+			bo.setCourseProgress(knowledgeScore);
+			// 2、计算技能得分
+			Integer skillScore = calculateSkillScore(role.getResourceId(), userId);
+			bo.setMissionProgress(skillScore);
+			// 3、技能得分和知识点得分加权平均
+			Integer knowledgeWeight = role.getKnowledgeWeight();
+			Integer result = floor(
+					(knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight)));
+			bo.setMatch(result);
+			// ranking,
+			if (result < 100) {
+				// 计算 rtks_role_match_record中有几个人在同岗位的分数超过当前用户
+				Integer gt = rtksRoleMatchRecordMapper.countRanking(role.getResourceId(), userId,
+						result);
+				bo.setRanking(gt + 1);
+			} else {
+				bo.setRanking(1);
+			}
+
+			res.add(bo);
+		}
+		// sort
+		if ("course_count".equals(sort)) {
+			res.sort(Comparator.comparing(UserStatisticsBo::getCourseCount));
+		} else if ("course_progress".equals(sort)) {
+			res.sort(Comparator.comparing(UserStatisticsBo::getCourseProgress));
+		} else if ("mission_count".equals(sort)) {
+			res.sort(Comparator.comparing(UserStatisticsBo::getMissionCount));
+		} else if ("mission_progress".equals(sort)) {
+			res.sort(Comparator.comparing(UserStatisticsBo::getMissionProgress));
+		} else if ("ranking".equals(sort)) {
+			res.sort(Comparator.comparing(UserStatisticsBo::getRanking));
+		} else {
+			res.sort(Comparator.comparing(UserStatisticsBo::getMatch));
+		}
+		if (!Boolean.TRUE.equals(asc)) {
+			// 指定倒序或默认倒序
+			Collections.reverse(res);
+		}
+		return res;
 	}
 
 	@Override
@@ -377,6 +465,12 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		return result;
 	}
 
+	@Override
+	public Integer getKnowledgeProgress(SkillAndKnowledgeBase knowledge, String userId) {
+		ValueDataBo bo = calculateKnowledgeScore(knowledge, userId, true);
+		return MathUtils.round(bo.getProcess());
+	}
+
 	/**
 	 * 将 trainingRaw 训练数据 和  missionContext 任务数据组装成前端展示的内容 trainingBo
 	 * @param trainingMap 
@@ -549,7 +643,6 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		// 4、返回向上取整的分数
 		return MathUtils.ceil(calculation.solve());
 	}
-
 
 	/**
 	 * 计算角色对应的知识点得分

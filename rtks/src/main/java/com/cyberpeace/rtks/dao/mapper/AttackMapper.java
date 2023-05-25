@@ -34,4 +34,6 @@ public interface AttackMapper {
 	List<BusinessTemplateSimple> getRelatedTemplates(@Param("resourceId") String resourceId);
 
 	void clearRel(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	Integer countAll();
 }

@@ -72,5 +72,13 @@
         from rtks_engage_train_relation for
         update
     </select>
+    <select id="getAllRel" resultType="com.cyberpeace.rtks.dao.entity.EngageTrainRelation">
+        select *
+        from rtks_engage_train_relation
+    </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(id)
+        from rtks_engage
+    </select>
 
 </mapper>

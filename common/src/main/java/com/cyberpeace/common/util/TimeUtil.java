@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 public class TimeUtil {
 
@@ -509,5 +510,16 @@ public class TimeUtil {
         SimpleDateFormat sd = new SimpleDateFormat("dd");
         return sd.format(new Date()).toString();
     }
+
+	/**
+	 * 判断两个date是不是属于同一天
+	 *
+	 * @param d1 d1
+	 * @param d2 d2
+	 * @return {@code Boolean}
+	 */
+	public static Boolean sameDay(Date d1, Date d2) {
+		return DateUtils.isSameDay(d1, d2);
+	}
 
 }

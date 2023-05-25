@@ -1,14 +1,21 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.google.common.collect.Lists;
 
 @Service
 public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, TrainRecord> implements TrainRecordService {
@@ -33,6 +40,24 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 		trainRecord.setUserId(userId);
 		trainRecord.setBusinessType(businessType);
 		trainRecord.setStartTime(new Date());
+
+		save(trainRecord);
+	}
+
+	@Override
+	public void saveRecord(String name, String btId, String roomId, String userId,
+			Integer businessType, List<String> traineeIds) {
+		TrainRecord trainRecord = new TrainRecord();
+		trainRecord.setBusinessTemplateId(btId);
+		trainRecord.setRoomId(roomId);
+		trainRecord.setRoomName(name);
+		trainRecord.setUserId(userId);
+		trainRecord.setBusinessType(businessType);
+		trainRecord.setStartTime(new Date());
+		if (businessType.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())) {
+			traineeIds.add(userId);
+		}
+		trainRecord.setTrainee(JsonUtil.arrayToString(traineeIds));
 
 		save(trainRecord);
 	}
@@ -72,6 +97,23 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 	@Override
 	public TrainRecord getByRoomId(String roomId) {
 		return trainRecordMapper.getByRoomId(roomId);
+	}
+
+	@Override
+	public List<TrainRecord> getEndedByBtIdsAndUserId(List<String> btIds, String userId) {
+		if (CollectionUtils.isEmpty(btIds)) {
+			return Lists.newArrayList();
+		}
+		return trainRecordMapper.selectEndedByBtIdsAndUserId(btIds, userId);
+	}
+
+	@Override
+	public Set<String> getFinishedBtIds(List<String> btIds, String userId) {
+
+		// 该用户所有已结束的训练
+		List<TrainRecord> recordList = getEndedByBtIdsAndUserId(btIds, userId);
+		return recordList.stream().map(TrainRecord::getBusinessTemplateId)
+				.collect(Collectors.toSet());
 	}
 
 }

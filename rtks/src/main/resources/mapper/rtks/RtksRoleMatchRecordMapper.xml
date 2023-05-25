@@ -34,4 +34,16 @@
         order by id
         limit 1
     </select>
+    <select id="selectRoleIdsByUserId" resultType="java.lang.String">
+        select role_id
+        from rtks_role_match_record
+        where user_id = #{userId}
+    </select>
+    <select id="countRanking" resultType="java.lang.Integer">
+        select count(id)
+        from rtks_role_match_record
+        where role_id = #{roleId}
+          and user_id != #{userId}
+          and `match` > #{match}
+    </select>
 </mapper>

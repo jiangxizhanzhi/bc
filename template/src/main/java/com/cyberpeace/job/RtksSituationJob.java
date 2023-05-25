@@ -12,9 +12,13 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.rtks.dao.mapper.RtksRoleMatchRecordMapper;
 import com.cyberpeace.rtks.dao.mapper.UserRoleMapper;
+import com.cyberpeace.rtks.service.RtksDailyMatchLogService;
 import com.cyberpeace.rtks.service.RtksSituationService;
+import com.cyberpeace.rtks.service.RtksStatisticService;
 import com.cyberpeace.rtks.service.bo.UserRoleContext;
+import com.cyberpeace.rtks.service.bo.situation.RoleMatchRecordContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +34,15 @@ public class RtksSituationJob {
 
 	@Autowired
 	private RtksSituationService rtksSituationService;
+
+	@Autowired
+	private RtksRoleMatchRecordMapper rtksRoleMatchRecordMapper;
+
+	@Autowired
+	private RtksStatisticService rtksStatisticService;
+
+	@Autowired
+	private RtksDailyMatchLogService rtksDailyMatchLogService;
 
 	@Scheduled(fixedRate = 1000 * 300)
 	public void calculate() {
@@ -62,6 +75,31 @@ public class RtksSituationJob {
 		}
 		UserInfoContext.removeUserContext();
 		log.info("rtks situation job ends");
+	}
+
+	/**
+	 * 每天23时记录一次匹配度
+	 * 所有人参与过的所有岗位
+	 */
+	@Scheduled(cron = "0 0 23 * * ?")
+	public void logDaily() {
+		log.info("start rtks match daily log job");
+		// 获取所有人曾经选择过的岗位
+		List<RoleMatchRecordContext> recordList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
+		for (RoleMatchRecordContext context : recordList) {
+			try {
+				Integer match = rtksStatisticService.roleMatchPercent(context.getRoleId(),
+						context.getUserId());
+				rtksDailyMatchLogService.log(context.getUserId(), context.getRoleId(), match);
+			} catch (Exception e) {
+				log.error(String.format(
+						"rtks situation daily log job failed with userId:[%s], roleId: [%s]",
+						context.getUserId(), context.getRoleId()), e);
+			}
+		}
+		UserInfoContext.removeUserContext();
+		log.info("rtks situation daily log job ends");
 	}
 
 }

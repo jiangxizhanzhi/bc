@@ -5,10 +5,7 @@ import java.util.List;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
 import com.cyberpeace.rtks.controller.res.*;
-import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
-import com.cyberpeace.rtks.service.bo.situation.NewsBo;
-import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
-import com.cyberpeace.rtks.service.bo.situation.SituationTrendBo;
+import com.cyberpeace.rtks.service.bo.situation.*;
 
 public interface RtksSituationService {
 
@@ -66,5 +63,21 @@ public interface RtksSituationService {
 
 	ListRsp<TalentUserRoleInfoRes> getTalentUserRanking(TalentStatistuicReq req);
 
+	/**
+	 * 获取进度
+	 *
+	 * @return {@code SituationProgressBo}
+	 * @param userId
+	 */
+	SituationProgressBo getProgress(String userId);
+
 	TalentUserReleaseRes getTalentUserRoleInfos(String resourceId);
+
+	/**
+	 * 获取用户趋势
+	 *
+	 * @param userId 用户id
+	 * @return {@code UserTrend}
+	 */
+	UserTrend getUserTrend(String userId);
 }

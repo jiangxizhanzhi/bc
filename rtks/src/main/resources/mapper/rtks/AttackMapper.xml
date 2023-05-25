@@ -68,4 +68,8 @@
         from rtks_attack_train_relation
         where attack_id = #{resourceId}
     </select>
+    <select id="countAll" resultType="java.lang.Integer">
+        select count(id)
+        from rtks_attack
+    </select>
 </mapper>

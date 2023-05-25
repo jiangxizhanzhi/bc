@@ -35,6 +35,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -114,6 +115,9 @@ public class RbRoomController {
 
 	@Autowired
 	private RbRoomMapper rbRoomMapper;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -410,6 +414,7 @@ public class RbRoomController {
 				rbSceneService.stopScene(roomId);
 				crRoleService.clearRoomRoles(roomId);
 				rbRoomService.removeById(roomId);
+				trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 			}
 		});
 

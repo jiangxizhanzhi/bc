@@ -3,10 +3,12 @@ package com.cyberpeace.rtks.service;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.rtks.dao.entity.SkillAndKnowledgeBase;
 import com.cyberpeace.rtks.service.bo.KnowledgeStudyPercentBo;
 import com.cyberpeace.rtks.service.bo.RoleStudyBo;
 import com.cyberpeace.rtks.service.bo.RtksRadarBo;
 import com.cyberpeace.rtks.service.bo.StudyRecordBo;
+import com.cyberpeace.rtks.service.bo.situation.UserStatisticsBo;
 import com.cyberpeace.rtks.service.bo.skill.MissionPathBo;
 import com.cyberpeace.rtks.service.bo.skill.SkillTrainingRecordBo;
 
@@ -75,4 +77,23 @@ public interface RtksStatisticService {
 	 */
 	SkillTrainingRecordBo calculateTrainingRecord(String userId, String roleId, Date toDate1,
 			Date toDate11);
+
+	/**
+	 * 获取知识完成度
+	 *
+	 * @param knowledge 知识id
+	 * @param userId      用户id
+	 * @return {@code Integer}
+	 */
+	Integer getKnowledgeProgress(SkillAndKnowledgeBase knowledge, String userId);
+
+	/**
+	 * 获取用户统计数据
+	 *
+	 * @param userId 用户id
+	 * @param sort 排序字段
+	 * @param asc 正序？
+	 * @return {@code UserTrend}
+	 */
+	List<UserStatisticsBo> getUserStatistics(String userId, String sort, Boolean asc);
 }

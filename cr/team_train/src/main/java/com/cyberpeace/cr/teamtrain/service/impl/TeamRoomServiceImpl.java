@@ -303,9 +303,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public Integer changeTrainingStatus(String roomId) {
 		TeamRoom teamRoom = getById(roomId);
-
+		// get student ids
+		List<String> studentIds = Lists.newArrayList();
 		if (teamRoom.isUnopened()) {
 			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.OPENING.getCode());
+			studentIds.addAll(getStudentIds(roomId));
 		} else if (teamRoom.isOpening()) {
 			teamRoom.setTrainingStatus(TeamRoom.TrainingStatusCode.ENDED.getCode());
 		} else if (teamRoom.isEnded()) {
@@ -317,7 +319,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		String businessTemplateId;
 		// 模板可能已被删除。
 		if (teamTemplate == null) {
-			businessTemplateId = teamRoom.getTeamTemplateId();
+			businessTemplateId = "deleted";
 		} else {
 			businessTemplateId = teamTemplate.getBusinessTemplateId();
 		}
@@ -329,7 +331,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				if (teamRoom.isOpening()) {
 					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 							teamRoom.getCreateUserId(),
-							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode(), studentIds);
 				} else if (teamRoom.isEnded()) {
 					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 				}
@@ -567,6 +569,18 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		if (teamRoomMapper.existByName(name)) {
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
+	}
+
+	private List<String> getStudentIds(String roomId) {
+		List<String> res = Lists.newArrayList();
+		List<CrRole> roleList = crRoleService.getRolesByRoom(roomId,
+				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		for (CrRole role : roleList) {
+			if (role.isTeamStudent()) {
+				res.addAll(JsonUtil.toJsonObjectArray(role.getUserIds(), String.class));
+			}
+		}
+		return res;
 	}
 
 }

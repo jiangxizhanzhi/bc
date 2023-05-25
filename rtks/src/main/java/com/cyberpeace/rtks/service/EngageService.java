@@ -1,11 +1,13 @@
 package com.cyberpeace.rtks.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.EngageBackBo;
 import com.cyberpeace.rtks.service.bo.career.EngageCategoryBo;
 import com.cyberpeace.rtks.service.bo.career.EngageFrontBo;
+import com.cyberpeace.rtks.service.bo.situation.SkillProgressBo;
 
 public interface EngageService {
 
@@ -34,4 +36,19 @@ public interface EngageService {
 	 * @return
 	 */
 	List<EngageCategoryBo<EngageFrontBo>> getEngagesByTraining(String resourceId);
+
+	/**
+	 * 获取所有relation
+	 *
+	 * @return {@code Map<String, List<String>>}
+	 */
+	Map<String, List<String>> getAllRel();
+
+	/**
+	 * 获取engage进度
+	 *
+	 * @param userId 用户id
+	 * @return {@code Map<String, List<String>>}
+	 */
+	SkillProgressBo getEngageProgress(String userId);
 }

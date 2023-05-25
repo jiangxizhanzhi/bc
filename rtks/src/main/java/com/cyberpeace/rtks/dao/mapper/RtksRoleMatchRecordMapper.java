@@ -22,4 +22,9 @@ public interface RtksRoleMatchRecordMapper {
 	List<RoleMatchRecordContext> selectAllByExistingRoles();
 
 	Date getFirstRecordTime();
+
+	List<String> selectRoleIdsByUserId(@Param("userId") String userId);
+
+	Integer countRanking(@Param("roleId") String roleId, @Param("userId") String userId,
+			@Param("match") Integer match);
 }

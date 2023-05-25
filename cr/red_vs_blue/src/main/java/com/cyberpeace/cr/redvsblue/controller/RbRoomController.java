@@ -522,8 +522,8 @@ public class RbRoomController {
 	@GetMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<RbDeviceContext>> getDevices(
-			@ApiParam(value = "room_id", name = "红蓝对抗id", required = true) String room_id,
-			@ApiParam(value = "standard_device", name = "主机",
+			@ApiParam(name = "room_id", value = "红蓝对抗id", required = true) String room_id,
+			@ApiParam(name = "standard_device", value = "主机",
 					required = false) String standard_device) {
 
 		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(room_id,

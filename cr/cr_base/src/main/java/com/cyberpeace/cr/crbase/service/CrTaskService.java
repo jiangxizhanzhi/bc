@@ -9,6 +9,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
@@ -332,4 +333,6 @@ public interface CrTaskService {
 	 * @return {@code EvaluationMissionBo}
 	 */
 	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
+
+	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id);
 }

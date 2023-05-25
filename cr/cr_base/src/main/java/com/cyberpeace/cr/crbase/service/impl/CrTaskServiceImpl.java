@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -651,6 +652,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		rsp.setWriteUp(bo.getWriteUp());
 		rsp.setScore(bo.getScore());
 		return rsp;
+	}
+
+	@Override
+	public TaskMatrix getTaskMatrixExcludeTimeCost(String roomId) {
+		List<CrTask> list = this.getByRoomIdAndUserId(roomId, UserInfoContext.getUserContext().getUserId());
+		return new TaskMatrix(list);
 	}
 
 }

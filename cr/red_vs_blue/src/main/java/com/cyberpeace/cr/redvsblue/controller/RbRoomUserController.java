@@ -1,11 +1,14 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,6 +252,22 @@ public class RbRoomUserController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		Boolean ret = rbDeviceService.removeByRoomIdAndUserIdAndDeviceId(roomId, userId, deviceId);
 		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("红蓝对抗-学员任务矩阵")
+	@GetMapping("/task/matrix")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TaskMatrix> getTaskMatrix(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
+		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
+		return new BaseRsp<>(rbTaskMatrix);
 	}
 
 }

@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +28,6 @@ import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -51,6 +52,7 @@ import io.swagger.annotations.ApiParam;
 /**
  * 
  */
+@Slf4j
 @Api(tags = "学员团队训练")
 @RestController
 @RequestMapping("/cr/training_team/training_team_students")
@@ -74,6 +76,8 @@ public class TeamTrainStudentsController {
 	@Autowired
 	private MissionService missionService;
 
+	@Autowired
+	private TrainRecordService trainRecordService;
 	@ApiOperation("查询")
 	@GetMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -312,4 +316,20 @@ public class TeamTrainStudentsController {
 		return baseRole;
 	}
 
+
+	@ApiOperation("团队对抗-学员任务矩阵")
+	@GetMapping("/task/matrix")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TaskMatrix> getTaskMatrix(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
+		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
+		return new BaseRsp<>(rbTaskMatrix);
+	}
 }

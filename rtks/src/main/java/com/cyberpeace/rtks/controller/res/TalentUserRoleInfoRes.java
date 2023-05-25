@@ -14,6 +14,9 @@ public class TalentUserRoleInfoRes implements Serializable {
 	@ApiModelProperty("姓名")
 	private String userName;
 
+	@ApiModelProperty("用户id")
+	private String userId;
+
 	@ApiModelProperty("组织")
 	private String organizationData;
 

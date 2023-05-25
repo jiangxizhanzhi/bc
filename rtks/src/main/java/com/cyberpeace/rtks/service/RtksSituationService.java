@@ -66,5 +66,5 @@ public interface RtksSituationService {
 
 	ListRsp<TalentUserRoleInfoRes> getTalentUserRanking(TalentStatistuicReq req);
 
-	List<TalentUserReleaseRes> getTalentUserRoleInfos();
+	TalentUserReleaseRes getTalentUserRoleInfos(String resourceId);
 }

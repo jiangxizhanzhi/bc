@@ -12,11 +12,11 @@ public class TalentReleaseRes implements Serializable {
 	private String appName;
 
 	@ApiModelProperty("优秀")
-	private Integer count;
+	private Integer count=0;
 
 	@ApiModelProperty("合格")
-	private Integer count1;
+	private Integer count1=0;
 
 	@ApiModelProperty("其他")
-	private Integer count2;
+	private Integer count2=0;
 }

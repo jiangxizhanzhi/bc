@@ -5,11 +5,14 @@ import java.util.List;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
 import com.cyberpeace.rtks.controller.res.*;
+import com.cyberpeace.rtks.dao.entity.Role;
+import com.cyberpeace.rtks.dao.mapper.RoleMapper;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cyberpeace.common.constant.MenuConstant;
@@ -31,6 +34,9 @@ public class RtksSituationController {
 
 	@Autowired
 	private RtksSituationService rtksSituationService;
+
+	@Autowired
+	private RoleMapper roleMapper;
 
 	@ApiOperation("网安排名：个人-组织-复合")
 	@GetMapping("/ranking")
@@ -95,8 +101,15 @@ public class RtksSituationController {
 	@ApiOperation("网安个人岗位数据")
 	@GetMapping("/user/roleInfos")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
-	public BaseRsp<List<TalentUserReleaseRes>> getTalentUserRanking() {
-		return new BaseRsp<>(rtksSituationService.getTalentUserRoleInfos());
+	public BaseRsp<TalentUserReleaseRes> getTalentUserRanking(@RequestParam("resource_id") String resourceId) {
+		return new BaseRsp<>(rtksSituationService.getTalentUserRoleInfos(resourceId));
+	}
+
+	@ApiOperation("网安全岗位")
+	@GetMapping("/roles")
+	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
+	public BaseRsp<List<Role>> getAllRoles() {
+		return new BaseRsp<>(roleMapper.selectList(null));
 	}
 
 

@@ -23,11 +23,4 @@ public class TalentStatistuicReq extends PageReqBase {
 	@ApiModelProperty("姓名")
 	private String userName;
 
-//	public TalentStatistuicReq(PageReqBase req) {
-//		this.page = req.getPage();
-//		this.perPage = req.getPerPage();
-//		this.sort = "asc".equals(req.getSort());
-//	}
-
-
 }

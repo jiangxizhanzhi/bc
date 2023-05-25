@@ -2,10 +2,9 @@ package com.cyberpeace.rtks.service;
 
 import java.util.List;
 
-import com.cyberpeace.rtks.controller.res.TalentPersonReleaseRes;
-import com.cyberpeace.rtks.controller.res.TalentReleaseRes;
-import com.cyberpeace.rtks.controller.res.TalentUserReleaseRes;
-import com.cyberpeace.rtks.controller.res.TalentUserRoleInfoRes;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
+import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.service.bo.situation.LevelStatisticBo;
 import com.cyberpeace.rtks.service.bo.situation.NewsBo;
 import com.cyberpeace.rtks.service.bo.situation.RtksSituationRankings;
@@ -61,11 +60,11 @@ public interface RtksSituationService {
 	 */
 	List<TalentReleaseRes> getTalentReleaseRanking();
 
-	List<TalentPersonReleaseRes> getTalentPersonRanking();
+	List<TalentReleasePersonRankingRes> getTalentPersonRanking();
 
-	List<TalentPersonReleaseRes> getTalentOrgRanking();
+	List<TalentReleaseRankingRes> getTalentOrgRanking();
 
-	List<TalentUserReleaseRes> getTalentUserRanking();
+	ListRsp<TalentUserRoleInfoRes> getTalentUserRanking(TalentStatistuicReq req);
 
-	List<TalentUserRoleInfoRes> getTalentUserRoleInfos();
+	List<TalentUserReleaseRes> getTalentUserRoleInfos();
 }

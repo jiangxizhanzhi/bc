@@ -1,20 +1,28 @@
 package com.cyberpeace.rtks.controller.res;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class TalentUserRoleInfoRes implements Serializable {
 
+	@ApiModelProperty("姓名")
+	private String userName;
+
+	@ApiModelProperty("组织")
+	private String organizationData;
+
+	@ApiModelProperty("角色")
+	private List<JSONObject> roles;
+
 	@ApiModelProperty("岗位名称")
-	private String roleName;
+	private String roleStr;
 
-	@ApiModelProperty("岗位满足度")
-	private String match;
-
-	@ApiModelProperty("岗位id")
-	private Integer roleId;
-
+	@ApiModelProperty("综合排名")
+	private Integer ranking;
 }

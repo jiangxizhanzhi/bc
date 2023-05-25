@@ -417,4 +417,7 @@ public interface CrBusinessErrorCode {
 
 	// 创建启动节点失败
 	String FAILED_TO_CREATE_NODE = "101126";
+
+	// 排序字段错误
+	String SORT_FIELD_ERROR = "101127";
 }

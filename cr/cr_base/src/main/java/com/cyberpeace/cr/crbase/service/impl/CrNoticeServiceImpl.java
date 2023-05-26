@@ -102,7 +102,9 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		List<Integer> list = new ArrayList<>();
 		if (isRb) {
 			switch (role) {
+				case 1:
 				case 2:
+				case 3:
 					list.add(1);
 					break;// 导演
 				case 4:

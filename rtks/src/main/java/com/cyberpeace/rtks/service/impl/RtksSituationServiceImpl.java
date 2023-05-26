@@ -397,6 +397,9 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			String key = entry.getKey();
 			String username = userMap.get(key);
 			List<String> jobs = new ArrayList<>();
+			jobs.add("");
+			jobs.add("");
+			jobs.add("");
 			List<RoleMatchRecordContext> value = entry.getValue();
 
 			if (null == username) {
@@ -423,7 +426,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			if (value.size() == i) {
 				RoleMatchRecordContext top3 = value.get(2);
-				jobs.add(top3.getRoleName());
+				jobs.set(2, top3.getRoleName());
 				personReleaseRes.setMatchThree(top3.getMatch());
 				value = value.subList(0, 2);
 			}
@@ -431,14 +434,13 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				RoleMatchRecordContext top2 = value.get(1);
 				personReleaseRes.setMatchTwo(top2.getMatch());
 				value = value.subList(0, 1);
-				jobs.add(top2.getRoleName());
+				jobs.set(1, top2.getRoleName());
 			}
 			if (value.size() == 1) {
 				RoleMatchRecordContext top1 = value.get(0);
 				personReleaseRes.setMatchOne(top1.getMatch());
-				jobs.add(top1.getRoleName());
+				jobs.set(0, top1.getRoleName());
 			}
-			Collections.reverse(jobs);
 			personReleaseRes.setJobs(jobs);
 			res.add(personReleaseRes);
 		}

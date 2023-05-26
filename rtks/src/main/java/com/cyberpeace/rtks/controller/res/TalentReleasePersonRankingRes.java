@@ -23,13 +23,13 @@ public class TalentReleasePersonRankingRes implements Serializable {
 	private Integer other;
 
 	@ApiModelProperty("满足度Top1")
-	private Integer matchOne=0;
+	private Integer matchOne;
 
 	@ApiModelProperty("满足度Top2")
-	private Integer matchTwo=0;
+	private Integer matchTwo;
 
 	@ApiModelProperty("满足度Top3")
-	private Integer matchThree=0;
+	private Integer matchThree;
 
 	@ApiModelProperty("优秀岗位匹配总数")
 	private Integer excellentMatchSum;

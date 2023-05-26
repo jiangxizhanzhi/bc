@@ -88,7 +88,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		}
 		List<CrNotice> topList = list.stream()
 				.filter(a -> a.getIsTop() != null && a.getIsTop() == 1)
-				.sorted(Comparator.comparing(CrNotice::getCreateTime).reversed()).collect(Collectors.toList());
+				.sorted(Comparator.comparing(CrNotice::getUpdateTime).reversed()).collect(Collectors.toList());
 		List<CrNotice> notTopList = list.stream()
 				.filter(a -> a.getIsTop() == null || a.getIsTop() != 1)
 				.sorted(Comparator.comparing(CrNotice::getCreateTime).reversed()).collect(Collectors.toList());

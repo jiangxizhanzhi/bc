@@ -641,10 +641,26 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 					.filter(tmp -> userIds.contains(tmp.getUserId())).collect(Collectors.toList());
 		}
 		Map<String, List<RoleMatchRecordContext>> userRoles = StreamApiUtils.groupBy(recordContextList, RoleMatchRecordContext::getUserId);
-		int index = 1;
 		for (Map.Entry<String, List<RoleMatchRecordContext>> entry : userRoles.entrySet()) {
 			String userId = entry.getKey();
 			List<RoleMatchRecordContext> roleMatchInfo = entry.getValue();
+			TalentUserRoleInfoRes current = new TalentUserRoleInfoRes();
+			current.setMaxMatch(0);
+			roleMatchInfo.forEach(match -> {
+				if (match.getMatch() >= RtksCommonConstants.EXCELLENT_MATCH) {
+					current.addExcellent();
+					current.addMatchSum(match.getMatch());
+				} else if (match.getMatch() >= RtksCommonConstants.QUALIFIED_MATCH) {
+					current.addQualified();
+				} else {
+					current.addOther();
+				}
+			});
+
+			roleMatchInfo.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
+			if(roleMatchInfo.size() > 0){
+				current.setMaxMatch(roleMatchInfo.get(0).getMatch());
+			}
 			UserInfo userInfo = allUsers.get(userId);
 			if (null == userInfo) {
 				continue;
@@ -653,16 +669,24 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			if (null == name) {
 				continue;
 			}
-			TalentUserRoleInfoRes current = new TalentUserRoleInfoRes();
 			BeanUtils.copyProperties(userInfo, current);
 			List<String> roleNames = StreamApiUtils.getColumn(roleMatchInfo,
 					RoleMatchRecordContext::getRoleName);
 			String roleNameStr = String.join(",", roleNames);
 			current.setRoleStr(roleNameStr);
-			current.setRanking(index);
-			index++;
 			res.add(current);
 		}
+		if(null == roleId){
+			// 默认按照个人top5排序
+			res.sort(new TalentUserRankingResComparator());
+		} else {
+			// 单选岗位时 按最大匹配度排序
+			res.sort(Comparator.comparing(TalentUserRoleInfoRes::getMaxMatch).reversed());
+		}
+		res.forEach(tmp -> {
+			tmp.setRanking(res.indexOf(tmp));
+		});
+		// table 可按字段ranking排序
 		res.sort(new TalentUserRoleInfoComparator(req.getSort()));
 		IPage<TalentUserRoleInfoRes> dataPage = new Page<>(req.getPage(), req.getPerPage(),
 				res.size());
@@ -854,5 +878,22 @@ class TalentUserRoleInfoComparator implements Comparator<TalentUserRoleInfoRes> 
 		} else {
 			throw new BusinessException(CrBusinessErrorCode.SORT_FIELD_ERROR);
 		}
+	}
+}
+
+class TalentUserRankingResComparator implements Comparator<TalentUserRoleInfoRes> {
+
+	@Override
+	public int compare(TalentUserRoleInfoRes o1, TalentUserRoleInfoRes o2) {
+		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
+			return o2.getExcellent() - o1.getExcellent();
+		}
+		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
+			return o2.getQualified() - o1.getQualified();
+		}
+		if (o1.getExcellentMatchSum().intValue() != o2.getExcellentMatchSum().intValue()) {
+			return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
+		}
+		return o2.getMaxMatch() - o1.getMaxMatch();
 	}
 }

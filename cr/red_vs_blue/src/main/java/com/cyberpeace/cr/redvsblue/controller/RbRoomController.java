@@ -383,6 +383,10 @@ public class RbRoomController {
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
+		if(!crRole.isRvbStaff()) {
+			log.error("role is forbidden");
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
 
 		Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
 		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.RED.getCode());

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.CrScoreService;
+import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -115,6 +117,8 @@ public class RbRoomController {
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	@Autowired
+	private CrScoreService crScoreService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -564,5 +568,16 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
 		RbTimeLineData data = rbRoomService.getMissionTimeline(resource_id);
 		return new BaseRsp<>(data);
+	}
+
+
+	@ApiOperation("红蓝对抗-任务导调-训练报告")
+	@GetMapping("/mission/getTrainReports")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TrainReportContext> getTrainReports(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
+				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()));
+		return new BaseRsp<>(trainReport);
 	}
 }

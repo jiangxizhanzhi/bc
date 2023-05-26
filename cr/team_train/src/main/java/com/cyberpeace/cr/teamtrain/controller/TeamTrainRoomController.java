@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
@@ -12,10 +9,9 @@ import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -50,7 +46,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
@@ -146,6 +141,10 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private CrScoreService crScoreService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -291,7 +290,8 @@ public class TeamTrainRoomController {
 		Boolean result = localSceneService.recreateNode(room.getLocalSceneId(),
 				nodeOpsReq.getNodeId());
 		if (!result) {
-			log.error("failed to recreate node,nodeOpsReq =[{}]", JsonUtil.toJsonString(nodeOpsReq));
+			log.error("failed to recreate node,nodeOpsReq =[{}]",
+					JsonUtil.toJsonString(nodeOpsReq));
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_RECREATE_NODE);
 		}
 		return new BaseRsp();
@@ -684,11 +684,12 @@ public class TeamTrainRoomController {
 
 		return baseRole;
 	}
+
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+			releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
@@ -776,7 +777,8 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id, CrRole.TeamRoleGroup.STUDENT.getCode());
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainTaskReleaseInfoList(resource_id,
+				CrRole.TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
 
@@ -806,6 +808,20 @@ public class TeamTrainRoomController {
 		DashboardInfo data = teamRoomService.getDashboardInfo(crRole, resource_id, userId);
 
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("团队对抗-任务导调-训练报告")
+	@GetMapping("/mission/getTrainReports")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TrainReportContext> getTrainReports(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+		// 得分趋势
+		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
+				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+		return new BaseRsp<TrainReportContext>(trainReport);
 	}
 
 	@ApiOperation("获取聊天框群组成员列表")

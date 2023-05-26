@@ -1,11 +1,13 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,15 +17,8 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
@@ -55,7 +50,8 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 	@Autowired
 	private RemoteUserService remoteUserService;
-
+	@Autowired
+	private CrConstantsService crConstantsService;
 	@Override
 	public CrScore getByRoomIdAndUser(String roomId, String userId) {
 		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
@@ -248,5 +244,64 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		rsp.setTrainingScore(trainingScore);
 
 		return rsp;
+	}
+
+	@Override
+	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles) {
+		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
+		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		Map<String, Integer> userIdRoleMap = crRoles.stream()
+				.map(a -> a.getUserIdList().stream().map(b -> new UserIdRole(b, a.getRoleGroup()))
+						.collect(Collectors.toList()))
+				.flatMap(Collection::stream)
+				.collect(Collectors.toMap(UserIdRole::getUserId, UserIdRole::getRole, (a, b) -> a));
+
+		// 评分数据
+		List<CrScore> crScores = this.selectByRoomIdAndUserIds(roomId, userIds);
+		Map<String, CrScore> scoreMap = crScores.stream()
+				.collect(Collectors.toMap(CrScore::getUserId, Function.identity(), (a, b) -> a));
+
+		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
+		Map<String, List<CrTask>> taskMap = taskList.stream()
+				.collect(Collectors.groupingBy(CrTask::getUserId));
+		Set<String> missionIds = taskList.stream().map(CrTask::getMissionId)
+				.collect(Collectors.toSet());
+		List<Mission> missions = missionService.listByIds(missionIds);
+		Map<String, Mission> missionMap = missions.stream()
+				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
+
+		Map<String, List<Mission>> categoryMap = missions.stream()
+				.collect(Collectors.groupingBy(Mission::getCategoryId));
+		List<CrConstantsConfig> configs = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+		Map<String, CrConstantsConfig> configMap = configs.stream()
+				.collect(Collectors.toMap(CrConstantsConfig::getResourceId, Function.identity()));
+
+		List<StudentScoreTrend> scoreTrends = new ArrayList<>();
+		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
+		Map<String, Integer> kindMap = new HashMap<>();
+		List<UserData> userDataList = crRoleService.getUserDatas(userIds);
+		for (UserData userData : userDataList) {
+			List<CrTask> userTaskList = taskMap.getOrDefault(userData.getResourceId(),
+					new ArrayList<>());
+			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
+					.collect(Collectors.toList());
+			scoreTrends.add(new StudentScoreTrend(userData, successList,
+					userIdRoleMap.get(userData.getResourceId())));
+			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap));
+		}
+		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {
+			CrConstantsConfig config = configMap.get(entry.getKey());
+			if (config == null)
+				continue;
+			int size = entry.getValue() == null ? 0 : entry.getValue().size();
+			kindMap.put(config.getCnName(), size);
+		}
+		TrainReportContext trainReportContext = new TrainReportContext();
+		trainReportContext.initScoreTrends(scoreTrends);
+		trainReportContext.setGetScoreRsps(getScoreRsps);
+		trainReportContext.setKindMap(kindMap);
+		return trainReportContext;
 	}
 }

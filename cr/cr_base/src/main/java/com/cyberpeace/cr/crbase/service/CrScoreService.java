@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 
@@ -70,4 +72,7 @@ public interface CrScoreService extends IService<CrScore> {
 	 * @return {@code StudentScoreRsp}
 	 */
 	StudentScoreRsp getStudentScore(String roomId, String userId);
+
+	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles);
+
 }

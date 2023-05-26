@@ -25,4 +25,6 @@ public class CrNoticeRsp implements Serializable {
     private UserData userData;
 
     private String createUserId;
+
+    private String resourceId;
 }

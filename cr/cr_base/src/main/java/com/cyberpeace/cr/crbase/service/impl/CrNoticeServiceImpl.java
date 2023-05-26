@@ -16,15 +16,15 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +51,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		}
 		List<CrNotice> list = this.list(queryWrapper);
 		list = topDeal(list);
-		return BeanUtils.deepCopyList(list, CrNoticeRsp.class);
+		List<String> userIds = list.stream().filter(a -> a.getCreateUserId() != null).map(CrNotice::getCreateUserId).collect(Collectors.toList());
+		Map<String, UserData> userMap = crRoleService.getUserDatas(userIds).stream().collect(Collectors.toMap(UserData::getResourceId, Function.identity()));
+		List<CrNoticeRsp> rspList = BeanUtils.deepCopyList(list, CrNoticeRsp.class);
+		for (CrNoticeRsp noticeRsp : rspList) {
+			noticeRsp.setUserData(userMap.get(noticeRsp.getCreateUserId()));
+		}
+		return rspList;
 	}
 
 	@Override

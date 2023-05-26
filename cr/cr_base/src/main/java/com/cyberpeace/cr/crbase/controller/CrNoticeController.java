@@ -40,6 +40,7 @@ public class CrNoticeController {
 			logical = Logical.OR)
 	public BaseRsp<CrNotice> add(@RequestBody CrNoticeReq crNoticeReq) {
 		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
+		notice.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		crNoticeService.save(notice);
 		crNoticeService.notice(notice.getRoomId());
 		return new BaseRsp<CrNotice>(notice);

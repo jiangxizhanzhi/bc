@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -20,4 +21,8 @@ public class CrNoticeRsp implements Serializable {
     @ApiModelProperty("是否置顶 0否 1是")
     private Integer isTop;
 
+    @ApiModelProperty("用户信息")
+    private UserData userData;
+
+    private String createUserId;
 }

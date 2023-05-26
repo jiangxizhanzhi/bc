@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -16,9 +18,9 @@ import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.google.common.collect.Lists;
+
 import lombok.Data;
 import lombok.Getter;
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @TableName cr_role
@@ -99,6 +101,25 @@ public class CrRole extends BaseTable {
 		return studentRoles.stream().map(CrRoleSimple::new)
 				.collect(Collectors.toList());
 	}
+
+	public static CrRole findRoleByUserId(List<CrRole> roleList, String userId) {
+		for (CrRole role : roleList) {
+			if (role.getUserIds().contains(userId)) {
+				return role;
+			}
+		}
+		return null;
+	}
+
+	public static CrRole findRoleByRoleId(List<CrRole> roleList, String roleId) {
+		for (CrRole role : roleList) {
+			if (role.getResourceId().equals(roleId)) {
+				return role;
+			}
+		}
+		return null;
+	}
+
 	public void setRoleGroup(Integer roleGroup) {
 		this.roleGroup = roleGroup;
 	}

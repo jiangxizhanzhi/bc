@@ -2,9 +2,9 @@ package com.cyberpeace.cr.redvsblue.service;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 
 public interface RbSceneService {
 
@@ -22,7 +22,7 @@ public interface RbSceneService {
 	 * @param roleId 角色id
 	 * @return 场景数据
 	 */
-	SceneViewContext viewScene(String roomId, String roleId);
+	RbSceneViewContext viewScene(String roomId, String roleId);
 
 	/**
 	 * 关闭场景

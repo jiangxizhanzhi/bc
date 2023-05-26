@@ -22,12 +22,13 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
+import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -110,15 +111,21 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	}
 
 	@Override
-	public SceneViewContext viewScene(String roomId, String roleId) {
-		SceneViewContext ret = new SceneViewContext();
+	public TeamSceneViewContext viewScene(String roomId, String roleId) {
+		TeamSceneViewContext ret = new TeamSceneViewContext();
 		ret.setRoomId(roomId);
 
 		TeamRoom room = teamRoomService.getById(roomId);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、获取可见节点&鉴权， null代表所有节点可见
-		CrRoleNodesData nodes = getNodes(userId, roomId, roleId);
+		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
+		CrRole selfRole = CrRole.findRoleByUserId(roleList, userId);
+		if (null == selfRole) {
+			log.error("user [{}] has no permission to access team training [{}]", userId, roomId);
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
+		CrRoleNodesData nodes = getNodes(selfRole, roleList, roleId);
 
 		// 2、尝试获取启动的远程场景
 		JSONObject sceneData = getMpSceneData(room);
@@ -135,6 +142,23 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		sceneFilterService.filterVisibleTopo(topoData, nodes);
 		ret.setTopoId(room.getCopyedTopoId());
 		ret.setTopoData(topoData);
+
+		// 4. 场景角色资产配置，用于动态编辑,只有教员有权限
+		if (selfRole.isTeamTeacher()) {
+			List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
+			for (CrRole role : roleList) {
+				if (role.isTeamStudent()) {
+					CrRoleConfig config = new CrRoleConfig();
+					CrRoleNodesData nodesData = role.getNodeData();
+					config.setId(role.getResourceId());
+					config.setName(role.getName());
+					config.setAssetNodes(nodesData.getAssetNodes());
+					config.setVisibleNodes(nodesData.getVisibleNodes());
+					nodeConfigList.add(config);
+				}
+			}
+			ret.setRoleList(nodeConfigList);
+		}
 		return ret;
 	}
 
@@ -278,12 +302,11 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		return topoData;
 	}
 
-	private CrRoleNodesData getNodes(String userId, String roomId, String roleId) {
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {
 
 		// 1、如果是学员，直接返回
-		if (role.isTeamStudent()) {
-			return role.getNodeData();
+		if (selfRole.isTeamStudent()) {
+			return selfRole.getNodeData();
 		}
 
 		// 2、教员查看自己的节点，不需要传roleId
@@ -293,9 +316,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 3、教员查看学员角色的战争迷雾
 		// 3.1、查找学员的role
-		CrRole fakeRole = crRoleService.getById(roleId);
+		CrRole fakeRole = CrRole.findRoleByRoleId(roleList, roleId);
 		// 3.2、返回学员role的可见节点
-		if (fakeRole.getRoomId().equals(roomId)) {
+		if (null != fakeRole) {
 			return fakeRole.getNodeData();
 		}
 

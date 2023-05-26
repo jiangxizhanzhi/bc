@@ -2,13 +2,13 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
-import com.cyberpeace.common.constant.MenuConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -17,12 +17,12 @@ import com.cyberpeace.cr.crbase.controller.req.FlowOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
+import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -77,10 +77,10 @@ public class RbSceneController {
 	@ApiOperation("查看场景")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<SceneViewContext> getScene(
+	public BaseRsp<RbSceneViewContext> getScene(
 			@ApiParam(name = "room_id", value = "红蓝对抗实例id", required = true) String room_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
-		SceneViewContext context = rbSceneService.viewScene(room_id, role_id);
+		RbSceneViewContext context = rbSceneService.viewScene(room_id, role_id);
 
 		return new BaseRsp<>(context);
 	}

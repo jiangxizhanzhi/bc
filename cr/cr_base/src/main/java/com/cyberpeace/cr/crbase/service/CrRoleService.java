@@ -63,6 +63,14 @@ public interface CrRoleService extends IService<CrRole> {
 	 */
 	CrRole getCrRoleByRoomIdAndUserId(String roomId, String userId);
 
+	/**
+	 * 获取房间全部角色
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> getRolesByRoomId(String roomId);
+
 	/** 获取学员在训练的角色任务列表
 	 * @param roomId 训练实例id
 	 * @param userId 用户id

@@ -120,6 +120,11 @@
             #{group}
         </foreach>
     </select>
+    <select id="getRolesByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select *
+        from cr_role
+        where room_id = #{roomId}
+    </select>
 
 
 </mapper>

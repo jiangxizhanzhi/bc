@@ -1,19 +1,11 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.room.DashboardInfo;
-import com.cyberpeace.common.model.room.DashboardUser;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.*;
-import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -24,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -31,6 +24,8 @@ import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -47,6 +42,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
@@ -55,6 +51,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.TeamTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
+import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.teamtrain.controller.req.ResourceIdReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainRoomModifyReq;
@@ -69,6 +66,7 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
+import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
@@ -175,10 +173,10 @@ public class TeamTrainRoomController {
 	@ApiOperation("查看场景")
 	@GetMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<SceneViewContext> getScene(
+	public BaseRsp<TeamSceneViewContext> getScene(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
 			@ApiParam(name = "role_id", value = "角色id", required = false) String role_id) {
-		SceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
+		TeamSceneViewContext context = teamSceneService.viewScene(resource_id, role_id);
 
 		return new BaseRsp<>(context);
 	}

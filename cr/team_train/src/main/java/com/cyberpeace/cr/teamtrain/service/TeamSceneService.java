@@ -2,9 +2,9 @@ package com.cyberpeace.cr.teamtrain.service;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 
 public interface TeamSceneService {
 
@@ -22,7 +22,7 @@ public interface TeamSceneService {
 	 * @param roleId 角色id
 	 * @return 场景数据
 	 */
-	SceneViewContext viewScene(String roomId, String roleId);
+	TeamSceneViewContext viewScene(String roomId, String roleId);
 
 	/**
 	 * 关闭场景

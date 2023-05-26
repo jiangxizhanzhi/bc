@@ -86,11 +86,21 @@ public class RtksSituationJob {
 		// 获取所有人曾经选择过的岗位
 		List<RoleMatchRecordContext> recordList = rtksRoleMatchRecordMapper
 				.selectAllByExistingRoles();
+		List<String> userIds = recordList.stream().map(RoleMatchRecordContext::getUserId)
+				.collect(Collectors.toList());
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 		for (RoleMatchRecordContext context : recordList) {
 			try {
+				String userId = context.getUserId();
+				UserInfo userInfo = userInfoMap.get(userId);
+				if (null == userInfo) {
+					continue;
+				}
+				// 计算知识点的匹配度，需要设置UserContext
+				UserInfoContext.setUserContext(userInfo);
 				Integer match = rtksStatisticService.roleMatchPercent(context.getRoleId(),
-						context.getUserId());
-				rtksDailyMatchLogService.log(context.getUserId(), context.getRoleId(), match);
+						userId);
+				rtksDailyMatchLogService.log(userId, context.getRoleId(), match);
 			} catch (Exception e) {
 				log.error(String.format(
 						"rtks situation daily log job failed with userId:[%s], roleId: [%s]",

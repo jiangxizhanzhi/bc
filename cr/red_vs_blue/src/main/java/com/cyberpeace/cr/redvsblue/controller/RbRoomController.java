@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -375,7 +376,7 @@ public class RbRoomController {
 	@ApiOperation("红蓝对抗-训练手册")
 	@GetMapping("/manual")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
@@ -383,7 +384,11 @@ public class RbRoomController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, crRole.getRoleGroup());
+		Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
+		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.RED.getCode());
+		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.BLUE.getCode());
+		res.put("red", redManuals);
+		res.put("blue", blueManuals);
 		return new BaseRsp<>(res);
 	}
 

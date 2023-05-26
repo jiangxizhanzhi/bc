@@ -791,6 +791,10 @@ public class TeamTrainRoomController {
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+		if(crRole.isTeamStudent()) {
+			log.error("role team_student is forbidden");
+			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
+		}
 
 		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, crRole.getRoleGroup());
 		return new BaseRsp<>(res);

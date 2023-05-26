@@ -4,14 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
-import io.swagger.annotations.ApiModelProperty;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
-import lombok.extern.slf4j.Slf4j;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -31,10 +26,14 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
+import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
@@ -52,14 +51,13 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
  */
 @Slf4j
-@Api(tags = "学员团队训练")
+@Api(tags = "团队训练学员")
 @RestController
 @RequestMapping("/cr/training_team/training_team_students")
 public class TeamTrainStudentsController {
@@ -262,9 +260,10 @@ public class TeamTrainStudentsController {
 
 	/**
 	 * 查询团队训练时间线
+	 * 5.4弃用
 	 * @return
 	 */
-	@ApiOperation("查询团队训练时间线")
+	@ApiOperation("弃用-查询团队训练时间线")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<StudentsTimeLineData> getTimeLine(
@@ -275,12 +274,28 @@ public class TeamTrainStudentsController {
 		return new BaseRsp(data);
 	}
 
-	@ApiModelProperty("新增标记")
+	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("团队对抗-学员任务矩阵")
+	@GetMapping("/task/matrix")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TaskMatrix> getTaskMatrix(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
+		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
+		return new BaseRsp<>(rbTaskMatrix);
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息
@@ -331,22 +346,5 @@ public class TeamTrainStudentsController {
 		baseRole.setRoleDataList(roleUsersList);
 
 		return baseRole;
-	}
-
-
-	@ApiOperation("团队对抗-学员任务矩阵")
-	@GetMapping("/task/matrix")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<TaskMatrix> getTaskMatrix(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
-
-		if (StringUtils.isBlank(resource_id)) {
-			log.error("resource_id_missing");
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
-		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		return new BaseRsp<>(rbTaskMatrix);
 	}
 }

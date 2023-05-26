@@ -562,6 +562,7 @@ public class TeamTrainRoomController {
 
 	/**
 	 * 查询团队训练时间线
+	 * 5.4 教员和学员看到的时间线一致
 	 * @return
 	 */
 	@ApiOperation("查询团队训练时间线")
@@ -569,9 +570,7 @@ public class TeamTrainRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-
 		TimeLineData data = teamRoomService.getTimeLine(resource_id);
-
 		return new BaseRsp<>(data);
 	}
 

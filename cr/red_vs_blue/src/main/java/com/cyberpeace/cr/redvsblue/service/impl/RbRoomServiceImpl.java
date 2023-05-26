@@ -5,6 +5,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrMark;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,11 +39,6 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -75,7 +75,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private CrTaskService crTaskService;
 
 	@Autowired
-	private CrTaskSubmitMapper crTaskSubmitMapper;
+	private CrCommonService crCommonService;
 
 	@Autowired
 	private RbTimeManagementService rbTimeManagementService;
@@ -682,8 +682,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		rbTimeLineData.setStartTime(startTime);
 		rbTimeLineData.setEndTime(endTime);
 
-		List<RbTimeLineEvent> rbTimeLineEventList = new ArrayList<>();
-
 		// 构造角色分组map
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
@@ -691,6 +689,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 		// collect dynamic missions
 		List<String> dynamicMissionIds = Lists.newArrayList();
+		// collect user role group
+		Map<String, Integer> userRoleMap = Maps.newHashMap();
 		for (CrRole role : crRoles) {
 			if (role.isRvbStudent()) {
 				List<CrRoleMissionSchemeStage> stages = JsonUtil
@@ -698,23 +698,26 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				dynamicMissionIds.addAll(
 						StreamApiUtils.flatMap(stages, CrRoleMissionSchemeStage::getDynamic));
 			}
+			for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
+				userRoleMap.put(userId, role.getRoleGroup());
+			}
 		}
 
-		Map<String, Integer> crRoleMap = crRoles.stream()
-				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
-
 		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomId(roomId);
+		List<CrMark> crMarkList = crCommonService.getMarkByRoomId(roomId);
 		List<String> userIds = crTasks.stream().filter(a -> StringUtils.isNotBlank(a.getUserId()))
 				.map(a -> a.getUserId()).collect(Collectors.toList());
+		userIds.addAll(crMarkList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-
+		// task
+		List<RbTimeLineEvent> rbTimeLineEventList = new ArrayList<>();
 		for (TaskContext task : crTasks) {
 
 			if (task.getLastSubmitTime() != null) {
 				// 获取任务下发用户id
 				UserInfo userInfo = userInfoMap.get(task.getUserId());
 				RbTimeLineEvent rbTimeLineEvent = new RbTimeLineEvent();
-				rbTimeLineEvent.setRoleGroup(crRoleMap.get(task.getRoleId()));
+				rbTimeLineEvent.setRoleGroup(userRoleMap.get(task.getUserId()));
 				rbTimeLineEvent.setTitle(task.getMission().getTitle());
 				if (null != userInfo) {
 					rbTimeLineEvent.setUserName(userInfo.getName());
@@ -723,11 +726,26 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				rbTimeLineEvent.setTime(task.getLastSubmitTime());
 				rbTimeLineEvent.setStatus(task.getStatus());
 				rbTimeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
+				rbTimeLineEvent.setType(TimeLineEvent.EventType.MISSION.getCode());
 
 				rbTimeLineEventList.add(rbTimeLineEvent);
 			}
-
 		}
+		// mark
+		for (CrMark mark : crMarkList) {
+			RbTimeLineEvent rbTimeLineEvent = new RbTimeLineEvent();
+			UserInfo userInfo = userInfoMap.get(mark.getUserId());
+			rbTimeLineEvent.setRoleGroup(userRoleMap.get(mark.getUserId()));
+			rbTimeLineEvent.setTitle(mark.getName());
+			if (null != userInfo) {
+				rbTimeLineEvent.setUserName(userInfo.getName());
+				rbTimeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			}
+			rbTimeLineEvent.setTime(mark.getCreateTime());
+			rbTimeLineEvent.setType(TimeLineEvent.EventType.MARK.getCode());
+			rbTimeLineEvent.setAttachments(JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
+		}
+
 		rbTimeLineData.setData(rbTimeLineEventList);
 
 		return rbTimeLineData;

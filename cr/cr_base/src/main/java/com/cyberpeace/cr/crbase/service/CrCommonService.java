@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
@@ -53,4 +54,13 @@ public interface CrCommonService {
 	 * @param code 代码
 	 */
 	void addMark(MarkAddReq req, Integer code);
+
+	/**
+	 * 通过房间id获取标记
+	 *
+	 * @return {@code List<CrMark>}
+	 * @param roomId
+	 */
+	List<CrMark> getMarkByRoomId(String roomId);
+
 }

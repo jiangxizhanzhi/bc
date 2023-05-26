@@ -8,12 +8,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.model.room.DashboardFriend;
-import com.cyberpeace.common.model.room.DashboardGroup;
-import com.cyberpeace.common.model.room.DashboardInfo;
-import com.cyberpeace.common.model.room.DashboardUser;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,22 +23,25 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.room.DashboardFriend;
+import com.cyberpeace.common.model.room.DashboardGroup;
+import com.cyberpeace.common.model.room.DashboardInfo;
+import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskLog;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -106,6 +103,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private RemoteTopoService remoteTopoService;
+
+	@Autowired
+	private CrCommonService crCommonService;
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -401,6 +401,26 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	}
 
 	@Override
+	public TeamRoom getByLocalSceneId(String localSceneId) {
+		TeamRoom room = teamRoomMapper.selectByLocalSceneId(localSceneId);
+		if (room == null) {
+			log.error("failed to get TeamRoom with localSceneId [{}]", localSceneId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return room;
+	}
+
+	@Override
+	public TeamRoom getById(String roomId) {
+		TeamRoom room = teamRoomMapper.selectById(roomId);
+		if (room == null) {
+			log.error("failed to get TeamRoom with Id [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return room;
+	}
+
+	@Override
 	public StudentsTimeLineData getStudentsTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
 		setTime(timeLineData, roomId);
@@ -441,28 +461,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		}
 
 		studentsTimeLineData.setData(timeLineEventList);
-
 		return studentsTimeLineData;
-	}
-
-	@Override
-	public TeamRoom getByLocalSceneId(String localSceneId) {
-		TeamRoom room = teamRoomMapper.selectByLocalSceneId(localSceneId);
-		if (room == null) {
-			log.error("failed to get TeamRoom with localSceneId [{}]", localSceneId);
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
-		return room;
-	}
-
-	@Override
-	public TeamRoom getById(String roomId) {
-		TeamRoom room = teamRoomMapper.selectById(roomId);
-		if (room == null) {
-			log.error("failed to get TeamRoom with Id [{}]", roomId);
-			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
-		}
-		return room;
 	}
 
 	@Override
@@ -471,7 +470,39 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		setTime(timeLineData, roomId);
 
 		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+		// 5.4暂时只展示自己做的任务
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		List<String> missionIds = taskList.stream().map(a -> a.getMissionId())
+				.collect(Collectors.toList());
+		List<Mission> missions = missionService.batchGet(missionIds);
+		Map<String, Mission> missionMap = missions.stream()
+				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
+		// get dynamic missions
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		List<MissionStageScheme> stages = JsonUtil.toJsonObjectArray(role.getMissionScheme(),
+				MissionStageScheme.class);
+		List<String> dynamicMissionIds = StreamApiUtils.flatMap(stages,
+				MissionStageScheme::getDynamic);
+		for (TaskContext task : taskList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
 
+			Date lastSubmitTime = task.getLastSubmitTime();
+			// 进返回操作过的任务
+			if (null != lastSubmitTime) {
+
+				timeLineEvent.setTime(lastSubmitTime);
+				timeLineEvent.setTitle(missionMap.get(task.getMissionId()).getTitle());
+				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
+				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
+				timeLineEvent.setStatus(task.getStatus());
+				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
+
+				timeLineEventList.add(timeLineEvent);
+			}
+		}
+		// 5.4保持和之前逻辑一致，可以看到下发任务事件
 		List<Integer> actionCodes = Lists.newArrayList();
 		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
 		List<CrTaskLog> crTaskLogList = crTaskLogMapper.selectReleaseByRoomIdAndActionCodes(roomId,
@@ -479,24 +510,42 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		List<String> userIds = crTaskLogList.stream()
 				.filter(a -> StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId())
 				.collect(Collectors.toList());
-		List<UserInfo> userList = remoteUserService.getByIdList(userIds);
-		Map<String, UserInfo> userInfoMap = userList.stream()
-				.collect(Collectors.toMap(UserInfo::getUserId, Function.identity()));
+		// get user ids
+		List<CrMark> crMarkList = crCommonService.getMarkByRoomId(roomId);
+		userIds.addAll(crMarkList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
 		for (CrTaskLog crTaskLog : crTaskLogList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			UserInfo userInfo = userInfoMap.get(crTaskLog.getUserId());
 			timeLineEvent.setResourceId(roomId);
 			timeLineEvent.setTime(crTaskLog.getCreateTime());
 			timeLineEvent.setTitle(missionService.getById(crTaskLog.getMissionId()).getTitle());
-			timeLineEvent.setUserName(userInfo.getUserName());
-			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			timeLineEvent.setType(TimeLineEvent.SendDataType.SEND_DATA_IS_MISSION.getCode());
+			if (null != userInfo) {
+				timeLineEvent.setUserName(userInfo.getUserName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			}
+			timeLineEvent.setType(TimeLineEvent.EventType.MISSION.getCode());
 
+			timeLineEventList.add(timeLineEvent);
+
+		}
+		// 增加标记事件
+		for (CrMark mark : crMarkList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+			UserInfo userInfo = userInfoMap.get(mark.getUserId());
+			timeLineEvent.setTitle(mark.getName());
+			if (null != userInfo) {
+				timeLineEvent.setUserName(userInfo.getName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			}
+			timeLineEvent.setTime(mark.getCreateTime());
+			timeLineEvent.setType(TimeLineEvent.EventType.MARK.getCode());
+			timeLineEvent.setAttachments(
+					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
 			timeLineEventList.add(timeLineEvent);
 		}
 
 		timeLineData.setUserTimeLineConfig(timeLineEventList);
-
 		return timeLineData;
 	}
 

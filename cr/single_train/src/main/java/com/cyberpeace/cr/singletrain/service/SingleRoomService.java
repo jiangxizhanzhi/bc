@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -85,7 +86,7 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @param businessTemplateId 业务模板id
 	 * @return 训练手册字符串
 	 */
-	String getTrainManual(String businessTemplateId);
+	List<ManualStageBo> getTrainManual(String businessTemplateId);
 
 	/**
 	 * 获取时间线数据
@@ -158,4 +159,12 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return {@code SingleMatrixProgressRsp}
 	 */
 	SingleMatrixProgressRsp getMatrixProgress(SingleRoom room);
+
+	/**
+	 * 获取人物矩阵和进度
+	 *
+	 * @param roomId 房间id
+	 * @return {@code SingleMatrixProgressRsp}
+	 */
+	SingleMatrixProgressRsp getMatrixRsp(String roomId);
 }

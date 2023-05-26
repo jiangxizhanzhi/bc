@@ -1,9 +1,7 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
-import java.util.Date;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,10 +14,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomTrainSubmitReq;
@@ -39,6 +37,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Api(tags = "单兵训练")
 @RestController
@@ -132,9 +131,10 @@ public class SingleRoomController {
 	}
 
 	@GetMapping("/train_manual")
-	@ApiOperation("训练手册")
+	@ApiOperation("训练手册, 需要开启单兵训练")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp<String> trainManual(@RequestParam("resource_id") String businessTemplateId) {
+	public BaseRsp<List<ManualStageBo>>
+			trainManual(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTrainManual(businessTemplateId));
 	}
 
@@ -225,31 +225,8 @@ public class SingleRoomController {
 		if (StringUtils.isBlank(resource_id)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		SingleMatrixProgressRsp rsp;
-		String userId = UserInfoContext.getUserContext().getUserId();
-		SingleRoom room = singleRoomService.getByBusinessTemplateIdAndUserId(resource_id, userId);
-		if (null == room) {
-			// training not started
-			rsp = singleTemplateService.getSingleMatrix(resource_id);
-			rsp.setSuccessful(0);
-			rsp.setFailed(0);
-			rsp.setFinished(0);
-			rsp.setScore(0);
-			// 训练时长为0
-			rsp.setTimeCost(TimeUtil.getTimeInterval(new Date(0), new Date(0)));
-			rsp.setStarted(false);
-		} else {
-			// training started
-			rsp = singleRoomService.getMatrixProgress(room);
-			rsp.setTimeCost(TimeUtil.getTimeInterval(room.getCreateTime(), new Date()));
-			rsp.setStarted(true);
-		}
-		// set user_info
-		rsp.setUserId(userId);
-		rsp.setUserName(UserInfoContext.getUserContext().getName());
-		rsp.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
-
-		return new BaseRsp(rsp);
+		SingleMatrixProgressRsp res = singleRoomService.getMatrixRsp(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 }

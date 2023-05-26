@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +39,10 @@ import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.manual.ManualMissionBo;
+import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -59,7 +58,10 @@ import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixMission;
 import com.cyberpeace.cr.singletrain.service.bo.mission.MatrixStage;
 import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
-import com.cyberpeace.cr.singletrain.service.bo.record.*;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordMissionSimpleBo;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordStageBo;
+import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -69,6 +71,8 @@ import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleRoom> implements SingleRoomService {
@@ -655,37 +659,41 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * @return String
 	 */
 	@Override
-	public String getTrainManual(String businessTemplateId) {
-		// 获取训练方案
-		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-		CrRoleConfigMissionsScheme missionScheme = JsonUtil
-				.toJsonObject(singleTemplate.getMissionsScheme(), CrRoleConfigMissionsScheme.class);
-		List<CrRoleConfigSchemeStage> stages = missionScheme.getSchemeData();
-		Map<String, MissionTemplate> missionTemplateMap = missionTemplateService
-				.getMappingBySchemeJson(singleTemplate.getMissionsScheme());
+	public List<ManualStageBo> getTrainManual(String businessTemplateId) {
+		List<ManualStageBo> res = Lists.newArrayList();
+		// get role and mission scheme
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = getByBusinessTemplateIdAndUserId(businessTemplateId, userId);
+		if (null == room) {
+			return res;
+		}
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(room.getResourceId(), userId);
+		List<CrRoleMissionSchemeStage> stages = JsonUtil.toJsonObjectArray(role.getMissionScheme(),
+				CrRoleMissionSchemeStage.class);
+		List<Mission> missions = missionService.batchGetByRoom(room.getResourceId());
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
+				mission -> mission);
 
-		// 生成富文本训练手册
-		StringBuilder writeup = new StringBuilder();
-		for (int i = 0; i < stages.size(); i++) {
-			CrRoleConfigSchemeStage item = stages.get(i);
+		// 遍历stage
+		for (CrRoleMissionSchemeStage stage : stages) {
+			ManualStageBo stageBo = new ManualStageBo();
+			stageBo.setStageName(stage.getStage());
+			for (String missionId : stage.getMissions()) {
+				Mission mission = missionMap.get(missionId);
+				if (null == mission) {
+					continue;
+				}
+				ManualMissionBo missionBo = new ManualMissionBo();
+				missionBo.setResourceId(missionId);
+				missionBo.setTitle(mission.getTitle());
+				missionBo.setWriteUp(mission.getWriteUp());
 
-			writeup.append("## ").append(TrainI18n.STAGE.getMsg()).append(i + 1).append(": ")
-					.append(item.getStage()).append("\n\n");
-			List<CrRoleConfigMission> missions = item.getMissions();
-			List<String> missionTemplateIds = Lists.newArrayList();
-			for (CrRoleConfigMission mission : missions) {
-				missionTemplateIds.add(mission.getResourceId());
+				stageBo.getMissions().add(missionBo);
 			}
-			for (int j = 0; j < missions.size(); j++) {
-				MissionTemplate missionTemplate = missionTemplateMap.get(missionTemplateIds.get(j));
-				writeup.append("#### ").append(TrainI18n.TASK.getMsg()).append(j + 1).append(": ")
-						.append(missionTemplate.getTitle()).append("\n\n");
-				writeup.append(String.format("%s: %n", TrainI18n.WRITEUP))
-						.append(missionTemplate.getWriteUp()).append("\n\n");
-			}
+			res.add(stageBo);
 		}
 
-		return writeup.toString();
+		return res;
 	}
 
 	/**
@@ -1134,6 +1142,36 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		rsp.setFinished(successful + failed);
 		rsp.setMissionCount(missionMap.size());
 		return rsp;
+	}
+
+	@Override
+	public SingleMatrixProgressRsp getMatrixRsp(String btId) {
+
+		SingleMatrixProgressRsp result;
+		String userId = UserInfoContext.getUserContext().getUserId();
+		SingleRoom room = getByBusinessTemplateIdAndUserId(btId, userId);
+		if (null == room) {
+			// training not started
+			result = singleTemplateService.getSingleMatrix(btId);
+			result.setSuccessful(0);
+			result.setFailed(0);
+			result.setFinished(0);
+			result.setScore(0);
+			// 训练时长为0
+			result.setTimeCost(TimeUtil.getTimeInterval(new Date(0), new Date(0)));
+			result.setStarted(false);
+		} else {
+			// training started
+			result = getMatrixProgress(room);
+			result.setTimeCost(TimeUtil.getTimeInterval(room.getCreateTime(), new Date()));
+			result.setStarted(true);
+		}
+		// set user_info
+		result.setUserId(userId);
+		result.setUserName(UserInfoContext.getUserContext().getName());
+		result.setUserAvatar(UserInfoContext.getUserContext().getAvatarUrl());
+
+		return result;
 	}
 
 	private Map<String, Mission>

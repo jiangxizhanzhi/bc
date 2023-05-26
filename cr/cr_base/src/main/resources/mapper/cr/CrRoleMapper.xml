@@ -38,7 +38,7 @@
 
     <select id="getCrRoleByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
 
-        <bind name="userId" value="'%' + userId + '%'"/>
+        <bind name="userId1" value="'%' + userId + '%'"/>
         select resource_id,
         `name` ,
         room_id,
@@ -52,7 +52,7 @@
         business_type
         from cr_role
         where room_id = #{roomId}
-        and user_ids like #{userId}
+        and user_ids like #{userId1}
     </select>
     <select id="getRoomIdsByUserIdAndType" resultType="java.lang.String">
         <bind name="user_id" value="'%' + userId + '%'"/>

@@ -247,7 +247,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	}
 
 	@Override
-	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles) {
+	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,ScoreTrendReq scoreTrendReq) {
+		TrainReportContext trainReportContext = new TrainReportContext();
+		trainReportContext.initTimeList(scoreTrendReq);
 		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
 		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
@@ -288,7 +290,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList,
-					userIdRoleMap.get(userData.getResourceId())));
+					userIdRoleMap.get(userData.getResourceId()),trainReportContext.getTimeList()));
 			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap));
 		}
 		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {
@@ -298,7 +300,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			int size = entry.getValue() == null ? 0 : entry.getValue().size();
 			kindMap.put(config.getCnName(), size);
 		}
-		TrainReportContext trainReportContext = new TrainReportContext();
+
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
 		trainReportContext.setKindMap(kindMap);

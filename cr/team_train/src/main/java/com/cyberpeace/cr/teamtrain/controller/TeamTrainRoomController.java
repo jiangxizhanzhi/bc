@@ -12,6 +12,7 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -817,13 +818,16 @@ public class TeamTrainRoomController {
 	@GetMapping("/mission/getTrainReports")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TrainReportContext> getTrainReports(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
+		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(teamRoom.getStartTime(), teamRoom.getEndTime(), scoreCount);
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
-				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
 

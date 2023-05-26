@@ -10,6 +10,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
+import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 
 /**
@@ -73,6 +74,6 @@ public interface CrScoreService extends IService<CrScore> {
 	 */
 	StudentScoreRsp getStudentScore(String roomId, String userId);
 
-	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles);
+	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles, ScoreTrendReq scoreTrendReq);
 
 }

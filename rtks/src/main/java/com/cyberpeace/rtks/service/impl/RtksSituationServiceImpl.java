@@ -445,8 +445,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			res.add(personReleaseRes);
 		}
 		// 先按复合人才逻辑排序 若无合格或优秀岗位 按最高匹配度排序
-		res.sort(Comparator.comparing(TalentReleasePersonRankingRes::getExcellent).reversed().thenComparing(TalentReleasePersonRankingRes::getQualified).reversed()
-				.thenComparing(TalentReleasePersonRankingRes::getExcellentMatchSum).reversed().thenComparing(TalentReleasePersonRankingRes::getMaxMatch).reversed());
+		res.sort(new TalentReleasePersonRankingResComparator());
 		if (res.size() > 5) {
 			res = res.subList(0, 5);
 		}
@@ -493,9 +492,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			}
 			res.add(orgRankingBo);
 		}
-		res.sort(Comparator.comparing(TalentReleaseRankingRes::getExcellent).reversed().
-				thenComparing(TalentReleaseRankingRes::getQualified).reversed().
-				thenComparing(TalentReleaseRankingRes::getOther).reversed());
+		res.sort(new TalentReleaseRankingResComparator());
 		// 取前5名用户
 		int i = 5;
 		if (res.size() > i) {
@@ -804,6 +801,38 @@ class MultiRoleComparator implements Comparator<MultiRoleRankingBo> {
 			return o2.getQualified() - o1.getQualified();
 		}
 		return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
+	}
+}
+
+
+class TalentReleaseRankingResComparator implements Comparator<TalentReleaseRankingRes> {
+
+	@Override
+	public int compare(TalentReleaseRankingRes o1, TalentReleaseRankingRes o2) {
+		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
+			return o2.getExcellent() - o1.getExcellent();
+		}
+		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
+			return o2.getQualified() - o1.getQualified();
+		}
+		return o2.getOther() - o1.getOther();
+	}
+}
+
+class TalentReleasePersonRankingResComparator implements Comparator<TalentReleasePersonRankingRes> {
+
+	@Override
+	public int compare(TalentReleasePersonRankingRes o1, TalentReleasePersonRankingRes o2) {
+		if (o1.getExcellent().intValue() != o2.getExcellent().intValue()) {
+			return o2.getExcellent() - o1.getExcellent();
+		}
+		if (o1.getQualified().intValue() != o2.getQualified().intValue()) {
+			return o2.getQualified() - o1.getQualified();
+		}
+		if (o1.getExcellentMatchSum().intValue() != o2.getExcellentMatchSum().intValue()) {
+			return o2.getExcellentMatchSum() - o1.getExcellentMatchSum();
+		}
+		return o2.getMaxMatch() - o1.getMaxMatch();
 	}
 }
 

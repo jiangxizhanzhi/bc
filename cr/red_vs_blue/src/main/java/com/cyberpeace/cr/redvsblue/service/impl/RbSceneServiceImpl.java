@@ -188,7 +188,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		ret.setTopoData(topoData);
 
 		// 4. 场景角色资产配置，用于动态编辑,只有教员有权限
-		if (selfRole.isTeamTeacher()) {
+		if (selfRole.isRvbStaff()) {
 			List<CrRoleConfig> redConfigList = Lists.newArrayList();
 			List<CrRoleConfig> blueConfigList = Lists.newArrayList();
 			for (CrRole role : roleList) {

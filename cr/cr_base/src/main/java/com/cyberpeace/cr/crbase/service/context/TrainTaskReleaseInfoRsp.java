@@ -17,6 +17,9 @@ public class TrainTaskReleaseInfoRsp implements Serializable {
     @ApiModelProperty(value = "角色名称")
     private String roleName;
 
+    @ApiModelProperty(value = "角色名称")
+    private String roleId;
+
     @ApiModelProperty(value = "用户列表")
     private List<UserData> userInfoList;
 

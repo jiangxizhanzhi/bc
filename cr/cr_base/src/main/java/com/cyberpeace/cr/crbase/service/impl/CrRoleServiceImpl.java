@@ -468,6 +468,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			}
 			taskReleaseInfoRsp.setMissionStages(missionReleaseStageInfos);
 			taskReleaseInfoRsp.initCount();
+			taskReleaseInfoRsp.setRoleId(roleSimple.getResourceId());
 			res.add(taskReleaseInfoRsp);
 		}
 		return res;

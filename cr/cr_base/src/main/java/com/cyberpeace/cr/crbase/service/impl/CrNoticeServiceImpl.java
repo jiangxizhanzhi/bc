@@ -19,6 +19,7 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,12 +62,29 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	}
 
 	@Override
-	public void notice(String roomId) {
-		sendWsData(new TaskWsData(MissionWsCode.NOTICE_Code), roomId);
+	public void notice(CrNoticeReq crNoticeReq) {
+		List<CrRole> roles;
+		if (crNoticeReq.getIsRb()) {
+			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(2));
+
+		} else {
+			List<Integer> groups = new ArrayList<>();
+			if (crNoticeReq.getRole()==1) {
+				groups.add(4);
+				groups.add(5);
+			} else if (crNoticeReq.getRole()==2){
+				groups.add(4);
+			} else {
+				groups.add(5);
+			}
+			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(groups));
+		}
+		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).collect(Collectors.toList());
+		sendWsData(new TaskWsData(MissionWsCode.NOTICE_Code), crNoticeReq.getRoomId(),userIds);
 
 	}
 
-	private <T> void sendWsData(T data, String businessId) {
+	private <T> void sendWsData(T data, String businessId,List<String> userIds) {
 		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);
 		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
@@ -74,7 +92,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
-		webSocketHandler.pushMessage(messageContext, true);
+		webSocketHandler.pushMessageToUsers(messageContext, userIds);
 	}
 
 	/**

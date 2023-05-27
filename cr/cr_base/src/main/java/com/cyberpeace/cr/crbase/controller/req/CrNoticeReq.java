@@ -48,4 +48,8 @@ public class CrNoticeReq implements Serializable {
 
     @ApiModelProperty("是否置顶 0否 1是")
     private Integer isTop;
+
+    @ApiModelProperty("是否红蓝 0否 1是")
+    private Boolean isRb;
+
 }

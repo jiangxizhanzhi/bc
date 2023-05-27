@@ -44,6 +44,7 @@ import com.cyberpeace.situation.service.context.DashboardTemplateContext;
 import com.cyberpeace.situation.service.context.DashboardTemplateRefContext;
 import com.cyberpeace.situation.service.context.DynamicParameterContext;
 import com.cyberpeace.situation.service.context.config.DashboardConfigContext;
+import com.google.common.collect.Lists;
 
 /**
  * @Author xuxz
@@ -325,6 +326,12 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 						if (dynamic == null || dynamic) {
 							dataSetObject.put("source", echartsOption);
 							optionObject.replace("dataset", dataSetObject);
+							// 基础雷达图特殊处理
+							if (jsonObject.getString("resource_id").equals("1589463122191163393")
+									|| jsonObject.getString("resource_id")
+											.equals("1653675834149482498")) {
+								changeRadar(optionObject, echartsOption);
+							}
 						} else {
 							parseUnDataSet(optionObject, echartsOption, componentSetting);
 						}
@@ -337,6 +344,88 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 			}
 		}
 		return componentsSettingList;
+	}
+
+	/**
+	 * 修改图表实际配置
+	 * 改为如下 [
+	 *                 {
+	 *                   "name": "IP信息获取率","max":100
+	 *                 },
+	 *                 {
+	 *                   "name": "端口信息获取率","max":100
+	 *                 },
+	 *                 {
+	 *                   "name": "高危漏洞获取率","max":100
+	 *                 }
+	 *               ]
+	 *                [[60,84,25]]
+	 * @param optionObject  动态数据，例如 [
+	 *                 {
+	 *                   "ability": "IP信息获取率",
+	 *                   "value": 60
+	 *                 },
+	 *                 {
+	 *                   "ability": "端口信息获取率",
+	 *                   "value": 84
+	 *                 },
+	 *                 {
+	 *                   "ability": "漏洞信息获取率",
+	 *                   "value": 25
+	 *                 }
+	 *               ]
+	 * @param echartsOption 图表实际配置
+	 *
+	 */
+	private void changeRadar(JSONObject optionObject, JSONArray echartsOption) {
+
+		JSONArray indicators = new JSONArray();
+		JSONArray datasetSources = new JSONArray();
+		List datasetSource = Lists.newArrayList();
+		Integer max = 100;
+		Integer sum = 0;
+
+		// 遍历数据，创建标签和数据
+		for (int i = 0; i < echartsOption.size(); i++) {
+			JSONObject dataset = echartsOption.getJSONObject(i);
+			Object[] array = dataset.values().toArray();
+			if (2 <= array.length) {
+				JSONObject indicator = new JSONObject();
+
+				Object key = array[0];
+				Object value = array[1];
+				try {
+					// 找到最大值
+					Integer v = (Integer) value;
+					sum += v;
+					if (max < v) {
+						max = v;
+					}
+					indicator.put("value", v);
+
+				} catch (Exception e) {
+					log.error("value of radar is not number", e);
+				}
+				// 填充名称
+				indicator.put("name", key);
+				datasetSource.add(value);
+				indicators.add(indicator);
+			}
+		}
+
+		for (int i = 0; i < indicators.size(); i++) {
+			// 填充最大值
+			JSONObject indicator = indicators.getJSONObject(i);
+			indicator.put("max", ((max - 1) / 100 + 1) * 100);
+			// 填充百分比
+			int value = indicator.getInteger("value") / sum * 100;
+			indicator.put("name", value + "%" + " " + indicator.getString("name"));
+
+		}
+		datasetSources.add(datasetSource);
+		optionObject.getJSONObject("radar").replace("indicator", indicators);
+		optionObject.getJSONObject("dataset").replace("source", datasetSources);
+
 	}
 
 	@Override

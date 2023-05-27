@@ -13,6 +13,9 @@ public class PlatformReq extends TaskBaseReq implements Serializable {
 	@ApiModelProperty(value = "可视化方案id")
 	private String schemeId;
 
+	@ApiModelProperty(value = "环境配置方案ID")
+	private String envId;
+
 	@ApiModelProperty("平台ID")
 	private String platformId;
 

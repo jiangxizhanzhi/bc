@@ -242,7 +242,7 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		NodeListReq nodeListReq = BeanUtils.copy(platformReq, NodeListReq.class);
 		List<String> nodeIdList = getNodeIdList(nodeListReq);
 		ThirdPartyTopoBo topoBo = HttpClientUtil.tsGet(
-				XD_TOPO_URL + "?platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class,
+				XD_TOPO_URL + "?taskId=" + platformReq.getTaskId() + "&envId=" + platformReq.getEnvId() + "&subjectId=" + platformReq.getSubjectId()+ "&platformId=" + platformReq.getPlatformId(), ThirdPartyTopoBo.class,
 				"获取想定系统拓扑信息失败");
 
 		NodeListApiReq nodeListApiReq = BeanUtils.copy(platformReq, NodeListApiReq.class);

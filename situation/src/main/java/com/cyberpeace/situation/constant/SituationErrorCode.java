@@ -254,7 +254,7 @@ public interface SituationErrorCode {
 	String XD_DASHBOARD_CANCEL_ERROR = "106008";
 
 	/**
-	 * 态势模板未关联拓
+	 * 态势模板未关联拓扑
 	 */
 	String UNRELATED_TO_TOPO = "106009";
 

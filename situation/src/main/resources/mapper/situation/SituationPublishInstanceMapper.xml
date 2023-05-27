@@ -44,7 +44,11 @@
         <if test="!situationPublishInstanceFilterReq.replay">
             AND replay_mode = 0
         </if>
-        ORDER BY create_time DESC
+        ORDER BY
+        <if test="situationPublishInstanceFilterReq.type == 1 ">
+            sub_range_id asc,
+        </if>
+        create_time DESC
     </select>
 
     <select id="getAttributeIds" resultType="java.lang.String">

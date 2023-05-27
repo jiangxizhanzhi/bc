@@ -597,6 +597,53 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteSceneService.restartNode(context);
 	}
 
+	@Override
+	public JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category,
+			String name, Boolean realTimeHostState) {
+		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
+		AllNodeReq req = new AllNodeReq();
+		req.setSceneId(localScene.getMpSceneId());
+		req.setCategory(category);
+		req.setName(name);
+		req.setRealTimeHostState(realTimeHostState);
+		return remoteSceneService.getAllNodes(req);
+	}
+
+	@Override
+	public JSONArray getAssetListByTopoId(String topoId, Integer category, String name) {
+		return null;
+	}
+
+	@Override
+	public JSONObject getNodeStatistics(String localSceneId) {
+		String mpSceneId = getMpSceneIdOrExceptionByLocalSceneId(localSceneId);
+		return remoteSceneService.getAssetsStatisticsBySceneId(mpSceneId);
+	}
+
+	@Override
+	public JSONObject getNodeStatisticsByTopoId(String topoId) {
+		return null;
+	}
+
+	private String getMpSceneIdOrExceptionByLocalSceneId(String localSceneId) {
+		LocalScene localScene = getOrException(localSceneId);
+		String mpSceneId = localScene.getMpSceneId();
+		if (StringUtils.isBlank(mpSceneId)) {
+			log.error("local scene [{}] has no valid mpSceneId", localScene);
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		return mpSceneId;
+	}
+
+	private LocalScene getOrException(String localSceneId) {
+		LocalScene localScene = localSceneMapper.selectById(localSceneId);
+		if (null == localScene) {
+			log.error("cant find localscene by localSceneId: [{}]", localSceneId);
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		return localScene;
+	}
+
 	private SceneUpdateContext getSceneUpdateContext(LocalScene localScene) {
 		SceneUpdateContext sceneUpdateContext = new SceneUpdateContext();
 		sceneUpdateContext.setId(localScene.getMpSceneId());
@@ -620,6 +667,15 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
 		if (null == localScene) {
 			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);
+			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
+		}
+		return localScene;
+	}
+
+	private LocalScene getOrExceptionByBusinessInstanceId(String businessInstanceId) {
+		LocalScene localScene = localSceneMapper.selectByBusinessInstanceId(businessInstanceId);
+		if (null == localScene) {
+			log.error("cant find localscene by business_instance_id: [{}]", businessInstanceId);
 			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
 		}
 		return localScene;

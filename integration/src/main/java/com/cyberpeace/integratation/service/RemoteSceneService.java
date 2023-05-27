@@ -238,4 +238,20 @@ public interface RemoteSceneService {
 	 * @return {@code Boolean}
 	 */
 	Boolean stopNode(NodeOpsContext context);
+
+	/**
+	 * 获取节点列表
+	 *
+	 * @param req 请求体
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAllNodes(AllNodeReq req);
+
+	/**
+	 * 通过场景id获取资产统计数据
+	 *
+	 * @param sceneId 场景id
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getAssetsStatisticsBySceneId(String sceneId);
 }

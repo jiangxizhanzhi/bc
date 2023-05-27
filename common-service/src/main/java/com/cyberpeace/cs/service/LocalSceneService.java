@@ -216,4 +216,42 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code Boolean}
 	 */
 	Boolean restartNodeBySceneId(String mpSceneId, String nodeId);
+
+	/**
+	 * 通过实例id获取资产列表
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @param name               业务实例id
+	 * @param category           类别
+	 * @param realTimeHostState  是否展示实时主机状态
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category, String name,
+			Boolean realTimeHostState);
+
+	/**
+	 * 通过拓扑id获取资产列表
+	 *
+	 * @param topoId   拓扑id
+	 * @param category 类别
+	 * @param name     名称
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAssetListByTopoId(String topoId, Integer category, String name);
+
+	/**
+	 * 获取节点统计数据
+	 *
+	 * @param localSceneId 当地场景id
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getNodeStatistics(String localSceneId);
+
+	/**
+	 * 通过拓扑id获取节点统计数据
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getNodeStatisticsByTopoId(String topoId);
 }

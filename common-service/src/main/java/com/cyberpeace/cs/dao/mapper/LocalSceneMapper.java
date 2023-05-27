@@ -1,14 +1,14 @@
 package com.cyberpeace.cs.dao.mapper;
 
+import java.util.Date;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
-
-import java.util.Date;
-import java.util.List;
 
 @Mapper
 @Repository
@@ -41,4 +41,12 @@ public interface LocalSceneMapper extends BaseMapper<LocalScene> {
 	LocalScene selectBySceneId(@Param("sceneId") String sceneId);
 
 	List<LocalScene> selectAll();
+
+	/**
+	 * 查询通过业务实例id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code LocalScene}
+	 */
+	LocalScene selectByBusinessInstanceId(@Param("businessInstanceId") String businessInstanceId);
 }

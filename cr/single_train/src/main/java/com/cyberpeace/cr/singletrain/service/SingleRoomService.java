@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
@@ -167,4 +168,14 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return {@code SingleMatrixProgressRsp}
 	 */
 	SingleMatrixProgressRsp getMatrixRsp(String roomId);
+
+	/**
+	 * 获取资产清单
+	 *
+	 * @param businessTemplateId 业务模板id
+	 * @param category
+	 * @param name
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAssetList(String businessTemplateId, Integer category, String name);
 }

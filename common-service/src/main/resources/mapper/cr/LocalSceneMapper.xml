@@ -30,16 +30,23 @@
     <select id="selectBetweenEndTime" resultMap="baseResultMap">
         select * from local_scene
         where end_time &gt;= #{start_time}
-        and end_time &lt;= #{end_time}
-        and scene_status = 1
+          and end_time &lt;= #{end_time}
+          and scene_status = 1
     </select>
 
     <select id="selectBySceneId" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
         where mp_scene_id = #{sceneId}
     </select>
 
     <select id="selectAll" resultMap="baseResultMap">
-        select * from local_scene
+        select *
+        from local_scene
+    </select>
+    <select id="selectByBusinessInstanceId" resultType="com.cyberpeace.cs.dao.entity.LocalScene">
+        select *
+        from local_scene
+        where business_instance_id = #{businessInstanceId}
     </select>
 </mapper>

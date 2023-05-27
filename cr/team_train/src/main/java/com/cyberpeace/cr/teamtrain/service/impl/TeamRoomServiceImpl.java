@@ -721,6 +721,16 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return friend;
 	}
 
+	@Override
+	public TeamRoom getOrExceptionById(String roomId) {
+		TeamRoom room = getById(roomId);
+		if (null == room) {
+			log.error("failed to get team room by room_id: [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		return room;
+	}
+
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
 		if(file.exists()) {

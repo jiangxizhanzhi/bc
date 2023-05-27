@@ -109,6 +109,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_STOP_URL;
 
+	private String SCENE_NODE_LIST;
+
+	private String SCENE_NODE_STATISTICS;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -187,6 +191,9 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		NODE_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("mp.node.stop");
 
+		SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
+
+		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
 	}
 
 	@Override
@@ -252,6 +259,20 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public Boolean stopNode(NodeOpsContext context) {
 		return HttpClientUtil.post(NODE_STOP_URL, context, Boolean.class);
+	}
+
+	@Override
+	public JSONArray getAllNodes(AllNodeReq req) {
+		String targetUrl = SCENE_NODE_LIST + req.toQuery();
+		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONObject getAssetsStatisticsBySceneId(String sceneId) {
+		// 只获取一个场景的
+		String targetUrl = SCENE_NODE_STATISTICS + "?sceneIds=" + sceneId;
+		JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+		return rsp.getJSONObject(0);
 	}
 
 	@Override

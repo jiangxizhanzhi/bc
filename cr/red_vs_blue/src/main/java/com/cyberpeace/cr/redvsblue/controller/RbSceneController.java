@@ -8,6 +8,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -226,5 +228,47 @@ public class RbSceneController {
 			throw new BusinessException(CrBusinessErrorCode.FAILED_TO_CREATE_NODE);
 		}
 		return new BaseRsp();
+	}
+
+	/**
+	 * 获取设备列表
+	 * 透传中台
+	 *
+	 * @param resource_id 资源id
+	 * @param category    类别
+	 * @param name        名称
+	 * @return {@code BaseRsp<JSONArray>}
+	 */
+	@ApiOperation("设备清单")
+	@GetMapping("/device/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONArray> getDeviceList(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONArray res = rbSceneService.getAssetList(resource_id, category, name);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 获取设备统计数据
+	 * 透传中台数据
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
+	@ApiOperation("设备统计")
+	@GetMapping("/device/count")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONObject> getDeviceStatistics(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONObject res = rbSceneService.getNodeStatistics(resource_id);
+		return new BaseRsp<>(res);
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -291,6 +292,30 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		// 5. 返回流量数据列表
 		return flows;
+	}
+
+	@Override
+	public JSONArray getAssetList(String roomId, Integer category, String name) {
+		TeamRoom room = teamRoomService.getOrExceptionById(roomId);
+		String localSceneId = room.getLocalSceneId();
+		if (StringUtils.isNotBlank(localSceneId)) {
+			return localSceneService.getAssetListByInstanceId(roomId, category, name, true);
+		} else {
+			String topoId = room.getCopyedTopoId();
+			return localSceneService.getAssetListByTopoId(topoId, category, name);
+		}
+	}
+
+	@Override
+	public JSONObject getNodeStatistics(String roomId) {
+		TeamRoom room = teamRoomService.getOrExceptionById(roomId);
+		String localSceneId = room.getLocalSceneId();
+		if (StringUtils.isNotBlank(localSceneId)) {
+			return localSceneService.getNodeStatistics(localSceneId);
+		} else {
+			String topoId = room.getCopyedTopoId();
+			return localSceneService.getNodeStatisticsByTopoId(topoId);
+		}
 	}
 
 	private JSONObject getTopoData(String topoId, CrRoleNodesData nodes) {

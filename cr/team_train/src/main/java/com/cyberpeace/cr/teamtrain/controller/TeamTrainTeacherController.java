@@ -1,16 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.util.Comparator;
 import java.util.List;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.MissionService;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomMissionReq;
-import com.cyberpeace.cs.service.context.IdNameType;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -18,19 +9,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomMissionReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
+import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
+import com.cyberpeace.cs.service.context.IdNameType;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,6 +56,9 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private TeamTeacherService teamTeacherService;
+
+	@Autowired
+	private TeamSceneService teamSceneService;
 
 	@Autowired
 	private CrRoleService crRoleService;
@@ -133,5 +140,31 @@ public class TeamTrainTeacherController {
 		CrRole crRole = crRoleService.getById(rbRoomMissionReq.getRoleResourceId());
 		return new BaseRsp<>(
 				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
+	}
+
+	@ApiOperation("设备清单")
+	@GetMapping("/device/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<JSONArray> getDeviceList(
+			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONArray res = teamSceneService.getAssetList(resource_id, category, name);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("设备统计")
+	@GetMapping("/device/statistics")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<JSONObject> getDeviceCount(
+			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONObject res = teamSceneService.getNodeStatistics(resource_id);
+		return new BaseRsp<>(res);
 	}
 }

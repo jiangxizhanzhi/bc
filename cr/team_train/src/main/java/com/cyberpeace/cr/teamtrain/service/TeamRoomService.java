@@ -145,4 +145,12 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return 聊天面板用户列表
 	 */
 	List<DashboardUser> getMembersInfo(String roleId, String roomId);
+
+	/**
+	 * 获取或异常
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TeamRoom}
+	 */
+	TeamRoom getOrExceptionById(String roomId);
 }

@@ -1174,6 +1174,15 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return result;
 	}
 
+	@Override
+	public JSONArray getAssetList(String businessTemplateId, Integer category, String name) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String businessInstanceId = businessTemplateId + "_" + userId;
+		JSONArray res = localSceneService.getAssetListByInstanceId(businessInstanceId, category,
+				name, false);
+		return res;
+	}
+
 	private Map<String, Mission>
 			getMissionMapByScheme(List<MissionStageScheme> missionStageSchemes) {
 		List<String> missionIds = missionService.getMissionIdsByScheme(missionStageSchemes);

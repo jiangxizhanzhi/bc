@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -229,4 +230,17 @@ public class SingleRoomController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("资产清单, 需要开启场景")
+	@GetMapping("/asset/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<JSONArray> getAssets(
+			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONArray res = singleRoomService.getAssetList(resource_id, category, name);
+		return new BaseRsp<>(res);
+	}
 }

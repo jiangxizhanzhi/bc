@@ -163,4 +163,12 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code Integer}
 	 */
 	Integer getDuration(String roomId);
+
+	/**
+	 * 获取或异常
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RbRoom}
+	 */
+	RbRoom getOrExceptionById(String roomId);
 }

@@ -639,8 +639,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			Optional<String> first = userIdList.stream()
 					.filter(userId -> userId.equals(currentUserId))
 					.findFirst();
-			String myUserId = first.get();
-			mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
+			String myUserId = first.orElse("");
+			if(StringUtils.isNotEmpty(myUserId)) {
+				mineArr[0] = (buildDashboardUser(role, myUserId, userInfoMap));
+			}
 
 			userIds.addAll(role.getUserIdList());
 		});

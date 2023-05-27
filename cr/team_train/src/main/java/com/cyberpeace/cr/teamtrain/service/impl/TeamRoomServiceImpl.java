@@ -615,9 +615,6 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					.collect(Collectors.toList());
 			role.setUserIdList(userIdList);
 
-			// 添加所有人作为好友列表
-			friend.addAll(buildDashboardUser(role, userInfoMap));
-
 			teamMembers.addAll(userIdList);
 
 			/*
@@ -645,6 +642,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			}
 
 			userIds.addAll(role.getUserIdList());
+
+			userIdList = userIdList.stream()
+					.filter(item -> !currentUserId.equals(item))
+					.collect(Collectors.toList());
+			role.setUserIdList(userIdList);
+			// 添加所有人作为好友列表
+			friend.addAll(buildDashboardUser(role, userInfoMap));
 		});
 
 		DashboardUser mine = mineArr[0];

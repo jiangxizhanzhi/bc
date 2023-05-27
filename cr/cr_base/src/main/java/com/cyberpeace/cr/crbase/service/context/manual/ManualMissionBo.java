@@ -14,6 +14,6 @@ public class ManualMissionBo implements Serializable {
 	@ApiModelProperty(value = "任务名称")
 	private String title;
 
-	@ApiModelProperty(value = "任务模板id")
+	@ApiModelProperty(value = "题解")
 	private String writeUp;
 }

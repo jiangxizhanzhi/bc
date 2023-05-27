@@ -65,10 +65,13 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	public void notice(CrNoticeReq crNoticeReq) {
 		List<CrRole> roles;
 		if (crNoticeReq.getIsRb()) {
-			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(2));
+			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(1,2));
 
 		} else {
 			List<Integer> groups = new ArrayList<>();
+			groups.add(1);
+			groups.add(2);
+			groups.add(3);
 			if (crNoticeReq.getRole()==1) {
 				groups.add(4);
 				groups.add(5);
@@ -79,7 +82,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 			}
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(groups));
 		}
-		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).collect(Collectors.toList());
+		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).filter(a->!UserInfoContext.getUserContext().getUserId().equals(a)).collect(Collectors.toList());
 		sendWsData(new TaskWsData(MissionWsCode.NOTICE_Code), crNoticeReq.getRoomId(),userIds);
 
 	}

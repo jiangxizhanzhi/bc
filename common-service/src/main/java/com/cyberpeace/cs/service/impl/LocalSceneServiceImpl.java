@@ -601,8 +601,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category,
 			String name, Boolean realTimeHostState) {
 		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
-		AllNodeReq req = new AllNodeReq();
-		req.setSceneId(localScene.getMpSceneId());
+		AllNodeSceneReq req = new AllNodeSceneReq();
+		req.setId(localScene.getMpSceneId());
 		req.setCategory(category);
 		req.setName(name);
 		req.setRealTimeHostState(realTimeHostState);
@@ -611,7 +611,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public JSONArray getAssetListByTopoId(String topoId, Integer category, String name) {
-		return null;
+		AllNodeReq req = new AllNodeReq();
+		req.setId(topoId);
+		req.setCategory(category);
+		req.setName(name);
+		return remoteTopoService.getAllNodes(req);
 	}
 
 	@Override
@@ -622,7 +626,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 
 	@Override
 	public JSONObject getNodeStatisticsByTopoId(String topoId) {
-		return null;
+		return remoteTopoService.getNodeStatistics(topoId);
 	}
 
 	private String getMpSceneIdOrExceptionByLocalSceneId(String localSceneId) {

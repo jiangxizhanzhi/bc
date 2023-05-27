@@ -3,8 +3,10 @@ package com.cyberpeace.integratation.service;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
+import com.cyberpeace.integratation.model.scene.AllNodeReq;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 
 public interface RemoteTopoService {
@@ -78,4 +80,20 @@ public interface RemoteTopoService {
 	 * @param supportPartialStart
 	 */
 	void setSupportPartialStart(String topoId, Boolean supportPartialStart);
+
+	/**
+	 * 获取所有节点
+	 *
+	 * @param req 请求体
+	 * @return {@code JSONArray}
+	 */
+	JSONArray getAllNodes(AllNodeReq req);
+
+	/**
+	 * 获取节点统计数据
+	 *
+	 * @param topoId 拓扑id
+	 * @return {@code JSONObject}
+	 */
+	JSONObject getNodeStatistics(String topoId);
 }

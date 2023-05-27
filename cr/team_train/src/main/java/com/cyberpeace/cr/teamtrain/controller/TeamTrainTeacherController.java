@@ -142,6 +142,15 @@ public class TeamTrainTeacherController {
 				missionService.addDynamic(mission, crRole, rbRoomMissionReq.getMissionStage(),rbRoomMissionReq.getAfterMissionId()));
 	}
 
+	/**
+	 * 获取设备列表
+	 * 透传中台
+	 *
+	 * @param resource_id 资源id
+	 * @param category    类别
+	 * @param name        名称
+	 * @return {@code BaseRsp<JSONArray>}
+	 */
 	@ApiOperation("设备清单")
 	@GetMapping("/device/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -156,10 +165,17 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取设备统计数据
+	 * 透传中台
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
 	@ApiOperation("设备统计")
 	@GetMapping("/device/statistics")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<JSONObject> getDeviceCount(
+	public BaseRsp<JSONObject> getDeviceStatistics(
 			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);

@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.exception.RemoteServiceException;
@@ -19,8 +19,10 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
+import com.cyberpeace.integratation.model.scene.AllNodeReq;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,6 +49,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 
 	private String BATCH_DELETE_TOPO;
 
+	private String TOPO_NODE_LIST;
+
+	private String TOPO_NODE_STATISTICS;
+
 	@Autowired
 	private MpEnvService mpEnvService;
 
@@ -65,6 +71,10 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TOPO_EXPORT = mpEnvService.getMpHost() + ConfigUtil.getContextProperty("scene.topo.export");
 
 		BATCH_DELETE_TOPO = MP_HOST + ConfigUtil.getContextProperty("scene.topo.delete.batch");
+
+		TOPO_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("topo.node.list");
+
+		TOPO_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("topo.node.statistics");
 	}
 
 	@Override
@@ -161,6 +171,19 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 		TopoSupportPartialStartContext context = new TopoSupportPartialStartContext(topoId,
 				enableRecording);
 		sync(JsonUtil.java2JsonObject(context));
+	}
+
+	@Override
+	public JSONArray getAllNodes(AllNodeReq req) {
+		String targetUrl = TOPO_NODE_LIST + req.toUrl();
+		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONObject getNodeStatistics(String topoId) {
+		String targetUrl = TOPO_NODE_STATISTICS + "?id=" + topoId;
+		JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+		return rsp.getJSONObject(0);
 	}
 
 	@Override

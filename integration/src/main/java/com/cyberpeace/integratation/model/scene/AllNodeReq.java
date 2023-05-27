@@ -1,7 +1,9 @@
 package com.cyberpeace.integratation.model.scene;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import com.cyberpeace.common.constant.ErrorCode;
@@ -14,34 +16,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AllNodeReq implements Serializable {
 
-	private String sceneId;
+	private String id;
 
 	private Integer category;
 
 	private String name;
 
-	private Boolean realTimeHostState;
-
-	public String toQuery() {
-		StringBuilder builder = new StringBuilder();
-		if (StringUtils.isBlank(sceneId)) {
-			log.error("scene id missing");
-			throw new BusinessException(ErrorCode.UNKNOWN_SCENE);
-		}
-		builder.append(this.sceneId);
-		builder.append("?realTimeHostState=");
-		if (this.realTimeHostState.equals(Boolean.TRUE)) {
-			builder.append("true");
-		} else {
-			builder.append("false");
-		}
+	protected List<String> getQuery() {
+		List<String> queries = Lists.newArrayList();
 		if (StringUtils.isNotBlank(name)) {
-			builder.append("&name=").append(this.name);
+			queries.add("name=" + this.name);
 		}
 		if (null != category) {
-			builder.append("&category=").append(this.category);
+			queries.add("category=" + this.category);
 		}
+		return queries;
+	}
 
-		return builder.toString();
+	public String toUrl() {
+		if (StringUtils.isBlank(this.id)) {
+			log.error("blank id for scene or topo");
+			throw new BusinessException(ErrorCode.BLANK_ID);
+		}
+		List<String> queries = getQuery();
+		if (queries.isEmpty()) {
+			return id;
+		} else {
+			return id + "?" + String.join("&", queries);
+		}
 	}
 }

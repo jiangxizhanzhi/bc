@@ -167,4 +167,9 @@ public interface ErrorCode {
 
 	/** 未知场景 */
 	String UNKNOWN_SCENE = "100054";
+
+	/**
+	 * 空白id
+	 */
+	String BLANK_ID = "100055";
 }

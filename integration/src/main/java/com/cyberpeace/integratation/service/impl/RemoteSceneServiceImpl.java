@@ -262,8 +262,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONArray getAllNodes(AllNodeReq req) {
-		String targetUrl = SCENE_NODE_LIST + req.toQuery();
+	public JSONArray getAllNodes(AllNodeSceneReq req) {
+		String targetUrl = SCENE_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 

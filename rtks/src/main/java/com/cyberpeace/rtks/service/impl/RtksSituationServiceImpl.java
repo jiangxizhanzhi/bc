@@ -516,14 +516,18 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			List<TalentUserReleaseModelRes> result = new ArrayList<>();
 			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(resourceId);
 			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
+			List<TalentUserReleaseModelRes> finalResult = result;
 			roleMatchRecordContexts.forEach(roleMatchRecordContext -> {
 				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
 				String roleName = roleMatchRecordContext.getRoleName();
 				Integer match = recordSituation(userInfo.getUserId(), userInfo.getUserName(), roleMatchRecordContext.getRoleId(), roleMatchRecordContext.getRoleName());
 				tmp.setPercent(match);
 				tmp.setName(roleName);
-				result.add(tmp);
+				finalResult.add(tmp);
 			});
+			if(result.size() > 5){
+				result = result.subList(0,5);
+			}
 			res.setRoleInfos(result);
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();
@@ -648,6 +652,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				continue;
 			}
 			BeanUtils.copyProperties(userInfo, current);
+			current.setName(userInfo.getUserName());
 			List<String> roleNames = StreamApiUtils.getColumn(roleMatchInfo,
 					RoleMatchRecordContext::getRoleName);
 			String roleNameStr = String.join(",", roleNames);

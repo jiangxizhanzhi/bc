@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller.req;
+package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class RbMissionDeleteReq implements Serializable {
+public class MissionDeleteReq implements Serializable {
 
 	@ApiModelProperty(value = "房间id", required = true)
 	private String roomId;

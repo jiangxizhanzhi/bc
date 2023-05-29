@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -45,9 +47,6 @@ import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
-import com.cyberpeace.cr.crbase.service.context.mission.TeamTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
@@ -847,5 +846,61 @@ public class TeamTrainRoomController {
 		json.put("list", data);
 
 		return new BaseRsp(json);
+	}
+	@ApiOperation("任务删除")
+	@PostMapping("/mission_delete")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<String>
+	addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				List<MissionConfig> missionConfigList = rbMissionDeleteReq.getMissionConfig();
+				for (MissionConfig missionConfig : missionConfigList) {
+					CrRole crRole = crRoleService.getById(missionConfig.getRoleResourceId());
+					if (!crRole.isTeamStudent()) {
+						log.error("student role  does not exist！roleId=[{}] ",
+								crRole.getResourceId());
+						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
+
+					}
+					List<String> deleteMissions = missionConfig.getMissions();
+
+					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
+							.size() > 0) {
+						log.error("mission is issued！missionIds=[{}] ",
+								JSONObject.toJSONString(deleteMissions));
+						throw new BusinessException(CrBusinessErrorCode.MISSION_ISSUED);
+					}
+
+					List<MissionStageScheme> missionStageSchemeList = crRole
+							.getMissionStageSchemes();
+
+					for (MissionStageScheme missionStageScheme : missionStageSchemeList) {
+
+						List<String> missions = missionStageScheme.getMissions();
+						for (int i = missions.size() - 1; i >= 0; i--) {
+							String mission = missions.get(i);
+
+							if (deleteMissions.contains(mission)) {
+								missions.remove(mission);
+							}
+						}
+						missionStageScheme.setMissions(missions);
+
+					}
+
+					crRole.setMissionStageSchemes(missionStageSchemeList);
+					crRoleService.updateById(crRole);
+					missionService.removeByIds(deleteMissions);
+
+				}
+
+			}
+		});
+
+		return new BaseRsp<>();
 	}
 }

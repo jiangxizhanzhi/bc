@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.controller.req;
+package com.cyberpeace.cr.crbase.service.context.mission;
 
 import java.io.Serializable;
 import java.util.List;

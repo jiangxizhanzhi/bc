@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.cr.crbase.service.WebSocketPushService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionDeleteReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -43,8 +44,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
-import com.cyberpeace.cr.redvsblue.controller.req.MissionConfig;
-import com.cyberpeace.cr.redvsblue.controller.req.RbMissionDeleteReq;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionConfig;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -209,7 +209,7 @@ public class RbRoomDirectorController {
 	@PostMapping("/mission_delete")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
-			addMissionInfo(@RequestBody @Validated RbMissionDeleteReq rbMissionDeleteReq) {
+			addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

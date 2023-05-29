@@ -684,7 +684,7 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			res.sort(Comparator.comparing(TalentUserRoleInfoRes::getMaxMatch).reversed());
 		}
 		res.forEach(tmp -> {
-			tmp.setRanking(res.indexOf(tmp));
+			tmp.setRanking(res.indexOf(tmp) + 1);
 		});
 		// table 可按字段ranking排序
 		res.sort(new TalentUserRoleInfoComparator(req.getSort()));

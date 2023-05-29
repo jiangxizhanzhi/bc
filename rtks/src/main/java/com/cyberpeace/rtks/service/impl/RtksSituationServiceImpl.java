@@ -652,7 +652,6 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				continue;
 			}
 			BeanUtils.copyProperties(userInfo, current);
-			current.setName(userInfo.getUserName());
 			List<String> roleNames = StreamApiUtils.getColumn(roleMatchInfo,
 					RoleMatchRecordContext::getRoleName);
 			String roleNameStr = String.join(",", roleNames);

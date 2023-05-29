@@ -87,6 +87,9 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	@Autowired
 	private RoleService roleService;
 
+	@Autowired
+	private RtksSituationService rtksSituationService;
+
 	@Override
 	public Integer roleMatchPercent(String roleId, String userId) {
 		Integer knowledgeScore = 0;
@@ -178,6 +181,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 			Integer knowledgeWeight = role.getKnowledgeWeight();
 			Integer result = floor(
 					(knowledgeScore * knowledgeWeight + skillScore * (100 - knowledgeWeight)));
+			// 更新记录
+			rtksSituationService.recordMatch(userId, role.getResourceId(), result);
 			bo.setMatch(result);
 			// ranking,
 			if (result < 100) {

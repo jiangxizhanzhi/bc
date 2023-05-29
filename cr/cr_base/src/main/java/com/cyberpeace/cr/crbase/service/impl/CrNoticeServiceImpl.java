@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.CrNoticeReq;
 import com.cyberpeace.cr.crbase.controller.rsp.CrNoticeRsp;
@@ -39,18 +40,15 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
 	@Override
 	public List<CrNoticeRsp> queryList(String roomId, boolean isRb) {
-		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
-				UserInfoContext.getUserContext().getUserId());
-		// 角色映射
-		List<Integer> roles = dealRole(crRole.getRoleGroup(), isRb);
-		QueryWrapper<CrNotice> queryWrapper = new QueryWrapper<>();
-		queryWrapper.lambda().eq(CrNotice::getRoomId, roomId);
-		// 如果不是导演或是团队直接不过滤
-		if (!roles.contains(1) || !isRb) {
-			roles.add(1);
-			queryWrapper.lambda().in(CrNotice::getRole, roles);
+		List<CrNotice> list = getList(roomId, isRb);
+		List<CrNotice>  updateList = new ArrayList<>();
+		for (CrNotice notice:list) {
+			boolean update = notice.reoveUserId(UserInfoContext.getUserContext().getUserId());
+			if (update) {
+				updateList.add(notice);
+			}
 		}
-		List<CrNotice> list = this.list(queryWrapper);
+		this.updateBatchById(updateList);
 		list = topDeal(list);
 		List<String> userIds = list.stream().filter(a -> a.getCreateUserId() != null).map(CrNotice::getCreateUserId).collect(Collectors.toList());
 		Map<String, UserData> userMap = crRoleService.getUserDatas(userIds).stream().collect(Collectors.toMap(UserData::getResourceId, Function.identity()));
@@ -63,6 +61,8 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 
 	@Override
 	public void notice(CrNoticeReq crNoticeReq) {
+		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
+		notice.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		List<CrRole> roles;
 		if (crNoticeReq.getIsRb()) {
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(1,2));
@@ -84,7 +84,36 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		}
 		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).filter(a->!UserInfoContext.getUserContext().getUserId().equals(a)).collect(Collectors.toList());
 		sendWsData(new TaskWsData(MissionWsCode.NOTICE_Code), crNoticeReq.getRoomId(),userIds);
+		notice.setNoticeUsers(JsonUtil.toJsonString(userIds));
+		this.save(notice);
+	}
 
+	@Override
+	public Boolean hasNewInfo(String roomId, boolean isRb) {
+		List<CrNotice> list = getList(roomId, isRb);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		for (CrNotice notice : list) {
+			if (notice.getNoticeUsers()!=null&&notice.getNoticeUsers().contains(userId)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<CrNotice> getList(String roomId, boolean isRb) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		// 角色映射
+		List<Integer> roles = dealRole(crRole.getRoleGroup(), isRb);
+		QueryWrapper<CrNotice> queryWrapper = new QueryWrapper<>();
+		queryWrapper.lambda().eq(CrNotice::getRoomId, roomId);
+		// 如果不是导演或是团队直接不过滤
+		if (!roles.contains(1) || !isRb) {
+			roles.add(1);
+			queryWrapper.lambda().in(CrNotice::getRole, roles);
+		}
+		List<CrNotice> list = this.list(queryWrapper);
+		return list;
 	}
 
 	private <T> void sendWsData(T data, String businessId,List<String> userIds) {

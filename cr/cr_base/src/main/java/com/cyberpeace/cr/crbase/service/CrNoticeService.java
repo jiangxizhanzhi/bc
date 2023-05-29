@@ -19,4 +19,6 @@ public interface CrNoticeService extends IService<CrNotice> {
     List<CrNoticeRsp> queryList(String roomId, boolean isRb);
 
     void notice(CrNoticeReq crNoticeReq);
+
+    Boolean hasNewInfo(String roomID, boolean isRb);
 }

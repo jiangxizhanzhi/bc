@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
@@ -49,6 +51,18 @@ public class CrNotice extends BaseTable {
      * 是否置顶0否1是
      */
     private Integer isTop;
+
+    private String noticeUsers;
+
+    public boolean reoveUserId(String userId) {
+        List<String> userIds = JsonUtil.toJsonObjectArray(noticeUsers, String.class);
+        boolean remove = userIds.remove(userId);
+        if (remove) {
+            noticeUsers = JsonUtil.toJsonString(userIds);
+            return true;
+        }
+        return false;
+    }
 
     public enum RoleGroup implements GenericEnum, CrRole.RoleGroup, BaseI18n {
 

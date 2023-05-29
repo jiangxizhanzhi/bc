@@ -39,11 +39,8 @@ public class CrNoticeController {
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
 	public BaseRsp<CrNotice> add(@RequestBody CrNoticeReq crNoticeReq) {
-		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
-		notice.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-		crNoticeService.save(notice);
 		crNoticeService.notice(crNoticeReq);
-		return new BaseRsp<CrNotice>(notice);
+		return new BaseRsp<CrNotice>();
 	}
 
 	@ApiOperation("置顶取消置顶")
@@ -78,6 +75,19 @@ public class CrNoticeController {
 		List<CrNoticeRsp> res = crNoticeService.queryList(resource_id, true);
 		return new BaseRsp<List<CrNoticeRsp>>(res);
 	}
+
+	@ApiOperation("查询是否有新消息")
+	@GetMapping("/hasNewInfo")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
+			logical = Logical.OR)
+	public BaseRsp<Boolean> hasNewInfo(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id,
+			@ApiParam(name = "is_rb", value = "是否红蓝", required = true) Boolean is_rb) {
+		Boolean res = crNoticeService.hasNewInfo(resource_id,is_rb);
+		return new BaseRsp<Boolean>(res);
+	}
+
 
 	@ApiOperation("团队查询")
 	@GetMapping("/teamList/list")

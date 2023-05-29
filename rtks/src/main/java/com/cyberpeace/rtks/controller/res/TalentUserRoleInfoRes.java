@@ -12,7 +12,7 @@ import java.util.List;
 public class TalentUserRoleInfoRes implements Serializable {
 
 	@ApiModelProperty("姓名")
-	private String userName;
+	private String name;
 
 	@ApiModelProperty("用户id")
 	private String userId;

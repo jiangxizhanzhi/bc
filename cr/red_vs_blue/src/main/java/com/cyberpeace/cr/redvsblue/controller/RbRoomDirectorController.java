@@ -1,9 +1,12 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.WsPath;
+import com.cyberpeace.cr.crbase.service.WebSocketPushService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -94,6 +97,8 @@ public class RbRoomDirectorController {
 	@Autowired
 	private RemoteLogService remoteLogService;
 
+	@Autowired
+	private WebSocketPushService webSocketPushService;
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -107,7 +112,8 @@ public class RbRoomDirectorController {
 			crRole.setExercisePaper(exercisePaperReq.getExercisePaper());
 		}
 		crRoleService.updateBatchById(crRoles);
-
+		List<String> userList = crRoles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).collect(Collectors.toList());
+		webSocketPushService.notice(userList,MissionWsCode.EXERCISE_PAPER_CODE,exercisePaperReq.getResourceId(), WsPath.EXERCISE_PAPER);
 		return new BaseRsp<>();
 	}
 

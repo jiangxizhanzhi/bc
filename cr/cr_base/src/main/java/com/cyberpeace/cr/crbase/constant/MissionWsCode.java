@@ -12,4 +12,6 @@ public interface MissionWsCode {
 	Integer MISSION_WS_UPDATE_STATUS = 3;
 
 	Integer NOTICE_Code = 4;
+
+	Integer EXERCISE_PAPER_CODE = 5;
 }

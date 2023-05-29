@@ -40,6 +40,8 @@ public class WsPath {
 
 	public static final String NOTICE = "/ws/cr/ce_base/notice";
 
+	public static final String EXERCISE_PAPER = "/ws/cr/ce_base/exercise_paper";
+
 	private static Set<String> cache = Sets.newHashSet();
 
 	static {

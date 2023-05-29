@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -659,7 +660,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	public TaskMatrix getTaskMatrixExcludeTimeCost(String roomId,String userId) {
 		List<CrTask> list = this.getByRoomIdAndUserId(roomId,userId);
 		List<String> missionIds = list.stream().map(CrTask::getMissionId).collect(Collectors.toList());
-		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>(): missionMapper.selectBatchIds(missionIds);
 		Map<Integer, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getId, Function.identity()));
 		return new TaskMatrix().init(list,missionMap);
 	}

@@ -516,36 +516,14 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 			List<TalentUserReleaseModelRes> result = new ArrayList<>();
 			List<RoleMatchRecordContext> roleMatchRecordContexts = userGroup.get(resourceId);
 			roleMatchRecordContexts.sort(Comparator.comparing(RoleMatchRecordContext::getMatch).reversed());
-			int i = 3;
-			int index = 2;
-			int index1 = 1;
-			if (roleMatchRecordContexts.size() > i) {
-				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, i);
-			}
-			if (roleMatchRecordContexts.size() == i) {
-				RoleMatchRecordContext top3 = roleMatchRecordContexts.get(index);
+			roleMatchRecordContexts.forEach(roleMatchRecordContext -> {
 				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
-				tmp.setPercent(top3.getMatch());
-				tmp.setName(top3.getRoleName());
-				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index);
+				String roleName = roleMatchRecordContext.getRoleName();
+				Integer match = recordSituation(userInfo.getUserId(), userInfo.getUserName(), roleMatchRecordContext.getRoleId(), roleMatchRecordContext.getRoleName());
+				tmp.setPercent(match);
+				tmp.setName(roleName);
 				result.add(tmp);
-			}
-			if (roleMatchRecordContexts.size() == index) {
-				RoleMatchRecordContext top2 = roleMatchRecordContexts.get(index1);
-				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
-				tmp.setPercent(top2.getMatch());
-				tmp.setName(top2.getRoleName());
-				roleMatchRecordContexts = roleMatchRecordContexts.subList(0, index1);
-				result.add(tmp);
-			}
-			if (roleMatchRecordContexts.size() == index1) {
-				RoleMatchRecordContext top1 = roleMatchRecordContexts.get(0);
-				TalentUserReleaseModelRes tmp = new TalentUserReleaseModelRes();
-				tmp.setPercent(top1.getMatch());
-				tmp.setName(top1.getRoleName());
-				result.add(tmp);
-			}
-			Collections.reverse(result);
+			});
 			res.setRoleInfos(result);
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();

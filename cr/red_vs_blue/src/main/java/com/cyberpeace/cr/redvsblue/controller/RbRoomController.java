@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.CrScoreService;
@@ -192,6 +189,25 @@ public class RbRoomController {
 		rbRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(rbRoomData.getTrainSkill(), String.class));
 
+		return new BaseRsp(rbRoomRsp);
+	}
+
+	@ApiOperation("训练说明")
+	@GetMapping("train_introduction")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<RbRoomRsp> getTrainIntroduction(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
+
+		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
+
+		String copyedTopoId = rbRoomData.getCopyedTopoId();
+		List<String> copyedTopoIds = new ArrayList<>();
+		copyedTopoIds.add(copyedTopoId);
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(copyedTopoIds);
+
+		rbRoomRsp.setNodesCount(
+				topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
 		return new BaseRsp(rbRoomRsp);
 	}
 

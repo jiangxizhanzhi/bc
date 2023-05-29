@@ -2,6 +2,9 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
+import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -54,6 +57,9 @@ public class RbSceneController {
 
 	@Autowired
 	private RemoteLogService remoteLogService;
+
+	@Autowired
+	private RbDeviceService rbDeviceService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -250,6 +256,25 @@ public class RbSceneController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		JSONArray res = rbSceneService.getAssetList(resource_id, category, name);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("设备清单")
+	@GetMapping("/device/common_assets")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONArray> getCommonAssets(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id,
+				"");
+		JSONArray res = rbSceneService.getAssetList(resource_id, category, name);
+		res.stream().filter(MissionTemplateService -> {
+			return false;
+		});
 		return new BaseRsp<>(res);
 	}
 

@@ -2,6 +2,7 @@ package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +114,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_NODE_STATISTICS;
 
+	private String NODE_SCENE_URL;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -194,6 +197,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
 
 		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
+
+		NODE_SCENE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.cscenes");
 	}
 
 	@Override
@@ -273,6 +278,11 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String targetUrl = SCENE_NODE_STATISTICS + "?sceneIds=" + sceneId;
 		JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 		return rsp.getJSONObject(0);
+	}
+
+	@Override
+	public JSONObject getCscene(String id) {
+		return HttpClientUtil.rawGet(NODE_SCENE_URL+"?id="+id, JSONObject.class);
 	}
 
 	@Override

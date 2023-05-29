@@ -55,6 +55,8 @@ public class BaseInfoRsp implements Serializable {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	private String topo;
+
 	public BaseInfoRsp(RbTemplate template, BusinessTemplate businessTemplate) {
 		this.name = businessTemplate.getName();
 		this.category = template.getSubType();

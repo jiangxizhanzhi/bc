@@ -1,7 +1,10 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
 import com.cyberpeace.cr.crbase.service.context.ColorMission;
@@ -9,6 +12,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 
 @Data
 public class TeamTrainTemplateRoleRsp implements Serializable {
@@ -48,5 +52,20 @@ public class TeamTrainTemplateRoleRsp implements Serializable {
 
 	@ApiModelProperty(value = "类型")
 	private String type;
+
+	private Map<Integer,Integer>  assetMap;
+
+
+	public void initAssetMap() {
+		assetMap = new HashMap<>();
+		if (CollectionUtils.isEmpty(assetNodes)) {
+			return;
+		}
+		Map<Integer, List<CrRoleNode>> nodeMap = assetNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));
+		for (Map.Entry<Integer, List<CrRoleNode>> entry : nodeMap.entrySet()) {
+			int size = entry.getValue()==null? 0:entry.getValue().size();
+			assetMap.put(entry.getKey(),size);
+		}
+	}
 
 }

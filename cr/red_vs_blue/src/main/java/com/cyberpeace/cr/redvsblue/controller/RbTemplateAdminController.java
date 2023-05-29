@@ -20,6 +20,7 @@ import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
@@ -34,9 +35,11 @@ import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -47,8 +50,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "红蓝对抗模板后台")
 @RestController
@@ -81,10 +87,12 @@ public class RbTemplateAdminController {
 	@Autowired
 	private BusinessTemplateMapper businessTemplateMapper;
 
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
-	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
+	public BaseRsp<Object> create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
 		// set type
 		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
@@ -183,7 +191,11 @@ public class RbTemplateAdminController {
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
-
+		JSONObject cscene = remoteSceneService.getCscene(businessTemplate.getTopoId());
+		String logo="";
+		if (cscene!=null) {
+			logo= cscene.getObject("logo", String.class);
+		}
 		// 获取红蓝角色
 		String roleString = template.getRoleConfig();
 		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
@@ -192,7 +204,8 @@ public class RbTemplateAdminController {
 				.getMappingBySchemeJson(roleString);
 		List<JSONObject> redRoleRsps = getRoles(roleObject.getJSONArray("red_roles"), mapping);
 		List<JSONObject> blueRoleRsps = getRoles(roleObject.getJSONArray("blue_roles"), mapping);
-
+		dealAssetNodesMap(redRoleRsps);
+		dealAssetNodesMap(blueRoleRsps);
 		// 获取基本信息
 		BaseInfoRsp baseInfoRsp = new BaseInfoRsp(template, businessTemplate);
 
@@ -204,6 +217,7 @@ public class RbTemplateAdminController {
 			sceneManagerId = localScene.getResourceId();
 		}
 		baseInfoRsp.setSceneManagerId(sceneManagerId);
+		baseInfoRsp.setTopo(logo);
 
 		// 获取返回对象
 		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();
@@ -216,6 +230,23 @@ public class RbTemplateAdminController {
 		return new BaseRsp<>(teamTrainTemplateRsp);
 	}
 
+	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
+		for (JSONObject roleRsp : roleRsps) {
+			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
+			Map<Integer,Integer>  assetMap = new HashMap<>();
+			if (CollectionUtils.isEmpty(assetNodes)) {
+				roleRsp.put("assetMap",assetMap);
+				continue;
+			}
+			List<CrRoleNode> crRoleNodes = BeanUtils.deepCopyList(assetNodes, CrRoleNode.class);
+			Map<Integer, List<CrRoleNode>> nodeMap = crRoleNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));
+			for (Map.Entry<Integer, List<CrRoleNode>> entry : nodeMap.entrySet()) {
+				int size = entry.getValue()==null? 0:entry.getValue().size();
+				assetMap.put(entry.getKey(),size);
+			}
+			roleRsp.put("assetMap",assetMap);
+		}
+	}
 	private List<JSONObject> getRoles(JSONArray roleArray, Map<String, MissionTemplate> mapping) {
 		List<JSONObject> result = Lists.newArrayList();
 		// 逐角色逐阶段读取任务信息

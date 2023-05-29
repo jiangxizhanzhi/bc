@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -93,6 +95,8 @@ public class TeamTrainTemplateController {
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
 
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
@@ -191,10 +195,19 @@ public class TeamTrainTemplateController {
 		String sceneManagerId = "";
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(businessTemplate.getResourceId());
+
+		JSONObject cscene = remoteSceneService.getCscene(businessTemplate.getTopoId());
+		String logo="";
+		if (cscene!=null) {
+			logo= cscene.getObject("logo", String.class);
+		}
+
 		if (localScene != null) {
 			sceneManagerId = localScene.getResourceId();
 		}
 		baseInfoRsp.setSceneManagerId(sceneManagerId);
+
+		baseInfoRsp.setTopo(logo);
 
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 
@@ -204,7 +217,9 @@ public class TeamTrainTemplateController {
 
 		teamTrainTemplateRsp.setRoleList(teamTrainTemplateRoleRsps);
 		teamTrainTemplateRsp.setTimeLineConfig(template.getTimeLineConfig());
-
+		for (TeamTrainTemplateRoleRsp teamTrainTemplateRoleRsp : teamTrainTemplateRsp.getRoleList()) {
+			teamTrainTemplateRoleRsp.initAssetMap();
+		}
 		return new BaseRsp(teamTrainTemplateRsp);
 	}
 

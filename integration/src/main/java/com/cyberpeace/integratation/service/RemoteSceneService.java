@@ -239,6 +239,8 @@ public interface RemoteSceneService {
 	 */
 	Boolean stopNode(NodeOpsContext context);
 
+	public JSONObject getCscene(String id);
+
 	/**
 	 * 获取节点列表
 	 *

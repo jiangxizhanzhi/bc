@@ -334,5 +334,5 @@ public interface CrTaskService {
 	 */
 	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
 
-	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id);
+	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id,String userId);
 }

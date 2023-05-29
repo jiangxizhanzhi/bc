@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
@@ -655,9 +656,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public TaskMatrix getTaskMatrixExcludeTimeCost(String roomId) {
-		List<CrTask> list = this.getByRoomIdAndUserId(roomId, UserInfoContext.getUserContext().getUserId());
-		return new TaskMatrix(list);
+	public TaskMatrix getTaskMatrixExcludeTimeCost(String roomId,String userId) {
+		List<CrTask> list = this.getByRoomIdAndUserId(roomId,userId);
+		List<String> missionIds = list.stream().map(CrTask::getMissionId).collect(Collectors.toList());
+		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
+		Map<Integer, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getId, Function.identity()));
+		return new TaskMatrix().init(list,missionMap);
 	}
 
 }

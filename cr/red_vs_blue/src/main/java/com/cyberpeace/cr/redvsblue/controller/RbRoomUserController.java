@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -72,6 +74,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -263,15 +268,20 @@ public class RbRoomUserController {
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
-			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
 
 		if (StringUtils.isBlank(resource_id)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id);
+		if (StringUtils.isBlank(user_id)) {
+			user_id = UserInfoContext.getUserContext().getUserId();
+		}
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
+		rbTaskMatrix.initTaskListStage(crRole);
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 

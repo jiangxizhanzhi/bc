@@ -1,9 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,5 +55,17 @@ public class CrRoleSimple implements Serializable {
 		}
 		List<String> res = list.stream().map(function).flatMap(Collection::stream).collect(Collectors.toList());
 		return res;
+	}
+
+	public Map<String,String> getMissionIdStageMap() {
+		Map<String,String> map = new HashMap<>();
+		for (CrRoleMissionSchemeStage schemeStage : missionScheme) {
+			for (String missionId : schemeStage.getDynamic()) {
+				map.put(missionId,schemeStage.getStage());
+			}
+		}
+
+		return map;
+
 	}
 }

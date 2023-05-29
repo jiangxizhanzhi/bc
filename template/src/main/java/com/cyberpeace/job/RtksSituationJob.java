@@ -47,30 +47,32 @@ public class RtksSituationJob {
 	@Scheduled(fixedRate = 1000 * 300)
 	public void calculate() {
 		log.info("start rtks situation job");
-		List<UserRoleContext> userRoleList = userRoleMapper.selectAll();
+		List<RoleMatchRecordContext> userRoleList = rtksRoleMatchRecordMapper
+				.selectAllByExistingRoles();
 		if (userRoleList.isEmpty()) {
 			return;
 		}
-		List<String> userIds = userRoleList.stream().map(UserRoleContext::getUserId)
+		List<String> userIds = userRoleList.stream().map(RoleMatchRecordContext::getUserId)
 				.collect(Collectors.toList());
-		Map<String, UserRoleContext> userRoleMap = StreamApiUtils.toMap(userRoleList,
-				UserRoleContext::getUserId, context -> context);
+		Map<String, List<RoleMatchRecordContext>> userRoleMap = StreamApiUtils.groupBy(userRoleList, RoleMatchRecordContext::getUserId);
 		List<UserInfo> userInfoList = remoteUserService.getByIdList(userIds);
 		// get existing user
 		String userId;
-		UserRoleContext roleContext;
+		List<RoleMatchRecordContext> roleContexts;
 		Integer match;
 		for (UserInfo userInfo : userInfoList) {
 			userId = userInfo.getUserId();
-			roleContext = userRoleMap.get(userId);
+			roleContexts= userRoleMap.get(userId);
 			UserInfoContext.setUserContext(userInfo);
-			try {
-				// cal match & record
-				match = rtksSituationService.recordSituation(userId, userInfo.getName(),
-						roleContext.getRoleId(), roleContext.getRoleName());
-			} catch (Exception e) {
-				log.error(String.format("rtks situation job failed with userId:[%s], roleId: [%s]",
-						userId, roleContext.getRoleId()), e);
+			for(RoleMatchRecordContext roleContext:roleContexts){
+				try {
+					// cal match & record
+					match = rtksSituationService.recordSituation(userId, userInfo.getName(),
+							roleContext.getRoleId(), roleContext.getRoleName());
+				} catch (Exception e) {
+					log.error(String.format("rtks situation job failed with userId:[%s], roleId: [%s]",
+							userId, roleContext.getRoleId()), e);
+				}
 			}
 		}
 		UserInfoContext.removeUserContext();

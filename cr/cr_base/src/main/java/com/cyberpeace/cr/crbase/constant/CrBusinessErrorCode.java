@@ -426,4 +426,7 @@ public interface CrBusinessErrorCode {
 
 	// 评估已启动
 	String EVALUATION_HAS_BEEN_INITIATED_ERROR = "101129";
+
+	// 评分类型错误
+	String 	SCORE_TYPE_ERROR = "101130";
 }

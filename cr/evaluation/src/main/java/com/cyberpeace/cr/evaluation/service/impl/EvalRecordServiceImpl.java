@@ -30,6 +30,7 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.*;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordVariableContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
@@ -214,6 +215,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 break;
             }
         }
+        Integer status = evalRecord.getStatus();
+        recordRsp.setRunStatus(status >= EvalRecord.Status.END.getCode() ? EvalRecord.Status.END.getCode() : status);
         return recordRsp;
     }
 
@@ -233,12 +236,56 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
+
+        Map<String, Integer> firstIndexesTypeMap = Maps.newHashMap();
+        Map<String, Integer> firstSpecialistMap = Maps.newHashMap();
+
+        Map<String, Integer> secondIndexesTypeMap = Maps.newHashMap();
+        Map<String, Integer> secondSpecialistMap = Maps.newHashMap();
+
+        Map<String, Integer> fourthIndexesTypeMap = Maps.newHashMap();
+        Map<String, Integer> fourthSpecialistMap = Maps.newHashMap();
+
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
-            thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
-            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
+            Integer firstType = evalRecordIndexContext.getType();
+            firstIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), firstType);
+            List<EvalRecordIndexContext> secondIndexes = evalRecordIndexContext.getIndexes();
+            List<Integer> types = StreamApiUtils.getColumn(secondIndexes, EvalRecordIndexContext::getType);
+            Set<Integer> typeSet = Sets.newHashSet(types);
+            if (firstType.equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                firstSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
+                if(typeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())){
+                    throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
+                }
             }
-            evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
+            secondIndexes.forEach(secondIndex->{
+                Integer secondIndexType = secondIndex.getType();
+                List<EvalRecordIndexContext> thirdIndexes = secondIndex.getIndexes();
+                List<Integer> thirdTypes = StreamApiUtils.getColumn(thirdIndexes, EvalRecordIndexContext::getType);
+                Set<Integer> thirdTypeSet = Sets.newHashSet(thirdTypes);
+
+                secondIndexesTypeMap.put(secondIndex.getResourceId(), secondIndexType);
+                if (secondIndexType.equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                    secondSpecialistMap.put(secondIndex.getResourceId(), secondIndex.getSpecialist().getValue());
+                    if(thirdTypeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())){
+                        throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
+                    }
+                }
+                thirdIndexes.forEach(thirdIndex->{
+                    thirdIndexesTypeMap.put(thirdIndex.getResourceId(), thirdIndex.getType());
+                    List<EvalRecordIndexContext> fourthIndexes = thirdIndex.getIndexes();
+                    List<Integer> fourthTypes = StreamApiUtils.getColumn(fourthIndexes, EvalRecordIndexContext::getType);
+                    Set<Integer> fourthTypeSet = Sets.newHashSet(fourthTypes);
+
+                    if (thirdIndex.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                        thirdSpecialistMap.put(thirdIndex.getResourceId(), thirdIndex.getSpecialist().getValue());
+                        if(fourthTypeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())) {
+                            throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
+                        }
+                    }
+                    setSpecialList(fourthIndexes, fourthIndexesTypeMap, fourthSpecialistMap, evalRecordVariableContextMap);
+                });
+            });
         });
 
         // 获取一、二、三级指标
@@ -416,6 +463,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         });
 
         return get(evalRecord.getResourceId());
+    }
+
+    public void setSpecialList(List<EvalRecordIndexContext> fourthIndexes, Map<String, Integer> fourthIndexesTypeMap,
+                               Map<String, Integer> fourthSpecialistMap,Map<String, EvalRecordVariableContext> evalRecordVariableContextMap){
+
+        fourthIndexes.forEach(fourthIndex->{
+            fourthIndexesTypeMap.put(fourthIndex.getResourceId(), fourthIndex.getType());
+            List<EvalRecordVariableContext> variables = fourthIndex.getVariables();
+            if (fourthIndex.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                fourthSpecialistMap.put(fourthIndex.getResourceId(), fourthIndex.getSpecialist().getValue());
+            }
+            variables.forEach(evalRecordVariableContext -> {
+                evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext);
+            });
+        });
     }
 
     private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {

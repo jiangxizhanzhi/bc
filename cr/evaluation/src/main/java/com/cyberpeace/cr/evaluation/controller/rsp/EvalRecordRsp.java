@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.controller.rsp;
 import com.cyberpeace.cr.evaluation.service.context.EvalSystemIndexesContext;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -35,6 +36,9 @@ public class EvalRecordRsp implements Serializable {
 
     @ApiModelProperty("评估开始时间")
     private Date evalTime;
+
+    @ApiModelProperty("启动状态 1-未评估 2-计算中 3-再次启动")
+    private Integer runStatus;
 
     @ApiModelProperty("指标体系结构")
     private List<EvalSystemIndexesContext> indexes;

@@ -64,7 +64,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		CrNotice notice = BeanUtils.copy(crNoticeReq, CrNotice.class);
 		notice.setCreateUserId(UserInfoContext.getUserContext().getUserId());
 		List<CrRole> roles;
-		if (crNoticeReq.getIsRb()) {
+		if (!crNoticeReq.getIsRb()) {
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(1,2));
 
 		} else {

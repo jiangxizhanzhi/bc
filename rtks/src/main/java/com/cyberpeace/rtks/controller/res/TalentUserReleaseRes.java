@@ -17,6 +17,9 @@ public class TalentUserReleaseRes implements Serializable {
 	@ApiModelProperty("用户名")
 	private String name;
 
+	@ApiModelProperty("姓名")
+	private String username;
+
 	@ApiModelProperty("组织")
 	private String organizationData;
 

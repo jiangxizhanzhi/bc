@@ -1,5 +1,23 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.*;
@@ -26,6 +44,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.MissionSchemeTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionDetail;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionSchemeTemplateConfig;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -38,27 +57,12 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Api(tags = "任务相关接口")
 @RestController
@@ -143,7 +147,7 @@ public class MissionController {
 		return new BaseRsp();
 	}
 
-	@ApiOperation("获取任务")
+	@ApiOperation("获取任务模板详情")
 	@GetMapping("/missions")
 	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
 			logical = Logical.OR)
@@ -154,6 +158,16 @@ public class MissionController {
 			return new BaseRsp<>(null);
 		}
 		return new BaseRsp<>(missionTemplateToRsp(missionTemplate));
+	}
+
+	@ApiOperation("获取前台任务详情")
+	@GetMapping("/detail")
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_MISSION_SCHEME, MenuConstant.WEB_ALL },
+			logical = Logical.OR)
+	public BaseRsp<MissionDetail>
+			getDetail(@RequestParam("resource_id") @Validated String resourceId) {
+		MissionDetail res = missionService.getDetailById(resourceId);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("新增任务")

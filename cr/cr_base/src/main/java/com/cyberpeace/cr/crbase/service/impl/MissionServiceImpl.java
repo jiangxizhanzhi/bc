@@ -1,5 +1,21 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
@@ -27,22 +43,8 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.CollectionUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author yinqingrong
@@ -761,6 +763,23 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 			}
 		});
+	}
+
+	@Override
+	public MissionDetail getDetailById(String resourceId) {
+		Mission mission = getById(resourceId);
+		MissionDetail detail = new MissionDetail();
+		detail.setResourceId(mission.getResourceId());
+		detail.setCategoryId(mission.getCategoryId());
+		detail.setDescription(mission.getDescription());
+		detail.setTitle(mission.getTitle());
+		detail.setOption(JsonUtil.toJsonObjectArray(mission.getOption(), MissionOption.class));
+		detail.setType(mission.getType());
+		detail.setAnswer(mission.getAnswer());
+		detail.setWriteUp(mission.getWriteUp());
+		detail.setShowWriteup(mission.getShowWriteup());
+		detail.setSkillPoints(JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class));
+		return detail;
 	}
 
 	private String dumpSchemeTemplates(List<String> templateIds) {

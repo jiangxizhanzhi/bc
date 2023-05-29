@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,10 +22,8 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -181,7 +178,7 @@ public class RbRoomRefereeController {
 	@GetMapping("/get_statistical_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<JSONObject> getStatisticalInfo(
-			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
 		MissionEvaluationQuery missionEvaluationQuery = new MissionEvaluationQuery();
 		missionEvaluationQuery.setRoomId(resource_id);
 		missionEvaluationQuery.setPage(1);

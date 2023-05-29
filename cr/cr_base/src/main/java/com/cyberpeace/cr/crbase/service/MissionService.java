@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionDetail;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 
 public interface MissionService extends IService<Mission> {
@@ -268,4 +269,12 @@ public interface MissionService extends IService<Mission> {
 	 * @param currentUserId 用户id
 	 */
 	void batchRelease(List<String> missionIds, String roleId, String currentUserId);
+
+	/**
+	 * 获取详情通过id
+	 *
+	 * @param resourceId 资源id
+	 * @return {@code MissionDetail}
+	 */
+	MissionDetail getDetailById(String resourceId);
 }

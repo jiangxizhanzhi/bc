@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.controller;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -8,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.ConfigUtil;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.HttpClientUtil;
+import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.integratation.model.situation.*;
 import com.cyberpeace.integratation.model.situation.res.EventListRsp;
 import com.cyberpeace.integratation.service.RemoteOperationService;
@@ -21,6 +24,7 @@ import com.cyberpeace.situation.controller.req.EventMsgReq;
 import com.cyberpeace.situation.controller.req.TaskEventMsgReq;
 import com.cyberpeace.situation.controller.res.EvaluateUrlRes;
 import com.cyberpeace.situation.controller.res.EventTypeRes;
+import com.cyberpeace.situation.controller.res.SysVersionRes;
 import com.cyberpeace.situation.service.SituationHandlerService;
 import com.cyberpeace.situation.service.ThirdPartyService;
 
@@ -197,6 +201,21 @@ public class ExternalDataController {
 			required = false) @RequestParam(value = "mode", required = false) Boolean mode) {
 		HttpClientUtil.changeMode(mode);
 		return new BaseRsp<>(mode);
+	}
+
+	@ApiOperation("获取系统版本信息")
+	@GetMapping("/version/")
+	public BaseRsp<SysVersionRes> getVersion() {
+
+		// 读取版本文件
+		InputStream inputStream = getClass().getResourceAsStream("/version.json");
+		JSONObject version = JsonUtil.toJsonObject(inputStream, JSONObject.class)
+				.getJSONArray("versions").getJSONObject(0);
+
+		// 提取最新的版本信息
+		SysVersionRes sysVersion = JsonUtil.toJsonObject(version.toJSONString(),
+				SysVersionRes.class);
+		return new BaseRsp<>(sysVersion);
 	}
 
 }

@@ -372,8 +372,17 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 		// 如果自己是红方或蓝方角色，再放入自己的角色
 		if (myRole.isRvbStudent()) {
-			DashboardGroup selfGroup = new DashboardGroup(
-					groups.get(0).getGroupname() + "/" + myRole.getName());
+			String groupRole = groups.get(0).getGroupname() + "/" + myRole.getName();
+			String groupAvatar = "";
+			if(groups.get(0).getGroupname().equals(CrRole.RbRoleGroup.RED_GROUP.getMsg())) {
+				groupAvatar = confirmAvatarFile(CrCommonConstants.RED_GROUP_AVATAR, CrCommonConstants.RED_GROUP_JAR_AVATAR);
+			}
+			if(groups.get(0).getGroupname().equals(CrRole.RbRoleGroup.BLUE_GROUP.getMsg())) {
+				groupAvatar = confirmAvatarFile(CrCommonConstants.BLUE_GROUP_AVATAR, CrCommonConstants.BLUE_GROUP_JAR_AVATAR);
+			}
+
+			DashboardGroup selfGroup = new DashboardGroup(groupRole);
+			selfGroup.setAvatar(groupAvatar);
 			selfGroup.setId(myRole.getResourceId());
 			selfGroup.setMembers(myRole.getUserIdList());
 			groups.add(selfGroup);

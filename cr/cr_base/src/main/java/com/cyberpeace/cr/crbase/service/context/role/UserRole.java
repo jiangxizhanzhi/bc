@@ -24,4 +24,6 @@ public class UserRole {
 	@ApiModelProperty("角色描述")
 	private String roleDesc;
 
+	@ApiModelProperty("角色组：4红方 5蓝方")
+	private Integer type;
 }

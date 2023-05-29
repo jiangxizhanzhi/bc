@@ -648,6 +648,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				UserRole userRole = new UserRole();
 				userRole.setResourceId(user);
 				userRole.setRoleName(crRole.getName());
+				userRole.setType(crRole.getRoleGroup());
 				userRole.setRoleDesc(
 						crRole.getDescription() == null ? "" : crRole.getDescription());
 				userRoleList.add(userRole);

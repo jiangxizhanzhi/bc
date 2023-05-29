@@ -38,4 +38,7 @@ public class MissionDetail implements Serializable {
 
 	@ApiModelProperty("答案")
 	private String answer;
+
+	@ApiModelProperty("分值")
+	private Integer score;
 }

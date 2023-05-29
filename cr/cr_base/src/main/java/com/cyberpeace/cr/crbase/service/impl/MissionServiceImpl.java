@@ -779,6 +779,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		detail.setWriteUp(mission.getWriteUp());
 		detail.setShowWriteup(mission.getShowWriteup());
 		detail.setSkillPoints(JsonUtil.toJsonObjectArray(mission.getSkillPoints(), Integer.class));
+		detail.setScore(mission.getScore());
 		return detail;
 	}
 

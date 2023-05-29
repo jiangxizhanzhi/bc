@@ -449,8 +449,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		List<CrTask> crTaskList = crTaskService.getByRoomId(roomId);
 		Map<String, List<CrTask>> taskMap = crTaskList.stream().collect(Collectors.groupingBy(CrTask::getMissionId));
 
+		List<String> missionIds = CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds, roles);
 
-		List<Mission> allMissions = missionService.listByIds(CrRoleSimple.getFieldList(CrRoleSimple::getMissionIds,roles));
+		List<Mission> allMissions =CollectionUtils.isEmpty(missionIds)?new ArrayList<>(): missionService.listByIds(missionIds);
 
 		List<UserData> allUserInfos = this.getUserDatas(CrRoleSimple.getFieldList(CrRoleSimple::getUserIds,roles));
 

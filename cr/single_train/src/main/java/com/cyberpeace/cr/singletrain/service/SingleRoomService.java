@@ -2,10 +2,11 @@ package com.cyberpeace.cr.singletrain.service;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
@@ -172,10 +173,8 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	/**
 	 * 获取资产清单
 	 *
-	 * @param businessTemplateId 业务模板id
-	 * @param category
-	 * @param name
-	 * @return {@code JSONArray}
+	 * @param req 请求体
+	 * @return {@code ListRsp<JSONObject>}
 	 */
-	JSONArray getAssetList(String businessTemplateId, Integer category, String name);
+	ListRsp<JSONObject> getAssetList(AssetPageReq req);
 }

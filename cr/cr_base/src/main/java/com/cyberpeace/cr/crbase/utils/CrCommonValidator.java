@@ -1,5 +1,12 @@
 package com.cyberpeace.cr.crbase.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
@@ -7,16 +14,23 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CrCommonValidator {
+
+	/**
+	 * 验证id是否为空
+	 *
+	 * @param id id
+	 */
+	public static void validateId(String id) {
+		if (StringUtils.isBlank(id)) {
+			log.error("id is blank");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+	}
 
 	/**
 	 * 验证字符串长度。中文算2个字符。

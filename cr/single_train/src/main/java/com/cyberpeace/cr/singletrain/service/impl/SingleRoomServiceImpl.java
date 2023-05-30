@@ -26,10 +26,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.common.util.TimeUtil;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.constant.TrainI18n;
@@ -39,6 +36,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualMissionBo;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
@@ -66,6 +64,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.scene.AllNodeSceneReq;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -1174,13 +1173,24 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		return result;
 	}
 
+	/**
+	 * 获取资产列表
+	 * 不用考虑角色
+	 *
+	 * @param pageReq 分页请求体
+	 * @return {@code ListRsp<JSONObject>}
+	 */
 	@Override
-	public JSONArray getAssetList(String businessTemplateId, Integer category, String name) {
+	public ListRsp<JSONObject> getAssetList(AssetPageReq pageReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		String businessInstanceId = businessTemplateId + "_" + userId;
-		JSONArray res = localSceneService.getAssetListByInstanceId(businessInstanceId, category,
-				name, false);
-		return res;
+		String businessInstanceId = pageReq.getResourceId() + "_" + userId;
+		AllNodeSceneReq req = new AllNodeSceneReq();
+		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(businessInstanceId);
+		req.setId(mpSceneId);
+		req.setName(pageReq.getPattern());
+		req.setSystemTypeName(pageReq.getSystemTypeName());
+		List<JSONObject> rsp = localSceneService.getAssetList(req);
+		return PageUtil.pageList(rsp, pageReq.getPage(), pageReq.getPerPage());
 	}
 
 	private Map<String, Mission>

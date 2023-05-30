@@ -629,6 +629,18 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return remoteTopoService.getNodeStatistics(topoId);
 	}
 
+	@Override
+	public String getMpSceneIdByBusinessInstanceId(String businessInstanceId) {
+		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
+		return localScene.getMpSceneId();
+	}
+
+	@Override
+	public List<JSONObject> getAssetList(AllNodeSceneReq req) {
+		JSONArray rsp = remoteSceneService.getAllNodes(req);
+		return rsp.toJavaList(JSONObject.class);
+	}
+
 	private String getMpSceneIdOrExceptionByLocalSceneId(String localSceneId) {
 		LocalScene localScene = getOrException(localSceneId);
 		String mpSceneId = localScene.getMpSceneId();

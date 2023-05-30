@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
@@ -18,6 +18,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.singletrain.controller.req.SingleRoomOpsReq;
@@ -230,17 +231,19 @@ public class SingleRoomController {
 		return new BaseRsp<>(res);
 	}
 
+	/**
+	 * 获取资产清单
+	 * 透传中台节点数据
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<JSONObject>>}
+	 */
 	@ApiOperation("资产清单, 需要开启场景")
 	@GetMapping("/asset/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp<JSONArray> getAssets(
-			@ApiParam(name = "resource_id", value = "单兵模板id", required = true) String resource_id,
-			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
-			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
-		if (StringUtils.isBlank(resource_id)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		JSONArray res = singleRoomService.getAssetList(resource_id, category, name);
+	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
+		CrCommonValidator.validateId(req.getResourceId());
+		ListRsp<JSONObject> res = singleRoomService.getAssetList(req);
 		return new BaseRsp<>(res);
 	}
 }

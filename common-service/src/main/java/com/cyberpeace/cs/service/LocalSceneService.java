@@ -1,5 +1,6 @@
 package com.cyberpeace.cs.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
@@ -9,6 +10,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.scene.AllNodeSceneReq;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 
 public interface LocalSceneService extends IService<LocalScene> {
@@ -254,4 +256,20 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getNodeStatisticsByTopoId(String topoId);
+
+	/**
+	 * 通过业务实例id获取场景id
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code String}
+	 */
+	String getMpSceneIdByBusinessInstanceId(String businessInstanceId);
+
+	/**
+	 * 获取资产列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<JSONObject>}
+	 */
+	List<JSONObject> getAssetList(AllNodeSceneReq req);
 }

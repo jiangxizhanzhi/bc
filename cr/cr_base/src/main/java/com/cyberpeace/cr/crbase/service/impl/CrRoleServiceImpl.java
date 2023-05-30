@@ -491,6 +491,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 		//按角色分组
 		for (CrRoleSimple roleSimple : roles) {
+			if(!roleSimple.getRoleGroup().equals(code)) {
+				continue;
+			}
 			TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
 			taskReleaseInfoRsp.setRoleName(roleSimple.getName());
 			//获取用户列表

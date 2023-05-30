@@ -1,13 +1,20 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
+import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
+import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +67,9 @@ public class RbSceneController {
 
 	@Autowired
 	private RbDeviceService rbDeviceService;
+
+	@Autowired
+	private RbCommonDeviceService rbCommonDeviceService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -259,23 +269,120 @@ public class RbSceneController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("设备清单")
-	@GetMapping("/device/common_assets")
+	@ApiOperation("常用资产可添加列表")
+	@GetMapping("/device/common_device/not_yet")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<JSONArray> getCommonAssets(
+	public BaseRsp<List<RbCommonDeviceContext>> getNotYetCommonDevices(
 			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
-		if (StringUtils.isBlank(resource_id)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+
+		// 1.拉取场景中可用 设备
+		JSONArray availableDevices = rbSceneService.getAssetList(resource_id, category, name);
+		// 2.获取占用的设备
+		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
+		// 3.查询已添加设备
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<RbCommonDevice> collectedCommonDevices = rbCommonDeviceService.getCollectedCommonDevices(resource_id, userId);
+		List<String> collectedCommonDeviceIds = collectedCommonDevices.stream().map(RbCommonDevice::getDeviceId).collect(Collectors.toList());
+		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
+		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, collectedCommonDeviceIds);
+
+		return new BaseRsp<>(commonDeviceContexts);
+	}
+
+	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices,
+																List<RbDeviceContext> occupyDevices,
+																String roomId,
+																List<String> collectedCommonDeviceIds) {
+		if(CollectionUtils.isEmpty(availableDevices)) {
+			return new ArrayList<>();
 		}
-		List<RbDeviceContext> ret = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id,
-				"");
-		JSONArray res = rbSceneService.getAssetList(resource_id, category, name);
-		res.stream().filter(MissionTemplateService -> {
-			return false;
-		});
-		return new BaseRsp<>(res);
+		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
+		for(int i = 0; i < availableDevices.size(); i ++) {
+			JSONObject availableDevice = availableDevices.getJSONObject(i);
+
+			if(collectedCommonDeviceIds.contains(availableDevice.getString("eid"))) {
+				continue;
+			}
+
+			RbCommonDeviceContext context = new RbCommonDeviceContext();
+			context.setOccupyFlag(0);
+			for(RbDeviceContext occupyDevice : occupyDevices) {
+				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("eid"))) {
+					context.setOccupyFlag(0);
+				} else {
+					context.setOccupyFlag(1);
+				}
+			}
+			context.setDeviceId(availableDevice.getString("eid"));
+			context.setDeviceInfo(availableDevice);
+			context.setRoomId(roomId);
+			commonDeviceContexts.add(context);
+		}
+		return commonDeviceContexts;
+	}
+
+	@ApiOperation("添加常用资产")
+	@PostMapping("/device/common_device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp addDevice(@RequestBody RbCommonDeviceContext commonDeviceContext) {
+		if(StringUtils.isEmpty(commonDeviceContext.getRoomId())) {
+			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
+		}
+		rbCommonDeviceService.addToCollect(commonDeviceContext);
+		return new BaseRsp();
+	}
+
+	@ApiOperation("删除常用资产")
+	@DeleteMapping("/device/common_device")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+		rbCommonDeviceService.delCollect(resource_id);
+		return new BaseRsp();
+	}
+
+
+	@ApiOperation("常用资产已添加列表")
+	@GetMapping("/device/common_device/already")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<List<RbCommonDeviceContext>> getAlreadyCommonDevices(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
+			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
+			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
+		// 2.拉取场景中可用 设备
+		JSONArray availableDevices = rbSceneService.getAssetList(resource_id, category, name);
+
+		// 3.查询已添加的设备
+		String userId = UserInfoContext.getUserContext().getUserId();
+		List<RbCommonDevice> collectedCommonDevices = rbCommonDeviceService.getCollectedCommonDevices(resource_id, userId);
+
+		// 4.装配设备信息
+		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, collectedCommonDevices);
+
+		return new BaseRsp<>(commonDeviceContexts);
+	}
+
+	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices, List<RbCommonDevice> collectedCommonDevices) {
+		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
+			return new ArrayList<>();
+		}
+		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
+		outer:
+		for(int i = 0; i < availableDevices.size(); i ++) {
+			JSONObject availableDevice = availableDevices.getJSONObject(i);
+			RbCommonDeviceContext context = new RbCommonDeviceContext();
+
+			for(RbCommonDevice commonDevice : collectedCommonDevices) {
+				if(!commonDevice.getDeviceId().equals(availableDevice.getString("eid"))) {
+					continue outer;
+				}
+				BeanUtils.copyProperties(commonDevice, context);
+			}
+			context.setDeviceInfo(availableDevice);
+			commonDeviceContexts.add(context);
+		}
+		return commonDeviceContexts;
 	}
 
 	/**

@@ -233,16 +233,15 @@ public class RbTemplateAdminController {
 	public void dealAssetNodesMap(List<JSONObject> roleRsps ) {
 		for (JSONObject roleRsp : roleRsps) {
 			List<Object> assetNodes = roleRsp.getObject("asset_nodes", ArrayList.class);
-			Map<Integer,Integer>  assetMap = new HashMap<>();
+			Map<String,Integer>  assetMap = new HashMap<>();
 			if (CollectionUtils.isEmpty(assetNodes)) {
 				roleRsp.put("assetMap",assetMap);
 				continue;
 			}
 			List<CrRoleNode> crRoleNodes = BeanUtils.deepCopyList(assetNodes, CrRoleNode.class);
 			Map<Integer, List<CrRoleNode>> nodeMap = crRoleNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));
-			for (Map.Entry<Integer, List<CrRoleNode>> entry : nodeMap.entrySet()) {
-				int size = entry.getValue()==null? 0:entry.getValue().size();
-				assetMap.put(entry.getKey(),size);
+			for (CrRoleNode.CategoryGroup value : CrRoleNode.CategoryGroup.values()) {
+				assetMap.put(value.getEnglish(),nodeMap.getOrDefault(value.getCode(),new ArrayList<>()).size());
 			}
 			roleRsp.put("assetMap",assetMap);
 		}

@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.teamtrain.controller.rsp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class TeamTrainTemplateRoleRsp implements Serializable {
 	@ApiModelProperty(value = "类型")
 	private String type;
 
-	private Map<Integer,Integer>  assetMap;
+	private Map<String,Integer>  assetMap;
 
 
 	public void initAssetMap() {
@@ -62,9 +63,8 @@ public class TeamTrainTemplateRoleRsp implements Serializable {
 			return;
 		}
 		Map<Integer, List<CrRoleNode>> nodeMap = assetNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));
-		for (Map.Entry<Integer, List<CrRoleNode>> entry : nodeMap.entrySet()) {
-			int size = entry.getValue()==null? 0:entry.getValue().size();
-			assetMap.put(entry.getKey(),size);
+		for (CrRoleNode.CategoryGroup value : CrRoleNode.CategoryGroup.values()) {
+			assetMap.put(value.getEnglish(),nodeMap.getOrDefault(value.getCode(),new ArrayList<>()).size());
 		}
 	}
 

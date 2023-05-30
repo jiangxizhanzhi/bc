@@ -661,7 +661,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		List<CrTask> list = this.getByRoomIdAndUserId(roomId,userId);
 		List<String> missionIds = list.stream().map(CrTask::getMissionId).collect(Collectors.toList());
 		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>(): missionMapper.selectBatchIds(missionIds);
-		Map<Integer, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getId, Function.identity()));
+		Map<String, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
 		return new TaskMatrix().init(list,missionMap);
 	}
 

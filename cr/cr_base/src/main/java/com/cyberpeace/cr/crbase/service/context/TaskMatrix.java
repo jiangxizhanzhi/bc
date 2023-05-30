@@ -45,7 +45,7 @@ public class TaskMatrix {
     public TaskMatrix() {
     }
 
-    public TaskMatrix init(List<CrTask> tasks,Map<Integer, Mission> missionMap) {
+    public TaskMatrix init(List<CrTask> tasks,Map<String, Mission> missionMap) {
         this.taskList = BeanUtils.deepCopyList(tasks,TaskStage.class);
         this.allCount = tasks==null?0:tasks.size();
         this.successCount = tasks==null?0:(int)tasks.stream().filter(a->CrTask.TaskStatus.SUCCESS.getCode().equals(a.getStatus())).count();

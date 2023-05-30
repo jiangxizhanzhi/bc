@@ -60,6 +60,9 @@ public class TeamTrainTemplateRoleRsp implements Serializable {
 	public void initAssetMap() {
 		assetMap = new HashMap<>();
 		if (CollectionUtils.isEmpty(assetNodes)) {
+			for (CrRoleNode.CategoryGroup value : CrRoleNode.CategoryGroup.values()) {
+				assetMap.put(value.getEnglish(),0);
+			}
 			return;
 		}
 		Map<Integer, List<CrRoleNode>> nodeMap = assetNodes.stream().collect(Collectors.groupingBy(CrRoleNode::getCategory));

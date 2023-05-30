@@ -18,4 +18,17 @@ public enum Difficulty implements GenericEnum {
 		this.code = code;
 		this.desc = desc;
 	}
+
+	public static String ofCode(Integer code) {
+		if(code == 0) {
+			return PRIMARY.getDesc();
+		}
+		if(code == 1) {
+			return MIDDLE.getDesc();
+		}
+		if(code == 2) {
+			return HIGH.getDesc();
+		}
+		return "";
+	}
 }

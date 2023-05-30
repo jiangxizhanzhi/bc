@@ -3,8 +3,10 @@ package com.cyberpeace.oj.person.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -14,6 +16,7 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.LessonRecord;
 import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
 import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
+import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.dao.entity.Comment;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
 import com.cyberpeace.oj.ojbase.dao.entity.NoteEvaluate;
@@ -42,6 +45,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.cyberpeace.integratation.constant.LogContent.EXERCISE;
+import static com.cyberpeace.integratation.constant.LogContent.THEORY;
 
 @Service
 @Slf4j
@@ -324,13 +330,16 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	private PersonNote noteToBo(PersonNote note) {
 		UserInfo userInfo = remoteUserService.getById(note.getUserId());
 		note.setUserName(userInfo.getUserName());
-		if(note.getResourceType() != null
-		&& (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode()) ||
-				note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode()))) {
+		if(note.getResourceType() != null) {
 			String themeName = note.getThemeName();
-
-			note.setThemeName(themeName);
+			if(note.getResourceType() == Note.NoteResourceType.OPTION.getCode()) {
+				note.setThemeName(EXERCISE.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
+			}
+			if(note.getResourceType() == Note.NoteResourceType.THEORY.getCode()) {
+				note.setThemeName(THEORY.getMsg() + "-" + Difficulty.ofCode(note.getDifficulty()) + "-" + themeName);
+			}
 		}
 		return note;
 	}
+
 }

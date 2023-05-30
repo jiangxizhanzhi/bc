@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -66,8 +67,8 @@ public class TaskMatrix {
         for (TaskStage taskStage : taskList) {
             taskStage.setStage(stageMap.get(taskStage.getMissionId()));
         }
-        List<TaskStage> submit = taskList.stream().filter(TaskStage::isSubmitted).sorted(Comparator.comparing(CrTask::getLastSubmitTime).reversed()).collect(Collectors.toList());
-        List<TaskStage> notSubmit = taskList.stream().filter(a->!a.isSubmitted()).sorted(Comparator.comparing(CrTask::getLastSubmitTime).reversed()).collect(Collectors.toList());
+        List<TaskStage> submit = taskList.stream().filter(TaskStage::isSubmitted).sorted(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
+        List<TaskStage> notSubmit = taskList.stream().filter(a->!a.isSubmitted()).sorted(Comparator.comparing(CrTask::getCreateTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
         submit.addAll(notSubmit);
         taskList = submit;
     }

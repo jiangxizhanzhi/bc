@@ -24,7 +24,7 @@ public class CrRoleNode implements Serializable {
 	public enum CategoryGroup implements GenericEnum, BaseI18n {
 
 		/*应用系统：1 操作系统:2 网路设备:3 安防设备:4**/
-		APPLICATION_SYSTEM(1, "应用系统", "Teacher"),
+		APPLICATION(1, "应用系统", "APPLICATION"),
 		OPERATING(2, "操作系统", "OPERATING"),
 		NETWORK(3, "网路设备", "NETWORK"),
 		SECURITY(4, "安防设备", "SECURITY");

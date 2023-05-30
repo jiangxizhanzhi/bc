@@ -15,6 +15,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.SituationIconCategoryReq;
 import com.cyberpeace.situation.controller.req.SituationIconDelReq;
 import com.cyberpeace.situation.controller.req.SituationIconPageReq;
@@ -65,6 +67,7 @@ public class ComponentIconController {
 	 * @param situationIconReq 图标组件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("图标组件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationIcon(
@@ -82,6 +85,7 @@ public class ComponentIconController {
 	 * @param situationIconReq 图标组件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.XG)
 	@ApiOperation("图标组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationIcon(
@@ -99,6 +103,7 @@ public class ComponentIconController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationIconRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("图标组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationIconRes>
@@ -113,6 +118,7 @@ public class ComponentIconController {
 	 * @param SituationIconDelReq 图标组件删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.SC)
 	@ApiOperation("图标组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
@@ -127,6 +133,7 @@ public class ComponentIconController {
 	 * @param situationIconPageReq 图标组件请求
 	 * @return {@code BaseRsp<ListRsp<SituationIconRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("图标组件-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationIconRes>>
@@ -139,6 +146,7 @@ public class ComponentIconController {
 	 *
 	 * @return {@code BaseRsp<List<SituationIconRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.ICZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("图标组件-全量查询")
 	@GetMapping("all")
 	public BaseRsp<List<SituationIconRes>> getSituationIcon() {

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateConfigReq;
 import com.cyberpeace.situation.controller.req.DashBoardTemplateReq;
 import com.cyberpeace.situation.controller.req.DashboardTemplateDelReq;
@@ -45,6 +47,7 @@ public class DashboardTemplateRefController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<DashboardTemplateRefContext>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPSL, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("实例模板-新增")
 	@PostMapping()
 	public BaseRsp<DashboardTemplateRefContext>
@@ -62,6 +65,7 @@ public class DashboardTemplateRefController {
 	 * @param dashBoardTemplateReq 态势模板请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPSL, type = ServiceLogContext.Type.XG)
 	@ApiOperation("实例模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
@@ -80,6 +84,7 @@ public class DashboardTemplateRefController {
 	 * @param req 态势模板配置请求
 	 * @return {@code BaseRsp<DashboardTemplateRefContext>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPSL, type = ServiceLogContext.Type.XG)
 	@ApiOperation("实例模板-修改配置")
 	@PatchMapping("/config")
 	public BaseRsp<DashboardTemplateRefContext>
@@ -94,6 +99,7 @@ public class DashboardTemplateRefController {
 	 * @param type       视角类型
 	 * @return {@code BaseRsp<DashboardTemplateRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPSL, type = ServiceLogContext.Type.CX)
 	@ApiOperation("实例模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
@@ -111,6 +117,7 @@ public class DashboardTemplateRefController {
 	 * @param dashboardTemplateDelReq 态势模板删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPSL, type = ServiceLogContext.Type.SC)
 	@ApiOperation("实例模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(

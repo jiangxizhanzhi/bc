@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -49,9 +50,25 @@ public class ServiceLogContext implements Serializable {
 
 	public enum Module {
 
+		/**
+		 * 态势大屏
+		 */
 		TSDP(1, "态势大屏"),
+
+		/**
+		 * 视图管理
+		 */
 		STGL(2, "视图管理"),
-		TXGL(3, "图形管理");
+
+		/**
+		 * 图形管理
+		 */
+		TXGL(3, "图形管理"),
+
+		/**
+		 * 系统管理
+		 */
+		XTGL(4, "系统管理");
 
 		@Getter
 		private Integer code;
@@ -68,21 +85,88 @@ public class ServiceLogContext implements Serializable {
 
 	public enum SubModule {
 
+		/**
+		 * 态势大屏
+		 */
 		TSDP(1, Module.TSDP, "态势大屏"),
-		DPSL(2, Module.STGL, "大屏实例"),
-		DPMB(3, Module.STGL, "大屏模板"),
-		SJK(4, Module.STGL, "数据源-数据库"),
-		API(5, Module.STGL, "数据源-API"),
-		GIS(6, Module.TXGL, "GIS组件"),
-		TPZJ(7, Module.TXGL, "拓扑组件"),
-		TJZJ(8, Module.TXGL, "统计组件"),
-		XSKJ(9, Module.TXGL, "显示控件"),
-		TXZY(10, Module.TXGL, "图形资源"),
-		ZJZT(11, Module.TXGL, "组件主题"),
-		DXZY(12, Module.TXGL, "动效资源"),
-		DXYS(13, Module.TXGL, "动效映射"),
-		BHTY(14, Module.TXGL, "标绘图元"),
-		BHWJ(15, Module.TXGL, "标绘文件");
+		/**
+		 * 态势标绘
+		 */
+		TSBH(2, Module.TSDP, "态势标绘"),
+		/**
+		 * 拓扑坐标
+		 */
+
+		TPZB(3, Module.TSDP, "拓扑坐标"),
+		/**
+		 * 重演大屏
+		 */
+		CYDP(4, Module.STGL, "重演大屏"),
+		/**
+		 * 大屏实例
+		 */
+		DPSL(5, Module.STGL, "大屏实例"),
+
+		/**
+		 * 大屏模板
+		 */
+		DPMB(6, Module.STGL, "大屏模板"),
+		/**
+		 * 数据源-数据库
+		 */
+		SJK(7, Module.STGL, "数据源-数据库"),
+		/**
+		 * 数据源-API
+		 */
+		API(8, Module.STGL, "数据源-API"), TYZJ(17, Module.TXGL, "通用组件"),
+		/**
+		 * GIS组件
+		 */
+		GIS(9, Module.TXGL, "GIS组件"),
+		/**
+		 * 拓扑组件
+		 */
+		TPZJ(10, Module.TXGL, "拓扑组件"), DHZJ(16, Module.TXGL, "动画组件"),
+		/**
+		 * 图标组件
+		 */
+		ICZJ(11, Module.TXGL, "图标组件"),
+		/**
+		 * 图表组件
+		 */
+		TBZJ(12, Module.TXGL, "图表组件"),
+		/**
+		 * 显示控件
+		 */
+		XSKJ(13, Module.TXGL, "显示控件"),
+		/**
+		 * 样式组件
+		 */
+		YSZJ(14, Module.TXGL, "样式组件"),
+		/**
+		 * 图表主题
+		 */
+		TBZT(15, Module.TXGL, "图表主题"),
+		/**
+		 * 动效资源
+		 */
+		DXZY(16, Module.TXGL, "动效资源"),
+		/**
+		 * 动效映射
+		 */
+		DXYS(17, Module.TXGL, "动效映射"),
+		/**
+		 * 标绘图元
+		 */
+		BHTY(18, Module.TXGL, "标绘图元"),
+		/**
+		 * 标绘文件
+		 */
+		BHWJ(19, Module.TXGL, "标绘文件"),
+		/**
+		 * 管理工具
+		 */
+		GLGJ(20, Module.XTGL, "管理工具");
 
 		@Getter
 		private Integer code;
@@ -103,11 +187,29 @@ public class ServiceLogContext implements Serializable {
 
 	public enum Type {
 
+		/**
+		 * 新增
+		 */
 		XZ(1, "新增"),
+		/**
+		 * 查询
+		 */
 		CX(2, "查询"),
+		/**
+		 * 修改
+		 */
 		XG(3, "修改"),
+		/**
+		 * 删除
+		 */
 		SC(4, "删除"),
+		/**
+		 * 导入
+		 */
 		DR(5, "导入"),
+		/**
+		 * 导出
+		 */
 		DC(6, "导出");
 
 		@Getter

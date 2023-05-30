@@ -29,8 +29,10 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.SubModule;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.Type;
 import com.cyberpeace.integratation.service.RemoteManageService;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsAddReq;
@@ -132,6 +134,7 @@ public class ComponentChartController {
 	 * @param twoDimensionalComponentsAddReq 图表组件新增请求
 	 * @return {@code BaseRsp<TwoDimensionalComponents>}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.XZ)
 	@ApiOperation("图表组件-新增")
 	@PostMapping("")
 	public BaseRsp<TwoDimensionalComponents> setTwoDimensionalComponents(
@@ -173,6 +176,7 @@ public class ComponentChartController {
 	 * @param twoDimensionalComponentsFilterReq 图表组件查询请求
 	 * @return {@code BaseRsp<List<SituationComponentsChartDetailsRes>>}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.CX)
 	@ApiOperation("图表组件-列表查询")
 	@GetMapping("list")
 	public BaseRsp<List<SituationComponentsChartDetailsRes>> getTwoDimensionalComponents(
@@ -219,9 +223,6 @@ public class ComponentChartController {
 			result.add(situationComponentsChartDetailsRes);
 		});
 
-		// 写入远程审计日志
-		remoteManageService.writeLog(ServiceLogContext.SubModule.TJZJ, ServiceLogContext.Type.CX);
-
 		// 写入数据库操作日志
 		insertIntoDb();
 
@@ -234,6 +235,7 @@ public class ComponentChartController {
 	 * @param batchDeleteReq 批量删除请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.SC)
 	@ApiOperation("图表组件-删除")
 	@DeleteMapping("")
 	public BaseRsp
@@ -261,6 +263,7 @@ public class ComponentChartController {
 	 * @param twoDimensionalComponentsUpdateReq 图表组件修改请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.XG)
 	@ApiOperation("图表组件-修改")
 	@PatchMapping("")
 	public BaseRsp patchTwoDimensionalComponents(
@@ -303,6 +306,7 @@ public class ComponentChartController {
 	 * @param resourceId 资源id
 	 * @param response   响应
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.DC)
 	@SneakyThrows
 	@ApiOperation("图表组件-导出")
 	@GetMapping("export")
@@ -338,11 +342,11 @@ public class ComponentChartController {
 
 	/**
 	 * 图表组件-导入
-	 * todo: 确认是否使用
 	 *
 	 * @param file 文件
 	 * @return {@code BaseRsp<TwoDimensionalComponents>}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.DR)
 	@ApiOperation("图表组件-导入")
 	@PutMapping("import")
 	public BaseRsp<TwoDimensionalComponents>

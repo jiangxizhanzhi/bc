@@ -41,14 +41,8 @@ public class RemoteManageServiceImpl implements RemoteManageService {
 		return true;
 	}
 
-	@Override
-	public Boolean writeLog(ServiceLogContext.SubModule subModule, ServiceLogContext.Type type) {
-		ServiceLogContext serviceLogContext = new ServiceLogContext(subModule, type);
-		writeLog(serviceLogContext);
-		return true;
-	}
-
 	@Async
+	@Override
 	public void writeLog(ServiceLogContext serviceLogContext) {
 		HttpClientUtil.tsPost(GL_REPORT_LOG, serviceLogContext, String.class, "上报态势系统日志失败");
 	}

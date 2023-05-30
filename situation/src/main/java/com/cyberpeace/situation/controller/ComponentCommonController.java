@@ -25,6 +25,9 @@ import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.SubModule;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.Type;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
 import com.cyberpeace.situation.controller.req.CommonComponentsReq;
 import com.cyberpeace.situation.controller.req.HikVisionReq;
@@ -68,6 +71,7 @@ public class ComponentCommonController {
 	 * @param situationCommonComponentsPageReq 通用组件列表查询请求
 	 * @return {@code BaseRsp<ListRsp<SituationCommonComponentsPageRes>>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.CX)
 	@ApiOperation("通用组件-列表查询")
 	@GetMapping
 	public BaseRsp<ListRsp<SituationCommonComponentsPageRes>>
@@ -82,6 +86,7 @@ public class ComponentCommonController {
 	 * @param situationCommonComponentsPageReq 通用组件查询请求
 	 * @return {@code BaseRsp<List<SituationCommonComponentsPageRes>>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.CX)
 	@ApiOperation("通用组件-全量查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationCommonComponentsPageRes>>
@@ -96,6 +101,7 @@ public class ComponentCommonController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationCommonComponents>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.CX)
 	@ApiOperation("通用组件-单个查询")
 	@GetMapping("/info")
 	public BaseRsp<SituationCommonComponents>
@@ -110,6 +116,7 @@ public class ComponentCommonController {
 	 * @param commonComponentsReq 通用组件新增请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.XZ)
 	@ApiOperation("通用组件-新增")
 	@PostMapping("")
 	public BaseRsp<String> teComponents(
@@ -128,6 +135,7 @@ public class ComponentCommonController {
 	 * @param commonComponentsReq 通用组件修改请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.XG)
 	@ApiOperation("通用组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateComponents(
@@ -146,6 +154,7 @@ public class ComponentCommonController {
 	 * @param idList id列表
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = SubModule.TYZJ, type = Type.SC)
 	@ApiOperation("通用组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponents(@RequestBody @Validated ColorThemeDelReq idList) {

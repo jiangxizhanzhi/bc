@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -544,6 +545,30 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			teamStudent.setRoleCode(CrRole.TeamRoleGroup.STUDENT.getCode());
 		}};
 		dashboardInfo.setRoleConst(roleConst);
+	}
+
+	@Override
+	public List<UserRole> getUserRolesByRoomIdAndRoleGroups(String roomId, List<Integer> groups) {
+		List<CrRole> roles = this.getRolesByRoomAndGroups(roomId, groups);
+		List<String> userIds = roles.stream().map(CrRole::getUserIdList)
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		Map<String, CrRole> userIdRoleMap = roles.stream()
+				.map(crRole -> crRole.getUserIdList().stream().map(b -> new UserIdRole(b, crRole))
+						.collect(Collectors.toList()))
+				.flatMap(Collection::stream)
+				.collect(Collectors.toMap(UserIdRole::getUserId, UserIdRole::getRole, (a, b) -> a));
+
+		List<UserData> userDatas = this.getUserDatas(userIds);
+		List<UserRole> userRoleList = userDatas.stream().map(a -> {
+			UserRole userRole = new UserRole();
+			userRole.setResourceId(a.getResourceId());
+			userRole.setLogo(a.getLogo());
+			userRole.setName(a.getRepName());
+			userRole.setType(userIdRoleMap.getOrDefault(a.getResourceId(),new CrRole()).getRoleGroup());
+			userRole.setRoleName(userIdRoleMap.getOrDefault(a.getResourceId(),new CrRole()).getName());
+			return userRole;
+		}).collect(Collectors.toList());
+		return userRoleList;
 	}
 
 }

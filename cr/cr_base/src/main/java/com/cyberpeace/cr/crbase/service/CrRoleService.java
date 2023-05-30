@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.crbase.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 
 /**
  *
@@ -170,4 +172,6 @@ public interface CrRoleService extends IService<CrRole> {
 	List<TrainTaskReleaseInfoRsp> getTrainManual(String roomId, Integer code);
 
 	void combineRoleConst(DashboardInfo dashboardInfo);
+
+	List<UserRole> getUserRolesByRoomIdAndRoleGroups(String roomId, List<Integer> groups);
 }

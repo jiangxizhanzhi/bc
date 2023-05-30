@@ -255,8 +255,8 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
 		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		Map<String, Integer> userIdRoleMap = crRoles.stream()
-				.map(a -> a.getUserIdList().stream().map(b -> new UserIdRole(b, a.getRoleGroup()))
+		Map<String, CrRole> userIdRoleMap = crRoles.stream()
+				.map(crRole -> crRole.getUserIdList().stream().map(b -> new UserIdRole(b, crRole))
 						.collect(Collectors.toList()))
 				.flatMap(Collection::stream)
 				.collect(Collectors.toMap(UserIdRole::getUserId, UserIdRole::getRole, (a, b) -> a));
@@ -294,13 +294,14 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList,
-					userIdRoleMap.get(userData.getResourceId()),trainReportContext.getTimeList()));
+					userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getRoleGroup(),trainReportContext.getTimeList()));
 			//人员得分
 			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
 			userRole.setLogo(userData.getLogo());
-			userRole.setType(userIdRoleMap.get(userData.getResourceId()));
+			userRole.setType(userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getRoleGroup());
+			userRole.setRoleName(userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getName());
 			userRoles.add(userRole);
 		}
 		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {

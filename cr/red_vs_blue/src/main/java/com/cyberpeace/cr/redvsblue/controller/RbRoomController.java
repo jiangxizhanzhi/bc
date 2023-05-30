@@ -7,6 +7,7 @@ import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -40,10 +41,6 @@ import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.UserData;
-import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
-import com.cyberpeace.cr.crbase.service.context.role.ChartInfo;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
@@ -610,6 +607,12 @@ public class RbRoomController {
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
 		trainReport.setRoomBaseInfo(roomBaseInfo);
+		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
+		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
+		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
+		trainReport.setAdminName(UserRole.getName(UserRole::getName,admins));
+		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
+		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
 		return new BaseRsp<>(trainReport);
 	}
 }

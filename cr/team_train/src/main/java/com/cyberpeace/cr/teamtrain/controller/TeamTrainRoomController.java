@@ -822,7 +822,9 @@ public class TeamTrainRoomController {
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(teamRoom, RoomBaseInfo.class);
+		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
+		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
 

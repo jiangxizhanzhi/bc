@@ -8,5 +8,5 @@ import lombok.Data;
 public class UserIdRole {
 
     private String userId;
-    private Integer role;
+    private CrRole role;
 }

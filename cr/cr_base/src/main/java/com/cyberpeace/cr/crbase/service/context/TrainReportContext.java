@@ -41,6 +41,13 @@ public class TrainReportContext {
     @ApiModelProperty("基础信息")
     private RoomBaseInfo roomBaseInfo;
 
+    private String teacherName;
+    @ApiModelProperty("管理员")
+    private String adminName;
+    @ApiModelProperty("导演")
+    private String directorName;
+    @ApiModelProperty("裁判")
+    private String refereesName;
     private List<Date> timeList = new ArrayList<>();
 
     public void initScoreTrends(List<StudentScoreTrend> scoreTrends) {

@@ -3,11 +3,13 @@ package com.cyberpeace.cr.evaluation.service.context;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
 public class EvalRecordSpecialistContext implements Serializable {
     @ApiModelProperty("数据类型")
+    @NotNull
     private Integer type;
 
     @ApiModelProperty("数据属性")

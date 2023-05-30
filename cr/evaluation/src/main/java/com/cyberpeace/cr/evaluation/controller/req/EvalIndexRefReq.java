@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller.req;
 
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,8 +14,8 @@ public class EvalIndexRefReq {
 	@NotEmpty
 	private String resourceId;
 
-	@ApiModelProperty(value = "描述", required = false)
-	@NotNull
-	private Integer type;
+	@ApiModelProperty("指标项专家评分配置")
+	private EvalRecordSpecialistContext specialist;
+
 
 }

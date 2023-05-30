@@ -25,10 +25,7 @@ import com.cyberpeace.cr.crbase.service.context.TrainingReport;
 import com.cyberpeace.cr.evaluation.controller.req.EvalRecordAddReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.*;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvaResultMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalRecordMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalTaskMapper;
-import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.*;
 import com.cyberpeace.cr.evaluation.service.*;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordIndexContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
@@ -135,6 +132,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvaResultMapper evaResultMapper;
 
+    @Autowired
+    private EvalIndexRefMapper evalIndexRefMapper;
+
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
     @Override
@@ -236,56 +236,12 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 获取"三级指标"评分类型
         Map<String, Integer> thirdIndexesTypeMap = Maps.newHashMap();
         Map<String, Integer> thirdSpecialistMap = Maps.newHashMap();
-
-        Map<String, Integer> firstIndexesTypeMap = Maps.newHashMap();
-        Map<String, Integer> firstSpecialistMap = Maps.newHashMap();
-
-        Map<String, Integer> secondIndexesTypeMap = Maps.newHashMap();
-        Map<String, Integer> secondSpecialistMap = Maps.newHashMap();
-
-        Map<String, Integer> fourthIndexesTypeMap = Maps.newHashMap();
-        Map<String, Integer> fourthSpecialistMap = Maps.newHashMap();
-
         requestData.getIndexes().forEach(evalRecordIndexContext -> {
-            Integer firstType = evalRecordIndexContext.getType();
-            firstIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), firstType);
-            List<EvalRecordIndexContext> secondIndexes = evalRecordIndexContext.getIndexes();
-            List<Integer> types = StreamApiUtils.getColumn(secondIndexes, EvalRecordIndexContext::getType);
-            Set<Integer> typeSet = Sets.newHashSet(types);
-            if (firstType.equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                firstSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
-                if(typeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())){
-                    throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
-                }
+            thirdIndexesTypeMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getType());
+            if (evalRecordIndexContext.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
+                thirdSpecialistMap.put(evalRecordIndexContext.getResourceId(), evalRecordIndexContext.getSpecialist().getValue());
             }
-            secondIndexes.forEach(secondIndex->{
-                Integer secondIndexType = secondIndex.getType();
-                List<EvalRecordIndexContext> thirdIndexes = secondIndex.getIndexes();
-                List<Integer> thirdTypes = StreamApiUtils.getColumn(thirdIndexes, EvalRecordIndexContext::getType);
-                Set<Integer> thirdTypeSet = Sets.newHashSet(thirdTypes);
-
-                secondIndexesTypeMap.put(secondIndex.getResourceId(), secondIndexType);
-                if (secondIndexType.equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                    secondSpecialistMap.put(secondIndex.getResourceId(), secondIndex.getSpecialist().getValue());
-                    if(thirdTypeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())){
-                        throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
-                    }
-                }
-                thirdIndexes.forEach(thirdIndex->{
-                    thirdIndexesTypeMap.put(thirdIndex.getResourceId(), thirdIndex.getType());
-                    List<EvalRecordIndexContext> fourthIndexes = thirdIndex.getIndexes();
-                    List<Integer> fourthTypes = StreamApiUtils.getColumn(fourthIndexes, EvalRecordIndexContext::getType);
-                    Set<Integer> fourthTypeSet = Sets.newHashSet(fourthTypes);
-
-                    if (thirdIndex.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())) {
-                        thirdSpecialistMap.put(thirdIndex.getResourceId(), thirdIndex.getSpecialist().getValue());
-                        if(fourthTypeSet.contains(EvalIndexRef.Type.SYSTEM.getCode())) {
-                            throw new BusinessException(CrBusinessErrorCode.SCORE_TYPE_ERROR);
-                        }
-                    }
-                    setSpecialList(fourthIndexes, fourthIndexesTypeMap, fourthSpecialistMap, evalRecordVariableContextMap);
-                });
-            });
+            evalRecordIndexContext.getVariables().forEach(evalRecordVariableContext -> evalRecordVariableContextMap.put(evalRecordVariableContext.getResourceId(), evalRecordVariableContext));
         });
 
         // 获取一、二、三级指标
@@ -508,8 +464,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return create(requestData);
         }
         // TODO 不止3级 可修改评估方式
-//        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
-        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndex.Level.THIRD.getCode()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
+//        Map<String, EvalIndexRef> evalIndexRefMap = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, newEvalRecord.getResourceId()).list().stream().collect(Collectors.toMap(EvalIndexRef::getResourceId, evalIndexRef -> evalIndexRef));
         // 重复数据仅编辑一次
         Set<String> indexesSet = Sets.newHashSet();
         Set<String> variablesSet = Sets.newHashSet();
@@ -771,6 +727,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
+        LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
+        query.eq(EvalIndexRef::getRecordId, evalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndexRef.Level.AGGREGATION.getCode());
+        List<EvalIndexRef> evalIndexRefs = evalIndexRefMapper.selectList(query);
+        Set<String> execVariableIds = Sets.newHashSet();
+        evalIndexRefs.forEach(evalIndexRef -> {
+            String nextIds = evalIndexRef.getNextIds();
+            if(evalIndexRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())){
+                execVariableIds.addAll(JsonUtil.toJsonObjectArray(nextIds, String.class));
+            }
+        });
+        variableIds = execVariableIds;
         if (variableIds.isEmpty()) {
             EvalLog.info(evalRecord, "variables id is empty, continue.");
             return;

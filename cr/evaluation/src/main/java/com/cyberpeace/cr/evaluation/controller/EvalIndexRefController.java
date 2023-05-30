@@ -7,6 +7,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndexRefReq;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
+import com.cyberpeace.cr.evaluation.service.context.EvalRecordSpecialistContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +28,9 @@ public class EvalIndexRefController {
     @Autowired
     private EvalIndexRefMapper evalIndexRefMapper;
 
+    @Autowired
+    private EvalIndexRefService evalIndexRefService;
+
     @ApiOperation("更新评估关联算法的评分方式")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @PatchMapping("")
@@ -35,7 +40,14 @@ public class EvalIndexRefController {
             log.error("Resource not found! resourceId = [{}]", requestData.getResourceId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        evalIndexRef.setType(requestData.getType());
+        EvalRecordSpecialistContext specialist = requestData.getSpecialist();
+        Integer type = specialist.getType();
+        evalIndexRef.setType(type);
+        if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+            evalIndexRef.setSpecialistValue(specialist.getValue());
+            evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+            evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+        }
         evalIndexRefMapper.updateById(evalIndexRef);
         return new BaseRsp<>(evalIndexRef);
     }

@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
-import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
-import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
-import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
-import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -31,9 +25,14 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
+import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
+import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -247,6 +246,25 @@ public class RbSceneController {
 	}
 
 	/**
+	 * 获取设备统计数据
+	 * 透传中台数据
+	 *
+	 * @param resource_id 资源id
+	 * @return {@code BaseRsp<JSONObject>}
+	 */
+	@ApiOperation("设备统计")
+	@GetMapping("/device/count")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<JSONObject> getDeviceStatistics(
+			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+		if (StringUtils.isBlank(resource_id)) {
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		JSONObject res = rbSceneService.getNodeStatistics(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	/**
 	 * 获取设备列表
 	 * 透传中台
 	 *
@@ -383,24 +401,5 @@ public class RbSceneController {
 			commonDeviceContexts.add(context);
 		}
 		return commonDeviceContexts;
-	}
-
-	/**
-	 * 获取设备统计数据
-	 * 透传中台数据
-	 *
-	 * @param resource_id 资源id
-	 * @return {@code BaseRsp<JSONObject>}
-	 */
-	@ApiOperation("设备统计")
-	@GetMapping("/device/count")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<JSONObject> getDeviceStatistics(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
-		if (StringUtils.isBlank(resource_id)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
-		JSONObject res = rbSceneService.getNodeStatistics(resource_id);
-		return new BaseRsp<>(res);
 	}
 }

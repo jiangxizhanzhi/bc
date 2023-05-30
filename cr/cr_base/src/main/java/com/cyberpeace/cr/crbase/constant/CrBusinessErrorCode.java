@@ -429,4 +429,8 @@ public interface CrBusinessErrorCode {
 
 	// 评分类型错误
 	String 	SCORE_TYPE_ERROR = "101130";
+	/**
+	 * 空白用户id
+	 */
+	String BLANK_USER_ID = "101131";
 }

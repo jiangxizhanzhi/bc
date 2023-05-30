@@ -6,4 +6,10 @@
         from cr_mark
         where room_id = #{roomId}
     </select>
+    <select id="selectByRoomIdAndUserId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrMark">
+        select *
+        from cr_mark
+        where room_id = #{roomId}
+          and user_id = #{userId}
+    </select>
 </mapper>

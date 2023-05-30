@@ -14,4 +14,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 public interface CrMarkMapper extends BaseMapper<CrMark> {
 
 	List<CrMark> selectByRoomId(@Param("roomId") String roomId);
+
+	List<CrMark> selectByRoomIdAndUserId(@Param("roomId") String roomId,
+			@Param("userId") String userId);
 }

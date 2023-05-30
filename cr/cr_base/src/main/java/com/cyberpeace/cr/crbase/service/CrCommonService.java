@@ -63,4 +63,12 @@ public interface CrCommonService {
 	 */
 	List<CrMark> getMarkByRoomId(String roomId);
 
+	/**
+	 * 通过房间id和用户id获取标记
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code List<CrMark>}
+	 */
+	List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId);
 }

@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -95,6 +95,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrReplayService crReplayService;
 
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -627,6 +630,32 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
+	public TimeLineData getReplayTimeline(String roomId, String userId) {
+		TimeLineData timeLineData = new TimeLineData();
+		// get start time and endtime
+		RbRoom rbRoom = getById(roomId);
+		Date startTime = rbRoom.getStartTime();
+		Date endTime = rbRoom.getEndTime();
+
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
+		if (rbTimeManagement != null) {
+			startTime = rbTimeManagement.getCreateTime();
+			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
+					.equals(rbTimeManagement.getStatus())) {
+				endTime = rbTimeManagement.getUpdateTime();
+			} else {
+				endTime = new Date();
+			}
+		}
+		timeLineData.setStartTime(startTime);
+		timeLineData.setEndTime(endTime);
+		// get events
+		List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+		timeLineData.setUserTimeLineConfig(eventList);
+		return timeLineData;
+	}
+
+    @Override
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
@@ -769,7 +798,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			rbTimeLineEvent.setType(TimeLineEvent.EventType.MARK.getCode());
 			rbTimeLineEvent.setAttachments(JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
 		}
-
 		rbTimeLineData.setData(rbTimeLineEventList);
 
 		return rbTimeLineData;

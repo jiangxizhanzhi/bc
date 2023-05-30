@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,5 +47,10 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 			res.add(teamRole);
 		}
 		return res;
+	}
+
+	@Override
+	public TimeLineData getReplayTimeline(String roomId, String userId) {
+		return teamRoomService.getTimeLine(roomId, userId);
 	}
 }

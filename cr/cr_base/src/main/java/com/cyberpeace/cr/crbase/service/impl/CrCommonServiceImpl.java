@@ -189,4 +189,9 @@ public class CrCommonServiceImpl implements CrCommonService {
 	public List<CrMark> getMarkByRoomId(String roomId) {
 		return crMarkMapper.selectByRoomId(roomId);
 	}
+
+    @Override
+    public List<CrMark> getMarkByRoomIdAndUserId(String roomId, String userId) {
+		return crMarkMapper.selectByRoomIdAndUserId(roomId, userId);
+    }
 }

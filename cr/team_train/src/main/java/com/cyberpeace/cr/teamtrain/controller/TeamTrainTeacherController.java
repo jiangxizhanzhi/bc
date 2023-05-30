@@ -2,6 +2,8 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -177,10 +179,20 @@ public class TeamTrainTeacherController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<JSONObject> getDeviceStatistics(
 			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id) {
-		if (StringUtils.isBlank(resource_id)) {
-			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
-		}
+		CrCommonValidator.validateId(resource_id);
 		JSONObject res = teamSceneService.getNodeStatistics(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("复盘时间轴")
+	@GetMapping("/replay/timeline")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TimeLineData> getReviewTimeLine(
+			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+		CrCommonValidator.validateId(resource_id);
+		CrCommonValidator.validateUserId(user_id);
+		TimeLineData res = teamTeacherService.getReplayTimeline(resource_id, user_id);
 		return new BaseRsp<>(res);
 	}
 }

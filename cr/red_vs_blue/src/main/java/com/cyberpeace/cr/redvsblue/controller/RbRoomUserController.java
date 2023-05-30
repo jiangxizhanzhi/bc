@@ -1,23 +1,11 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.ScreenService;
-import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordRsp;
-import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -34,14 +22,19 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.ScreenService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
+import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
@@ -298,7 +291,7 @@ public class RbRoomUserController {
 	}
 
 	@ApiOperation("红蓝对抗-复盘设备")
-	@GetMapping("/task/replyUserTimeInfo")
+	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
@@ -308,15 +301,28 @@ public class RbRoomUserController {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		List<ScreenRecordUserRole> resList= screenService.getReplyUserTimeInfo(resource_id,node_id);
+		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,node_id);
 		return new BaseRsp<>(resList);
 	}
+
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		return new BaseRsp();
+	}
+
+	@ApiOperation("复盘时间轴")
+	@GetMapping("/replay/timeline")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<TimeLineData> getReviewTimeLine(
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+		CrCommonValidator.validateId(resource_id);
+		CrCommonValidator.validateUserId(user_id);
+		TimeLineData res = rbRoomService.getReplayTimeline(resource_id, user_id);
+		return new BaseRsp<>(res);
 	}
 
 }

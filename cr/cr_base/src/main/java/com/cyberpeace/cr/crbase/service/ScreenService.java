@@ -7,5 +7,5 @@ import java.util.List;
 public interface ScreenService {
 
 
-    List<ScreenRecordUserRole>  getReplyUserTimeInfo(String roomId,String nodeId);
+    List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String nodeId);
 }

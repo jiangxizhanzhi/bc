@@ -42,6 +42,7 @@ import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -53,7 +54,10 @@ import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
-import com.cyberpeace.cr.teamtrain.service.context.*;
+import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
+import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
+import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -106,6 +110,9 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@Autowired
+	private CrReplayService crReplayService;
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -729,6 +736,15 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
 		return room;
+	}
+
+	@Override
+	public TimeLineData getTimeLine(String roomId, String userId) {
+		TimeLineData timeLineData = new TimeLineData();
+		setTime(timeLineData, roomId);
+		List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+		timeLineData.setUserTimeLineConfig(eventList);
+		return timeLineData;
 	}
 
 	private String confirmAvatarFile(String filePath, String jarFilePath) {

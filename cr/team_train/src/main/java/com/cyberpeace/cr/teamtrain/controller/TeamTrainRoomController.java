@@ -64,7 +64,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;

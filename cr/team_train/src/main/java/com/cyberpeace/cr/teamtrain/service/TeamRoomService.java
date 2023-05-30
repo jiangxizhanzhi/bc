@@ -15,7 +15,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.teamtrain.service.context.TimeLineData;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 
 /**
  *
@@ -153,4 +153,13 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code TeamRoom}
 	 */
 	TeamRoom getOrExceptionById(String roomId);
+
+	/**
+	 * 获取时间轴
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code TimeLineData}
+	 */
+	TimeLineData getTimeLine(String roomId, String userId);
 }

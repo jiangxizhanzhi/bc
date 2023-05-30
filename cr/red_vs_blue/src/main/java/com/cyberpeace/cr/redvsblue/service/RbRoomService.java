@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
@@ -171,4 +172,13 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code RbRoom}
 	 */
 	RbRoom getOrExceptionById(String roomId);
+
+	/**
+	 * 获取复盘时间轴
+	 *
+	 * @param roomId 房间id
+	 * @param userId 用户id
+	 * @return {@code TimeLineData}
+	 */
+	TimeLineData getReplayTimeline(String roomId, String userId);
 }

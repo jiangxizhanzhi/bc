@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -15,6 +16,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
@@ -201,6 +203,28 @@ public class CrCommonUtil {
 
 			osTypeSet.add(osType);
 			res.add(idNameType);
+		}
+		return res;
+	}
+
+	/**
+	 * 列表通过角色任务配置获取动态任务id
+	 *
+	 * @param missionSchemeJson 任务计划json
+	 * @return {@code List<String>}
+	 */
+	public static List<String> getDynamicMissionIdsByRoleMissionScheme(String missionSchemeJson) {
+		List<String> res = Lists.newArrayList();
+		List<MissionStageScheme> stages = JsonUtil.toJsonObjectArray(missionSchemeJson,
+				MissionStageScheme.class);
+		if (stages.isEmpty()) {
+			return res;
+		}
+		for (MissionStageScheme stage : stages) {
+			List<String> dynamicIds = stage.getDynamic();
+			if (CollectionUtils.isNotEmpty(dynamicIds)) {
+				res.addAll(dynamicIds);
+			}
 		}
 		return res;
 	}

@@ -33,6 +33,18 @@ public class CrCommonValidator {
 	}
 
 	/**
+	 * 验证用户id是否空
+	 *
+	 * @param userId 用户id
+	 */
+	public static void validateUserId(String userId) {
+		if (StringUtils.isBlank(userId)) {
+			log.error("userId is blank");
+			throw new BusinessException(CrBusinessErrorCode.BLANK_USER_ID);
+		}
+	}
+
+	/**
 	 * 验证字符串长度。中文算2个字符。
 	 */
 	public static void validateLength(String target, Integer minLen, Integer maxLen,

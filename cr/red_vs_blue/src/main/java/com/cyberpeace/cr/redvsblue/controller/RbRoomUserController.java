@@ -1,13 +1,23 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.ScreenService;
+import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordRsp;
+import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -78,6 +88,8 @@ public class RbRoomUserController {
 	@Autowired
 	private CrRoleService crRoleService;
 
+	@Autowired
+	private ScreenService screenService;
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -264,7 +276,7 @@ public class RbRoomUserController {
 		return new BaseRsp<>(ret);
 	}
 
-	@ApiOperation("红蓝对抗-学员任务矩阵")
+	@ApiOperation("红蓝对抗-任务矩阵&&用户维度复盘")
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
@@ -285,6 +297,20 @@ public class RbRoomUserController {
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
+	@ApiOperation("红蓝对抗-复盘设备")
+	@GetMapping("/task/replyUserTimeInfo")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<ScreenRecordUserRole> resList= screenService.getReplyUserTimeInfo(resource_id,node_id);
+		return new BaseRsp<>(resList);
+	}
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)

@@ -256,4 +256,7 @@ public interface RemoteSceneService {
 	 * @return {@code JSONObject}
 	 */
 	JSONObject getAssetsStatisticsBySceneId(String sceneId);
+
+
+	JSONObject screenrecord(String sceneId,String nodeId);
 }

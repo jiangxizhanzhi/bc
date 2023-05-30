@@ -116,6 +116,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_SCENE_URL;
 
+	private String NODE_SCREEN_RECORD;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -199,6 +201,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
 
 		NODE_SCENE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.cscenes");
+
+		NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
 	}
 
 	@Override
@@ -278,6 +282,13 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		String targetUrl = SCENE_NODE_STATISTICS + "?sceneIds=" + sceneId;
 		JSONArray rsp = HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 		return rsp.getJSONObject(0);
+	}
+
+	@Override
+	public JSONObject screenrecord(String sceneId, String nodeId) {
+
+		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId;
+		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 
 	@Override

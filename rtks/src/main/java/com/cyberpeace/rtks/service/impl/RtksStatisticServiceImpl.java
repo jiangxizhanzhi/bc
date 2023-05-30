@@ -141,8 +141,8 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 	}
 
 	@Override
-	public List<UserStatisticsBo> getUserStatistics(String userId, String sort, Boolean asc) {
-		List<UserStatisticsBo> res = org.apache.commons.compress.utils.Lists.newArrayList();
+	public List<UserStatisticsBo> getUserStatistics(String userId, String sort, boolean asc) {
+		List<UserStatisticsBo> res = Lists.newArrayList();
 		// 获取当前用户所有参与过的岗位
 		List<String> roleIds = rtksRoleMatchRecordMapper.selectRoleIdsByUserId(userId);
 		List<Role> roles = roleMapper.selectBatchIds(roleIds);
@@ -210,10 +210,11 @@ public class RtksStatisticServiceImpl implements RtksStatisticService {
 		} else {
 			res.sort(Comparator.comparing(UserStatisticsBo::getMatch));
 		}
-		if (!Boolean.TRUE.equals(asc)) {
+		if (!asc) {
 			// 指定倒序或默认倒序
 			Collections.reverse(res);
 		}
+
 		return res;
 	}
 

@@ -95,5 +95,5 @@ public interface RtksStatisticService {
 	 * @param asc 正序？
 	 * @return {@code UserTrend}
 	 */
-	List<UserStatisticsBo> getUserStatistics(String userId, String sort, Boolean asc);
+	List<UserStatisticsBo> getUserStatistics(String userId, String sort, boolean asc);
 }

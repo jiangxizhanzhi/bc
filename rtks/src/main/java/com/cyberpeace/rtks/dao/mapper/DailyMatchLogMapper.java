@@ -14,4 +14,6 @@ import com.cyberpeace.rtks.dao.entity.DailyMatchLog;
 public interface DailyMatchLogMapper extends BaseMapper<DailyMatchLog> {
 
 	List<DailyMatchLog> selectByUserId(@Param("userId") String userId);
+
+    void insertLog(@Param("userId") String userId, @Param("roleId") String roleId, @Param("match") Integer match);
 }

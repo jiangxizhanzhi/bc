@@ -10,7 +10,7 @@ CREATE TABLE `rtks_daily_match_log`
     `create_time` datetime    NULL DEFAULT NULL,
     `update_time` datetime    NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `user_id` (`user_id`) USING BTREE
+    INDEX `user_id` (`user_id`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8

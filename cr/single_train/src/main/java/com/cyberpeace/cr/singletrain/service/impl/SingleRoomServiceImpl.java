@@ -1184,7 +1184,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	@Override
 	public ListRsp<JSONObject> getAssetList(AssetPageReq pageReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
-		String businessInstanceId = pageReq.getResourceId() + "_" + userId;
+		String businessInstanceId = pageReq.getResource_id() + "_" + userId;
 		SceneNodeListReq req = new SceneNodeListReq();
 		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(businessInstanceId);
 		req.setId(mpSceneId);

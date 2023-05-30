@@ -17,7 +17,7 @@ import lombok.Data;
 public class AssetPageReq extends PageReqBase implements Serializable {
 
 	@ApiModelProperty(value = "训练id", required = true)
-	private String resourceId;
+	private String resource_id;
 
 	@ApiModelProperty(value = "操作系统名称", required = false)
 	private String systemTypeName;

@@ -183,7 +183,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	@Override
 	public List<JSONObject> getAssetList(AssetPageReq req) {
-		String roomId = req.getResourceId();
+		String roomId = req.getResource_id();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// make req
 		SceneNodeListReq listReq = new SceneNodeListReq();

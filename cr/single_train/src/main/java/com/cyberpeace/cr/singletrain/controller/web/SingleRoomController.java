@@ -243,7 +243,7 @@ public class SingleRoomController {
 	@GetMapping("/asset/list")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
-		CrCommonValidator.validateId(req.getResourceId());
+		CrCommonValidator.validateId(req.getResource_id());
 		ListRsp<JSONObject> res = singleRoomService.getAssetList(req);
 		return new BaseRsp<>(res);
 	}

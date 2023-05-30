@@ -98,7 +98,7 @@ public class CrSceneController {
 	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
-		CrCommonValidator.validateId(req.getResourceId());
+		CrCommonValidator.validateId(req.getResource_id());
 		List<JSONObject> res = crSceneService.getAssetList(req);
 		return new BaseRsp<>(PageUtil.pageList(res, req.getPage(), req.getPerPage()));
 	}

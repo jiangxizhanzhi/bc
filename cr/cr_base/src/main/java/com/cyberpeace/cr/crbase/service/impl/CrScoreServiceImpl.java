@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.UserData;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -269,7 +270,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				.collect(Collectors.groupingBy(CrTask::getUserId));
 		Set<String> missionIds = taskList.stream().map(CrTask::getMissionId)
 				.collect(Collectors.toSet());
-		List<Mission> missions = missionService.listByIds(missionIds);
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>() : missionService.listByIds(missionIds);
 		Map<String, Mission> missionMap = missions.stream()
 				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
 

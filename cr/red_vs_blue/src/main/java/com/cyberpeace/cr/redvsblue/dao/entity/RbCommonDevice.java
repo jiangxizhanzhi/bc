@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.redvsblue.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.sun.xml.internal.ws.spi.db.DatabindingException;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -126,4 +126,10 @@ public class PageUtil {
 
 	}
 
+	public static <T> ListRsp<T> pageList(List<T> list, Integer page, Integer perPage) {
+		IPage<T> resPage = new Page<>(page, perPage, list.size());
+		resPage.setRecords(ListUtil.pageList(list, page, perPage, (int) resPage.getTotal()));
+		return PageUtil.getListResult(resPage);
+	}
+
 }

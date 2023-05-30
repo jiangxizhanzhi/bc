@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +16,9 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.rtks.controller.req.SituationStatisticsPageReq;
 import com.cyberpeace.rtks.controller.req.TalentStatistuicReq;
 import com.cyberpeace.rtks.controller.res.*;
 import com.cyberpeace.rtks.dao.entity.Role;
@@ -144,15 +147,29 @@ public class RtksSituationController {
 	@ApiOperation("个人岗位统计数据")
 	@GetMapping("/user/statistics")
 	@RequiresPermissions(MenuConstant.CMS_TALENT_STATISTICS)
-	public BaseRsp<List<UserStatisticsBo>> getUserStatistics(
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id,
-			@ApiParam(name = "sort", value = "排序字段") String sort,
-			@ApiParam(name = "asc", value = "是否正序， 默认倒序") Boolean asc) {
-		if (StringUtils.isBlank(user_id)) {
+	public BaseRsp<ListRsp<UserStatisticsBo>>
+			getUserStatistics(@Validated SituationStatisticsPageReq req) {
+		String userId = req.getUser_id();
+		if (StringUtils.isBlank(userId)) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		List<UserStatisticsBo> res = rtksStatisticService.getUserStatistics(user_id, sort, asc);
-		return new BaseRsp<>(res);
+
+		String sort = req.getSort();
+		boolean asc;
+		if (StringUtils.isNotBlank(sort)) {
+			if (sort.startsWith("-")) {
+				sort = sort.substring(1);
+				asc = false;
+			} else {
+				asc = true;
+			}
+		} else {
+			// 不输入排序字段默认匹配度倒序
+			asc = false;
+		}
+		List<UserStatisticsBo> res = rtksStatisticService.getUserStatistics(userId, sort, asc);
+		ListRsp<UserStatisticsBo> rsp = PageUtil.pageList(res, req.getPage(), req.getPerPage());
+		return new BaseRsp<>(rsp);
 	}
 
 }

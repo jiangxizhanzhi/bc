@@ -794,7 +794,7 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, crRole.getRoleGroup());
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, CrRole.TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
 

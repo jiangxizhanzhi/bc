@@ -525,9 +525,6 @@ public class RtksSituationServiceImpl implements RtksSituationService {
 				tmp.setName(roleName);
 				finalResult.add(tmp);
 			});
-			if(result.size() > 5){
-				result = result.subList(0,5);
-			}
 			res.setRoleInfos(result);
 			BeanUtils.copyProperties(userInfo, res);
 			List<JSONObject> roles = userInfo.getRoles();

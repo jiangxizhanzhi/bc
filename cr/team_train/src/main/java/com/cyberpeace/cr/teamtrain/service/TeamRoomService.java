@@ -2,14 +2,12 @@ package com.cyberpeace.cr.teamtrain.service;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
@@ -155,12 +153,4 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code TeamRoom}
 	 */
 	TeamRoom getOrExceptionById(String roomId);
-
-	/**
-	 * 获取资产列表
-	 *
-	 * @param req 请求体
-	 * @return {@code ListRsp<JSONObject>}
-	 */
-	List<JSONObject> getAssetList(AssetPageReq req);
 }

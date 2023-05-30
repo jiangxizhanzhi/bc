@@ -1,17 +1,9 @@
 package com.cyberpeace.cr.crbase.controller;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.MenuConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.cr.crbase.service.BaseRoleUpdateHandler;
-import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
-import com.cyberpeace.cs.service.LocalSceneService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -19,12 +11,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.util.PageUtil;
+import com.cyberpeace.cr.crbase.service.BaseRoleUpdateHandler;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
+import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.IdNameType;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "cr场景相关接口")
 @RestController
@@ -41,6 +51,9 @@ public class CrSceneController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@PutMapping("/update/dynamic")
 	@ApiOperation("动态更新场景")
@@ -71,5 +84,38 @@ public class CrSceneController {
 		});
 
 		return new BaseRsp<>();
+	}
+
+	/**
+	 * 获取资产清单
+	 * 透传中台节点数据
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<JSONObject>>}
+	 */
+	@ApiOperation("资产清单, 需要开启场景(团队、红蓝)")
+	@GetMapping("/asset/list")
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN },
+			logical = Logical.OR)
+	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
+		CrCommonValidator.validateId(req.getResourceId());
+		List<JSONObject> res = crSceneService.getAssetList(req);
+		return new BaseRsp<>(PageUtil.pageList(res, req.getPage(), req.getPerPage()));
+	}
+
+	/**
+	 * 获取操作系统名字
+	 * 透传中台节点数据
+	 *
+	 * @return {@code BaseRsp<List<IdNameType>>}
+	 */
+	@ApiOperation("操作系统列表, 需要开启场景(团队、红蓝)")
+	@GetMapping("/os/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<List<IdNameType>> getOsNames(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		List<IdNameType> res = crSceneService.getOsNames(resource_id);
+		return new BaseRsp<>(res);
 	}
 }

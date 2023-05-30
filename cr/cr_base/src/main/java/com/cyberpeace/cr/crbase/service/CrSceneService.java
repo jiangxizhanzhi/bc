@@ -2,11 +2,14 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.cs.service.context.scene.ElementFlow;
 import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
@@ -85,4 +88,19 @@ public interface CrSceneService {
 	List<ElementFlow> setElementFlowStatus(List<ElementFlow> elementFlowList, String mpSceneId,
 			String nodeId);
 
+	/**
+	 * 获取资产列表
+	 *
+	 * @param req 请求体
+	 * @return {@code List<JSONObject>}
+	 */
+	List<JSONObject> getAssetList(AssetPageReq req);
+
+	/**
+	 * 获取操作系统名字
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<IdNameType>}
+	 */
+	List<IdNameType> getOsNames(String roomId);
 }

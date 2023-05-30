@@ -1,10 +1,19 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.scene.AssetProperty;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
@@ -12,27 +21,29 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
+import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.cs.service.context.scene.*;
 import com.cyberpeace.integratation.model.mp.MpFlow;
 import com.cyberpeace.integratation.model.scene.*;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.concurrent.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -49,6 +60,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
@@ -165,6 +179,57 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		return elementFlowList;
+	}
+
+	@Override
+	public List<JSONObject> getAssetList(AssetPageReq req) {
+		String roomId = req.getResourceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// make req
+		SceneNodeListReq listReq = new SceneNodeListReq();
+		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(roomId);
+		listReq.setId(mpSceneId);
+		listReq.setName(req.getPattern());
+		listReq.setSystemTypeName(req.getSystemTypeName());
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		// get role assets
+		if (role.isRvbStudent() || role.isTeamStudent()) {
+			// if student
+			CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(),
+					CrRoleNodesData.class);
+			List<String> assetNodeIds = nodesData.getAssetNodes().stream().map(CrRoleNode::getId)
+					.collect(Collectors.toList());
+			if (assetNodeIds.isEmpty()) {
+				// 没有资产，直接返回空列表
+				return Lists.newArrayList();
+			} else {
+				// 有资产，传入节点id
+				listReq.setElementIds(assetNodeIds);
+			}
+		}
+		return localSceneService.getAssetList(listReq);
+	}
+
+	@Override
+	public List<IdNameType> getOsNames(String roomId) {
+		List<JSONObject> allAssets = localSceneService.getAllAssetByBusinessInstanceId(roomId);
+		String userId = UserInfoContext.getUserContext().getUserId();
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		if (role.isRvbStudent() || role.isTeamStudent()) {
+			CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(),
+					CrRoleNodesData.class);
+			List<String> assetNodeIds = nodesData.getAssetNodes().stream().map(CrRoleNode::getId)
+					.collect(Collectors.toList());
+			if (assetNodeIds.isEmpty()) {
+				// 没有资产，直接返回空列表
+				return Lists.newArrayList();
+			} else {
+				// 过滤非资产节点
+				allAssets
+						.removeIf(item -> !assetNodeIds.contains(item.getString(AssetProperty.ID)));
+			}
+		}
+		return CrCommonUtil.getOsListFromAssets(allAssets);
 	}
 
 	/**启动流量前校验流量任务状态*/

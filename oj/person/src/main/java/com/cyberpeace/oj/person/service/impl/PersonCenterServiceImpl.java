@@ -33,6 +33,7 @@ import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryMapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.crypto.JcaCipherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -323,6 +324,13 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	private PersonNote noteToBo(PersonNote note) {
 		UserInfo userInfo = remoteUserService.getById(note.getUserId());
 		note.setUserName(userInfo.getUserName());
+		if(note.getResourceType() != null
+		&& (note.getResourceType().equals(Note.NoteResourceType.OPTION.getCode()) ||
+				note.getResourceType().equals(Note.NoteResourceType.THEORY.getCode()))) {
+			String themeName = note.getThemeName();
+
+			note.setThemeName(themeName);
+		}
 		return note;
 	}
 }

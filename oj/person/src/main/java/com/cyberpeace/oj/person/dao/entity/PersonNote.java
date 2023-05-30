@@ -24,7 +24,13 @@ public class PersonNote extends NoteAddReq {
 	@ApiModelProperty("主题名")
 	private String themeName;
 
-	@ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习")
+	@ApiModelProperty("资源类型 1=课程 2=课时 3=练习 4=课后练习 5=理论")
 	@NotNull
 	private Integer resourceType;
+
+	@ApiModelProperty("题型")
+	private Integer practiceType;
+
+	@ApiModelProperty("难度")
+	private Integer difficulty;
 }

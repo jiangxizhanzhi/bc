@@ -28,6 +28,7 @@
         <result property="userId" column="user_id" jdbcType="VARCHAR"/>
         <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
+        <result property="practiceType" column="practice_type" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap id="personComment" type="com.cyberpeace.oj.person.dao.entity.PersonComment">
@@ -85,14 +86,20 @@
         oj_note.note_type,
         (case when oj_note.business_type = 1 then oj_course.name
         when oj_note.business_type = 2 then oj_course_lesson.name
-        when oj_note.business_type = 3 then (case when oj_practice_operation.title is not null then
-        oj_practice_operation.title else '' END )
+        when oj_note.business_type = 3 then ifnull(oj_practice_operation.title, '')
         when oj_note.business_type = 4 then pp.name
-        END ) as theme_name
+        when oj_note.business_type = 5
+        then ifnull(oj_practice_theory.title, '')
+        END ) as theme_name,
+        oj_practice_theory.theory_type practice_type,
+        ifnull(oj_practice_theory.difficulty, oj_practice_operation.difficulty) difficulty
         from oj_note
         left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
         left join oj_course on oj_note.business_id = oj_course.resource_id
-        left join oj_practice_operation on oj_note.business_id = oj_practice_operation.resource_id
+        left join oj_practice_operation
+        on oj_note.business_id = oj_practice_operation.resource_id
+        left join oj_practice_theory
+        on oj_note.business_id = oj_practice_theory.resource_id
         left join (select p.name as name,l.resource_id as resource_id,p.resource_id as p_resource_id from oj_course_lesson l left join oj_paper p on l.paper_id = p.resource_id) pp
         on pp.resource_id = oj_note.business_id
         where oj_note.`user_id` = #{userId}

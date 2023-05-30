@@ -35,7 +35,10 @@ public class Comment extends BaseTable {
 
 		LESSON(2, "课时"),
 
-		EXERCISE(3, "实操题");
+		EXERCISE(3, "实操题"),
+		AFTER_CLASS_EXERCISE(4, "课后练习"),
+		THEORY(5, "理论题"),
+		;
 
 		@Getter
 		private Integer code;

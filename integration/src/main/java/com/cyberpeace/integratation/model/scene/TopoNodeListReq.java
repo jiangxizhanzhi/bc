@@ -12,9 +12,15 @@ import com.cyberpeace.common.exception.BusinessException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 拓扑节点列表请求体
+ *
+ * @author SN
+ * @date 2023/05/30
+ */
 @Data
 @Slf4j
-public class AllNodeReq implements Serializable {
+public class TopoNodeListReq implements Serializable {
 
 	private String id;
 

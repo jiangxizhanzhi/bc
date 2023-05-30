@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -20,6 +21,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
@@ -33,6 +35,7 @@ import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
@@ -280,6 +283,23 @@ public class TeamTrainStudentsController {
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		return new BaseRsp();
+	}
+
+	/**
+	 * 获取资产清单
+	 * 透传中台节点数据
+	 *
+	 * @param req 请求体
+	 * @return {@code BaseRsp<ListRsp<JSONObject>>}
+	 */
+	@ApiOperation("资产清单, 虚拟机内查看")
+	@GetMapping("/asset/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
+		CrCommonValidator.validateId(req.getResourceId());
+		List<JSONObject> assetList = teamRoomService.getAssetList(req);
+		ListRsp<JSONObject> res = PageUtil.pageList(assetList, req.getPage(), req.getPerPage());
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("团队对抗-学员任务矩阵")

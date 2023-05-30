@@ -15,6 +15,7 @@ import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.RecordDetail;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
+import com.cyberpeace.cs.service.context.IdNameType;
 
 public interface SingleRoomService extends IService<SingleRoom> {
 
@@ -177,4 +178,6 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @return {@code ListRsp<JSONObject>}
 	 */
 	ListRsp<JSONObject> getAssetList(AssetPageReq req);
+
+	List<IdNameType> getOsNames(String businessTemplateId);
 }

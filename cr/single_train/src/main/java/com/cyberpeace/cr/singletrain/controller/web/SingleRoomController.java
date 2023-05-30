@@ -32,6 +32,7 @@ import com.cyberpeace.cr.singletrain.service.bo.*;
 import com.cyberpeace.cr.singletrain.service.bo.mission.SingleMatrixProgressRsp;
 import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -244,6 +245,22 @@ public class SingleRoomController {
 	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
 		CrCommonValidator.validateId(req.getResourceId());
 		ListRsp<JSONObject> res = singleRoomService.getAssetList(req);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 获取操作系统名字
+	 * 透传中台节点数据
+	 *
+	 * @return {@code BaseRsp<List<IdNameType>>}
+	 */
+	@ApiOperation("操作系统列表, 需要开启场景")
+	@GetMapping("/os/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
+	public BaseRsp<List<IdNameType>> getOsNames(
+			@ApiParam(name = "resource_id", value = "单兵训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		List<IdNameType> res = singleRoomService.getOsNames(resource_id);
 		return new BaseRsp<>(res);
 	}
 }

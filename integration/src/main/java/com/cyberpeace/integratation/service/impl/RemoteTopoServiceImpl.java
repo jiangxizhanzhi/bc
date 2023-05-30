@@ -19,8 +19,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.integratation.model.SceneConfig;
 import com.cyberpeace.integratation.model.mp.MpTopoStatistic;
-import com.cyberpeace.integratation.model.scene.AllNodeReq;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.bo.TopoSupportPartialStartContext;
 
@@ -174,7 +174,7 @@ public class RemoteTopoServiceImpl implements RemoteTopoService {
 	}
 
 	@Override
-	public JSONArray getAllNodes(AllNodeReq req) {
+	public JSONArray getAllNodes(TopoNodeListReq req) {
 		String targetUrl = TOPO_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}

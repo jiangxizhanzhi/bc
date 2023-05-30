@@ -2,7 +2,6 @@ package com.cyberpeace.integratation.service.impl;
 
 import static com.cyberpeace.common.constant.WebConstant.SCENE_ID_LENGTH;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -271,7 +270,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public JSONArray getAllNodes(AllNodeSceneReq req) {
+	public JSONArray getAssetList(SceneNodeListReq req) {
 		String targetUrl = SCENE_NODE_LIST + req.toUrl();
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}

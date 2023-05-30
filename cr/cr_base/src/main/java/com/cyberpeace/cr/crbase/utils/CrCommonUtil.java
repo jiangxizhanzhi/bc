@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.utils;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,6 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.cyberpeace.common.model.scene.AssetProperty;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
@@ -18,7 +20,9 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.cyberpeace.cs.service.context.IdNameType;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * 一些靶场工具
@@ -174,4 +178,31 @@ public class CrCommonUtil {
 		characterList.sort(Comparator.naturalOrder());
 		return String.join(",", characterList);
 	}
+
+	/**
+	 * 获取操作系统列表
+	 * 去重
+	 *
+	 * @param assetList 资产列表
+	 * @return {@code List<IdNameType>}
+	 */
+	public static List<IdNameType> getOsListFromAssets(List<JSONObject> assetList) {
+		Set<String> osTypeSet = Sets.newHashSet();
+		List<IdNameType> res = Lists.newArrayList();
+		for (JSONObject jsonObject : assetList) {
+			String osType = jsonObject.getString(AssetProperty.SYSTEM_TYPE);
+			String osName = jsonObject.getString(AssetProperty.SYSTEM_TYPE_NAME);
+			if (osTypeSet.contains(osType)) {
+				continue;
+			}
+			IdNameType idNameType = new IdNameType();
+			idNameType.setId(osType);
+			idNameType.setName(osName);
+
+			osTypeSet.add(osType);
+			res.add(idNameType);
+		}
+		return res;
+	}
+
 }

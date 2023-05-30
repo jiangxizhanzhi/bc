@@ -601,17 +601,17 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public JSONArray getAssetListByInstanceId(String businessInstanceId, Integer category,
 			String name, Boolean realTimeHostState) {
 		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
-		AllNodeSceneReq req = new AllNodeSceneReq();
+		SceneNodeListReq req = new SceneNodeListReq();
 		req.setId(localScene.getMpSceneId());
 		req.setCategory(category);
 		req.setName(name);
 		req.setRealTimeHostState(realTimeHostState);
-		return remoteSceneService.getAllNodes(req);
+		return remoteSceneService.getAssetList(req);
 	}
 
 	@Override
 	public JSONArray getAssetListByTopoId(String topoId, Integer category, String name) {
-		AllNodeReq req = new AllNodeReq();
+		TopoNodeListReq req = new TopoNodeListReq();
 		req.setId(topoId);
 		req.setCategory(category);
 		req.setName(name);
@@ -636,9 +636,17 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public List<JSONObject> getAssetList(AllNodeSceneReq req) {
-		JSONArray rsp = remoteSceneService.getAllNodes(req);
+	public List<JSONObject> getAssetList(SceneNodeListReq req) {
+		JSONArray rsp = remoteSceneService.getAssetList(req);
 		return rsp.toJavaList(JSONObject.class);
+	}
+
+	@Override
+	public List<JSONObject> getAllAssetByBusinessInstanceId(String businessInstanceId) {
+		LocalScene localScene = getOrExceptionByBusinessInstanceId(businessInstanceId);
+		SceneNodeListReq req = new SceneNodeListReq();
+		req.setId(localScene.getMpSceneId());
+		return remoteSceneService.getAssetList(req).toJavaList(JSONObject.class);
 	}
 
 	private String getMpSceneIdOrExceptionByLocalSceneId(String localSceneId) {

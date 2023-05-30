@@ -10,8 +10,8 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.scene.SceneData;
-import com.cyberpeace.integratation.model.scene.AllNodeSceneReq;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
+import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 
 public interface LocalSceneService extends IService<LocalScene> {
 
@@ -271,5 +271,13 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @param req 请求体
 	 * @return {@code List<JSONObject>}
 	 */
-	List<JSONObject> getAssetList(AllNodeSceneReq req);
+	List<JSONObject> getAssetList(SceneNodeListReq req);
+
+	/**
+	 * 通过业务实例id获取所有资产
+	 *
+	 * @param businessInstanceId 业务实例id
+	 * @return {@code List<JSONObject>}
+	 */
+	List<JSONObject> getAllAssetByBusinessInstanceId(String businessInstanceId);
 }

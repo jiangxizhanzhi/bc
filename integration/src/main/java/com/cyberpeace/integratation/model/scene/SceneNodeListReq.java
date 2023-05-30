@@ -9,9 +9,15 @@ import org.apache.commons.lang3.StringUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 场景节点列表请求体
+ *
+ * @author SN
+ * @date 2023/05/30
+ */
 @Data
 @Slf4j
-public class AllNodeSceneReq extends AllNodeReq implements Serializable {
+public class SceneNodeListReq extends TopoNodeListReq implements Serializable {
 
 	private Boolean realTimeHostState;
 

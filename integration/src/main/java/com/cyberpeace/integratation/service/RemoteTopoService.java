@@ -6,8 +6,8 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.model.SceneConfig;
-import com.cyberpeace.integratation.model.scene.AllNodeReq;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.model.scene.TopoNodeListReq;
 
 public interface RemoteTopoService {
 
@@ -87,7 +87,7 @@ public interface RemoteTopoService {
 	 * @param req 请求体
 	 * @return {@code JSONArray}
 	 */
-	JSONArray getAllNodes(AllNodeReq req);
+	JSONArray getAllNodes(TopoNodeListReq req);
 
 	/**
 	 * 获取节点统计数据

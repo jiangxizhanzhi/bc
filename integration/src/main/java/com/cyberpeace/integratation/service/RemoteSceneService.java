@@ -247,7 +247,7 @@ public interface RemoteSceneService {
 	 * @param req 请求体
 	 * @return {@code JSONArray}
 	 */
-	JSONArray getAllNodes(AllNodeSceneReq req);
+	JSONArray getAssetList(SceneNodeListReq req);
 
 	/**
 	 * 通过场景id获取资产统计数据

@@ -63,8 +63,9 @@ import com.cyberpeace.cr.singletrain.service.bo.record.TrainingRecordListBo;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.cs.service.context.scene.SceneData;
-import com.cyberpeace.integratation.model.scene.AllNodeSceneReq;
+import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -1184,13 +1185,23 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	public ListRsp<JSONObject> getAssetList(AssetPageReq pageReq) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		String businessInstanceId = pageReq.getResourceId() + "_" + userId;
-		AllNodeSceneReq req = new AllNodeSceneReq();
+		SceneNodeListReq req = new SceneNodeListReq();
 		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(businessInstanceId);
 		req.setId(mpSceneId);
 		req.setName(pageReq.getPattern());
 		req.setSystemTypeName(pageReq.getSystemTypeName());
 		List<JSONObject> rsp = localSceneService.getAssetList(req);
 		return PageUtil.pageList(rsp, pageReq.getPage(), pageReq.getPerPage());
+	}
+
+	@Override
+	public List<IdNameType> getOsNames(String businessTemplateId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		String businessInstanceId = businessTemplateId + "_" + userId;
+		List<JSONObject> assetList = localSceneService
+				.getAllAssetByBusinessInstanceId(businessInstanceId);
+
+		return CrCommonUtil.getOsListFromAssets(assetList);
 	}
 
 	private Map<String, Mission>

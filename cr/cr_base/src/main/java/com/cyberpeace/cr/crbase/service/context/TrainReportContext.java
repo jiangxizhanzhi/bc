@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
@@ -33,6 +34,12 @@ public class TrainReportContext {
 
     @ApiModelProperty("任务分类：key 名称 value个数")
     private Map<String,Integer>  kindMap;
+
+    @ApiModelProperty("角色信息")
+    private List<UserRole>  userRoles;
+
+    @ApiModelProperty("基础信息")
+    private RoomBaseInfo roomBaseInfo;
 
     private List<Date> timeList = new ArrayList<>();
 

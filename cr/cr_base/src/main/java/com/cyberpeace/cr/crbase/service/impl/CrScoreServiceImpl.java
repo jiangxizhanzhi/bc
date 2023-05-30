@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,14 +286,22 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
 		Map<String, Integer> kindMap = new HashMap<>();
 		List<UserData> userDataList = crRoleService.getUserDatas(userIds);
+		List<UserRole>  userRoles = new ArrayList<>();
 		for (UserData userData : userDataList) {
+			//构建趋势
 			List<CrTask> userTaskList = taskMap.getOrDefault(userData.getResourceId(),
 					new ArrayList<>());
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList,
 					userIdRoleMap.get(userData.getResourceId()),trainReportContext.getTimeList()));
+			//人员得分
 			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap));
+			UserRole userRole = new UserRole();
+			userRole.setName(userData.getRepName());
+			userRole.setLogo(userData.getLogo());
+			userRole.setType(userIdRoleMap.get(userData.getResourceId()));
+			userRoles.add(userRole);
 		}
 		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {
 			CrConstantsConfig config = configMap.get(entry.getKey());
@@ -305,6 +314,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
 		trainReportContext.setKindMap(kindMap);
+		trainReportContext.setUserRoles(userRoles);
 		return trainReportContext;
 	}
 }

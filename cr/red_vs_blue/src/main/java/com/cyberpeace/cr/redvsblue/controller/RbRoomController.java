@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.CrScoreService;
+import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
@@ -599,7 +600,7 @@ public class RbRoomController {
 
 	@ApiOperation("红蓝对抗-任务导调-训练报告")
 	@GetMapping("/mission/getTrainReports")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TrainReportContext> getTrainReports(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
@@ -607,6 +608,8 @@ public class RbRoomController {
 		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount);
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);
+		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
+		trainReport.setRoomBaseInfo(roomBaseInfo);
 		return new BaseRsp<>(trainReport);
 	}
 }

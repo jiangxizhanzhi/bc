@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainDevice;
+import com.cyberpeace.cr.teamtrain.service.TeamDeviceService;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +88,9 @@ public class TeamTrainStudentsController {
 	private TrainRecordService trainRecordService;
 	@Autowired
 	private CrCommonService crCommonService;
+
+	@Autowired
+	private TeamDeviceService teamDeviceService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -301,6 +308,52 @@ public class TeamTrainStudentsController {
 		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole);
 		return new BaseRsp<>(rbTaskMatrix);
+	}
+
+	@ApiOperation("新增占用主机-")
+	@PostMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> createDevice(@RequestBody @Valid TeamTrainDeviceReq req) {
+		String roomId = req.getRoomId();
+		String deviceId = req.getDeviceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		teamRoomService.checkStudentPermission(roomId, userId);
+
+		// 校验主机是否被占用
+		TeamTrainDevice occupied = teamDeviceService.getOccupied(roomId, deviceId);
+		if(occupied != null) {
+			throw new BusinessException(CrBusinessErrorCode.MACHINE_OCCUPIED);
+		}
+
+		TeamTrainDevice device = new TeamTrainDevice();
+		device.setCreateUserId(userId);
+		device.setRoomId(roomId);
+		device.setDeviceId(deviceId);
+		boolean ret = teamDeviceService.occupy(device);
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("解除主机占用")
+	@DeleteMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> deleteDevice(@RequestBody @Valid TeamTrainDeviceReq req) {
+		String roomId = req.getRoomId();
+		String deviceId = req.getDeviceId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Boolean ret = teamDeviceService.remove(roomId, userId, deviceId);
+		return new BaseRsp<>(ret);
+	}
+
+	@ApiOperation("查询主机占用情况")
+	@GetMapping("/device")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<TeamTrainDeviceContext>> getOccupiedDevices(
+			@ApiParam(value = "room_id", name = "团队房间id", required = true) String room_id,
+			 @ApiParam(value = "standard_device", name = "主机", required = false) String standard_device) {
+		List<TeamTrainDeviceContext> ret = teamDeviceService.getOccupies(room_id, standard_device);
+
+		return new BaseRsp<>(ret);
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息

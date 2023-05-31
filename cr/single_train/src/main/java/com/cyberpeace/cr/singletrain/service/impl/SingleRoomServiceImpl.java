@@ -39,6 +39,8 @@ import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualMissionBo;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
@@ -703,7 +705,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 	 * @return TrainTimeLineBo
 	 */
 	@Override
-	public TrainTimeLineBo getTimeLineData(String businessTemplateId) {
+	public TimeLineData getTimeLineData(String businessTemplateId) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		SingleRoom singleRoom = singleRoomMapper.getSingleRoom(businessTemplateId, userId);
 		if (singleRoom == null) {
@@ -711,46 +713,40 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		}
 
 		SingleTemplate singleTemplate = singleTemplateMapper.getByBusinessId(businessTemplateId);
-		TrainTimeLineBo trainTimeLineBo = new TrainTimeLineBo();
+		TimeLineData timeLineData = new TimeLineData();
 
-		trainTimeLineBo.setCurrentTime(new Date());
-		trainTimeLineBo.setStartTime(singleRoom.getStartTime());
+		timeLineData.setCurrentTime(new Date());
+		timeLineData.setStartTime(singleRoom.getStartTime());
 
 		// 预计结束时间
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(singleRoom.getStartTime());
 		calendar.add(Calendar.HOUR, singleTemplate.getDurationTime());
-		trainTimeLineBo.setEndTime(calendar.getTime());
+		timeLineData.setEndTime(calendar.getTime());
 
 		// 任务完成时间点
-		List<JSONObject> missionRecord = Lists.newArrayList();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		List<TimeLineEvent> missionRecord = Lists.newArrayList();
 
 		// 获取用户任务
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(singleRoom.getResourceId(),
 				userId);
-		if (crRole == null) {
-			log.error("role not exist error: ResourceId = [{}]",singleRoom.getResourceId());
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
 		Map<String, Mission> missionMap = getMissionMapByScheme(crRole.getMissionStageSchemes());
 
 		JSONObject trainRecord = JsonUtil.toJsonObject(singleRoom.getTrainingRecord(),
 				JSONObject.class);
 		for (Map.Entry<String, Object> stringObjectEntry : trainRecord.entrySet()) {
 
-			JSONObject missionEvent = new JSONObject();
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			JSONObject val = (JSONObject) stringObjectEntry.getValue();
-			missionEvent.put("time", simpleDateFormat.format(new Date(val.getLong("time"))));
-			missionEvent.put("title", missionMap.get(stringObjectEntry.getKey()).getTitle());
-			missionEvent.put("userName",UserInfoContext.getUserContext().getUserName());
-			missionEvent.put("avatarUrl",UserInfoContext.getUserContext().getAvatarUrl());
+			timeLineEvent.setTime(new Date(val.getLong("time")));
+			timeLineEvent.setTitle(missionMap.get(stringObjectEntry.getKey()).getTitle());
+			timeLineEvent.setUserName(UserInfoContext.getUserContext().getUserName());
+			timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
 
-			missionRecord.add(missionEvent);
+			missionRecord.add(timeLineEvent);
 		}
-		trainTimeLineBo.setData(missionRecord);
-
-		return trainTimeLineBo;
+		timeLineData.setData(missionRecord);
+		return timeLineData;
 	}
 
 	@Override

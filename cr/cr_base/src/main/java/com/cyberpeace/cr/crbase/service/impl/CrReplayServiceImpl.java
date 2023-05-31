@@ -48,6 +48,10 @@ public class CrReplayServiceImpl implements CrReplayService {
 		// user info
 		UserInfo userInfo = remoteUserService.getById(userId);
 		List<TimeLineEvent> eventList = Lists.newArrayList();
+		if (null == userInfo) {
+			// 用户不存在
+			return eventList;
+		}
 		// 只展示学员自己做的任务
 		List<CrTask> taskList = crTaskService.getByRoomIdAndUserId(roomId, userId);
 		List<String> missionIds = taskList.stream().map(CrTask::getMissionId)
@@ -70,13 +74,12 @@ public class CrReplayServiceImpl implements CrReplayService {
 				if (null != mission) {
 					timeLineEvent.setTitle(mission.getTitle());
 				}
-				if (null != userInfo) {
-					timeLineEvent.setUserName(userInfo.getName());
-					timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-				}
+				timeLineEvent.setUserName(userInfo.getName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 				timeLineEvent.setStatus(task.getStatus());
 				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
 				timeLineEvent.setEventType(TimeLineEvent.EventType.MISSION.getCode());
+				timeLineEvent.setRoleGroup(role.getRoleGroup());
 
 				eventList.add(timeLineEvent);
 			}
@@ -88,15 +91,15 @@ public class CrReplayServiceImpl implements CrReplayService {
 		for (CrMark mark : crMarkList) {
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			timeLineEvent.setTitle(mark.getName());
-			if (null != userInfo) {
-				timeLineEvent.setUserName(userInfo.getName());
-				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			}
+			timeLineEvent.setUserName(userInfo.getName());
+			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 			timeLineEvent.setTime(mark.getCreateTime());
 			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
 			timeLineEvent.setAttachments(
 					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
+			timeLineEvent.setRoleGroup(role.getRoleGroup());
 			eventList.add(timeLineEvent);
+
 		}
 
 		return eventList;

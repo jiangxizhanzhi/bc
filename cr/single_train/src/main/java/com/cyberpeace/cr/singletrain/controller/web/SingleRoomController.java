@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -159,7 +160,7 @@ public class SingleRoomController {
 	@GetMapping("/time_line")
 	@ApiOperation("训练时间线")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
-	public BaseRsp<TrainTimeLineBo>
+	public BaseRsp<TimeLineData>
 			trainTimeLine(@RequestParam("resource_id") String businessTemplateId) {
 		return new BaseRsp<>(singleRoomService.getTimeLineData(businessTemplateId));
 	}

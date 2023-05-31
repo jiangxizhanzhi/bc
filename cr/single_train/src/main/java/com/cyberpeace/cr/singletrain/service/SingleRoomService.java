@@ -8,6 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
 import com.cyberpeace.cr.singletrain.controller.req.SubmitMissionReq;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
@@ -96,7 +97,7 @@ public interface SingleRoomService extends IService<SingleRoom> {
 	 * @param businessTemplateId 业务模板id
 	 * @return 时间线数据
 	 */
-	TrainTimeLineBo getTimeLineData(String businessTemplateId);
+	TimeLineData getTimeLineData(String businessTemplateId);
 
 	/**
 	 * 单兵查看场景

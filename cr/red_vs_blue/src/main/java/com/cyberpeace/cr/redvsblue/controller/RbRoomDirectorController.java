@@ -492,14 +492,21 @@ public class RbRoomDirectorController {
 		return new BaseRsp<>(list);
 	}
 
+	/**
+	 * 获取复盘时间轴
+	 * 传入用户id，则展示事件，否则只提供开始时间、结束时间
+	 *
+	 * @param resource_id 资源id
+	 * @param user_id     用户id
+	 * @return {@code BaseRsp<TimeLineData>}
+	 */
 	@ApiOperation("导演-复盘时间轴")
 	@GetMapping("/replay/timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getReviewTimeLine(
 			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+			@ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
 		CrCommonValidator.validateId(resource_id);
-		CrCommonValidator.validateUserId(user_id);
 		TimeLineData res = rbRoomService.getReplayTimeline(resource_id, user_id);
 		return new BaseRsp<>(res);
 	}

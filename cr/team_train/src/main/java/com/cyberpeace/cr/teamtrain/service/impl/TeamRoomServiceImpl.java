@@ -742,8 +742,11 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public TimeLineData getTimeLine(String roomId, String userId) {
 		TimeLineData timeLineData = new TimeLineData();
 		setTime(timeLineData, roomId);
-		List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
-		timeLineData.setUserTimeLineConfig(eventList);
+		// 传入用户id，则展示事件，否则只提供开始时间、结束时间
+		if (StringUtils.isNotBlank(userId)) {
+			List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+			timeLineData.setUserTimeLineConfig(eventList);
+		}
 		return timeLineData;
 	}
 

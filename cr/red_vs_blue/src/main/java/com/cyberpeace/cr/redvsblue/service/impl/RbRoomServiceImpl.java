@@ -649,9 +649,12 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 		timeLineData.setStartTime(startTime);
 		timeLineData.setEndTime(endTime);
-		// get events
-		List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
-		timeLineData.setUserTimeLineConfig(eventList);
+		// 传入用户id，则展示事件，否则只提供开始时间、结束时间
+		if (StringUtils.isNotBlank(userId)) {
+			// get events
+			List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+			timeLineData.setUserTimeLineConfig(eventList);
+		}
 		return timeLineData;
 	}
 

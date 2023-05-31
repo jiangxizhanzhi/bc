@@ -1212,6 +1212,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     int score = Integer.parseInt(jsonObject.get(nextId).toString());
                     setCycleResult(rsp, i, score);
                 }
+                rsp.setChildren(null);
+                res.add(rsp);
             } else {
                 if (evalIndexRef1.getLevel().equals(EvalIndex.Level.SECOND.getCode())) {
                     rsp.setResourceId(evalIndexRef1.getResourceId());

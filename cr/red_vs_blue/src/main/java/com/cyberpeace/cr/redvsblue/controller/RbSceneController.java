@@ -309,38 +309,6 @@ public class RbSceneController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
-	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices,
-																List<RbDeviceContext> occupyDevices,
-																String roomId,
-																List<String> collectedCommonDeviceIds) {
-		if(CollectionUtils.isEmpty(availableDevices)) {
-			return new ArrayList<>();
-		}
-		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		for(int i = 0; i < availableDevices.size(); i ++) {
-			JSONObject availableDevice = availableDevices.getJSONObject(i);
-
-			if(collectedCommonDeviceIds.contains(availableDevice.getString("eid"))) {
-				continue;
-			}
-
-			RbCommonDeviceContext context = new RbCommonDeviceContext();
-			context.setOccupyFlag(0);
-			for(RbDeviceContext occupyDevice : occupyDevices) {
-				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("eid"))) {
-					context.setOccupyFlag(0);
-				} else {
-					context.setOccupyFlag(1);
-				}
-			}
-			context.setDeviceId(availableDevice.getString("eid"));
-			context.setDeviceInfo(availableDevice);
-			context.setRoomId(roomId);
-			commonDeviceContexts.add(context);
-		}
-		return commonDeviceContexts;
-	}
-
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -381,6 +349,38 @@ public class RbSceneController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
+	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices,
+																List<RbDeviceContext> occupyDevices,
+																String roomId,
+																List<String> collectedCommonDeviceIds) {
+		if(CollectionUtils.isEmpty(availableDevices)) {
+			return new ArrayList<>();
+		}
+		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
+		for(int i = 0; i < availableDevices.size(); i ++) {
+			JSONObject availableDevice = availableDevices.getJSONObject(i);
+
+			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
+				continue;
+			}
+
+			RbCommonDeviceContext context = new RbCommonDeviceContext();
+			context.setOccupyFlag(0);
+			for(RbDeviceContext occupyDevice : occupyDevices) {
+				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+					context.setOccupyFlag(0);
+				} else {
+					context.setOccupyFlag(1);
+				}
+			}
+			context.setDeviceId(availableDevice.getString("id"));
+			context.setDeviceInfo(availableDevice);
+			context.setRoomId(roomId);
+			commonDeviceContexts.add(context);
+		}
+		return commonDeviceContexts;
+	}
+
 	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices, List<RbCommonDevice> collectedCommonDevices) {
 		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
@@ -392,7 +392,7 @@ public class RbSceneController {
 			RbCommonDeviceContext context = new RbCommonDeviceContext();
 
 			for(RbCommonDevice commonDevice : collectedCommonDevices) {
-				if(!commonDevice.getDeviceId().equals(availableDevice.getString("eid"))) {
+				if(!commonDevice.getDeviceId().equals(availableDevice.getString("id"))) {
 					continue outer;
 				}
 				BeanUtils.copyProperties(commonDevice, context);

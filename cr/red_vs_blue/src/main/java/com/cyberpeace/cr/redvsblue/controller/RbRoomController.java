@@ -3,12 +3,6 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
-import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
-import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
-import com.cyberpeace.cr.crbase.service.context.role.*;
-import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -39,8 +33,14 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
+import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
+import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
+import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
 import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
@@ -57,7 +57,10 @@ import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
-import com.cyberpeace.cr.redvsblue.service.context.*;
+import com.cyberpeace.cr.redvsblue.service.context.RbDeviceContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -584,16 +587,6 @@ public class RbRoomController {
 
 		return new BaseRsp<>(ret);
 	}
-
-	@ApiOperation("获取时间轴数据")
-	@GetMapping("/timeline")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<RbTimeLineData> getMissionTimeline(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
-		RbTimeLineData data = rbRoomService.getMissionTimeline(resource_id);
-		return new BaseRsp<>(data);
-	}
-
 
 	@ApiOperation("红蓝对抗-任务导调-训练报告")
 	@GetMapping("/mission/getTrainReports")

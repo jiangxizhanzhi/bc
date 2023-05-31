@@ -277,4 +277,12 @@ public interface MissionService extends IService<Mission> {
 	 * @return {@code MissionDetail}
 	 */
 	MissionDetail getDetailById(String resourceId);
+
+	/**
+	 * 获取任务map通过id列表
+	 *
+	 * @param missionIds 任务id列表
+	 * @return {@code Map<String, Mission>}
+	 */
+	Map<String, Mission> getMissionMapByIds(List<String> missionIds);
 }

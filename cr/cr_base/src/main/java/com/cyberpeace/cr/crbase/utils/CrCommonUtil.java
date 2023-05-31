@@ -16,12 +16,8 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigMissionsScheme;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -215,12 +211,12 @@ public class CrCommonUtil {
 	 */
 	public static List<String> getDynamicMissionIdsByRoleMissionScheme(String missionSchemeJson) {
 		List<String> res = Lists.newArrayList();
-		List<MissionStageScheme> stages = JsonUtil.toJsonObjectArray(missionSchemeJson,
-				MissionStageScheme.class);
+		List<CrRoleMissionSchemeStage> stages = JsonUtil.toJsonObjectArray(missionSchemeJson,
+				CrRoleMissionSchemeStage.class);
 		if (stages.isEmpty()) {
 			return res;
 		}
-		for (MissionStageScheme stage : stages) {
+		for (CrRoleMissionSchemeStage stage : stages) {
 			List<String> dynamicIds = stage.getDynamic();
 			if (CollectionUtils.isNotEmpty(dynamicIds)) {
 				res.addAll(dynamicIds);

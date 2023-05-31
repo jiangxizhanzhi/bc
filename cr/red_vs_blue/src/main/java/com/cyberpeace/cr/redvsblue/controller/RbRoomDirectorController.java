@@ -57,7 +57,6 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
-import com.cyberpeace.cr.redvsblue.service.context.RbTimeLineData;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -388,9 +387,9 @@ public class RbRoomDirectorController {
 	@ApiOperation("查询红蓝对抗导演时间线")
 	@GetMapping("/mission_timeline")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<RbTimeLineData> getMissionTimeline(
+	public BaseRsp<TimeLineData> getMissionTimeline(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RbTimeLineData data = rbRoomService.getMissionTimeline(resource_id);
+		TimeLineData data = rbRoomService.getMissionTimeline(resource_id);
 		return new BaseRsp<>(data);
 	}
 

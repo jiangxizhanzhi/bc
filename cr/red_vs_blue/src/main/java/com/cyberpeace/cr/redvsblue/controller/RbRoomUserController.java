@@ -33,6 +33,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
@@ -82,6 +83,7 @@ public class RbRoomUserController {
 
 	@Autowired
 	private ScreenService screenService;
+
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -310,5 +312,18 @@ public class RbRoomUserController {
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		return new BaseRsp();
+	}
+
+	/**
+	 * 查询红蓝训练学员时间轴
+	 * @return
+	 */
+	@ApiOperation("红蓝对抗学员时间轴")
+	@GetMapping("/get_time_line")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TimeLineData> getTimeLine(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		TimeLineData data = rbRoomService.getStudentsTimeLine(resource_id);
+		return new BaseRsp(data);
 	}
 }

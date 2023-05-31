@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mission.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -44,6 +42,8 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.*;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowRsp;
@@ -64,7 +64,6 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -556,11 +555,11 @@ public class TeamTrainRoomController {
 	}
 
 	/**
-	 * 查询团队训练时间线
-	 * 5.4 教员和学员看到的时间线一致
+	 * 查询团队训练时间轴
+	 * 教员
 	 * @return
 	 */
-	@ApiOperation("查询团队训练时间线")
+	@ApiOperation("查询团队训练时间轴")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TimeLineData> getTimeLine(

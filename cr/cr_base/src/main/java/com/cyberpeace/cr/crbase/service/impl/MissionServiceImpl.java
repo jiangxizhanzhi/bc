@@ -783,6 +783,15 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 		return detail;
 	}
 
+	@Override
+	public Map<String, Mission> getMissionMapByIds(List<String> missionIds) {
+		if (CollectionUtils.isEmpty(missionIds)) {
+			return Maps.newHashMap();
+		}
+		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
+		return StreamApiUtils.toMap(missions, Mission::getResourceId, mission -> mission);
+	}
+
 	private String dumpSchemeTemplates(List<String> templateIds) {
 		List<MissionSchemeTemplate> templateList = missionSchemeTemplateMapper
 				.selectBatchIds(templateIds);

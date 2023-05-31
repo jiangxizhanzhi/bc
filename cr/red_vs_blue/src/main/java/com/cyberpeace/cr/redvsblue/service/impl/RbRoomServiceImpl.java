@@ -38,12 +38,19 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
-import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
@@ -51,7 +58,9 @@ import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTemplateService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
-import com.cyberpeace.cr.redvsblue.service.context.*;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
+import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
+import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -98,6 +107,9 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 
 	@Autowired
 	private CrReplayService crReplayService;
+
+	@Autowired
+	private CrTaskSubmitMapper crTaskSubmitMapper;
 
 	@Override
 	public Integer getTrainingStatus(String roomId) {
@@ -632,33 +644,75 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public TimeLineData getReplayTimeline(String roomId, String userId) {
 		TimeLineData timeLineData = new TimeLineData();
-		// get start time and endtime
-		RbRoom rbRoom = getById(roomId);
-		Date startTime = rbRoom.getStartTime();
-		Date endTime = rbRoom.getEndTime();
-
-		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
-		if (rbTimeManagement != null) {
-			startTime = rbTimeManagement.getCreateTime();
-			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
-					.equals(rbTimeManagement.getStatus())) {
-				endTime = rbTimeManagement.getUpdateTime();
-			} else {
-				endTime = new Date();
-			}
-		}
-		timeLineData.setStartTime(startTime);
-		timeLineData.setEndTime(endTime);
+		setTime(timeLineData, roomId);
 		// 传入用户id，则展示事件，否则只提供开始时间、结束时间
 		if (StringUtils.isNotBlank(userId)) {
 			// get events
 			List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
-			timeLineData.setUserTimeLineConfig(eventList);
+			timeLineData.setEvents(eventList);
 		}
 		return timeLineData;
 	}
 
-    @Override
+	@Override
+	public TimeLineData getStudentsTimeLine(String roomId) {
+		TimeLineData timeLineData = new TimeLineData();
+		setTime(timeLineData, roomId);
+
+		List<TimeLineEvent> timeLineEventList = Lists.newArrayList();
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		// get dynamic missions
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
+				UserInfoContext.getUserContext().getUserId());
+		List<String> dynamicMissionIds = CrCommonUtil
+				.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme());
+		for (TaskContext task : taskList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+
+			Date lastSubmitTime = task.getLastSubmitTime();
+			// 进返回操作过的任务
+			if (null != lastSubmitTime) {
+
+				timeLineEvent.setTime(lastSubmitTime);
+				if (null != task.getMission()) {
+					timeLineEvent.setTitle(task.getMission().getTitle());
+				}
+				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
+				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
+				timeLineEvent.setStatus(task.getStatus());
+				timeLineEvent.setRoleGroup(role.getRoleGroup());
+				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
+
+				timeLineEventList.add(timeLineEvent);
+			}
+		}
+
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		//
+		List<CrMark> crMarkList = crCommonService.getMarkByRoomIdAndUserId(roomId,
+				userInfo.getUserId());
+
+		// 增加标记事件
+		for (CrMark mark : crMarkList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+			timeLineEvent.setTitle(mark.getName());
+			if (null != userInfo) {
+				timeLineEvent.setUserName(userInfo.getName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			}
+			timeLineEvent.setTime(mark.getCreateTime());
+			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
+			timeLineEvent.setAttachments(
+					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
+			timeLineEventList.add(timeLineEvent);
+		}
+
+		timeLineData.setEvents(timeLineEventList);
+		return timeLineData;
+	}
+
+	@Override
 	public void checkStudentPermission(String roomId, String userId) {
 		RbRoom rbRoom = getById(roomId);
 		if (rbRoom == null) {
@@ -717,47 +771,34 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	}
 
 	@Override
-	public RbTimeLineData getMissionTimeline(String roomId) {
-		RbTimeLineData rbTimeLineData = new RbTimeLineData();
-		// get start time and endtime
-		RbRoom rbRoom = getById(roomId);
-		Date startTime = rbRoom.getStartTime();
-		Date endTime = rbRoom.getEndTime();
+	public TimeLineData getMissionTimeline(String roomId) {
+		TimeLineData timeLineData = new TimeLineData();
 
-		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
-		if (rbTimeManagement != null) {
-			startTime = rbTimeManagement.getCreateTime();
-
-			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
-					.equals(rbTimeManagement.getStatus())) {
-				endTime = rbTimeManagement.getUpdateTime();
-			} else {
-				endTime = new Date();
-			}
-		}
-		rbTimeLineData.setStartTime(startTime);
-		rbTimeLineData.setEndTime(endTime);
+		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
+		List<String> userList = Lists.newArrayList();
 
 		// 构造角色分组map
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(roomId);
 
 		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
+
 		// collect dynamic missions
 		List<String> dynamicMissionIds = Lists.newArrayList();
 		// collect user role group
 		Map<String, Integer> userRoleMap = Maps.newHashMap();
 		for (CrRole role : crRoles) {
 			if (role.isRvbStudent()) {
-				List<CrRoleMissionSchemeStage> stages = JsonUtil
-						.toJsonObjectArray(role.getMissionScheme(), CrRoleMissionSchemeStage.class);
-				dynamicMissionIds.addAll(
-						StreamApiUtils.flatMap(stages, CrRoleMissionSchemeStage::getDynamic));
+				dynamicMissionIds.addAll(CrCommonUtil
+						.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme()));
 			}
 			for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
 				userRoleMap.put(userId, role.getRoleGroup());
 			}
 		}
+
+		Map<String, Integer> crRoleMap = crRoles.stream()
+				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
 
 		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomId(roomId);
 		List<CrMark> crMarkList = crCommonService.getMarkByRoomId(roomId);
@@ -765,45 +806,59 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 				.map(a -> a.getUserId()).collect(Collectors.toList());
 		userIds.addAll(crMarkList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
 		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-		// task
-		List<RbTimeLineEvent> rbTimeLineEventList = new ArrayList<>();
-		for (TaskContext task : crTasks) {
 
-			if (task.getLastSubmitTime() != null) {
-				// 获取任务下发用户id
-				UserInfo userInfo = userInfoMap.get(task.getUserId());
-				RbTimeLineEvent rbTimeLineEvent = new RbTimeLineEvent();
-				rbTimeLineEvent.setRoleGroup(userRoleMap.get(task.getUserId()));
-				rbTimeLineEvent.setTitle(task.getMission().getTitle());
-				if (null != userInfo) {
-					rbTimeLineEvent.setUserName(userInfo.getName());
-					rbTimeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+		for (TaskContext crTask : crTasks) {
+
+			CrTaskSubmit crTaskSubmit = crTaskSubmitMapper
+					.selectLastByTaskId(crTask.getResourceId());
+
+			if (crTaskSubmit != null) {
+				UserInfo userInfo = userInfoMap.get(crTask.getUserId());
+				if (null == userInfo) {
+					continue;
 				}
-				rbTimeLineEvent.setTime(task.getLastSubmitTime());
-				rbTimeLineEvent.setStatus(task.getStatus());
-				rbTimeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
-				rbTimeLineEvent.setType(TimeLineEvent.EventType.MISSION.getCode());
+				TimeLineEvent timeLineEvent = new TimeLineEvent();
+				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getRoleId()));
+				timeLineEvent.setTitle(crTask.getMission().getTitle());
+				timeLineEvent.setUserName(userInfo.getName());
+				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(crTask.getMissionId()));
 
-				rbTimeLineEventList.add(rbTimeLineEvent);
+				if (crTask.isFinished()) {
+					timeLineEvent.setType(
+							MissionsStatistic.MissionStatisticalState.MISSION_COMPLETED.getCode());
+					timeLineEvent.setTime(crTaskSubmit.getEvaluateTime());
+				} else {
+					timeLineEvent.setType(
+							MissionsStatistic.MissionStatisticalState.MISSION_ONGOING.getCode());
+					timeLineEvent.setTime(crTask.getLastSubmitTime());
+				}
+				timeLineEvent.setStatus(crTask.getStatus());
+				timeLineEventList.add(timeLineEvent);
 			}
 		}
+
 		// mark
 		for (CrMark mark : crMarkList) {
-			RbTimeLineEvent rbTimeLineEvent = new RbTimeLineEvent();
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			UserInfo userInfo = userInfoMap.get(mark.getUserId());
-			rbTimeLineEvent.setRoleGroup(userRoleMap.get(mark.getUserId()));
-			rbTimeLineEvent.setTitle(mark.getName());
-			if (null != userInfo) {
-				rbTimeLineEvent.setUserName(userInfo.getName());
-				rbTimeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			if (null == userInfo) {
+				continue;
 			}
-			rbTimeLineEvent.setTime(mark.getCreateTime());
-			rbTimeLineEvent.setType(TimeLineEvent.EventType.MARK.getCode());
-			rbTimeLineEvent.setAttachments(JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
-		}
-		rbTimeLineData.setData(rbTimeLineEventList);
+			timeLineEvent.setRoleGroup(userRoleMap.get(mark.getUserId()));
+			timeLineEvent.setTitle(mark.getName());
+			timeLineEvent.setUserName(userInfo.getName());
+			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			timeLineEvent.setTime(mark.getCreateTime());
+			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
+			timeLineEvent.setAttachments(
+					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
 
-		return rbTimeLineData;
+			timeLineEventList.add(timeLineEvent);
+		}
+
+		timeLineData.setData(timeLineEventList);
+		return timeLineData;
 	}
 
 	@Override
@@ -935,5 +990,31 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 			log.error("room name [{}] already exist", name);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
+	}
+
+	/**
+	 * 设置时间轴开始时间和结束时间
+	 *
+	 * @param timeLineData 时间线数据
+	 * @param roomId       房间id
+	 */
+	private void setTime(TimeLineData timeLineData, String roomId) {
+		// get start time and endtime
+		RbRoom rbRoom = getById(roomId);
+		Date startTime = rbRoom.getStartTime();
+		Date endTime = rbRoom.getEndTime();
+
+		RbTimeManagement rbTimeManagement = rbTimeManagementService.getByRoomId(roomId);
+		if (rbTimeManagement != null) {
+			startTime = rbTimeManagement.getCreateTime();
+			if (RbTimeManagement.TimeManagementStatus.STOP.getCode()
+					.equals(rbTimeManagement.getStatus())) {
+				endTime = rbTimeManagement.getUpdateTime();
+			} else {
+				endTime = new Date();
+			}
+		}
+		timeLineData.setStartTime(startTime);
+		timeLineData.setEndTime(endTime);
 	}
 }

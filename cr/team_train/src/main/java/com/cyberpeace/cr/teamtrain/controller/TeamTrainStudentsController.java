@@ -7,16 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainDevice;
-import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
-import com.cyberpeace.cr.teamtrain.service.TeamDeviceService;
-import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
-import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
-import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -24,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
@@ -46,16 +38,24 @@ import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainDevice;
+import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
+import com.cyberpeace.cr.teamtrain.service.TeamDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
+import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
+import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
+import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
@@ -280,17 +280,16 @@ public class TeamTrainStudentsController {
 	}
 
 	/**
-	 * 查询团队训练时间线
-	 * 5.4弃用
+	 * 查询团队训练学员时间轴
 	 * @return
 	 */
-	@ApiOperation("弃用-查询团队训练时间线")
+	@ApiOperation("查询团队训练时间线")
 	@GetMapping("/get_time_line")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<StudentsTimeLineData> getTimeLine(
+	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 
-		StudentsTimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
+		TimeLineData data = teamRoomService.getStudentsTimeLine(resource_id);
 
 		return new BaseRsp(data);
 	}

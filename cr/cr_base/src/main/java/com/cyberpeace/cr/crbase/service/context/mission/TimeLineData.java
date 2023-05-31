@@ -7,10 +7,19 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 团队时间线数据
+ * 时间轴数据
+ * 兼容不同训练类型的前端事件列表字段
+ * @author SN
+ * @date 2023/05/31
  */
 @Data
 public class TimeLineData {
+
+	@ApiModelProperty(value = "时间轴事件")
+	private List<TimeLineEvent> events;
+
+	@ApiModelProperty(value = "时间轴事件")
+	private List<TimeLineEvent> data;
 
 	@ApiModelProperty(value = "时间轴事件")
 	private List<TimeLineEvent> userTimeLineConfig;

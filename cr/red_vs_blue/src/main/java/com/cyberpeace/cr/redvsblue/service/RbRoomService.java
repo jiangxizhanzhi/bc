@@ -13,7 +13,6 @@ import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
-import com.cyberpeace.cr.redvsblue.service.context.RbTimeLineData;
 
 public interface RbRoomService extends IService<RbRoom> {
 
@@ -118,7 +117,7 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @param roomId 红蓝对抗实例id
 	 * @return 时间线数据
 	 */
-	RbTimeLineData getMissionTimeline(String roomId);
+	TimeLineData getMissionTimeline(String roomId);
 
 	/**
 	 * 校验用户权限
@@ -181,4 +180,12 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code TimeLineData}
 	 */
 	TimeLineData getReplayTimeline(String roomId, String userId);
+
+	/**
+	 * 获取学员时间轴
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TimeLineData}
+	 */
+	TimeLineData getStudentsTimeLine(String roomId);
 }

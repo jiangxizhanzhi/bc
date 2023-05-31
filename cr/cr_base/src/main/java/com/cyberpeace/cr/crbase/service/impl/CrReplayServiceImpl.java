@@ -76,7 +76,7 @@ public class CrReplayServiceImpl implements CrReplayService {
 				}
 				timeLineEvent.setStatus(task.getStatus());
 				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
-				timeLineEvent.setType(TimeLineEvent.EventType.MISSION.getCode());
+				timeLineEvent.setEventType(TimeLineEvent.EventType.MISSION.getCode());
 
 				eventList.add(timeLineEvent);
 			}
@@ -93,7 +93,7 @@ public class CrReplayServiceImpl implements CrReplayService {
 				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
 			}
 			timeLineEvent.setTime(mark.getCreateTime());
-			timeLineEvent.setType(TimeLineEvent.EventType.MARK.getCode());
+			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
 			timeLineEvent.setAttachments(
 					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
 			eventList.add(timeLineEvent);

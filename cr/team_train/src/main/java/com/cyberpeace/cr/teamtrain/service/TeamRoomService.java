@@ -10,12 +10,11 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
-import com.cyberpeace.cr.teamtrain.service.context.StudentsTimeLineData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 
 /**
  *
@@ -85,7 +84,7 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @param roomId 团队训练实例id
 	 * @return 学员时间线数据
 	 */
-	StudentsTimeLineData getStudentsTimeLine(String roomId);
+	TimeLineData getStudentsTimeLine(String roomId);
 
 	TeamRoom getByLocalSceneId(String localSceneId);
 

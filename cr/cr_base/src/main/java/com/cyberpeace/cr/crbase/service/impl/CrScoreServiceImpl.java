@@ -311,7 +311,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			int size = entry.getValue() == null ? 0 : entry.getValue().size();
 			kindMap.put(config.getCnName(), size);
 		}
-
+		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore));
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
 		trainReportContext.setKindMap(kindMap);

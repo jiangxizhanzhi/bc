@@ -2,9 +2,11 @@ package com.cyberpeace.situation.controller;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
@@ -14,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -28,10 +27,12 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.*;
+import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.model.manage.ServiceLogContext.SubModule;
 import com.cyberpeace.integratation.model.manage.ServiceLogContext.Type;
-import com.cyberpeace.integratation.service.RemoteManageService;
 import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
@@ -39,10 +40,8 @@ import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsAddReq;
 import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsFilterReq;
 import com.cyberpeace.situation.controller.req.TwoDimensionalComponentsUpdateReq;
 import com.cyberpeace.situation.controller.res.SituationComponentsChartDetailsRes;
-import com.cyberpeace.situation.dao.entity.SituationDbAccess;
 import com.cyberpeace.situation.dao.entity.TwoDimensionalComponents;
 import com.cyberpeace.situation.dao.entity.TwoDimensionalComponentsCategory;
-import com.cyberpeace.situation.dao.mapper.SituationDbAccessMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsCategoryMapper;
 import com.cyberpeace.situation.dao.mapper.TwoDimensionalComponentsMapper;
 import com.cyberpeace.situation.service.SituationHandlerService;
@@ -76,12 +75,6 @@ public class ComponentChartController {
 	private TwoDimensionalComponentsCategoryMapper twoDimensionalComponentsCategoryMapper;
 
 	@Autowired
-	private RemoteManageService remoteManageService;
-
-	@Autowired
-	private SituationDbAccessMapper situationDbAccessMapper;
-
-	@Autowired
 	private SituationHandlerService situationHandlerService;
 
 	/**
@@ -98,8 +91,6 @@ public class ComponentChartController {
 		List<TwoDimensionalComponentsCategory> res = twoDimensionalComponentsCategoryMapper
 				.selectList(queryWrapper);
 
-		// 插入数据库查询日志
-		insertIntoDb();
 		return new BaseRsp<>(res);
 	}
 
@@ -123,8 +114,6 @@ public class ComponentChartController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
-		// 写入数据库操作日志
-		insertIntoDb();
 		return new BaseRsp<>(twoDimensionalComponents);
 	}
 
@@ -165,8 +154,6 @@ public class ComponentChartController {
 			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
 		}
 
-		// 写入数据库操作日志
-		insertIntoDb();
 		return new BaseRsp<>(twoDimensionalComponents);
 	}
 
@@ -224,8 +211,6 @@ public class ComponentChartController {
 		});
 
 		// 写入数据库操作日志
-		insertIntoDb();
-
 		return new BaseRsp<>(result);
 	}
 
@@ -253,7 +238,6 @@ public class ComponentChartController {
 		twoDimensionalComponentsMapper.deleteBatchIds(resourceIds);
 
 		// 写入数据库操作日志
-		insertIntoDb();
 		return new BaseRsp<>();
 	}
 
@@ -296,7 +280,6 @@ public class ComponentChartController {
 		twoDimensionalComponentsMapper.updateById(patchObj);
 
 		// 写入数据库操作日志
-		insertIntoDb();
 		return new BaseRsp<>();
 	}
 
@@ -337,7 +320,6 @@ public class ComponentChartController {
 				log.error("failed to delete dir: {}", path);
 			}
 		}
-		insertIntoDb();
 	}
 
 	/**
@@ -370,48 +352,7 @@ public class ComponentChartController {
 				e.printStackTrace();
 			}
 		}
-		insertIntoDb();
+
 		return new BaseRsp<>(twoDimensionalComponents);
-	}
-
-	/**
-	 * 写入数据库操作日志
-	 */
-	private void insertIntoDb() {
-
-		// 获取请求信息
-		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-
-		// 构造数据库操作日志对象
-		SituationDbAccess situationDbAccess = new SituationDbAccess();
-		// 填充基本信息
-		situationDbAccess.setDbName("bc");
-		situationDbAccess.setTableName("situation_components_chart");
-		String requestURI = request.getRequestURI();
-		if (requestURI.contains("category")) {
-			situationDbAccess.setTableName("situation_components_chart_category");
-		}
-
-		// 填充操作类型
-		String method = request.getMethod();
-		if (method.equals("GET")) {
-			situationDbAccess.setOperationType("查询");
-			if (requestURI.contains("export")) {
-				situationDbAccess.setOperationType("导出");
-			}
-		} else if (method.equals("PATCH") || method.equals("POST")) {
-			situationDbAccess.setOperationType("写入");
-		} else if (method.equals("PUT")) {
-			situationDbAccess.setOperationType("导入");
-		}
-		String now = DateUtil.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss");
-		situationDbAccess.setOperationTime(now);
-		situationDbAccess.setOperationDetail(
-				String.format("select * from %s", situationDbAccess.getTableName()));
-		// situationDbAccess.setCreateUserId(UserInfoContext.getUserContext().getUserId());
-
-		// 写入数据库操作日志
-		situationDbAccessMapper.insert(situationDbAccess);
 	}
 }

@@ -9,4 +9,7 @@ public class PageNoteReq extends PageReqBase {
 
 	@ApiModelProperty("业务类型")
 	private Integer businessType;
+
+	@ApiModelProperty("题型")
+	private Integer practiceType;
 }

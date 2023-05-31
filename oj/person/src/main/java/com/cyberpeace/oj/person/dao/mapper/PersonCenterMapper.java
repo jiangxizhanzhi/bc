@@ -45,7 +45,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
       @Param("userId") String userId,
       @Param("noteType") Integer noteType,
       @Param("businessIds") List<String> businessIds,
-      @Param("businessType") Integer businessType);
+      @Param("businessType") Integer businessType,
+      @Param("practiceType") Integer practiceType);
 
   /**
    * 获取用户收藏的资源

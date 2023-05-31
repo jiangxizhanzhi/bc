@@ -104,7 +104,9 @@ public class PersonController {
 		// 权限数据获取
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				true);
-		IPage<PersonNote> comments = personCenterService.pageNotes(page, userId, authContext, pageReq.getBusinessType());
+		IPage<PersonNote> comments = personCenterService.pageNotes(page, userId, authContext,
+				pageReq.getBusinessType(),
+				pageReq.getPracticeType());
 		return new BaseRsp<>(PageUtil.getListResult(comments));
 	}
 

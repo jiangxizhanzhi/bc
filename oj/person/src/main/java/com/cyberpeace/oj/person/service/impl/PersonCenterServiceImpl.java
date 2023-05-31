@@ -97,7 +97,8 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	}
 
 	@Override
-	public IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext, Integer businessType) {
+	public IPage<PersonNote> pageNotes(Page page, String userId, AuthContext authContext,
+									   Integer businessType, Integer practiceType) {
 		Integer noteType = Note.NoteType.NOTE.getCode();
 		List<String> resourceIds = new ArrayList<>();
 		if (null != authContext) {
@@ -111,7 +112,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
 		}
 		IPage<PersonNote> iPage = personCenterMapper.selectNoteByUser(page, userId, noteType,
-				resourceIds, businessType);
+				resourceIds, businessType, practiceType);
 		return iPage.convert(this::noteToBo);
 	}
 

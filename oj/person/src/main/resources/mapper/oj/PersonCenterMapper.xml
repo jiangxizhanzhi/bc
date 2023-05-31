@@ -114,6 +114,9 @@
         <if test="businessType != null">
             and business_type = #{businessType}
         </if>
+        <if test="practiceType != null">
+            AND oj_practice_theory.theory_type = #{practiceType}
+        </if>
         order by oj_note.create_time desc
     </select>
 

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 
+@Slf4j
 @Service
 public class ScreenServiceImpl implements ScreenService {
     @Autowired
@@ -35,6 +39,10 @@ public class ScreenServiceImpl implements ScreenService {
     @Override
 	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String nodeId) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+        if (localScene == null) {
+            log.error("Scene not exist! roomId = [{}]", roomId);
+            throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+        }
         JSONObject jsonObject = remoteSceneService.screenrecord(localScene.getMpSceneId(), nodeId);
         List<Object> list = jsonObject.getObject("list", List.class);
         if (CollectionUtils.isEmpty(list)) {

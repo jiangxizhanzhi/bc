@@ -1159,7 +1159,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     @Override
-    public EvalSystemResultRsp getAllCycleResult(String resourceId) {
+    public List<EvalSystemResultRsp> getAllCycleResult(String resourceId) {
+        List<EvalSystemResultRsp> res = new ArrayList<>();
         LambdaQueryWrapper<EvalResult> filter = new LambdaQueryWrapper<>();
         filter.eq(EvalResult::getRecord, resourceId);
         filter.last("limit 5");
@@ -1190,7 +1191,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 break;
             }
         }
-        return rsp;
+        res.add(rsp);
+        return res;
     }
 
     private List<EvalSystemResultRsp> generateNextIndexesRes(EvalIndexRef evalIndexRef, Map<String, EvalIndexRef> evalIndexRefMap, Map<String, EvalVariableRef> evalVariableRefMap, List<EvalResult> evalResults) {

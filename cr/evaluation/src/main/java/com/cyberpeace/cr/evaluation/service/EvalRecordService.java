@@ -127,5 +127,5 @@ public interface EvalRecordService extends IService<EvalRecord> {
      */
     String dumpEvalRecordPath(String resourceId, String taskId);
 
-    EvalSystemResultRsp getAllCycleResult(String resourceId);
+    List<EvalSystemResultRsp> getAllCycleResult(String resourceId);
 }

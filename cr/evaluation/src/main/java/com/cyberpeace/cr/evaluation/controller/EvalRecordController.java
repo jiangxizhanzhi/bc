@@ -219,7 +219,7 @@ public class EvalRecordController {
     @ApiOperation("评估任务结果-5轮评估记录")
     @RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
     @GetMapping("/result/list")
-    public BaseRsp<EvalSystemResultRsp> getRecordResultList(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId) {
+    public BaseRsp<List<EvalSystemResultRsp>> getRecordResultList(@ApiParam(name = "resource_id", value = "评估ID") @RequestParam("resource_id") String resourceId) {
         return new BaseRsp<>(evalRecordService.getAllCycleResult(resourceId));
     }
 }

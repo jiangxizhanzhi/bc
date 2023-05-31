@@ -112,7 +112,8 @@ public class PersonController {
 	@GetMapping("/collections")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonCollection>> listCollections(
-			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type) {
+			@ApiParam @Validated PageReqBase pageReq, @ApiParam @Validated String type,
+			@RequestParam(value = "practiceType", required = false) Integer practiceType) {
 		Page page = pageReq.toPageParam();
 		String userId = UserInfoContext.getUserContext().getUserId();
 
@@ -121,7 +122,7 @@ public class PersonController {
 				true);
 
 		IPage<PersonCollection> collections = personCenterService.pageCollections(page, userId,
-				type, authContext);
+				type, authContext, practiceType);
 		return new BaseRsp<>(PageUtil.getListResult(collections));
 	}
 

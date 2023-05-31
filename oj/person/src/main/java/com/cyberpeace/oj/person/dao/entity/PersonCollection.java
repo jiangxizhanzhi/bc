@@ -19,4 +19,7 @@ public class PersonCollection implements Serializable {
 
   @ApiModelProperty("资源类型")
   private String businessType;
+
+  @ApiModelProperty("题型")
+  private Integer practiceType;
 }

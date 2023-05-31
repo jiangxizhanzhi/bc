@@ -39,7 +39,7 @@ public interface PersonCenterService {
 	 * @return
 	 */
 	IPage<PersonCollection> pageCollections(Page page, String userId, String type,
-			AuthContext authContext);
+			AuthContext authContext, Integer practiceType);
 
 	/**
 	 * 查询用户的学习课程与训练的记录

@@ -122,7 +122,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 	 */
 	@Override
 	public IPage<PersonCollection> pageCollections(Page page, String userId, String type,
-			AuthContext authContext) {
+			AuthContext authContext, Integer practiceType) {
 		List<String> resourceIds = new ArrayList<>();
 		if (null != authContext) {
 			List<String> courseIds = courseMapper.selectByAuth(authContext);
@@ -132,7 +132,7 @@ public class PersonCenterServiceImpl extends ServiceImpl<CommentMapper, Comment>
 			resourceIds.addAll(personCenterMapper.selectTheoryPracticeByAuth());
 			resourceIds.addAll(personCenterMapper.selectOperationPracticeByAuth());
 		}
-		return personCenterMapper.selectByUser(page, userId, type, resourceIds);
+		return personCenterMapper.selectByUser(page, userId, type, resourceIds, practiceType);
 	}
 
 	@Override

@@ -8,6 +8,7 @@
         <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <result property="practiceType" column="business_type" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap id="studyRecord" type="com.cyberpeace.oj.person.dao.entity.StudyRecord">
@@ -221,7 +222,8 @@
         when oj_practice_operation.title is not null then oj_practice_operation.title
         when oj_practice_operation.content is not null then oj_practice_operation.content END) as name,
         oj_resource_collection.create_time,
-        oj_resource_collection.business_type as business_type
+        oj_resource_collection.business_type as business_type,
+        oj_practice_theory.theory_type practice_type
         from oj_resource_collection
         left join oj_course on oj_resource_collection.business_id = oj_course.resource_id and
         oj_resource_collection.business_type = 3
@@ -240,6 +242,9 @@
             <foreach collection="businessIds" item="businessId" open="(" close=")" separator=",">
                 #{businessId}
             </foreach>
+        </if>
+        <if test="practiceType != null">
+            AND oj_practice_theory.theory_type = #{practiceType}
         </if>
         order by oj_resource_collection.create_time desc
     </select>

@@ -57,7 +57,8 @@ public interface PersonCenterMapper extends BaseMapper<ResourceCollection> {
       Page page,
       @Param("userId") String userId,
       @Param("businessType") String businessType,
-      @Param("businessIds") List<String> businessIds);
+      @Param("businessIds") List<String> businessIds,
+      @Param("practiceType") Integer practiceType);
 
   List<String> selectResourceIdByUser(@Param("userId") String userId,
                                       @Param("businessType") String businessType,

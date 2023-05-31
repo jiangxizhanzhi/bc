@@ -605,7 +605,10 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		req.setId(localScene.getMpSceneId());
 		req.setCategory(category);
 		req.setName(name);
+		// 前台设备列表展示主机状态
 		req.setRealTimeHostState(realTimeHostState);
+		// 前台设备列表展示简易型
+		req.setIsAll(true);
 		return remoteSceneService.getAssetList(req);
 	}
 
@@ -615,6 +618,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		req.setId(topoId);
 		req.setCategory(category);
 		req.setName(name);
+		// 前台设备列表展示简易型
+		req.setIsAll(true);
 		return remoteTopoService.getAllNodes(req);
 	}
 

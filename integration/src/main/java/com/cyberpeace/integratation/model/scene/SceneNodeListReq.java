@@ -19,8 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SceneNodeListReq extends TopoNodeListReq implements Serializable {
 
+	/**
+	 * 实时主机状态
+	 */
 	private Boolean realTimeHostState;
 
+	/**
+	 * 筛选节点id
+	 */
 	private List<String> elementIds;
 
 	private String systemTypeName;

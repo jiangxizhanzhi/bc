@@ -28,6 +28,11 @@ public class TopoNodeListReq implements Serializable {
 
 	private String name;
 
+	/**
+	 * 是否展示简易型
+	 */
+	private Boolean isAll;
+
 	protected List<String> getQuery() {
 		List<String> queries = Lists.newArrayList();
 		if (StringUtils.isNotBlank(name)) {
@@ -35,6 +40,12 @@ public class TopoNodeListReq implements Serializable {
 		}
 		if (null != category) {
 			queries.add("category=" + this.category);
+		}
+		// 不传isAll默认不展示简易型
+		if (Boolean.TRUE.equals(this.isAll)) {
+			queries.add("isAll=true");
+		} else {
+			queries.add("isAll=false");
 		}
 		return queries;
 	}

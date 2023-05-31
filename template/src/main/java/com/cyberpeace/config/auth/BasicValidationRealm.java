@@ -68,8 +68,13 @@ public class BasicValidationRealm extends AuthorizingRealm {
 
             userInfo = remoteUserService.doAuthentication(token);
             CommonContext.setAuthorization(token);
-            Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
-            userInfo.setPermissions(userPermission);
+
+            // 设置权限，当系统为可视化时，不进行此步骤
+            if (!Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+                Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
+                userInfo.setPermissions(userPermission);
+            }
+
             UserInfoContext.setUserContext(userInfo);
         } catch (Exception e) {
             log.error("RemoteUserService.doAuthentication error", e);

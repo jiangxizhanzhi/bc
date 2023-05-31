@@ -135,6 +135,23 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			ret.setSceneData(sceneData);
 			ret.setLocalSceneId(room.getLocalSceneId());
 			ret.setMpSceneId(sceneData.getString(CrCommonConstants.MP_SCENE_ID_KEY));
+
+			// 4. 场景角色资产配置，用于动态编辑,只有教员有权限
+			if (selfRole.isTeamTeacher()) {
+				List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
+				for (CrRole role : roleList) {
+					if (role.isTeamStudent()) {
+						CrRoleConfig config = new CrRoleConfig();
+						CrRoleNodesData nodesData = role.getNodeData();
+						config.setId(role.getResourceId());
+						config.setName(role.getName());
+						config.setAssetNodes(nodesData.getAssetNodes());
+						config.setVisibleNodes(nodesData.getVisibleNodes());
+						nodeConfigList.add(config);
+					}
+				}
+				ret.setRoleList(nodeConfigList);
+			}
 			return ret;
 		}
 		// 3、 远程场景不存在，返回topo数据
@@ -144,22 +161,6 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		ret.setTopoId(room.getCopyedTopoId());
 		ret.setTopoData(topoData);
 
-		// 4. 场景角色资产配置，用于动态编辑,只有教员有权限
-		if (selfRole.isTeamTeacher()) {
-			List<CrRoleConfig> nodeConfigList = Lists.newArrayList();
-			for (CrRole role : roleList) {
-				if (role.isTeamStudent()) {
-					CrRoleConfig config = new CrRoleConfig();
-					CrRoleNodesData nodesData = role.getNodeData();
-					config.setId(role.getResourceId());
-					config.setName(role.getName());
-					config.setAssetNodes(nodesData.getAssetNodes());
-					config.setVisibleNodes(nodesData.getVisibleNodes());
-					nodeConfigList.add(config);
-				}
-			}
-			ret.setRoleList(nodeConfigList);
-		}
 		return ret;
 	}
 

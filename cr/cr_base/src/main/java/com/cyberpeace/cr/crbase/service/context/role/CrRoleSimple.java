@@ -59,9 +59,13 @@ public class CrRoleSimple implements Serializable {
 
 	public Map<String,String> getMissionIdStageMap() {
 		Map<String,String> map = new HashMap<>();
-		for (CrRoleMissionSchemeStage schemeStage : missionScheme) {
-			for (String missionId : schemeStage.getDynamic()) {
-				map.put(missionId,schemeStage.getStage());
+		if (!CollectionUtils.isEmpty(missionScheme)) {
+			for (CrRoleMissionSchemeStage schemeStage : missionScheme) {
+				if (!CollectionUtils.isEmpty(schemeStage.getMissions())) {
+					for (String missionId : schemeStage.getMissions()) {
+						map.put(missionId,schemeStage.getStage());
+					}
+				}
 			}
 		}
 

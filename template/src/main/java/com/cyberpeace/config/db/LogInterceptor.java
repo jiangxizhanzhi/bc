@@ -116,7 +116,7 @@ public class LogInterceptor implements Interceptor {
 				.setOperationTime(DateUtil.DateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
 		situationDbAccess.setDbName(getDbName());
 		situationDbAccess.setTableName(tableName);
-		situationDbAccess.setOperationType(ms.getSqlCommandType().name());
+		situationDbAccess.setOperationType(covertType(ms.getSqlCommandType().name()));
 		situationDbAccess.setOperationDetail(JsonUtil.toJsonString(actualSql));
 		situationDbAccess.setCreateUserId(getUser());
 
@@ -205,6 +205,17 @@ public class LogInterceptor implements Interceptor {
 			}
 		}
 		return tableName;
+	}
+
+	private static String covertType(String type) {
+		if ("INSERT".equals(type)) {
+			return "写入";
+		} else if ("UPDATE".equals(type)) {
+			return "更新";
+		} else if ("DELETE".equals(type)) {
+			return "删除";
+		}
+		return type;
 	}
 
 }

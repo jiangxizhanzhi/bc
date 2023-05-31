@@ -37,4 +37,6 @@ public class ChatMessage {
 	public void setTimestamp() {
 		timestamp = System.currentTimeMillis();
 	}
+
+	private String uuid;
 }

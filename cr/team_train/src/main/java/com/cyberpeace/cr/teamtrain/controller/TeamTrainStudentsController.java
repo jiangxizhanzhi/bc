@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -105,6 +106,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private TeamSceneService teamSceneService;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -378,7 +382,11 @@ public class TeamTrainStudentsController {
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 
 		// 1.拉取场景中可用 设备
-		JSONArray availableDevices = teamSceneService.getAssetList(resource_id, category, name);
+		AssetPageReq assetPageReq = new AssetPageReq();
+		assetPageReq.setPage(1);
+		assetPageReq.setPerPage(Integer.MAX_VALUE);
+		assetPageReq.setResource_id(resource_id);
+		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
 		// 2.获取占用的设备
 		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
 		// 3.查询已添加设备
@@ -389,38 +397,6 @@ public class TeamTrainStudentsController {
 		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, collectedCommonDeviceIds);
 
 		return new BaseRsp<>(commonDeviceContexts);
-	}
-
-	private List<TeamCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices,
-																  List<TeamTrainDeviceContext> occupyDevices,
-																  String roomId,
-																  List<String> collectedCommonDeviceIds) {
-		if(CollectionUtils.isEmpty(availableDevices)) {
-			return new ArrayList<>();
-		}
-		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		for(int i = 0; i < availableDevices.size(); i ++) {
-			JSONObject availableDevice = availableDevices.getJSONObject(i);
-
-			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
-				continue;
-			}
-
-			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
-			context.setOccupyFlag(0);
-			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
-				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
-					context.setOccupyFlag(0);
-				} else {
-					context.setOccupyFlag(1);
-				}
-			}
-			context.setDeviceId(availableDevice.getString("id"));
-			context.setDeviceInfo(availableDevice);
-			context.setRoomId(roomId);
-			commonDeviceContexts.add(context);
-		}
-		return commonDeviceContexts;
 	}
 
 	@ApiOperation("添加常用资产")
@@ -451,7 +427,11 @@ public class TeamTrainStudentsController {
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备
-		JSONArray availableDevices = teamSceneService.getAssetList(resource_id, category, name);
+		AssetPageReq assetPageReq = new AssetPageReq();
+		assetPageReq.setPage(1);
+		assetPageReq.setPerPage(Integer.MAX_VALUE);
+		assetPageReq.setResource_id(resource_id);
+		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
 
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -513,14 +493,46 @@ public class TeamTrainStudentsController {
 		return baseRole;
 	}
 
-	private List<TeamCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices, List<TeamCommonDevice> collectedCommonDevices) {
+	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
+																  List<TeamTrainDeviceContext> occupyDevices,
+																  String roomId,
+																  List<String> collectedCommonDeviceIds) {
+		if(CollectionUtils.isEmpty(availableDevices)) {
+			return new ArrayList<>();
+		}
+		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
+		for(int i = 0; i < availableDevices.size(); i ++) {
+			JSONObject availableDevice = availableDevices.get(i);
+
+			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
+				continue;
+			}
+
+			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
+			context.setOccupyFlag(0);
+			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
+				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+					context.setOccupyFlag(0);
+				} else {
+					context.setOccupyFlag(1);
+				}
+			}
+			context.setDeviceId(availableDevice.getString("id"));
+			context.setDeviceInfo(availableDevice);
+			context.setRoomId(roomId);
+			commonDeviceContexts.add(context);
+		}
+		return commonDeviceContexts;
+	}
+
+	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices, List<TeamCommonDevice> collectedCommonDevices) {
 		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
 		}
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
 		outer:
 		for(int i = 0; i < availableDevices.size(); i ++) {
-			JSONObject availableDevice = availableDevices.getJSONObject(i);
+			JSONObject availableDevice = availableDevices.get(i);
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
 
 			for(TeamCommonDevice commonDevice : collectedCommonDevices) {

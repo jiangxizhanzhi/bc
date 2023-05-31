@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.CrSceneService;
+import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -69,6 +71,9 @@ public class RbSceneController {
 
 	@Autowired
 	private RbCommonDeviceService rbCommonDeviceService;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -296,7 +301,11 @@ public class RbSceneController {
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 
 		// 1.拉取场景中可用 设备
-		JSONArray availableDevices = rbSceneService.getAssetList(resource_id, category, name);
+		AssetPageReq assetPageReq = new AssetPageReq();
+		assetPageReq.setPage(1);
+		assetPageReq.setPerPage(Integer.MAX_VALUE);
+		assetPageReq.setResource_id(resource_id);
+		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
 		// 2.获取占用的设备
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
@@ -337,7 +346,11 @@ public class RbSceneController {
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备
-		JSONArray availableDevices = rbSceneService.getAssetList(resource_id, category, name);
+		AssetPageReq assetPageReq = new AssetPageReq();
+		assetPageReq.setPage(1);
+		assetPageReq.setPerPage(Integer.MAX_VALUE);
+		assetPageReq.setResource_id(resource_id);
+		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
 
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -349,7 +362,7 @@ public class RbSceneController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
-	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices,
+	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																List<RbDeviceContext> occupyDevices,
 																String roomId,
 																List<String> collectedCommonDeviceIds) {
@@ -358,7 +371,7 @@ public class RbSceneController {
 		}
 		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
 		for(int i = 0; i < availableDevices.size(); i ++) {
-			JSONObject availableDevice = availableDevices.getJSONObject(i);
+			JSONObject availableDevice = availableDevices.get(i);
 
 			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
 				continue;
@@ -381,14 +394,14 @@ public class RbSceneController {
 		return commonDeviceContexts;
 	}
 
-	private List<RbCommonDeviceContext> combineAvailableDevices(JSONArray availableDevices, List<RbCommonDevice> collectedCommonDevices) {
+	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices, List<RbCommonDevice> collectedCommonDevices) {
 		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
 		}
 		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
 		outer:
 		for(int i = 0; i < availableDevices.size(); i ++) {
-			JSONObject availableDevice = availableDevices.getJSONObject(i);
+			JSONObject availableDevice = availableDevices.get(i);
 			RbCommonDeviceContext context = new RbCommonDeviceContext();
 
 			for(RbCommonDevice commonDevice : collectedCommonDevices) {

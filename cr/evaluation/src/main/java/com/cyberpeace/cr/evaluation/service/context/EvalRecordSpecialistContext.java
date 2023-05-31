@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 public class EvalRecordSpecialistContext implements Serializable {
-    @ApiModelProperty("数据类型")
+    @ApiModelProperty("数据类型 3级指标时 property value不为空 4、5级指标时 仅传value")
     @NotNull
     private Integer type;
 

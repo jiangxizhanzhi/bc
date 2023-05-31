@@ -5,6 +5,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndexRefReq;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndex;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
@@ -44,9 +45,14 @@ public class EvalIndexRefController {
         Integer type = specialist.getType();
         evalIndexRef.setType(type);
         if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
-            evalIndexRef.setSpecialistValue(specialist.getValue());
-            evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
-            evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+            if(evalIndexRef.getLevel().equals(EvalIndex.Level.THIRD.getCode())){
+                // TODO 设置回显 speciallist的其他值
+                evalIndexRef.setSpecialistValue(specialist.getValue());
+                evalIndexRef.setScore(evalIndexRefService.thirdSpecialist(evalIndexRef.getSpecialistType(), evalIndexRef.getSpecialistAttr(), evalIndexRef.getSpecialistAttrValue(), evalIndexRef.getSpecialistValue()));
+                evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
+            } else if(!evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode()) && evalIndexRef.getLevel().equals(EvalIndexRef.Level.VARIABLE.getCode())){
+                evalIndexRef.setScore(specialist.getValue());
+            }
         }
         evalIndexRefMapper.updateById(evalIndexRef);
         return new BaseRsp<>(evalIndexRef);

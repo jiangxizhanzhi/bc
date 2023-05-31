@@ -130,7 +130,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private RemoteServerEnvService remoteServerEnvService;
 
     @Autowired
-    private EvaResultMapper evaResultMapper;
+    private EvalResultMapper evalResultMapper;
+
+    @Autowired
+    private EvalRecordMapper evalRecordMapper;
 
     @Autowired
     private EvalIndexRefMapper evalIndexRefMapper;
@@ -638,7 +641,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         filter.eq(EvalResult::getRecord, record);
         filter.orderByDesc(EvalResult::getExeCycle);
         filter.last("limit 1");
-        EvalResult evalResultQuery = evaResultMapper.selectOne(filter);
+        EvalResult evalResultQuery = evalResultMapper.selectOne(filter);
         evalResult.setExeCycle(exeCycle);
         if(null != evalResultQuery){
             exeCycle += evalResultQuery.getExeCycle();
@@ -711,7 +714,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         }
 
-        evaResultMapper.insert(evalResult);
+        evalResultMapper.insert(evalResult);
     }
 
     private void getFifthObj(Map<String, EvalVariableRef> fifthEvalIndexRefMap, JSONObject fifthObj, EvalIndexRef current) {
@@ -727,17 +730,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void startVariables(EvalRecord evalRecord, EvalTask evalTask, Set<String> variableIds) {
-        LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
-        query.eq(EvalIndexRef::getRecordId, evalRecord.getResourceId()).eq(EvalIndexRef::getLevel, EvalIndexRef.Level.AGGREGATION.getCode());
-        List<EvalIndexRef> evalIndexRefs = evalIndexRefMapper.selectList(query);
-        Set<String> execVariableIds = Sets.newHashSet();
-        evalIndexRefs.forEach(evalIndexRef -> {
-            String nextIds = evalIndexRef.getNextIds();
-            if(evalIndexRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())){
-                execVariableIds.addAll(JsonUtil.toJsonObjectArray(nextIds, String.class));
-            }
-        });
-        variableIds = execVariableIds;
         if (variableIds.isEmpty()) {
             EvalLog.info(evalRecord, "variables id is empty, continue.");
             return;
@@ -1125,6 +1117,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             }
             result.setMessage(StringUtils.join(msgNow, "\n"));
         }
+        EvalRecord evalRecord = evalRecordMapper.selectById(recordId);
+        Integer status = evalRecord.getStatus();
+        result.setRunStatus(status >= EvalRecord.Status.END.getCode() ? EvalRecord.Status.END.getCode() : status);
 
         return result;
     }
@@ -1169,7 +1164,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         filter.eq(EvalResult::getRecord, resourceId);
         filter.last("limit 5");
         filter.orderByDesc(EvalResult::getExeCycle);
-        List<EvalResult> evalResults = evaResultMapper.selectList(filter);
+        List<EvalResult> evalResults = evalResultMapper.selectList(filter);
         EvalSystemResultRsp rsp = new EvalSystemResultRsp();
 
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.lambdaQuery().eq(EvalIndexRef::getRecordId, resourceId).list();

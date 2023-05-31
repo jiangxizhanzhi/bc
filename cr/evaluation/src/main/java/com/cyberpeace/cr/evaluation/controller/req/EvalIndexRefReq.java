@@ -13,8 +13,21 @@ public class EvalIndexRefReq {
 	@NotEmpty
 	private String resourceId;
 
+	@ApiModelProperty("等级")
+	private Integer level;
+
 	@ApiModelProperty("指标项专家评分配置")
 	private EvalRecordSpecialistContext specialist;
+
+	@ApiModelProperty("评分方式 1系统 2 专家")
+	private Integer type;
+
+	@ApiModelProperty("系统评分时 需要节点id")
+	private String deviceId;
+
+	@ApiModelProperty("系统评分时 需要探针id")
+	private String probeId;
+
 
 
 }

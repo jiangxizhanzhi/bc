@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 @Repository
-public interface EvaResultMapper extends BaseMapper<EvalResult> {
+public interface EvalResultMapper extends BaseMapper<EvalResult> {
 }
 
 

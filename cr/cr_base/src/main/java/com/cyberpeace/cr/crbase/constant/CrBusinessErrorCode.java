@@ -433,4 +433,14 @@ public interface CrBusinessErrorCode {
 	 * 空白用户id
 	 */
 	String BLANK_USER_ID = "101131";
+
+	/**
+	 * 无效level
+	 */
+	String INVALID_LEVEL = "101132";
+
+	/**
+	 * 无效type
+	 */
+	String INVALID_TYPE = "101133";
 }

@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.WsPath;
-import com.cyberpeace.cr.crbase.service.WebSocketPushService;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionDeleteReq;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -38,13 +36,17 @@ import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.WebSocketPushService;
 import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionConfig;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionDeleteReq;
 import com.cyberpeace.cr.crbase.service.context.mission.RedBlueTaskReleaseProgress;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleContext;
 import com.cyberpeace.cr.crbase.service.context.role.RoleData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.ExercisePaperReq;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionConfig;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomMissionReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.ExercisePaperRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
@@ -488,5 +490,17 @@ public class RbRoomDirectorController {
 				CrRole.RbRoleGroup.BLUE.getCode());
 		list.add(new TrainTaskReleaseInfoContext("blue", blue));
 		return new BaseRsp<>(list);
+	}
+
+	@ApiOperation("导演-复盘时间轴")
+	@GetMapping("/replay/timeline")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<TimeLineData> getReviewTimeLine(
+			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+		CrCommonValidator.validateId(resource_id);
+		CrCommonValidator.validateUserId(user_id);
+		TimeLineData res = rbRoomService.getReplayTimeline(resource_id, user_id);
+		return new BaseRsp<>(res);
 	}
 }

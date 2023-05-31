@@ -33,7 +33,6 @@ import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
@@ -312,17 +311,4 @@ public class RbRoomUserController {
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		return new BaseRsp();
 	}
-
-	@ApiOperation("复盘时间轴")
-	@GetMapping("/replay/timeline")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<TimeLineData> getReviewTimeLine(
-			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id,
-			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
-		CrCommonValidator.validateId(resource_id);
-		CrCommonValidator.validateUserId(user_id);
-		TimeLineData res = rbRoomService.getReplayTimeline(resource_id, user_id);
-		return new BaseRsp<>(res);
-	}
-
 }

@@ -81,7 +81,7 @@ public class CrReplayServiceImpl implements CrReplayService {
 				eventList.add(timeLineEvent);
 			}
 		}
-		// 5.4保持和之前逻辑一致，可以看到下发任务事件
+		//
 		List<CrMark> crMarkList = crCommonService.getMarkByRoomIdAndUserId(roomId, userId);
 
 		// 增加标记事件

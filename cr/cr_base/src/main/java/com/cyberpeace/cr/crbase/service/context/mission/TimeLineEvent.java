@@ -29,7 +29,7 @@ public class TimeLineEvent {
 	@ApiModelProperty(value = "头像地址")
 	private String avatarUrl;
 
-	@ApiModelProperty(value = "类型， 1：下发任务，2：下发流量， 3：标记")
+	@ApiModelProperty(value = "类型， 1：任务，2：流量， 3：标记")
 	private Integer type;
 
 	@ApiModelProperty(value = "任务事件类型， 0：待评估，1：成功，2:失败")

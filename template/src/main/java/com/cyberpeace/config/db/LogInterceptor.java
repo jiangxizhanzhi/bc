@@ -75,6 +75,9 @@ public class LogInterceptor implements Interceptor {
 
 		// 提取表名
 		String tableName = getTableNameFromEntity(entityClass);
+		if (tableName == null) {
+			tableName = getTableNameFromSql(sql);
+		}
 
 		// 如果是对日志操作记录的SQL语句，则不再处理
 		if ((sql != null && sql.contains(LOG_TABLE_NAME)) || LOG_TABLE_NAME.equals(tableName)) {
@@ -182,6 +185,26 @@ public class LogInterceptor implements Interceptor {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * 从sql提取表名
+	 *
+	 * @param sql sql
+	 * @return {@code String}
+	 */
+	private static String getTableNameFromSql(String sql) {
+		String tableName = null;
+		int fromIndex = sql.toLowerCase().indexOf("from");
+		if (fromIndex != -1) {
+			int spaceIndex = sql.indexOf(" ", fromIndex + 5);
+			if (spaceIndex != -1) {
+				tableName = sql.substring(fromIndex + 5, spaceIndex);
+			} else {
+				tableName = sql.substring(fromIndex + 5);
+			}
+		}
+		return tableName;
 	}
 
 }

@@ -99,12 +99,14 @@
         business_type
         from cr_role
         where room_id = #{roomId}
-        and (role_group like #{roleId}
-        or resource_id = #{roleId}
-        <if test="roleId == '7'.toString()">
-            or role_group in (1,2,3)
-        </if>
-        )
+      <if test="roleId != null and roleId != ''">
+          and (role_group like #{roleId}
+          or resource_id = #{roleId}
+          <if test="roleId == '7'.toString()">
+              or role_group in (1,2,3)
+          </if>
+          )
+      </if>
     </select>
     <select id="selectByRoomIdAndMissionId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
         <bind name="mission_id" value="'%' + missionId + '%'"/>

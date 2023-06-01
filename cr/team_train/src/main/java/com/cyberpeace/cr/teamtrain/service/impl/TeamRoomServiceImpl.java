@@ -692,7 +692,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	public List<DashboardUser> getMembersInfo(String roleId, String roomId) {
 		List<DashboardUser> friend = Lists.newArrayList();
 
-		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, roleId);
+		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomIdAndRoleId(roomId, null);
 		final List<String> userIds = new ArrayList<>();
 		crRoles.forEach(role -> userIds.addAll(role.getUserIdList()));
 

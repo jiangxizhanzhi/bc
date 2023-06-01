@@ -738,10 +738,23 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
 			JSONObject val = (JSONObject) stringObjectEntry.getValue();
-			timeLineEvent.setTime(new Date(val.getLong("time")));
-			timeLineEvent.setTitle(missionMap.get(stringObjectEntry.getKey()).getTitle());
+			timeLineEvent.setTime(new Date(val.getLong(SingleRoom.MissionsRecordFields.TIME)));
+			Mission mission = missionMap.get(stringObjectEntry.getKey());
+			if (null == mission) {
+				continue;
+			}
+			timeLineEvent.setTitle(mission.getTitle());
 			timeLineEvent.setUserName(UserInfoContext.getUserContext().getUserName());
 			timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
+			// 任务状态
+			String userAnswer = val.getString(SingleRoom.MissionsRecordFields.ANSWER);
+			if (userAnswer.equals(mission.getAnswer())) {
+				// right
+				timeLineEvent.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());
+			} else {
+				// wrong
+				timeLineEvent.setStatus(CrTask.SingleTaskStatus.FAIL.getCode());
+			}
 
 			missionRecord.add(timeLineEvent);
 		}

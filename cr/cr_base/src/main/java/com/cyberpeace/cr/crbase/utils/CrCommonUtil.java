@@ -13,6 +13,7 @@ import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.cyberpeace.common.model.scene.AssetProperty;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
@@ -112,12 +113,16 @@ public class CrCommonUtil {
 	 * @return {@code List<Integer>}
 	 */
 	public static List<Integer> getInitPoints() {
-		List<Integer> points = Lists.newArrayList();
-		int skillPointsSize = CrCommonConstants.SKILL_POINTS_SIZE;
-		for (int i = 0; i < skillPointsSize; i++) {
-			points.add(0);
-		}
-		return points;
+		return getZeroList(CrCommonConstants.SKILL_POINTS_SIZE);
+	}
+
+	/**
+	 * 获取指定长度的填0数组
+	 *
+	 * @return {@code List<Integer>}
+	 */
+	public static List<Integer> getZeroList(Integer size) {
+		return ListUtil.getRepeatingList(size, 0);
 	}
 
 	/**

@@ -25,6 +25,16 @@ public interface CrCommonConstants {
 
 	Integer TERMINAL_TYPE_CODE = 4;
 
+	/**
+	 * 评分界面，教员主观打分的指标项数
+	 */
+	Integer SCORE_ABILITY_SIZE = 5;
+
+	/**
+	 * 评分界面，每颗星代表多少分
+	 */
+	Integer SCORE_PER_STAR = 4;
+
 	int SKILL_POINTS_SIZE = ConfigReader.readInt("cr.skill.point.size");
 
 	int SKILL_POINT_MIN_VALUE = ConfigReader.readInt("cr.skill.point.min");

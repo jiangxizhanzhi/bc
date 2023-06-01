@@ -1,11 +1,12 @@
 package com.cyberpeace.cr.crbase.controller.rsp;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
 import com.cyberpeace.cr.crbase.service.context.score.TaskStatistics;
 import com.cyberpeace.cr.crbase.service.context.score.TrainingScore;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,7 +18,11 @@ public class StudentScoreRsp {
 	private String abilityPercentage = "";
 
 	@ApiModelProperty(value = "能力分")
-	private List<Integer> abilityScore = new ArrayList<>();
+	private List<Integer> abilityScore = CrCommonUtil
+			.getZeroList(CrCommonConstants.SCORE_ABILITY_SIZE);
+
+	@ApiModelProperty(value = "能力分值")
+	private Integer abilityScoreResult = 0;
 
 	@ApiModelProperty(value = "评语")
 	private String comment = "";
@@ -36,5 +41,14 @@ public class StudentScoreRsp {
 
 	@ApiModelProperty(value = "阶段统计")
 	private TrainingScore trainingScore;
+
+	public void setAbilityScore(List<Integer> scoreList) {
+		this.abilityScore = scoreList;
+		int result = 0;
+		for (Integer integer : scoreList) {
+			result += integer * CrCommonConstants.SCORE_PER_STAR;
+		}
+		this.abilityScoreResult = result;
+	}
 
 }

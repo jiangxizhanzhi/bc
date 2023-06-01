@@ -164,4 +164,17 @@ public class ListUtil {
 		res.addAll(set);
 		return res;
 	}
+
+	/**
+	 * 获取指定长度的包含某指定元素的数组
+	 *
+	 * @return {@code List<Integer>}
+	 */
+	public static <T> List<T> getRepeatingList(Integer size, T element) {
+		List<T> points = Lists.newArrayList();
+		for (int i = 0; i < size; i++) {
+			points.add(element);
+		}
+		return points;
+	}
 }

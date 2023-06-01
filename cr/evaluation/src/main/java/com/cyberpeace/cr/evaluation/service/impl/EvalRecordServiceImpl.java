@@ -260,6 +260,21 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalIndicator> thirdRelationList = evalIndicatorService.lambdaQuery().in(EvalIndicator::getResourceId, evalIndicatorIds).list();
         // 四级指标
         List<EvalAggregation> evalAggregations = evalAggregationService.lambdaQuery().in(EvalAggregation::getEvalIndicatorId, evalIndicatorIds).list();
+        // 4级指标 联5级id有重复时 更新5级id
+        List<String> collections = new ArrayList<>();
+        evalAggregations.forEach(evalAggregation -> {
+            List<String> collectionIds = JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class);
+            collectionIds.forEach(collectionId->{
+                if(!collections.contains(collectionId)){
+                    collections.add(collectionId);
+                } else {
+                    String id = IDGeneratorUtil.getID();
+                    collectionIds.set(collectionIds.indexOf(collectionId), id);
+                }
+            });
+            String currentCollectionIds = JsonUtil.arrayToString(collectionIds);
+            evalAggregation.setCollectionIds(currentCollectionIds);
+        });
         // 五级指标
         List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty() ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list() : Lists.newArrayList();
 

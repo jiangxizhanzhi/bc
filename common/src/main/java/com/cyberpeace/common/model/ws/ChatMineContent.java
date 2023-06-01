@@ -17,4 +17,6 @@ public class ChatMineContent {
 
 	// 后面增加的服务器时间
 	private String time;
+
+	private String uuid;
 }

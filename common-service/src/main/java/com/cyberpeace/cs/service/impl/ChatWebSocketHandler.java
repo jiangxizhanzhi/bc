@@ -213,6 +213,7 @@ public class ChatWebSocketHandler extends MyWebSocketHandler {
 		chatMessage.setFromid(mine.getId());
 		chatMessage.setTimestamp();
 		chatMessage.setTime(toContent.getTime());
+		chatMessage.setUuid(chatContent.getTo().getUuid());
 
 		return chatMessage;
 	}

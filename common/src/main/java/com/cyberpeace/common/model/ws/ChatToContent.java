@@ -32,4 +32,6 @@ public class ChatToContent {
 	private String sign;
 
 	private String status;
+
+	private String uuid;
 }

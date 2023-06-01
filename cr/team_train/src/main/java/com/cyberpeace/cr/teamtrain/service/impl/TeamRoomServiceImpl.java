@@ -660,7 +660,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				CrRole.RbRoleGroup.TEAM.getCode(),
 				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
 		teamGroup.setMembers(teamMembers);
-		teamGroup.setId(roomId + "_" + myRole.getRoleGroup());
+		teamGroup.setId(roomId);
 		groups.add(teamGroup);
 
 

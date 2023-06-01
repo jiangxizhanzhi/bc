@@ -94,6 +94,16 @@ public class EvalAlgorithm extends BaseTable {
 			this.desc = desc;
 		}
 
+		public static  boolean valid(Integer consumer){
+            Type[] values = Type.values();
+            for(Type type : values) {
+                if(type.getCode().equals(consumer)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
 	}
 
     @ApiModelProperty("算法模型")

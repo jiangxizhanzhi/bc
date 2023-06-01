@@ -27,6 +27,8 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
@@ -80,9 +82,12 @@ public class EvalAlgorithmRefController {
 			@ApiParam(name = "type", value = "算法类型", required = true) @RequestParam(name = "type") Integer type) {
 
 		EvalAlgorithmRsp evalAlgorithmRsp;
-		EvalIndexRef evalIndexRef = evalIndexRefMapper.selectById(resourceId);
-		if(EnumUtils.isValidEnum(EvalAlgorithm.Type.class, type.toString())){
+		if(EvalAlgorithm.Type.valid(type)){
 			if(type.equals(EvalAlgorithm.Type.AGGREGATING_ALGORITHM.getCode())){
+				LambdaQueryWrapper<EvalIndexRef> queryWrapper = new LambdaQueryWrapper<>();
+				queryWrapper.eq(EvalIndexRef::getAlgorithmId, resourceId);
+				List<EvalIndexRef> evalIndexRefs = evalIndexRefMapper.selectList(queryWrapper);
+				EvalIndexRef evalIndexRef = evalIndexRefs.get(0);
 				EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(resourceId);
 				if(null == evalAlgorithmRef){
 					log.error("Resource not found! resourceId = [{}]", resourceId);
@@ -98,23 +103,29 @@ public class EvalAlgorithmRefController {
 			}
 
 		}
+		EvalVariableRef evalVariableRef;
 		LambdaQueryWrapper<EvalVariableRef> query =  new LambdaQueryWrapper<>();
-		evalAlgorithmRsp = BeanUtils.copy(evalIndexRef, EvalAlgorithmRsp.class);
-		evalAlgorithmRsp.setEvalAlgorithmId(evalIndexRef.getResourceId());
 		String params = "";
+		String algorithmId = "";
 		if(type.equals(EvalAlgorithm.Type.SCORING_ALGORITHM.getCode())){
 			query.eq(EvalVariableRef::getMarkAlgorithmId, resourceId);
-			EvalVariableRef evalVariableRef = evalVariableRefMapper.selectOne(query);
+			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getMarkParams();
+			algorithmId = evalVariableRef.getMarkAlgorithmId();
 		} else if(type.equals(EvalAlgorithm.Type.FORMAT_ALGORITHM.getCode())){
 			query.eq(EvalVariableRef::getFormatAlgorithmId, resourceId);
-			EvalVariableRef evalVariableRef = evalVariableRefMapper.selectOne(query);
+			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getFormatParams();
+			algorithmId = evalVariableRef.getFormatAlgorithmId();
 		} else if(type.equals(EvalAlgorithm.Type.MATCHING_ALGORITHM.getCode())){
 			query.eq(EvalVariableRef::getMatchAlgorithmId, resourceId);
-			EvalVariableRef evalVariableRef = evalVariableRefMapper.selectOne(query);
+			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getMatchParams();
+			algorithmId = evalVariableRef.getMatchAlgorithmId();
 		}
+		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(algorithmId);
+		evalAlgorithmRsp = BeanUtils.copy(evalAlgorithmRef, EvalAlgorithmRsp.class);
+		evalAlgorithmRsp.setEvalAlgorithmId(algorithmId);
 		evalAlgorithmRsp.setParams(
 				JsonUtil.toJsonObjectArray(params, AlgorithmParamContext.class));
 		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());

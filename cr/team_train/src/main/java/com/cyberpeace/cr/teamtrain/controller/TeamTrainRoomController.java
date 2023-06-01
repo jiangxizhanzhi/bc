@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -139,6 +140,9 @@ public class TeamTrainRoomController {
 	@Autowired
 	private CrScoreService crScoreService;
 
+
+	@Autowired
+	private ScreenService screenService;
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -896,5 +900,19 @@ public class TeamTrainRoomController {
 		});
 
 		return new BaseRsp<>();
+	}
+	@ApiOperation("团队对抗-复盘设备")
+	@GetMapping("/task/replayUserTimeInfo")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,node_id);
+		return new BaseRsp<>(resList);
 	}
 }

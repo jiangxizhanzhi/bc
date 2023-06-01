@@ -7,7 +7,7 @@ import java.io.File;
 
 public enum HtmlTemplateEnum {
 	/** html模板枚举*/
-	INDIVIDUAL("index.html", "static/template/html_to_pdf_template/Individual"),
+	INDIVIDUAL("index.html", "static/template/html_to_pdf_template/single"),
 	REDBLUE("index.html", "static/template/html_to_pdf_template/Team"),
 	TEAM("index.html", "static/template/html_to_pdf_template/Team"),
 	EVAL("index.html", "static/template/html_to_pdf_template/Eval"),

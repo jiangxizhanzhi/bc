@@ -137,6 +137,7 @@ public class SingleRoomScoreController {
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 		data.put("radarLabels", radarLabels);
 		data.put("locale", crScoreController.getTemplateI18n());
+		data.put("name", "cc");
 
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
 				String.format("%s-%s", roomId, data.getString("user_id")),

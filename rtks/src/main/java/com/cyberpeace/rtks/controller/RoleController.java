@@ -36,7 +36,6 @@ import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -292,11 +291,8 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<CourseConfigOutput>> getSkillCourses(String resource_id,
 			@ApiParam(allowableValues = "knowledge, skill") @NotBlank String field) {
-		Role role = roleService.getOr404(resource_id);
-		List<String> courseIds = getCourseIdsFromDb(role, field);
-		List<CourseConfigOutput> outputList = getCourseConfigOutputList(courseIds);
-
-		return new BaseRsp<>(outputList);
+		List<CourseConfigOutput> res = roleService.getCourseList(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("编排课程列表")
@@ -334,38 +330,8 @@ public class RoleController {
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<List<MissionTemplateSimple>>
 			getSkillMissions(@RequestParam("resource_id") String resource_id) {
-
-		List<String> missionIds = roleService.getRelMissionIds(resource_id);
-		Map<String, MissionTemplateRes> missionMapping = missionTemplateService
-				.mapWithBusiness(missionIds);
-		// merge with current order
-		Role role = roleService.getOr404(resource_id);
-		List<String> currentMissionIds = JsonUtil.toJsonObjectArray(role.getSkillMissions(),
-				String.class);
-		List<MissionTemplateRes> newOrder = Lists.newArrayList();
-		for (String missionId : currentMissionIds) {
-			MissionTemplateRes mission = missionMapping.get(missionId);
-			if (mission != null) {
-				newOrder.add(mission);
-				missionMapping.remove(missionId);
-			}
-		}
-		for (Map.Entry<String, MissionTemplateRes> entry : missionMapping.entrySet()) {
-			newOrder.add(entry.getValue());
-		}
-		// save new order
-		List<String> newOrderIds = newOrder.stream().map(MissionTemplateRes::getResourceId)
-				.collect(Collectors.toList());
-		String newOrderJson = JsonUtil.arrayToString(newOrderIds);
-		if (!newOrderJson.equals(role.getSkillMissions())) {
-			role.setSkillMissions(JsonUtil.arrayToString(newOrderIds));
-			roleService.updateById(role);
-		}
-		// convert
-		List<MissionTemplateSimple> result = BeanUtils.deepCopyList(newOrder,
-				MissionTemplateSimple.class);
-
-		return new BaseRsp(result);
+		List<MissionTemplateSimple> res = roleService.getMissionList(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("编排任务列表")

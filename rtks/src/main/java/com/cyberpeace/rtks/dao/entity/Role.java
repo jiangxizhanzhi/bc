@@ -48,11 +48,17 @@ public class Role extends BaseTable {
 	@TableField(value = "ability_ids")
 	private String abilityIds;
 
+	/**
+	 * 仅保存顺序，不可用作关联
+	 */
 	@TableField(value = "knowledge_courses")
 	private String knowledgeCourses;
 
 	private Integer knowledgeWeight;
 
+	/**
+	 * 仅保存顺序，不可用作关联
+	 */
 	private String skillMissions;
 
 }

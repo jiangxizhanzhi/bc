@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.rtks.dao.entity.CourseName;
+import com.cyberpeace.rtks.service.CourseNameService;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -19,9 +22,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.DeleteReq;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
+import com.cyberpeace.cr.crbase.service.MissionTemplateService;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionTemplateRes;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
+import com.cyberpeace.rtks.controller.course.CourseConfigOutput;
 import com.cyberpeace.rtks.dao.entity.Role;
 import com.cyberpeace.rtks.dao.entity.RoleSkillRelation;
 import com.cyberpeace.rtks.dao.mapper.RoleMapper;
@@ -31,6 +38,7 @@ import com.cyberpeace.rtks.service.KnowledgeService;
 import com.cyberpeace.rtks.service.RoleService;
 import com.cyberpeace.rtks.service.bo.Difference;
 import com.cyberpeace.rtks.service.bo.skill.IdWeight;
+import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.RoleSkillRes;
 import com.cyberpeace.rtks.service.bo.skill.SkillWeightRes;
 import com.cyberpeace.rtks.util.RtksCommonUtil;
@@ -54,6 +62,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
 	@Autowired
 	private SkillMapper skillMapper;
+
+	@Autowired
+	private MissionTemplateService missionTemplateService;
+
+	@Autowired
+	private CourseNameService courseNameService;
 
 	@Override
 	public Role getOr404(String roleId) {
@@ -244,6 +258,90 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 	@Override
 	public Boolean ifNameDuplicate(String name, String resourceId) {
 		return roleMapper.ifNameDuplicate(name, resourceId);
+	}
+
+	@Override
+	public List<CourseConfigOutput> getCourseList(String roleId) {
+		List<CourseConfigOutput> res = Lists.newArrayList();
+		Role role = this.getOr404(roleId);
+
+		// get knowledge ids
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(), String.class);
+		// get course ids
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
+		// get courses
+		List<CourseName> courseNameList = courseNameService.selectByIds(courseIds);
+		if (courseNameList.isEmpty()) {
+			return res;
+		}
+		Map<String, CourseName> courseNameMap = StreamApiUtils.toMap(courseNameList,
+				CourseName::getResourceId, courseName -> courseName);
+		// get saved old order
+		List<String> oldOrder = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(), String.class);
+		// merge with current order
+		for (String courseId : oldOrder) {
+			CourseName courseName  = courseNameMap.get(courseId);
+			if(null != courseName){
+				CourseConfigOutput output = new CourseConfigOutput();
+				output.setName(courseName.getName());
+				output.setResourceId(courseName.getResourceId());
+				// 按保存顺序加入
+				res.add(output);
+				courseNameMap.remove(courseId);
+			}
+		}
+		// 加入剩余的
+		for (CourseName courseName : courseNameMap.values()) {
+			CourseConfigOutput output = new CourseConfigOutput();
+			output.setName(courseName.getName());
+			output.setResourceId(courseName.getResourceId());
+			res.add(output);
+		}
+		// save new order
+		List<String> newOrder = res.stream().map(CourseConfigOutput::getResourceId).collect(Collectors.toList());
+		String newOrderJson = JsonUtil.toJsonString(newOrder);
+		if(!newOrderJson.equals(role.getKnowledgeCourses())){
+			role.setKnowledgeCourses(newOrderJson);
+			this.updateById(role);
+		}
+
+		return res;
+	}
+
+	@Override
+	public List<MissionTemplateSimple> getMissionList(String roleId) {
+
+		List<String> missionIds = this.getRelMissionIds(roleId);
+		Map<String, MissionTemplateRes> missionMapping = missionTemplateService
+				.mapWithBusiness(missionIds);
+		// merge with current order
+		Role role = this.getOr404(roleId);
+		List<String> currentMissionIds = JsonUtil.toJsonObjectArray(role.getSkillMissions(),
+				String.class);
+		List<MissionTemplateRes> newOrder = Lists.newArrayList();
+		for (String missionId : currentMissionIds) {
+			MissionTemplateRes mission = missionMapping.get(missionId);
+			if (mission != null) {
+				newOrder.add(mission);
+				missionMapping.remove(missionId);
+			}
+		}
+		for (Map.Entry<String, MissionTemplateRes> entry : missionMapping.entrySet()) {
+			newOrder.add(entry.getValue());
+		}
+		// save new order
+		List<String> newOrderIds = newOrder.stream().map(MissionTemplateRes::getResourceId)
+				.collect(Collectors.toList());
+		String newOrderJson = JsonUtil.arrayToString(newOrderIds);
+		if (!newOrderJson.equals(role.getSkillMissions())) {
+			role.setSkillMissions(JsonUtil.arrayToString(newOrderIds));
+			this.updateById(role);
+		}
+		// convert
+		List<MissionTemplateSimple> result = BeanUtils.deepCopyList(newOrder,
+				MissionTemplateSimple.class);
+
+		return result;
 	}
 
 	private String deleteIds(String Ids, List<String> ids) {

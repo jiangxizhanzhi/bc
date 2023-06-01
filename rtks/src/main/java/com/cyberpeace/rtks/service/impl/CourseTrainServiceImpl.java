@@ -50,8 +50,11 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
-		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
+		// get knowledge ids
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
+		// get course ids
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
 
 		List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(courseIds,
 				userId);
@@ -119,8 +122,11 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
 		}
 
-		List<String> courseIds = JsonUtil.toJsonObjectArray(role.getKnowledgeCourses(),
+		// get knowledge ids
+		List<String> knowledgeIds = JsonUtil.toJsonObjectArray(role.getKnowledgeIds(),
 				String.class);
+		// get course ids
+		List<String> courseIds = knowledgeService.getCourseByIds(knowledgeIds);
 		if (CollectionUtils.isEmpty(courseIds)) {
 			return Lists.newArrayList();
 		}

@@ -8,7 +8,7 @@
         <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
-        <result property="practiceType" column="business_type" jdbcType="INTEGER"/>
+        <result property="practiceType" column="practice_type" jdbcType="INTEGER"/>
     </resultMap>
 
     <resultMap id="studyRecord" type="com.cyberpeace.oj.person.dao.entity.StudyRecord">
@@ -93,7 +93,8 @@
         then ifnull(oj_practice_theory.title, '')
         END ) as theme_name,
         oj_practice_theory.theory_type practice_type,
-        ifnull(oj_practice_theory.difficulty, oj_practice_operation.difficulty) difficulty
+        ifnull(oj_practice_theory.difficulty, oj_practice_operation.difficulty) difficulty,
+        oj_note.business_type
         from oj_note
         left join oj_course_lesson on oj_note.business_id = oj_course_lesson.resource_id
         left join oj_course on oj_note.business_id = oj_course.resource_id

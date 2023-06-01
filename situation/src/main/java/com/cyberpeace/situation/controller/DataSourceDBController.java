@@ -12,6 +12,8 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.DataSourceRecordDelReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordPageReq;
 import com.cyberpeace.situation.controller.req.DataSourceRecordReq;
@@ -87,6 +89,7 @@ public class DataSourceDBController {
 	 * @param dataSourceRecordPageReq 数据库记录分页请求
 	 * @return {@code BaseRsp<ListRsp<DataSourceRecordRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.SJK, type = ServiceLogContext.Type.CX)
 	@ApiOperation("数据库-列表查询")
 	@GetMapping("page")
 	public BaseRsp<ListRsp<DataSourceRecordRes>>
@@ -100,6 +103,7 @@ public class DataSourceDBController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<DataResourceRecordInfoRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.SJK, type = ServiceLogContext.Type.CX)
 	@ApiOperation("数据库-单个查询")
 	@GetMapping("")
 	public BaseRsp<DataResourceRecordInfoRes>
@@ -114,6 +118,7 @@ public class DataSourceDBController {
 	 * @param dataSourceRecordDelReq 数据库记录删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.SJK, type = ServiceLogContext.Type.SC)
 	@ApiOperation("数据库-删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDataSourceRecord(
@@ -127,6 +132,7 @@ public class DataSourceDBController {
 	 * @param dataSourceRecordReq 数据库记录请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.SJK, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("数据库-新增")
 	@PostMapping("")
 	public BaseRsp<String> createDataSourceRecord(
@@ -144,6 +150,7 @@ public class DataSourceDBController {
 	 * @param dataSourceRecordReq 数据库记录请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.SJK, type = ServiceLogContext.Type.XG)
 	@ApiOperation("数据库-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDataSourceRecord(

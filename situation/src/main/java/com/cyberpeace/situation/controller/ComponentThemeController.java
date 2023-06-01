@@ -9,6 +9,8 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.ColorThemeDelReq;
 import com.cyberpeace.situation.controller.req.ColorThemeImportReq;
 import com.cyberpeace.situation.controller.req.ColorThemePageReq;
@@ -45,6 +47,7 @@ public class ComponentThemeController {
 	 * @param colorThemeReq 图表主题请求
 	 * @return {@code BaseRsp<ColorThemeReq>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("图表主题-新增")
 	@PostMapping()
 	public BaseRsp<ColorThemeReq>
@@ -62,6 +65,7 @@ public class ComponentThemeController {
 	 * @param colorThemeReq 图表主题请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.XG)
 	@ApiOperation("图表主题-修改")
 	@PatchMapping("")
 	public BaseRsp<String>
@@ -79,6 +83,7 @@ public class ComponentThemeController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ColorTheme>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.CX)
 	@ApiOperation("图表主题-单个查询")
 	@GetMapping("")
 	public BaseRsp<ColorTheme>
@@ -93,6 +98,7 @@ public class ComponentThemeController {
 	 * @param ColorThemeDelReq 图表主题删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.SC)
 	@ApiOperation("图表主题-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer>
@@ -107,6 +113,7 @@ public class ComponentThemeController {
 	 * @param colorThemePageReq 图表主题分页查询请求
 	 * @return {@code BaseRsp<ListRsp<ColorTheme>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.CX)
 	@ApiOperation("图表主题-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<ColorTheme>> getColorThemePage(ColorThemePageReq colorThemePageReq) {
@@ -119,6 +126,7 @@ public class ComponentThemeController {
 	 * @param colorThemeImportReq 图表主题导入请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TBZT, type = ServiceLogContext.Type.DR)
 	@ApiOperation("图表主题-导入")
 	@PostMapping("upload")
 	public BaseRsp<String> importColorTheme(ColorThemeImportReq colorThemeImportReq) {

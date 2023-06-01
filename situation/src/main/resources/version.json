@@ -1,0 +1,21 @@
+{
+  "versions": [
+    {
+      "version": "0.1.1",
+      "update_time": "2023-05-29 09:00:00",
+      "latest_commit": "5b2dcb5953acb3703856bc76b458d933277a64cd",
+      "db_change": false,
+      "log": "1、新增拓扑demo模式切换功能"
+    },
+    {
+      "version": "0.1.0",
+      "update_time": "2023-05-22 09:00:00",
+      "latest_commit": "db441dee306db0864ee8ff981cf5ff6b8da73430",
+      "db_change": true,
+      "log": "1、优化动效匹配逻辑\n2、完善名称、描述字段的校验"
+    }
+  ]
+}
+
+
+

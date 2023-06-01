@@ -49,6 +49,7 @@
         <xmlworker.version>5.4.1</xmlworker.version>
         <itext-asian.version>5.2.0</itext-asian.version>
         <flying-saucer-pdf.version>9.0.3</flying-saucer-pdf.version>
+        <aop-version>2.5.14</aop-version>
 
         <!-- 自有模块版本号 -->
         <common.service.version>0.0.1-SNAPSHOT</common.service.version>
@@ -75,6 +76,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${aop-version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.itextpdf</groupId>
                 <artifactId>itextpdf</artifactId>

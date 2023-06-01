@@ -12,6 +12,8 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.datasource.ApiRequestType;
 import com.cyberpeace.situation.controller.req.ApiConnectDelReq;
 import com.cyberpeace.situation.controller.req.ApiConnectReq;
@@ -52,6 +54,7 @@ public class DataSourceAPIController {
 	 * @param apiConnectReq api连接请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("API-新增")
 	@PostMapping("message")
 	public BaseRsp<String>
@@ -70,6 +73,7 @@ public class DataSourceAPIController {
 	 * @param apiConnectReq api连接请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.XG)
 	@ApiOperation("API-修改")
 	@PatchMapping("message")
 	public BaseRsp<String>
@@ -88,6 +92,7 @@ public class DataSourceAPIController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<ApiRequestInfoRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.CX)
 	@ApiOperation("API-单个查询")
 	@GetMapping("message")
 	public BaseRsp<ApiRequestInfoRes>
@@ -102,6 +107,7 @@ public class DataSourceAPIController {
 	 * @param apiConnectDelReq api连接删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.SC)
 	@ApiOperation("API-批量删除")
 	@DeleteMapping("message")
 	public BaseRsp<Integer>
@@ -116,6 +122,7 @@ public class DataSourceAPIController {
 	 * @param apiRequestPageReq api连接分页请求
 	 * @return {@code BaseRsp<ListRsp<ApiRequestRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.CX)
 	@ApiOperation("API-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<ApiRequestRes>> getApiConnectPage(ApiRequestPageReq apiRequestPageReq) {
@@ -127,6 +134,7 @@ public class DataSourceAPIController {
 	 *
 	 * @return {@code BaseRsp<List<ApiRequest>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.API, type = ServiceLogContext.Type.CX)
 	@ApiOperation("API-列表查询（全量）")
 	@GetMapping("/list/all/")
 	public BaseRsp<List<ApiRequest>> getAllApi() {

@@ -26,6 +26,8 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DbToolRes;
 import com.cyberpeace.situation.dao.entity.SituationDbTool;
@@ -180,6 +182,7 @@ public class DbManageToolController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationDbTool>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.GLGJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("管理工具-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDbTool>
@@ -197,6 +200,7 @@ public class DbManageToolController {
 	 * @param dbToolAddReq 管理工具新增请求
 	 * @return {@code BaseRsp<SituationDbTool>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.GLGJ, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("管理工具-新增")
 	@PostMapping("")
 	public BaseRsp<SituationDbTool> setSituationDbTool(
@@ -238,6 +242,7 @@ public class DbManageToolController {
 	 * @param req 管理工具列表查询请求
 	 * @return {@code BaseRsp<ListRsp<DbToolRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.GLGJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("管理工具-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<DbToolRes>> getSituationDbTool(SituationDbToolFilterReq req) {
@@ -269,6 +274,7 @@ public class DbManageToolController {
 	 * @param batchDeleteReq 批量删除请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.GLGJ, type = ServiceLogContext.Type.SC)
 	@ApiOperation("管理工具-删除")
 	@DeleteMapping("")
 	public BaseRsp deleteSituationDbTool(@RequestBody @Validated BatchDeleteReq batchDeleteReq) {
@@ -288,6 +294,7 @@ public class DbManageToolController {
 	 * @param situationDbToolUpdateReq 管理工具修改请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.GLGJ, type = ServiceLogContext.Type.XG)
 	@ApiOperation("管理工具-修改")
 	@PatchMapping("")
 	public BaseRsp patchSituationDbTool(

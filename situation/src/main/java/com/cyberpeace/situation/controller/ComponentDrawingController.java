@@ -15,6 +15,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.SituationDrawingPageReq;
 import com.cyberpeace.situation.controller.req.SituationDrawingReq;
 import com.cyberpeace.situation.controller.req.SituationIconDelReq;
@@ -62,6 +64,7 @@ public class ComponentDrawingController {
 	 * @param situationDrawingReq 样式组件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("样式组件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDrawing(
@@ -79,6 +82,7 @@ public class ComponentDrawingController {
 	 * @param situationDrawingReq 样式组件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.XG)
 	@ApiOperation("样式组件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDrawing(
@@ -96,6 +100,7 @@ public class ComponentDrawingController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationDrawing>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("样式组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDrawing>
@@ -110,6 +115,7 @@ public class ComponentDrawingController {
 	 * @param situationIconDelReq 样式组件删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.SC)
 	@ApiOperation("样式组件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDrawing(
@@ -124,6 +130,7 @@ public class ComponentDrawingController {
 	 * @param situationDrawingPageReq 样式组件分页请求
 	 * @return {@code BaseRsp<ListRsp<SituationDrawingPageRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("样式组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDrawingPageRes>>
@@ -137,6 +144,7 @@ public class ComponentDrawingController {
 	 *
 	 * @return {@code BaseRsp<List<SituationDrawingPageRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.YSZJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("样式组件-全量查询")
 	@GetMapping("/all")
 	public BaseRsp<List<SituationDrawingPageRes>> getSituationDrawing() {

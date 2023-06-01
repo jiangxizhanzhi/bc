@@ -44,13 +44,6 @@ public class EvalIndexRefController {
     @PatchMapping("")
     public BaseRsp<String> update(@RequestBody EvalIndexRefReq requestData) {
         Integer type = requestData.getType();
-        LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
-        query.like(EvalIndexRef::getNextIds, requestData.getResourceId());
-        EvalIndexRef upperIndex = evalIndexRefMapper.selectOne(query);
-        // 上级评分方式为 专家评分时 下级不可改为 系统评分
-        if(upperIndex.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode()) && requestData.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())){
-            throw new BusinessException(CrBusinessErrorCode.INVALID_TYPE);
-        }
         if(requestData.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())){
             EvalIndexRef evalIndexRef = evalIndexRefMapper.selectById(requestData.getResourceId());
             EvalRecordSpecialistContext specialist = requestData.getSpecialist();

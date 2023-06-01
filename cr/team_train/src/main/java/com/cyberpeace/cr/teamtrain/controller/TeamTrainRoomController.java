@@ -660,17 +660,17 @@ public class TeamTrainRoomController {
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-			if (crRole.isTeamStudent()) {
-				RoleUsers roleUsers = new RoleUsers();
-				roleUsers.setRoleName(crRole.getName());
-				roleUsers.setRoleGroup(crRole.getRoleGroup());
-				String userNamesByRoleUsers = crRoleService
-						.getUserNamesByRoleUsers(crRole.getUserIdList());
-				List<UserData> userDatas = crRoleService.getUserDatas(crRole.getUserIdList());
-				roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
-				roleUsers.setUserInfos(userDatas);
-				roleUsersList.add(roleUsers);
-			}
+//			if (crRole.isTeamStudent()) {
+			RoleUsers roleUsers = new RoleUsers();
+			roleUsers.setRoleName(crRole.getName());
+			roleUsers.setRoleGroup(crRole.getRoleGroup());
+			String userNamesByRoleUsers = crRoleService
+					.getUserNamesByRoleUsers(crRole.getUserIdList());
+			List<UserData> userDatas = crRoleService.getUserDatas(crRole.getUserIdList());
+			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
+			roleUsers.setUserInfos(userDatas);
+			roleUsersList.add(roleUsers);
+//			}
 		});
 
 		baseRole.setRoleDataList(roleUsersList);

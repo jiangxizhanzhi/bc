@@ -78,7 +78,7 @@ public class EvalAlgorithmRefController {
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRef(
-			@ApiParam(name = "resourceId", value = "id", required = true) String resourceId,
+			@ApiParam(name = "resourceId", value = "id", required = true) @RequestParam(name = "resource_id") String resourceId,
 			@ApiParam(name = "type", value = "算法类型", required = true) @RequestParam(name = "type") Integer type) {
 
 		EvalAlgorithmRsp evalAlgorithmRsp;

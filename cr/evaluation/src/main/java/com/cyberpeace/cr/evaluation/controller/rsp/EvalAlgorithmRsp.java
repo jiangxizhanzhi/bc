@@ -37,6 +37,9 @@ public class EvalAlgorithmRsp {
 	@NotNull
 	private String code;
 
+	@ApiModelProperty(value = "矩阵代码", required = true)
+	private String matrixData;
+
 	@ApiModelProperty(value = "算法类型", required = true)
 	@NotNull
 	private Integer mode;

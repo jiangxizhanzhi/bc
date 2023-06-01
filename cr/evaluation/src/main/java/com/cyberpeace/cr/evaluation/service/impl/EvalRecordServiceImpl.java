@@ -440,10 +440,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private EvalAlgorithmRef generateAlgorithmRef(String algorithmId, Map<String, EvalAlgorithm> originAlgorithmMap, Map<String, EvalAlgorithmRef> evalAlgorithmRefMap) {
-        // 已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回
-        if (evalAlgorithmRefMap.containsKey(algorithmId)) {
-            return evalAlgorithmRefMap.get(algorithmId);
-        }
+        // 取消原逻辑 【已拷贝算法, 不再重复拷贝, evalAlgorithmRefMap获取返回】
+
 
         EvalAlgorithm originAlgorithm = originAlgorithmMap.get(algorithmId);
         EvalAlgorithmRef newAlgorithm = new EvalAlgorithmRef();
@@ -655,17 +653,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 保存variable_ref id:score 5
         List<EvalVariableRef> variableRefs = evalVariableRefMapper.getByRecordId(record);
 
-        List<EvalIndexRef> firstIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.FIRST.getCode())).collect(Collectors.toList());
-        List<EvalIndexRef> secondIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.SECOND.getCode())).collect(Collectors.toList());
-        List<EvalIndexRef> thirdIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.THIRD.getCode())).collect(Collectors.toList());
-        List<EvalIndexRef> fourthIndexs = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> firstIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.FIRST.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> secondIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.SECOND.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> thirdIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.THIRD.getCode())).collect(Collectors.toList());
+        List<EvalIndexRef> fourthIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())).collect(Collectors.toList());
 
-        Map<String, EvalIndexRef> secondEvalIndexRefMap = StreamApiUtils.toMap(secondIndexs, EvalIndexRef::getResourceId, s -> s);
-        Map<String, EvalIndexRef> thirdEvalIndexRefMap = StreamApiUtils.toMap(thirdIndexs, EvalIndexRef::getResourceId, s -> s);
-        Map<String, EvalIndexRef> fourthEvalIndexRefMap = StreamApiUtils.toMap(fourthIndexs, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalIndexRef> secondEvalIndexRefMap = StreamApiUtils.toMap(secondIndexes, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalIndexRef> thirdEvalIndexRefMap = StreamApiUtils.toMap(thirdIndexes, EvalIndexRef::getResourceId, s -> s);
+        Map<String, EvalIndexRef> fourthEvalIndexRefMap = StreamApiUtils.toMap(fourthIndexes, EvalIndexRef::getResourceId, s -> s);
         Map<String, EvalVariableRef> fifthEvalIndexRefMap = StreamApiUtils.toMap(variableRefs, EvalVariableRef::getResourceId, s -> s);
 
-        for(EvalIndexRef first:firstIndexs){
+        for(EvalIndexRef first:firstIndexes){
             String nextIds = first.getNextIds();
             Integer score = first.getScore();
             if(first.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())){
@@ -695,6 +693,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     List<String> idList = JsonUtil.toJsonObjectArray(ids, String.class);
                     for(String currentNextId:idList){
                         EvalIndexRef current = fourthEvalIndexRefMap.get(currentNextId);
+                        log.info("current evalIndexRef name is : [{}], id is [{}], score is [{}]", current.getName(), current.getResourceId(), current.getScore());
                         if(null != current){
                             Integer type = current.getType();
                             Integer currentScore = current.getScore();

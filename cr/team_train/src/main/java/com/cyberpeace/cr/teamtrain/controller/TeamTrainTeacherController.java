@@ -2,8 +2,6 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -29,8 +27,11 @@ import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomMissionReq;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -199,6 +200,20 @@ public class TeamTrainTeacherController {
 			@ApiParam(name = "user_id", value = "用户id", required = false) String user_id) {
 		CrCommonValidator.validateId(resource_id);
 		TimeLineData res = teamTeacherService.getReplayTimeline(resource_id, user_id);
+		return new BaseRsp<>(res);
+	}
+
+	/**
+	 * 获取任务状态统计数据
+	 * @return
+	 */
+	@ApiOperation("获取任务状态统计数据")
+	@GetMapping("/get_statistical_info")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TaskStatisticsInfo> getStatisticalInfo(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		TaskStatisticsInfo res = teamTeacherService.getTaskStatisticsInfo(resource_id);
 		return new BaseRsp<>(res);
 	}
 }

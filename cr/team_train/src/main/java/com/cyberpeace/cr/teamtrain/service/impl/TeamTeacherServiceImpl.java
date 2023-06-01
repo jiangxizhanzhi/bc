@@ -2,14 +2,16 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
+import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cs.service.context.IdNameType;
@@ -25,6 +27,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	@Autowired
+	private CrTaskService crTaskService;
 
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -52,5 +57,10 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	@Override
 	public TimeLineData getReplayTimeline(String roomId, String userId) {
 		return teamRoomService.getTimeLine(roomId, userId);
+	}
+
+	@Override
+	public TaskStatisticsInfo getTaskStatisticsInfo(String roomId) {
+		return crTaskService.getTaskStatisticsInfoByRoomId(roomId);
 	}
 }

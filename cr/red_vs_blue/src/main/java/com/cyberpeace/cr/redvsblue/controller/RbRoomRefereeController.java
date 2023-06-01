@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
@@ -22,7 +21,6 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
@@ -33,6 +31,8 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
@@ -177,47 +177,11 @@ public class RbRoomRefereeController {
 	@ApiOperation("获取统计数据")
 	@GetMapping("/get_statistical_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<JSONObject> getStatisticalInfo(
+	public BaseRsp<TaskStatisticsInfo> getStatisticalInfo(
 			@ApiParam(name = "resource_id", value = "红蓝对抗id", required = true) String resource_id) {
-		MissionEvaluationQuery missionEvaluationQuery = new MissionEvaluationQuery();
-		missionEvaluationQuery.setRoomId(resource_id);
-		missionEvaluationQuery.setPage(1);
-
-		IPage<MissionEvaluationContext> data = crTaskService
-				.getRbMissionEvaluationList(missionEvaluationQuery);
-
-		Integer successMissionsCount = 0;
-		Integer failMissionsCount = 0;
-		Integer rejectMissionsCount = 0;
-		Integer submitMissionCount = 0;
-		Integer waitMissionsCount = 0;
-
-		List<MissionEvaluationContext> taskSubmits = data.getRecords();
-		for (MissionEvaluationContext taskSubmit : taskSubmits) {
-			submitMissionCount++;
-
-			if (CrTaskSubmit.EvaluateStatus.SUCCESS.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
-				successMissionsCount++;
-			} else if (CrTaskSubmit.EvaluateStatus.FAIL.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
-				failMissionsCount++;
-			} else if (CrTaskSubmit.EvaluateStatus.REJECT.getCode()
-					.equals(taskSubmit.getEvaluateStatus())) {
-				rejectMissionsCount++;
-			} else {
-				waitMissionsCount++;
-			}
-		}
-
-		JSONObject result = new JSONObject();
-		result.put("success_missions_count", successMissionsCount);
-		result.put("fail_missions_count", failMissionsCount);
-		result.put("reject_missions_count", rejectMissionsCount);
-		result.put("submit_mission_count", submitMissionCount);
-		result.put("wait_missions_count", waitMissionsCount);
-
-		return new BaseRsp(result);
+		CrCommonValidator.validateId(resource_id);
+		TaskStatisticsInfo res = crTaskService.getTaskStatisticsInfoByRoomId(resource_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("提交任务的人工评估")

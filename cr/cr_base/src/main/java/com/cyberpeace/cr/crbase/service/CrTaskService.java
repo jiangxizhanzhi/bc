@@ -13,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 
 public interface CrTaskService {
 
@@ -335,4 +336,12 @@ public interface CrTaskService {
 	EvaluationMissionRsp getEvaluationById(String taskSubmitId);
 
 	TaskMatrix getTaskMatrixExcludeTimeCost(String resource_id,String userId);
+
+	/**
+	 * 获取任务统计数据信息通过房间id
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TaskStatisticsInfo}
+	 */
+	TaskStatisticsInfo getTaskStatisticsInfoByRoomId(String roomId);
 }

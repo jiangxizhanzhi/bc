@@ -41,6 +41,7 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.ImmutableMap;
@@ -671,6 +672,30 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>(): missionMapper.selectBatchIds(missionIds);
 		Map<String, Mission> missionMap = missions.stream().collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
 		return new TaskMatrix().init(list,missionMap);
+	}
+
+	@Override
+	public TaskStatisticsInfo getTaskStatisticsInfoByRoomId(String roomId) {
+		List<CrTaskSubmit> taskSubmitList = crTaskSubmitMapper.selectByRoomId(roomId);
+		long success = taskSubmitList.stream().filter(task -> task.getEvaluateStatus()
+				.equals(CrTaskSubmit.EvaluateStatus.SUCCESS.getCode())).count();
+		long fail = taskSubmitList.stream().filter(
+				task -> task.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.FAIL.getCode()))
+				.count();
+		long reject = taskSubmitList.stream().filter(task -> task.getEvaluateStatus()
+				.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())).count();
+		long wait = taskSubmitList.stream().filter(
+				task -> task.getEvaluateStatus().equals(CrTaskSubmit.EvaluateStatus.WAIT.getCode()))
+				.count();
+		int submitted = taskSubmitList.size();
+
+		TaskStatisticsInfo info = new TaskStatisticsInfo();
+		info.setSuccessMissionsCount((int) success);
+		info.setFailMissionsCount((int) fail);
+		info.setRejectMissionsCount((int) reject);
+		info.setWaitMissionsCount((int) wait);
+		info.setSubmitMissionCount(submitted);
+		return info;
 	}
 
 }

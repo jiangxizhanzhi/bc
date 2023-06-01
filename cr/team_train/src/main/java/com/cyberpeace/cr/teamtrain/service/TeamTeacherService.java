@@ -2,8 +2,9 @@ package com.cyberpeace.cr.teamtrain.service;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cs.service.context.IdNameType;
 
 public interface TeamTeacherService {
@@ -32,4 +33,12 @@ public interface TeamTeacherService {
 	 * @return {@code TimeLineData}
 	 */
 	TimeLineData getReplayTimeline(String roomId, String userId);
+
+	/**
+	 * 获取任务统计数据信息
+	 *
+	 * @param roomId 房间id
+	 * @return {@code TaskStatisticsInfo}
+	 */
+	TaskStatisticsInfo getTaskStatisticsInfo(String roomId);
 }

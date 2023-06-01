@@ -3,6 +3,8 @@ package com.cyberpeace.cr.redvsblue.controller;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -408,7 +410,9 @@ public class RbRoomController {
 
 		Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
 		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.RED.getCode());
+		redManuals = mergeStageByCreateTime(redManuals);
 		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.BLUE.getCode());
+		blueManuals = mergeStageByCreateTime(blueManuals);
 		res.put("red", redManuals);
 		res.put("blue", blueManuals);
 		return new BaseRsp<>(res);
@@ -607,5 +611,24 @@ public class RbRoomController {
 		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
 		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
 		return new BaseRsp<>(trainReport);
+	}
+
+	private List<TrainTaskReleaseInfoRsp> mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
+		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>(1);
+
+		List<MissionReleaseStageInfo> allStages = new ArrayList<>();
+		manuals.stream().filter(item -> CollectionUtils.isNotEmpty(item.getMissionStages()))
+				.forEach(item -> allStages.addAll(item.getMissionStages()));
+		if(CollectionUtils.isEmpty(allStages)) {
+			return res;
+		}
+		List<MissionReleaseStageInfo> sortedStages = allStages.stream()
+				.sorted(Comparator.comparing(item -> item.getMissionInfos().get(0).getCreateTime()))
+				.collect(Collectors.toList());
+
+		TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
+		taskReleaseInfoRsp.setMissionStages(sortedStages);
+		res.add(taskReleaseInfoRsp);
+		return res;
 	}
 }

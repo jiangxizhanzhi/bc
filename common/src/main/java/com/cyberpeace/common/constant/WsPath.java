@@ -58,6 +58,7 @@ public class WsPath {
 		cache.add(CLASSROOM_HELP);
 		cache.add(ROOM_SCENE_FIFTEEN_MIN_TIPS);
 		cache.add(NOTICE);
+		cache.add(EXERCISE_PAPER);
 	}
 
 	public static boolean validPath(String path) {

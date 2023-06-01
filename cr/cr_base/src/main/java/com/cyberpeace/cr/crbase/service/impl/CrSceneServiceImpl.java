@@ -10,12 +10,16 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.scene.AssetProperty;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.model.ws.WebSocketMessageContext;
+import com.cyberpeace.common.model.ws.WsMessageIdentifier;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.PageUtil;
@@ -25,10 +29,12 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
+import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateWsBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
@@ -63,6 +69,9 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private MyWebSocketHandler webSocketHandler;
 
 	@Override
 	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
@@ -230,6 +239,29 @@ public class CrSceneServiceImpl implements CrSceneService {
 			}
 		}
 		return CrCommonUtil.getOsListFromAssets(allAssets);
+	}
+
+	@Override
+	public void sendAssetUpdateSceneWs(String businessId) {
+		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.ASSET_UPDATED);
+		sendWsData(bo, businessId);
+	}
+
+	/**
+	 * 发送ws数据
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 */
+	private <T> void sendWsData(T data, String businessId) {
+		MissionWsIdentifier identifier = new MissionWsIdentifier();
+		identifier.setBusinessId(businessId);
+		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
+		identifier.setPath(WsPath.CR_SCENE);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+		webSocketHandler.pushMessage(messageContext, true);
 	}
 
 	/**启动流量前校验流量任务状态*/

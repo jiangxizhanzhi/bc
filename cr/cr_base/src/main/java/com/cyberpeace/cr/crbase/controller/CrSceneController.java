@@ -82,7 +82,8 @@ public class CrSceneController {
 				localSceneService.updateScene(localScene, req.getUpdateScene());
 			}
 		});
-
+		// 发送ws提示前端刷新场景数据
+		crSceneService.sendAssetUpdateSceneWs(localScene.getBusinessInstanceId());
 		return new BaseRsp<>();
 	}
 

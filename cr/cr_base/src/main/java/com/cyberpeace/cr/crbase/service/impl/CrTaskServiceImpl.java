@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,7 @@ import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.evaluation.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
@@ -569,6 +569,14 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		sendWsData(message, businessId);
 	}
 
+	/**
+	 * 发送ws数据
+	 * 多用于推送更新消息
+	 * 包括任务下发、场景暂停
+	 *
+	 * @param data       数据
+	 * @param businessId 业务标识
+	 */
 	private <T> void sendWsData(T data, String businessId) {
 		MissionWsIdentifier identifier = new MissionWsIdentifier();
 		identifier.setBusinessId(businessId);

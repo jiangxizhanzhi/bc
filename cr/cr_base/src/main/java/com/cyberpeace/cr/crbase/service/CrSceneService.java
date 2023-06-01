@@ -103,4 +103,11 @@ public interface CrSceneService {
 	 * @return {@code List<IdNameType>}
 	 */
 	List<IdNameType> getOsNames(String roomId);
+
+	/**
+	 * 发送资产更新场景ws
+	 *
+	 * @param businessId 业务标识
+	 */
+	void sendAssetUpdateSceneWs(String businessId);
 }

@@ -1,7 +1,8 @@
 package com.cyberpeace.cr.crbase.constant;
 
 /**
- * 任务相关ws推送code
+ * ws推送code
+ * 不限于任务相关
  */
 public interface MissionWsCode {
 
@@ -14,4 +15,9 @@ public interface MissionWsCode {
 	Integer NOTICE_Code = 4;
 
 	Integer EXERCISE_PAPER_CODE = 5;
+
+	/**
+	 * 场景更新
+	 */
+	Integer SCENE_UPDATED = 6;
 }

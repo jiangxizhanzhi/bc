@@ -220,23 +220,10 @@ public class PersonController {
 	@GetMapping("/mistake")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
 	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageMistakeReq pageReq) {
-		Page page = pageReq.toPageParam();
-		List<OrderItem> orders = Lists.newArrayList();
-		if(pageReq.getSortByIncorrect() != 0) {
-			OrderItem item = new OrderItem("incorrect", 1 == pageReq.getSortByIncorrect() ? true : false);
-			orders.add(item);
-		}
-		if(pageReq.getSortByCorrect() != 0) {
-			OrderItem item = new OrderItem("correct", 1 == pageReq.getSortByCorrect() ? true : false);
-			orders.add(item);
-		}
 		if (StringUtils.isBlank(pageReq.getSort())) {
-			OrderItem item = new OrderItem("update_time", false);
-			orders.add(item);
+			pageReq.setSort("-update_time");
 		}
-
-		page.setOrders(orders);
-
+		Page page = pageReq.toPageParam();
 
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
 		ListRsp<PersonalMistakeRes> listResult = PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size());

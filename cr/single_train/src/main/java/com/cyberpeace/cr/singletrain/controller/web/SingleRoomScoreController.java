@@ -154,7 +154,7 @@ public class SingleRoomScoreController {
 		String destHtmlPath = destHtmlPathObj.toString();
 		try {
 			// 生成html
-			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.INDIVIDUAL, destHtmlPath);
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.SINGLE, destHtmlPath);
 
 			// 在同目录下生成pdf
 			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))

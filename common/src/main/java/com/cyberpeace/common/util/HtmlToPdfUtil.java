@@ -38,6 +38,7 @@ public class HtmlToPdfUtil {
 		ensureDir(file);
 
 		StringBuilder command = new StringBuilder(TOOL);
+		command.append(" --enable-local-file-access");
 		command.append(" ");
 		command.append(htmlFilePath);
 		command.append(" ");

@@ -111,8 +111,8 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 	@Override
 	public String getTimeCost(String roomId) {
 		RbTimeManagement timeManagement = getByRoomId(roomId);
-		if (timeManagement==null) {
-			return "";
+		if (timeManagement == null) {
+			return TimeUtil.duration2String(0L);
 		}
 		if (timeManagement.isStopped()) {
 			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(),
@@ -121,5 +121,4 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(), new Date());
 		}
 	}
-
 }

@@ -1,13 +1,14 @@
 package com.cyberpeace.common.util;
 
-import com.cyberpeace.common.model.CommonContext;
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.cyberpeace.common.model.CommonContext;
 
 public class TimeUtil {
 
@@ -545,6 +546,16 @@ public class TimeUtil {
 	 */
 	public static String getTimeInterval(Date start, Date end) {
 		long sec = getIntervalSeconds(start, end);
+		return duration2String(sec);
+	}
+
+	/**
+	 * 时间间隔（秒单位）格式化为字符串
+	 *
+	 * @param sec 证券交易委员会
+	 * @return {@code String}
+	 */
+	public static String duration2String(long sec) {
 		long min = sec / 60;
 		sec = sec % 60;
 		long hour = min / 60;

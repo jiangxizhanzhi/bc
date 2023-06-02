@@ -312,9 +312,9 @@ public class TeamTrainRoomController {
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
-		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
-		String teamTemplateName = businessTemplateMapper
-				.selectById(teamTemplate.getBusinessTemplateId()).getName();
+//		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
+//		String teamTemplateName = businessTemplateMapper
+//				.selectById(teamTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE,

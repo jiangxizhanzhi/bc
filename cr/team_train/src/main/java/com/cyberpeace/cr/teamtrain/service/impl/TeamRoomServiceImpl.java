@@ -33,19 +33,21 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
-import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
-import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -110,7 +112,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private CrCommonService crCommonService;
 
 	@Autowired
-	private CrReplayService crReplayService;
+	private CrTimelineService crTimelineService;
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -430,53 +432,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		TimeLineData timeLineData = new TimeLineData();
 		setTime(timeLineData, roomId);
 
-		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
+		List<TimeLineEvent> timeLineEventList = crTimelineService.getReplayEvents(roomId,
 				UserInfoContext.getUserContext().getUserId());
-		// get dynamic missions
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
-				UserInfoContext.getUserContext().getUserId());
-		List<String> dynamicMissionIds = CrCommonUtil
-				.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme());
-
-		for (TaskContext task : taskList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-
-			Date lastSubmitTime = task.getLastSubmitTime();
-			// 进返回操作过的任务
-			if (null != lastSubmitTime) {
-
-				timeLineEvent.setTime(lastSubmitTime);
-				if (null != task.getMission()) {
-					timeLineEvent.setTitle(task.getMission().getTitle());
-				}
-				timeLineEvent.setStatus(task.getStatus());
-				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
-				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
-				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
-				timeLineEvent.setEventType(TimeLineEvent.EventType.MISSION.getCode());
-
-				timeLineEventList.add(timeLineEvent);
-			}
-		}
-
-		UserInfo userInfo = UserInfoContext.getUserContext();
-		//
-		List<CrMark> crMarkList = crCommonService.getMarkByRoomIdAndUserId(roomId,
-				userInfo.getUserId());
-
-		// 增加标记事件
-		for (CrMark mark : crMarkList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			timeLineEvent.setTitle(mark.getName());
-			timeLineEvent.setUserName(userInfo.getName());
-			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			timeLineEvent.setTime(mark.getCreateTime());
-			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
-			timeLineEvent.setAttachments(
-					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
-			timeLineEventList.add(timeLineEvent);
-		}
 
 		timeLineData.setData(timeLineEventList);
 		return timeLineData;
@@ -485,61 +442,10 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public TimeLineData getTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
+		// 设置开始时间、结束时间
 		setTime(timeLineData, roomId);
-
-		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-
-		List<Integer> actionCodes = Lists.newArrayList();
-		actionCodes.add(CrTaskLog.ActionCode.RELEASE.getCode());
-		List<CrTaskLog> crTaskLogList = crTaskLogMapper.selectReleaseByRoomIdAndActionCodes(roomId,
-				actionCodes);
-		List<String> userIds = crTaskLogList.stream()
-				.filter(a -> StringUtils.isNotBlank(a.getUserId())).map(a -> a.getUserId())
-				.collect(Collectors.toList());
-		// 获取全部标记
-		List<CrMark> crMarkList = crCommonService.getMarkByRoomId(roomId);
-		userIds.addAll(crMarkList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
-		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-		// get missions
-		List<String> missionIds = crTaskLogList.stream().map(CrTaskLog::getMissionId)
-				.collect(Collectors.toList());
-		Map<String, Mission> missionMap = missionService.getMissionMapByIds(missionIds);
-
-		for (CrTaskLog crTaskLog : crTaskLogList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			UserInfo userInfo = userInfoMap.get(crTaskLog.getUserId());
-			if (null == userInfo) {
-				continue;
-			}
-			timeLineEvent.setResourceId(roomId);
-			timeLineEvent.setTime(crTaskLog.getCreateTime());
-			if (missionMap.containsKey(crTaskLog.getMissionId())) {
-				timeLineEvent.setTitle(missionMap.get(crTaskLog.getMissionId()).getTitle());
-			}
-			timeLineEvent.setUserName(userInfo.getUserName());
-			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			timeLineEvent.setType(TimeLineEvent.EventType.MISSION.getCode());
-			timeLineEvent.setEventType(TimeLineEvent.EventType.MISSION.getCode());
-			timeLineEventList.add(timeLineEvent);
-		}
-
-		// 增加标记事件
-		for (CrMark mark : crMarkList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			UserInfo userInfo = userInfoMap.get(mark.getUserId());
-			if (null == userInfo) {
-				continue;
-			}
-			timeLineEvent.setTitle(mark.getName());
-			timeLineEvent.setUserName(userInfo.getName());
-			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			timeLineEvent.setTime(mark.getCreateTime());
-			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
-			timeLineEvent.setAttachments(
-					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
-			timeLineEventList.add(timeLineEvent);
-		}
-
+		// 获取事件列表
+		List<TimeLineEvent> timeLineEventList = crTimelineService.getTimelineEventsByRoomId(roomId);
 		timeLineData.setUserTimeLineConfig(timeLineEventList);
 		return timeLineData;
 	}
@@ -730,7 +636,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		setTime(timeLineData, roomId);
 		// 传入用户id，则展示事件，否则只提供开始时间、结束时间
 		if (StringUtils.isNotBlank(userId)) {
-			List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+			List<TimeLineEvent> eventList = crTimelineService.getReplayEvents(roomId, userId);
 			timeLineData.setEvents(eventList);
 		}
 		return timeLineData;

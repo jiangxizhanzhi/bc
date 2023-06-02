@@ -389,6 +389,7 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getMissionTimeline(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
 		TimeLineData data = rbRoomService.getMissionTimeline(resource_id);
 		return new BaseRsp<>(data);
 	}

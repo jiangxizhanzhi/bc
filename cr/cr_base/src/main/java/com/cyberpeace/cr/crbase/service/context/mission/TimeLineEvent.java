@@ -30,16 +30,16 @@ public class TimeLineEvent {
 	@ApiModelProperty(value = "头像地址")
 	private String avatarUrl;
 
-	@ApiModelProperty(value = "角色组")
+	@ApiModelProperty(value = "角色组，2：团队学员，4：红方，5：蓝方")
 	private Integer roleGroup;
 
-	@ApiModelProperty(value = "类型， 1：任务，2：流量 || 1:未开始，2：进行中，3：已完成")
+	@ApiModelProperty(value = "类型, || 1:未开始，2：进行中，3：已完成")
 	private Integer type;
 
 	@ApiModelProperty(value = "事件类型; 1：任务，2：流量，3：标记")
 	private Integer eventType;
 
-	@ApiModelProperty(value = "任务事件类型， 0：待评估，1：成功，2:失败")
+	@ApiModelProperty(value = "任务事件状态， 0：待评估，1：成功，2:失败")
 	private Integer status;
 
 	@ApiModelProperty(value = "任务是否动态新增")

@@ -394,7 +394,7 @@ public class TeamTrainScoreController {
 	}
 
 	private List<StageExport>
-	getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
+			getStageRsps(List<MissionSchemeObject<TrainingRecordMissionRsp>> missionSchemeList) {
 		List<StageExport> stageExports = Lists.newArrayList();
 
 		for (MissionSchemeObject<TrainingRecordMissionRsp> missionSchemeObject : missionSchemeList) {

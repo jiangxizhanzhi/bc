@@ -36,21 +36,19 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mark.EvidenceBo;
-import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
+import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
+import com.cyberpeace.cr.crbase.service.context.ColorMission;
+import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
+import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
@@ -64,7 +62,6 @@ import com.cyberpeace.cr.redvsblue.service.context.RoomRole;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -106,7 +103,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private CrReplayService crReplayService;
+	private CrTimelineService crTimelineService;
 
 	@Autowired
 	private CrTaskSubmitMapper crTaskSubmitMapper;
@@ -648,7 +645,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// 传入用户id，则展示事件，否则只提供开始时间、结束时间
 		if (StringUtils.isNotBlank(userId)) {
 			// get events
-			List<TimeLineEvent> eventList = crReplayService.getReplayEvents(roomId, userId);
+			List<TimeLineEvent> eventList = crTimelineService.getReplayEvents(roomId, userId);
 			timeLineData.setEvents(eventList);
 		}
 		return timeLineData;
@@ -657,57 +654,11 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public TimeLineData getStudentsTimeLine(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
+		// set start time , end time
 		setTime(timeLineData, roomId);
-
-		List<TimeLineEvent> timeLineEventList = Lists.newArrayList();
-		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId,
+		// get event list
+		List<TimeLineEvent> timeLineEventList = crTimelineService.getReplayEvents(roomId,
 				UserInfoContext.getUserContext().getUserId());
-		// get dynamic missions
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId,
-				UserInfoContext.getUserContext().getUserId());
-		List<String> dynamicMissionIds = CrCommonUtil
-				.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme());
-		for (TaskContext task : taskList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-
-			Date lastSubmitTime = task.getLastSubmitTime();
-			// 进返回操作过的任务
-			if (null != lastSubmitTime) {
-
-				timeLineEvent.setTime(lastSubmitTime);
-				if (null != task.getMission()) {
-					timeLineEvent.setTitle(task.getMission().getTitle());
-				}
-				timeLineEvent.setUserName(UserInfoContext.getUserContext().getName());
-				timeLineEvent.setAvatarUrl(UserInfoContext.getUserContext().getAvatarUrl());
-				timeLineEvent.setStatus(task.getStatus());
-				timeLineEvent.setRoleGroup(role.getRoleGroup());
-				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(task.getMissionId()));
-
-				timeLineEventList.add(timeLineEvent);
-			}
-		}
-
-		UserInfo userInfo = UserInfoContext.getUserContext();
-		//
-		List<CrMark> crMarkList = crCommonService.getMarkByRoomIdAndUserId(roomId,
-				userInfo.getUserId());
-
-		// 增加标记事件
-		for (CrMark mark : crMarkList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			timeLineEvent.setTitle(mark.getName());
-			if (null != userInfo) {
-				timeLineEvent.setUserName(userInfo.getName());
-				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			}
-			timeLineEvent.setTime(mark.getCreateTime());
-			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
-			timeLineEvent.setAttachments(
-					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
-			timeLineEventList.add(timeLineEvent);
-		}
-
 		timeLineData.setEvents(timeLineEventList);
 		return timeLineData;
 	}
@@ -773,90 +724,8 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	@Override
 	public TimeLineData getMissionTimeline(String roomId) {
 		TimeLineData timeLineData = new TimeLineData();
-
-		List<TimeLineEvent> timeLineEventList = new ArrayList<>();
-		List<String> userList = Lists.newArrayList();
-
-		// 构造角色分组map
-		RoleQuery roleQuery = new RoleQuery();
-		roleQuery.setRoomId(roomId);
-
-		List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-
-		// collect dynamic missions
-		List<String> dynamicMissionIds = Lists.newArrayList();
-		// collect user role group
-		Map<String, Integer> userRoleMap = Maps.newHashMap();
-		for (CrRole role : crRoles) {
-			if (role.isRvbStudent()) {
-				dynamicMissionIds.addAll(CrCommonUtil
-						.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme()));
-			}
-			for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
-				userRoleMap.put(userId, role.getRoleGroup());
-			}
-		}
-
-		Map<String, Integer> crRoleMap = crRoles.stream()
-				.collect(Collectors.toMap(CrRole::getResourceId, bo -> bo.getRoleGroup()));
-
-		List<TaskContext> crTasks = crTaskService.getTaskContextByRoomId(roomId);
-		List<CrMark> crMarkList = crCommonService.getMarkByRoomId(roomId);
-		List<String> userIds = crTasks.stream().filter(a -> StringUtils.isNotBlank(a.getUserId()))
-				.map(a -> a.getUserId()).collect(Collectors.toList());
-		userIds.addAll(crMarkList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
-		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
-
-		for (TaskContext crTask : crTasks) {
-
-			CrTaskSubmit crTaskSubmit = crTaskSubmitMapper
-					.selectLastByTaskId(crTask.getResourceId());
-
-			if (crTaskSubmit != null) {
-				UserInfo userInfo = userInfoMap.get(crTask.getUserId());
-				if (null == userInfo) {
-					continue;
-				}
-				TimeLineEvent timeLineEvent = new TimeLineEvent();
-				timeLineEvent.setRoleGroup(crRoleMap.get(crTask.getRoleId()));
-				timeLineEvent.setTitle(crTask.getMission().getTitle());
-				timeLineEvent.setUserName(userInfo.getName());
-				timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-				timeLineEvent.setIsDynamic(dynamicMissionIds.contains(crTask.getMissionId()));
-
-				if (crTask.isFinished()) {
-					timeLineEvent.setType(
-							MissionsStatistic.MissionStatisticalState.MISSION_COMPLETED.getCode());
-					timeLineEvent.setTime(crTaskSubmit.getEvaluateTime());
-				} else {
-					timeLineEvent.setType(
-							MissionsStatistic.MissionStatisticalState.MISSION_ONGOING.getCode());
-					timeLineEvent.setTime(crTask.getLastSubmitTime());
-				}
-				timeLineEvent.setStatus(crTask.getStatus());
-				timeLineEventList.add(timeLineEvent);
-			}
-		}
-
-		// mark
-		for (CrMark mark : crMarkList) {
-			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			UserInfo userInfo = userInfoMap.get(mark.getUserId());
-			if (null == userInfo) {
-				continue;
-			}
-			timeLineEvent.setRoleGroup(userRoleMap.get(mark.getUserId()));
-			timeLineEvent.setTitle(mark.getName());
-			timeLineEvent.setUserName(userInfo.getName());
-			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
-			timeLineEvent.setTime(mark.getCreateTime());
-			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
-			timeLineEvent.setAttachments(
-					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
-
-			timeLineEventList.add(timeLineEvent);
-		}
-
+		setTime(timeLineData, roomId);
+		List<TimeLineEvent> timeLineEventList = crTimelineService.getTimelineEventsByRoomId(roomId);
 		timeLineData.setData(timeLineEventList);
 		return timeLineData;
 	}

@@ -21,12 +21,13 @@ import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class CrReplayServiceImpl implements CrReplayService {
+public class CrTimelineServiceImpl implements CrTimelineService {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
@@ -103,5 +104,88 @@ public class CrReplayServiceImpl implements CrReplayService {
 		}
 
 		return eventList;
+	}
+
+	@Override
+	public List<TimeLineEvent> getTimelineEventsByRoomId(String roomId) {
+		List<TimeLineEvent> res = Lists.newArrayList();
+		// get tasks
+		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
+		// get marks
+		List<CrMark> markList = crCommonService.getMarkByRoomId(roomId);
+		// get user info
+		List<String> userIds = taskList.stream().map(CrTask::getUserId)
+				.collect(Collectors.toList());
+		userIds.addAll(markList.stream().map(CrMark::getUserId).collect(Collectors.toList()));
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+		if (userInfoMap.isEmpty()) {
+			return res;
+		}
+		// get role groups
+		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
+		List<String> dynamicMissionIds = Lists.newArrayList();
+		// collect user role group
+		Map<String, Integer> roleGroupMap = Maps.newHashMap();
+		for (CrRole role : roleList) {
+			if (role.isRvbStudent() || role.isTeamStudent()) {
+				dynamicMissionIds.addAll(CrCommonUtil
+						.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme()));
+			}
+			// collect dynamic missions
+			roleGroupMap.put(role.getResourceId(), role.getRoleGroup());
+		}
+		// missions
+		List<String> missionIds = taskList.stream().map(CrTask::getMissionId)
+				.collect(Collectors.toList());
+		List<Mission> missions = missionService.getBaseMapper().selectBatchIds(missionIds);
+		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
+				mission -> mission);
+
+		// task events
+		for (CrTask crTask : taskList) {
+			// 仅返回操作过的任务
+			if (null == crTask.getLastSubmitTime()) {
+				continue;
+			}
+			UserInfo userInfo = userInfoMap.get(crTask.getUserId());
+			if (null == userInfo) {
+				continue;
+			}
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+			timeLineEvent.setRoleGroup(roleGroupMap.get(crTask.getRoleId()));
+			Mission mission = missionMap.get(crTask.getMissionId());
+			if (null != mission) {
+				timeLineEvent.setTitle(mission.getTitle());
+			}
+			timeLineEvent.setTime(crTask.getLastSubmitTime());
+			timeLineEvent.setUserName(userInfo.getName());
+			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			timeLineEvent.setIsDynamic(dynamicMissionIds.contains(crTask.getMissionId()));
+			timeLineEvent.setEventType(TimeLineEvent.EventType.MISSION.getCode());
+
+			timeLineEvent.setStatus(crTask.getStatus());
+			res.add(timeLineEvent);
+		}
+
+		// mark
+		for (CrMark mark : markList) {
+			TimeLineEvent timeLineEvent = new TimeLineEvent();
+			UserInfo userInfo = userInfoMap.get(mark.getUserId());
+			if (null == userInfo) {
+				continue;
+			}
+			timeLineEvent.setRoleGroup(roleGroupMap.get(mark.getUserId()));
+			timeLineEvent.setTitle(mark.getName());
+			timeLineEvent.setUserName(userInfo.getName());
+			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());
+			timeLineEvent.setTime(mark.getCreateTime());
+			timeLineEvent.setEventType(TimeLineEvent.EventType.MARK.getCode());
+			timeLineEvent.setAttachments(
+					JsonUtil.toJsonObjectArray(mark.getEvidence(), EvidenceBo.class));
+
+			res.add(timeLineEvent);
+		}
+
+		return res;
 	}
 }

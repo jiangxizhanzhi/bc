@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.person.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -12,6 +13,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.ojbase.dao.entity.ResourceCollection;
+import com.cyberpeace.oj.person.controller.req.PageMistakeReq;
 import com.cyberpeace.oj.person.controller.req.PageNoteReq;
 import com.cyberpeace.oj.person.dao.entity.*;
 import com.cyberpeace.oj.person.service.PersonCenterService;
@@ -22,6 +24,7 @@ import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
 import com.cyberpeace.oj.practice.service.bo.WebTheoryBo;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -216,13 +219,29 @@ public class PersonController {
 	@ApiOperation("查看理论题错题页面")
 	@GetMapping("/mistake")
 	@RequiresPermissions(MenuConstant.WEB_PERSON_CENTER)
-	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageReqBase pageReq) {
-		if (StringUtils.isNotBlank(pageReq.getSort())) {
-			pageReq.setSort("-update_time");
-		}
+	public BaseRsp<ListRsp<PersonalMistakeRes>> getPracticeMistake(PageMistakeReq pageReq) {
 		Page page = pageReq.toPageParam();
+		List<OrderItem> orders = Lists.newArrayList();
+		if(pageReq.getSortByIncorrect() != 0) {
+			OrderItem item = new OrderItem("incorrect", 1 == pageReq.getSortByIncorrect() ? true : false);
+			orders.add(item);
+		}
+		if(pageReq.getSortByCorrect() != 0) {
+			OrderItem item = new OrderItem("correct", 1 == pageReq.getSortByCorrect() ? true : false);
+			orders.add(item);
+		}
+		if (StringUtils.isNotBlank(pageReq.getSort())) {
+			OrderItem item = new OrderItem("update_time", false);
+			orders.add(item);
+		}
+
+		page.setOrders(orders);
+
+
 		List<PersonalMistakeRes> personalMistakeResList = practiceMistakeService.getPracticeMistake();
-		return new BaseRsp<>(PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size()));
+		ListRsp<PersonalMistakeRes> listResult = PageUtil.getListResult(personalMistakeResList, page, personalMistakeResList.size());
+
+		return new BaseRsp<>(listResult);
 	}
 
 	@ApiOperation("批量移除错题")

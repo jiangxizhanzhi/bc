@@ -34,6 +34,10 @@ public class TrainReportContext {
 
     @ApiModelProperty("任务分类：key 名称 value个数")
     private Map<String,Integer>  kindMap;
+    @ApiModelProperty("红方任务分类：key 名称 value个数")
+    private Map<String,Integer>  redMap;
+    @ApiModelProperty("蓝方任务分类：key 名称 value个数")
+    private Map<String,Integer>  blueMap;
 
     @ApiModelProperty("角色信息")
     private List<UserRole>  userRoles;

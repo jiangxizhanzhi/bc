@@ -253,7 +253,12 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		TrainReportContext trainReportContext = new TrainReportContext();
 		trainReportContext.initTimeList(scoreTrendReq);
 		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
+		//获取用户id
 		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		List<String> redUserIds = crRoles.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getRoleGroup())).map(CrRole::getUserIdList)
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		List<String> blueUserIds = crRoles.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getRoleGroup())).map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
 		Map<String, CrRole> userIdRoleMap = crRoles.stream()
 				.map(crRole -> crRole.getUserIdList().stream().map(b -> new UserIdRole(b, crRole))
@@ -266,6 +271,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		Map<String, CrScore> scoreMap = crScores.stream()
 				.collect(Collectors.toMap(CrScore::getUserId, Function.identity(), (a, b) -> a));
 
+		//查询任务数据
 		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
 		Map<String, List<CrTask>> taskMap = taskList.stream()
 				.collect(Collectors.groupingBy(CrTask::getUserId));
@@ -275,20 +281,13 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		Map<String, Mission> missionMap = missions.stream()
 				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
 
-		Map<String, List<Mission>> categoryMap = missions.stream()
-				.collect(Collectors.groupingBy(Mission::getCategoryId));
-		List<CrConstantsConfig> configs = crConstantsService
-				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
-		Map<String, CrConstantsConfig> configMap = configs.stream()
-				.collect(Collectors.toMap(CrConstantsConfig::getResourceId, Function.identity()));
 
 		List<StudentScoreTrend> scoreTrends = new ArrayList<>();
 		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
-		Map<String, Integer> kindMap = new HashMap<>();
 		List<UserData> userDataList = crRoleService.getUserDatas(userIds);
 		List<UserRole>  userRoles = new ArrayList<>();
 		for (UserData userData : userDataList) {
-			//构建趋势
+			//得分趋势
 			List<CrTask> userTaskList = taskMap.getOrDefault(userData.getResourceId(),
 					new ArrayList<>());
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
@@ -304,6 +303,32 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			userRole.setRoleName(userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getName());
 			userRoles.add(userRole);
 		}
+
+		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,Comparator.nullsLast(Integer::compareTo)));
+		trainReportContext.initScoreTrends(scoreTrends);
+		trainReportContext.setGetScoreRsps(getScoreRsps);
+		//任务分类图
+		trainReportContext.setKindMap(dealCateMap(taskList,userIds));
+		trainReportContext.setRedMap(dealCateMap(taskList,redUserIds));
+		trainReportContext.setBlueMap(dealCateMap(taskList,blueUserIds));
+		trainReportContext.setUserRoles(userRoles);
+		return trainReportContext;
+	}
+
+	public Map<String,Integer> dealCateMap(List<CrTask> taskList,List<String> userIds) {
+		Map<String, Integer> kindMap = new HashMap<>();
+
+
+		Set<String> missionIds = taskList.stream().filter(a->userIds.contains(a.getUserId())).map(CrTask::getMissionId)
+				.collect(Collectors.toSet());
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>() : missionService.listByIds(missionIds);
+
+		Map<String, List<Mission>> categoryMap = missions.stream()
+				.collect(Collectors.groupingBy(Mission::getCategoryId));
+		List<CrConstantsConfig> configs = crConstantsService
+				.getByType(CrConstantsConfig.ConstantsType.MISSION_CATEGORY.getCode());
+		Map<String, CrConstantsConfig> configMap = configs.stream()
+				.collect(Collectors.toMap(CrConstantsConfig::getResourceId, Function.identity()));
 		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {
 			CrConstantsConfig config = configMap.get(entry.getKey());
 			if (config == null)
@@ -311,11 +336,6 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			int size = entry.getValue() == null ? 0 : entry.getValue().size();
 			kindMap.put(config.getCnName(), size);
 		}
-		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,Comparator.nullsLast(Integer::compareTo)));
-		trainReportContext.initScoreTrends(scoreTrends);
-		trainReportContext.setGetScoreRsps(getScoreRsps);
-		trainReportContext.setKindMap(kindMap);
-		trainReportContext.setUserRoles(userRoles);
-		return trainReportContext;
+		return kindMap;
 	}
 }

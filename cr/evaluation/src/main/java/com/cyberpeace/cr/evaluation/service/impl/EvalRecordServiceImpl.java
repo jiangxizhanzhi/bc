@@ -349,11 +349,17 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setProgress(EvalIndexRef.Progress.NOT_START.getCode());
 
             List<String> nextIds = Lists.newArrayList();
-            JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class).forEach(item -> {
+            String matrixData = evalAggregation.getMatrixData();
+            for(String item :JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class)){
                 if (variableIdsMap.containsKey(item)) {
-                    nextIds.add(variableIdsMap.get(item));
+                    String currentId = variableIdsMap.get(item);
+                    if (StringUtils.isNotBlank(matrixData) && matrixData.contains(item)) {
+                        matrixData = matrixData.replaceAll(item, currentId);
+                    }
+                    nextIds.add(currentId);
                 }
-            });
+            }
+            evalIndexRef.setMatrixData(matrixData);
             evalIndexRef.setNextIds(JsonUtil.toJsonString(nextIds));
 
             EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalAggregation.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
@@ -409,7 +415,15 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
 
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(nextIds, String.class).stream().map(evalIndexIdsMap::get).collect(Collectors.toList())));
-
+            List<String> nextIdLists = JsonUtil.toJsonObjectArray(nextIds, String.class);
+            String matrixData = evalIndex.getMatrixData();
+            for(String nextId:nextIdLists){
+                String currentId = evalIndexIdsMap.get(nextId);
+                if (StringUtils.isNotBlank(matrixData)) {
+                    matrixData = matrixData.replaceAll(nextId, currentId);
+                }
+            }
+            evalIndexRef.setMatrixData(matrixData);
             indexRefs.add(evalIndexRef);
             evalIndexIdsMap.put(evalIndex.getResourceId(), evalIndexRef.getResourceId());
         });

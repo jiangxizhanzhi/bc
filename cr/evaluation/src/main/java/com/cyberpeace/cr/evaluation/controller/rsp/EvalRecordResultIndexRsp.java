@@ -35,4 +35,7 @@ public class EvalRecordResultIndexRsp implements Serializable {
 
     @JsonIgnore
     private String parentId;
+
+    @ApiModelProperty("算法是否为层次分析法")
+    private Integer mode;
 }

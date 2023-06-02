@@ -230,7 +230,7 @@ public class PersonController {
 			OrderItem item = new OrderItem("correct", 1 == pageReq.getSortByCorrect() ? true : false);
 			orders.add(item);
 		}
-		if (StringUtils.isNotBlank(pageReq.getSort())) {
+		if (StringUtils.isBlank(pageReq.getSort())) {
 			OrderItem item = new OrderItem("update_time", false);
 			orders.add(item);
 		}

@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.context.screen;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -11,11 +12,11 @@ public class ScreenRecordRsp {
 
     private String user_name;
 
-    private Date create_time;
+    private String create_time;
 
-    private Long recortime;
+    private BigDecimal recortime;
 
-    private Date end_time;
+    private String end_time;
 
     private Integer group;
 

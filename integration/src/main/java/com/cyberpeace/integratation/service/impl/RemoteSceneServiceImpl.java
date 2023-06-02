@@ -286,7 +286,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	@Override
 	public JSONObject screenrecord(String sceneId, String nodeId) {
 
-		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId;
+		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId+"&page=1&pageSize=999";
 		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
 	}
 

@@ -29,14 +29,14 @@ public class StudentScoreTrend {
 		this.scoreTrends = new ArrayList<>();
 		this.role = role;
 		Integer score = 0;
-		successList.sort(Comparator.comparing(CrTask::getLastSubmitTime));
+		successList.sort(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo)));
 		int j = 0;
 		for (int i = 1; i < timeList.size(); i++) {
 			Date date = timeList.get(i);
 			ScoreTrend scoreTrend = new ScoreTrend();
 			for (; j < successList.size(); j++) {
 				CrTask crTask = successList.get(j);
-				if (date.before(crTask.getLastSubmitTime())) break;
+				if (date==null||crTask.getLastSubmitTime()==null||date.before(crTask.getLastSubmitTime())) break;
 				score += crTask.getScore();
 			}
 			scoreTrend.setScore(score);

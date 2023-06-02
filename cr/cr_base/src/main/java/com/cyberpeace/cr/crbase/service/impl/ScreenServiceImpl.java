@@ -65,7 +65,7 @@ public class ScreenServiceImpl implements ScreenService {
             recordUserRole.setName(recordRsps.get(0).getUser_name());
             recordUserRole.setType(map.get(userId));
             recordUserRole.setScreenRecords(recordRsps);
-
+            resList.add(recordUserRole);
         }
         return resList;
     }

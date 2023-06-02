@@ -1,5 +1,6 @@
 package com.cyberpeace.cs.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Data;
@@ -13,6 +14,7 @@ public class SystemProperty implements Serializable {
 
 	private String name;
 
+	@TableField("`desc`")
 	private String desc;
 
 	private String content;

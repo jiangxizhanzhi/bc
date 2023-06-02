@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    
-    <link rel="stylesheet" type="text/css" href="./common.css" />
-    <link rel="stylesheet" type="text/css" href="./index.css" />
-    <style>
-      <#include "./common.css">
-      <#include "./index.css">
-    </style>
-    <script>
-      <#include "./js/echarts.min.js">
-      <#include "./js/flexible.js">
-    </script>
-    <script>
-      window.onload = function () {
-        // 训练得分图
-        var myChart = echarts.init(document.getElementById('score'));
-        var legendName = ['成功', '失败','未完成'];
-        var valueDatas = [5, 2,6];
-        option = {
-          color: [
-            '#36D94C',
-            '#FF6652',
-            '#F2A92A',
-          ],
-         
-          graphic: [
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+
+  <style>
+    <#include "./common.css">
+    <#include "./index.css">
+  </style>
+  <script>
+    <#include "./js/flexible.js">
+    <#include "./js/echarts.min.js">
+  </script>
+  <script>
+    window.onload = function () {
+      // 训练得分图
+      var myChart = echarts.init(document.getElementById('score'));
+      var legendName = ['成功', '失败','未完成'];
+      var valueDatas = [5, 2,6];
+      option = {
+        color: [
+          '#36D94C',
+          '#FF6652',
+          '#F2A92A',
+        ],
+
+        graphic: [
           {
             type: 'text',
             left: 'center',
@@ -52,18 +50,18 @@
             },
           },
         ],
-          series: [
-            {
-              name: 'Access From',
-              type: 'pie',
-              radius: ['43%', '56%'],
-              center: ['50%', '50%'],
-              avoidLabelOverlap: false,
-              itemStyle: {
-                borderColor: '#32405c',
-                borderWidth: 3
-              },
-              label: {
+        series: [
+          {
+            name: 'Access From',
+            type: 'pie',
+            radius: ['43%', '56%'],
+            center: ['50%', '50%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderColor: '#32405c',
+              borderWidth: 3
+            },
+            label: {
               formatter: '{b|{b}：}{c}\n{per|{d}%}',
               minMargin: 5,
               edgeDistance: 30,
@@ -83,7 +81,7 @@
               },
             },
             labelLine: {
-                length: 30,
+              length: 30,
               length2: 40,
               maxSurfaceAngle: 80,
             },
@@ -92,452 +90,452 @@
               const isLeft = params.labelRect.x < myChart.getWidth() / 2;
               const points = params.labelLinePoints;
               points[2][0] = isLeft
-                ? params.labelRect.x
-                : params.labelRect.x + params.labelRect.width;
+                      ? params.labelRect.x
+                      : params.labelRect.x + params.labelRect.width;
               return {
                 labelLinePoints: points,
               };
             },
-              data: [
-              ]
-            }
-          ]
-        }
-        for (let i = 0; i < legendName.length; i++) {
-          option.series[0].data.push({
-            value: valueDatas[i],
-            name: legendName[i]
-          })
-        }
-        option.series[0].data
-        console.log(option);
-        myChart.setOption(option)
-        console.log(myChart);
-  
-  
-        // 技能评分图
-        var myChart1 = echarts.init(document.getElementById('skillScore'));
-        option1 = {
-          legend: {
-            show: false
-          },
-          radar: {
-            // 标签的颜色
-            name: {
-              textStyle: {
-                color: '#C0CCE7',
-                fontFamily: 'PingFangSC-Regular,PingFang SC',
-              },
-            },
-            // shape: 'circle',
-            indicator: [
-              { name: 'Reconnaissance', max: 100 },
-              { name: 'Weaponization', max: 100 },
-              { name: 'Delivery ', max: 100 },
-              { name: 'Exploitation', max: 100 },
-              { name: 'Installation', max: 100 },
-              { name: 'Command control', max: 100 },
-              { name: 'Actions on objectives', max: 100 }
-            ],
-            // 雷达图大小
-            radius: '65%',
-            // 分割线
-            splitLine: {
-              lineStyle: {
-                width: 1,
-                color: [
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,0.05)',
-                  'rgba(255, 255, 255,1)',
-                ],
-              },
-            },
-            //轴线设置
-            axisLine: {
-              lineStyle: {
-                color: 'rgba(255, 255, 255,0.05)',
-              },
-            },
-            //分隔区域设置
-            splitArea: {
-              areaStyle: {
-                color: 'transparent',
-              },
-            },
-          },
-          series: [
-            {
-              name: 'Budget vs spending',
-              type: 'radar',
-              //标记图形的形状
-              symbol: 'none',
-              //区域颜色,透明度
-              areaStyle: {
-                color: 'rgba(68,138,255,0.1)',
-              },
-              //lineStyle 颜色要和区域颜色一样
-              lineStyle: {
-                color: '#0ACFF2',
-                width: 1,
-              },
-              data: [
-                {
-                  value: [10, 20, 30, 40, 50, 60],
-                }
-              ]
-            }
-          ]
-        }
-        myChart1.setOption(option1)
+            data: [
+            ]
+          }
+        ]
       }
-    </script>
-  </head>
-  <body>
-    <div class="page flex-col">
-      <div class="section_1 flex-col">
-        <span class="text_1">输油储油工艺的渗透实战训练记录</span>
-        <div class="box_16 flex-row">
-          <img
-            class="thumbnail_18"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
-          />
-          <span class="text_2">训练人员:&nbsp;${name}</span>
-          <img
-            class="icon_7"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPng4a89a29f2c9089dae93b82fd5ead9450415ca6c4f14ac2670c3dfc504f45a607.png"
-          />
-          <span class="text_3">训练得分:&nbsp;90</span>
-          <img
-            class="icon_8"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPng0bf19eecd375842f27972ce422c27a48fd2bb7c15e2724045bad501afd17179a.png"
-          />
-          <span class="text_4">训练时间:&nbsp;2023-01-10&nbsp;17:20:39</span>
-          <img
-            class="thumbnail_19"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPngb5e252b2f80375fabefc760cd9d45b623c525a1d894fada22f9e95bfb242f031.png"
-          />
-          <span class="text_5">训练时长:&nbsp;3&nbsp;小时</span>
-        </div>
-        <div class="box_2 flex-col"></div>
-        <div class="box_17 flex-row">
-          <img
-            class="icon_9"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPng79f783db593d06afae87d3c61d9ad376b0a706aa4d7b613fe3d617f86e61f7f5.png"
-          />
-          <span class="text_6">推荐时长：</span>
-          <span class="text_7">21天</span>
-          <img
-            class="icon_10"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPng559f21ffd5d58bc592aedf81d3ef01de896b1e67d4bd1af94032a5e950e1df39.png"
-          />
-          <span class="text_8">类别：</span>
-          <span class="text_9">渗透测试</span>
-          <img
-            class="icon_11"
-            referrerpolicy="no-referrer"
-            src="./img/SketchPng739eb6edac83ee84afd6b065b2178bed6e09822c4b78deaee35c0349ea3738eb.png"
-          />
-          <span class="text_10">难度：</span>
-          <span class="text_11">初级</span>
-        </div>
-        <div class="box_18 flex-row">
-          <span class="text_12">训练技能：</span>
-          <div class="tag_8_content">
-          <div class="tag_8 flex-col">
-            <span class="text_60">T1595-主动扫描</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_61">T1090-连接代理</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_62">T1110-暴力破解</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_63">T1570-工具横向转移</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_60">T1595-主动扫描</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_61">T1090-连接代理</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_62">T1110-暴力破解</span>
-          </div>
-          <div class="tag_8 flex-col">
-            <span class="text_63">T1570-工具横向转移</span>
-          </div>
-        </div>
-        </div>
-        <div class="box_19 flex-row">
-          <span class="text_17">前置技能：</span>
-          <div class="tag_12-content">
-            <div class="tag_12 flex-col">
-              <span class="text_64">发现系统服务</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_65">账户发现</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_66">创建账户</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_64">发现系统服务</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_65">账户发现</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_66">创建账户</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_64">发现系统服务</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_65">账户发现</span>
-            </div>
-            <div class="tag_12 flex-col">
-              <span class="text_66">创建账户</span>
-            </div>
-          </div>
-          
-          
-        </div>
-        <div class="text-wrapper_13 flex-row justify-between">
-          <span class="text_21">训练描述：</span>
-          <span class="text_22">
-            为进一步强化网络安全工作责任制，全面提升关键信息基础设施网络安全防护能力，近日某通信企业高薪诚聘我司安全团队开展网络安全指导工作，团队成员通过查验资料、网络安全漏洞检测、安全技术检查及现场咨询等多种形式，对各部门的互联网电子邮箱管理、计算机终端、应用系统、机房安全设施配备、网络边界安全防护及应急管理措施等情况进行了全面细致检查，针对存在的安全隐患，现场提出整改建议。本场景模拟此次安全指导任务，真实还原了企业内部某部门的网络环境，完美复现了企业内网环境中存在的真实漏洞
-          </span>
-        </div>
-        <div class="image-text_21 flex-row justify-between">
-          <div class="box_6 flex-col"></div>
-          <span class="text-group_1">训练统计</span>
-        </div>
-        <div class="chart_1 flex-col" >
-         <div id='score'></div>
-        </div>
-        <div class="image-text_22 flex-row justify-between">
-          <div class="box_9 flex-col"></div>
-          <span class="text-group_3">技能评分</span>
-        </div>
-        <div class="box_10 flex-col" >
-          <div id="skillScore"></div>
-        </div>
-        <div class="image-text_23 flex-row justify-between">
-          <div class="group_9 flex-col"></div>
-          <span class="text-group_23">Wakanda主机渗透</span>
-        </div>
-        <div class="text-wrapper_5 flex-col">
-          <span class="text_32">构建反弹Shell打印Flag</span>
-        </div>
-        <div class="box_11 flex-col">
-          <span class="text_33">
-            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
-          </span>
-          <div class="image-text_24 flex-row justify-between">
-            <img
-              class="thumbnail_20"
+      for (let i = 0; i < legendName.length; i++) {
+        option.series[0].data.push({
+          value: valueDatas[i],
+          name: legendName[i]
+        })
+      }
+      option.series[0].data
+      console.log(option);
+      myChart.setOption(option)
+      console.log(myChart);
+
+
+      // 技能评分图
+      var myChart1 = echarts.init(document.getElementById('skillScore'));
+      option1 = {
+        legend: {
+          show: false
+        },
+        radar: {
+          // 标签的颜色
+          name: {
+            textStyle: {
+              color: '#C0CCE7',
+              fontFamily: 'PingFangSC-Regular,PingFang SC',
+            },
+          },
+          // shape: 'circle',
+          indicator: [
+            { name: 'Reconnaissance', max: 100 },
+            { name: 'Weaponization', max: 100 },
+            { name: 'Delivery ', max: 100 },
+            { name: 'Exploitation', max: 100 },
+            { name: 'Installation', max: 100 },
+            { name: 'Command control', max: 100 },
+            { name: 'Actions on objectives', max: 100 }
+          ],
+          // 雷达图大小
+          radius: '65%',
+          // 分割线
+          splitLine: {
+            lineStyle: {
+              width: 1,
+              color: [
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,0.05)',
+                'rgba(255, 255, 255,1)',
+              ],
+            },
+          },
+          //轴线设置
+          axisLine: {
+            lineStyle: {
+              color: 'rgba(255, 255, 255,0.05)',
+            },
+          },
+          //分隔区域设置
+          splitArea: {
+            areaStyle: {
+              color: 'transparent',
+            },
+          },
+        },
+        series: [
+          {
+            name: 'Budget vs spending',
+            type: 'radar',
+            //标记图形的形状
+            symbol: 'none',
+            //区域颜色,透明度
+            areaStyle: {
+              color: 'rgba(68,138,255,0.1)',
+            },
+            //lineStyle 颜色要和区域颜色一样
+            lineStyle: {
+              color: '#0ACFF2',
+              width: 1,
+            },
+            data: [
+              {
+                value: [10, 20, 30, 40, 50, 60],
+              }
+            ]
+          }
+        ]
+      }
+      myChart1.setOption(option1)
+    }
+  </script>
+</head>
+<body>
+<div class="page flex-col">
+  <div class="section_1 flex-col">
+    <span class="text_1">输油储油工艺的渗透实战训练记录</span>
+    <div class="box_16 flex-row">
+      <img
+              class="thumbnail_18"
               referrerpolicy="no-referrer"
-              src="./img/f195f3501c954ca3914065a2bbf8537a_mergeImage.png"
-            />
-            <div class="text-group_24 flex-row">
-              <span class="text_34">A、net&nbsp;user</span>
-              <span class="text_35">A、net&nbsp;user</span>
-            </div>
-          </div>
-          <div class="image-text_25 flex-row justify-between">
-            <img
-              class="thumbnail_21"
+              src="img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
+      />
+      <span class="text_2">训练人员:&nbsp;${name}</span>
+      <img
+              class="icon_7"
               referrerpolicy="no-referrer"
-              src="./img/cc02b8dacda048dd8a3b9214f620d7fa_mergeImage.png"
-            />
-            <div class="text-group_25 flex-row">
-              <span class="text_36">B、whoisthis</span>
-              <span class="text_37">B、whoisthis</span>
-            </div>
-          </div>
-          <div class="image-text_26 flex-row justify-between">
-            <img
-              class="thumbnail_22"
+              src="img/SketchPng4a89a29f2c9089dae93b82fd5ead9450415ca6c4f14ac2670c3dfc504f45a607.png"
+      />
+      <span class="text_3">训练得分:&nbsp;90</span>
+      <img
+              class="icon_8"
               referrerpolicy="no-referrer"
-              src="./img/3f25d65dde1241969ef07bbae9c85382_mergeImage.png"
-            />
-            <div class="text-group_26 flex-row">
-              <span class="text_38">C、whoami</span>
-              <span class="text_39">C、whoami</span>
-            </div>
-          </div>
-          <div class="image-text_27 flex-row justify-between">
-            <img
-              class="thumbnail_23"
+              src="img/SketchPng0bf19eecd375842f27972ce422c27a48fd2bb7c15e2724045bad501afd17179a.png"
+      />
+      <span class="text_4">训练时间:&nbsp;2023-01-10&nbsp;17:20:39</span>
+      <img
+              class="thumbnail_19"
               referrerpolicy="no-referrer"
-              src="./img/fd085adc74f74e7393f4cf6ece43c80e_mergeImage.png"
-            />
-            <div class="text-group_27 flex-row">
-              <span class="text_40">D、wherearewe</span>
-              <span class="text_41">D、wherearewe</span>
-            </div>
-          </div>
-          <div class="group_5 flex-col"></div>
-          <div class="text-wrapper_17 flex-row">
-            <span class="text_42">正确答案：A</span>
-            <span class="text_43">你的答案：</span>
-            <span class="text_44">A</span>
-          </div>
+              src="img/SketchPngb5e252b2f80375fabefc760cd9d45b623c525a1d894fada22f9e95bfb242f031.png"
+      />
+      <span class="text_5">训练时长:&nbsp;3&nbsp;小时</span>
+    </div>
+    <div class="box_2 flex-col"></div>
+    <div class="box_17 flex-row">
+      <img
+              class="icon_9"
+              referrerpolicy="no-referrer"
+              src="img/SketchPng79f783db593d06afae87d3c61d9ad376b0a706aa4d7b613fe3d617f86e61f7f5.png"
+      />
+      <span class="text_6">推荐时长：</span>
+      <span class="text_7">21天</span>
+      <img
+              class="icon_10"
+              referrerpolicy="no-referrer"
+              src="img/SketchPng559f21ffd5d58bc592aedf81d3ef01de896b1e67d4bd1af94032a5e950e1df39.png"
+      />
+      <span class="text_8">类别：</span>
+      <span class="text_9">渗透测试</span>
+      <img
+              class="icon_11"
+              referrerpolicy="no-referrer"
+              src="img/SketchPng739eb6edac83ee84afd6b065b2178bed6e09822c4b78deaee35c0349ea3738eb.png"
+      />
+      <span class="text_10">难度：</span>
+      <span class="text_11">初级</span>
+    </div>
+    <div class="box_18 flex-row">
+      <span class="text_12">训练技能：</span>
+      <div class="tag_8_content">
+        <div class="tag_8 flex-col">
+          <span class="text_60">T1595-主动扫描</span>
         </div>
-        <div class="text-wrapper_7 flex-col">
-          <span class="text_45">构建反弹Shell打印Flag</span>
+        <div class="tag_8 flex-col">
+          <span class="text_61">T1090-连接代理</span>
         </div>
-        <div class="box_12 flex-col">
-          <span class="text_46">
-            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
-          </span>
-          <div class="image-text_28 flex-row justify-between">
-            <img
-              class="thumbnail_24"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
-            />
-            <span class="text-group_9">A、net&nbsp;user</span>
-          </div>
-          <div class="image-text_29 flex-row justify-between">
-            <img
-              class="thumbnail_25"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_10">B、whoisthis</span>
-          </div>
-          <div class="image-text_30 flex-row justify-between">
-            <img
-              class="thumbnail_26"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_11">C、whoami</span>
-          </div>
-          <div class="image-text_31 flex-row justify-between">
-            <img
-              class="thumbnail_27"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_12">D、wherearewe</span>
-          </div>
-          <div class="section_2 flex-col"></div>
-          <div class="text-wrapper_18 flex-row">
-            <span class="text_47">正确答案：A</span>
-            <span class="text_48">你的答案：</span>
-            <span class="text_49">B</span>
-          </div>
+        <div class="tag_8 flex-col">
+          <span class="text_62">T1110-暴力破解</span>
         </div>
-        <div class="text-wrapper_9 flex-col">
-          <span class="text_50">构建反弹Shell打印Flag</span>
+        <div class="tag_8 flex-col">
+          <span class="text_63">T1570-工具横向转移</span>
         </div>
-        <div class="box_13 flex-col">
-          <span class="text_51">
-            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
-          </span>
-          <div class="image-text_32 flex-row justify-between">
-            <img
-              class="thumbnail_28"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
-            />
-            <span class="text-group_13">A、net&nbsp;user</span>
-          </div>
-          <div class="image-text_33 flex-row justify-between">
-            <img
-              class="thumbnail_29"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_14">B、whoisthis</span>
-          </div>
-          <div class="image-text_34 flex-row justify-between">
-            <img
-              class="thumbnail_30"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_15">C、whoami</span>
-          </div>
-          <div class="image-text_35 flex-row justify-between">
-            <img
-              class="thumbnail_31"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_16">D、wherearewe</span>
-          </div>
-          <div class="section_3 flex-col"></div>
-          <div class="text-wrapper_19 flex-row">
-            <span class="text_52">正确答案：A</span>
-            <span class="text_53">你的答案：</span>
-            <span class="text_54">未作答</span>
-          </div>
+        <div class="tag_8 flex-col">
+          <span class="text_60">T1595-主动扫描</span>
         </div>
-        <div class="image-text_36 flex-row justify-between">
-          <div class="section_5 flex-col"></div>
-          <span class="text-group_28">Wakanda主机渗透</span>
+        <div class="tag_8 flex-col">
+          <span class="text_61">T1090-连接代理</span>
         </div>
-        <div class="text-wrapper_11 flex-col">
-          <span class="text_55">构建反弹Shell打印Flag</span>
+        <div class="tag_8 flex-col">
+          <span class="text_62">T1110-暴力破解</span>
         </div>
-        <div class="box_15 flex-col">
-          <span class="text_56">
-            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
-          </span>
-          <div class="image-text_37 flex-row justify-between">
-            <img
-              class="thumbnail_32"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
-            />
-            <span class="text-group_18">A、net&nbsp;user</span>
-          </div>
-          <div class="image-text_38 flex-row justify-between">
-            <img
-              class="thumbnail_33"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_19">B、whoisthis</span>
-          </div>
-          <div class="image-text_39 flex-row justify-between">
-            <img
-              class="thumbnail_34"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_20">C、whoami</span>
-          </div>
-          <div class="image-text_40 flex-row justify-between">
-            <img
-              class="thumbnail_35"
-              referrerpolicy="no-referrer"
-              src="./img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
-            />
-            <span class="text-group_21">D、wherearewe</span>
-          </div>
-          <div class="group_6 flex-col"></div>
-          <div class="text-wrapper_20 flex-row">
-            <span class="text_57">正确答案：A</span>
-            <span class="text_58">你的答案：</span>
-            <span class="text_59">A</span>
-          </div>
+        <div class="tag_8 flex-col">
+          <span class="text_63">T1570-工具横向转移</span>
         </div>
       </div>
     </div>
-  </body>
+    <div class="box_19 flex-row">
+      <span class="text_17">前置技能：</span>
+      <div class="tag_12-content">
+        <div class="tag_12 flex-col">
+          <span class="text_64">发现系统服务</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_65">账户发现</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_66">创建账户</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_64">发现系统服务</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_65">账户发现</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_66">创建账户</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_64">发现系统服务</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_65">账户发现</span>
+        </div>
+        <div class="tag_12 flex-col">
+          <span class="text_66">创建账户</span>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="text-wrapper_13 flex-row justify-between">
+      <span class="text_21">训练描述：</span>
+      <span class="text_22">
+            为进一步强化网络安全工作责任制，全面提升关键信息基础设施网络安全防护能力，近日某通信企业高薪诚聘我司安全团队开展网络安全指导工作，团队成员通过查验资料、网络安全漏洞检测、安全技术检查及现场咨询等多种形式，对各部门的互联网电子邮箱管理、计算机终端、应用系统、机房安全设施配备、网络边界安全防护及应急管理措施等情况进行了全面细致检查，针对存在的安全隐患，现场提出整改建议。本场景模拟此次安全指导任务，真实还原了企业内部某部门的网络环境，完美复现了企业内网环境中存在的真实漏洞
+          </span>
+    </div>
+    <div class="image-text_21 flex-row justify-between">
+      <div class="box_6 flex-col"></div>
+      <span class="text-group_1">训练统计</span>
+    </div>
+    <div class="chart_1 flex-col" >
+      <div id='score'></div>
+    </div>
+    <div class="image-text_22 flex-row justify-between">
+      <div class="box_9 flex-col"></div>
+      <span class="text-group_3">技能评分</span>
+    </div>
+    <div class="box_10 flex-col" >
+      <div id="skillScore"></div>
+    </div>
+    <div class="image-text_23 flex-row justify-between">
+      <div class="group_9 flex-col"></div>
+      <span class="text-group_23">Wakanda主机渗透</span>
+    </div>
+    <div class="text-wrapper_5 flex-col">
+      <span class="text_32">构建反弹Shell打印Flag</span>
+    </div>
+    <div class="box_11 flex-col">
+          <span class="text_33">
+            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
+          </span>
+      <div class="image-text_24 flex-row justify-between">
+        <img
+                class="thumbnail_20"
+                referrerpolicy="no-referrer"
+                src="img/f195f3501c954ca3914065a2bbf8537a_mergeImage.png"
+        />
+        <div class="text-group_24 flex-row">
+          <span class="text_34">A、net&nbsp;user</span>
+          <span class="text_35">A、net&nbsp;user</span>
+        </div>
+      </div>
+      <div class="image-text_25 flex-row justify-between">
+        <img
+                class="thumbnail_21"
+                referrerpolicy="no-referrer"
+                src="img/cc02b8dacda048dd8a3b9214f620d7fa_mergeImage.png"
+        />
+        <div class="text-group_25 flex-row">
+          <span class="text_36">B、whoisthis</span>
+          <span class="text_37">B、whoisthis</span>
+        </div>
+      </div>
+      <div class="image-text_26 flex-row justify-between">
+        <img
+                class="thumbnail_22"
+                referrerpolicy="no-referrer"
+                src="img/3f25d65dde1241969ef07bbae9c85382_mergeImage.png"
+        />
+        <div class="text-group_26 flex-row">
+          <span class="text_38">C、whoami</span>
+          <span class="text_39">C、whoami</span>
+        </div>
+      </div>
+      <div class="image-text_27 flex-row justify-between">
+        <img
+                class="thumbnail_23"
+                referrerpolicy="no-referrer"
+                src="img/fd085adc74f74e7393f4cf6ece43c80e_mergeImage.png"
+        />
+        <div class="text-group_27 flex-row">
+          <span class="text_40">D、wherearewe</span>
+          <span class="text_41">D、wherearewe</span>
+        </div>
+      </div>
+      <div class="group_5 flex-col"></div>
+      <div class="text-wrapper_17 flex-row">
+        <span class="text_42">正确答案：A</span>
+        <span class="text_43">你的答案：</span>
+        <span class="text_44">A</span>
+      </div>
+    </div>
+    <div class="text-wrapper_7 flex-col">
+      <span class="text_45">构建反弹Shell打印Flag</span>
+    </div>
+    <div class="box_12 flex-col">
+          <span class="text_46">
+            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
+          </span>
+      <div class="image-text_28 flex-row justify-between">
+        <img
+                class="thumbnail_24"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
+        />
+        <span class="text-group_9">A、net&nbsp;user</span>
+      </div>
+      <div class="image-text_29 flex-row justify-between">
+        <img
+                class="thumbnail_25"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_10">B、whoisthis</span>
+      </div>
+      <div class="image-text_30 flex-row justify-between">
+        <img
+                class="thumbnail_26"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_11">C、whoami</span>
+      </div>
+      <div class="image-text_31 flex-row justify-between">
+        <img
+                class="thumbnail_27"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_12">D、wherearewe</span>
+      </div>
+      <div class="section_2 flex-col"></div>
+      <div class="text-wrapper_18 flex-row">
+        <span class="text_47">正确答案：A</span>
+        <span class="text_48">你的答案：</span>
+        <span class="text_49">B</span>
+      </div>
+    </div>
+    <div class="text-wrapper_9 flex-col">
+      <span class="text_50">构建反弹Shell打印Flag</span>
+    </div>
+    <div class="box_13 flex-col">
+          <span class="text_51">
+            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
+          </span>
+      <div class="image-text_32 flex-row justify-between">
+        <img
+                class="thumbnail_28"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
+        />
+        <span class="text-group_13">A、net&nbsp;user</span>
+      </div>
+      <div class="image-text_33 flex-row justify-between">
+        <img
+                class="thumbnail_29"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_14">B、whoisthis</span>
+      </div>
+      <div class="image-text_34 flex-row justify-between">
+        <img
+                class="thumbnail_30"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_15">C、whoami</span>
+      </div>
+      <div class="image-text_35 flex-row justify-between">
+        <img
+                class="thumbnail_31"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_16">D、wherearewe</span>
+      </div>
+      <div class="section_3 flex-col"></div>
+      <div class="text-wrapper_19 flex-row">
+        <span class="text_52">正确答案：A</span>
+        <span class="text_53">你的答案：</span>
+        <span class="text_54">未作答</span>
+      </div>
+    </div>
+    <div class="image-text_36 flex-row justify-between">
+      <div class="section_5 flex-col"></div>
+      <span class="text-group_28">Wakanda主机渗透</span>
+    </div>
+    <div class="text-wrapper_11 flex-col">
+      <span class="text_55">构建反弹Shell打印Flag</span>
+    </div>
+    <div class="box_15 flex-col">
+          <span class="text_56">
+            你发现内网中另外一台主机开放的80端口，存在文件包含漏洞，利用文件包含漏洞读取源码，得到用户名和密码，在通过扫描主机端口，去尝试ssh登录到内网的这台主机。请选择该主机的登录密码是？
+          </span>
+      <div class="image-text_37 flex-row justify-between">
+        <img
+                class="thumbnail_32"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng4f4aea9ee092bf30880de7a34b1644870f68b219d0ada8ff7bb92fd08f51d296.png"
+        />
+        <span class="text-group_18">A、net&nbsp;user</span>
+      </div>
+      <div class="image-text_38 flex-row justify-between">
+        <img
+                class="thumbnail_33"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_19">B、whoisthis</span>
+      </div>
+      <div class="image-text_39 flex-row justify-between">
+        <img
+                class="thumbnail_34"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_20">C、whoami</span>
+      </div>
+      <div class="image-text_40 flex-row justify-between">
+        <img
+                class="thumbnail_35"
+                referrerpolicy="no-referrer"
+                src="img/SketchPng20e0782f33626c23a93b59abc6b8c66549b6a28d0c8a47670225296adebcb38a.png"
+        />
+        <span class="text-group_21">D、wherearewe</span>
+      </div>
+      <div class="group_6 flex-col"></div>
+      <div class="text-wrapper_20 flex-row">
+        <span class="text_57">正确答案：A</span>
+        <span class="text_58">你的答案：</span>
+        <span class="text_59">A</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
 </html>

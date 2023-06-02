@@ -37,6 +37,11 @@
             </foreach>
         </where>
     </select>
+    <select id="getLevelIdByName" resultType="java.lang.String">
+        select `resource_id`
+        from rtks_level
+        where name = #{levelName}
+    </select>
 
     <update id="changeLevelId">
         update rtks_level

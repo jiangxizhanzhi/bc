@@ -3,6 +3,7 @@ package com.cyberpeace.rtks.dao.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -29,4 +30,12 @@ public interface LevelMapper extends BaseMapper<Level> {
 	void clearAll();
 
 	void copyFromPreset();
+
+	/**
+	 * 根据level name获取level id
+	 *
+	 * @param levelName 层级名称
+	 * @return {@code String}
+	 */
+	String getLevelIdByName(@Param("levelName") String levelName);
 }

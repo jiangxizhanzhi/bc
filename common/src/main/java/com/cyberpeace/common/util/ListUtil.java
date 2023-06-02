@@ -152,6 +152,13 @@ public class ListUtil {
 
 	}
 
+	/**
+	 * 将l2的元素按l1的顺序排列，l2中存在但l1中不存在的元素放在末尾
+	 *
+	 * @param l1 l1
+	 * @param l2 l2
+	 * @return {@code List<T>}
+	 */
 	public static <T> List<T> mergeWithOldOrder(List<T> l1, List<T> l2) {
 		List<T> res = Lists.newArrayList();
 		Set<T> set = Sets.newHashSet(l2);

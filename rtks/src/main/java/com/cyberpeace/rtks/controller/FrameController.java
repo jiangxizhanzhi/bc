@@ -283,6 +283,8 @@ public class FrameController {
 				roleService.initDefaultFromPreset("knowledge_category");
 				roleService.initDefaultFromPreset("knowledge");
 				roleService.initDefaultFromPreset("course_related");
+				// 导入预置的role-skill关系
+				roleService.initDefaultFromPreset("role_skill_relation");
 			}
 		});
 

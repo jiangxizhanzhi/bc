@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.rtks.dao.mapper.RtksInitMapper">
+    <insert id="copyRole">
+        insert into init_rtks_role
+                (select * from rtks_role where rtks_role.resource_id = #{resourceId})
+    </insert>
+    <insert id="saveInitRole">
+        insert into init_rtks_role (`resource_id`, `name`, `description`, `create_time`, `update_time`, `level_id`,
+                                    `category`, `task_ids`, `knowledge_id_weights`, `knowledge_ids`, `skill_id_weights`,
+                                    `skill_ids`, `ability_ids`, `skill_courses`, `knowledge_courses`,
+                                    `knowledge_weight`, `skill_missions`)
+        values (#{role.resourceId}, #{role.name}, #{role.description}, now(), now(), #{role.levelId}, '',
+                #{role.taskIds}, #{role.knowledgeIdWeights}, #{role.knowledgeIds}, #{role.skillIdWeight},
+                #{role.skillIds}, #{role.abilityIds}, #{role.skillCourses}, #{role.knowledgeCourses},
+                #{role.knowledgeWeight}, #{role.skillMissions})
+    </insert>
+    <insert id="batchInsertRoleSkillRel">
+        insert into init_rtks_role_skill_relation
+        (role_id, skill_id, weight, create_time, update_time)
+        values
+        <foreach collection="relations" item="relation" separator=",">
+            (#{relation.roleId}, #{relation.skillId}, #{relation.weight}, now(), now())
+        </foreach>
+    </insert>
+    <update id="updateRoleCourseIds">
+        update init_rtks_role
+        set knowledge_courses = #{knowledgeCourses}
+        where resource_id = #{resourceId}
+    </update>
+    <select id="getLastInitLevelName" resultType="java.lang.String">
+        select `name`
+        from init_rtks_level
+        order by id desc
+        limit 1
+    </select>
+    <select id="getInitKnowledgeByIds" resultType="com.cyberpeace.rtks.dao.entity.Knowledge">
+        select * from init_rtks_knowledge
+        where resource_id in
+        <foreach collection="knowledgeIds" item="knowledgeId" open="(" close=")" separator=",">
+            #{knowledgeId}
+        </foreach>
+    </select>
+</mapper>

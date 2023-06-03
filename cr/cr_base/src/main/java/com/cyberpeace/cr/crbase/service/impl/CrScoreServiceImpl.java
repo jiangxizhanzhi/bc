@@ -288,20 +288,22 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<UserRole>  userRoles = new ArrayList<>();
 		for (UserData userData : userDataList) {
 			Integer type = userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getRoleGroup();
+			String roleName = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole()).getName();
+			Integer roleGroup = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole()).getRoleGroup();
 			//得分趋势
 			List<CrTask> userTaskList = taskMap.getOrDefault(userData.getResourceId(),
 					new ArrayList<>());
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList,
-					userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getRoleGroup(),trainReportContext.getTimeList()));
+					roleGroup,trainReportContext.getTimeList(),roleName));
 			//人员得分
 			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap,type));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
 			userRole.setLogo(userData.getLogo());
 			userRole.setType(type);
-			userRole.setRoleName(userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getName());
+			userRole.setRoleName(roleName);
 			userRoles.add(userRole);
 		}
 

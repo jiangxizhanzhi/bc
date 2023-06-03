@@ -21,13 +21,16 @@ public class StudentScoreTrend {
 
 	private Integer role;
 
+	private String roleName;
+
 	public StudentScoreTrend() {}
 
 	public StudentScoreTrend(UserData user, List<CrTask> successList, Integer role,
-			List<Date> timeList) {
+			List<Date> timeList,String roleName) {
 		this.userData = user;
 		this.scoreTrends = new ArrayList<>();
 		this.role = role;
+		this.roleName = roleName;
 		Integer score = 0;
 		successList.sort(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo)));
 		int j = 0;

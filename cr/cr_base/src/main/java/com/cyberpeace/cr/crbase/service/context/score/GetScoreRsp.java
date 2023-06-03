@@ -45,11 +45,14 @@ public class GetScoreRsp implements Serializable {
 	private Integer type;
 	@ApiModelProperty(value = "排名")
 	private Integer index;
+	@ApiModelProperty(value = "角色名称")
+	private String roleName;
 
 	public GetScoreRsp(UserData userData, List<CrTask> userTaskList,
-			Map<String, Mission> missionMap, Map<String, CrScore> scoreMap,Integer type) {
+			Map<String, Mission> missionMap, Map<String, CrScore> scoreMap,Integer type,String roleName) {
 		this.userId = userData.getResourceId();
 		this.name = userData.getRepName();
+		this.roleName = roleName;
 		this.userAvatar = userData.getLogo();
 		this.allTaskCount = userTaskList.size();
 		this.finishTaskCount = (int) userTaskList.stream().filter(CrTask::isFinished).count();

@@ -296,9 +296,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList,
-					roleGroup,trainReportContext.getTimeList(),roleName));
+					roleGroup,trainReportContext.getTimeList()));
 			//人员得分
-			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap,type));
+			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap,type,roleName));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
 			userRole.setLogo(userData.getLogo());

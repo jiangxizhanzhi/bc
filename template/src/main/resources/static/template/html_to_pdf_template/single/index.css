@@ -1,8 +1,9 @@
 .page {
   background-color: rgba(19, 25, 38, 1);
   position: relative;
-  width: 732px;
+  width: 820px;
   overflow: hidden;
+  margin: 0 auto;
 }
 
 .section_1 {
@@ -440,7 +441,7 @@
   margin-left: auto;
   margin-right: auto;
   margin-top: 8px;
-  width: 684px;
+  width: 772px;
   height: 230px;
   position: relative;
 }
@@ -532,7 +533,7 @@
   width: 140px;
   height: 140px;
   background: url(./img/SketchPng55a6e948ad75a37e2b67ee9b506ee5ffa9a416ba56f5dae253b6f52db52203b4.png)
-    0px 0px no-repeat;
+  0px 0px no-repeat;
   background-size: 141px 140px;
   padding: 43px 42px 43px 42px;
 }
@@ -590,9 +591,8 @@
   background-color: rgba(25, 33, 51, 1);
   border-radius: 4px;
   position: relative;
-  width: 684px;
+  width: 772px;
   height: 230px;
-  
   margin: 8px auto;
 }
 #skillScore{

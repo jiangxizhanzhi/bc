@@ -602,15 +602,21 @@ public class RbRoomController {
 		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount);
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);
+		initRbReport(rbRoom,trainReport);
+		return new BaseRsp<>(trainReport);
+	}
+
+	public void initRbReport(RbRoom rbRoom,TrainReportContext trainReport) {
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
 		trainReport.setRoomBaseInfo(roomBaseInfo);
-		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
-		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
-		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(resource_id, Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
+		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
+		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
+		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
 		trainReport.setAdminName(UserRole.getName(UserRole::getName,admins));
 		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
 		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
-		return new BaseRsp<>(trainReport);
+		trainReport.initRbGetScoreRsps();
+
 	}
 
 	private List<TrainTaskReleaseInfoRsp> mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {

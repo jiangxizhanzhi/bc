@@ -826,19 +826,14 @@ public class TeamTrainRoomController {
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
-		//
-		initRbReport(teamRoom,trainReport);
-		return new BaseRsp<TrainReportContext>(trainReport);
-	}
-
-	public void initRbReport(TeamRoom teamRoom,TrainReportContext trainReport) {
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(teamRoom, RoomBaseInfo.class);
 		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(teamRoom.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
-		trainReport.initRbGetScoreRsps();
-
+		return new BaseRsp<TrainReportContext>(trainReport);
 	}
+
+
 
 	@ApiOperation("获取聊天框群组成员列表")
 	@GetMapping("/members_info")

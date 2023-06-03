@@ -43,6 +43,8 @@ public class GetScoreRsp implements Serializable {
 	private Integer synthesisScore;
 	@ApiModelProperty(value = "人员角色类型")
 	private Integer type;
+	@ApiModelProperty(value = "排名")
+	private Integer index;
 
 	public GetScoreRsp(UserData userData, List<CrTask> userTaskList,
 			Map<String, Mission> missionMap, Map<String, CrScore> scoreMap,Integer type) {

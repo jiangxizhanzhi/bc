@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Data
@@ -79,7 +80,13 @@ public class TrainReportContext {
     }
 
     public void initRbGetScoreRsps() {
-        this.RedGetScoreRsps = this.getGetScoreRsps().stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
-        this.BlueGetScoreRsps = this.getGetScoreRsps().stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
+        this.RedGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
+        this.BlueGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
+        AtomicReference<Integer> index = new AtomicReference<>(1);
+        getScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        index.set(1);
+        RedGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        index.set(1);
+        BlueGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
     }
 }

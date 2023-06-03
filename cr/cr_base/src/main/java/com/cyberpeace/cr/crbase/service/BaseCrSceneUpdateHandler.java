@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUpdateConfig;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.google.common.collect.Maps;
@@ -17,11 +18,11 @@ import com.google.common.collect.Maps;
  * @author SN
  * @date 2023/05/12
  */
-public abstract class BaseRoleUpdateHandler {
+public abstract class BaseCrSceneUpdateHandler {
 
-	private static Map<Integer, BaseRoleUpdateHandler> handlerMap = Maps.newHashMap();
+	private static Map<Integer, BaseCrSceneUpdateHandler> handlerMap = Maps.newHashMap();
 
-	public static BaseRoleUpdateHandler getHandler(Integer type) {
+	public static BaseCrSceneUpdateHandler getHandler(Integer type) {
 		return handlerMap.get(type);
 	}
 
@@ -56,6 +57,14 @@ public abstract class BaseRoleUpdateHandler {
 	public void updateRoles(String roomId, SceneUpdateReq req) {}
 
 	/**
+	 * 删除节点时，删除节点的用户资产和常用资产
+	 *
+	 * @param roomId 房间id
+	 * @param nodeId 节点id
+	 */
+	public void deleteNode(String roomId, String nodeId) {}
+
+	/**
 	 * 在角色配置列表中查找角色，并判断是否修改
 	 *
 	 * @param role           角色
@@ -76,5 +85,20 @@ public abstract class BaseRoleUpdateHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 获取过滤后节点数据
+	 * 去除指定id节点
+	 *
+	 * @param role   角色
+	 * @param nodeId 节点id
+	 * @return {@code String}
+	 */
+	protected String getFilteredNodesData(CrRole role, String nodeId) {
+		CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(), CrRoleNodesData.class);
+		nodesData.getAssetNodes().removeIf(node -> node.getId().equals(nodeId));
+		nodesData.getVisibleNodes().removeIf(node -> node.getId().equals(nodeId));
+		return JsonUtil.toJsonString(nodesData);
 	}
 }

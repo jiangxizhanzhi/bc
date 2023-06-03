@@ -692,7 +692,8 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 		return context;
 	}
 
-	private LocalScene getOrExceptionByMpSceneId(String mpSceneId){
+	@Override
+	public LocalScene getOrExceptionByMpSceneId(String mpSceneId) {
 		LocalScene localScene = localSceneMapper.selectBySceneId(mpSceneId);
 		if (null == localScene) {
 			log.error("cannot find a local_scene by scene_id: [{}]", mpSceneId);

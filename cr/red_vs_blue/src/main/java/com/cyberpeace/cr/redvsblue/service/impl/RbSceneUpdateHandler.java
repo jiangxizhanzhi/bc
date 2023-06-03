@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.BaseRoleUpdateHandler;
+import com.cyberpeace.cr.crbase.service.BaseCrSceneUpdateHandler;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
+import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
@@ -22,13 +23,16 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
  * @date 2023/05/12
  */
 @Service
-public class RbRoleUpdateHandler extends BaseRoleUpdateHandler {
+public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
 	@Autowired
 	private RbRoomService rbRoomService;
 
 	@Autowired
 	private CrRoleService crRoleService;
+
+	@Autowired
+	private RbCommonDeviceService rbCommonDeviceService;
 
 	@Override
 	protected Integer getCode() {
@@ -57,5 +61,19 @@ public class RbRoleUpdateHandler extends BaseRoleUpdateHandler {
 		}
 		// update
 		crRoleService.updateBatchById(modified);
+	}
+
+	@Override
+	public void deleteNode(String roomId, String nodeId) {
+		checkPermission(roomId);
+		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
+		// 更新含有指定节点id的学员的数据
+		roleList.removeIf(role -> role.isRvbStaff()
+				|| getFilteredNodesData(role, nodeId).equals(role.getNodes()));
+		if (!roleList.isEmpty()) {
+			crRoleService.updateBatchById(roleList);
+		}
+		// 清除常用资产
+		rbCommonDeviceService.deleteByDeviceId(nodeId);
 	}
 }

@@ -1,11 +1,10 @@
 package com.cyberpeace.cr.teamtrain.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
-
-import java.util.List;
 
 public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
@@ -14,4 +13,11 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
     void addToCollect(TeamCommonDeviceContext commonDeviceContext);
 
     void delCollect(String resourceId);
+
+	/**
+	 * 按节点id删除
+	 *
+	 * @param nodeId 节点id
+	 */
+	void deleteByDeviceId(String nodeId);
 }

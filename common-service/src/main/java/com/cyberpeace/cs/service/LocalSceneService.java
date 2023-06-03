@@ -280,4 +280,12 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return {@code List<JSONObject>}
 	 */
 	List<JSONObject> getAllAssetByBusinessInstanceId(String businessInstanceId);
+
+	/**
+	 * 通过mp scene id获取localscene
+	 *
+	 * @param mpSceneId 议员scenen id
+	 * @return {@code LocalScene}
+	 */
+	LocalScene getOrExceptionByMpSceneId(String mpSceneId);
 }

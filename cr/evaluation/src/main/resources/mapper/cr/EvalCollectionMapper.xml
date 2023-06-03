@@ -59,4 +59,8 @@
             #{evalIndicatorId}
         </foreach>
     </select>
+
+    <select id="getMaxId" resultType="java.lang.Integer">
+        select max(id) from cr_eval_collection
+    </select>
 </mapper>

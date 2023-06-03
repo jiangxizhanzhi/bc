@@ -83,6 +83,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     @Autowired
     private EvalCollectionService evalCollectionService;
 
+    @Autowired
+    private EvalCollectionMapper evalCollectionMapper;
+
     /**
      * 三级指标关联关系
      */
@@ -269,7 +272,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     collections.add(collectionId);
                 } else {
                     String id = IDGeneratorUtil.getID();
-                    collectionIds.set(collectionIds.indexOf(collectionId), id);
+                    EvalCollection evalCollection = evalCollectionMapper.selectById(collectionId);
+                    collectionIds.set(collectionIds.indexOf(collectionId), id+ '_' + evalCollection.getId());
                 }
             });
             String currentCollectionIds = JsonUtil.arrayToString(collectionIds);
@@ -339,6 +343,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalIndexRef> indexRefs = Lists.newArrayList();
         Map<String, String> evalIndexIdsMap = Maps.newHashMap();
 
+        Map<String, EvalVariableRef> stringEvalVariableRefMap = StreamApiUtils.toMap(variableRefs, EvalVariableRef::getResourceId, s -> s);
         evalAggregations.forEach(evalAggregation -> {
             EvalIndexRef evalIndexRef = new EvalIndexRef();
             evalIndexRef.setResourceId(IDGeneratorUtil.getID());
@@ -357,6 +362,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                         matrixData = matrixData.replaceAll(item, currentId);
                     }
                     nextIds.add(currentId);
+                } else {
+                    String[] split = item.split("_");
+                    String id = split[1];
+                    LambdaQueryWrapper<EvalCollection> query = new LambdaQueryWrapper<>();
+                    query.eq(EvalCollection::getId, id);
+                    EvalCollection evalCollection = evalCollectionMapper.selectOne(query);
+                    String currentVariableId = variableIdsMap.get(evalCollection.getResourceId());
+                    EvalVariableRef evalVariableRef = stringEvalVariableRefMap.get(currentVariableId);
+                    evalVariableRef.setResourceId(item);
+                    if(!stringEvalVariableRefMap.containsKey(item)){
+                        variableRefs.add(evalVariableRef);
+                    }
+//                    evalVariableRef.setId(null);
+//                    evalVariableRefMapper.insert(evalVariableRef);
                 }
             }
             evalIndexRef.setMatrixData(matrixData);

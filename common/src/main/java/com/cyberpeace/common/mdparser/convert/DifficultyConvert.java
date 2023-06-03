@@ -1,9 +1,11 @@
 package com.cyberpeace.common.mdparser.convert;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
+
 /**
  * @author chenzhuo
  */
-public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
+public enum DifficultyConvert implements MdConvertEnum<Integer, String>, GenericEnum {
 
 	/** 难度值*/
 	PRIMARY(0, "初级"), INTERMEDIATE(1, "中级"), ADVANCED(2, "高级");
@@ -28,4 +30,13 @@ public enum DifficultyConvert implements MdConvertEnum<Integer, String> {
 	}
 
 
+	@Override
+	public Integer getCode() {
+		return difficulty;
+	}
+
+	@Override
+	public String getDesc() {
+		return desc;
+	}
 }

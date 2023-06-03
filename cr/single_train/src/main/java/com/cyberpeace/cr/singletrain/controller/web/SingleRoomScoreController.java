@@ -4,9 +4,15 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.mdparser.convert.DifficultyConvert;
+import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.DateUtil;
+import com.cyberpeace.common.util.EnumUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -133,15 +139,16 @@ public class SingleRoomScoreController {
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
-		JSONObject data = getHistoryDetail(roomId).getData();
-		List<RadarLabel> radarLabels = missionService.getRadarLabel();
-		data.put("radarLabels", radarLabels);
-		data.put("locale", crScoreController.getTemplateI18n());
-		data.put("name", "cc");
-
+		RecordDetail data = getRecordDetail(roomId).getData();
+//		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+		data.setTrainingTimeString(DateUtil.DateToString(data.getTrainingTime(),"yyyy-MM-dd HH:mm:ss"));
+		data.setSubTypeString(EnumUtils.getEnumDescByCode(data.getSubType(), TrainTypeConvert.class));
+		data.setDifficultyString(EnumUtils.getEnumDescByCode(data.getDifficulty(), DifficultyConvert.class));
+		data.setRadarsString(data.getRadars().stream().map(a->Integer.toString(a)).collect(Collectors.joining(",")));
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
-				String.format("%s-%s", roomId, data.getString("user_id")),
+				String.format("%s-%s", roomId, UserInfoContext.getUserContext().getUserId()),
 				String.format("%s.html", roomId));
+		FileUtil.copyDirectory(HtmlTemplateEnum.SINGLE.getTemplatePath()+"/img",AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),true);
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {

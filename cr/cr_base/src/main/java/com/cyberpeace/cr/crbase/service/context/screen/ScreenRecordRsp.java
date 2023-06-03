@@ -20,4 +20,11 @@ public class ScreenRecordRsp {
 
     private Integer group;
 
+    private String play_url;
+
+    private String user_avatar;
+
+    private String host;
+
+    private String file_name;
 }

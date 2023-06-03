@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1016,10 +1017,14 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		statistics.setMissionCount(missionList.size());
 		// get record extra -> get score -> get recorded user answer
 		JSONObject extra = JsonUtil.toJsonObject(trainRecord.getExtra(), JSONObject.class);
+		JSONObject missionRecordCol;
 		if (extra.isEmpty()) {
 			detail.setScore(0);
+			missionRecordCol = new JSONObject();
 		} else {
 			detail.setScore(extra.getInteger(SingleRoom.CrTrainRecordFields.SCORE));
+			missionRecordCol = extra
+					.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
 		}
 		// 不包含任务
 		if (missionList.isEmpty()) {
@@ -1031,8 +1036,6 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			return detail;
 		}
 		// get recorded user answer
-		JSONObject missionRecordCol = extra
-				.getJSONObject(SingleRoom.CrTrainRecordFields.MISSIONS_RECORD);
 		for (MissionStageScheme stage : missionStages) {
 			RecordStageBo stageBo = new RecordStageBo();
 			stageBo.setStageName(stage.getStage());

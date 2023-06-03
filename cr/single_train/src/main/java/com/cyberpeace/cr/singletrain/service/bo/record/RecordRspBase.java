@@ -12,6 +12,9 @@ public class RecordRspBase implements Serializable {
 	@ApiModelProperty(value = "训练时间")
 	private Date trainingTime;
 
+	@ApiModelProperty(value = "训练时间")
+	private String trainingTimeString;
+
 	@ApiModelProperty(value = "训练时长")
 	private String timeCost;
 

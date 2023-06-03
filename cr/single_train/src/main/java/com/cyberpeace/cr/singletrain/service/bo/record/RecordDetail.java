@@ -25,8 +25,12 @@ public class RecordDetail extends RecordRspBase implements Serializable {
 	@ApiModelProperty(value = "训练类别")
 	private Integer subType;
 
+	private String subTypeString;
+
 	@ApiModelProperty(value = "难度")
 	private Integer difficulty;
+	private String difficultyString;
+
 
 	@ApiModelProperty(value = "训练技能")
 	private List<String> trainSkill;
@@ -42,7 +46,7 @@ public class RecordDetail extends RecordRspBase implements Serializable {
 
 	@ApiModelProperty(value = "技能评分")
 	private List<Integer> radars;
-
+	private String radarsString;
 	@ApiModelProperty(value = "任务详情")
 	private List<RecordStageBo> stages = Lists.newArrayList();
 

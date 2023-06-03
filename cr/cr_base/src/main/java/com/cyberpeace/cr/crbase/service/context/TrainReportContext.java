@@ -28,6 +28,10 @@ public class TrainReportContext {
 
     @ApiModelProperty("人员得分")
     List<GetScoreRsp>  getScoreRsps;
+    @ApiModelProperty("红方人员得分")
+    List<GetScoreRsp>  RedGetScoreRsps;
+    @ApiModelProperty("蓝方人员得分")
+    List<GetScoreRsp>  BlueGetScoreRsps;
 
     @ApiModelProperty("任务分类个数")
     private Integer taskKindCount;
@@ -72,5 +76,10 @@ public class TrainReportContext {
         timeList.add(scoreTrendReq.getEndTime());
 
 
+    }
+
+    public void initRbGetScoreRsps() {
+        this.RedGetScoreRsps = this.getGetScoreRsps().stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
+        this.BlueGetScoreRsps = this.getGetScoreRsps().stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
     }
 }

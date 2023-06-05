@@ -2,7 +2,9 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,22 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
     @Override
     public List<RbCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {
         return rbCommonDeviceMapper.selectByCollectUserAndRoomId(roomId, collectUserId);
+    }
+
+    @Override
+    public void addListToCollect(List<RbCommonDeviceContext> commonDeviceContextList) {
+        List<RbCommonDevice> commonDeviceList = commonDeviceContextList.stream().map( item -> {
+            RbCommonDevice commonDevice = new RbCommonDevice();
+            BeanUtils.copyProperties(item, commonDevice);
+
+            commonDevice.setResourceId(IDGeneratorUtil.getID());
+            String userId = UserInfoContext.getUserContext().getUserId();
+            commonDevice.setCollectUserId(userId);
+            commonDevice.setCreateUserId(userId);
+            commonDevice.setCreateTime(new Date());
+            return commonDevice;
+        }).collect(Collectors.toList());
+        rbCommonDeviceMapper.insertList(commonDeviceList);
     }
 
     @Override

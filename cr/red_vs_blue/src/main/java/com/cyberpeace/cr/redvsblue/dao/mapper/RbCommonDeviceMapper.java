@@ -10,6 +10,8 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
 public interface RbCommonDeviceMapper extends BaseMapper<RbCommonDevice> {
     List<RbCommonDevice> selectByCollectUserAndRoomId(@Param("roomId") String roomId, @Param("collectUserId") String collectUserId);
 
+    void insertList(@Param("commonDeviceList") List<RbCommonDevice> commonDeviceList);
+
     void deleteByResourceId(@Param("resourceId") String resourceId);
 
 	void deleteByDeviceId(@Param("deviceId") String deviceId);

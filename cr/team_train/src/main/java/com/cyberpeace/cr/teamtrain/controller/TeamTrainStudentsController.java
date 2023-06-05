@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -401,11 +402,16 @@ public class TeamTrainStudentsController {
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp addDevice(@RequestBody TeamCommonDeviceContext commonDeviceContext) {
-		if(StringUtils.isEmpty(commonDeviceContext.getRoomId())) {
+	public BaseRsp addDevice(@RequestBody TeamCommonDeviceReq teamCommonDeviceReq) {
+		if(StringUtils.isEmpty(teamCommonDeviceReq.getRoomId())) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
-		teamCommonDeviceService.addToCollect(commonDeviceContext);
+		List<TeamCommonDeviceContext> commonDeviceContextList = teamCommonDeviceReq.getTeamCommonDeviceContextList();
+		if(CollectionUtils.isEmpty(commonDeviceContextList)) {
+			throw new BusinessException(CrBusinessErrorCode.INVALID_COMMON_DEVICE);
+		}
+		commonDeviceContextList.forEach(item -> {item.setRoomId(teamCommonDeviceReq.getRoomId());});
+		teamCommonDeviceService.addListToCollect(commonDeviceContextList);
 		return new BaseRsp();
 	}
 

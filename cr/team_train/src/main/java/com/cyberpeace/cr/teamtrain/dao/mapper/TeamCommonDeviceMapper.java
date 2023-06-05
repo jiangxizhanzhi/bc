@@ -18,4 +18,6 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
     void deleteByResourceId(@Param("resourceId") String resourceId);
 
 	void deleteByDeviceId(@Param("nodeId") String nodeId);
+
+    void insertList(@Param("teamCommonDeviceList") List<TeamCommonDevice> teamCommonDeviceList);
 }

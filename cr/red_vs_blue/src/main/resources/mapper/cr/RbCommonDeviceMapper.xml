@@ -17,6 +17,30 @@
           AND collect_user_id = #{collectUserId}
     </select>
 
+    <insert id="insertList">
+        INSERT INTO cr_rb_common_device
+        (
+            resource_id,
+            room_id,
+            device_id,
+            collect_user_id,
+            create_user_id,
+            create_time
+        )
+        VALUES
+        <foreach collection="commonDeviceList" item="commonDevice" separator=",">
+        (
+            #{commonDevice.resourceId},
+            #{commonDevice.roomId},
+            #{commonDevice.deviceId},
+            #{commonDevice.collectUserId},
+            #{commonDevice.createUserId},
+            #{commonDevice.createTime}
+        )
+        </foreach>
+
+    </insert>
+
     <delete id="deleteByResourceId">
         DELETE
         FROM cr_rb_common_device

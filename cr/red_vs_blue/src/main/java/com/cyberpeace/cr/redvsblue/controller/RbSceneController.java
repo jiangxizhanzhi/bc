@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
+import com.cyberpeace.cr.redvsblue.controller.req.RbCommonDeviceReq;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -321,11 +322,16 @@ public class RbSceneController {
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp addDevice(@RequestBody RbCommonDeviceContext commonDeviceContext) {
-		if(StringUtils.isEmpty(commonDeviceContext.getRoomId())) {
+	public BaseRsp addDevice(@RequestBody RbCommonDeviceReq rbCommonDeviceReq) {
+		if(StringUtils.isEmpty(rbCommonDeviceReq.getRoomId())) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
-		rbCommonDeviceService.addToCollect(commonDeviceContext);
+		List<RbCommonDeviceContext> commonDeviceContextList = rbCommonDeviceReq.getCommonDeviceContextList();
+		if(CollectionUtils.isEmpty(commonDeviceContextList)) {
+			throw new BusinessException(CrBusinessErrorCode.INVALID_COMMON_DEVICE);
+		}
+		commonDeviceContextList.forEach(item -> {item.setRoomId(rbCommonDeviceReq.getRoomId());});
+		rbCommonDeviceService.addListToCollect(commonDeviceContextList);
 		return new BaseRsp();
 	}
 

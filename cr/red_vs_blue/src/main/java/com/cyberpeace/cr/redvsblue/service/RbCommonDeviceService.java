@@ -16,11 +16,20 @@ public interface RbCommonDeviceService extends IService<RbCommonDevice> {
 	 */
     List<RbCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId);
 
+
+	/**
+	 * 批量添加常用资产
+	 * @param commonDeviceContextList 常用资产列表
+	 */
+	void addListToCollect(List<RbCommonDeviceContext> commonDeviceContextList);
+
 	/**
 	 * 添加常用设备
 	 * @param commonDeviceContext 常用设备
 	 */
     void addToCollect(RbCommonDeviceContext commonDeviceContext);
+
+
 
 	/**
 	 * 删除常用设备

@@ -443,4 +443,9 @@ public interface CrBusinessErrorCode {
 	 * 无效type
 	 */
 	String INVALID_TYPE = "101133";
+
+	/**
+	 * 无效常用资产
+	 */
+	String INVALID_COMMON_DEVICE = "101134";
 }

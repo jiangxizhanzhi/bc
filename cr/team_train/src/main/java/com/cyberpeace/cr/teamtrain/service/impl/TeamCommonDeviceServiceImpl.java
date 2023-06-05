@@ -2,7 +2,9 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.IDGeneratorUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,22 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
     @Override
     public List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {
         return teamCommonDeviceMapper.selectByCollectUserAndRoomId(roomId, collectUserId);
+    }
+
+    @Override
+    public void addListToCollect(List<TeamCommonDeviceContext> commonDeviceContextList) {
+        List<TeamCommonDevice> commonDeviceList = commonDeviceContextList.stream().map(item -> {
+            TeamCommonDevice commonDevice = new TeamCommonDevice();
+            BeanUtils.copyProperties(item, commonDevice);
+
+            commonDevice.setResourceId(IDGeneratorUtil.getID());
+            String userId = UserInfoContext.getUserContext().getUserId();
+            commonDevice.setCollectUserId(userId);
+            commonDevice.setCreateUserId(userId);
+            commonDevice.setCreateTime(new Date());
+            return commonDevice;
+        }).collect(Collectors.toList());
+        teamCommonDeviceMapper.insertList(commonDeviceList);
     }
 
     @Override

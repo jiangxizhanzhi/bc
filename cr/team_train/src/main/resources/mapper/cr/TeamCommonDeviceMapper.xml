@@ -27,4 +27,27 @@
         from cr_team_common_device
         where device_id = #{nodeId}
     </delete>
+
+    <insert id="insertList">
+        INSERT INTO cr_team_common_device
+        (
+            resource_id,
+            room_id,
+            device_id,
+            collect_user_id,
+            create_user_id,
+            create_time
+        )
+        VALUES
+        <foreach collection="teamCommonDeviceList" item="teamCommonDevice">
+            (
+             #{teamCommonDevice.resourceId},
+             #{teamCommonDevice.roomId},
+             #{teamCommonDevice.deviceId},
+             #{teamCommonDevice.collectUserId},
+             #{teamCommonDevice.createUserId},
+             #{teamCommonDevice.createTime},
+            )
+        </foreach>
+    </insert>
 </mapper>

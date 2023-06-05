@@ -418,8 +418,9 @@ public class TeamTrainStudentsController {
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "资产资源id", required = true) String resource_id) {
-		teamCommonDeviceService.delCollect(resource_id);
+	public BaseRsp delDevice(@RequestBody TeamCommonDeviceContext teamCommonDeviceContext) {
+		String resourceId = teamCommonDeviceContext.getResourceId();
+		teamCommonDeviceService.delCollect(resourceId);
 		return new BaseRsp();
 	}
 

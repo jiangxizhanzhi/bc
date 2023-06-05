@@ -26,14 +26,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 
 @Slf4j
@@ -58,6 +60,9 @@ public class EvalAlgorithmRefController {
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
+	@Qualifier("taskExecutor")
+	@Autowired
+	private Executor executor;
 
 	/**
 	 * 编辑算法
@@ -77,32 +82,42 @@ public class EvalAlgorithmRefController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
-			LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
-			query.eq(EvalIndexRef::getAlgorithmId, req.getResourceId());
-			EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
-			try {
-				List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
-				Integer cr = remotePythonService.indexAhpPerform(req.getResourceId(), evalAlgorithmRef.getMatrixData(),
-						evalAlgorithmRef.getCode(), null, otherArguments);
-				if (null != cr) {
-					res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
-				}
-			} catch (RemoteServiceException e) {
-				String msg = "";
-				if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
-					msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID), evalIndexRef.getLevel(), evalIndexRef.getName());
-				} else {
-					msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED), evalIndexRef.getLevel(), evalIndexRef.getName());
-				}
-				res.setMsg(msg);
-				log.error(evalIndexRef.getName(), "[{}]consistency check failure.");
-			}
-			evalAlgorithmRef.setMatrixData(req.getMatrixData());
+			String matrixData = req.getMatrixData();
+			Runnable task = () -> {checkMatrixData(req, res, evalAlgorithmRef, matrixData);};
+			executor.execute(task);
+			evalAlgorithmRef.setMatrixData(matrixData);
 		}
 		evalAlgorithmRef.setCode(req.getCode());
 		evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
 		BeanUtils.copyProperties(evalAlgorithmRef, res);
 		return new BaseRsp(res);
+	}
+
+
+	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res, EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
+		LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
+		query.eq(EvalIndexRef::getAlgorithmId, req.getResourceId());
+		EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
+		if(StringUtils.isBlank(matrixData)){
+			throw new BusinessException(CrBusinessErrorCode.MATRIX_DATA_EMPTY_ERROR);
+		}
+		try {
+			List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
+			Integer cr = remotePythonService.indexAhpPerform(req.getResourceId(), matrixData,
+					evalAlgorithmRef.getCode(), null, otherArguments);
+			if (null != cr) {
+				res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
+			}
+		} catch (RemoteServiceException e) {
+			String msg;
+			if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+				msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID), EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
+			} else {
+				msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED), EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
+			}
+			res.setMsg(msg);
+			log.error(evalIndexRef.getName(), "[{}]consistency check failure.");
+		}
 	}
 
 

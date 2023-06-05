@@ -3,11 +3,13 @@ package com.cyberpeace.integratation.service.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import com.alibaba.fastjson.JSONArray;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -143,15 +145,30 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
-	public List<Integer> getFormatMatrixData(String matrixData){
+	public List<List<Integer>> getFormatMatrixData(String matrixData){
 		JSONArray objects = JSONArray.parseArray(matrixData);
-		List<Integer> res = new ArrayList<>();
+		List<List<Integer>> res = new ArrayList<>();
 		for (int i = 0; i < objects.size(); i++) {
 			JSONObject jsonObject = objects.getJSONObject(i);
 			String data = jsonObject.get("data").toString();
 			JSONObject dataJsonObj = JsonUtil.toJsonObject(data, JSONObject.class);
-			// TODO 获取值集合 格式化成数值
 			Collection<Object> values = dataJsonObj.values();
+			Iterator<Object> iterator = values.iterator();
+			List<Integer> tmp = new ArrayList<>();
+			while (iterator.hasNext()){
+				Object next = iterator.next();
+				if(null == next){
+					continue;
+				}
+				String str = String.valueOf(next);
+				if(StringUtils.isBlank(str)){
+					continue;
+				}
+				double ceil = Math.ceil(Double.parseDouble(str));
+				int intValue = (int) ceil;
+				tmp.add(intValue);
+			}
+			res.add(tmp);
 
 		}
 		return res;

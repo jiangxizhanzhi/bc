@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.evaluation.controller.req.EvalAlgorithmRefReq;
+import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmEditRsp;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalAlgorithmRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithm;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalAlgorithmRef;
@@ -16,7 +19,9 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
+import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import com.cyberpeace.integratation.service.RemotePythonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,6 +32,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -46,6 +52,12 @@ public class EvalAlgorithmRefController {
 	@Autowired
 	private EvalVariableRefMapper evalVariableRefMapper;
 
+	@Autowired
+	private RemotePythonService remotePythonService;
+
+	@Autowired
+	private EvalAlgorithmRefService evalAlgorithmRefService;
+
 
 	/**
 	 * 编辑算法
@@ -55,8 +67,9 @@ public class EvalAlgorithmRefController {
 	@PutMapping("")
 	@ApiOperation("编辑算法")
 	@RequiresPermissions(MenuConstant.WEB_CR_EVALUATION)
-	public BaseRsp<EvalAlgorithmRef> editAlgorithm(@RequestBody EvalAlgorithmRefReq req) {
+	public BaseRsp<EvalAlgorithmEditRsp> editAlgorithm(@RequestBody EvalAlgorithmRefReq req) {
 
+		EvalAlgorithmEditRsp res = new EvalAlgorithmEditRsp();
 		String evalAlgorithmId = req.getResourceId();
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(evalAlgorithmId);
 		if(null == evalAlgorithmRef){
@@ -64,13 +77,32 @@ public class EvalAlgorithmRefController {
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
+			LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
+			query.eq(EvalIndexRef::getAlgorithmId, req.getResourceId());
+			EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
+			try {
+				List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
+				Integer cr = remotePythonService.indexAhpPerform(req.getResourceId(), evalAlgorithmRef.getMatrixData(),
+						evalAlgorithmRef.getCode(), null, otherArguments);
+				if (null != cr) {
+					res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
+				}
+			} catch (RemoteServiceException e) {
+				String msg = "";
+				if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
+					msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID), evalIndexRef.getLevel(), evalIndexRef.getName());
+				} else {
+					msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED), evalIndexRef.getLevel(), evalIndexRef.getName());
+				}
+				res.setMsg(msg);
+				log.error(evalIndexRef.getName(), "[{}]consistency check failure.");
+			}
 			evalAlgorithmRef.setMatrixData(req.getMatrixData());
 		}
 		evalAlgorithmRef.setCode(req.getCode());
 		evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
-
-
-		return new BaseRsp(evalAlgorithmRef);
+		BeanUtils.copyProperties(evalAlgorithmRef, res);
+		return new BaseRsp(res);
 	}
 
 

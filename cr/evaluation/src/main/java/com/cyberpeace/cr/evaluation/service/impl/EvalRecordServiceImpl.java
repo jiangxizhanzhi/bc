@@ -265,6 +265,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalAggregation> evalAggregations = evalAggregationService.lambdaQuery().in(EvalAggregation::getEvalIndicatorId, evalIndicatorIds).list();
         // 4级指标 联5级id有重复时 更新5级id
         List<String> collections = new ArrayList<>();
+        // 五级指标
+        List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty() ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list() : Lists.newArrayList();
+
         evalAggregations.forEach(evalAggregation -> {
             List<String> collectionIds = JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class);
             collectionIds.forEach(collectionId->{
@@ -273,20 +276,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 } else {
                     String id = IDGeneratorUtil.getID();
                     EvalCollection evalCollection = evalCollectionMapper.selectById(collectionId);
-                    collectionIds.set(collectionIds.indexOf(collectionId), id+ '_' + evalCollection.getId());
+                    evalCollection.setResourceId(id);
+                    evalCollections.add(evalCollection);
+                    collectionIds.set(collectionIds.indexOf(collectionId), id);
+                    EvalRecordVariableContext evalRecordVariableContext = evalRecordVariableContextMap.get(collectionId);
+                    evalRecordVariableContextMap.put(id, evalRecordVariableContext);
                 }
             });
             String currentCollectionIds = JsonUtil.arrayToString(collectionIds);
             evalAggregation.setCollectionIds(currentCollectionIds);
         });
-        // 五级指标
-        List<EvalCollection> evalCollections = !evalRecordVariableContextMap.isEmpty() ? evalCollectionService.lambdaQuery().in(EvalCollection::getResourceId, evalRecordVariableContextMap.keySet()).list() : Lists.newArrayList();
 
-        // 请求体变量项数量与db获取体系下变量项数量一致
-        if (evalCollections.size() != evalRecordVariableContextMap.keySet().size()) {
-            log.error("Index system variable data is invalid! evalCollections = [{}], keySet = [{}]", JsonUtil.toJsonString(evalCollections), JsonUtil.toJsonString(evalRecordVariableContextMap.keySet()));
-            throw new BusinessException(CrBusinessErrorCode.SYSTEM_INDEX_IS_FAILED);
-        }
+        // 取消校验 --请求体变量项数量与db获取体系下变量项数量一致
 
         // 使用指标体系内的全部算法
         Set<String> usingAlgorithmIds = Sets.newHashSet();
@@ -314,17 +315,35 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
 
             // 构建变量项新的算法数据 - 格式化算法
-            EvalAlgorithmRef newFormatAlgorithm = generateAlgorithmRef(evalCollection.getFormatAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+            String formatAlgorithmId = evalCollection.getFormatAlgorithmId();
+            if(evalAlgorithmMap.containsKey(formatAlgorithmId)) {
+                formatAlgorithmId = IDGeneratorUtil.getID();
+                evalAlgorithmMap.put(formatAlgorithmId, evalAlgorithmMap.get(evalCollection.getFormatAlgorithmId()));
+                evalVariableRef.setFormatAlgorithmId(formatAlgorithmId);
+            }
+            EvalAlgorithmRef newFormatAlgorithm = generateAlgorithmRef(formatAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setFormatAlgorithmId(newFormatAlgorithm.getResourceId());
             evalVariableRef.setFormatParams(evalCollection.getFormatAlgorithmParams());
 
             // 匹配算法
-            EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(evalCollection.getDetectionAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+            String detectionAlgorithmId = evalCollection.getDetectionAlgorithmId();
+            if(evalAlgorithmMap.containsKey(detectionAlgorithmId)) {
+                detectionAlgorithmId = IDGeneratorUtil.getID();
+                evalAlgorithmMap.put(detectionAlgorithmId, evalAlgorithmMap.get(evalCollection.getDetectionAlgorithmId()));
+                evalVariableRef.setFormatAlgorithmId(detectionAlgorithmId);
+            }
+            EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(detectionAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setMatchAlgorithmId(newMatchAlgorithm.getResourceId());
             evalVariableRef.setMatchParams(evalCollection.getDetectionAlgorithmParams());
 
             // 评分算法
-            EvalAlgorithmRef newMarkAlgorithm = generateAlgorithmRef(evalCollection.getScoreAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+            String scoreAlgorithmId = evalCollection.getScoreAlgorithmId();
+            if(evalAlgorithmMap.containsKey(scoreAlgorithmId)){
+                scoreAlgorithmId = IDGeneratorUtil.getID();
+                evalAlgorithmMap.put(scoreAlgorithmId, evalAlgorithmMap.get(evalCollection.getScoreAlgorithmId()));
+                evalVariableRef.setMarkAlgorithmId(scoreAlgorithmId);
+            }
+            EvalAlgorithmRef newMarkAlgorithm = generateAlgorithmRef(scoreAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setMarkAlgorithmId(newMarkAlgorithm.getResourceId());
             evalVariableRef.setMarkParams(evalCollection.getScoreAlgorithmParams());
 
@@ -343,7 +362,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalIndexRef> indexRefs = Lists.newArrayList();
         Map<String, String> evalIndexIdsMap = Maps.newHashMap();
 
-        Map<String, EvalVariableRef> stringEvalVariableRefMap = StreamApiUtils.toMap(variableRefs, EvalVariableRef::getResourceId, s -> s);
         evalAggregations.forEach(evalAggregation -> {
             EvalIndexRef evalIndexRef = new EvalIndexRef();
             evalIndexRef.setResourceId(IDGeneratorUtil.getID());
@@ -362,26 +380,18 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                         matrixData = matrixData.replaceAll(item, currentId);
                     }
                     nextIds.add(currentId);
-                } else {
-                    String[] split = item.split("_");
-                    String id = split[1];
-                    LambdaQueryWrapper<EvalCollection> query = new LambdaQueryWrapper<>();
-                    query.eq(EvalCollection::getId, id);
-                    EvalCollection evalCollection = evalCollectionMapper.selectOne(query);
-                    String currentVariableId = variableIdsMap.get(evalCollection.getResourceId());
-                    EvalVariableRef evalVariableRef = stringEvalVariableRefMap.get(currentVariableId);
-                    evalVariableRef.setResourceId(item);
-                    if(!stringEvalVariableRefMap.containsKey(item)){
-                        variableRefs.add(evalVariableRef);
-                    }
-//                    evalVariableRef.setId(null);
-//                    evalVariableRefMapper.insert(evalVariableRef);
                 }
             }
             evalIndexRef.setMatrixData(matrixData);
             evalIndexRef.setNextIds(JsonUtil.toJsonString(nextIds));
 
-            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(evalAggregation.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+            String aggregatingAlgorithmId = evalAggregation.getAggregatingAlgorithmId();
+            if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+                aggregatingAlgorithmId = IDGeneratorUtil.getID();
+                evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalAggregation.getAggregatingAlgorithmId()));
+                evalAggregation.setAggregatingAlgorithmId(aggregatingAlgorithmId);
+            }
+            EvalAlgorithmRef evalAlgorithmRef = generateAlgorithmRef(aggregatingAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             evalIndexRef.setAlgorithmParams(evalAggregation.getAggregatingAlgorithmParams());
             evalIndexRef.setAlgorithmId(evalAlgorithmRef.getResourceId());
 
@@ -409,7 +419,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 evalIndexRef.setAlgorithmParams(evalIndex.getAggregatingAlgorithmParams());
 
                 nextIds = evalIndex.getChildrenIds();
-                evalAlgorithmRef = generateAlgorithmRef(evalIndex.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+                String aggregatingAlgorithmId = evalIndex.getAggregatingAlgorithmId();
+                if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+                    aggregatingAlgorithmId = IDGeneratorUtil.getID();
+                    evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalIndex.getAggregatingAlgorithmId()));
+                    evalIndexRef.setAlgorithmId(aggregatingAlgorithmId);
+                }
+                evalAlgorithmRef = generateAlgorithmRef(aggregatingAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             } else {
                 EvalIndicator evalIndicator = thirdRelationMap.get(evalIndex.getEvalIndicatorId());
                 if (evalIndicator == null) {
@@ -418,7 +434,13 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
 
                 nextIds = evalIndicator.getAggregationIds();
-                evalAlgorithmRef = generateAlgorithmRef(evalIndicator.getAggregatingAlgorithmId(), evalAlgorithmMap, evalAlgorithmRefMap);
+                String aggregatingAlgorithmId = evalIndicator.getAggregatingAlgorithmId();
+                if(evalAlgorithmMap.containsKey(aggregatingAlgorithmId)){
+                    aggregatingAlgorithmId = IDGeneratorUtil.getID();
+                    evalAlgorithmMap.put(aggregatingAlgorithmId, evalAlgorithmMap.get(evalIndicator.getAggregatingAlgorithmId()));
+                    evalIndexRef.setAlgorithmId(aggregatingAlgorithmId);
+                }
+                evalAlgorithmRef = generateAlgorithmRef(aggregatingAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
 
                 // 专家评分, 设置默认分值
                 evalIndexRef.setSpecialistType(evalIndicator.getDatatype());
@@ -1304,7 +1326,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalResult evalResult = evalResults.get(i);
             String fourthIndexRes = evalResult.getFourthIndexRes();
             JSONObject jsonObject = JsonUtil.toJsonObject(fourthIndexRes, JSONObject.class);
-            int score = Integer.parseInt(jsonObject.get(nextId).toString());
+            int score = 0;
+            if(null != jsonObject && jsonObject.size() > 0){
+                score = Integer.parseInt(jsonObject.get(nextId).toString());
+            }
             setCycleResult(rsp, i, score);
         }
     }

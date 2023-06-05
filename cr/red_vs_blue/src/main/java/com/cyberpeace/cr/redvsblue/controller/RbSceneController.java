@@ -332,7 +332,7 @@ public class RbSceneController {
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "常用设备uuid", required = true) String resource_id) {
 		rbCommonDeviceService.delCollect(resource_id);
 		return new BaseRsp();
 	}

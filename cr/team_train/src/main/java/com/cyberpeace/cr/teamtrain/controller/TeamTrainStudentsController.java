@@ -412,7 +412,7 @@ public class TeamTrainStudentsController {
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id) {
+	public BaseRsp delDevice(@ApiParam(name = "resource_id", value = "资产资源id", required = true) String resource_id) {
 		teamCommonDeviceService.delCollect(resource_id);
 		return new BaseRsp();
 	}
@@ -422,7 +422,7 @@ public class TeamTrainStudentsController {
 	@GetMapping("/device/common_device/already")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<TeamCommonDeviceContext>> getAlreadyCommonDevices(
-			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
+			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备

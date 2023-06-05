@@ -8,10 +8,24 @@ import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
 
 public interface RbCommonDeviceService extends IService<RbCommonDevice> {
 
+	/**
+	 * 根据红蓝房间id和设备添加人 查询常用设备列表
+	 * @param roomId 红蓝房间id
+	 * @param collectUserId 常用设备添加人
+	 * @return
+	 */
     List<RbCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId);
 
+	/**
+	 * 添加常用设备
+	 * @param commonDeviceContext 常用设备
+	 */
     void addToCollect(RbCommonDeviceContext commonDeviceContext);
 
+	/**
+	 * 删除常用设备
+	 * @param resourceId 设备uuid
+	 */
     void delCollect(String resourceId);
 
 	/**

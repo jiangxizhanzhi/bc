@@ -721,7 +721,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         List<EvalIndexRef> evalIndexRefs = evalIndexRefService.getBaseMapper().selectList(queryWrapper);
 
         // 保存variable_ref id:score 5
-        List<EvalVariableRef> variableRefs = evalVariableRefMapper.getByRecordId(record);
+        LambdaQueryWrapper<EvalVariableRef> query = new LambdaQueryWrapper<>();
+        query.eq(EvalVariableRef::getRecordId, evalRecord.getResourceId());
+        List<EvalVariableRef> variableRefs = evalVariableRefMapper.selectList(query);
 
         List<EvalIndexRef> firstIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.FIRST.getCode())).collect(Collectors.toList());
         List<EvalIndexRef> secondIndexes = evalIndexRefs.stream().filter(s -> s.getLevel().equals(EvalIndex.Level.SECOND.getCode())).collect(Collectors.toList());

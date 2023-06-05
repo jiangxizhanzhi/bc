@@ -543,6 +543,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			teamStudent.setRoleType(CrRole.TeamRoleGroup.STUDENT.getEnglish());
 			teamStudent.setRole(CrRole.TeamRoleGroup.STUDENT.getMsg());
 			teamStudent.setRoleCode(CrRole.TeamRoleGroup.STUDENT.getCode());
+			add(teamStudent);
 		}};
 		dashboardInfo.setRoleConst(roleConst);
 	}

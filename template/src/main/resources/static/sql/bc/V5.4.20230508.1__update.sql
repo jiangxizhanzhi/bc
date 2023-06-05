@@ -1,12 +1,38 @@
 
 
 -- TODO 修改py内容
-INSERT INTO `cr_eval_algorithm` VALUES (17, '230ced924ec485dd37c3945b4d4c13d4', '层次分析法', NULL , 0, 4, 0, 'from typing import List\ndef solution(data: List[int], other_arguments) -> int:\n    \"\"\"\n    聚合算法模板\n    :param data: 包含元素均为0~100 int\n    :param other_arguments: List[int, str, bool], 可配置参数列表, 长度、索引一致\n    :return: 聚合算法结果, 0~100\n    \"\"\"\n', '[]', 0, '3f655d87112f4ae094bbaf70830e20aa', '2023-05-05 16:25:14', '2023-05-05 16:25:45');
+ALTER TABLE cr_eval_algorithm  add column `mode` int(1) NOT NULL DEFAULT 0 COMMENT '0为其他算法，1为层次分析法';
+ALTER TABLE cr_eval_algorithm  add column `builtin` int(1) NOT NULL DEFAULT 0 COMMENT '0为内置算法，1为用户自定义算法';
+
+INSERT INTO `cr_eval_algorithm` VALUES (17, '230ced924ec485dd37c3945b4d4c13d4', '层次分析法', NULL , 0, 4, 0,
+'\nimport numpy as np\nimport math\n\n\ndef solution(matrix_data, data, other_arguments):\n    """\n    聚合算法层次分析法模板\n    :param matrix_data: 矩阵数据 [[1, 2, 7, 5, 5],\n                         [1 / 2, 1, 4, 3, 3],\n                         [1 / 7, 1 / 4, 1, 1 / 2, 1 / 3],\n                         [1 / 5, 1 / 3, 2, 1, 1],\n                         [1 / 5, 1 / 3, 3, 1, 1]]\n    :param data: 包含元素均为0~100 int\n    :param other_arguments: List[int, str, bool], 可配置参数列表, 长度、索引一致\n    :return: 聚合算法结果, 0~100\n    """\n    RI = (0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49)\n    input_matrix = np.array(matrix_data)\n    n, n1 = input_matrix.shape\n    assert n == n1, \'不是一个方阵\'\n    for i in range(n):\n        for j in range(n):\n            if np.abs(input_matrix[i, j] * input_matrix[j, i] - 1) > 1e-7:\n                raise ValueError(\'不是反互对称矩阵\')\n\n    eigenvalues, eigenvectors = np.linalg.eig(input_matrix)\n\n    max_idx = np.argmax(eigenvalues)\n    max_eigen = eigenvalues[max_idx].real\n    eigen = eigenvectors[:, max_idx].real\n    eigen = eigen / eigen.sum()\n\n    res = 0\n    if n > 9:\n        CR = None\n        return res, CR\n    else:\n        CI = (max_eigen - n) / (n - 1)\n        CR = CI / RI[n]\n    for tmp in eigen:\n        res += data * tmp\n    return math.ceil(res), CR', '[]', 0, '3f655d87112f4ae094bbaf70830e20aa', '2023-05-05 16:25:14', '2023-05-05 16:25:45',1, 0);
 
 -- 新增层次分析法的参数矩阵内容字段
 ALTER TABLE cr_eval_indicator  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';
 ALTER TABLE cr_eval_aggregation  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';
 ALTER TABLE cr_eval_index  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';
+ALTER TABLE cr_eval_index_ref  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';
+ALTER TABLE cr_eval_algorithm_ref  add column `mode` int(1) NOT NULL DEFAULT 0 COMMENT '0为其他算法，1为层次分析法';
+ALTER TABLE cr_eval_algorithm_ref  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';
+
+-- ----------------------------
+-- Table structure for cr_eval_result
+-- ----------------------------
+CREATE TABLE `cr_eval_result`  (
+                               `id` int(11) NOT NULL AUTO_INCREMENT,
+                               `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '资源id',
+                               `record` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '关联评估运行实例id',
+                               `first_index_res` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '一级指标得分',
+                               `second_index_res` longtext NULL COMMENT '二级指标得分',
+                               `third_index_res` longtext NULL COMMENT '三级指标得分',
+                               `fourth_index_res` longtext NULL COMMENT '四级指标得分',
+                               `fifth_index_res` longtext NULL COMMENT '五级指标得分',
+                               `exe_cycle` int(11) NOT NULL COMMENT '执行轮次',
+                               `update_time` datetime NOT NULL,
+                               `create_time` datetime NOT NULL,
+                                PRIMARY KEY (`id`) USING BTREE,
+                                UNIQUE INDEX `record_exe_cycle_uniq`(`exe_cycle`, `record`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

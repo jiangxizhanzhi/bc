@@ -362,6 +362,14 @@ public class RbSceneController {
 		return new BaseRsp<>(commonDeviceContexts);
 	}
 
+	/**
+	 * 根据 场景中可用设备和已占用设备 装配常用资产列表
+	 * @param availableDevices 场景中的可用设备，中台给的设备状态信息
+	 * @param occupyDevices 已占用设备列表
+	 * @param roomId 红蓝房间id
+	 * @param collectedCommonDeviceIds 已添加常用资产列表id
+	 * @return 可添加常用资产列表
+	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																List<RbDeviceContext> occupyDevices,
 																String roomId,
@@ -394,7 +402,8 @@ public class RbSceneController {
 		return commonDeviceContexts;
 	}
 
-	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices, List<RbCommonDevice> collectedCommonDevices) {
+	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
+																List<RbCommonDevice> collectedCommonDevices) {
 		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
 		}

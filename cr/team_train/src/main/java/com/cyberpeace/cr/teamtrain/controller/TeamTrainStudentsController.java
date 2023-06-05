@@ -492,10 +492,19 @@ public class TeamTrainStudentsController {
 		return baseRole;
 	}
 
+	/**
+	 * 装配 中台过来的设备信息 和 设置占用标志 并过滤 已添加设备
+	 * @param availableDevices 场景中的可用设备，中台的设备状态信息列表
+	 * @param occupyDevices 当前场景已占用的设备列表
+	 * @param roomId 房间id
+	 * @param collectedCommonDeviceIds 已添加的常用资产列表
+	 * @return 可添加的常用资产列表
+	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																  List<TeamTrainDeviceContext> occupyDevices,
 																  String roomId,
 																  List<String> collectedCommonDeviceIds) {
+		// 如果场景中可用设备为空，直接返回空数组
 		if(CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
 		}
@@ -503,10 +512,12 @@ public class TeamTrainStudentsController {
 		for(int i = 0; i < availableDevices.size(); i ++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
+			// 如果 已添加常用设备 包含 场景中可用设备  直接跳过
 			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
 				continue;
 			}
 
+			// 根据占用设备情况 设置标志位
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
 			context.setOccupyFlag(0);
 			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
@@ -524,7 +535,14 @@ public class TeamTrainStudentsController {
 		return commonDeviceContexts;
 	}
 
-	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices, List<TeamCommonDevice> collectedCommonDevices) {
+	/**
+	 *
+	 * @param availableDevices 常用中可用设备，中台的设备状态信息
+	 * @param collectedCommonDevices 已添加的常用资产列表
+	 * @return 已添加常用资产列表
+	 */
+	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
+																  List<TeamCommonDevice> collectedCommonDevices) {
 		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
 		}

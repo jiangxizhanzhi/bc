@@ -125,14 +125,17 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
 		List<String> dynamicMissionIds = Lists.newArrayList();
 		// collect user role group
-		Map<String, Integer> roleGroupMap = Maps.newHashMap();
+		Map<String, Integer> userRoleGroupMap = Maps.newHashMap();
 		for (CrRole role : roleList) {
 			if (role.isRvbStudent() || role.isTeamStudent()) {
+				// collect dynamic missions
 				dynamicMissionIds.addAll(CrCommonUtil
 						.getDynamicMissionIdsByRoleMissionScheme(role.getMissionScheme()));
 			}
-			// collect dynamic missions
-			roleGroupMap.put(role.getResourceId(), role.getRoleGroup());
+			for (String userId : JsonUtil.toJsonObjectArray(role.getUserIds(), String.class)) {
+				userRoleGroupMap.put(userId, role.getRoleGroup());
+			}
+			userRoleGroupMap.put(role.getResourceId(), role.getRoleGroup());
 		}
 		// missions
 		List<String> missionIds = taskList.stream().map(CrTask::getMissionId)
@@ -152,7 +155,7 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 				continue;
 			}
 			TimeLineEvent timeLineEvent = new TimeLineEvent();
-			timeLineEvent.setRoleGroup(roleGroupMap.get(crTask.getRoleId()));
+			timeLineEvent.setRoleGroup(userRoleGroupMap.get(crTask.getUserId()));
 			Mission mission = missionMap.get(crTask.getMissionId());
 			if (null != mission) {
 				timeLineEvent.setTitle(mission.getTitle());
@@ -174,7 +177,7 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 			if (null == userInfo) {
 				continue;
 			}
-			timeLineEvent.setRoleGroup(roleGroupMap.get(mark.getUserId()));
+			timeLineEvent.setRoleGroup(userRoleGroupMap.get(mark.getUserId()));
 			timeLineEvent.setTitle(mark.getName());
 			timeLineEvent.setUserName(userInfo.getName());
 			timeLineEvent.setAvatarUrl(userInfo.getAvatarUrl());

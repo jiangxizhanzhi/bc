@@ -28,6 +28,11 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
     }
 
     @Override
+    public List<String> getAllCollectedCommonDeviceDeviceIds() {
+        return rbCommonDeviceMapper.selectAllDeviceIds();
+    }
+
+    @Override
     public void addListToCollect(List<RbCommonDeviceContext> commonDeviceContextList) {
         List<RbCommonDevice> commonDeviceList = commonDeviceContextList.stream().map( item -> {
             RbCommonDevice commonDevice = new RbCommonDevice();

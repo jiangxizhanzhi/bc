@@ -17,6 +17,12 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
     List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId);
 
 	/**
+	 * 获取所有已添加为常用资产的 resourceIds
+	 * @return 常用资产的 deviceIds
+	 */
+	List<String> getAllCollectedCommonDeviceDeviceIds();
+
+	/**
 	 * 批量添加常用资产
 	 * @param commonDeviceContextList 常用资产列表
 	 */

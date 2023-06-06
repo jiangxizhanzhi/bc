@@ -390,11 +390,11 @@ public class TeamTrainStudentsController {
 		// 2.获取占用的设备
 		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
 		// 3.查询已添加设备
-		String userId = UserInfoContext.getUserContext().getUserId();
-		List<TeamCommonDevice> collectedCommonDevices = teamCommonDeviceService.getCollectedCommonDevices(resource_id, userId);
-		List<String> collectedCommonDeviceIds = collectedCommonDevices.stream().map(TeamCommonDevice::getDeviceId).collect(Collectors.toList());
+		// 所有已添加为常用资产的deviceIds
+		List<String> allCollectedCommonDeviceResourceIds = teamCommonDeviceService.getAllCollectedCommonDeviceDeviceIds();
+
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
-		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, collectedCommonDeviceIds);
+		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceResourceIds);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -504,13 +504,13 @@ public class TeamTrainStudentsController {
 	 * @param availableDevices 场景中的可用设备，中台的设备状态信息列表
 	 * @param occupyDevices 当前场景已占用的设备列表
 	 * @param roomId 房间id
-	 * @param collectedCommonDeviceIds 已添加的常用资产列表
+	 * @param allCollectedCommonDeviceIds 已添加的常用资产列表
 	 * @return 可添加的常用资产列表
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																  List<TeamTrainDeviceContext> occupyDevices,
 																  String roomId,
-																  List<String> collectedCommonDeviceIds) {
+																  List<String> allCollectedCommonDeviceIds) {
 		// 如果场景中可用设备为空，直接返回空数组
 		if(CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
@@ -519,13 +519,14 @@ public class TeamTrainStudentsController {
 		for(int i = 0; i < availableDevices.size(); i ++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
-			// 如果 已添加常用设备 包含 场景中可用设备  直接跳过
-			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
-				continue;
-			}
-
 			// 根据占用设备情况 设置标志位
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
+
+			// 如果 已添加常用设备 包含 场景中可用设备
+			if(allCollectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
+				context.setOccupyFlag(1);;
+			}
+
 			context.setOccupyFlag(0);
 			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
 				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {

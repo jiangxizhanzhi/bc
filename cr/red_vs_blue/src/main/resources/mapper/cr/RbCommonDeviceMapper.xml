@@ -17,6 +17,12 @@
           AND collect_user_id = #{collectUserId}
     </select>
 
+    <select id="selectAllDeviceIds" resultType="string">
+        SELECT
+            device_id
+        FROM cr_rb_common_device
+    </select>
+
     <insert id="insertList">
         INSERT INTO cr_rb_common_device
         (

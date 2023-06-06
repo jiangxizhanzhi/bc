@@ -310,11 +310,10 @@ public class RbSceneController {
 		// 2.获取占用的设备
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
-		String userId = UserInfoContext.getUserContext().getUserId();
-		List<RbCommonDevice> collectedCommonDevices = rbCommonDeviceService.getCollectedCommonDevices(resource_id, userId);
-		List<String> collectedCommonDeviceIds = collectedCommonDevices.stream().map(RbCommonDevice::getDeviceId).collect(Collectors.toList());
+		List<String> allCollectedCommonDeviceDeviceIds = rbCommonDeviceService.getAllCollectedCommonDeviceDeviceIds();
+
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
-		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, collectedCommonDeviceIds);
+		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceDeviceIds);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -374,13 +373,13 @@ public class RbSceneController {
 	 * @param availableDevices 场景中的可用设备，中台给的设备状态信息
 	 * @param occupyDevices 已占用设备列表
 	 * @param roomId 红蓝房间id
-	 * @param collectedCommonDeviceIds 已添加常用资产列表id
+	 * @param allCollectedCommonDeviceDeviceIds 已添加常用资产列表id
 	 * @return 可添加常用资产列表
 	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																List<RbDeviceContext> occupyDevices,
 																String roomId,
-																List<String> collectedCommonDeviceIds) {
+																List<String> allCollectedCommonDeviceDeviceIds) {
 		if(CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
 		}
@@ -388,11 +387,11 @@ public class RbSceneController {
 		for(int i = 0; i < availableDevices.size(); i ++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
-			if(collectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
-				continue;
+			RbCommonDeviceContext context = new RbCommonDeviceContext();
+			if(allCollectedCommonDeviceDeviceIds.contains(availableDevice.getString("id"))) {
+				context.setOccupyFlag(1);
 			}
 
-			RbCommonDeviceContext context = new RbCommonDeviceContext();
 			context.setOccupyFlag(0);
 			for(RbDeviceContext occupyDevice : occupyDevices) {
 				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {

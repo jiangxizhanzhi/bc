@@ -15,6 +15,8 @@ public interface TeamCommonDeviceMapper extends BaseMapper<TeamCommonDevice> {
 
     List<TeamCommonDevice> selectByCollectUserAndRoomId(@Param("roomId") String roomId, @Param("collectUserId") String collectUserId);
 
+    List<String> selectAllDeviceIds();
+
     void deleteByResourceId(@Param("resourceId") String resourceId);
 
 	void deleteByDeviceId(@Param("nodeId") String nodeId);

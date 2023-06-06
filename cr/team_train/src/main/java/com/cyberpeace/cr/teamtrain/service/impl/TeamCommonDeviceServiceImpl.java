@@ -28,6 +28,11 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
     }
 
     @Override
+    public List<String> getAllCollectedCommonDeviceDeviceIds() {
+        return teamCommonDeviceMapper.selectAllDeviceIds();
+    }
+
+    @Override
     public void addListToCollect(List<TeamCommonDeviceContext> commonDeviceContextList) {
         List<TeamCommonDevice> commonDeviceList = commonDeviceContextList.stream().map(item -> {
             TeamCommonDevice commonDevice = new TeamCommonDevice();

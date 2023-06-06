@@ -44,7 +44,7 @@
     xAxis: {
       boundaryGap: false,
       // name: 's', // x轴名称
-      data: [${sceneTrendSizeString}],
+      data: [${sceneTrendTimeString}],
       // x轴名称样式
       nameTextStyle: {
         fontSize: 14,

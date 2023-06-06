@@ -837,10 +837,8 @@ public class TeamTrainRoomController {
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
-		RoomBaseInfo roomBaseInfo = BeanUtils.copy(teamRoom, RoomBaseInfo.class);
-		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(teamRoom.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
-		trainReport.setRoomBaseInfo(roomBaseInfo);
-		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
+
+		initTeamReport(teamRoom,trainReport);
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
 	@ApiOperation("团队对抗-任务导调-训练报告导出")
@@ -888,13 +886,17 @@ public class TeamTrainRoomController {
 		}
 
 	}
-	public void initRbReport(TeamRoom room,TrainReportContext trainReport) {
+	public void initTeamReport(TeamRoom room,TrainReportContext trainReport) {
 		//基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(room, RoomBaseInfo.class);
 		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
 		roomBaseInfo.setDurationTime(template.getDurationTime());
 		roomBaseInfo.initExportString();
 		trainReport.setRoomBaseInfo(roomBaseInfo);
+		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(room.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
+		trainReport.setRoomBaseInfo(roomBaseInfo);
+		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
+		trainReport.initRbGetScoreRsps(false);
 	}
 
 	@ApiOperation("获取聊天框群组成员列表")

@@ -678,7 +678,7 @@ public class RbRoomController {
 		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
 		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
 		//红蓝得分趋势分组
-		trainReport.initRbGetScoreRsps();
+		trainReport.initRbGetScoreRsps(true);
 
 	}
 

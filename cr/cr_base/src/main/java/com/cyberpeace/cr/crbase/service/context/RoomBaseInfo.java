@@ -16,55 +16,60 @@ import java.util.List;
 
 @Data
 public class RoomBaseInfo {
-    private String teamTemplateId;
 
-    private String teamTemplateName;
+	private String teamTemplateId;
 
-    private String name;
+	private String teamTemplateName;
 
-    private String description;
+	private String name;
 
-    @ApiModelProperty("训练类型")
-    private Integer subType;
+	private String description;
 
-    private String subTypeString;
+	@ApiModelProperty("训练类型")
+	private Integer subType;
 
-    private String preSkills;
+	private String subTypeString;
 
-    private String trainSkills;
+	private String preSkills;
 
-    private Date startTime;
+	private String trainSkills;
 
-    private Date endTime;
+	private Date startTime;
 
-    @ApiModelProperty("推荐时长")
-    private Integer durationTime;
-    @ApiModelProperty("难度")
-    private Integer difficulty;
+	private Date endTime;
 
-    private String difficultyString;
+	@ApiModelProperty("推荐时长")
+	private Integer durationTime;
 
-    private Integer trainingStatus;
+	@ApiModelProperty("难度")
+	private Integer difficulty;
 
-    private String timeLineConfig;
+	private String difficultyString;
 
-    @ApiModelProperty(value = "训练时间")
-    private String startTimeString;
+	private Integer trainingStatus;
 
-    @ApiModelProperty(value = "训练时长")
-    private String timeCost;
+	private String timeLineConfig;
 
-    private List<String> preSkillList;
-    private List<String> trainSkillList;
+	@ApiModelProperty(value = "训练时间")
+	private String startTimeString;
 
-    public void initExportString() {
-        String duration = TimeUtil.getTimeInterval(this.getStartTime(),
-                this.getEndTime());
-        this.setTimeCost(duration);
-        this.setSubTypeString(EnumUtils.getEnumDescByCode(this.getSubType(), TrainTypeConvert.class));
-        this.setDifficultyString(EnumUtils.getEnumDescByCode(this.getDifficulty(), DifficultyConvert.class));
-        this.setStartTimeString(DateUtil.DateToString(startTime,""));
-        this.preSkillList = StringUtils.isBlank(preSkills)?new ArrayList<>():JsonUtil.toJsonObjectArray(preSkills, String.class);
-        this.trainSkillList = StringUtils.isBlank(trainSkills)?new ArrayList<>():JsonUtil.toJsonObjectArray(trainSkills, String.class);
-    }
+	@ApiModelProperty(value = "训练时长")
+	private String timeCost;
+
+	private List<String> preSkillList;
+
+	private List<String> trainSkillList;
+
+	public void initExportString() {
+		String duration = TimeUtil.getTimeInterval(this.getStartTime(), this.getEndTime());
+		this.timeCost = duration;
+		this.subTypeString = EnumUtils.getEnumDescByCode(this.getSubType(), TrainTypeConvert.class);
+		this.difficultyString = EnumUtils.getEnumDescByCode(this.getDifficulty(),
+				DifficultyConvert.class);
+		this.startTimeString = DateUtil.DateToString(startTime, "");
+		this.preSkillList = StringUtils.isBlank(preSkills) ? new ArrayList<>()
+				: JsonUtil.toJsonObjectArray(preSkills, String.class);
+		this.trainSkillList = StringUtils.isBlank(trainSkills) ? new ArrayList<>()
+				: JsonUtil.toJsonObjectArray(trainSkills, String.class);
+	}
 }

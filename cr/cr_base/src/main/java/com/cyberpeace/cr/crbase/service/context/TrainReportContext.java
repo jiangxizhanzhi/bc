@@ -88,15 +88,18 @@ public class TrainReportContext {
 
     }
 
-    public void initRbGetScoreRsps() {
+    public void initRbGetScoreRsps(Boolean isRb) {
         this.redGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
         this.blueGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
         AtomicReference<Integer> index = new AtomicReference<>(1);
-        getScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
-        index.set(1);
-        redGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
-        index.set(1);
-        blueGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        if (isRb) {
+            redGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+            index.set(1);
+            blueGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        } else {
+            getScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        }
+
     }
 
     public void initMpData(JSONArray attackTypeCount, JSONArray sceneTrend) {

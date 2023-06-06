@@ -19,6 +19,7 @@ import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.service.RemoteSceneService;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 	@Autowired
 	private RemoteSceneService remoteSceneService;
+
+	@Autowired
+	private MpEnvService mpEnvService;
 	@Override
 	public CrScore getByRoomIdAndUser(String roomId, String userId) {
 		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
@@ -349,7 +353,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 					logRsps));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
-			userRole.setLogo(userData.getLogo());
+			userRole.setLogo(mpEnvService.getMpHost()+userData.getLogo());
 			userRole.setType(type);
 			userRole.setRoleName(roleName);
 			userRoles.add(userRole);

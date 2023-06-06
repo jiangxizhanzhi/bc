@@ -54,7 +54,7 @@ option= {
   xAxis: {
     boundaryGap: false,
     // name: 's', // x轴名称
-    data: ['04-19 16:00:50','04-20 16:00:50','04-20 17:00:50','04-21 17:00:50'],
+    data: [${timeListString}],
     // x轴名称样式
     nameTextStyle: {
       fontSize: 14,
@@ -108,61 +108,7 @@ option= {
     },
   },
   series: [
-    {
-      name: '段秀秀',
-      type: 'line',
-      data: [30,40,50,60],
-      showSymbol: false,
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'none',
-      smooth: true,
-    },
-    {
-      name: '顔胜',
-      type: 'line',
-      data: [60,30,90,67],
-      showSymbol: false,
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'none',
-      smooth: true,
-    },
-    {
-      name: '别超勇',
-      type: 'line',
-      data: [80,30,20,80],
-      showSymbol: false,
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'none',
-      smooth: true,
-    },
-    {
-      name: '自祥晨',
-      type: 'line',
-      data: [20,40,20,60],
-      showSymbol: false,
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'none',
-      smooth: true,
-    },
-    {
-      name: '终晶',
-      type: 'line',
-      data: [100,40,20,50],
-      showSymbol: false,
-      lineStyle: {
-        width: 2,
-      },
-      symbol: 'none',
-      smooth: true,
-    }
+    ${teamTrendsString}
   ],
 }
 myChart.setOption(option)

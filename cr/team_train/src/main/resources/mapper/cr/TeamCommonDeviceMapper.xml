@@ -46,7 +46,7 @@
              #{teamCommonDevice.deviceId},
              #{teamCommonDevice.collectUserId},
              #{teamCommonDevice.createUserId},
-             #{teamCommonDevice.createTime},
+             #{teamCommonDevice.createTime}
             )
         </foreach>
     </insert>

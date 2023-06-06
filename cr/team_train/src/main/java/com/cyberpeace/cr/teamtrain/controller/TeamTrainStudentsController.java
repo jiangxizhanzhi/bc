@@ -375,7 +375,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("常用资产可添加列表")
 	@GetMapping("/device/common_device/not_yet")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<TeamCommonDeviceContext>> getNotYetCommonDevices(
 			@ApiParam(name = "resource_id", value = "红蓝房间id", required = true) String resource_id,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,
@@ -401,7 +401,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("添加常用资产")
 	@PostMapping("/device/common_device")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp addDevice(@RequestBody TeamCommonDeviceReq teamCommonDeviceReq) {
 		if(StringUtils.isEmpty(teamCommonDeviceReq.getRoomId())) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
@@ -417,7 +417,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("删除常用资产")
 	@DeleteMapping("/device/common_device")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp delDevice(@RequestBody TeamCommonDeviceContext teamCommonDeviceContext) {
 		String resourceId = teamCommonDeviceContext.getResourceId();
 		teamCommonDeviceService.delCollect(resourceId);
@@ -427,7 +427,7 @@ public class TeamTrainStudentsController {
 
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
-	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<TeamCommonDeviceContext>> getAlreadyCommonDevices(
 			@ApiParam(name = "resource_id", value = "团队房间id", required = true) String resource_id,
 			@ApiParam(name = "category", value = "设备类型", required = false) Integer category,

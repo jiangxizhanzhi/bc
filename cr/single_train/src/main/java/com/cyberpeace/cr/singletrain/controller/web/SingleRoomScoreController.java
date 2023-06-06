@@ -13,6 +13,8 @@ import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordMissionSimpleBo;
+import com.cyberpeace.cr.singletrain.service.bo.record.RecordStageBo;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

@@ -96,7 +96,7 @@ public class CrTask extends BaseTable {
 	/**
 	 * task 状态枚举
 	 */
-	public enum TaskStatus {
+	public enum TaskStatus implements GenericEnum{
 
 		UNRELEASED(10, "未下发"), RELEASED(11, "已下发"), STARTED(12, "已开始"), WAIT(0, "待评估"), SUCCESS(1,
 				"成功"), FAIL(2, "失败"), REJECT(3, "驳回");

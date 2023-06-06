@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      <#include "./common.css">
+      <#include "./index.css">
+    </style>
+    <script src="../js/flexible.js"></script>
+    <script src="../js/echarts.min.js"></script>
+    <script>
+      // 客观题得分
+      <#include "./js/object.js">
+      // 主观题得分
+      <#include "./js/subject.js">
+      // 训练统计
+      <#include "./js/train.js">
+      // 技能评分
+      <#include "./js/skill.js">
+    </script>
+  </head>
+  <body>
+    <div class="page flex-col">
+      <div class="group_1">
+          <div class="block_1">
+            <div style="text-align:center;">
+            <span class="text_1">${roomBaseInfo.name}训练报告</span>
+            </div>
+          </div>
+          <div class="group_2">
+            <div class="title-content">
+            <div class="title-name">
+              <img
+                class="thumbnail_1"
+                referrerpolicy="no-referrer"
+                src="../img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
+              />
+              <span class="text_2">管理员:&nbsp;${adminName}</span>
+          </div>
+          <div class="title-name">
+            <img
+            class="thumbnail_1"
+            referrerpolicy="no-referrer"
+            src="../img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
+          />
+          <span class="text_2">导演:${directorName}</span>
+        </div>
+        <div class="title-name">
+          <img
+          class="thumbnail_1"
+          referrerpolicy="no-referrer"
+          src="../img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
+        />
+        <span class="text_2">裁判:${refereesName}</span>
+      </div>
+      <div class="title-name">
+            <img
+              class="thumbnail_2"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng0bf19eecd375842f27972ce422c27a48fd2bb7c15e2724045bad501afd17179a.png"
+            />
+            <span class="text_3">训练时间:&nbsp;${roomBaseInfo.startTimeString}</span>
+          </div>
+          <div class="title-name">
+          <img
+              class="thumbnail_3"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPngb7489065b7731628cb45cda91c51ae35fa03ae602c0e825c753d5a11d2245736.png"
+            />
+            <span class="text_4">训练时长:&nbsp;${roomBaseInfo.timeCost}</span>
+
+          </div>
+        </div>
+
+          <img
+            class="image_1"
+            referrerpolicy="no-referrer"
+            src="../img/SketchPng5b5121590977177bd3fa2e4f0f6ba9064a62d9a21fdedb9fd422e8f99e31cd54.png"
+          />
+          <div class="group_3 flex-row">
+            <img
+              class="thumbnail_4"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng79f783db593d06afae87d3c61d9ad376b0a706aa4d7b613fe3d617f86e61f7f5.png"
+            />
+            <span class="text_5">推荐时长：</span>
+            <span class="text_6">${roomBaseInfo.durationTime}h</span>
+            <img
+              class="thumbnail_5"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng559f21ffd5d58bc592aedf81d3ef01de896b1e67d4bd1af94032a5e950e1df39.png"
+            />
+            <span class="text_7">类别：</span>
+            <span class="text_8">${roomBaseInfo.subTypeString}</span>
+            <img
+              class="thumbnail_6"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng739eb6edac83ee84afd6b065b2178bed6e09822c4b78deaee35c0349ea3738eb.png"
+            />
+            <span class="text_9">难度：</span>
+            <span class="text_10">${roomBaseInfo.difficultyString}</span>
+          </div>
+          <div class="group_4 flex-row">
+            <div class="text-wrapper_1 flex-col ">
+              <span class="text_11">训练技能：</span>
+            </div>
+            <div class="grid_1">
+              <#list roomBaseInfo.trainSkillList as skill>
+                <div class="text-wrapper_2 flex-col">
+                  <span class="text_13">${skill}</span>
+                </div>
+              </#list>
+            </div>
+          </div>
+          <div class="group_4_1 flex-row">
+            <div class="text-wrapper_1 flex-col ">
+              <span class="text_12">前置技能：</span>
+            </div>
+            <div class="grid_1">
+              <#list roomBaseInfo.preSkillList as skill>
+                <div class="text-wrapper_6 flex-col">
+                  <span class="text_17">${skill}</span>
+                </div>
+              </#list>
+            </div>
+          </div>
+          <div class="text-wrapper_9">
+            <span class="text_20">训练描述：</span>
+            <span class="text_21">
+              ${roomBaseInfo.description}
+            </span>
+          </div>
+          <div class="group_5 flex-row">
+            <span class="text_22">角色信息：</span>
+            <#list userRoles as userRole>
+              <div class="role-content">
+                <div class="flex-row role-item">
+                    <img
+                    class="label_1"
+                    referrerpolicy="no-referrer"
+                    src="${userRole.logo}"
+                  />
+                  <div class="block_2 flex-col justify-between">
+                    <span class="text_23">${userRole.name}</span>
+                    <div class="text-wrapper_10 flex-col">
+                      <span class="text_24">${userRole.roleName}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </#list>
+          </div>
+
+          <div class="group_7 flex-row justify-between">
+            <img
+              class="image_2"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng1b1ae46a091d8f01de701a9f5f1d87bad699091bef11bf33dd1b97894a757673.png"
+            />
+            <span class="text_33">总体数据</span>
+            <img
+              class="image_3"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPnga31724b98ccda1c49a4c9b708dea360e9a893ee05dd919774540a38d509812b8.png"
+            />
+          </div>
+          <div class="list_1 flex-col">
+            <div class="list-items_1-0 flex-col">
+              <div class="group_8-0 flex-row">
+                <div class="image-text_3-0 flex-row justify-between">
+                  <div class="block_6-0 flex-col"></div>
+                  <span class="text-group_3-0">任务分类</span>
+                </div>
+              </div>
+              <div class="task_content">
+
+                <div id="task"></div>
+              </div>
+
+            </div>
+            <div class="list-items_1-1 flex-col">
+              <div class="group_8-1 flex-row">
+                <div class="image-text_3-1 flex-row justify-between">
+                  <div class="block_6-1 flex-col"></div>
+                  <span class="text-group_3-1">攻击手法</span>
+                </div>
+              </div>
+              <div class="task_content">
+
+                <div id="attack"></div>
+              </div>
+
+            </div>
+          </div>
+          <div class="group_20 flex-col">
+            <div class="box_2 flex-row justify-between">
+              <div class="box_3 flex-col"></div>
+              <span class="text_38">攻击趋势</span>
+            </div>
+            <div class="task_content">
+
+              <div id="attack2"></div>
+            </div>
+          </div>
+          <div class="group_7 flex-row justify-between">
+            <img
+              class="image_2"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPng1b1ae46a091d8f01de701a9f5f1d87bad699091bef11bf33dd1b97894a757673.png"
+            />
+            <span class="text_33">红方数据</span>
+            <img
+              class="image_3"
+              referrerpolicy="no-referrer"
+              src="../img/SketchPnga31724b98ccda1c49a4c9b708dea360e9a893ee05dd919774540a38d509812b8.png"
+            />
+          </div>
+          <div class="group_21 flex-col">
+            <div class="box_5 flex-row justify-between">
+              <div class="box_6 flex-col"></div>
+              <span class="text_45">任务分类</span>
+            </div>
+            <div class="task_content">
+
+              <div id="red-task"></div>
+            </div>
+          </div>
+          <div class="group_21 flex-col">
+            <div class="box_5 flex-row justify-between">
+              <div class="box_6 flex-col"></div>
+              <span class="text_45">得分趋势</span>
+            </div>
+            <div class="task_content">
+
+              <div id="red-score"></div>
+            </div>
+          </div>
+          <div class="group_25 flex-col">
+            <div class="image-text_4 flex-row justify-between">
+              <div class="group_26 flex-col"></div>
+              <span class="text-group_4">人员得分</span>
+            </div>
+            <div class="text-wrapper_21 flex-row">
+              <span class="text_title">排名</span>
+              <span class="text_title">人员</span>
+              <span class="text_title">角色</span>
+              <span class="text_title">任务进度</span>
+              <span class="text_title">主观题得分</span>
+              <span class="text_title">客观题得分</span>
+              <span class="text_title">能力得分</span>
+              <span class="text_title">综合得分</span>
+            </div>
+            <#list redGetScoreRsps as score>
+              <div class="group_27 flex-row">
+                <span class="content_1">${score.index}</span>
+                <span class="content_1">${score.name}</span>
+                <span class="content_1">${score.roleName}</span>
+                <span class="content_1">${score.finishTaskCount}/${score.allTaskCount}</span>
+                <span class="content_1">${score.subjectiveScore}</span>
+                <span class="content_1">${score.objectiveScore}</span>
+                <span class="content_1">${score.abilityScore}</span>
+                <span class="content_1">${score.synthesisScore}</span>
+              </div>
+            </#list>
+          </div>
+          <div class="group_7 flex-row justify-between">
+            <img
+                    class="image_2"
+                    referrerpolicy="no-referrer"
+                    src="../img/SketchPng1b1ae46a091d8f01de701a9f5f1d87bad699091bef11bf33dd1b97894a757673.png"
+            />
+            <span class="text_33">蓝方数据</span>
+            <img
+                    class="image_3"
+                    referrerpolicy="no-referrer"
+                    src="../img/SketchPnga31724b98ccda1c49a4c9b708dea360e9a893ee05dd919774540a38d509812b8.png"
+            />
+          </div>
+          <div class="group_21 flex-col">
+            <div class="box_5 flex-row justify-between">
+              <div class="box_6 flex-col"></div>
+              <span class="text_45">任务分类</span>
+            </div>
+            <div class="task_content">
+
+              <div id="blue-task"></div>
+            </div>
+          </div>
+          <div class="group_21 flex-col">
+            <div class="box_5 flex-row justify-between">
+              <div class="box_6 flex-col"></div>
+              <span class="text_45">得分趋势</span>
+            </div>
+            <div class="task_content">
+
+              <div id="blue-score"></div>
+            </div>
+          </div>
+          <div class="group_25 flex-col">
+            <div class="image-text_4 flex-row justify-between">
+              <div class="group_26 flex-col"></div>
+              <span class="text-group_4">人员得分</span>
+            </div>
+            <div class="text-wrapper_21 flex-row">
+              <span class="text_title">排名</span>
+              <span class="text_title">人员</span>
+              <span class="text_title">角色</span>
+              <span class="text_title">任务进度</span>
+              <span class="text_title">主观题得分</span>
+              <span class="text_title">客观题得分</span>
+              <span class="text_title">能力得分</span>
+              <span class="text_title">综合得分</span>
+            </div>
+            <#list blueGetScoreRsps as score>
+              <div class="group_27 flex-row">
+                <span class="content_1">${score.index}</span>
+                <span class="content_1">${score.name}</span>
+                <span class="content_1">${score.roleName}</span>
+                <span class="content_1">${score.finishTaskCount}/${score.allTaskCount}</span>
+                <span class="content_1">${score.subjectiveScore}</span>
+                <span class="content_1">${score.objectiveScore}</span>
+                <span class="content_1">${score.abilityScore}</span>
+                <span class="content_1">${score.synthesisScore}</span>
+              </div>
+            </#list>
+          </div>
+
+      </div>
+      <#include "./student_red.html">
+      <#include "./student_blue.html">
+    </div>
+    </div>
+    <script>
+      // 任务分类
+      <#include "./js/task.js">
+      // 攻击手法
+      <#include "./js/attack.js">
+      // 攻击趋势
+      <#include "./js/attack2.js">
+      // 任务分类
+      <#include "./js/red-task.js">
+      // 得分趋势
+      <#include "./js/red-score.js">
+      // 任务分类
+      <#include "./js/blue-task.js">
+      // 得分趋势
+      <#include "./js/blue-score.js">
+    </script>
+  </body>
+</html>

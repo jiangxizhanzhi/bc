@@ -1,0 +1,27 @@
+<div class="box_11 flex-col">
+              <span class="text_33">
+                  ${mission.description}
+              </span>
+    <#list mission.option as op>
+        <div class="image-text_24 flex-row">
+            <img
+                    class="thumbnail_20"
+                    referrerpolicy="no-referrer"
+                    <#if ${mission.userAnswer} contains ${op.optionLabel}>
+                    src="./img/checkbox-check.png"
+                    <#else>
+                    src="./img/checkbox-no.png"
+                    </#if>
+            />
+            <div class="text-group_24 flex-row">
+                <span class="text_34">${op.optionLabel}、${op.optionValue}</span>
+            </div>
+        </div>
+    </#list>
+    <div class="group_5 flex-col"></div>
+    <div class="text-wrapper_17 flex-row">
+        <span class="text_42">正确答案：["AB"]</span>
+        <span class="text_43">你的答案：</span>
+        <span class="text_44">AB</span>
+    </div>
+</div>

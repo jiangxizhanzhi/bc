@@ -1,6 +1,10 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
+import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
@@ -30,9 +34,9 @@ public class TrainReportContext {
     @ApiModelProperty("人员得分")
     List<GetScoreRsp>  getScoreRsps;
     @ApiModelProperty("红方人员得分")
-    List<GetScoreRsp>  RedGetScoreRsps;
+    List<GetScoreRsp>  redGetScoreRsps;
     @ApiModelProperty("蓝方人员得分")
-    List<GetScoreRsp>  BlueGetScoreRsps;
+    List<GetScoreRsp>  blueGetScoreRsps;
 
     @ApiModelProperty("任务分类个数")
     private Integer taskKindCount;
@@ -59,6 +63,11 @@ public class TrainReportContext {
     private String refereesName;
     private List<Date> timeList = new ArrayList<>();
 
+    @ApiModelProperty("攻击流量各类别统计")
+    private List<AttackTypeCount> attackTypeCount;
+    @ApiModelProperty("场景流量趋势图")
+    private List<SceneTrend> sceneTrend;
+
     public void initScoreTrends(List<StudentScoreTrend> scoreTrends) {
         teamTrends = scoreTrends.stream().filter(a-> CrRole.TeamRoleGroup.STUDENT.getCode().equals(a.getRole())).collect(Collectors.toList());
         redTrends = scoreTrends.stream().filter(a-> CrRole.RbRoleGroup.RED.getCode().equals(a.getRole())).collect(Collectors.toList());
@@ -80,13 +89,20 @@ public class TrainReportContext {
     }
 
     public void initRbGetScoreRsps() {
-        this.RedGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
-        this.BlueGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
+        this.redGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getType())).collect(Collectors.toList());
+        this.blueGetScoreRsps = this.getScoreRsps.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getType())).collect(Collectors.toList());
         AtomicReference<Integer> index = new AtomicReference<>(1);
         getScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
         index.set(1);
-        RedGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        redGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
         index.set(1);
-        BlueGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+        blueGetScoreRsps.forEach(a->a.setIndex(index.getAndSet(index.get() + 1)));
+    }
+
+    public void initMpData(JSONArray attackTypeCount, JSONArray sceneTrend) {
+        this.attackTypeCount = BeanUtils.deepCopyList(attackTypeCount,AttackTypeCount.class);
+        this.sceneTrend = BeanUtils.deepCopyList(sceneTrend,SceneTrend.class);
+
+
     }
 }

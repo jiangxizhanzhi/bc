@@ -117,6 +117,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String NODE_SCREEN_RECORD;
 
+	private String ATTACK_TYPE_COUNT;
+
+	private String SCENE_TREND;
+
 	@PostConstruct
 	public void init() {
 		String MP_HOST = mpEnvService.getMpHost();
@@ -202,6 +206,10 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		NODE_SCENE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.cscenes");
 
 		NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
+
+		ATTACK_TYPE_COUNT = MP_HOST + ConfigUtil.getContextProperty("mp.attack.type.count");
+
+		SCENE_TREND = MP_HOST + ConfigUtil.getContextProperty("mp.scene.trend");
 	}
 
 	@Override
@@ -288,6 +296,18 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		String targetUrl = NODE_SCREEN_RECORD + "?csceneId=" + sceneId+"&nodeId="+nodeId+"&page=1&pageSize=999";
 		return  HttpClientUtil.rawGet(targetUrl, JSONObject.class);
+	}
+
+	@Override
+	public JSONArray attackTypeCount(String mpSceneId) {
+		String targetUrl = ATTACK_TYPE_COUNT + "?sceneId=" + mpSceneId;
+		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
+	}
+
+	@Override
+	public JSONArray sceneTrend(String mpSceneId) {
+		String targetUrl = SCENE_TREND + "?sceneId=" + mpSceneId;
+		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
 	}
 
 	@Override

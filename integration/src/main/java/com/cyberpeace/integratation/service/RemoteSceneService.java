@@ -259,4 +259,8 @@ public interface RemoteSceneService {
 
 
 	JSONObject screenrecord(String sceneId,String nodeId);
+
+	JSONArray attackTypeCount(String mpSceneId);
+
+	JSONArray sceneTrend(String mpSceneId);
 }

@@ -4,11 +4,21 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONArray;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
-import com.cyberpeace.cr.crbase.service.context.UserData;
+import com.cyberpeace.cr.crbase.service.context.*;
+import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +26,9 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
-import com.cyberpeace.cr.crbase.service.context.TrainingSummary;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
@@ -52,8 +59,18 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private CrTaskLogMapper crTaskLogMapper;
+
+	@Autowired
+	private LocalSceneService localSceneService;
+
+	@Autowired
+	private RemoteSceneService remoteSceneService;
 	@Override
 	public CrScore getByRoomIdAndUser(String roomId, String userId) {
 		return crScoreMapper.getByRoomIdAndUser(roomId, userId);
@@ -249,17 +266,22 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	}
 
 	@Override
-	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,ScoreTrendReq scoreTrendReq) {
+	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,
+			ScoreTrendReq scoreTrendReq) {
 		TrainReportContext trainReportContext = new TrainReportContext();
 		trainReportContext.initTimeList(scoreTrendReq);
 		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
-		//获取用户id
+		// 获取用户id
 		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
 				.flatMap(Collection::stream).collect(Collectors.toList());
-		List<String> redUserIds = crRoles.stream().filter(a->CrRole.RbRoleGroup.RED.getCode().equals(a.getRoleGroup())).map(CrRole::getUserIdList)
-				.flatMap(Collection::stream).collect(Collectors.toList());
-		List<String> blueUserIds = crRoles.stream().filter(a->CrRole.RbRoleGroup.BLUE.getCode().equals(a.getRoleGroup())).map(CrRole::getUserIdList)
-				.flatMap(Collection::stream).collect(Collectors.toList());
+		List<String> redUserIds = crRoles.stream()
+				.filter(a -> CrRole.RbRoleGroup.RED.getCode().equals(a.getRoleGroup()))
+				.map(CrRole::getUserIdList).flatMap(Collection::stream)
+				.collect(Collectors.toList());
+		List<String> blueUserIds = crRoles.stream()
+				.filter(a -> CrRole.RbRoleGroup.BLUE.getCode().equals(a.getRoleGroup()))
+				.map(CrRole::getUserIdList).flatMap(Collection::stream)
+				.collect(Collectors.toList());
 		Map<String, CrRole> userIdRoleMap = crRoles.stream()
 				.map(crRole -> crRole.getUserIdList().stream().map(b -> new UserIdRole(b, crRole))
 						.collect(Collectors.toList()))
@@ -271,34 +293,60 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		Map<String, CrScore> scoreMap = crScores.stream()
 				.collect(Collectors.toMap(CrScore::getUserId, Function.identity(), (a, b) -> a));
 
-		//查询任务数据
+		// 查询任务数据
 		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
 		Map<String, List<CrTask>> taskMap = taskList.stream()
 				.collect(Collectors.groupingBy(CrTask::getUserId));
-		Set<String> missionIds = taskList.stream().map(CrTask::getMissionId)
-				.collect(Collectors.toSet());
-		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>() : missionService.listByIds(missionIds);
+		Set<String> missionIds = crRoles.stream().map(a->{
+			CrRoleSimple crRoleSimple = new CrRoleSimple(a);
+			return crRoleSimple.getMissionIds();
+		}).flatMap(Collection::stream).collect(Collectors.toSet());
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds) ? new ArrayList<>()
+				: missionService.listByIds(missionIds);
 		Map<String, Mission> missionMap = missions.stream()
 				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
-
+		// 获取人员技能评分
+		List<UserSkillScoreContext> skillScoreList = getSkillScoreList(roomId, userIds, taskList,
+				missionMap);
+		Map<String, UserSkillScoreContext> skillScoreContextMap = skillScoreList.stream()
+				.collect(Collectors.toMap(UserSkillScoreContext::getUserId, Function.identity(),
+						(a, b) -> a));
+		// 动态事件
+		List<CrTaskLog> crTaskLogs = crTaskLogMapper.selectReleaseByRoomId(roomId);
+		List<TaskLogRsp> taskLogRsps = BeanUtils.deepCopyList(crTaskLogs, TaskLogRsp.class);
+		for (TaskLogRsp taskLogRsp : taskLogRsps) {
+			taskLogRsp.setName(missionMap.get(taskLogRsp.getMissionId()).getTitle());
+			taskLogRsp.setActionName(EnumUtils.getEnumDescByCode(taskLogRsp.getActionCode(),
+					TaskLogRsp.ActionCode.class));
+			taskLogRsp.setCreateTimeString(
+					DateUtil.DateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
+		}
+//		Map<String, List<TaskLogRsp>> taskLogMap = taskLogRsps.stream()
+//				.collect(Collectors.groupingBy(TaskLogRsp::getUserId));
 
 		List<StudentScoreTrend> scoreTrends = new ArrayList<>();
 		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
 		List<UserData> userDataList = crRoleService.getUserDatas(userIds);
-		List<UserRole>  userRoles = new ArrayList<>();
+		List<UserRole> userRoles = new ArrayList<>();
 		for (UserData userData : userDataList) {
-			Integer type = userIdRoleMap.getOrDefault(userData.getResourceId(),new CrRole()).getRoleGroup();
-			String roleName = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole()).getName();
-			Integer roleGroup = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole()).getRoleGroup();
-			//得分趋势
+			CrRole crRole = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole());
+			Integer type = crRole.getRoleGroup();
+			String roleName = crRole.getName();
+			Integer roleGroup = crRole.getRoleGroup();
+			// 得分趋势
 			List<CrTask> userTaskList = taskMap.getOrDefault(userData.getResourceId(),
 					new ArrayList<>());
+			List<String> taskIds = userTaskList.stream().map(CrTask::getResourceId).collect(Collectors.toList());
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
-			scoreTrends.add(new StudentScoreTrend(userData, successList,
-					roleGroup,trainReportContext.getTimeList()));
-			//人员得分
-			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap,type,roleName));
+			scoreTrends.add(new StudentScoreTrend(userData, successList, roleGroup,
+					trainReportContext.getTimeList()));
+			// 人员得分
+			List<MissionSchemeObject<MissionContext>> userMissionList = crRoleService
+					.getCrRoleMissionByRoomIdAndUserId(roomId, userData.getResourceId());
+			List<TaskLogRsp> logRsps = taskLogRsps.stream().filter(a -> taskIds.contains(a.getTaskId())).collect(Collectors.toList());
+			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap, crRole, skillScoreContextMap.get(userData.getResourceId()), userMissionList,
+					logRsps));
 			UserRole userRole = new UserRole();
 			userRole.setName(userData.getRepName());
 			userRole.setLogo(userData.getLogo());
@@ -306,25 +354,93 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			userRole.setRoleName(roleName);
 			userRoles.add(userRole);
 		}
+		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
+		JSONArray attackTypeCount;
+		JSONArray sceneTrend;
+		if (scene!=null) {
+			//中台攻击手法
+			attackTypeCount= remoteSceneService.attackTypeCount(scene.getMpSceneId());
+			//中台攻击趋势
+			sceneTrend = remoteSceneService.sceneTrend(scene.getMpSceneId());
+			trainReportContext.initMpData(attackTypeCount,sceneTrend);
+		}
 
-		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,Comparator.nullsLast(Integer::compareTo)));
+
+		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,
+				Comparator.nullsLast(Integer::compareTo)));
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
-		//任务分类图
-		trainReportContext.setKindMap(dealCateMap(taskList,userIds));
-		trainReportContext.setRedMap(dealCateMap(taskList,redUserIds));
-		trainReportContext.setBlueMap(dealCateMap(taskList,blueUserIds));
 		trainReportContext.setUserRoles(userRoles);
+		// 任务分类图
+		trainReportContext.setKindMap(dealCateMap(taskList, userIds));
+		trainReportContext.setRedMap(dealCateMap(taskList, redUserIds));
+		trainReportContext.setBlueMap(dealCateMap(taskList, blueUserIds));
+
+
 		return trainReportContext;
 	}
 
-	public Map<String,Integer> dealCateMap(List<CrTask> taskList,List<String> userIds) {
+	public List<UserSkillScoreContext> getSkillScoreList(String roomId, ArrayList<Integer> roles) {
+		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
+		Map<String, List<CrTask>> taskMap = taskList.stream()
+				.collect(Collectors.groupingBy(CrTask::getUserId));
+		Set<String> missionIds = taskList.stream().map(CrTask::getMissionId)
+				.collect(Collectors.toSet());
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds) ? new ArrayList<>()
+				: missionService.listByIds(missionIds);
+		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
+		// 获取用户id
+		List<String> userIds = crRoles.stream().map(CrRole::getUserIdList)
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		Map<String, Mission> missionMap = missions.stream()
+				.collect(Collectors.toMap(Mission::getResourceId, Function.identity()));
+		return getSkillScoreList(roomId, userIds, taskList, missionMap);
+	}
+
+	public List<UserSkillScoreContext> getSkillScoreList(String roomId, List<String> userIds,
+			List<CrTask> taskList, Map<String, Mission> missionMap) {
+		Map<String, List<CrTask>> taskMap = taskList.stream()
+				.collect(Collectors.groupingBy(CrTask::getUserId));
+		List<RadarLabel> radarLabel = missionService.getRadarLabel();
+		Map<Integer, RadarLabel> radarMap = radarLabel.stream()
+				.collect(Collectors.toMap(RadarLabel::getResourceId, Function.identity()));
+		List<UserSkillScoreContext> list = new ArrayList<>();
+		for (String userId : userIds) {
+			UserSkillScoreContext context = new UserSkillScoreContext();
+			List<Integer> points = CrCommonUtil.getInitPoints();
+			List<CrTask> userTaskList = taskMap.getOrDefault(userId,new ArrayList<>());
+			for (CrTask crTask : userTaskList) {
+				if (crTask.isSuccess()) {
+					Mission mission = missionMap.get(crTask.getMissionId());
+					List<Integer> mPoints = JsonUtil.toJsonObjectArray(mission.getSkillPoints(),
+							Integer.class);
+					if (!CollectionUtils.isEmpty(mPoints)) {
+						for (int i = 0; i < mPoints.size(); i++) {
+							points.set(i, mPoints.get(i) + points.get(i));
+						}
+					}
+				}
+			}
+			context.setUserId(userId);
+			List<SkillScoreContext> skillScoreContextList = new ArrayList<>();
+			for (int i = 0; i < points.size(); i++) {
+				SkillScoreContext skillScoreContext = new SkillScoreContext(
+						radarMap.get(i+1).getLabel(), points.get(i), i);
+				skillScoreContextList.add(skillScoreContext);
+			}
+			context.setSkillScoreContextList(skillScoreContextList);
+			list.add(context);
+		}
+		return list;
+	}
+
+	public Map<String, Integer> dealCateMap(List<CrTask> taskList, List<String> userIds) {
 		Map<String, Integer> kindMap = new HashMap<>();
 
-
-		Set<String> missionIds = taskList.stream().filter(a->userIds.contains(a.getUserId())).map(CrTask::getMissionId)
-				.collect(Collectors.toSet());
-		List<Mission> missions = CollectionUtils.isEmpty(missionIds)?new ArrayList<>() : missionService.listByIds(missionIds);
+		Set<String> missionIds = taskList.stream().filter(a -> userIds.contains(a.getUserId()))
+				.map(CrTask::getMissionId).collect(Collectors.toSet());
+		List<Mission> missions = CollectionUtils.isEmpty(missionIds) ? new ArrayList<>()
+				: missionService.listByIds(missionIds);
 
 		Map<String, List<Mission>> categoryMap = missions.stream()
 				.collect(Collectors.groupingBy(Mission::getCategoryId));
@@ -340,5 +456,19 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			kindMap.put(config.getCnName(), size);
 		}
 		return kindMap;
+	}
+
+	public void getTrainRecord(List<CrRole> crRoles, List<CrTask> taskList,
+			Map<String, Mission> missionMap) {
+		Map<String, List<CrTask>> taskMap = taskList.stream()
+				.collect(Collectors.groupingBy(CrTask::getUserId));
+		for (CrRole crRole : crRoles) {
+			List<MissionStageScheme> missionStageSchemes = crRole.getMissionStageSchemes();
+			for (String userId : crRole.getUserIdList()) {
+				List<CrTask> userTaskList = taskMap.get(userId);
+
+			}
+		}
+
 	}
 }

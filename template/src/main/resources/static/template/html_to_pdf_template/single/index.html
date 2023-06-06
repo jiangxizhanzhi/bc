@@ -4,13 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    
+
 
     <style>
       <#include "./common.css">
                               <#include "./index.css">
     </style>
-    <script src="./js/flexible.js"></script>
     <script>
       <#include "./js/flexible.js">
       <#include "./js/echarts.min.js">
@@ -27,7 +26,7 @@
             '#FF6652',
             '#F2A92A',
           ],
-         
+
           graphic: [
           {
             type: 'text',
@@ -113,8 +112,8 @@
         // }
         // option.series[0].data
         myChart.setOption(option)
-  
-  
+
+
         // 技能评分图
         var myChart1 = echarts.init(document.getElementById('skillScore'));
         option1 = {
@@ -206,25 +205,25 @@
           <img
             class="thumbnail_18"
             referrerpolicy="no-referrer"
-            src="../img/SketchPngfcbb2e2efd0381e1efb9d6bd74078232edc3d4d2f2c9fac59c97c13a9761b595.png"
+            src="../img/student.png"
           />
           <span class="text_2">训练人员:&nbsp;${traineeName}</span>
           <img
             class="icon_7"
             referrerpolicy="no-referrer"
-            src="../img/SketchPng4a89a29f2c9089dae93b82fd5ead9450415ca6c4f14ac2670c3dfc504f45a607.png"
+            src="../img/score.png"
           />
           <span class="text_3">训练得分:&nbsp;${score}</span>
           <img
             class="icon_8"
             referrerpolicy="no-referrer"
-            src="../img/SketchPng0bf19eecd375842f27972ce422c27a48fd2bb7c15e2724045bad501afd17179a.png"
+            src="../img/train-time.png"
           />
           <span class="text_4">训练时间:&nbsp;${trainingTimeString}</span>
           <img
             class="thumbnail_19"
             referrerpolicy="no-referrer"
-            src="../img/SketchPngb5e252b2f80375fabefc760cd9d45b623c525a1d894fada22f9e95bfb242f031.png"
+            src="../img/time.png"
           />
           <span class="text_5">训练时长:&nbsp;${timeCost}&nbsp;小时</span>
         </div>
@@ -233,21 +232,21 @@
           <img
             class="icon_9"
             referrerpolicy="no-referrer"
-            src="../img/SketchPng79f783db593d06afae87d3c61d9ad376b0a706aa4d7b613fe3d617f86e61f7f5.png"
+            src="../img/recommend-time.png"
           />
           <span class="text_6">推荐时长：</span>
           <span class="text_7">${durationTime}天</span>
           <img
             class="icon_10"
             referrerpolicy="no-referrer"
-            src="../img/SketchPng559f21ffd5d58bc592aedf81d3ef01de896b1e67d4bd1af94032a5e950e1df39.png"
+            src="../img/catory.png"
           />
           <span class="text_8">类别：</span>
           <span class="text_9">${subTypeString}</span>
           <img
             class="icon_11"
             referrerpolicy="no-referrer"
-            src="../img/SketchPng739eb6edac83ee84afd6b065b2178bed6e09822c4b78deaee35c0349ea3738eb.png"
+            src="../img/difficity.png"
           />
           <span class="text_10">难度：</span>
           <span class="text_11">${difficultyString}</span>
@@ -271,8 +270,8 @@
               </div>
             </#list>
           </div>
-          
-          
+
+
         </div>
         <div class="text-wrapper_13 flex-row justify-between">
           <span class="text_21">训练描述：</span>
@@ -294,72 +293,33 @@
         <div class="box_10 flex-col" >
           <div id="skillScore"></div>
         </div>
-        <#list stages as stage>
-          <div class="image-text_23 flex-row justify-between">
-            <div class="group_9 flex-col"></div>
-            <span class="text-group_23">${stage.stageName}</span>
+
+
+
+
+
+
+      <#list stages as stage>
+
+        <div class="image-text_23 flex-row">
+          <div class="group_9 flex-col"></div>
+          <span class="text-group_23">${stage.stageName}</span>
+        </div>
+        <#list stage.missions as mission>
+          <div class="text-wrapper_5 flex-col">
+            <span class="text_32">${mission.title}</span>
           </div>
-          <#list stage.missions as mission>
-            <div class="text-wrapper_5 flex-col">
-              <span class="text_32">${mission.title}</span>
-            </div>
-            <div class="box_11 flex-col">
-              <span class="text_33">
-                ${mission.description}
-              </span>
-              <div class="image-text_24 flex-row justify-between">
-                <img
-                  class="thumbnail_20"
-                  referrerpolicy="no-referrer"
-                  src="../img/f195f3501c954ca3914065a2bbf8537a_mergeImage.png"
-                />
-                <div class="text-group_24 flex-row">
-                  <span class="text_34">A、net&nbsp;user</span>
-                  <span class="text_35">A、net&nbsp;user</span>
-                </div>
-              </div>
-              <div class="image-text_25 flex-row justify-between">
-                <img
-                  class="thumbnail_21"
-                  referrerpolicy="no-referrer"
-                  src="../img/cc02b8dacda048dd8a3b9214f620d7fa_mergeImage.png"
-                />
-                <div class="text-group_25 flex-row">
-                  <span class="text_36">B、whoisthis</span>
-                  <span class="text_37">B、whoisthis</span>
-                </div>
-              </div>
-              <div class="image-text_26 flex-row justify-between">
-                <img
-                  class="thumbnail_22"
-                  referrerpolicy="no-referrer"
-                  src="../img/3f25d65dde1241969ef07bbae9c85382_mergeImage.png"
-                />
-                <div class="text-group_26 flex-row">
-                  <span class="text_38">C、whoami</span>
-                  <span class="text_39">C、whoami</span>
-                </div>
-              </div>
-              <div class="image-text_27 flex-row justify-between">
-                <img
-                  class="thumbnail_23"
-                  referrerpolicy="no-referrer"
-                  src="../img/fd085adc74f74e7393f4cf6ece43c80e_mergeImage.png"
-                />
-                <div class="text-group_27 flex-row">
-                  <span class="text_40">D、wherearewe</span>
-                  <span class="text_41">D、wherearewe</span>
-                </div>
-              </div>
-              <div class="group_5 flex-col"></div>
-              <div class="text-wrapper_17 flex-row">
-                <span class="text_42">正确答案：${mission.answer}</span>
-                <span class="text_43">你的答案：</span>
-                <span class="text_44">${mission.answer}</span>
-              </div>
-            </div>
+            <#if mission.type == 0>
+              <#include "./judge.html">
+            <#elseif mission.type == 1>
+              <#include "./single_choice.html">
+            <#elseif mission.type == 2>
+              <#include "./multiple_choice.html">
+            <#else>
+              <#include "./file.html">
+            </#if>
           </#list>
-        </#list>
+      </#list>
       </div>
     </div>
   </body>

@@ -50,5 +50,10 @@
         and cr_task.room_id = #{roomId}
         and cr_task_log.action_code = ${RELEASE}
     </select>
+    <select id="selectReleaseByRoomId" resultType="com.cyberpeace.cr.crbase.dao.entity.CrTaskLog">
+        select *
+        from cr_task_log
+        where room_id = #{roomId}
+    </select>
 
 </mapper>

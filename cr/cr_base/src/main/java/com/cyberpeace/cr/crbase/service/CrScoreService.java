@@ -8,10 +8,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrScore;
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
+import com.cyberpeace.cr.crbase.service.context.score.UserSkillScoreContext;
 
 /**
  *
@@ -76,4 +79,7 @@ public interface CrScoreService extends IService<CrScore> {
 
 	TrainReportContext getTrainReport(String resource_id, ArrayList<Integer> roles, ScoreTrendReq scoreTrendReq);
 
+	List<UserSkillScoreContext> getSkillScoreList(String roomId,ArrayList<Integer> roles);
+
+	List<UserSkillScoreContext> getSkillScoreList(String roomId,List<String> userIds, List<CrTask> taskList, Map<String, Mission> missionMap);
 }

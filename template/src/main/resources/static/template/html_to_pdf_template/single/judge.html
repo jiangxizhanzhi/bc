@@ -1,0 +1,44 @@
+<div class="box_11 flex-col">
+              <span class="text_33">
+                  ${mission.description}
+              </span>
+    <div class="image-text_24 flex-row">
+        <img
+                class="thumbnail_20"
+                referrerpolicy="no-referrer"
+                <#if !mission.userAnswer??>
+                    src="./img/radio-no.png"
+                <#elseif mission.userAnswer == A>
+                    src="./img/radio-check.png"
+                <#else>
+                    src="./img/radio-no.png"
+                </#if>
+        />
+        <div class="text-group_24 flex-row">
+            <span class="text_34">A、正确</span>
+        </div>
+    </div>
+    <div class="image-text_24 flex-row">
+        <img
+                class="thumbnail_20"
+                referrerpolicy="no-referrer"
+        <#if !mission.userAnswer??>
+        src="./img/radio-no.png"
+        <#elseif mission.userAnswer == B>
+        src="./img/radio-check.png"
+        <#else>
+        src="./img/radio-no.png"
+        </#if>
+        />
+        <div class="text-group_24 flex-row">
+            <span class="text_34">B、错误</span>
+        </div>
+    </div>
+
+    <div class="group_5 flex-col"></div>
+    <div class="text-wrapper_17 flex-row">
+        <span class="text_42">正确答案：${mission.answer}</span>
+        <span class="text_43">你的答案：</span>
+        <span class="text_49">${mission.userAnswer!''}</span>
+    </div>
+</div>

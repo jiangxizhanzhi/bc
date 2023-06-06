@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,6 +252,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 					newMission.setCategoryId(mission.getCategoryId());
 					newMission.setDescription(mission.getDescription());
 					newMission.setState(taskStatusMap.get(mission.getResourceId()));
+					newMission.setStateString(EnumUtils.getEnumDescByCode(newMission.getState(),CrTask.TaskStatus.class));
 					missionContextList.add(newMission);
 				}
 

@@ -1,9 +1,19 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.LocalSceneService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -26,9 +36,6 @@ import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
@@ -37,10 +44,6 @@ import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
-import com.cyberpeace.cr.crbase.service.context.RoomBaseInfo;
-import com.cyberpeace.cr.crbase.service.context.TrainReportContext;
-import com.cyberpeace.cr.crbase.service.context.TrainTaskReleaseInfoRsp;
-import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
@@ -75,6 +78,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Api(tags = "红蓝对抗实例")
 @Slf4j
@@ -121,6 +126,9 @@ public class RbRoomController {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -606,8 +614,62 @@ public class RbRoomController {
 		return new BaseRsp<>(trainReport);
 	}
 
+	@ApiOperation("红蓝对抗-任务导调-训练报告")
+	@GetMapping("/mission/TrainReportsPdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public void TrainReportsPdf(HttpServletResponse httpServletResponse,
+								@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+								@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+		TrainReportExportContext data = BeanUtils.deepCopy(originData, TrainReportExportContext.class);
+		data.initExport();
+		Path destHtmlPathObj = Paths.get(AttachmentPath.REDVSBLUE.getDesc(),
+				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
+				String.format("%s.html", resource_id));
+		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath()+"/img",AttachmentPath.REDVSBLUE.getDesc(),true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath()+"/js",AttachmentPath.REDVSBLUE.getDesc(),true);
+		// 临时存放目录
+		File directory = destHtmlPathObj.getParent().toFile();
+		if (!directory.exists()) {
+			boolean isCreated = directory.mkdirs();
+			if (!isCreated) {
+				log.error("failed_to_make_dir: Path = [{}]", directory.getPath());
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
+			}
+		}
+		String destHtmlPath = destHtmlPathObj.toString();
+		try {
+			// 生成html
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.REDBLUE, destHtmlPath);
+
+			// 在同目录下生成pdf
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
+
+			FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
+
+		} catch (Exception e) {
+			log.error("failed to export pdf: {}", destHtmlPath);
+			throw e;
+		} finally {
+			if (!FileUtil.deleteDir(directory)) {
+				log.error("failed to delete dir: {}", directory);
+			}
+		}
+
+	}
+
+	public void initExportInfo(TrainReportContext trainReport) {
+
+	}
+
 	public void initRbReport(RbRoom rbRoom,TrainReportContext trainReport) {
+		//基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
+		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
+		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
+		roomBaseInfo.initExportString();
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
 		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
@@ -615,6 +677,7 @@ public class RbRoomController {
 		trainReport.setAdminName(UserRole.getName(UserRole::getName,admins));
 		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
 		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
+		//红蓝得分趋势分组
 		trainReport.initRbGetScoreRsps();
 
 	}

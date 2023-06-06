@@ -31,6 +31,9 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -60,6 +63,9 @@ public class EvalAlgorithmRefController {
 	@Autowired
 	private EvalAlgorithmRefService evalAlgorithmRefService;
 
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
 	@Qualifier("taskExecutor")
 	@Autowired
 	private Executor executor;
@@ -83,12 +89,25 @@ public class EvalAlgorithmRefController {
 		}
 		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
 			String matrixData = req.getMatrixData();
-			Runnable task = () -> {checkMatrixData(req, res, evalAlgorithmRef, matrixData);};
-			executor.execute(task);
+			checkMatrixData(req, res, evalAlgorithmRef, matrixData);
+			LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
+			query.eq(EvalIndexRef::getAlgorithmId, evalAlgorithmId);
+			EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
+			evalIndexRef.setMatrixData(matrixData);
 			evalAlgorithmRef.setMatrixData(matrixData);
+			if(StringUtils.isNotBlank(req.getCode())){
+				evalAlgorithmRef.setCode(req.getCode());
+			}
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
+					evalIndexRefMapper.updateById(evalIndexRef);
+				}
+			});
+		} else {
+			evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
 		}
-		evalAlgorithmRef.setCode(req.getCode());
-		evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
 		BeanUtils.copyProperties(evalAlgorithmRef, res);
 		return new BaseRsp(res);
 	}
@@ -141,6 +160,7 @@ public class EvalAlgorithmRefController {
 					throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 				}
 				evalAlgorithmRsp = BeanUtils.copy(evalAlgorithmRef, EvalAlgorithmRsp.class);
+				evalAlgorithmRsp.setMatrixData(evalIndexRef.getMatrixData());
 				evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithmRef.getResourceId());
 				evalAlgorithmRsp.setParams(
 						JsonUtil.toJsonObjectArray(evalIndexRef.getAlgorithmParams(), AlgorithmParamContext.class));

@@ -607,6 +607,9 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		RbRoom rbRoom = rbRoomService.getById(resource_id);
+		if (scoreCount==null||scoreCount==0) {
+			scoreCount=10;
+		}
 		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount);
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);

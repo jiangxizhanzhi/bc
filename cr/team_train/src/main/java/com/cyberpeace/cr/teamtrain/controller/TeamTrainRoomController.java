@@ -833,6 +833,9 @@ public class TeamTrainRoomController {
 
 		String userId = UserInfoContext.getUserContext().getUserId();
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		if (scoreCount==null||scoreCount==0) {
+			scoreCount=10;
+		}
 		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(teamRoom.getStartTime(), teamRoom.getEndTime(), scoreCount);
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists

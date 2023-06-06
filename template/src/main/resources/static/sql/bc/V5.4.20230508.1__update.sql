@@ -1910,3 +1910,7 @@ CREATE TABLE `init_rtks_role_skill_relation`
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci COMMENT = '预置rtks角色技能点关联表';
+
+INSERT INTO `cr_constants_config` VALUES (138, NULL, 1, 39, '已解出', 'Solved');
+INSERT INTO `cr_constants_config` VALUES (139, NULL, 2, 39, '未开始', 'Not started');
+INSERT INTO `cr_constants_config` VALUES (140, NULL, 0, 39, '尝试过', 'Attempted');

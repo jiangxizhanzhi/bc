@@ -10,7 +10,7 @@ public enum HtmlTemplateEnum {
 	INDIVIDUAL("index.html", "static/template/html_to_pdf_template/Individual"),
 	SINGLE("index.html", "static/template/html_to_pdf_template/single"),
 	REDBLUE("index.html", "static/template/html_to_pdf_template/redvsblue"),
-	TEAM("index.html", "static/template/html_to_pdf_template/Team"),
+	TEAM("index.html", "static/template/html_to_pdf_template/teamNew"),
 	EVAL("index.html", "static/template/html_to_pdf_template/Eval"),
 	LESSON("index.html", "static/template/html_to_pdf_template/Lesson");
 

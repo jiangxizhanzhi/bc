@@ -1,12 +1,21 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -82,6 +91,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -832,8 +843,59 @@ public class TeamTrainRoomController {
 		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
+	@ApiOperation("团队对抗-任务导调-训练报告导出")
+	@GetMapping("/mission/TrainReportsPdf")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public void TrainReportsPdf(HttpServletResponse httpServletResponse,
+								@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+								@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
+		TrainReportExportContext data = BeanUtils.deepCopy(originData, TrainReportExportContext.class);
+		data.initExport();
+		Path destHtmlPathObj = Paths.get(AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),
+				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
+				String.format("%s.html", resource_id));
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath()+"/img",AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath()+"/js",AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),true);
+		// 临时存放目录
+		File directory = destHtmlPathObj.getParent().toFile();
+		if (!directory.exists()) {
+			boolean isCreated = directory.mkdirs();
+			if (!isCreated) {
+				log.error("failed_to_make_dir: Path = [{}]", directory.getPath());
+				throw new BusinessException(ErrorCode.FAILED_TO_MAKE_DIR, directory.getPath());
+			}
+		}
+		String destHtmlPath = destHtmlPathObj.toString();
+		try {
+			// 生成html
+			HtmlToPdfUtil.getHtmlTemplateInstance(data, HtmlTemplateEnum.TEAM, destHtmlPath);
 
+			// 在同目录下生成pdf
+			String destPdfPath = destHtmlPath.substring(0, destHtmlPath.lastIndexOf("html"))
+					+ "pdf";
+			HtmlToPdfUtil.convert(destHtmlPath, destPdfPath);
 
+			FileUtil.setResponse(new File(destPdfPath), false, httpServletResponse);
+
+		} catch (Exception e) {
+			log.error("failed to export pdf: {}", destHtmlPath);
+			throw e;
+		} finally {
+			if (!FileUtil.deleteDir(directory)) {
+				log.error("failed to delete dir: {}", directory);
+			}
+		}
+
+	}
+	public void initRbReport(TeamRoom room,TrainReportContext trainReport) {
+		//基础信息
+		RoomBaseInfo roomBaseInfo = BeanUtils.copy(room, RoomBaseInfo.class);
+		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
+		roomBaseInfo.setDurationTime(template.getDurationTime());
+		roomBaseInfo.initExportString();
+		trainReport.setRoomBaseInfo(roomBaseInfo);
+	}
 
 	@ApiOperation("获取聊天框群组成员列表")
 	@GetMapping("/members_info")

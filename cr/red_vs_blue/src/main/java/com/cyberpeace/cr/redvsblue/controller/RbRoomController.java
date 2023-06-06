@@ -614,7 +614,7 @@ public class RbRoomController {
 		return new BaseRsp<>(trainReport);
 	}
 
-	@ApiOperation("红蓝对抗-任务导调-训练报告")
+	@ApiOperation("红蓝对抗-任务导调-训练报告导出")
 	@GetMapping("/mission/TrainReportsPdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public void TrainReportsPdf(HttpServletResponse httpServletResponse,

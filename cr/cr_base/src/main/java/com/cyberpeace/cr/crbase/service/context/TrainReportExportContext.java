@@ -62,7 +62,7 @@ public class TrainReportExportContext extends TrainReportContext {
 		attackTypeCountString=getKindString(getAttackTypeCount());
 		attackTypeAllCount=getAttackTypeCount()==null?0:getAttackTypeCount().stream().mapToInt(AttackTypeCount::getTimes).sum();
 		sceneTrendSizeString = getSceneTrend()==null?"": getSceneTrend().stream().map(a->a.getData_size()+"").collect(Collectors.joining(","));
-		sceneTrendTimeString = getSceneTrend()==null?"":getSceneTrend().stream().map(SceneTrend::getTime).collect(Collectors.joining(","));
+		sceneTrendTimeString = getSceneTrend()==null?"":getSceneTrend().stream().map(a->"'"+a.getTime()+"'").collect(Collectors.joining(","));
     }
 
 	public String getKindString(Map<String, Integer> map) {

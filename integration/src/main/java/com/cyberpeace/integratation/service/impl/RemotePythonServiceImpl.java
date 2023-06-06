@@ -145,16 +145,16 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
-	public List<List<Integer>> getFormatMatrixData(String matrixData){
+	public List<List<String>> getFormatMatrixData(String matrixData){
 		JSONArray objects = JSONArray.parseArray(matrixData);
-		List<List<Integer>> res = new ArrayList<>();
+		List<List<String>> res = new ArrayList<>();
 		for (int i = 0; i < objects.size(); i++) {
 			JSONObject jsonObject = objects.getJSONObject(i);
 			String data = jsonObject.get("data").toString();
 			JSONObject dataJsonObj = JsonUtil.toJsonObject(data, JSONObject.class);
 			Collection<Object> values = dataJsonObj.values();
 			Iterator<Object> iterator = values.iterator();
-			List<Integer> tmp = new ArrayList<>();
+			List<String> tmp = new ArrayList<>();
 			while (iterator.hasNext()){
 				Object next = iterator.next();
 				if(null == next){
@@ -164,9 +164,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 				if(StringUtils.isBlank(str)){
 					continue;
 				}
-				double ceil = Math.ceil(Double.parseDouble(str));
-				int intValue = (int) ceil;
-				tmp.add(intValue);
+				tmp.add(str);
 			}
 			res.add(tmp);
 

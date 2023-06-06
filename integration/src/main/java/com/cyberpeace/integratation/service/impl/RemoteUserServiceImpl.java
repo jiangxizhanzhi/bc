@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -260,6 +261,20 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 	public void clearCache() {
 
  	}
+
+	@Override
+	public UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos) {
+		if(StringUtils.isEmpty(userId) || CollectionUtils.isEmpty(userInfos)) {
+			return null;
+		}
+		for(UserInfo userInfo : userInfos) {
+			if(!userId.equals(userInfo.getUserId())) {
+				continue;
+			}
+			return userInfo;
+		}
+		return null;
+	}
 
 	/**
 	 * 获取用户可见的菜单

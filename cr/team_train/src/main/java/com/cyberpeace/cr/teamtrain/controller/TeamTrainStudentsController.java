@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -109,6 +111,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private CrSceneService crSceneService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -391,10 +396,10 @@ public class TeamTrainStudentsController {
 		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
 		// 3.查询已添加设备
 		// 所有已添加为常用资产的deviceIds
-		List<String> allCollectedCommonDeviceResourceIds = teamCommonDeviceService.getAllCollectedCommonDeviceDeviceIds();
+		List<TeamCommonDevice> allCollectedCommonDevices = teamCommonDeviceService.getAllCollectedCommonDeviceDevices();
 
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
-		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceResourceIds);
+		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDevices);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -504,26 +509,43 @@ public class TeamTrainStudentsController {
 	 * @param availableDevices 场景中的可用设备，中台的设备状态信息列表
 	 * @param occupyDevices 当前场景已占用的设备列表
 	 * @param roomId 房间id
-	 * @param allCollectedCommonDeviceIds 已添加的常用资产列表
+	 * @param allCollectedCommonDevices 已添加的常用资产列表
 	 * @return 可添加的常用资产列表
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																  List<TeamTrainDeviceContext> occupyDevices,
 																  String roomId,
-																  List<String> allCollectedCommonDeviceIds) {
+																  List<TeamCommonDevice> allCollectedCommonDevices) {
 		// 如果场景中可用设备为空，直接返回空数组
 		if(CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
 		}
+
+		List<String> userIds = allCollectedCommonDevices.stream()
+				.map(TeamCommonDevice::getCollectUserId).collect(Collectors.toList());
+		List<UserInfo> userInfos = remoteUserService.getByIdList(userIds);
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
 		for(int i = 0; i < availableDevices.size(); i ++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
 			// 根据占用设备情况 设置标志位
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
+			for(TeamCommonDevice collectedCommonDeviceDevice : allCollectedCommonDevices) {
+				if(!collectedCommonDeviceDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+					continue;
+				}
+				context.setOccupyFlag(1);
+				UserInfo userInfo = remoteUserService.searchUserByUserIdInUserList(collectedCommonDeviceDevice.getCollectUserId(), userInfos);
+				if(userInfo == null) {
+					continue;
+				}
+				context.setCollectUserId(userInfo.getUserId());
+				context.setCollectUser(userInfo.getUserName());
+			}
+
 
 			// 如果 已添加常用设备 包含 场景中可用设备
-			if(allCollectedCommonDeviceIds.contains(availableDevice.getString("id"))) {
+			if(allCollectedCommonDevices.contains(availableDevice.getString("id"))) {
 				context.setOccupyFlag(1);;
 			}
 
@@ -533,6 +555,8 @@ public class TeamTrainStudentsController {
 					context.setOccupyFlag(0);
 				} else {
 					context.setOccupyFlag(1);
+					context.setCollectUserId(occupyDevice.getCreateUserId());
+					context.setCollectUser(occupyDevice.getCreateUser());
 				}
 			}
 			context.setDeviceId(availableDevice.getString("id"));

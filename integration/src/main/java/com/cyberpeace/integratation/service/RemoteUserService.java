@@ -55,4 +55,12 @@ public interface RemoteUserService {
 	Map<String, UserInfo> allUsers();
 
     void clearCache();
+
+	/**
+	 * 根据userId搜索用户信息
+	 * @param userId 查询条件
+	 * @param userInfos 查询目标数组
+	 * @return 用户信息
+	 */
+	UserInfo searchUserByUserIdInUserList(String userId, List<UserInfo> userInfos);
 }

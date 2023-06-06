@@ -28,8 +28,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
     }
 
     @Override
-    public List<String> getAllCollectedCommonDeviceDeviceIds() {
-        return teamCommonDeviceMapper.selectAllDeviceIds();
+    public List<TeamCommonDevice> getAllCollectedCommonDeviceDevices() {
+        return teamCommonDeviceMapper.selectAllDevices();
     }
 
     @Override

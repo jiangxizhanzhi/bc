@@ -11,4 +11,6 @@ public class TeamCommonDeviceContext extends TeamCommonDevice {
     private Integer occupyFlag = 0;
     @ApiModelProperty("设备信息")
     private JSONObject deviceInfo;
+    @ApiModelProperty("设备占用人")
+    private String collectUser;
 }

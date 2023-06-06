@@ -17,9 +17,10 @@
           AND collect_user_id = #{collectUserId}
     </select>
 
-    <select id="selectAllDeviceIds" resultType="string">
+    <select id="selectAllDevices" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice">
         SELECT
-            device_id
+            room_id         roomId,
+            device_id       deviceId
         FROM cr_team_common_device
     </select>
 

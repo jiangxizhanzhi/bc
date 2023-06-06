@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbCommonDeviceReq;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -75,6 +77,9 @@ public class RbSceneController {
 
 	@Autowired
 	private CrSceneService crSceneService;
+
+	@Autowired
+	private RemoteUserService remoteUserService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("")
@@ -310,10 +315,10 @@ public class RbSceneController {
 		// 2.获取占用的设备
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
-		List<String> allCollectedCommonDeviceDeviceIds = rbCommonDeviceService.getAllCollectedCommonDeviceDeviceIds();
+		List<RbCommonDevice> allCollectedCommonDeviceDevices = rbCommonDeviceService.getAllCollectedCommonDeviceDevices();
 
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
-		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceDeviceIds);
+		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceDevices);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -373,23 +378,36 @@ public class RbSceneController {
 	 * @param availableDevices 场景中的可用设备，中台给的设备状态信息
 	 * @param occupyDevices 已占用设备列表
 	 * @param roomId 红蓝房间id
-	 * @param allCollectedCommonDeviceDeviceIds 已添加常用资产列表id
+	 * @param allCollectedCommonDeviceDevices 已添加常用资产列表
 	 * @return 可添加常用资产列表
 	 */
 	private List<RbCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
 																List<RbDeviceContext> occupyDevices,
 																String roomId,
-																List<String> allCollectedCommonDeviceDeviceIds) {
+																List<RbCommonDevice> allCollectedCommonDeviceDevices) {
 		if(CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
 		}
+
+		List<String> userIds = allCollectedCommonDeviceDevices.stream()
+				.map(RbCommonDevice::getCollectUserId).collect(Collectors.toList());
+		List<UserInfo> userInfos = remoteUserService.getByIdList(userIds);
 		List<RbCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
 		for(int i = 0; i < availableDevices.size(); i ++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
 			RbCommonDeviceContext context = new RbCommonDeviceContext();
-			if(allCollectedCommonDeviceDeviceIds.contains(availableDevice.getString("id"))) {
+			for(RbCommonDevice collectedCommonDeviceDevice : allCollectedCommonDeviceDevices) {
+				if(!collectedCommonDeviceDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+					continue;
+				}
 				context.setOccupyFlag(1);
+				UserInfo userInfo = remoteUserService.searchUserByUserIdInUserList(collectedCommonDeviceDevice.getCollectUserId(), userInfos);
+				if(userInfo == null) {
+					continue;
+				}
+				context.setCollectUserId(userInfo.getUserId());
+				context.setCollectUser(userInfo.getUserName());
 			}
 
 			context.setOccupyFlag(0);
@@ -398,6 +416,8 @@ public class RbSceneController {
 					context.setOccupyFlag(0);
 				} else {
 					context.setOccupyFlag(1);
+					context.setCollectUserId(occupyDevice.getCreateUserId());
+					context.setCollectUser(occupyDevice.getCreateUser());
 				}
 			}
 			context.setDeviceId(availableDevice.getString("id"));

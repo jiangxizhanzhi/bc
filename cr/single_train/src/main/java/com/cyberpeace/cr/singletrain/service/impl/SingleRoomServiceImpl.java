@@ -1170,7 +1170,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			result.setFinished(0);
 			result.setScore(0);
 			// 训练时长为0
-			result.setTimeCost(TimeUtil.getTimeInterval(new Date(0), new Date(0)));
+			result.setTimeCost(TimeUtil.duration2String(0L));
 			result.setStarted(false);
 		} else {
 			// training started

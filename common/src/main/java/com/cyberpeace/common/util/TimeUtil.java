@@ -8,7 +8,12 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.constant.BaseI18n;
+
+import lombok.Data;
+import lombok.Getter;
 
 public class TimeUtil {
 
@@ -552,7 +557,7 @@ public class TimeUtil {
 	/**
 	 * 时间间隔（秒单位）格式化为字符串
 	 *
-	 * @param sec 证券交易委员会
+	 * @param sec 秒数
 	 * @return {@code String}
 	 */
 	public static String duration2String(long sec) {
@@ -562,11 +567,51 @@ public class TimeUtil {
 		min = min % 60;
 		long day = hour / 24;
 		hour = hour % 24;
-		if (CommonContext.isChinese()) {
-			return String.format("%d%s %02d:%02d:%02d", day, DAY_ZH, hour, min, sec);
-		} else {
-			return String.format("%d%s %02d:%02d:%02d", day, DAY_EN, hour, min, sec);
+
+		StringBuilder builder = new StringBuilder();
+		TimeUnitI18n timeUnitI18n = TimeUnitI18n.getTimeUnit();
+
+		boolean flag = false;
+		if (day > 0) {
+			builder.append(day).append(timeUnitI18n.getDay());
+			flag = true;
 		}
+		if (hour > 0 || flag) {
+			builder.append(hour).append(timeUnitI18n.getHour());
+			flag = true;
+		}
+		if (min > 0 || flag) {
+			builder.append(min).append(timeUnitI18n.getMinute());
+		}
+		builder.append(sec).append(timeUnitI18n.getSecond());
+		return builder.toString();
+	}
+}
+
+@Data
+class TimeUnitI18n {
+
+	private String day;
+
+	private String hour;
+
+	private String minute;
+
+	private String second;
+
+	private TimeUnitI18n(String day, String hour, String minute, String second) {
+		this.day = day;
+		this.hour = hour;
+		this.minute = minute;
+		this.second = second;
 	}
 
+	public static TimeUnitI18n getTimeUnit() {
+		if (CommonContext.isChinese()) {
+			return new TimeUnitI18n("天", "小时", "分钟", "秒");
+		} else {
+			return new TimeUnitI18n("D ", "H ", "M ", "S ");
+		}
+	}
 }
+

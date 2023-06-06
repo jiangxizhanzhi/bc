@@ -116,8 +116,11 @@ public interface MenuConstant {
     //团队训练
     String CMS_CR_TEAM_TRAIN = "cr-team-training";
 
-    //红蓝对抗
-    String CMS_RED_VS_BLUE = "red-vs-blue-folder";
+    //红蓝对抗 定制化菜单-修改-场景编排
+    String CMS_RED_VS_BLUE = "red-blue";
+
+    //红蓝对抗 定制化菜单-修改-对抗训练
+    String CMS_RED_VS_BLUE_ARRANGE = "red-vs-blue-arrange";
 
     //工具库
     String CMS_TOOL = "tool";

@@ -37,6 +37,7 @@ import com.cyberpeace.integratation.service.RemoteLogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("新增")
 	@PostMapping()
-	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_RED_VS_BLUE_ARRANGE}, logical = Logical.OR)
 	public BaseRsp create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
 		// set type
@@ -114,7 +115,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("修改")
 	@PatchMapping()
-	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_RED_VS_BLUE_ARRANGE}, logical = Logical.OR)
 	public BaseRsp update(@RequestBody @Validated RbTemplateModifyReq modifyReq) {
 		String resourceId = modifyReq.getResourceId();
 		RbTemplate rbTemplate = rbTemplateService.getRbTemplateByBusinessId(resourceId);
@@ -149,7 +150,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("删除")
 	@DeleteMapping()
-	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_RED_VS_BLUE_ARRANGE}, logical = Logical.OR)
 	public BaseRsp<String> batchDelete(@RequestBody @Validated DeleteReq deleteReq) {
 		List<BusinessTemplate> businessTemplates = businessTemplateMapper.selectBatchIds(deleteReq.getIds());
 		rbTemplateService.batchDelete(deleteReq.getIds());
@@ -165,7 +166,7 @@ public class RbTemplateAdminController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(MenuConstant.CMS_RED_VS_BLUE)
+	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_RED_VS_BLUE_ARRANGE}, logical = Logical.OR)
 	public BaseRsp<RbTemplateRsp> getRbTemplate(String resource_id) {
 
 		businessTemplateService.checkPermission(resource_id,

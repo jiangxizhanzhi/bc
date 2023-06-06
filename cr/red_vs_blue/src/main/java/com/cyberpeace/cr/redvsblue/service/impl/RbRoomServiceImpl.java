@@ -659,7 +659,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		// get event list
 		List<TimeLineEvent> timeLineEventList = crTimelineService.getReplayEvents(roomId,
 				UserInfoContext.getUserContext().getUserId());
-		timeLineData.setEvents(timeLineEventList);
+		timeLineData.setData(timeLineEventList);
 		return timeLineData;
 	}
 

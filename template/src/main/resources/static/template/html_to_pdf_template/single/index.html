@@ -306,7 +306,14 @@
           <span class="text-group_23">${stage.stageName}</span>
         </div>
         <#list stage.missions as mission>
-          <div class="text-wrapper_5 flex-col">
+          <div
+          <#if !mission.userAnswer??>
+            class="text-wrapper_9 flex-col"
+          <#elseif mission.userAnswer == mission.answer>
+            class="text-wrapper_5 flex-col"
+          <#else>
+            class="text-wrapper_7 flex-col"
+          </#if>>
             <span class="text_32">${mission.title}</span>
           </div>
             <#if mission.type == 0>

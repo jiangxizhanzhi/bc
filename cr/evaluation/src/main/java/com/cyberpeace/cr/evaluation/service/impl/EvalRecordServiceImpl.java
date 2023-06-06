@@ -700,6 +700,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     }
 
     private void addResToEvalResult(EvalRecord evalRecord) {
+        if(evalRecord.getStatus().equals(EvalRecord.Status.EXCEPTION.getCode())){
+            return;
+        }
         Integer exeCycle = 1;
         EvalResult evalResult = new EvalResult();
         evalResult.setExeCycle(exeCycle);

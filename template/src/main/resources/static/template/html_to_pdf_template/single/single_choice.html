@@ -7,7 +7,7 @@
             <img
                     class="thumbnail_20"
                     referrerpolicy="no-referrer"
-                    <#if ${mission.userAnswer} == ${op.optionLabel}>
+                    <#if mission.userAnswer?? && mission.userAnswer == op.optionLabel>
                     src="../img/radio-check.png"
                     <#else>
                     src="../img/radio-no.png"
@@ -22,6 +22,6 @@
     <div class="text-wrapper_17 flex-row">
         <span class="text_42">正确答案：${mission.answer}</span>
         <span class="text_43">你的答案：</span>
-        <span class="text_44">${mission.userAnswer}</span>
+        <span class="text_44">${mission.userAnswer!""}</span>
     </div>
 </div>

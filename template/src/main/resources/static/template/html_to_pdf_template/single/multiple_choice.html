@@ -7,7 +7,9 @@
             <img
                     class="thumbnail_20"
                     referrerpolicy="no-referrer"
-                    <#if ${mission.userAnswer} contains ${op.optionLabel}>
+                    <#if !mission.userAnswer??>
+                    src="./img/checkbox-no.png"
+                    <#elseif mission.userAnswer?contains(op.optionLabel)>
                     src="../img/checkbox-check.png"
                     <#else>
                     src="../img/checkbox-no.png"
@@ -20,8 +22,8 @@
     </#list>
     <div class="group_5 flex-col"></div>
     <div class="text-wrapper_17 flex-row">
-        <span class="text_42">正确答案：["AB"]</span>
+        <span class="text_42">正确答案：${mission.answer}</span>
         <span class="text_43">你的答案：</span>
-        <span class="text_44">AB</span>
+        <span class="text_44">${mission.userAnswer!""}</span>
     </div>
 </div>

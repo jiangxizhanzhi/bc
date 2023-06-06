@@ -105,6 +105,7 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 		role.setSkillIdWeights(CommonConstant.EMPTY_LIST_JSON);
 		role.setSkillIds(CommonConstant.EMPTY_LIST_JSON);
 		role.setAbilityIds(CommonConstant.EMPTY_LIST_JSON);
+		role.setCategory("");
 		// 设置id
 		role.setResourceId(IDGeneratorUtil.getID());
 

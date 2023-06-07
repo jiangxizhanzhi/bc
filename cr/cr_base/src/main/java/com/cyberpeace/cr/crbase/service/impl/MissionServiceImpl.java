@@ -34,6 +34,7 @@ import com.cyberpeace.cr.crbase.controller.req.mission.MissionTemplatePageReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionSchemeTemplateRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.*;
+import com.cyberpeace.cr.crbase.service.CrBadgeService;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.MissionService;
 import com.cyberpeace.cr.crbase.service.context.*;
@@ -79,6 +80,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
 
 	private volatile Map<String, MissionCategoryCache> categoryCache;
 
@@ -760,7 +764,8 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskMapper.batchInsert(tasks);
 				crTaskLogMapper.batchInsert(taskLogs);
-
+				crBadgeService.createBatch(role.getRoomId(),
+						CrBadge.BadgeType.MISSION_RELEASE.getCode(), role.getUserIdList());
 			}
 		});
 		return true;

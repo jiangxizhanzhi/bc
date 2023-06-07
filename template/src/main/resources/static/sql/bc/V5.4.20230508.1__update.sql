@@ -1914,3 +1914,8 @@ CREATE TABLE `init_rtks_role_skill_relation`
 INSERT INTO `cr_constants_config` VALUES (138, NULL, 1, 39, '已解出', 'Solved');
 INSERT INTO `cr_constants_config` VALUES (139, NULL, 2, 39, '未开始', 'Not started');
 INSERT INTO `cr_constants_config` VALUES (140, NULL, 0, 39, '尝试过', 'Attempted');
+INSERT INTO `cr_constants_config` VALUES (141, NULL, 1, 40, '课程', 'Course');
+INSERT INTO `cr_constants_config` VALUES (142, NULL, 2, 40, '课时', 'Class');
+INSERT INTO `cr_constants_config` VALUES (143, NULL, 3, 40, '实操题', 'Practice');
+INSERT INTO `cr_constants_config` VALUES (144, NULL, 4, 40, '课后练习', 'AfterClass');
+INSERT INTO `cr_constants_config` VALUES (145, NULL, 5, 40, '理论题', 'Theory');

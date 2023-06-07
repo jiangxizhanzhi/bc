@@ -15,6 +15,8 @@ import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +89,9 @@ public class GetScoreRsp implements Serializable {
 
 	private String skillScoreContextListString;
 
+	private BigDecimal trainScoreRate;
+
+	private Integer abilityScoreRate;
 	public GetScoreRsp() {
 	}
 
@@ -104,7 +109,7 @@ public class GetScoreRsp implements Serializable {
 		this.failTaskCount = finishTaskCount - successTaskCount;
 		this.subjectiveScore = userTaskList.stream()
 				.filter(a -> missionMap.containsKey(a.getMissionId())
-						&& !missionMap.get(a.getMissionId()).isObjective())
+						&& !missionMap.get(a.getMissionId()).isObjective()&&a.getScore()!=null)
 				.mapToInt(CrTask::getScore).sum();
 		this.objectiveScore = userTaskList.stream()
 				.filter(a -> missionMap.containsKey(a.getMissionId())
@@ -140,5 +145,7 @@ public class GetScoreRsp implements Serializable {
 				this.allSubjectiveScore+=mission.getScore();
 			}
 		}
+		this.trainScoreRate = allScore!=0? new BigDecimal(subjectiveScore).add(new BigDecimal(objectiveScore)).divide(new BigDecimal(allScore),0, RoundingMode.HALF_UP) : new BigDecimal(0);
+		this.abilityScoreRate = abilityScore*4;
 	}
 }

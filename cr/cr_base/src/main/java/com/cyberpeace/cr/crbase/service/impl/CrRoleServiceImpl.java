@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.EnumUtils;
@@ -238,8 +239,8 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				crRole);
 
 		List<TaskContext> tasks = crTaskService.getByRoomIdAndUser(roomId, userId);
-		Map<String, Integer> taskStatusMap = tasks.stream().collect(Collectors
-				.toMap(TaskContext::getMissionId, taskContext -> taskContext.getStatus()));
+		Map<String, TaskContext> taskStatusMap = tasks.stream().collect(Collectors
+				.toMap(TaskContext::getMissionId, Function.identity()));
 
 		missionSchemeObjectList.forEach(missionSchemeObject -> {
 
@@ -251,7 +252,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 					newMission.setTitle(mission.getTitle());
 					newMission.setCategoryId(mission.getCategoryId());
 					newMission.setDescription(mission.getDescription());
-					newMission.setState(taskStatusMap.get(mission.getResourceId()));
+					TaskContext taskContext = taskStatusMap.get(mission.getResourceId());
+					newMission.setState(taskContext.getStatus());
+					newMission.setTrainingRecord(new TrainingRecord(taskContext.getLastSubmitTime(),taskContext.getUserAnswer()));
 					newMission.setStateString(EnumUtils.getEnumDescByCode(newMission.getState(),CrTask.TaskStatus.class));
 					missionContextList.add(newMission);
 				}

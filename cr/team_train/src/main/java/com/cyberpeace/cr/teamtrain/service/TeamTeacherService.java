@@ -41,4 +41,14 @@ public interface TeamTeacherService {
 	 * @return {@code TaskStatisticsInfo}
 	 */
 	TaskStatisticsInfo getTaskStatisticsInfo(String roomId);
+
+	/**
+	 * 检查训练是否满足复盘条件
+	 * 训练已结束
+	 * 场景已关闭
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Boolean}
+	 */
+	Boolean ifReplayEnabled(String roomId);
 }

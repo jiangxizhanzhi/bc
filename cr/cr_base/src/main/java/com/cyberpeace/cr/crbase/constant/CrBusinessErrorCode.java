@@ -448,4 +448,9 @@ public interface CrBusinessErrorCode {
 	 * 无效常用资产
 	 */
 	String INVALID_COMMON_DEVICE = "101134";
+
+	/**
+	 * 不满足复盘条件
+	 */
+	String REPLAY_NOT_ENABLED = "101135";
 }

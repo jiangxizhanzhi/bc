@@ -3,17 +3,22 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
+import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.IdNameType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +35,9 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private LocalSceneService localSceneService;
 
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -62,5 +70,15 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	@Override
 	public TaskStatisticsInfo getTaskStatisticsInfo(String roomId) {
 		return crTaskService.getTaskStatisticsInfoByRoomId(roomId);
+	}
+
+	@Override
+	public Boolean ifReplayEnabled(String roomId) {
+		TeamRoom room = teamRoomService.getById(roomId);
+		if (!room.isEnded() || StringUtils.isNotBlank(room.getLocalSceneId())) {
+			log.info("conditions not satisfied, cant replay now");
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_NOT_ENABLED);
+		}
+		return true;
 	}
 }

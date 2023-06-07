@@ -17,6 +17,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbDirectorService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 
@@ -94,5 +95,15 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 			}
 		}
 		return progress;
+	}
+
+	@Override
+	public Boolean ifReplayEnabled(String roomId) {
+		RbRoom room = rbRoomService.getOrExceptionById(roomId);
+		if (!room.isEnded() || StringUtils.isNotBlank(room.getLocalSceneId())) {
+			log.info("conditions not satisfied, replay not enabled");
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_NOT_ENABLED);
+		}
+		return true;
 	}
 }

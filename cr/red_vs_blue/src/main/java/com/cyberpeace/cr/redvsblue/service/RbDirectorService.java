@@ -11,4 +11,12 @@ public interface RbDirectorService {
 	 * @return {@code RedBlueTaskReleaseProgress}
 	 */
 	RedBlueTaskReleaseProgress getTaskReleaseProgress(String roomId);
+
+	/**
+	 * 查看复盘条件是否满足
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Boolean}
+	 */
+	Boolean ifReplayEnabled(String roomId);
 }

@@ -8,6 +8,8 @@ import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.SituationDecorationPageReq;
 import com.cyberpeace.situation.controller.req.SituationDecorationReq;
 import com.cyberpeace.situation.controller.req.SituationIconDelReq;
@@ -45,6 +47,7 @@ public class ComponentDecorationController {
 	 * @param situationDecorationReq 显示控件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.XSKJ, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("显示控件-新增")
 	@PostMapping()
 	public BaseRsp<String> createSituationDecoration(
@@ -63,6 +66,7 @@ public class ComponentDecorationController {
 	 * @param situationDecorationReq 显示控件请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.XSKJ, type = ServiceLogContext.Type.XG)
 	@ApiOperation("显示控件-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateSituationDecoration(
@@ -81,6 +85,7 @@ public class ComponentDecorationController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationDecoration>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.XSKJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("显示控件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationDecoration>
@@ -95,6 +100,7 @@ public class ComponentDecorationController {
 	 * @param situationIconDelReq 显示控件删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.XSKJ, type = ServiceLogContext.Type.SC)
 	@ApiOperation("显示控件-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteSituationDecoration(
@@ -109,6 +115,7 @@ public class ComponentDecorationController {
 	 * @param situationDecorationPageReq 显示控件列表查询请求
 	 * @return {@code BaseRsp<ListRsp<SituationDecorationPageRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.XSKJ, type = ServiceLogContext.Type.CX)
 	@ApiOperation("显示控件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<ListRsp<SituationDecorationPageRes>>

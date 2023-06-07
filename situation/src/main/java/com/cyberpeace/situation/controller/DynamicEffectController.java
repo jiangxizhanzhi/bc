@@ -21,6 +21,8 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.ZipUtil;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.topo.Color;
 import com.cyberpeace.situation.constant.topo.DynamicType;
@@ -217,6 +219,7 @@ public class DynamicEffectController {
 	 * @param dynamicEffectAddReq 动效新增请求
 	 * @return {@code BaseRsp<DynamicEffect>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXZY, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("动效-新增")
 	@PostMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffect> setDynamicEffectsLibrary(
@@ -268,6 +271,7 @@ public class DynamicEffectController {
 	 * @param batchDeleteReq 批量删除请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXZY, type = ServiceLogContext.Type.SC)
 	@ApiOperation("动效-删除")
 	@DeleteMapping("/dynamic_effect_library")
 	public BaseRsp
@@ -305,6 +309,7 @@ public class DynamicEffectController {
 	 * @param dynamicEffectFilterReq 动效列表查询请求
 	 * @return {@code BaseRsp<List<DynamicEffect>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXZY, type = ServiceLogContext.Type.CX)
 	@ApiOperation("动效-列表查询")
 	@GetMapping("/dynamic_effect_library/list")
 	public BaseRsp<List<DynamicEffect>>
@@ -344,6 +349,7 @@ public class DynamicEffectController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<DynamicEffect>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXZY, type = ServiceLogContext.Type.CX)
 	@ApiOperation("动效-单个查询")
 	@GetMapping("/dynamic_effect_library")
 	public BaseRsp<DynamicEffect>
@@ -399,6 +405,7 @@ public class DynamicEffectController {
 	 * @param dynamicEffectMappingReq 动态映射新增请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXYS, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("动效映射-新增")
 	@PostMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> setDynamicEffectsMapping(
@@ -417,6 +424,7 @@ public class DynamicEffectController {
 	 * @param batchDeleteReq 批量删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXYS, type = ServiceLogContext.Type.SC)
 	@ApiOperation("动效映射-删除")
 	@DeleteMapping("/dynamic/effect/mapping")
 	public BaseRsp<Integer>
@@ -432,6 +440,7 @@ public class DynamicEffectController {
 	 * @param dynamicEffectMappingUpdateReq 动态映射修改请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXYS, type = ServiceLogContext.Type.XG)
 	@ApiOperation("动效映射-修改")
 	@PatchMapping("/dynamic/effect/mapping")
 	public BaseRsp<String> patchDynamicEffectsMapping(
@@ -450,6 +459,7 @@ public class DynamicEffectController {
 	 * @param dynamicEffectMappingFilterReq 动态映射列表查询请求
 	 * @return {@code BaseRsp<ListRsp<DynamicEffectsMapping>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXYS, type = ServiceLogContext.Type.CX)
 	@ApiOperation("动效映射-列表查询（分页）")
 	@GetMapping("/dynamic/effect/mapping/list")
 	public BaseRsp<ListRsp<DynamicEffectMappingRes>>
@@ -465,6 +475,7 @@ public class DynamicEffectController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<DynamicEffectsMapping>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DXYS, type = ServiceLogContext.Type.CX)
 	@ApiOperation("动效映射-单个查询")
 	@GetMapping("/dynamic/effect/mapping")
 	public BaseRsp<DynamicEffectsMapping> getDynamicEffectsMappingDetail(

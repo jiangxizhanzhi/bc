@@ -15,7 +15,9 @@ import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
 import com.cyberpeace.integratation.model.situation.ElementSlimContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.BatchDeleteReq;
 import com.cyberpeace.situation.controller.req.NodePositionReq;
@@ -91,6 +93,7 @@ public class EmbeddedTopoController {
 	 * @param req 节点坐标请求
 	 * @return {@code BaseRsp<Boolean>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TPZB, type = ServiceLogContext.Type.XG)
 	@ApiOperation("拓扑编排-更新节点坐标")
 	@PostMapping("/template/topo/position/")
 	public BaseRsp<Boolean> updateNodePosition(@RequestBody @Validated NodePositionReq req) {

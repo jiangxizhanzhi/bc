@@ -6,6 +6,6 @@ public interface RemoteManageService {
 
 	Boolean reportStatus();
 
-	Boolean writeLog(ServiceLogContext.SubModule subModule, ServiceLogContext.Type type);
+	void writeLog(ServiceLogContext serviceLogContext);
 
 }

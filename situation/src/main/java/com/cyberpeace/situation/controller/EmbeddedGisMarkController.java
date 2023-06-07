@@ -26,6 +26,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.GisMark;
@@ -80,6 +82,7 @@ public class EmbeddedGisMarkController {
 	 * @param situationPlotPixelReq 标绘图元请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHTY, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("标绘图元-新增")
 	@PostMapping("/plot/pixel")
 	public BaseRsp<String> createPlotPixel(
@@ -98,6 +101,7 @@ public class EmbeddedGisMarkController {
 	 * @param situationPlotPixelReq 标绘图元请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHTY, type = ServiceLogContext.Type.XG)
 	@ApiOperation("标绘图元-修改")
 	@PatchMapping("/plot/pixel")
 	public BaseRsp<String> updateSituationPlotPixel(
@@ -116,6 +120,7 @@ public class EmbeddedGisMarkController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationPlotPixel>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHTY, type = ServiceLogContext.Type.CX)
 	@ApiOperation("标绘图元-单个查询")
 	@GetMapping("/plot/pixel")
 	public BaseRsp<SituationPlotPixel>
@@ -130,6 +135,7 @@ public class EmbeddedGisMarkController {
 	 * @param situationIconDelReq 标绘图元删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHTY, type = ServiceLogContext.Type.SC)
 	@ApiOperation("标绘图元-批量删除")
 	@DeleteMapping("/plot/pixel")
 	public BaseRsp<Integer> deleteSituationPlotPixel(
@@ -144,6 +150,7 @@ public class EmbeddedGisMarkController {
 	 * @param SituationPlotPixelPageReq 标绘图元分页请求
 	 * @return {@code BaseRsp<ListRsp<SituationPlotPixel>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHTY, type = ServiceLogContext.Type.CX)
 	@ApiOperation("标绘图元-列表查询")
 	@GetMapping("/plot/pixel/list")
 	public BaseRsp<ListRsp<SituationPlotPixel>>
@@ -158,6 +165,7 @@ public class EmbeddedGisMarkController {
 	 * @param gisMarkContext 标绘数据
 	 * @return {@code BaseRsp<GisMarkContext>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("标绘数据-新增")
 	@PostMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> setConfig(@RequestBody GisMarkContext gisMarkContext) {
@@ -170,6 +178,7 @@ public class EmbeddedGisMarkController {
 	 * @param markId 标绘ID
 	 * @return {@code BaseRsp<GisMarkContext>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.CX)
 	@ApiOperation("标绘数据-单个查询")
 	@GetMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> getConfig(@RequestParam("mark_id") @ApiParam(required = true,
@@ -184,6 +193,7 @@ public class EmbeddedGisMarkController {
 	 * @param gisMarkContext 标绘数据
 	 * @return {@code BaseRsp<GisMarkContext>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.XG)
 	@ApiOperation("标绘数据-修改")
 	@PatchMapping("/gis/mark/")
 	public BaseRsp<GisMarkContext> updateConfig(@RequestBody GisMarkContext gisMarkContext) {
@@ -199,6 +209,7 @@ public class EmbeddedGisMarkController {
 	 * @param markId 标绘ID
 	 * @return {@code BaseRsp<Boolean>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.SC)
 	@ApiOperation("标绘数据-删除")
 	@DeleteMapping("/gis/mark/")
 	public BaseRsp<Boolean> deleteConfig(@RequestParam("mark_id") @ApiParam(required = true,
@@ -214,6 +225,7 @@ public class EmbeddedGisMarkController {
 	 * @param endTime     结束时间
 	 * @return {@code BaseRsp<List<GisMarkContext>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.CX)
 	@ApiOperation("标绘数据-列表查询")
 	@GetMapping("/gis/mark/list/")
 	public BaseRsp<List<GisMarkContext>> getConfigList(
@@ -232,6 +244,7 @@ public class EmbeddedGisMarkController {
 	 * @param ids 大屏ID列表
 	 * @return {@code BaseRsp<Boolean>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSBH, type = ServiceLogContext.Type.SC)
 	@ApiOperation("标绘数据-清空")
 	@DeleteMapping("/gis/dashboard/mark/")
 	public BaseRsp<Boolean>
@@ -258,6 +271,7 @@ public class EmbeddedGisMarkController {
 	 *
 	 * @param dashboardId 大屏ID
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHWJ, type = ServiceLogContext.Type.DC)
 	@ApiOperation("标绘数据-导出")
 	@GetMapping("/gis/mark/export/")
 	public void exportConfig(HttpServletResponse response,
@@ -293,6 +307,7 @@ public class EmbeddedGisMarkController {
 	 * @param req {@code ImportMarkReq}
 	 * @return {@code BaseRsp<Boolean>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.BHWJ, type = ServiceLogContext.Type.DR)
 	@ApiOperation("标绘数据-导入")
 	@PostMapping("/gis/mark/import")
 	public BaseRsp<Boolean> importMark(@Validated ImportMarkReq req)

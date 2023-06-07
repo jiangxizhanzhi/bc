@@ -105,4 +105,5 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 	 * @return {@code SituationPublishInstance}
 	 */
 	SituationPublishInstance selectXdDashboardBySchemeId(@Param("schemeId") String schemeId);
+
 }

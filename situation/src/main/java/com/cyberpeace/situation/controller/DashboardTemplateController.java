@@ -1,8 +1,14 @@
 package com.cyberpeace.situation.controller;
 
 import java.io.*;
+import java.util.Date;
 import java.util.Map;
 
+
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -23,12 +29,11 @@ import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.controller.CommonController;
 import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
 import com.cyberpeace.cs.service.context.AttachmentBo;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
@@ -42,6 +47,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 态势大屏-原始模板
  *
@@ -51,6 +58,7 @@ import io.swagger.annotations.ApiParam;
 
 @Api(tags = "态势大屏-原始模板")
 @RestController
+@Slf4j
 @RequiresAuthentication
 @RequestMapping("dashboard/template/")
 public class DashboardTemplateController {
@@ -70,6 +78,7 @@ public class DashboardTemplateController {
 	 * @param dashBoardTemplateReq 态势模板请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("原始模板-新增")
 	@PostMapping()
 	public BaseRsp<String> createDashboardTemplate(
@@ -88,6 +97,7 @@ public class DashboardTemplateController {
 	 * @param dashBoardTemplateCopyReq 复制态势模板请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("原始模板-复制")
 	@PostMapping("/copy/")
 	public BaseRsp<String> copyDashboardTemplate(
@@ -101,11 +111,80 @@ public class DashboardTemplateController {
 	}
 
 	/**
+	 * 导出态势模板
+	 *
+	 * @param dashBoardTemplateId 导出态势模板请求
+	 *
+	 */
+	@ApiOperation("态势模板-导出")
+	@GetMapping("/export/")
+	public void exportDashboardTemplate(HttpServletResponse response, @ApiParam(name = "template_id", value = "模板id",
+			required = true) @RequestParam("template_id") String dashBoardTemplateId) {
+		// 1. generate dump file
+		DashboardTemplate dashboardTemplate = dashboardTemplateService.selectDashboardTemplateById(dashBoardTemplateId);
+
+		String fileName = dashboardTemplate.getName() + "_模板数据_" + TimeUtil.format5(new Date());
+		String tempDir = ZipUtil.generatePath(fileName);
+
+		try {
+			String zipPath = dashboardTemplateService.exportDashboardTemplate(tempDir,
+					dashBoardTemplateId);
+			// 2. generate file response
+			File zip = new File(zipPath);
+			FileUtil.setResponse(zip, false, response);
+		} catch (Exception e) {
+			log.error("failed to dump dashboard template", e);
+			throw new BusinessException(SituationErrorCode.FAILED_TO_EXPORT_DYNAMIC_SCHEME);
+		} finally {
+			// 3. delete temp dir
+			if (!FileUtil.deleteDir(new File(tempDir))) {
+				log.error("failed to remove temp dir :{}", tempDir);
+			}
+		}
+
+	}
+
+	/**
+	 * 导入态势模板
+	 *
+	 * @param req {@code DashBoardTemplateImportReq}
+	 * @return {@code BaseRsp<Boolean>}
+	 */
+	@ApiOperation("态势模板-导入")
+	@PostMapping("/import_template")
+	public BaseRsp<Boolean> importTemplate(@Validated DashBoardTemplateImportReq req)
+			throws IOException, ZipException {
+
+		// 1. 临时存储导入上传的文件
+		File markFile = FileUtil.saveFile(req.getFile(), ZipUtil.generatePath());
+
+		// 2. 解压文件
+		String unZipPath = ZipUtil.unZipToTmpPath(markFile.getAbsolutePath());
+
+		// 3. 导入模板
+		// 3.1 读取导入文件
+		String dataJson = FileUtil
+				.getContent(new File(unZipPath + File.separator + CrCommonConstants.RESOURCE_FILE_NAME));
+		// 3.2 提取模板数据
+		dashboardTemplateService.importDashboardTemplate(dataJson, unZipPath);
+
+		// 4. 删除临时文件
+		if (!FileUtil.deleteDir(new File(unZipPath))) {
+			log.error("failed to delete temp dir");
+		}
+
+		String message = "模板导入成功";
+		return new BaseRsp(true, message);
+	}
+
+
+	/**
 	 * 修改态势模板
 	 *
 	 * @param dashBoardTemplateReq 态势模板请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.XG)
 	@ApiOperation("原始模板-修改")
 	@PatchMapping("")
 	public BaseRsp<String> updateDashboardTemplate(
@@ -125,6 +204,7 @@ public class DashboardTemplateController {
 	 * @param type       视角类型
 	 * @return {@code BaseRsp<DashboardTemplateRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.CX)
 	@ApiOperation("原始模板-单个查询")
 	@GetMapping("")
 	public BaseRsp<DashboardTemplateRes> getDashboardTemplateInfo(
@@ -142,6 +222,7 @@ public class DashboardTemplateController {
 	 * @param dashboardTemplateDelReq 态势模板删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.SC)
 	@ApiOperation("原始模板-批量删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteDashboardTemplate(
@@ -156,6 +237,7 @@ public class DashboardTemplateController {
 	 * @param dashboardTemplatePageReq 态势模板分页请求
 	 * @return {@code BaseRsp<ListRsp<DashboardTemplatePageRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.DPMB, type = ServiceLogContext.Type.CX)
 	@ApiOperation("原始模板-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<DashboardTemplatePageRes>>

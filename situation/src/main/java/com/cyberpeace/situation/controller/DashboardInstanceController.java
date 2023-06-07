@@ -28,8 +28,10 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.integratation.constant.TaskType;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext;
 import com.cyberpeace.integratation.model.situation.StatusOrderContext;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.dashboard.PublicStatus;
 import com.cyberpeace.situation.constant.dashboard.ReplayMode;
@@ -192,6 +194,7 @@ public class DashboardInstanceController {
 	 * @param replayInstanceReq 重演实例请求
 	 * @return {@code BaseRsp<SituationPublishInstance>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.CYDP, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("重演实例-新增")
 	@PostMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> addReplayInstance(
@@ -212,6 +215,7 @@ public class DashboardInstanceController {
 	 * @param replayInstanceReq 重演实例请求
 	 * @return {@code BaseRsp<SituationPublishInstance>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.CYDP, type = ServiceLogContext.Type.XG)
 	@ApiOperation("重演实例-修改")
 	@PatchMapping("/replay/")
 	public BaseRsp<SituationPublishInstance> updateReplayInstance(
@@ -227,6 +231,7 @@ public class DashboardInstanceController {
 	 * @param situationPublishInstanceAddReq 实例新增请求
 	 * @return {@code BaseRsp<SituationPublishInstance>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSDP, type = ServiceLogContext.Type.XZ)
 	@ApiOperation("实例-新增")
 	@PostMapping("")
 	public BaseRsp<SituationPublishInstance> setSituationPublishInstance(
@@ -247,6 +252,7 @@ public class DashboardInstanceController {
 	 * @param situationPublishInstanceFilterReq 实例过滤请求
 	 * @return {@code BaseRsp<ListRsp<SituationPublishInstancePageRes>>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSDP, type = ServiceLogContext.Type.CX)
 	@ApiOperation("实例-列表查询")
 	@GetMapping("list")
 	public BaseRsp<ListRsp<SituationPublishInstancePageRes>> getSituationPublishInstance(
@@ -277,6 +283,7 @@ public class DashboardInstanceController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationPublishInstanceRes>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSDP, type = ServiceLogContext.Type.CX)
 	@ApiOperation("实例-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationPublishInstanceRes> getSituationPublishInstanceDetail(
@@ -317,6 +324,7 @@ public class DashboardInstanceController {
 	 * @param batchDeleteReq 批量删除请求
 	 * @return {@code BaseRsp}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSDP, type = ServiceLogContext.Type.SC)
 	@ApiOperation("实例-删除")
 	@DeleteMapping("")
 	public BaseRsp
@@ -369,6 +377,7 @@ public class DashboardInstanceController {
 	 * @param situationPublishInstanceUpdateReq 实例修改请求
 	 * @return {@code BaseRsp<SituationPublishInstance>}
 	 */
+	@AuditLogger(subModule = ServiceLogContext.SubModule.TSDP, type = ServiceLogContext.Type.XG)
 	@ApiOperation("实例-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationPublishInstance> patchSituationPublishInstance(

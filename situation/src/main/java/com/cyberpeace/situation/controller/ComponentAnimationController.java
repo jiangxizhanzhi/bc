@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.SubModule;
+import com.cyberpeace.integratation.model.manage.ServiceLogContext.Type;
+import com.cyberpeace.integratation.service.RemoteManageService;
+import com.cyberpeace.situation.annotation.AuditLogger;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationAddReq;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationDeleteReq;
 import com.cyberpeace.situation.controller.req.SituationComponentsAnimationReq;
@@ -42,12 +46,16 @@ public class ComponentAnimationController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
+	@Autowired
+	private RemoteManageService remoteManageService;
+
 	/**
 	 * 动画组件-新增
 	 *
 	 * @param situationComponentsAnimationAddReq 动画组件新增请求
 	 * @return {@code BaseRsp<String>}
 	 */
+	@AuditLogger(subModule = SubModule.DHZJ, type = Type.XZ)
 	@ApiOperation("动画组件-新增")
 	@PostMapping()
 	public BaseRsp<String> addComponentAnimation(
@@ -57,8 +65,10 @@ public class ComponentAnimationController {
 		situationHandlerService.checkFieldLen(situationComponentsAnimationAddReq.getName(),
 				situationComponentsAnimationAddReq.getDescription());
 
-		return new BaseRsp(situationComponentAnimationService
-				.addComponentAnimation(situationComponentsAnimationAddReq));
+		String resourceId = situationComponentAnimationService
+				.addComponentAnimation(situationComponentsAnimationAddReq);
+
+		return new BaseRsp(resourceId);
 	}
 
 	/**
@@ -67,6 +77,7 @@ public class ComponentAnimationController {
 	 * @param situationComponentsAnimationUpdateReq 动画组件修改请求
 	 * @return {@code BaseRsp<SituationComponentsAnimationRes>}
 	 */
+	@AuditLogger(subModule = SubModule.DHZJ, type = Type.XG)
 	@ApiOperation("动画组件-修改")
 	@PatchMapping("")
 	public BaseRsp<SituationComponentsAnimationRes> updateComponentAnimation(
@@ -86,6 +97,7 @@ public class ComponentAnimationController {
 	 * @param deleteReq 动画组件删除请求
 	 * @return {@code BaseRsp<Integer>}
 	 */
+	@AuditLogger(subModule = SubModule.DHZJ, type = Type.SC)
 	@ApiOperation("动画组件-删除")
 	@DeleteMapping("")
 	public BaseRsp<Integer> deleteComponentAnimation(
@@ -100,6 +112,7 @@ public class ComponentAnimationController {
 	 * @param req 动画组件列表查询请求
 	 * @return {@code BaseRsp<List<SituationComponentsAnimationRes>>}
 	 */
+	@AuditLogger(subModule = SubModule.DHZJ, type = Type.CX)
 	@ApiOperation("动画组件-列表查询")
 	@GetMapping("/list")
 	public BaseRsp<List<SituationComponentsAnimationRes>>
@@ -113,6 +126,7 @@ public class ComponentAnimationController {
 	 * @param resourceId 资源id
 	 * @return {@code BaseRsp<SituationComponentsAnimation>}
 	 */
+	@AuditLogger(subModule = SubModule.DHZJ, type = Type.CX)
 	@ApiOperation("动画组件-单个查询")
 	@GetMapping("")
 	public BaseRsp<SituationComponentsAnimation> getComponentAnimation(@ApiParam(required = true,
@@ -125,6 +139,7 @@ public class ComponentAnimationController {
 	 *
 	 * @return {@code BaseRsp<List<SituationComponentsChartDetailsRes>>}
 	 */
+	@AuditLogger(subModule = SubModule.TBZJ, type = Type.CX)
 	@ApiOperation("获取二维组件详情")
 	@GetMapping("chart/detail")
 	public BaseRsp<List<SituationComponentsChartDetailsRes>> getChartDetails() {

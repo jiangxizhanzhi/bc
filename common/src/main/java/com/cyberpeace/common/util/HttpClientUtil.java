@@ -408,7 +408,31 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	private static List<Header> defaultHeader() {
-		return defaultHeaders;
+
+		// 如果是可视化系统，直接返回默认的请求头
+		if (Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+			return defaultHeaders;
+		}
+
+		if (null != defaultHeaders) {
+			return defaultHeaders;
+		}
+
+		// 以下代码可能会并发，不会带来大问题
+		String mpAuthenticationParam = SystemPropUtil.getProp("MP_SECRET");
+
+		LOG.info("read prop mpAuthenticationParam=[{}]", mpAuthenticationParam);
+
+		String[] ss = StringUtils.split(mpAuthenticationParam, ",");
+		BasicHeader clientId = new BasicHeader(WebConstant.CLIENT_ID, ss[0]);
+
+		BasicHeader clientSecret = new BasicHeader(WebConstant.CLIENT_SECRET, ss[1]);
+
+		List<Header> defaultHeader = Arrays.asList(clientId, clientSecret);
+
+		HttpClientUtil.defaultHeaders = defaultHeader;
+
+		return defaultHeader;
 	}
 
 	/**

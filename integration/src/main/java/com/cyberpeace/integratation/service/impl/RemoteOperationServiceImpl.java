@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.util.SystemPropUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +39,11 @@ public class RemoteOperationServiceImpl implements RemoteOperationService {
 	@PostConstruct
 	public void init() {
 		String outerHostYw = situationEnvService.getYwHost();
-		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list");
-		YW_MODEL_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.list");
-		YW_MODEL_TYPE_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.type.list");
+		String ywCode = SystemPropUtil.getProp("YW_CODE") == null ? "A102": SystemPropUtil.getProp("YW_CODE");
+
+		YW_BC_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.bc.list").replace("YW_CODE",ywCode);
+		YW_MODEL_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.list").replace("YW_CODE",ywCode);
+		YW_MODEL_TYPE_LIST = outerHostYw + ConfigUtil.getContextProperty("yw.model.type.list").replace("YW_CODE",ywCode);
 		YW_TOKEN = ConfigUtil.getContextProperty("yw.token");
 	}
 

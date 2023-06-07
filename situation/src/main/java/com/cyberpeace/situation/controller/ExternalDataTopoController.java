@@ -22,6 +22,7 @@ import com.cyberpeace.integratation.model.situation.req.NodeIdApiReq;
 import com.cyberpeace.integratation.model.situation.req.NodeIdPageReq;
 import com.cyberpeace.integratation.model.situation.req.TopoReq;
 import com.cyberpeace.integratation.service.RemoteSituationService;
+import com.cyberpeace.situation.constant.topo.DemoTopo;
 import com.cyberpeace.situation.controller.req.NodeActionPageReq;
 import com.cyberpeace.situation.controller.req.NodePageReq;
 import com.cyberpeace.situation.dao.entity.TopoConfig;
@@ -53,7 +54,7 @@ public class ExternalDataTopoController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
-	private volatile Boolean demo = false;
+	private volatile Boolean demo = true;
 
 	/**
 	 * 获取节点链路状态
@@ -187,14 +188,14 @@ public class ExternalDataTopoController {
 	@PostMapping("/topo/")
 	public BaseRsp<TopoContext> getTopo(@RequestBody @Validated TopoReq topoReq) {
 
-		// 直接返回样例拓扑
-		if ("demo".equals(topoReq.getEnvId()) && demo) {
+		// Demo模式下，返回样例拓扑
+		if (DemoTopo.DEFAULT.getCode().equals(topoReq.getEnvId()) && demo) {
 			return new BaseRsp<>(JsonUtil.toJsonObject(
 					JsonUtil.toJsonString(getJsonByName("demoTopo")), TopoContext.class));
 		}
 
-		// 返回5000节点的测试拓扑
-		if ("test".equals(topoReq.getEnvId())) {
+		// Demo模式下，返回5000节点的测试拓扑
+		if (DemoTopo.TEST.getCode().equals(topoReq.getEnvId()) && demo) {
 			return new BaseRsp<>(JsonUtil.toJsonObject(
 					JsonUtil.toJsonString(getJsonByName("demo5000")), TopoContext.class));
 		}

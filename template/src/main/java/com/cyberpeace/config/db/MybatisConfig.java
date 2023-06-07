@@ -52,6 +52,7 @@ public class MybatisConfig {
 
 		// 自定义session，需要手动添加拦截器
 		configuration.addInterceptor(paginationInterceptor());
+		configuration.addInterceptor(new LogInterceptor());
 		sqlSessionFactory.setConfiguration(configuration);
 		sqlSessionFactory.setGlobalConfig(globalConfig());
 		sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()

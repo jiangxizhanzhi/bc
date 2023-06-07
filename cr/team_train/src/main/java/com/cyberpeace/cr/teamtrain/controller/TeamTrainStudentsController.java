@@ -549,7 +549,6 @@ public class TeamTrainStudentsController {
 				context.setOccupyFlag(1);;
 			}
 
-			context.setOccupyFlag(0);
 			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
 				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
 					context.setOccupyFlag(0);

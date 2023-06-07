@@ -410,7 +410,6 @@ public class RbSceneController {
 				context.setCollectUser(userInfo.getUserName());
 			}
 
-			context.setOccupyFlag(0);
 			for(RbDeviceContext occupyDevice : occupyDevices) {
 				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
 					context.setOccupyFlag(0);

@@ -60,7 +60,7 @@ public class CrTask extends BaseTable {
 	}
 
 	public Boolean isSuccess() {
-		return TaskStatus.RELEASED.getCode().equals(status) ;
+		return TaskStatus.SUCCESS.getCode().equals(status) ;
 	}
 	/**
 	 * task 单兵状态枚举

@@ -13,6 +13,8 @@ public class SkillScoreContext {
 
     private Integer score;
 
+    private Integer maxScore;
+
     private Integer id;
 
 

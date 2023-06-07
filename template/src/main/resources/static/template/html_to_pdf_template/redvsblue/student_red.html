@@ -141,7 +141,7 @@
     <div class="skill-content">
         <div id="skillScore-red-${scoreRsp.index}"></div>
         <script>
-            skillScore('skillScore-red-${scoreRsp.index}',[<#list scoreRsp.skillScoreContextList as r>'${r.skillName}',</#list>],[<#list scoreRsp.skillScoreContextList as r>${r.score},</#list>])
+            skillScore('skillScore-red-${scoreRsp.index}',[<#list scoreRsp.skillScoreContextList as r>{ name: '${r.skillName}', max: ${r.maxScore} },</#list>],[<#list scoreRsp.skillScoreContextList as r>${r.score},</#list>])
         </script>
     </div>
 

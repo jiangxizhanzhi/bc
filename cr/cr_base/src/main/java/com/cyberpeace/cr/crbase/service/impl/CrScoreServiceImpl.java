@@ -371,7 +371,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 
 		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,
-				Comparator.nullsLast(Integer::compareTo)));
+				Comparator.nullsLast(Integer::compareTo)).thenComparing(GetScoreRsp::getName,Comparator.nullsLast(String::compareTo)));
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
 		trainReportContext.setUserRoles(userRoles);
@@ -412,16 +412,18 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		for (String userId : userIds) {
 			UserSkillScoreContext context = new UserSkillScoreContext();
 			List<Integer> points = CrCommonUtil.getInitPoints();
+			List<Integer> maxPoints = CrCommonUtil.getInitPoints();
 			List<CrTask> userTaskList = taskMap.getOrDefault(userId,new ArrayList<>());
 			for (CrTask crTask : userTaskList) {
-				if (crTask.isSuccess()) {
-					Mission mission = missionMap.get(crTask.getMissionId());
-					List<Integer> mPoints = JsonUtil.toJsonObjectArray(mission.getSkillPoints(),
-							Integer.class);
-					if (!CollectionUtils.isEmpty(mPoints)) {
-						for (int i = 0; i < mPoints.size(); i++) {
+				Mission mission = missionMap.get(crTask.getMissionId());
+				List<Integer> mPoints = JsonUtil.toJsonObjectArray(mission.getSkillPoints(),
+						Integer.class);
+				if (!CollectionUtils.isEmpty(mPoints)) {
+					for (int i = 0; i < mPoints.size(); i++) {
+						if (crTask.isSuccess()) {
 							points.set(i, mPoints.get(i) + points.get(i));
 						}
+						maxPoints.set(i, mPoints.get(i) + points.get(i));
 					}
 				}
 			}
@@ -429,7 +431,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<SkillScoreContext> skillScoreContextList = new ArrayList<>();
 			for (int i = 0; i < points.size(); i++) {
 				SkillScoreContext skillScoreContext = new SkillScoreContext(
-						radarMap.get(i+1).getLabel(), points.get(i), i);
+						radarMap.get(i+1).getLabel(), points.get(i),maxPoints.get(i), i);
 				skillScoreContextList.add(skillScoreContext);
 			}
 			context.setSkillScoreContextList(skillScoreContextList);

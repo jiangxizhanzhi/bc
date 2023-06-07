@@ -85,7 +85,7 @@ public class TrainReportExportContext extends TrainReportContext {
 		if (list == null || list.size() == 0)
 			return "";
 		return list.stream()
-				.map(a -> "{name:'" + a.getUserData().getRepName() + "',type: 'line',data:[0," + a.getScoreTrends().stream().map(b->b.getScore()+"").collect(Collectors.joining(",")) + "],\n" +
+				.map(a -> "{name:'" + a.getUserData().getRepName() + "',type: 'line',data:[" + a.getScoreTrends().stream().map(b->b.getScore()+"").collect(Collectors.joining(",")) + "],\n" +
 						"      showSymbol: false,\n" +
 						"      lineStyle: {\n" +
 						"        width: 2,\n" +

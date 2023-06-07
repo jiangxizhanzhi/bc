@@ -32,7 +32,7 @@ public class StudentScoreTrend {
 		Integer score = 0;
 		successList.sort(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo)));
 		int j = 0;
-		for (int i = 1; i < timeList.size(); i++) {
+		for (int i = 0; i < timeList.size(); i++) {
 			Date date = timeList.get(i);
 			ScoreTrend scoreTrend = new ScoreTrend();
 			for (; j < successList.size(); j++) {

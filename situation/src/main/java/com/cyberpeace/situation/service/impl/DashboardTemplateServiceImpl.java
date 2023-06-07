@@ -1,9 +1,17 @@
 package com.cyberpeace.situation.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.situation.service.context.ExportTemplateContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +27,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.IDGeneratorUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
@@ -170,6 +174,145 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				}
 			}
 		});
+	}
+
+	@Override
+	public String exportDashboardTemplate(String tempDir, String templateId) throws IOException {
+
+		// 1、获取模板数据
+		DashboardTemplate dashboardTemplate = selectDashboardTemplateById(templateId, true);
+
+		// 2、清空原有模板ID并赋予新的模板名称
+		dashboardTemplate.setId(null);
+		dashboardTemplate.setResourceId(IDGeneratorUtil.getID());
+
+		// 3、复制组件数据
+		List<String> componentIds = JsonUtil
+				.toJsonObjectArray(dashboardTemplate.getComponentsSetting(), String.class);
+		List<DashboardComponents> dashboardComponentsList = dashboardComponentsMapper
+				.selectBatchIds(componentIds);
+
+		// 4.1、如果组件ID列表和组件列表的大小不一致，抛出异常
+		if (componentIds.size() != dashboardComponentsList.size()) {
+			throw new BusinessException(SituationErrorCode.TEMPLATE_DATA_ERROR);
+		}
+
+		// 4.2、构造组件列表数据
+		for (DashboardComponents dashboardComponents : dashboardComponentsList) {
+			String resourceId = IDGeneratorUtil.getID();
+			// 替换组件ID列表中的原有组件ID
+			componentIds.set(componentIds.indexOf(dashboardComponents.getResourceId()), resourceId);
+			dashboardComponents.setResourceId(resourceId);
+		}
+
+		// 5、重写组件ID列表
+		dashboardTemplate.setComponentsSetting(JsonUtil.toJsonString(componentIds));
+
+		// 6、导出模板数据
+		return exportTemplate(tempDir, dashboardTemplate, dashboardComponentsList);
+
+	}
+
+	@Override
+	public DashboardTemplate selectDashboardTemplateById(String templateId) {
+		return selectDashboardTemplateById(templateId, true);
+	}
+
+	@Override
+	public void importDashboardTemplate(String dataJson, String absolutePath) {
+		//1.写入模板数据
+		ExportTemplateContext exportTemplateContext = JsonUtil.toJsonObject(dataJson.replace("OUTER_HOST", SystemPropUtil.getProp( "OUTER_HOST")),
+				ExportTemplateContext.class);
+
+		// 校验字段长度是否合法
+//		situationHandlerService.checkFieldLen(exportTemplateContext.getDashboardTemplate().getName(), null);
+
+		List<String> filePaths  = getComponentsFilePaths(exportTemplateContext.getDashboardComponentsList());
+
+		List<String> files = FileUtil.listFileNamesByDir(absolutePath,false);
+
+		Map<String, String> filePathMap = StreamApiUtils.toMap(files, file -> file,
+				file -> {
+					for (String filePath : filePaths) {
+						if(filePath != null && filePath.contains(file)){
+							return filePath;
+						}
+					}
+					return file;
+				});
+
+		for (String file : files) {
+			String targetPath = filePathMap.get(file);
+			if(targetPath.startsWith(ConfigUtil.getContextProperty("cr.local.file.prefix"))){
+				FileUtil.copyFile(absolutePath + File.separator + file, targetPath,
+						false);
+			}
+
+		}
+
+		insertTemplate(exportTemplateContext.getDashboardTemplate(), exportTemplateContext.getDashboardComponentsList());
+
+	}
+
+	private List<String> getComponentsFilePaths(List<DashboardComponents> dashboardComponentsList) {
+		List<String> files = Lists.newArrayList();
+		for (DashboardComponents dashboardComponent : dashboardComponentsList) {
+			String componentSetting = dashboardComponent.getComponentSetting();
+			JSONObject jsonObject = JSONObject.parseObject(componentSetting);
+			files.add(jsonObject.getString("img"));
+			files.add(jsonObject.getString("url"));
+			files.add(jsonObject.getString("decoration_url"));
+			files.add(jsonObject.getString("drawing_url"));
+			files.add(jsonObject.getString("thumbnail"));
+		}
+
+		return StreamApiUtils.distinct(files);
+	}
+
+	private String exportTemplate(String tempDir, DashboardTemplate dashboardTemplate, List<DashboardComponents> dashboardComponentsList) throws IOException {
+
+		// 1. 创建文件夹
+		FileUtil.mkdirs(tempDir);
+
+		// 2. 获取模板数据
+		ExportTemplateContext exportTemplateContext = new ExportTemplateContext();
+
+		exportTemplateContext.setDashboardTemplate(dashboardTemplate);
+		exportTemplateContext.setDashboardComponentsList(dashboardComponentsList);
+
+		// 3. 获取模板中各种文件路径
+		List<String> filePaths  = getComponentsFilePaths(dashboardComponentsList);
+
+		// 4. 拷贝文件
+		for (String direction : filePaths) {
+			if(direction == null) {
+				continue;
+			}
+
+			File file = new File(direction);
+
+			// 过滤不必要的文件夹 隐藏文件夹
+			if (!file.isFile() || file.getName().startsWith(".")) {
+				continue;
+			}
+
+			// 拷贝对应文件
+			if (file.isFile()) {
+				String fileName = file.getAbsolutePath();
+				String newFile = fileName.replace(file.getParent(), "");
+				FileUtil.copyFile(fileName, tempDir + newFile,
+						false);
+			}
+		}
+
+		String data = JsonUtil.toJsonString(exportTemplateContext).replace(SystemPropUtil.getProp( "OUTER_HOST"),"OUTER_HOST");
+		// 5. 生成 data.json
+		String jsonPath = tempDir + File.separator + CrCommonConstants.RESOURCE_FILE_NAME;
+		OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(jsonPath),
+				StandardCharsets.UTF_8);
+		FileUtil.writeString(data, osw);
+		// 5. 压缩 zip 文件, 返回路径
+		return ZipUtil.toZip(tempDir);
 	}
 
 	@Override

@@ -48,4 +48,5 @@ public interface ApiRequestMapper extends BaseMapper<ApiRequest> {
 	 */
 	ApiRequest selectById(@Param("resourceId") String resourceId);
 
+	String selectByURL(String requestUrl);
 }

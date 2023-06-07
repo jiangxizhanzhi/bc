@@ -30,4 +30,9 @@
         from situation_datasource_api
         where resource_id = #{resourceId}
     </select>
+    <select id="selectByURL" resultType="java.lang.String">
+        select *
+        from situation_datasource_api
+        where resource_id = #{requestUrl}
+    </select>
 </mapper>

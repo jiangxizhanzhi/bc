@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cyberpeace.situation.dao.entity.SituationTopo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 拓扑配置映射器
@@ -13,5 +14,7 @@ import com.cyberpeace.situation.dao.entity.SituationTopo;
  */
 @Mapper
 public interface SituationTopoMapper extends BaseMapper<SituationTopo> {
+
+    String getEnvIdBySubjectIdAndTaskId(@Param("subjectId") String subjectId, @Param("taskId") String taskId);
 
 }

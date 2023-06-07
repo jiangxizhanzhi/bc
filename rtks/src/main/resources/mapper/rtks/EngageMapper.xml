@@ -17,6 +17,14 @@
             (#{engageId}, #{btId}, now(), now())
         </foreach>
     </insert>
+    <insert id="insertBatch">
+        insert into rtks_engage_train_relation
+        (engage_id, business_template_id, create_time, update_time)
+        values
+        <foreach collection="relList" item="rel" separator=",">
+            (#{rel.engageId}, #{rel.businessTemplateId}, now(), now())
+        </foreach>
+    </insert>
     <delete id="deleteRel">
         delete from rtks_engage_train_relation
         where engage_id = #{resourceId}
@@ -32,6 +40,10 @@
         <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
             #{businessTemplateId}
         </foreach>
+    </delete>
+    <delete id="clearAllRel">
+        delete
+        from rtks_engage_train_relation
     </delete>
     <select id="getAll" resultType="com.cyberpeace.rtks.service.bo.career.EngageContext">
         select rtks_engage_category.resource_id     as category_id,
@@ -90,6 +102,10 @@
         <foreach collection="businessTemplateIds" item="businessTemplateId" separator="," open="(" close=")">
             #{businessTemplateId}
         </foreach>
+    </select>
+    <select id="getAllRel" resultType="com.cyberpeace.rtks.dao.entity.EngageTrainRelation">
+        select *
+        from rtks_engage_train_relation
     </select>
 
 </mapper>

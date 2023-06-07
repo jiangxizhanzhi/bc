@@ -179,8 +179,6 @@ truncate rtks_attack_category;
 truncate rtks_engage_category;
 truncate rtks_engage_sub_category;
 truncate rtks_engage;
-delete from rtks_attack_train_relation;
-delete from rtks_engage_train_relation;
 
 -- ----------------------------
 -- for rtks_attack_ics

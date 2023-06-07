@@ -2,6 +2,9 @@ package com.cyberpeace.rtks.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +15,22 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.rtks.dao.entity.EngageTrainRelation;
 import com.cyberpeace.rtks.dao.mapper.EngageMapper;
 import com.cyberpeace.rtks.service.EngageService;
 import com.cyberpeace.rtks.service.bo.EngageDetail;
 import com.cyberpeace.rtks.service.bo.career.*;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class EngageServiceImpl implements EngageService {
 
 	private final Object lock = new Object();
@@ -34,6 +42,61 @@ public class EngageServiceImpl implements EngageService {
 	private TransactionTemplate transactionTemplate;
 
 	private volatile EngageCache cachedEngages;
+
+	/**
+	 * 5.3.7升级到5.4时，处理旧的attack和训练模板的关联
+	 * id变动，条目变动
+	 * rtks_attack_train_rel更新
+	 * @PostConstruct 执行在flyway执行之前
+	 */
+	@PostConstruct
+	private void trainRelUpgrade() {
+		try {
+			List<EngageTrainRelation> relationList = engageMapper.getAllRel();
+			// 无关联，跳过
+			if (relationList.isEmpty()) {
+				return;
+			}
+			// 已升级
+			if (relationList.get(0).getEngageId()
+					.length() < CrCommonConstants.GENERATED_UUID_LENGTH) {
+				return;
+			}
+			Map<String, String> oldNewMap = getOldNewMap();
+			List<EngageTrainRelation> newRelList = Lists.newArrayList();
+			// 一个新的id可能对应多个旧id
+			Set<String> engageTrainSet = Sets.newHashSet();
+
+			for (EngageTrainRelation old : relationList) {
+				String oldId = old.getEngageId();
+				String trainId = old.getBusinessTemplateId();
+				String newId = oldNewMap.get(oldId);
+				if (null == newId || engageTrainSet.contains(trainId + newId)) {
+					continue;
+				}
+				EngageTrainRelation newRel = new EngageTrainRelation();
+				newRel.setEngageId(newId);
+				newRel.setBusinessTemplateId(trainId);
+				newRelList.add(newRel);
+				engageTrainSet.add(trainId + newId);
+			}
+			if (newRelList.isEmpty()) {
+				return;
+			}
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// 清除全部旧的
+					engageMapper.clearAllRel();
+					// 插入新的
+					engageMapper.insertBatch(newRelList);
+				}
+			});
+		} catch (Exception e) {
+			log.error("error occurred when try to upgrade engage_train relation", e);
+		}
+	}
 
 	@Override
 	public List<EngageCategoryBo<EngageBackBo>> getEngages() {
@@ -198,6 +261,62 @@ public class EngageServiceImpl implements EngageService {
 		}
 
 		cachedEngages.setJson(JsonUtil.toJsonString(cachedEngages));
+	}
+
+	private Map<String, String> getOldNewMap() {
+		Map<String, String> oldNewMap = Maps.newHashMap();
+		oldNewMap.put("bd4817120ccc4882a76f432bb27f08f1", "SAC0004");
+		oldNewMap.put("f35db4d2e8ad4587bf80ed90f7cb4218", "SAC0012");
+		oldNewMap.put("f8ff871e12144280ae8698c0500be293", "SAC0005");
+		oldNewMap.put("07e2bce31e0a4115a719aa565c1339c7", "SAC0001");
+		oldNewMap.put("2a9894027add49ae8cfca2285b08c1fb", "SAC0002");
+		oldNewMap.put("6b494634bbab45de9214e3296b46d532", "SAC0003");
+		oldNewMap.put("96dc5a77224c40df8659218295eda5d0", "SAC0009");
+		oldNewMap.put("7242633569774cf89c1f6110267b657e", "EAC0001");
+		oldNewMap.put("5dbe69a917af47f9a83e559bbc8f368b", "EAC0002");
+		oldNewMap.put("0a745b34e3de451e866180f369fe9a5d", "EAC0014");
+		oldNewMap.put("79c8ec239e8644fc8b54967ca128184c", "EAC0003");
+		oldNewMap.put("fe5ef1debcc14f60a80c6e2c0db84a83", "EAC0023");
+		oldNewMap.put("e949fee196004dfeafa9da76ab78c461", "EAC0005");
+		oldNewMap.put("4f6562ab745144a4b15c584eecee628f", "EAC0013");
+		oldNewMap.put("35cec6b48d374455979016b95633c527", "EAC0004");
+		oldNewMap.put("0ad5f0e22f7f4fd2b70c06d17b1131a6", "EAC0019");
+		oldNewMap.put("e9eb6cc4d40846358602a13332cb743d", "EAC0017");
+		oldNewMap.put("9a019500e2f84696b50a5d09d7d86cf9", "EAC0020");
+		oldNewMap.put("b08fbeeb1737433d8bbac92b21eae3b9", "EAC0016");
+		oldNewMap.put("2f9a6ffc48d6492caee6b4227fa8a691", "EAC0018");
+		oldNewMap.put("1c46d87547f845b2829f74f99825ddd6", "EAC0021");
+		oldNewMap.put("c20cbf2a6d5d4c0a88dffeb978e7fe40", "EAC0009");
+		oldNewMap.put("6a3a4ee18ce6497ab740954733fdeefc", "EAC0023");
+		oldNewMap.put("c0111e6692c645eaa738e47c92cc07a4", "EAC0005");
+		oldNewMap.put("e00a01097edb49f48bf532c2e484e35e", "EAC0013");
+		oldNewMap.put("003627bbb3974574bfe7d307a6774d4e", "EAC0016");
+		oldNewMap.put("fb2a3b31076049f69b2b57ce1c02d597", "EAC0010");
+		oldNewMap.put("45628f9c8c5d424a8718df641cf4cfa9", "EAC0018");
+		oldNewMap.put("f0b0cf15f8964012ad674a25349194cb", "EAC0014");
+		oldNewMap.put("ae4800e238a940b39d5701e85f6a18ae", "EAC0020");
+		oldNewMap.put("3fc4cea17bf14d81959def65004659f8", "EAC0005");
+		oldNewMap.put("8fade69b3b6c495aa37ef7596cc62e8a", "EAC0016");
+		oldNewMap.put("31563ec6874b47578aa9d7fe8a1ed04a", "EAC0014");
+		oldNewMap.put("0efd3406d1a1491cbd8a2dae26533f6a", "EAC0006");
+		oldNewMap.put("b6c7b5b5d5744a94ad44ee25e0231ebd", "EAC0022");
+		oldNewMap.put("77fe17e4461c4229814a36740da02c88", "EAC0008");
+		oldNewMap.put("a335eddccea94322b50a00b71fe7d95e", "EAC0009");
+		oldNewMap.put("4ddca25c7cd94c8faeddbbc8641f4068", "EAC0015");
+		oldNewMap.put("b7bd81ae933f44e7b9b23191e635c615", "EAC0007");
+		oldNewMap.put("c151b3dc3bea4dc0902d2163a3e8f38a", "EAC0010");
+		oldNewMap.put("3dca2ed26184431f96be878949acdf7e", "EAC0011");
+		oldNewMap.put("b1f09aab975f40c9977bf37ac88fd1e8", "EAC0006");
+		oldNewMap.put("e88508bd7a064e93a9e1615ed9800b8d", "EAC0022");
+		oldNewMap.put("183c250bb395489d8decffb3fb4aa289", "EAC0015");
+		oldNewMap.put("2ef10e0904fb49d7b33b3f11fa441c89", "EAC0023");
+		oldNewMap.put("c4b241fdaaec41b99465ace534f712a0", "EAC0013");
+		oldNewMap.put("5a1fa286abfb48fd86c6584edb44d9ee", "EAC0007");
+		oldNewMap.put("d42084cac51649538e45f05f807985c9", "EAC0012");
+		oldNewMap.put("34436532322d404798fa4b6470fc9db9", "SAC0006");
+		oldNewMap.put("155ca8ba9b5f4b4f960d1fdcddd4634d", "SAC0004");
+		oldNewMap.put("f8594529332a4e67bd378f5a867f1925", "SAC0009");
+		return oldNewMap;
 	}
 
 }

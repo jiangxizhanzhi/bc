@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
+import com.cyberpeace.rtks.dao.entity.EngageTrainRelation;
 import com.cyberpeace.rtks.service.bo.career.EngageContext;
 import com.cyberpeace.rtks.service.bo.career.RelCount;
 import com.cyberpeace.rtks.service.bo.career.TechRelation;
@@ -39,4 +40,10 @@ public interface EngageMapper {
 
 	List<TechRelation>
 			selectRelsByBtIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	List<EngageTrainRelation> getAllRel();
+
+	void clearAllRel();
+
+	void insertBatch(@Param("relList") List<EngageTrainRelation> relList);
 }

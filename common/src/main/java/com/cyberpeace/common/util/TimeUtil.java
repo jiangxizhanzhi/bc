@@ -8,12 +8,9 @@ import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.constant.BaseI18n;
 
 import lombok.Data;
-import lombok.Getter;
 
 public class TimeUtil {
 
@@ -543,7 +540,6 @@ public class TimeUtil {
 
 	/**
 	 * 获取时间间隔
-	 * 格式化为 a天 b:c:d 的样式
 	 *
 	 * @param start 开始
 	 * @param end   结束
@@ -556,6 +552,7 @@ public class TimeUtil {
 
 	/**
 	 * 时间间隔（秒单位）格式化为字符串
+	 * 格式化为 a天b小时c分钟d秒
 	 *
 	 * @param sec 秒数
 	 * @return {@code String}

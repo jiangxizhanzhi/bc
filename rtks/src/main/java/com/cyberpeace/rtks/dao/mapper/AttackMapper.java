@@ -40,4 +40,8 @@ public interface AttackMapper {
 
 	List<TechRelation>
 			selectRelsByBtIds(@Param("businessTemplateIds") List<String> businessTemplateIds);
+
+	void clearAllRel();
+
+	void insertBatch(@Param("relList") List<AttackTrainRelation> relList);
 }

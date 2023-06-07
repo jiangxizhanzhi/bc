@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.situation.dao.mapper.SituationTopoMapper;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -76,6 +78,9 @@ public class ExternalSituationController {
 
 	@Autowired
 	private SituationGisService situationGisService;
+
+	@Autowired
+	private SituationTopoMapper situationTopoMapper;
 
 	/**
 	 * 接收任务指挥命令
@@ -307,5 +312,13 @@ public class ExternalSituationController {
 			log.error("地图静态资源鉴权失败,请求IP: {}", CommonContext.getIp());
 			return new BaseRsp<>(false);
 		}
+	}
+
+	@ApiOperation("根据subjectId和taskId返回envId")
+	@GetMapping("/get_env_id")
+	public BaseRsp<String> getEnvIdBySubjectIdAndTaskId(
+			@ApiParam(required = true, name = "subject_id", value = "科目id") @RequestParam("subject_id") String subjectId,
+			@ApiParam(required = true, name = "task_id", value = "任务id") @RequestParam("task_id") String taskId) {
+		return new BaseRsp<>(situationTopoMapper.getEnvIdBySubjectIdAndTaskId(subjectId,taskId));
 	}
 }

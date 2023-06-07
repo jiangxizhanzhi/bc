@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
@@ -7,6 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.controller.res.DashboardTemplatePageRes;
 import com.cyberpeace.situation.controller.res.DashboardTemplateRes;
+import com.cyberpeace.situation.dao.entity.DashboardTemplate;
 
 /**
  * @Author xuxz
@@ -104,4 +106,10 @@ public interface DashboardTemplateService {
 	 * @return
 	 */
 	JSONArray getComponentsEchartsData(String jsonString);
+
+	String exportDashboardTemplate(String tempDir, String templateId) throws IOException;
+
+	DashboardTemplate selectDashboardTemplateById(String templateId);
+
+	void importDashboardTemplate(String dataJson, String absolutePath);
 }

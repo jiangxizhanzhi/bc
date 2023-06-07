@@ -109,11 +109,16 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         ApiRequest apiRequest = apiConnectReqToApiRequest(apiConnectReq);
         String message = null;
         try {
-            ResponseEntity response = restTemplate.exchange(requestUrl, Objects.requireNonNull(HttpMethod.resolve(requestMethod)), httpEntity, String.class);
-            log.info("测试远程接口" + requestUrl);
-            if (response.getBody() != null) {
-                message = response.getBody().toString();
+            if("demo".equals(body.getString("taskId")) && "demo".equals(body.getString("subjectId"))) {
+                message = apiRequestMapper.selectById(apiConnectReq.getResourceId()).getResponseDemo();
+            } else {
+                ResponseEntity response = restTemplate.exchange(requestUrl, Objects.requireNonNull(HttpMethod.resolve(requestMethod)), httpEntity, String.class);
+                log.info("测试远程接口" + requestUrl);
+                if (response.getBody() != null) {
+                    message = response.getBody().toString();
+                }
             }
+
             apiRequest.setConnectStatus(Boolean.TRUE);
         } catch (Exception e) {
             log.info(e.getMessage());

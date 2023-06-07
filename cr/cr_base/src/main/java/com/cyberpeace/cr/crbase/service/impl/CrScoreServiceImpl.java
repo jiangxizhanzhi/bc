@@ -4,37 +4,35 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
-import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.*;
-import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
-import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
-import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.integratation.service.RemoteSceneService;
-import com.cyberpeace.integratation.service.impl.MpEnvService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
+import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
+import com.cyberpeace.cr.crbase.service.*;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionCategory;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistics;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.*;
+import com.cyberpeace.cr.crbase.service.context.task.TaskLogRsp;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.integratation.service.RemoteSceneService;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.cyberpeace.integratation.service.impl.MpEnvService;
 import com.google.common.collect.Maps;
 
 /**
@@ -384,6 +382,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return trainReportContext;
 	}
 
+	@Override
 	public List<UserSkillScoreContext> getSkillScoreList(String roomId, ArrayList<Integer> roles) {
 		List<CrTask> taskList = crTaskService.getByRoomId(roomId);
 		Map<String, List<CrTask>> taskMap = taskList.stream()
@@ -401,6 +400,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		return getSkillScoreList(roomId, userIds, taskList, missionMap);
 	}
 
+	@Override
 	public List<UserSkillScoreContext> getSkillScoreList(String roomId, List<String> userIds,
 			List<CrTask> taskList, Map<String, Mission> missionMap) {
 		Map<String, List<CrTask>> taskMap = taskList.stream()
@@ -456,8 +456,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				.collect(Collectors.toMap(CrConstantsConfig::getResourceId, Function.identity()));
 		for (Map.Entry<String, List<Mission>> entry : categoryMap.entrySet()) {
 			CrConstantsConfig config = configMap.get(entry.getKey());
-			if (config == null)
+			if (config == null) {
 				continue;
+			}
 			int size = entry.getValue() == null ? 0 : entry.getValue().size();
 			kindMap.put(config.getCnName(), size);
 		}

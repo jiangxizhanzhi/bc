@@ -565,6 +565,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
+	public void pushMissionWsToUsers(String businessId, List<String> userIds, Integer code) {
+		TaskWsData data = new TaskWsData(code);
+		sendWsData2Users(data, businessId, userIds);
+	}
+
+	@Override
 	public void pushStatusWs(String businessId, Integer runningStatus) {
 		MissionWsUpdateStatusMessage message = new MissionWsUpdateStatusMessage(runningStatus);
 		sendWsData(message, businessId);
@@ -587,6 +593,17 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
 				.builder().data(data).messageIdentifier(identifier).build();
 		webSocketHandler.pushMessage(messageContext, true);
+	}
+
+	private <T> void sendWsData2Users(T data, String businessId, List<String> userIds) {
+		MissionWsIdentifier identifier = new MissionWsIdentifier();
+		identifier.setBusinessId(businessId);
+		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
+		identifier.setPath(WsPath.CR_MISSION);
+
+		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
+				.builder().data(data).messageIdentifier(identifier).build();
+		webSocketHandler.pushMessageToUsers(messageContext, userIds);
 	}
 
 	@Override

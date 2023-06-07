@@ -1,20 +1,5 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.constant.WsPath;
@@ -61,11 +46,24 @@ import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.google.common.collect.Lists;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Api(tags = "红蓝对抗导演")
@@ -181,6 +179,8 @@ public class RbRoomDirectorController {
 				UserInfoContext.getUserContext().getUserId());
 
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+		crTaskService.pushMissionWsToUsers(crRole.getRoomId(), crRole.getUserIdList(),
+				MissionWsCode.MISSION_RELEASE);
 
 		return new BaseRsp<>();
 	}
@@ -448,8 +448,7 @@ public class RbRoomDirectorController {
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<String>
-			releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+	public BaseRsp<Boolean> releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 
@@ -457,18 +456,16 @@ public class RbRoomDirectorController {
 				UserInfoContext.getUserContext().getUserId());
 		rbRoomService.checkRoomOpening(crRole.getRoomId());
 
-		if (crRole == null) {
-			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
-
-		missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
+		Boolean res = missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
+		if (Boolean.TRUE.equals(res)) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
+			crTaskService.pushMissionWsToUsers(crRole.getRoomId(), crRole.getUserIdList(),
+					MissionWsCode.MISSION_RELEASE);
+		}
 
-		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.RVB_MISSION_CODE);
-
-		return new BaseRsp<>();
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("红蓝对抗-任务导调-任务列表")

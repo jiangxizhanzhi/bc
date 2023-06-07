@@ -264,11 +264,13 @@ public interface MissionService extends IService<Mission> {
 
 	/**
 	 * 批量下发任务
-	 * @param missionIds 任务ids
-	 * @param roleId 角色id
+	 *
+	 * @param missionIds    任务ids
+	 * @param roleId        角色id
 	 * @param currentUserId 用户id
+	 * @return {@code Boolean} 有任务被下发返回true，否则返回false
 	 */
-	void batchRelease(List<String> missionIds, String roleId, String currentUserId);
+	Boolean batchRelease(List<String> missionIds, String roleId, String currentUserId);
 
 	/**
 	 * 获取详情通过id

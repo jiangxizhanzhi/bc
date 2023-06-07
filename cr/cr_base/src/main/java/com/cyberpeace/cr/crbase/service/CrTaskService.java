@@ -260,6 +260,14 @@ public interface CrTaskService {
 	void pushMissionWS(String businessId, Integer code);
 
 	/**
+	 * 向指定用户列表推送任务ws
+	 *
+	 * @param businessId 业务id
+	 * @param userIds    用户id列表
+	 */
+	void pushMissionWsToUsers(String businessId, List<String> userIds, Integer code);
+
+	/**
 	 * 推送训练状态的ws，暂停状态不允许答题
 	 * @param businessId 业务id
 	 * @param runningStatus 运行状态

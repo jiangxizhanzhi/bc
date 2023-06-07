@@ -1,33 +1,9 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.HtmlTemplateEnum;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.HtmlToPdfUtil;
-import com.cyberpeace.cr.crbase.service.context.score.GetScoreRsp;
-import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
@@ -38,6 +14,8 @@ import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.FileUtil;
+import com.cyberpeace.common.util.HtmlToPdfUtil;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
@@ -68,6 +46,7 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
+import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
@@ -75,6 +54,7 @@ import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
+import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -86,13 +66,29 @@ import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -645,6 +641,9 @@ public class TeamTrainRoomController {
 				UserInfoContext.getUserContext().getUserId());
 
 		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+		// 发送ws给接入靶机的学员，任务矩阵显示红点
+		crTaskService.pushMissionWsToUsers(crRole.getRoomId(), crRole.getUserIdList(),
+				MissionWsCode.MISSION_RELEASE);
 
 		return new BaseRsp<>();
 	}
@@ -698,21 +697,21 @@ public class TeamTrainRoomController {
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<String>
-			releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+	public BaseRsp<Boolean>
+	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 		teamRoomService.checkTeacherPermission(crRole.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
 		teamRoomService.checkRoomOpening(crRole.getRoomId());
-		if (crRole == null) {
-			log.error("role does not exist！roleId=[{}]", releaseMissionReq.getRoleResourceId());
-			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
-		}
-		missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
+		Boolean res = missionService.batchRelease(releaseMissionReq.getMissionResourceIds(),
 				releaseMissionReq.getRoleResourceId(),
 				UserInfoContext.getUserContext().getUserId());
-		crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
-		return new BaseRsp<>();
+		if (Boolean.TRUE.equals(res)) {
+			crTaskService.pushMissionWS(crRole.getRoomId(), MissionWsCode.TEAM_MISSION_CODE);
+			crTaskService.pushMissionWsToUsers(crRole.getRoomId(), crRole.getUserIdList(),
+					MissionWsCode.MISSION_RELEASE);
+		}
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("团队对抗-任务导调-任务进度")

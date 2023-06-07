@@ -702,7 +702,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 	}
 
 	@Override
-	public void batchRelease(List<String> missionIds, String roleId, String currentUserId) {
+	public Boolean batchRelease(List<String> missionIds, String roleId, String currentUserId) {
 		List<Mission> missions = missionMapper.selectBatchIds(missionIds);
 		if (CollectionUtils.isEmpty(missions)) {
 			log.error("missions does not exist！missionIds=[{}]", JsonUtil.arrayToString(missionIds));
@@ -722,7 +722,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 			Set<String> existMissionIds = crTasks.stream().map(a -> a.getMissionId()).collect(Collectors.toSet());
 			missions=missions.stream().filter(a->!existMissionIds.contains(a.getResourceId())).collect(Collectors.toList());
 			if (CollectionUtils.isEmpty(missions)) {
-				return;
+				return false;
 			}
 		}
 
@@ -763,6 +763,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 			}
 		});
+		return true;
 	}
 
 	@Override

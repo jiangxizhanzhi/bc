@@ -24,7 +24,7 @@ public class TrainingScore implements Serializable {
 	private Integer total = 0;
 
 	@ApiModelProperty(value = "各阶段")
-	List<StageNameScore> stages = Lists.newArrayList();
+	private List<StageNameScore> stages = Lists.newArrayList();
 
 	public void addScore(Integer addend) {
 		this.score += addend;

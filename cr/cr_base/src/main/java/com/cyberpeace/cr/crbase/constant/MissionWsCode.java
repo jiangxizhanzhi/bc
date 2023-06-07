@@ -20,4 +20,9 @@ public interface MissionWsCode {
 	 * 场景更新
 	 */
 	Integer SCENE_UPDATED = 6;
+
+	/**
+	 * 任务下发
+	 */
+	Integer MISSION_RELEASE = 7;
 }

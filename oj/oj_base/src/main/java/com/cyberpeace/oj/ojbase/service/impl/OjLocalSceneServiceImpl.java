@@ -328,7 +328,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			log.error(
 					"checkSceneStartCount: Scene start greater limit count! start_scene=[{}], limit_scene=[{}]",
 					startCount, limitCount);
-			throw new BusinessException(OjBusinessErrorCode.SCENE_RUNNING_TOO_MUCH);
+			throw new BusinessException(OjBusinessErrorCode.SCENE_RUNNING_TOO_MUCH, limitCount);
 		}
 
 	}

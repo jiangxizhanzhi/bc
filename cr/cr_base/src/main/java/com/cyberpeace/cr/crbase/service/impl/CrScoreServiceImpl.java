@@ -277,8 +277,9 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,
 			ScoreTrendReq scoreTrendReq) {
 		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
+		//如果场景为空则取上一次场景
 		if (scene == null) {
-			scene = localSceneService.getByBusinessInstanceId(roomId);
+			scene = localSceneService.getByBusinessInstanceId(scoreTrendReq.getReplaySceneId());
 		}
 
 		TrainReportContext trainReportContext = new TrainReportContext();

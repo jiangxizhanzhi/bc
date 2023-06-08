@@ -610,7 +610,7 @@ public class RbRoomController {
 		if (scoreCount==null||scoreCount==0) {
 			scoreCount=10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount);
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount,rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);
 		initRbReport(rbRoom,trainReport);

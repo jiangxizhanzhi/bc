@@ -2796,7 +2796,6 @@
   background-color: rgba(25, 33, 51, 1);
   border-radius: 2px;
   width: 772px;
-  height: 184px;
   justify-content: center;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
@@ -2908,7 +2907,6 @@
 }
 
 .text_95-2 {
-  width: 112px;
   height: 22px;
   overflow-wrap: break-word;
   font-size: 14px;
@@ -2976,7 +2974,7 @@
 }
 
 .text_95-4 {
-  width: 50px;
+  margin-right: 4px;
   height: 22px;
   overflow-wrap: break-word;
   font-size: 14px;

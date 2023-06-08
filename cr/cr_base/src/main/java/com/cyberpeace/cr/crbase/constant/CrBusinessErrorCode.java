@@ -458,4 +458,14 @@ public interface CrBusinessErrorCode {
 	 * 复盘场景不存在，未开启过
 	 */
 	String REPLAY_SCENE_NOT_EXIST = "101136";
+
+	/**
+	 * 请训练结束后查看
+	 */
+	String PLZ_REPLAY_AFTER_TRAINING_ENDS = "101137";
+
+	/**
+	 * 请关闭训练场景后查看
+	 */
+	String PLZ_REPLAY_AFTER_SCENE_IS_STOPPED = "101138";
 }

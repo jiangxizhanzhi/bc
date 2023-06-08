@@ -55,6 +55,7 @@ public class TaskMatrix {
         this.score =tasks==null?0:tasks.stream().filter(a->CrTask.TaskStatus.SUCCESS.getCode().equals(a.getStatus())).map(CrTask::getScore).mapToInt(Integer::intValue).sum();
         for (TaskStage task : taskList) {
             task.setName(missionMap.getOrDefault(task.getMissionId(),new Mission()).getTitle());
+            task.setName(missionMap.getOrDefault(task.getMissionId(),new Mission()).getDescription());
         }
         return this;
     }

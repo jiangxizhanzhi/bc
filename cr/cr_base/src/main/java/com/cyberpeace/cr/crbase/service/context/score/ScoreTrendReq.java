@@ -14,4 +14,6 @@ public class ScoreTrendReq {
     private Date endTime;
 
     private Integer scoreCount;
+
+    private String replaySceneId;
 }

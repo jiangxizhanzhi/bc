@@ -278,8 +278,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			ScoreTrendReq scoreTrendReq) {
 		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
 		if (scene == null) {
-			log.error("Scene not exist! roomId = [{}]", roomId);
-			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+			scene = localSceneService.getByBusinessInstanceId(roomId);
 		}
 
 		TrainReportContext trainReportContext = new TrainReportContext();

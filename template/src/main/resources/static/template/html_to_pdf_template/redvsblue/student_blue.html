@@ -154,7 +154,7 @@
     <#list scoreRsp.taskLogRspList as taskLost>
         <div class="grid_2 flex-row">
             <span class="text_95-0">${taskLost.createTimeString}</span>
-            <span class="text_95-4">${taskLost.actionName}</span>
+            <span class="text_95-4">[${taskLost.actionName}]</span>
             <span class="text_95-2">${taskLost.name}</span>
         </div>
     </#list>

@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -23,6 +20,7 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
@@ -33,6 +31,7 @@ import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
@@ -46,6 +45,7 @@ import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
@@ -61,6 +61,7 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.Api;
@@ -114,6 +115,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private RemoteUserService remoteUserService;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -324,12 +328,27 @@ public class TeamTrainStudentsController {
 		}
 		if (StringUtils.isBlank(user_id)) {
 			user_id = UserInfoContext.getUserContext().getUserId();
+			// 查看自己的任务矩阵之后去掉任务矩阵红点标记
+			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+					user_id);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
 		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole);
 		return new BaseRsp<>(rbTaskMatrix);
+	}
+
+	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")
+	@GetMapping("/task/matrix/badge")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> ifShowMissionMatrixBadge(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		Boolean res = crBadgeService.ifExist(resource_id,
+				CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("新增占用主机")

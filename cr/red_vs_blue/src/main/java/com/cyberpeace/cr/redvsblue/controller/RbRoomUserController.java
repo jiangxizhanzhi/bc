@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -21,14 +23,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.service.CrCommonService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.ScreenService;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
@@ -83,6 +77,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private ScreenService screenService;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -283,12 +280,27 @@ public class RbRoomUserController {
 		}
 		if (StringUtils.isBlank(user_id)) {
 			user_id = UserInfoContext.getUserContext().getUserId();
+			// 查看自己的任务矩阵之后去掉任务矩阵红点标记
+			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(), user_id);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole);
 		return new BaseRsp<>(rbTaskMatrix);
+	}
+
+
+	@ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
+	@GetMapping("/task/matrix/badge")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<Boolean> ifShowMissionMatrixBadge(
+			@ApiParam(name = "resource_id", value = "红蓝对抗训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		Boolean res = crBadgeService.ifExist(resource_id,
+				CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("红蓝对抗-复盘设备")

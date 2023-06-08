@@ -1917,3 +1917,22 @@ INSERT INTO `cr_constants_config` VALUES (142, NULL, 2, 40, '课时', 'Class');
 INSERT INTO `cr_constants_config` VALUES (143, NULL, 3, 40, '实操题', 'Practice');
 INSERT INTO `cr_constants_config` VALUES (144, NULL, 4, 40, '课后练习', 'AfterClass');
 INSERT INTO `cr_constants_config` VALUES (145, NULL, 5, 40, '理论题', 'Theory');
+
+-- ----------------------------
+-- 红点标记
+-- ----------------------------
+CREATE TABLE `cr_badge`
+(
+    `id`          int(11)     NOT NULL AUTO_INCREMENT COMMENT '自增id',
+    `type`        tinyint(4)  NOT NULL COMMENT '类型',
+    `business_id` varchar(65) NOT NULL COMMENT '业务id',
+    `user_id`     varchar(32) NOT NULL COMMENT '用户id',
+    `extra`       text        NULL COMMENT '记录业务相关信息',
+    `create_time` datetime    NULL DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime    NULL DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`) USING BTREE,
+    INDEX `business_type_user` (`business_id`, `type`, `user_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  CHARACTER SET = utf8
+  COLLATE = utf8_general_ci COMMENT = '业务红点提示';

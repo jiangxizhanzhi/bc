@@ -267,7 +267,7 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		// 过滤无权限习题集
 		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
 		if (CollectionUtils.isEmpty(authSetIds)) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		// 过滤非公开习题集

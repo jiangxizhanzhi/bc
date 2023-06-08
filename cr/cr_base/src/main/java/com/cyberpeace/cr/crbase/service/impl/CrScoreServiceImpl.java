@@ -423,7 +423,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 						if (crTask.isSuccess()) {
 							points.set(i, mPoints.get(i) + points.get(i));
 						}
-						maxPoints.set(i, mPoints.get(i) + points.get(i));
+						maxPoints.set(i, mPoints.get(i) + maxPoints.get(i));
 					}
 				}
 			}

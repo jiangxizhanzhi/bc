@@ -19,7 +19,7 @@
          left: 'center',
          top: '42%',
          style: {
-           text: 38,
+           text: allTaskCount,
            fontSize: 24,
            fill: 'rgba(255,255,255,0.9)',
            textAlign: 'center',

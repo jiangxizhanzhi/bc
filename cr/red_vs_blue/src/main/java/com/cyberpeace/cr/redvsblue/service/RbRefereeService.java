@@ -6,7 +6,6 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
-import com.cyberpeace.cs.service.context.BadgeBo;
 
 /**
  * rb裁判Service
@@ -45,19 +44,4 @@ public interface RbRefereeService {
 	 * @param missionId 任务id
 	 */
 	void notifySubmission(String missionId);
-
-	/**
-	 * 是否展示任务裁决红点
-	 *
-	 * @param roomId 房间id
-	 * @return {@code BadgeBo}
-	 */
-	BadgeBo getEvaluationBadge(String roomId);
-
-	/**
-	 * 点击任务裁决，消除红点
-	 *
-	 * @param roomId 房间id
-	 */
-	void clickEvaluationBadge(String roomId);
 }

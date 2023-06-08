@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
@@ -20,7 +19,6 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
-import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.google.common.collect.Lists;
 
@@ -101,17 +99,6 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	}
 
 	@Override
-	public BadgeBo getEvaluationBadge(String roomId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		teamRoomService.checkTeacherPermission(roomId, userId);
-		Boolean res = crBadgeService.ifExist(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),
-				userId);
-		BadgeBo bo = new BadgeBo();
-		bo.setShow(res);
-		return bo;
-	}
-
-	@Override
 	public void notifySubmission(String missionId) {
 		// get mission
 		Mission mission = missionService.getById(missionId);
@@ -121,13 +108,6 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 		List<String> teacherIds = this.getTeacherIdsByRoomId(roomId);
 		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), teacherIds);
 		crTaskService.pushMissionWsToUsers(roomId, teacherIds, MissionWsCode.MISSION_SUBMISSION);
-	}
-
-	@Override
-	public void clickEvaluationBadge(String roomId) {
-		String userId = UserInfoContext.getUserContext().getUserId();
-		teamRoomService.checkTeacherPermission(roomId, userId);
-		crBadgeService.removeBadge(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), userId);
 	}
 
 	private List<String> getTeacherIdsByRoomId(String roomId) {

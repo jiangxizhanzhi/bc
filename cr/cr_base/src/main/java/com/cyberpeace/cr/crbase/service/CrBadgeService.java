@@ -2,6 +2,8 @@ package com.cyberpeace.cr.crbase.service;
 
 import java.util.List;
 
+import com.cyberpeace.cs.service.context.BadgeBo;
+
 public interface CrBadgeService {
 
 	/**
@@ -31,4 +33,19 @@ public interface CrBadgeService {
 	 * @param userId     用户id
 	 */
 	void removeBadge(String businessId, Integer type, String userId);
+
+	/**
+	 * 获取任务裁决红点
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BadgeBo}
+	 */
+	BadgeBo getEvaluationBadge(String roomId);
+
+	/**
+	 * 点击任务裁决，取消红点
+	 *
+	 * @param roomId 房间id
+	 */
+	void clickEvaluationBadge(String roomId);
 }

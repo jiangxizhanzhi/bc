@@ -286,7 +286,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("红蓝对抗-任务矩阵&&用户维度复盘")
 	@GetMapping("/task/matrix")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
@@ -310,7 +310,7 @@ public class RbRoomUserController {
 
 	@ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
 	@GetMapping("/task/matrix/badge")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> ifShowMissionMatrixBadge(
 			@ApiParam(name = "resource_id", value = "红蓝对抗训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
@@ -320,9 +320,20 @@ public class RbRoomUserController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("任务矩阵红点点击取消")
+	@GetMapping("/matrix/badge/click")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp clickEvaluationBadge(@ApiParam(name = "resource_id", value = "红蓝对抗训练id",
+			required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>();
+	}
+
 	@ApiOperation("红蓝对抗-复盘设备")
 	@GetMapping("/task/replayUserTimeInfo")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<ScreenRecordUserRole>> replyUserTimeInfo(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "node_id", value = "设备id", required = true) String node_id) {
@@ -349,7 +360,7 @@ public class RbRoomUserController {
 	 */
 	@ApiOperation("红蓝对抗学员时间轴")
 	@GetMapping("/get_time_line")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TimeLineData> getTimeLine(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TimeLineData data = rbRoomService.getStudentsTimeLine(resource_id);

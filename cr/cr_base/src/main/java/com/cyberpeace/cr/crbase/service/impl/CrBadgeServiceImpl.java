@@ -6,9 +6,11 @@ import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.mapper.CrBadgeMapper;
 import com.cyberpeace.cr.crbase.service.CrBadgeService;
+import com.cyberpeace.cs.service.context.BadgeBo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,5 +43,20 @@ public class CrBadgeServiceImpl implements CrBadgeService {
 	@Override
 	public void removeBadge(String businessId, Integer type, String userId) {
 		crBadgeMapper.removeBatchByBusinessIdAndTypeAndUserId(businessId, type, userId);
+	}
+
+	@Override
+	public BadgeBo getEvaluationBadge(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		Boolean res = this.ifExist(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), userId);
+		BadgeBo bo = new BadgeBo();
+		bo.setShow(res);
+		return bo;
+	}
+
+	@Override
+	public void clickEvaluationBadge(String roomId) {
+		this.removeBadge(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),
+				UserInfoContext.getUserContext().getUserId());
 	}
 }

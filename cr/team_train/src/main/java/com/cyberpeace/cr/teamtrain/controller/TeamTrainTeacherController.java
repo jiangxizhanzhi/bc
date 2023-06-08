@@ -20,10 +20,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.CrCommonService;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
-import com.cyberpeace.cr.crbase.service.MissionService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
@@ -69,6 +66,10 @@ public class TeamTrainTeacherController {
 
 	@Autowired
 	private MissionService missionService;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
+
 	@ApiOperation("获取桌面监控")
 	@GetMapping("/sessions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -234,7 +235,7 @@ public class TeamTrainTeacherController {
 	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		BadgeBo res = teamTeacherService.getEvaluationBadge(resource_id);
+		BadgeBo res = crBadgeService.getEvaluationBadge(resource_id);
 		return new BaseRsp<>(res);
 	}
 
@@ -244,7 +245,7 @@ public class TeamTrainTeacherController {
 	public BaseRsp clickEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		teamTeacherService.clickEvaluationBadge(resource_id);
+		crBadgeService.clickEvaluationBadge(resource_id);
 		return new BaseRsp<>();
 	}
 }

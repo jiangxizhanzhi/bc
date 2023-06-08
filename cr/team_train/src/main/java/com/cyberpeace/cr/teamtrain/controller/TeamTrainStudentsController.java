@@ -363,6 +363,17 @@ public class TeamTrainStudentsController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("任务矩阵红点点击取消")
+	@GetMapping("/matrix/badge/click")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp clickEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+		return new BaseRsp<>();
+	}
+
 	@ApiOperation("新增占用主机")
 	@PostMapping("/device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

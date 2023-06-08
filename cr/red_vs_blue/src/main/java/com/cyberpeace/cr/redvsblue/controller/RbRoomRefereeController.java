@@ -21,6 +21,7 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
+import com.cyberpeace.cr.crbase.service.CrBadgeService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
@@ -65,6 +66,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private RbRefereeService rbRefereeService;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
 
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
@@ -234,7 +238,7 @@ public class RbRoomRefereeController {
 	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		BadgeBo res = rbRefereeService.getEvaluationBadge(resource_id);
+		BadgeBo res = crBadgeService.getEvaluationBadge(resource_id);
 		return new BaseRsp<>(res);
 	}
 
@@ -244,7 +248,7 @@ public class RbRoomRefereeController {
 	public BaseRsp clickEvaluationBadge(
 			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		rbRefereeService.clickEvaluationBadge(resource_id);
+		crBadgeService.clickEvaluationBadge(resource_id);
 		return new BaseRsp<>();
 	}
 

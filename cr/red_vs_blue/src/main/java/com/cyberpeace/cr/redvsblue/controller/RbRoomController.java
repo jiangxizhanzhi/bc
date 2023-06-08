@@ -10,6 +10,8 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -129,6 +131,10 @@ public class RbRoomController {
 
 	@Autowired
 	private LocalSceneService localSceneService;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
+
 	@ApiOperation("新增")
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -206,7 +212,8 @@ public class RbRoomController {
 	@ApiOperation("训练说明")
 	@GetMapping("train_introduction")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<RbRoomRsp> getTrainIntroduction(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<RbRoomRsp> getTrainIntroduction(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		RbRoomData rbRoomData = rbRoomService.getRbRoomDataByRoomId(resource_id);
 
 		RbRoomRsp rbRoomRsp = BeanUtils.copy(rbRoomData, RbRoomRsp.class);
@@ -215,7 +222,8 @@ public class RbRoomController {
 		List<String> copyedTopoIds = new ArrayList<>();
 		copyedTopoIds.add(copyedTopoId);
 		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(copyedTopoIds);
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+				.batchGetTopoDigest(copyedTopoIds);
 
 		rbRoomRsp.setNodesCount(
 				topologyNodesStats.get(rbRoomData.getCopyedTopoId()).getNodeCounts());
@@ -404,22 +412,25 @@ public class RbRoomController {
 	@ApiOperation("红蓝对抗-训练手册")
 	@GetMapping("/manual")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = rbRoomService.checkRoomPermission(resource_id, userId);
-		if(!crRole.isRvbStaff()) {
+		if (!crRole.isRvbStaff()) {
 			log.error("role is forbidden");
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
 		Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
-		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.RED.getCode());
+		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id,
+				CrRole.RbRoleGroup.RED.getCode());
 		redManuals = mergeStageByCreateTime(redManuals);
-		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id, CrRole.RbRoleGroup.BLUE.getCode());
+		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id,
+				CrRole.RbRoleGroup.BLUE.getCode());
 		blueManuals = mergeStageByCreateTime(blueManuals);
 		res.put("red", redManuals);
 		res.put("blue", blueManuals);
@@ -606,14 +617,23 @@ public class RbRoomController {
 	public BaseRsp<TrainReportContext> getTrainReports(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
-		RbRoom rbRoom = rbRoomService.getById(resource_id);
-		if (scoreCount==null||scoreCount==0) {
-			scoreCount=10;
+		//开始时间  结束时间从训练记录表取
+		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
+		if (trainRecord == null) {
+			log.error("resourceId is null,resourceId =[{}]", resource_id);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(rbRoom.getStartTime(), rbRoom.getEndTime(), scoreCount,rbRoom.getReplaySceneId());
+		//
+		RbRoom rbRoom = rbRoomService.getById(resource_id);
+		if (scoreCount == null || scoreCount == 0) {
+			scoreCount = 10;
+		}
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord.getStartTime(),
+				trainRecord.getEndTime(), scoreCount, rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
-				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),scoreTrendReq);
-		initRbReport(rbRoom,trainReport);
+				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
+				scoreTrendReq);
+		initRbReport(rbRoom, trainReport);
 		return new BaseRsp<>(trainReport);
 	}
 
@@ -621,16 +641,19 @@ public class RbRoomController {
 	@GetMapping("/mission/TrainReportsPdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public void TrainReportsPdf(HttpServletResponse httpServletResponse,
-								@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-								@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
-		TrainReportExportContext data = BeanUtils.deepCopy(originData, TrainReportExportContext.class);
+		TrainReportExportContext data = BeanUtils.deepCopy(originData,
+				TrainReportExportContext.class);
 		data.initExport();
 		Path destHtmlPathObj = Paths.get(AttachmentPath.REDVSBLUE.getDesc(),
 				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
 				String.format("%s.html", resource_id));
-		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath()+"/img",AttachmentPath.REDVSBLUE.getDesc(),true);
-		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath()+"/js",AttachmentPath.REDVSBLUE.getDesc(),true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath() + "/img",
+				AttachmentPath.REDVSBLUE.getDesc(), true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.REDBLUE.getTemplatePath() + "/js",
+				AttachmentPath.REDVSBLUE.getDesc(), true);
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {
@@ -663,35 +686,35 @@ public class RbRoomController {
 
 	}
 
-	public void initExportInfo(TrainReportContext trainReport) {
-
-	}
-
-	public void initRbReport(RbRoom rbRoom,TrainReportContext trainReport) {
-		//基础信息
+	public void initRbReport(RbRoom rbRoom, TrainReportContext trainReport) {
+		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
 		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
 		roomBaseInfo.initExportString();
 		trainReport.setRoomBaseInfo(roomBaseInfo);
-		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
-		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
-		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
-		trainReport.setAdminName(UserRole.getName(UserRole::getName,admins));
-		trainReport.setDirectorName(UserRole.getName(UserRole::getName,directors));
-		trainReport.setRefereesName(UserRole.getName(UserRole::getName,referees));
-		//红蓝得分趋势分组
+		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(
+				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
+		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(
+				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
+		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(
+				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
+		trainReport.setAdminName(UserRole.getName(UserRole::getName, admins));
+		trainReport.setDirectorName(UserRole.getName(UserRole::getName, directors));
+		trainReport.setRefereesName(UserRole.getName(UserRole::getName, referees));
+		// 红蓝得分趋势分组
 		trainReport.initRbGetScoreRsps(true);
 
 	}
 
-	private List<TrainTaskReleaseInfoRsp> mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
+	private List<TrainTaskReleaseInfoRsp>
+			mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
 		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>(1);
 
 		List<MissionReleaseStageInfo> allStages = new ArrayList<>();
 		manuals.stream().filter(item -> CollectionUtils.isNotEmpty(item.getMissionStages()))
 				.forEach(item -> allStages.addAll(item.getMissionStages()));
-		if(CollectionUtils.isEmpty(allStages)) {
+		if (CollectionUtils.isEmpty(allStages)) {
 			return res;
 		}
 		List<MissionReleaseStageInfo> sortedStages = allStages.stream()

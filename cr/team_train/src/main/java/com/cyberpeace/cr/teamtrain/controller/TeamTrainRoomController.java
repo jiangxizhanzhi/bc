@@ -28,6 +28,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
@@ -829,13 +830,16 @@ public class TeamTrainRoomController {
 	public BaseRsp<TrainReportContext> getTrainReports(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
-
-		String userId = UserInfoContext.getUserContext().getUserId();
+		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
+		if (trainRecord == null) {
+			log.error("resourceId is null,resourceId =[{}]", resource_id);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
+		}
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
 		if (scoreCount==null||scoreCount==0) {
 			scoreCount=10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(teamRoom.getStartTime(), teamRoom.getEndTime(), scoreCount,teamRoom.getReplaySceneId());
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord.getStartTime(), trainRecord.getEndTime(), scoreCount,teamRoom.getReplaySceneId());
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);

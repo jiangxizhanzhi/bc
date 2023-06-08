@@ -4,8 +4,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +43,7 @@ import com.google.common.collect.Maps;
 /**
  *
  */
+@Slf4j
 @Service
 public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> implements CrScoreService {
 
@@ -270,6 +276,12 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	@Override
 	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,
 			ScoreTrendReq scoreTrendReq) {
+		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
+		if (scene == null) {
+			log.error("Scene not exist! roomId = [{}]", roomId);
+			throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+		}
+
 		TrainReportContext trainReportContext = new TrainReportContext();
 		trainReportContext.initTimeList(scoreTrendReq);
 		List<CrRole> crRoles = crRoleService.getRolesByRoomAndGroups(roomId, roles);
@@ -356,7 +368,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			userRole.setRoleName(roleName);
 			userRoles.add(userRole);
 		}
-		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
+
 		JSONArray attackTypeCount;
 		JSONArray sceneTrend;
 		if (scene!=null) {

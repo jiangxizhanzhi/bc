@@ -75,6 +75,9 @@ public class GetScoreRsp implements Serializable {
 	@ApiModelProperty(value = "动态事件")
 	private List<TaskLogRsp> taskLogRspList;
 
+	@ApiModelProperty(value = "训练评分总分")
+	private Integer allTrainScore;
+
 	@ApiModelProperty(value = "总分")
 	private Integer allScore;
 
@@ -129,7 +132,7 @@ public class GetScoreRsp implements Serializable {
 		this.skillScoreContextList = userSkillScoreContext.getSkillScoreContextList();
 		this.userMissionList = userMissionList;
 		this.taskLogRspList = taskLogRspList;
-		this.allScore = 0;
+		this.allTrainScore = 0;
 		this.allObjectiveScore = 0;
 		this.allSubjectiveScore = 0;
 
@@ -138,14 +141,15 @@ public class GetScoreRsp implements Serializable {
 			if (mission==null){
 				continue;
 			}
-			allScore +=mission.getScore();
+			this.allTrainScore +=mission.getScore();
 			if (mission.isObjective()) {
 				this.allObjectiveScore+=mission.getScore();
 			} else {
 				this.allSubjectiveScore+=mission.getScore();
 			}
 		}
-		this.trainScoreRate = allScore!=0? new BigDecimal(subjectiveScore).add(new BigDecimal(objectiveScore)).divide(new BigDecimal(allScore),0, RoundingMode.HALF_UP) : new BigDecimal(0);
+		this.allScore = this.allTrainScore *Integer.parseInt(crScore.getTrainingPercentage())/100 + Integer.parseInt(crScore.getSkillPercentage());
+		this.trainScoreRate = allTrainScore!=0? new BigDecimal(subjectiveScore).add(new BigDecimal(objectiveScore)).multiply(new BigDecimal(100)).divide(new BigDecimal(allTrainScore),0, RoundingMode.HALF_UP) : new BigDecimal(0);
 		this.abilityScoreRate = abilityScore*4;
 	}
 }

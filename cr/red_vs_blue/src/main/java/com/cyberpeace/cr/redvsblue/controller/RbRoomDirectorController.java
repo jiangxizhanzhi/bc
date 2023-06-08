@@ -523,7 +523,7 @@ public class RbRoomDirectorController {
 	public BaseRsp<String> isReplayEnabled(
 			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		String res = rbDirectorService.ifReplayEnabled(resource_id);
+		String res = rbDirectorService.getReplaySceneId(resource_id);
 		return new BaseRsp<>(res);
 	}
 }

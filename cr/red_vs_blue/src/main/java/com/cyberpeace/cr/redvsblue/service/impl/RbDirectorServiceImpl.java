@@ -98,12 +98,17 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 	}
 
 	@Override
-	public String ifReplayEnabled(String roomId) {
+	public String getReplaySceneId(String roomId) {
 		RbRoom room = rbRoomService.getOrExceptionById(roomId);
 		if (!room.isEnded() || StringUtils.isNotBlank(room.getLocalSceneId())) {
 			log.info("conditions not satisfied, replay not enabled");
 			throw new BusinessException(CrBusinessErrorCode.REPLAY_NOT_ENABLED);
 		}
-		return room.getReplaySceneId();
+		String res = room.getReplaySceneId();
+		if (StringUtils.isBlank(res)) {
+			log.info("This training [{}] hasn't start a scene, no scene to replay.", roomId);
+			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
+		}
+		return res;
 	}
 }

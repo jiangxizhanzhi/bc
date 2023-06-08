@@ -223,7 +223,7 @@ public class TeamTrainTeacherController {
 	public BaseRsp<String> isReplayEnabled(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		String res = teamTeacherService.ifReplayEnabled(resource_id);
+		String res = teamTeacherService.getReplaySceneId(resource_id);
 		return new BaseRsp<>(res);
 	}
 

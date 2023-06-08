@@ -453,4 +453,9 @@ public interface CrBusinessErrorCode {
 	 * 不满足复盘条件
 	 */
 	String REPLAY_NOT_ENABLED = "101135";
+
+	/**
+	 * 复盘场景不存在，未开启过
+	 */
+	String REPLAY_SCENE_NOT_EXIST = "101136";
 }

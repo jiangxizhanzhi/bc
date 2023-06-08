@@ -50,5 +50,5 @@ public interface TeamTeacherService {
 	 * @param roomId 房间id
 	 * @return {@code Boolean}
 	 */
-	String ifReplayEnabled(String roomId);
+	String getReplaySceneId(String roomId);
 }

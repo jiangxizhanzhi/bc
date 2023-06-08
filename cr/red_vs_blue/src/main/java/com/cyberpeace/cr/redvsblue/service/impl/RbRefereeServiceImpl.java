@@ -3,19 +3,23 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
+import com.cyberpeace.cs.service.context.BadgeBo;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +35,15 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 
 	@Autowired
 	private CrScoreService crScoreService;
+
+	@Autowired
+	private CrRoleService crRoleService;
+
+	@Autowired
+	private MissionService missionService;
+
+	@Autowired
+	private CrBadgeService crBadgeService;
 
 	@Override
 	public List<EvaluationListRsp> getEvaluationList(EvaluationListReq req) {
@@ -62,5 +75,45 @@ public class RbRefereeServiceImpl implements RbRefereeService {
 		// 红方角色放在前面
 		res.sort(Comparator.comparing(RbRoleIdNameType::getType));
 		return res;
+	}
+
+	@Override
+	public void notifySubmission(String missionId) {
+		// get mission
+		Mission mission = missionService.getById(missionId);
+		// get roomId
+		String roomId = mission.getRoomId();
+		// get teacher
+		List<String> refereeIds = this.getRefereeIdsByRoomId(roomId);
+		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), refereeIds);
+		crTaskService.pushMissionWsToUsers(roomId, refereeIds, MissionWsCode.MISSION_SUBMISSION);
+	}
+
+	@Override
+	public BadgeBo getEvaluationBadge(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkRefereePermission(roomId, userId);
+		Boolean res = crBadgeService.ifExist(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),
+				userId);
+		BadgeBo bo = new BadgeBo();
+		bo.setShow(res);
+		return bo;
+	}
+
+	@Override
+	public void clickEvaluationBadge(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		rbRoomService.checkRefereePermission(roomId, userId);
+		crBadgeService.removeBadge(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),
+				UserInfoContext.getUserContext().getUserId());
+	}
+
+	private List<String> getRefereeIdsByRoomId(String roomId) {
+		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
+				Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
+		if (roles.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return roles.get(0).getUserIdList();
 	}
 }

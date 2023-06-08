@@ -25,4 +25,9 @@ public interface MissionWsCode {
 	 * 任务下发
 	 */
 	Integer MISSION_RELEASE = 7;
+
+	/**
+	 * 新的任务提交
+	 */
+	Integer MISSION_SUBMISSION = 8;
 }

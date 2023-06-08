@@ -38,6 +38,7 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
+import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.integratation.service.RemoteUserService;
 
 import io.swagger.annotations.Api;
@@ -225,6 +226,26 @@ public class RbRoomRefereeController {
 				UserInfoContext.getUserContext().getUserId());
 		List<StudentScoreListRsp> res = rbRefereeService.getScoreList(resource_id);
 		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("任务裁决红点是否显示")
+	@GetMapping("/evaluation/badge")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		BadgeBo res = rbRefereeService.getEvaluationBadge(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("任务裁决红点点击取消")
+	@GetMapping("/evaluation/badge/click")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp clickEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "训练房间id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		rbRefereeService.clickEvaluationBadge(resource_id);
+		return new BaseRsp<>();
 	}
 
 }

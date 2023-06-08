@@ -11,6 +11,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,10 +56,7 @@ import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainDevice;
-import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
-import com.cyberpeace.cr.teamtrain.service.TeamDeviceService;
-import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
+import com.cyberpeace.cr.teamtrain.service.*;
 import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -118,6 +118,12 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private CrBadgeService crBadgeService;
+
+	@Autowired
+	private TeamTeacherService teamTeacherService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -254,9 +260,15 @@ public class TeamTrainStudentsController {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		teamRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);
 
-		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+				teamTeacherService.notifySubmission(submitMissionsReq.getMissionHash());
+			}
+		});
 		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
 				MissionWsCode.TEAM_MISSION_CODE);
 

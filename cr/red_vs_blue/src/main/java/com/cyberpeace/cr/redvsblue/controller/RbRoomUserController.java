@@ -6,12 +6,13 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.cr.crbase.dao.entity.*;
-import com.cyberpeace.cr.crbase.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
+import com.cyberpeace.cr.crbase.dao.entity.*;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
 import com.cyberpeace.cr.crbase.service.context.TaskMatrix;
 import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
@@ -36,6 +39,7 @@ import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDevice;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
+import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.integratation.service.RemoteUserService;
@@ -80,6 +84,12 @@ public class RbRoomUserController {
 
 	@Autowired
 	private CrBadgeService crBadgeService;
+
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private RbRefereeService rbRefereeService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -220,8 +230,15 @@ public class RbRoomUserController {
 		rbRoomService.checkStudentPermission(submitMissionsReq.getResourceId(), userId);
 		rbRoomService.checkRoomOpening(submitMissionsReq.getResourceId());
 
-		crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-				submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+				rbRefereeService.notifySubmission(submitMissionsReq.getMissionHash());
+			}
+		});
 
 		crTaskService.pushMissionWS(submitMissionsReq.getResourceId(),
 				MissionWsCode.RVB_MISSION_CODE);

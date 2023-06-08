@@ -2,24 +2,27 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
-import com.cyberpeace.cs.service.LocalSceneService;
+import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
+import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +40,13 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	private CrTaskService crTaskService;
 
 	@Autowired
-	private LocalSceneService localSceneService;
+	private CrBadgeService crBadgeService;
+
+	@Autowired
+	private MissionService missionService;
+
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@Override
 	public List<StudentScoreListRsp> getScoreList(String roomId) {
@@ -89,5 +98,44 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 			throw new BusinessException(CrBusinessErrorCode.REPLAY_SCENE_NOT_EXIST);
 		}
 		return res;
+	}
+
+	@Override
+	public BadgeBo getEvaluationBadge(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		Boolean res = crBadgeService.ifExist(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(),
+				userId);
+		BadgeBo bo = new BadgeBo();
+		bo.setShow(res);
+		return bo;
+	}
+
+	@Override
+	public void notifySubmission(String missionId) {
+		// get mission
+		Mission mission = missionService.getById(missionId);
+		// get roomId
+		String roomId = mission.getRoomId();
+		// get teacher
+		List<String> teacherIds = this.getTeacherIdsByRoomId(roomId);
+		crBadgeService.createBatch(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), teacherIds);
+		crTaskService.pushMissionWsToUsers(roomId, teacherIds, MissionWsCode.MISSION_SUBMISSION);
+	}
+
+	@Override
+	public void clickEvaluationBadge(String roomId) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		crBadgeService.removeBadge(roomId, CrBadge.BadgeType.NEW_SUBMIT.getCode(), userId);
+	}
+
+	private List<String> getTeacherIdsByRoomId(String roomId) {
+		List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,
+				Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
+		if (roles.isEmpty()) {
+			return Lists.newArrayList();
+		}
+		return roles.get(0).getUserIdList();
 	}
 }

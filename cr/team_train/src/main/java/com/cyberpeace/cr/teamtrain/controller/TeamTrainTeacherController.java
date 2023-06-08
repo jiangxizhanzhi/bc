@@ -37,6 +37,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
+import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
 
 import io.swagger.annotations.Api;
@@ -227,4 +228,23 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
+	@ApiOperation("任务裁决红点是否显示")
+	@GetMapping("/evaluation/badge")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<BadgeBo> ifShowEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		BadgeBo res = teamTeacherService.getEvaluationBadge(resource_id);
+		return new BaseRsp<>(res);
+	}
+
+	@ApiOperation("任务裁决红点点击取消")
+	@GetMapping("/evaluation/badge/click")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp clickEvaluationBadge(
+			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		teamTeacherService.clickEvaluationBadge(resource_id);
+		return new BaseRsp<>();
+	}
 }

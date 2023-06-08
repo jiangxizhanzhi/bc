@@ -40,7 +40,7 @@ public class CrBadge {
 	public enum BadgeType implements GenericEnum {
 
 		NOTICE(1, "notice"),
-        MISSION_RELEASE(2, "任务下发提示");
+		MISSION_RELEASE(2, "任务下发提示"), NEW_SUBMIT(3, "待评估的提交");
 
 		@Getter
 		private Integer code;

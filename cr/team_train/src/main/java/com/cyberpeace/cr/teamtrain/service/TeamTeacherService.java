@@ -5,6 +5,7 @@ import java.util.List;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cs.service.context.BadgeBo;
 import com.cyberpeace.cs.service.context.IdNameType;
 
 public interface TeamTeacherService {
@@ -51,4 +52,26 @@ public interface TeamTeacherService {
 	 * @return {@code Boolean}
 	 */
 	String getReplaySceneId(String roomId);
+
+	/**
+	 * 获取任务裁决红点
+	 *
+	 * @param roomId 房间id
+	 * @return {@code BadgeBo}
+	 */
+	BadgeBo getEvaluationBadge(String roomId);
+
+	/**
+	 * 学员提交任务后通知教员
+	 *
+	 * @param missionId 任务id
+	 */
+	void notifySubmission(String missionId);
+
+	/**
+	 * 点击任务裁决，取消红点
+	 *
+	 * @param roomId 房间id
+	 */
+	void clickEvaluationBadge(String roomId);
 }

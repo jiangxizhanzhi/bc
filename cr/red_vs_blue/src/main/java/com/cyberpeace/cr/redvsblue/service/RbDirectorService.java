@@ -14,9 +14,10 @@ public interface RbDirectorService {
 
 	/**
 	 * 查看复盘条件是否满足
+	 * 满足则返回scene_id
 	 *
 	 * @param roomId 房间id
 	 * @return {@code Boolean}
 	 */
-	Boolean ifReplayEnabled(String roomId);
+	String ifReplayEnabled(String roomId);
 }

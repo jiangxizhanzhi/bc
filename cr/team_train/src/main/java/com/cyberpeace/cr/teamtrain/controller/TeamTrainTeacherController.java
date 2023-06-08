@@ -217,13 +217,13 @@ public class TeamTrainTeacherController {
 		return new BaseRsp<>(res);
 	}
 
-	@ApiOperation("是否满足复盘条件")
+	@ApiOperation("查询复盘所需scene_id")
 	@GetMapping("/replay/enable")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<Boolean> isReplayEnabled(
+	public BaseRsp<String> isReplayEnabled(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
-		Boolean res = teamTeacherService.ifReplayEnabled(resource_id);
+		String res = teamTeacherService.ifReplayEnabled(resource_id);
 		return new BaseRsp<>(res);
 	}
 

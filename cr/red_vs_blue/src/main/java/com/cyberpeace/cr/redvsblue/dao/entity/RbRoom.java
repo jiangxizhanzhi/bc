@@ -53,6 +53,11 @@ public class RbRoom extends BaseTable {
 
 	private String logo;
 
+	/**
+	 * 复盘用的场景id，每次关闭场景时更新
+	 */
+	private String replaySceneId;
+
 	public RbRoom() {
 
 	}

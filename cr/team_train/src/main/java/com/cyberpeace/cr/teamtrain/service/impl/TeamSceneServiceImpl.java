@@ -179,6 +179,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
 		if (stopResult) {
+			// 记录复盘sceneId
+			teamRoom.setReplaySceneId(localSceneService.getMpSceneIdByBusinessInstanceId(roomId));
+			// 清除localScene
 			clearLocal(teamRoom);
 		}
 

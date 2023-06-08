@@ -73,12 +73,12 @@ public class TeamTeacherServiceImpl implements TeamTeacherService {
 	}
 
 	@Override
-	public Boolean ifReplayEnabled(String roomId) {
+	public String ifReplayEnabled(String roomId) {
 		TeamRoom room = teamRoomService.getById(roomId);
 		if (!room.isEnded() || StringUtils.isNotBlank(room.getLocalSceneId())) {
 			log.info("conditions not satisfied, cant replay now");
 			throw new BusinessException(CrBusinessErrorCode.REPLAY_NOT_ENABLED);
 		}
-		return true;
+		return room.getReplaySceneId();
 	}
 }

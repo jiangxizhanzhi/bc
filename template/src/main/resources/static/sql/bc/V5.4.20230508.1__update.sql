@@ -1936,3 +1936,12 @@ CREATE TABLE `cr_badge`
   AUTO_INCREMENT = 1
   CHARACTER SET = utf8
   COLLATE = utf8_general_ci COMMENT = '业务红点提示';
+
+-- ----------------------------
+-- 复盘场景id
+-- ----------------------------
+ALTER TABLE `cr_rb_room`
+    ADD COLUMN `replay_scene_id` varchar(32) NULL COMMENT '复盘场景id' AFTER `logo`;
+
+ALTER TABLE `cr_team_room`
+    ADD COLUMN `replay_scene_id` varchar(32) NULL COMMENT '复盘场景id' AFTER `logo`;

@@ -233,6 +233,8 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 		Boolean stopResult = localSceneService.stopScene(room.getLocalSceneId());
 		if (stopResult) {
+			// 记录复盘用的scene_id
+			room.setReplaySceneId(localSceneService.getMpSceneIdByBusinessInstanceId(roomId));
 			// 清除localScene
 			clearLocal(room);
 			// 清理 device

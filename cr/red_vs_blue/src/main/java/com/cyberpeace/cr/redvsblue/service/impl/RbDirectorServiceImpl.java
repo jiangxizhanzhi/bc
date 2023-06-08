@@ -98,12 +98,12 @@ public class RbDirectorServiceImpl implements RbDirectorService {
 	}
 
 	@Override
-	public Boolean ifReplayEnabled(String roomId) {
+	public String ifReplayEnabled(String roomId) {
 		RbRoom room = rbRoomService.getOrExceptionById(roomId);
 		if (!room.isEnded() || StringUtils.isNotBlank(room.getLocalSceneId())) {
 			log.info("conditions not satisfied, replay not enabled");
 			throw new BusinessException(CrBusinessErrorCode.REPLAY_NOT_ENABLED);
 		}
-		return true;
+		return room.getReplaySceneId();
 	}
 }

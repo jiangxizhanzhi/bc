@@ -17,6 +17,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrNoticeMapper;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.WebSocketPushService;
 import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
@@ -36,8 +37,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 	private CrRoleService crRoleService;
 
 	@Autowired
-	private MyWebSocketHandler webSocketHandler;
-
+	private WebSocketPushService webSocketPushService;
 	@Override
 	public List<CrNoticeRsp> queryList(String roomId, boolean isRb) {
 		List<CrNotice> list = getList(roomId, isRb);
@@ -83,7 +83,7 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(groups));
 		}
 		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).filter(a->!UserInfoContext.getUserContext().getUserId().equals(a)).collect(Collectors.toList());
-		sendWsData(new TaskWsData(MissionWsCode.NOTICE_Code), crNoticeReq.getRoomId(),userIds);
+		webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,crNoticeReq.getRoomId(),WsPath.NOTICE);
 		notice.setNoticeUsers(JsonUtil.toJsonString(userIds));
 		this.save(notice);
 	}
@@ -98,6 +98,17 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void remveAndNotice(String resourceId) {
+		CrNotice notice = this.getById(resourceId);
+		this.removeById(resourceId);
+		//删除通知需要通知相关用户删除红点
+		List<String> userIds = JsonUtil.toJsonObjectArray(notice.getNoticeUsers(), String.class);
+		if (CollectionUtils.isNotEmpty(userIds)) {
+			webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,notice.getRoomId(),WsPath.NOTICE);
+		}
 	}
 
 	public List<CrNotice> getList(String roomId, boolean isRb) {
@@ -116,16 +127,6 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 		return list;
 	}
 
-	private <T> void sendWsData(T data, String businessId,List<String> userIds) {
-		MissionWsIdentifier identifier = new MissionWsIdentifier();
-		identifier.setBusinessId(businessId);
-		identifier.setUserId(UserInfoContext.getUserContext().getUserId());
-		identifier.setPath(WsPath.NOTICE);
-
-		WebSocketMessageContext<WsMessageIdentifier, Object> messageContext = WebSocketMessageContext
-				.builder().data(data).messageIdentifier(identifier).build();
-		webSocketHandler.pushMessageToUsers(messageContext, userIds);
-	}
 
 	/**
 	 * 置顶处理

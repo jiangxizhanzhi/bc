@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -20,25 +20,21 @@ import com.google.common.collect.Maps;
  */
 public abstract class BaseCrSceneUpdateHandler {
 
-	private static Map<Integer, BaseCrSceneUpdateHandler> handlerMap = Maps.newHashMap();
+	private static final Map<Integer, BaseCrSceneUpdateHandler> HANDLER_MAP = Maps.newHashMap();
 
 	public static BaseCrSceneUpdateHandler getHandler(Integer type) {
-		return handlerMap.get(type);
+		return HANDLER_MAP.get(type);
 	}
 
-	protected Integer getCode() {
-		return null;
-	}
+	/**
+	 * 获取业务类型code
+	 *
+	 * @return {@code Integer}
+	 */
+	protected abstract Integer getCode();
 
-	protected void register() {
-		if (null != getCode()) {
-			handlerMap.put(getCode(), this);
-		}
-	}
-
-	@PostConstruct
-	protected void init() {
-		register();
+	protected BaseCrSceneUpdateHandler() {
+		HANDLER_MAP.put(getCode(), this);
 	}
 
 	/**
@@ -46,7 +42,7 @@ public abstract class BaseCrSceneUpdateHandler {
 	 *
 	 * @param businessInstanceId 业务实例id
 	 */
-	protected void checkPermission(String businessInstanceId) {}
+	protected abstract void checkPermission(String businessInstanceId);
 
 	/**
 	 * 更新角色
@@ -54,7 +50,7 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * @param roomId 业务实例id
 	 * @param req                请求体
 	 */
-	public void updateRoles(String roomId, SceneUpdateReq req) {}
+	public abstract void updateRoles(String roomId, SceneUpdateReq req);
 
 	/**
 	 * 删除节点时，删除节点的用户资产和常用资产
@@ -62,7 +58,7 @@ public abstract class BaseCrSceneUpdateHandler {
 	 * @param roomId 房间id
 	 * @param nodeId 节点id
 	 */
-	public void deleteNode(String roomId, String nodeId) {}
+	public abstract void deleteNode(String roomId, String nodeId);
 
 	/**
 	 * 在角色配置列表中查找角色，并判断是否修改
@@ -100,5 +96,24 @@ public abstract class BaseCrSceneUpdateHandler {
 		nodesData.getAssetNodes().removeIf(node -> node.getId().equals(nodeId));
 		nodesData.getVisibleNodes().removeIf(node -> node.getId().equals(nodeId));
 		return JsonUtil.toJsonString(nodesData);
+	}
+
+	/**
+	 * 获取删除节点影响的角色
+	 *
+	 * @param roleList 角色列表
+	 * @param nodeId   节点id
+	 * @return {@code List<CrRole>}
+	 */
+	protected List<CrRole> getAffectedRoles(List<CrRole> roleList, String nodeId) {
+		List<CrRole> modifiedRoles = Lists.newArrayList();
+		for (CrRole role : roleList) {
+			String filteredNodesJson = getFilteredNodesData(role, nodeId);
+			if (!filteredNodesJson.equals(role.getNodes())) {
+				role.setNodes(filteredNodesJson);
+				modifiedRoles.add(role);
+			}
+		}
+		return modifiedRoles;
 	}
 }

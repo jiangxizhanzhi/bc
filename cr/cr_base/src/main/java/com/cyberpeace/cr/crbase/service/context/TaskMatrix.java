@@ -98,7 +98,7 @@ public class TaskMatrix {
 
         @Override
         public String getDesc() {
-            return getDesc();
+            return desc;
         }
 
         SORT(Integer code, String desc) {

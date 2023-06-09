@@ -362,6 +362,9 @@ public class TeamTrainStudentsController {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
+		if (StringUtils.isBlank(user_id)) {
+			user_id = UserInfoContext.getUserContext().getUserId();
+		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
 		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));

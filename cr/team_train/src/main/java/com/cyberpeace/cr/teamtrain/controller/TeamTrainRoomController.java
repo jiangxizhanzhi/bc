@@ -831,19 +831,16 @@ public class TeamTrainRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
-		if (trainRecord == null) {
-			log.error("resourceId is null,resourceId =[{}]", resource_id);
-			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
-		}
+
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
 		if (scoreCount==null||scoreCount==0) {
 			scoreCount=10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord.getStartTime(), trainRecord.getEndTime(), scoreCount,teamRoom.getReplaySceneId());
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(), scoreCount,teamRoom.getReplaySceneId());
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
-
+		teamRoom.setStartTime(scoreTrendReq.getStartTime());
 		initTeamReport(teamRoom,trainReport);
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}

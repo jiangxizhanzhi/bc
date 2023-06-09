@@ -619,20 +619,16 @@ public class RbRoomController {
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		//开始时间  结束时间从训练记录表取
 		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
-		if (trainRecord == null) {
-			log.error("resourceId is null,resourceId =[{}]", resource_id);
-			throw new BusinessException(CrBusinessErrorCode.TRAIN_NOT_BEGIN);
-		}
-		//
 		RbRoom rbRoom = rbRoomService.getById(resource_id);
 		if (scoreCount == null || scoreCount == 0) {
 			scoreCount = 10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord.getStartTime(),
-				trainRecord.getEndTime(), scoreCount, rbRoom.getReplaySceneId());
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord,
+				rbRoom.getStartTime(), scoreCount, rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
 				scoreTrendReq);
+		rbRoom.setStartTime(scoreTrendReq.getStartTime());
 		initRbReport(rbRoom, trainReport);
 		return new BaseRsp<>(trainReport);
 	}

@@ -347,10 +347,27 @@ public class TeamTrainStudentsController {
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
 		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole);
+		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
+	@ApiOperation("团队对抗-复盘用户任务列表")
+	@GetMapping("/task/replayUserTaskInfo")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<TaskMatrix> replayUserTaskInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "user_id", value = "用户id", required = true) String user_id) {
+
+		if (StringUtils.isBlank(resource_id)) {
+			log.error("resource_id_missing");
+			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
+		}
+		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
+		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.REPLAY.getDesc());
+		return new BaseRsp<>(rbTaskMatrix);
+	}
 	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

@@ -187,4 +187,17 @@
             and `public` = true
         </where>
     </select>
+
+    <select id="selectInResourceIds" resultType="com.cyberpeace.oj.practice.dao.entity.PracticeSet">
+        SELECT *
+        FROM oj_practice_set
+        <where>
+            <if test="resourceIds != null and resourceIds.size() > 0">
+                AND resource_id IN
+                <foreach collection="resourceIds" item="resourceId" separator="," open="(" close=")">
+                    #{resourceId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

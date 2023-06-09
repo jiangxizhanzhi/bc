@@ -276,11 +276,6 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 	@Override
 	public TrainReportContext getTrainReport(String roomId, ArrayList<Integer> roles,
 			ScoreTrendReq scoreTrendReq) {
-		LocalScene scene = localSceneService.getByBusinessInstanceId(roomId);
-		//如果场景为空则取上一次场景
-		if (scene == null) {
-			scene = localSceneService.getByBusinessInstanceId(scoreTrendReq.getReplaySceneId());
-		}
 
 		TrainReportContext trainReportContext = new TrainReportContext();
 		trainReportContext.initTimeList(scoreTrendReq);
@@ -369,13 +364,16 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			userRoles.add(userRole);
 		}
 
+		//中台数据查询
 		JSONArray attackTypeCount;
 		JSONArray sceneTrend;
-		if (scene!=null) {
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		String mpSceneId = localScene!=null ?localScene.getMpSceneId() : scoreTrendReq.getReplaySceneId();
+		if (StringUtils.isNotBlank(mpSceneId)) {
 			//中台攻击手法
-			attackTypeCount= remoteSceneService.attackTypeCount(scene.getMpSceneId());
+			attackTypeCount= remoteSceneService.attackTypeCount(mpSceneId);
 			//中台攻击趋势
-			sceneTrend = remoteSceneService.sceneTrend(scene.getMpSceneId());
+			sceneTrend = remoteSceneService.sceneTrend(mpSceneId);
 			trainReportContext.initMpData(attackTypeCount,sceneTrend);
 		}
 

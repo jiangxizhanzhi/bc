@@ -23,6 +23,18 @@
         and practice_id = #{practiceId}
     </select>
 
+    <select id="selectInPracticeIds" resultMap="solved">
+        select * from oj_practice_solved
+        where submit_user_id = #{userId}
+      and practice_type = #{practiceType}
+      <if test="practiceIds != null and practiceIds.size() > 0">
+          and practice_id in
+          <foreach collection="practiceIds" item="practiceId" separator="," open="(" close=")">
+              #{practiceId}
+          </foreach>
+      </if>
+    </select>
+
     <select id="selectUserAndSolved" resultType="java.lang.String">
         select practice_id from oj_practice_solved
         <where>

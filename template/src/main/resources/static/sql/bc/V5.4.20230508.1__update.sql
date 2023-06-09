@@ -2001,3 +2001,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- 我的笔记添加常量
 -- ----------------------------
 INSERT INTO `cr_constants_config` (`resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (NULL, 0, 39, '尝试过', 'Attempted');
+
+-- ----------------------------
+-- oj_practice_paper direction 题目方向字段加长
+-- ----------------------------
+ALTER TABLE `oj_practice_paper`
+MODIFY COLUMN `direction` VARCHAR(3000) NOT NULL;

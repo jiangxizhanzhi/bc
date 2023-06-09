@@ -11,6 +11,7 @@ import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrNoticeService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
+import com.cyberpeace.cr.crbase.service.WebSocketPushService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -61,7 +62,7 @@ public class CrNoticeController {
 			value = { MenuConstant.WEB_CR_TEAM_TRAIN, MenuConstant.WEB_CR_RED_VS_BLUE },
 			logical = Logical.OR)
 	public BaseRsp delete(@RequestBody CrNoticeReq crNoticeReq) {
-		crNoticeService.removeById(crNoticeReq.getResourceId());
+		crNoticeService.remveAndNotice(crNoticeReq.getResourceId());
 		return new BaseRsp();
 	}
 

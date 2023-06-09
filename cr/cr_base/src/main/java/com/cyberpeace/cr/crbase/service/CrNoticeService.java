@@ -21,4 +21,6 @@ public interface CrNoticeService extends IService<CrNotice> {
     void notice(CrNoticeReq crNoticeReq);
 
     Boolean hasNewInfo(String roomID, boolean isRb);
+
+    void remveAndNotice(String resourceId);
 }

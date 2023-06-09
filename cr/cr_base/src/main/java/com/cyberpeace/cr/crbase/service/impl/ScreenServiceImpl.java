@@ -10,6 +10,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +38,14 @@ public class ScreenServiceImpl implements ScreenService {
     private CrRoleService crRoleService;
 
     @Override
-	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String nodeId) {
+	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
-        if (localScene == null) {
-            log.error("Scene not exist! roomId = [{}]", roomId);
-            throw new BusinessException(CrBusinessErrorCode.LOCAL_SCENE_NOT_EXIST);
+        //如果场景已关闭获取上次的场景Id
+        String mpSceneId =localScene == null?replaySceneId : localScene.getMpSceneId();
+        if (StringUtils.isBlank(mpSceneId))  {
+            return new ArrayList<>();
         }
-        JSONObject jsonObject = remoteSceneService.screenrecord(localScene.getMpSceneId(), nodeId);
+        JSONObject jsonObject = remoteSceneService.screenrecord(mpSceneId, nodeId);
         List<Object> list = jsonObject.getObject("list", List.class);
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();

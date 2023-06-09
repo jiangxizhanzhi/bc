@@ -21,4 +21,6 @@ public interface CrConstantsService {
 	 */
 	Boolean validateType(Integer type, Integer code);
 
+	String geCnNameByTypeAndCode(Integer type, Integer code);
+
 }

@@ -57,7 +57,7 @@
               type: 'pie',
               radius: ['43%', '56%'],
               center: ['50%', '50%'],
-              avoidLabelOverlap: false,
+              avoidLabelOverlap: true,
               itemStyle: {
                 borderColor: '#32405c',
                 borderWidth: 3
@@ -130,13 +130,7 @@
             },
             // shape: 'circle',
             indicator: [
-              { name: 'Reconnaissance', max: 100 },
-              { name: 'Weaponization', max: 100 },
-              { name: 'Delivery ', max: 100 },
-              { name: 'Exploitation', max: 100 },
-              { name: 'Installation', max: 100 },
-              { name: 'Command control', max: 100 },
-              { name: 'Actions on objectives', max: 100 }
+                    ${radarNamesString}
             ],
             // 雷达图大小
             radius: '65%',
@@ -213,7 +207,7 @@
             referrerpolicy="no-referrer"
             src="../img/score.png"
           />
-          <span class="text_3">训练得分:&nbsp;${score}</span>
+          <span class="text_3">训练得分:&nbsp;${score}分</span>
           <img
             class="icon_8"
             referrerpolicy="no-referrer"
@@ -225,7 +219,7 @@
             referrerpolicy="no-referrer"
             src="../img/time.png"
           />
-          <span class="text_5">训练时长:&nbsp;${timeCost}&nbsp;小时</span>
+          <span class="text_5">训练时长:&nbsp;${timeCost}&nbsp;</span>
         </div>
         <div class="box_2 flex-col"></div>
         <div class="box_17 flex-row">
@@ -235,7 +229,7 @@
             src="../img/recommend-time.png"
           />
           <span class="text_6">推荐时长：</span>
-          <span class="text_7">${durationTime}天</span>
+          <span class="text_7">${durationTime}小时</span>
           <img
             class="icon_10"
             referrerpolicy="no-referrer"

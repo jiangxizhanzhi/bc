@@ -66,4 +66,22 @@ public class CrConstantsServiceImpl implements CrConstantsService {
 		}
 		return false;
 	}
+
+	@Override
+	public String geCnNameByTypeAndCode(Integer type, Integer code) {
+		if (type == null || code == null) {
+			return "";
+		}
+		if (cache.isEmpty()) {
+			init();
+		}
+		if (cache.containsKey(type)) {
+			for (CrConstantsConfig crConstantsConfig : cache.get(type)) {
+				if (code.equals(crConstantsConfig.getCode())) {
+					return crConstantsConfig.getCnName();
+				}
+			}
+		}
+		return "";
+	}
 }

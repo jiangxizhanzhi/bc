@@ -1,18 +1,19 @@
 package com.cyberpeace.cr.crbase.service.context;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -59,7 +60,7 @@ public class TaskMatrix {
         }
         return this;
     }
-    public void initTaskListStage(CrRole crRole) {
+    public void initTaskListStage(CrRole crRole,String code) {
         if (crRole==null) {
             return;
         }
@@ -68,9 +69,42 @@ public class TaskMatrix {
         for (TaskStage taskStage : taskList) {
             taskStage.setStage(stageMap.get(taskStage.getMissionId()));
         }
-        List<TaskStage> submit = taskList.stream().filter(TaskStage::isSubmitted).sorted(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
-        List<TaskStage> notSubmit = taskList.stream().filter(a->!a.isSubmitted()).sorted(Comparator.comparing(CrTask::getCreateTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
-        submit.addAll(notSubmit);
-        taskList = submit;
+        //复盘排序规则
+        if (SORT.REPLAY.getDesc().equals(code)) {
+            List<TaskStage> submit = taskList.stream().filter(TaskStage::isSubmitted).sorted(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
+            List<TaskStage> notSubmit = taskList.stream().filter(a->!a.isSubmitted()).sorted(Comparator.comparing(CrTask::getCreateTime,Comparator.nullsLast(Date::compareTo))).collect(Collectors.toList());
+            submit.addAll(notSubmit);
+            taskList = submit;
+        } else {//任务矩阵排序规则
+            List<TaskStage> notSubmit = taskList.stream().filter(a->!a.isSubmitted()).sorted(Comparator.comparing(CrTask::getCreateTime,Comparator.nullsFirst(Date::compareTo)).reversed()).collect(Collectors.toList());
+            List<TaskStage> submit = taskList.stream().filter(TaskStage::isSubmitted).sorted(Comparator.comparing(CrTask::getLastSubmitTime,Comparator.nullsLast(Date::compareTo)).reversed()).collect(Collectors.toList());
+            notSubmit.addAll(submit);
+            taskList = notSubmit;
+        }
+
+    }
+    public enum SORT implements GenericEnum {
+        /***/
+        MATRIX(1,  "matrix"),
+        REPLAY(2,  "replay");
+
+        @Getter
+        private final Integer code;
+
+        @Getter
+        private final String desc;
+
+
+
+        @Override
+        public String getDesc() {
+            return getDesc();
+        }
+
+        SORT(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
     }
 }

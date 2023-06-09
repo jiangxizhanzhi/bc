@@ -148,7 +148,9 @@ public class GetScoreRsp implements Serializable {
 				this.allSubjectiveScore+=mission.getScore();
 			}
 		}
-		this.allScore = this.allTrainScore *Integer.parseInt(crScore.getTrainingPercentage())/100 + Integer.parseInt(crScore.getSkillPercentage());
+		Integer trainingPercentage= crScore.getTrainingPercentage()==null?0 :Integer.parseInt(crScore.getTrainingPercentage());
+		Integer skillPercentage= crScore.getSkillPercentage()==null?0 :Integer.parseInt(crScore.getSkillPercentage());
+		this.allScore = this.allTrainScore * trainingPercentage/100 + skillPercentage;
 		this.trainScoreRate = allTrainScore!=0? new BigDecimal(subjectiveScore).add(new BigDecimal(objectiveScore)).multiply(new BigDecimal(100)).divide(new BigDecimal(allTrainScore),0, RoundingMode.HALF_UP) : new BigDecimal(0);
 		this.abilityScoreRate = abilityScore*4;
 	}

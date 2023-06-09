@@ -13,6 +13,8 @@ import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.common.util.EnumUtils;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
+import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.singletrain.service.bo.record.RecordMissionSimpleBo;
 import com.cyberpeace.cr.singletrain.service.bo.record.RecordStageBo;
 import org.apache.commons.compress.utils.Lists;
@@ -82,6 +84,8 @@ public class SingleRoomScoreController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	@Autowired
+	private CrConstantsService crConstantsService;
 	/**
 	 * 5.4弃用
 	 * /single_train/single_train/record/detail 替代
@@ -142,11 +146,13 @@ public class SingleRoomScoreController {
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
 			@RequestParam("room_id") String roomId) {
 		RecordDetail data = getRecordDetail(roomId).getData();
-//		List<RadarLabel> radarLabels = missionService.getRadarLabel();
+		List<RadarLabel> radarLabels = missionService.getRadarLabel();
 		data.setTrainingTimeString(DateUtil.DateToString(data.getTrainingTime(),"yyyy-MM-dd HH:mm:ss"));
-		data.setSubTypeString(EnumUtils.getEnumDescByCode(data.getSubType(), TrainTypeConvert.class));
-		data.setDifficultyString(EnumUtils.getEnumDescByCode(data.getDifficulty(), DifficultyConvert.class));
+		data.setSubTypeString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.TRAINING_CATEGORY.getCode(),data.getSubType()));
+		data.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),data.getDifficulty()));
 		data.setRadarsString(data.getRadars().stream().map(a->Integer.toString(a)).collect(Collectors.joining(",")));
+
+		data.setRadarNamesString(radarLabels.stream().map(a->"{ name: '"+a.getLabel()+"', max: 100 }").collect(Collectors.joining(",")));
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
 				String.format("%s-%s", roomId, UserInfoContext.getUserContext().getUserId()),
 				String.format("%s.html", roomId));

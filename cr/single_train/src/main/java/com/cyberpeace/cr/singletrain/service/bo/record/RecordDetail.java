@@ -46,7 +46,12 @@ public class RecordDetail extends RecordRspBase implements Serializable {
 
 	@ApiModelProperty(value = "技能评分")
 	private List<Integer> radars;
+
 	private String radarsString;
+
+	@ApiModelProperty(value = "雷达名称html字符串")
+	private String radarNamesString;
+
 	@ApiModelProperty(value = "任务详情")
 	private List<RecordStageBo> stages = Lists.newArrayList();
 

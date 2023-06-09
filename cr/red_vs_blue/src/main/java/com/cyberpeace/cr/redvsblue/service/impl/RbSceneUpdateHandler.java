@@ -68,10 +68,10 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 		checkPermission(roomId);
 		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
 		// 更新含有指定节点id的学员的数据
-		roleList.removeIf(role -> role.isRvbStaff()
-				|| getFilteredNodesData(role, nodeId).equals(role.getNodes()));
-		if (!roleList.isEmpty()) {
-			crRoleService.updateBatchById(roleList);
+		roleList.removeIf(CrRole::isRvbStaff);
+		List<CrRole> modified = getAffectedRoles(roleList, nodeId);
+		if (!modified.isEmpty()) {
+			crRoleService.updateBatchById(modified);
 		}
 		// 清除常用资产
 		rbCommonDeviceService.deleteByDeviceId(nodeId);

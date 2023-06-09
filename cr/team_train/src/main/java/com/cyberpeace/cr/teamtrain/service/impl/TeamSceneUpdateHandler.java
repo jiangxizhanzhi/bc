@@ -65,10 +65,10 @@ public class TeamSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 		checkPermission(roomId);
 		List<CrRole> roleList = crRoleService.getRolesByRoomId(roomId);
 		// 更新含有指定节点id的学员的数据
-		roleList.removeIf(role -> role.isTeamTeacher()
-				|| getFilteredNodesData(role, nodeId).equals(role.getNodes()));
-		if (!roleList.isEmpty()) {
-			crRoleService.updateBatchById(roleList);
+		roleList.removeIf(CrRole::isTeamTeacher);
+		List<CrRole> modified = getAffectedRoles(roleList, nodeId);
+		if (!modified.isEmpty()) {
+			crRoleService.updateBatchById(modified);
 		}
 		// 更新常用资产
 		teamCommonDeviceService.deleteByDeviceId(nodeId);

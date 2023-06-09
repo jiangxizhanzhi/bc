@@ -995,7 +995,8 @@ public class TeamTrainRoomController {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,node_id);
+		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,teamRoom.getReplaySceneId(),node_id);
 		return new BaseRsp<>(resList);
 	}
 }

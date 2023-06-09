@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -362,7 +363,8 @@ public class RbRoomUserController {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
-		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,node_id);
+		RbRoom room = rbRoomService.getById(resource_id);
+		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,room.getReplaySceneId(),node_id);
 		return new BaseRsp<>(resList);
 	}
 

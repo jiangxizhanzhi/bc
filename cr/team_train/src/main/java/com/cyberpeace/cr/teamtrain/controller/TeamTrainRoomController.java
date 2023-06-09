@@ -26,6 +26,7 @@ import com.cyberpeace.cr.crbase.controller.req.WriteUpReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
@@ -152,6 +153,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private ScreenService screenService;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -840,8 +844,15 @@ public class TeamTrainRoomController {
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
+		//训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
+		//训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
+		//训练已结束，训练时间显示的启动训练时间，训练时长是结束训练-启动训练时间
 		teamRoom.setStartTime(scoreTrendReq.getStartTime());
+		teamRoom.setEndTime(scoreTrendReq.getEndTime());
 		initTeamReport(teamRoom,trainReport);
+		if (trainRecord == null) {
+			trainReport.getRoomBaseInfo().setTimeCost(trainReport.getRoomBaseInfo().getDurationTime()+"小时");
+		}
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
 	@ApiOperation("团队对抗-任务导调-训练报告导出")
@@ -895,6 +906,7 @@ public class TeamTrainRoomController {
 		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
 		roomBaseInfo.setDurationTime(template.getDurationTime());
 		roomBaseInfo.initExportString();
+		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(room.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);

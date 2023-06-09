@@ -10,8 +10,9 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
-import com.cyberpeace.cr.crbase.service.TrainRecordService;
+import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
 import com.cyberpeace.cs.constant.AttachmentPath;
@@ -43,9 +44,6 @@ import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
-import com.cyberpeace.cr.crbase.service.CrRoleService;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
-import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
@@ -134,6 +132,9 @@ public class RbRoomController {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+
+	@Autowired
+	private CrConstantsService crConstantsService;
 
 	@ApiOperation("新增")
 	@PostMapping()
@@ -628,8 +629,15 @@ public class RbRoomController {
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
 				scoreTrendReq);
+		//训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
+		//训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
+		//训练已结束，训练时间显示的启动训练时间，训练时长是结束训练-启动训练时间
 		rbRoom.setStartTime(scoreTrendReq.getStartTime());
+		rbRoom.setEndTime(scoreTrendReq.getEndTime());
 		initRbReport(rbRoom, trainReport);
+		if (trainRecord == null) {
+			trainReport.getRoomBaseInfo().setTimeCost(trainReport.getRoomBaseInfo().getDurationTime()+"小时");
+		}
 		return new BaseRsp<>(trainReport);
 	}
 
@@ -688,6 +696,7 @@ public class RbRoomController {
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
 		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
 		roomBaseInfo.initExportString();
+		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(
 				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));

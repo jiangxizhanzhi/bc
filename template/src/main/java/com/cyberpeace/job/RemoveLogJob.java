@@ -1,19 +1,31 @@
 package com.cyberpeace.job;
 
+import com.cyberpeace.service.impl.LogConfigMessageListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 @Slf4j
 @Component
 public class RemoveLogJob {
 
+    /**
+     * 获取日志文件保持天数
+     *
+     * @return {@code Integer}
+     */
+    public Integer getLogFileKeepDays() {
+        return LogConfigMessageListener.getLogFileKeepDays();
+    }
+
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void removeLogFiles() {
         String logRootPath = System.getProperty("catalina.base") + "/logs/";
-        String cmd = String.format("find %s -type 'f' -mtime +15 | xargs rm -f", logRootPath);
+        String cmd = String.format("find %s -type 'f' -mtime +%d | xargs rm -f", logRootPath, getLogFileKeepDays());
+        log.info("Remove overdue logs, command=[{}]", cmd);
         DataOutputStream dos = null;
         try {
             Process p = Runtime.getRuntime().exec("su");

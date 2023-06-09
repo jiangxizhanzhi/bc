@@ -1983,7 +1983,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- ----------------------------
 -- 团队房间资产占用表
 -- ----------------------------
-DROP TABLE IF EXISTS `cr_team_device`;
 CREATE TABLE `cr_team_device`  (
                                    `id` int NOT NULL AUTO_INCREMENT,
                                    `resource_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,

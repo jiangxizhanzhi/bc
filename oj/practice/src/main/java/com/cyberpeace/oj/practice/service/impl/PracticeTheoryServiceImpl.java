@@ -174,6 +174,27 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		IPage<PracticeTheory> iPage = practiceTheoryMapper.pageByQuery(page, theoryListQuery,
 				authContext.getIsWeb());
 
+		List<PracticeTheory> records = iPage.getRecords();
+		if(CollectionUtils.isEmpty(records)) {
+			return new Page<>();
+		}
+
+		List<String> resourceIds = new ArrayList<>();
+		List<String> solvedUserIds = new ArrayList<>();
+		List<String> practiceSetIds = new ArrayList<>();
+
+		records.forEach(item -> {
+			resourceIds.add(item.getResourceId());
+			solvedUserIds.add(item.getCreateUserId());
+			practiceSetIds.add(item.getPracticeSetId());
+		});
+
+		List<PracticeSolved> practiceSolveds = practiceSolvedMapper.selectInPracticeIds(authContext.getUserId(),
+				PracticeCategory.PracticeType.THEORY.getCode(),
+				resourceIds, IS_COLLECTED);
+
+		List<UserInfo> userInfos = remoteUserService.getByIdList(solvedUserIds);
+
 		IPage<PracticeTheoryListBo> listBoIPage = iPage.convert(practiceTheory -> {
 			PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory,
 					PracticeTheoryListBo.class);
@@ -183,6 +204,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				if (null != listQuery.getSolved()) {
 					theoryListBo.setSolved(listQuery.getSolved());
 				} else {
+					/*
 					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
 							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
 							practiceTheory.getResourceId(), IS_COLLECTED);
@@ -192,18 +214,66 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 						theoryListBo.setSolved(practiceSolved.getSolved() ?
 								PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
 					}
+					*/
+					PracticeSolved practiceSolved = findInSolvedPractices(practiceTheory.getResourceId(), practiceSolveds);
+					if (practiceSolved == null) {
+						theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
+					}else {
+						theoryListBo.setSolved(practiceSolved.getSolved() ?
+								PracticeSolved.SolvedStatus.SOLVED.getCode() : PracticeSolved.SolvedStatus.TRIED.getCode());
+					}
 				}
 			}
 
-			UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
+			// UserInfo userInfo = remoteUserService.getById(practiceTheory.getCreateUserId());
+			UserInfo userInfo = findInUserInfos(practiceTheory.getCreateUserId(), userInfos);
 			theoryListBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
-			PracticeSet practiceSet = practiceSetMapper
-					.selectById(practiceTheory.getPracticeSetId());
+			// PracticeSet practiceSet = practiceSetMapper.selectById(practiceTheory.getPracticeSetId());
+			PracticeSet practiceSet = findInSetIds(practiceTheory.getPracticeSetId(), practiceSets);
 			theoryListBo.setPracticeSetName(null != practiceSet ? practiceSet.getName() : "");
 			return theoryListBo;
 		});
 
 		return listBoIPage;
+	}
+
+	private PracticeSet findInSetIds(String setId, List<PracticeSet> practiceSets) {
+		if(StringUtils.isEmpty(setId) || CollectionUtils.isEmpty(practiceSets)) {
+			return null;
+		}
+		for(PracticeSet practiceSet : practiceSets) {
+			if(!setId.equals(practiceSet.getResourceId())) {
+				continue;
+			}
+			return practiceSet;
+		}
+		return null;
+	}
+
+	private UserInfo findInUserInfos(String userId, List<UserInfo> userInfos) {
+		if(StringUtils.isEmpty(userId) || CollectionUtils.isEmpty(userInfos)) {
+			return null;
+		}
+		for(UserInfo userInfo : userInfos) {
+			if(!userId.equals(userInfo.getUserId())) {
+				continue;
+			}
+			return userInfo;
+		}
+		return null;
+	}
+
+	private PracticeSolved findInSolvedPractices(String practiceId, List<PracticeSolved> practiceSolveds) {
+		if(StringUtils.isEmpty(practiceId) || CollectionUtils.isEmpty(practiceSolveds)) {
+			return null;
+		}
+		for(PracticeSolved solved : practiceSolveds) {
+			if(!solved.getPracticeId().equals(practiceId)) {
+				continue;
+			}
+			return solved;
+		}
+		return null;
 	}
 
 	@Override

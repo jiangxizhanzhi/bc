@@ -25,6 +25,9 @@ public class MissionReleaseStageInfo {
 	@ApiModelProperty(value = "阶段任务列表")
 	private List<MissionReleaseInfo> missionInfos;
 
+	@ApiModelProperty(value = "是否全部下发")
+	private Boolean isAllRelease = true;
+
 	public MissionReleaseStageInfo() {}
 
 	public MissionReleaseStageInfo(CrRoleMissionSchemeStage stage, List<Mission> allMissions,
@@ -55,6 +58,10 @@ public class MissionReleaseStageInfo {
 							.filter(a -> crTasks.size() > 0 && !userIds.contains(a.getResourceId()))
 							.collect(Collectors.toList()));
 					missionReleaseInfo.setIsRelease(crTasks.size() > 0);
+					//前端需要一个字段判断是否全部下发 如果有一个没有下发 就是false
+					if (crTasks.size()==0) {
+						this.isAllRelease = false;
+					}
 					missionReleaseInfo
 							.setIsDynamic(dynamicMissions.contains(mission.getResourceId()));
 					missionReleaseInfos.add(missionReleaseInfo);

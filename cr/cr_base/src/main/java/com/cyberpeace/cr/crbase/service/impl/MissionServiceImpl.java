@@ -464,7 +464,9 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 
 				if (index++ == stage) {
 					int i = missions.indexOf(afterMissionId);
-					if (StringUtils.isNotBlank(afterMissionId)&&i!=-1) {
+					if ("first".equals(afterMissionId)) {
+						missions.add(0,missionId);
+					} else if (StringUtils.isNotBlank(afterMissionId)&&i!=-1) {
 						missions.add(i,missionId);
 					}else {
 						missions.add(missionId);

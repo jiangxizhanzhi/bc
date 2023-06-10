@@ -14,6 +14,7 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationMissionRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 
 public interface CrTaskService {
 
@@ -352,4 +353,7 @@ public interface CrTaskService {
 	 * @return {@code TaskStatisticsInfo}
 	 */
 	TaskStatisticsInfo getTaskStatisticsInfoByRoomId(String roomId);
+
+	List<CrTaskRejectRsp> getTaskRejctsByTaskId(String taskId);
+
 }

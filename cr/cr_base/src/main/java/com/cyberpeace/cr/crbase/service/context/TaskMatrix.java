@@ -55,8 +55,17 @@ public class TaskMatrix {
         this.finishCount =successCount+failCount;
         this.score =tasks==null?0:tasks.stream().filter(a->CrTask.TaskStatus.SUCCESS.getCode().equals(a.getStatus())).map(CrTask::getScore).mapToInt(Integer::intValue).sum();
         for (TaskStage task : taskList) {
-            task.setName(missionMap.getOrDefault(task.getMissionId(),new Mission()).getTitle());
-            task.setDescription(missionMap.getOrDefault(task.getMissionId(),new Mission()).getDescription());
+            Mission mission = missionMap.getOrDefault(task.getMissionId(), new Mission());
+            task.setName(mission.getTitle());
+            task.setDescription(mission.getDescription());
+            //题解处理
+            if (Boolean.TRUE.equals(mission.getShowWriteup())) {
+                task.setWriteUp(missionMap.getOrDefault(task.getMissionId(),new Mission()).getWriteUp());
+                task.setShowWriteup(true);
+            } else {
+                task.setWriteUp("");
+                task.setShowWriteup(false);
+            }
         }
         return this;
     }

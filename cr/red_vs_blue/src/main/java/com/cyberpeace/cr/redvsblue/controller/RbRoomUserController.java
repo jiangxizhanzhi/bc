@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
+import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -91,6 +94,9 @@ public class RbRoomUserController {
 
 	@Autowired
 	private RbRefereeService rbRefereeService;
+
+	@Autowired
+	private MissionService missionService;
 
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
@@ -285,7 +291,7 @@ public class RbRoomUserController {
 		return new BaseRsp<>(ret);
 	}
 
-	@ApiOperation("红蓝对抗-任务矩阵&&用户维度复盘")
+	@ApiOperation("红蓝对抗-任务矩阵")
 	@GetMapping("/task/matrix")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<TaskMatrix> getTaskMatrix(
@@ -299,12 +305,13 @@ public class RbRoomUserController {
 		if (StringUtils.isBlank(user_id)) {
 			user_id = UserInfoContext.getUserContext().getUserId();
 			// 查看自己的任务矩阵之后去掉任务矩阵红点标记
-			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(), user_id);
+			crBadgeService.removeBadge(resource_id, CrBadge.BadgeType.MISSION_RELEASE.getCode(),
+					user_id);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
+		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
@@ -323,17 +330,17 @@ public class RbRoomUserController {
 			user_id = UserInfoContext.getUserContext().getUserId();
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.REPLAY.getDesc());
+		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
 
 	@ApiOperation("红蓝对抗-学员任务矩阵-是否显示红点标记")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp<Boolean> ifShowMissionMatrixBadge(
-			@ApiParam(name = "resource_id", value = "红蓝对抗训练id", required = true) String resource_id) {
+	public BaseRsp<Boolean> ifShowMissionMatrixBadge(@ApiParam(name = "resource_id",
+			value = "红蓝对抗训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);
 		Boolean res = crBadgeService.ifExist(resource_id,
 				CrBadge.BadgeType.MISSION_RELEASE.getCode(),
@@ -364,14 +371,15 @@ public class RbRoomUserController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		RbRoom room = rbRoomService.getById(resource_id);
-		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,room.getReplaySceneId(),node_id);
+		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
+				room.getReplaySceneId(), node_id);
 		return new BaseRsp<>(resList);
 	}
 
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
-	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
+	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		return new BaseRsp();
 	}
@@ -387,5 +395,38 @@ public class RbRoomUserController {
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
 		TimeLineData data = rbRoomService.getStudentsTimeLine(resource_id);
 		return new BaseRsp(data);
+	}
+
+	@ApiOperation("获取任务详情")
+	@GetMapping("/get_mission_detail")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<MissionRsp> getMissionDetail(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "mission_id", value = "任务id", required = true) String mission_id) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+
+		TaskContext taskContext = crTaskService.getByMissionAndUser(mission_id, userId);
+
+		MissionInfoRsp missionRsp = new MissionInfoRsp();
+		missionRsp.setResourceId(taskContext.getMission().getRoomId());
+		missionRsp.setTitle(taskContext.getMission().getTitle());
+		missionRsp.setOption(taskContext.getMission().getOption());
+		missionRsp.setType(taskContext.getMission().getType());
+		missionRsp.setCategory(
+				missionService.getCategoryById(taskContext.getMission().getCategoryId()).getName());
+		missionRsp.setWriteUpShow(taskContext.getMission().getShowWriteup());
+		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
+		missionRsp.setDescription(taskContext.getMission().getDescription());
+		missionRsp.setUserAnswer(taskContext.getUserAnswer());
+		if (!taskContext.getMission().getShowWriteup()) {
+			missionRsp.setWriteUp("");
+		}
+		List<CrTaskRejectRsp> rejectLogs = crTaskService.getTaskRejctsByTaskId(resource_id);
+		missionRsp.setRejectLog(rejectLogs);
+		missionRsp.setEvaluateStatus(
+				CollectionUtils.isEmpty(rejectLogs) ? CrTask.TaskStatus.RELEASED.getCode()
+						: taskContext.getStatus());
+		missionRsp.initUserMissionStatus(taskContext);
+		return new BaseRsp(missionRsp);
 	}
 }

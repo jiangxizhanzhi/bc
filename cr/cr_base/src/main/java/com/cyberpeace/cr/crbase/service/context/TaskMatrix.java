@@ -1,6 +1,7 @@
 package com.cyberpeace.cr.crbase.service.context;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.constant.BaseI18n;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
@@ -43,6 +44,9 @@ public class TaskMatrix {
     @ApiModelProperty(value = "训练时长")
     private String timeCost;
 
+    @ApiModelProperty(value = "用户头像")
+    private String logo;
+
     public TaskMatrix() {
     }
 
@@ -67,6 +71,7 @@ public class TaskMatrix {
                 task.setShowWriteup(false);
             }
         }
+        this.logo = UserInfoContext.getUserContext().getAvatarUrl();
         return this;
     }
     public void initTaskListStage(CrRole crRole,String code) {

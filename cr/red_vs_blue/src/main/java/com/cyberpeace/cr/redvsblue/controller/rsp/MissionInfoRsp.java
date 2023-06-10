@@ -3,6 +3,9 @@ package com.cyberpeace.cr.redvsblue.controller.rsp;
 import java.io.Serializable;
 import java.util.List;
 
+import com.cyberpeace.cr.crbase.dao.entity.CrTask;
+import com.cyberpeace.cr.crbase.service.context.TaskContext;
+import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -56,4 +59,18 @@ public class MissionInfoRsp implements Serializable {
 
 	@ApiModelProperty("展示题解")
 	private Boolean writeUpShow;
+
+
+	public void initUserMissionStatus(TaskContext taskContext) {
+		if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {
+			this.setUserMissionStatus(
+					MissionsStatistic.MissionStatisticalState.MISSION_NOT_STARTED.getCode());
+		} else if (taskContext.isFinished()) {
+			this.setUserMissionStatus(
+					MissionsStatistic.MissionStatisticalState.MISSION_COMPLETED.getCode());
+		} else {
+			this.setUserMissionStatus(
+					MissionsStatistic.MissionStatisticalState.MISSION_ONGOING.getCode());
+		}
+	}
 }

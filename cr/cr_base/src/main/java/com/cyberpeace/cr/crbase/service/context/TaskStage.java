@@ -13,4 +13,10 @@ public class TaskStage extends CrTask {
 
     @ApiModelProperty(value = "任务描述")
     private String description;
+
+    @ApiModelProperty(value = "题解")
+    private String writeUp;
+
+    @ApiModelProperty(value = "是否显示题解")
+    private Boolean showWriteup;
 }

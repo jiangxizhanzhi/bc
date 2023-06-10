@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -713,6 +714,37 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		info.setWaitMissionsCount((int) wait);
 		info.setSubmitMissionCount(submitted);
 		return info;
+	}
+
+	@Override
+	public List<CrTaskRejectRsp> getTaskRejctsByTaskId(String taskId) {
+		List<CrTaskRejectRsp> rejectLogs = new ArrayList<>();
+		//评估处理
+		List<CrTaskSubmit> taskSubmits = this
+				.getOrderedSubmitsByTask(taskId);
+
+		// 获取评估人名字
+		List<String> userIds = taskSubmits.stream().map(CrTaskSubmit::getEvaluatorId).distinct()
+				.collect(Collectors.toList());
+		Map<String, String> userInfoMap = remoteUserService.getIdNameMap(userIds);
+
+		// 未提交过
+		if (taskSubmits.size() != 0) {
+			for (CrTaskSubmit taskSubmit : taskSubmits) {
+				if (taskSubmit.getEvaluateStatus()
+						.equals(CrTaskSubmit.EvaluateStatus.REJECT.getCode())) {
+					CrTaskRejectRsp crTaskReject = new CrTaskRejectRsp();
+
+					crTaskReject.setRejectTime(taskSubmit.getUpdateTime());
+					crTaskReject.setRejectReason(taskSubmit.getReason());
+					crTaskReject.setReferee(userInfoMap.get(taskSubmit.getEvaluatorId()));
+
+					rejectLogs.add(crTaskReject);
+				}
+			}
+		}
+
+		return rejectLogs;
 	}
 
 }

@@ -172,4 +172,7 @@ public interface ErrorCode {
 	 * 空白id
 	 */
 	String BLANK_ID = "100055";
+
+	/** 文件名称长度过长*/
+	String FILE_NAME_UPPER_LIMIT = "100056";
 }

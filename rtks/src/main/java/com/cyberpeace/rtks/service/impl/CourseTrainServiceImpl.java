@@ -1,13 +1,5 @@
 package com.cyberpeace.rtks.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -24,6 +16,13 @@ import com.cyberpeace.rtks.service.SkillService;
 import com.cyberpeace.rtks.service.bo.CourseKnowledgeSkillBo;
 import com.cyberpeace.rtks.service.bo.RoleCourseBo;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseTrainServiceImpl implements CourseTrainService {
@@ -116,7 +115,7 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 	}
 
 	@Override
-	public List<RoleCourseBo> getRoleCoursePath(String roleId) {
+	public List<RoleCourseBo> getRoleCoursePath(String roleId, String resourceId) {
 		Role role = roleMapper.selectById(roleId);
 		if (null == role) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_NOT_EXIST);
@@ -135,10 +134,9 @@ public class CourseTrainServiceImpl implements CourseTrainService {
 		Map<String, CourseInfoBo> infoBoMap = StreamApiUtils.toMap(infoBos,
 				CourseInfoBo::getResourceId, courseInfoBo -> courseInfoBo);
 
-		List<RoleCourseBo> courseBos = courseIds.stream()
-				.filter(courseId -> null != infoBoMap.get(courseId))
+		return courseIds.stream()
+				.filter(courseId -> null != infoBoMap.get(courseId) && !courseId.equals(resourceId))
 				.map(courseId -> BeanUtils.copy(infoBoMap.get(courseId), RoleCourseBo.class))
 				.collect(Collectors.toList());
-		return courseBos;
 	}
 }

@@ -91,6 +91,13 @@ public class CommonController {
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 
+		String limitLength = ConfigUtil.getContextProperty("md.upload.name.len.max");
+		if (fileName == null || fileName.length() > Integer.parseInt(limitLength)) {
+			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+					limitLength, fileName == null ? 0 : fileName.length());
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
+		}
+
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadDest(
 				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());

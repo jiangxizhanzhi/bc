@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -452,6 +453,9 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
+		if (CollectionUtils.isEmpty(releaseMissionReq.getMissionResourceIds())) {
+			return new BaseRsp<>(true);
+		}
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 
 		rbRoomService.checkDirectorPermission(crRole.getRoomId(),

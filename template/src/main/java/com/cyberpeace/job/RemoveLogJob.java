@@ -2,6 +2,7 @@ package com.cyberpeace.job;
 
 import com.cyberpeace.service.impl.LogConfigMessageListener;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +13,16 @@ import java.io.IOException;
 @Component
 public class RemoveLogJob {
 
+    @Autowired
+    private LogConfigMessageListener logConfigMessageListener;
+
     /**
      * 获取日志文件保持天数
      *
      * @return {@code Integer}
      */
     public Integer getLogFileKeepDays() {
-        return LogConfigMessageListener.getLogFileKeepDays();
+        return logConfigMessageListener.getLogFileKeepDays();
     }
 
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)

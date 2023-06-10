@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.integratation.service.SystemConfigService;
 import com.google.common.collect.Maps;
 import com.rabbitmq.client.Channel;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -19,11 +21,16 @@ import java.util.Map;
 @Service
 public class LogConfigMessageListener implements ChannelAwareMessageListener {
 
+    @Autowired
+    private SystemConfigService systemConfigService;
+
     private static final Logger log = LoggerFactory.getLogger("mq");
 
     private static Map<Integer, LogConfigMessageListener> register = Maps.newHashMap();
 
-    private final String LOG_FILE_KEEP_DAYS = "sys_config_update";
+    private static final String LOG_FILE_KEEP_DAYS = "sys_config_update";
+
+    private static final String LOG_FILE_KEEP_DAYS_KEY = "log_file_max_history";
 
     public static Integer logFileKeepDays = 15;
 
@@ -34,9 +41,23 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
         }
 
         register.put(declareMessageType(), this);
+
+        checkLogFileKeepDays();
     }
 
-    public static Integer getLogFileKeepDays() {
+    public void checkLogFileKeepDays() {
+        try {
+            // 更新日志文件保留天数
+            logFileKeepDays = Integer.valueOf(systemConfigService.getSystemConfig(LOG_FILE_KEEP_DAYS_KEY));
+            log.info("Update log_file_max_history to {}", logFileKeepDays);
+        } catch (Exception e) {
+            log.error("Update log_file_max_history error", e);
+            log.info("Use default log_file_max_history {}", logFileKeepDays);
+        }
+    }
+
+    public Integer getLogFileKeepDays() {
+        checkLogFileKeepDays();
         return logFileKeepDays;
     }
 
@@ -69,6 +90,14 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
     }
 
     public Boolean onLogConfigUpdate(Integer days) {
+
+        Integer currentDays = getLogFileKeepDays();
+
+        if (!currentDays.equals(days)) {
+            log.error("Log config error, current log_file_max_history is {}, but mq message is {}", currentDays, days);
+            return true;
+        }
+
         // 修改日志保留天数
         logFileKeepDays = days;
         return true;

@@ -500,6 +500,10 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST_SUBMIT_MISSION);
 		}
 
+		if (Boolean.TRUE.equals(roomObject.getIsFinish())) {
+			log.error("train is voer: businessTemplateId = [{}]",businessTemplateId);
+			throw new BusinessException(CrBusinessErrorCode.TRAIN_IS_OVER);
+		}
 		// 单兵训练运行房间任务查询, 答题者即为创建者
 		Mission mission = missionService.lambdaQuery()
 				.eq(Mission::getRoomId, roomObject.getResourceId())

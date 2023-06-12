@@ -346,7 +346,7 @@ public class TeamTrainStudentsController {
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
-		teamTaskMatrix.setTimeCost(trainRecordService.getColonTimeCost(resource_id));
+		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
 		teamTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}

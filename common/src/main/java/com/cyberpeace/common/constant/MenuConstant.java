@@ -15,7 +15,7 @@ public interface MenuConstant {
     String WEB_OJ_COURSE = "oj-course";
 
     // 全部课程
-    String WEB_OJ_ALL_COURSE = "course-folder";
+    String WEB_OJ_ALL_COURSE = "oj-all-course";
 
     //知识课程
     String WEB_OJ_KNOWLEDGE_COURSE = "oj-knowledge-course";
@@ -33,7 +33,7 @@ public interface MenuConstant {
     String WEB_CR_TEAM_TRAIN = "group-training";
 
     //红蓝对抗
-    String WEB_CR_RED_VS_BLUE = "red-vs-blue-web-folder";
+    String WEB_CR_RED_VS_BLUE = "red-vs-blue";
 
     //工具库
     String WEB_CR_TOOL_TOOLS = "tool-magazine";
@@ -51,7 +51,7 @@ public interface MenuConstant {
     String WEB_PERSON_CENTER = "personal-folder";
 
     //靶场测评
-    String WEB_CR_EVALUATION = "range-test";
+    String WEB_CR_EVALUATION = "range-test-self";
 
     /**
      * 后台页面
@@ -96,7 +96,7 @@ public interface MenuConstant {
     String CMS_SERVICE_MANAGE = "service-manage";
 
     //任务方案
-    String CMS_CR_MISSION_SCHEME = "cr-mission-arrange-folder";
+    String CMS_CR_MISSION_SCHEME = "mission-arrange-management";
 
     //背景流量
     String CMS_BACKGROUND_TRAFFIC = "static-traffic-list";
@@ -114,7 +114,7 @@ public interface MenuConstant {
     String CMS_CR_TEAM_TRAIN = "cr-team-training";
 
     //红蓝对抗
-    String CMS_RED_VS_BLUE = "red-vs-blue-folder";
+    String CMS_RED_VS_BLUE = "red-blue";
 
     //工具库
     String CMS_TOOL = "tool";

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
@@ -311,7 +312,16 @@ public class RbSceneController {
 		assetPageReq.setPage(1);
 		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
-		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
+		List<JSONObject> availableDevices = null;
+		try {
+			availableDevices = crSceneService.getAssetList(assetPageReq);
+		} catch (BusinessException e) {
+			if(StringUtils.isNotEmpty(e.getMessage())
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
+				log.error("localscene: [{}], is not started", resource_id);
+				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
+			}
+		}
 		// 2.获取占用的设备
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
@@ -361,7 +371,16 @@ public class RbSceneController {
 		assetPageReq.setPage(1);
 		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
-		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
+		List<JSONObject> availableDevices = null;
+		try {
+			availableDevices = crSceneService.getAssetList(assetPageReq);
+		} catch (BusinessException e) {
+			if(StringUtils.isNotEmpty(e.getMessage())
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
+				log.error("localscene: [{}], is not started", resource_id);
+				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
+			}
+		}
 
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();

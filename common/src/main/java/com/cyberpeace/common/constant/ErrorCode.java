@@ -175,4 +175,7 @@ public interface ErrorCode {
 
 	/** 文件名称过长*/
 	String FILE_NAME_UPPER_LIMIT = "100056";
+
+	/** 场景未启动*/
+	String NOT_STARTED_SCENE = "100057";
 }

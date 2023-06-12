@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -70,7 +71,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 
+ *
  */
 @Slf4j
 @Api(tags = "团队训练学员")
@@ -252,7 +253,7 @@ public class TeamTrainStudentsController {
 	@PostMapping("/submit_missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+	changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
 				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 
@@ -434,7 +435,7 @@ public class TeamTrainStudentsController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<TeamTrainDeviceContext>> getOccupiedDevices(
 			@ApiParam(value = "room_id", name = "团队房间id", required = true) String room_id,
-			 @ApiParam(value = "standard_device", name = "主机", required = false) String standard_device) {
+			@ApiParam(value = "standard_device", name = "主机", required = false) String standard_device) {
 		List<TeamTrainDeviceContext> ret = teamDeviceService.getOccupies(room_id, standard_device);
 
 		return new BaseRsp<>(ret);
@@ -453,7 +454,16 @@ public class TeamTrainStudentsController {
 		assetPageReq.setPage(1);
 		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
-		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
+		List<JSONObject> availableDevices = null;
+		try {
+			availableDevices = crSceneService.getAssetList(assetPageReq);
+		} catch (BusinessException e) {
+			if(StringUtils.isNotEmpty(e.getMessage())
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
+				log.error("localscene: [{}], is not started", resource_id);
+				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
+			}
+		}
 		// 2.获取占用的设备
 		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
 		// 3.查询已添加设备
@@ -504,7 +514,16 @@ public class TeamTrainStudentsController {
 		assetPageReq.setPage(1);
 		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
-		List<JSONObject> availableDevices = crSceneService.getAssetList(assetPageReq);
+		List<JSONObject> availableDevices = null;
+		try {
+			availableDevices = crSceneService.getAssetList(assetPageReq);
+		} catch (BusinessException e) {
+			if(StringUtils.isNotEmpty(e.getMessage())
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
+				log.error("localscene: [{}], is not started", resource_id);
+				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
+			}
+		}
 
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();
@@ -517,7 +536,7 @@ public class TeamTrainStudentsController {
 	}
 
 	/** 获取单个实例中自己的角色信息，只包括自己角色的基本信息
-	 * @param crRoles 
+	 * @param crRoles
 	 * @param userId
 	 * @return
 	 */
@@ -537,7 +556,7 @@ public class TeamTrainStudentsController {
 	}
 
 	/** 先获取实例列表中自己的角色，再获取所有的学员角色
-	 * @param crRoles 
+	 * @param crRoles
 	 * @param userId
 	 * @return
 	 */

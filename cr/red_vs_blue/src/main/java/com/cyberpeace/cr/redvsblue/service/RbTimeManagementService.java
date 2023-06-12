@@ -65,4 +65,6 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	 * @return {@code String}
 	 */
 	String getTimeCost(String roomId);
+
+	String getColonTimeCost(String roomId);
 }

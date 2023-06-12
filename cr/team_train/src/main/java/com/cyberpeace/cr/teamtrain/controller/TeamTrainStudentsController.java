@@ -345,10 +345,10 @@ public class TeamTrainStudentsController {
 					user_id);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
-		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
-		return new BaseRsp<>(rbTaskMatrix);
+		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		teamTaskMatrix.setTimeCost(trainRecordService.getColonTimeCost(resource_id));
+		teamTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
+		return new BaseRsp<>(teamTaskMatrix);
 	}
 
 	@ApiOperation("团队对抗-复盘用户任务列表")

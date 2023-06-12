@@ -713,6 +713,8 @@ public class RbRoomController {
 	public void initRbReport(RbRoom rbRoom, TrainReportContext trainReport) {
 		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
+		roomBaseInfo.setPreSkills(rbRoom.getPreSkill());
+		roomBaseInfo.setTrainSkills(rbRoom.getTrainSkill());
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
 		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
 		roomBaseInfo.initExportString();

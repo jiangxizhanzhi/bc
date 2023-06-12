@@ -173,6 +173,6 @@ public interface ErrorCode {
 	 */
 	String BLANK_ID = "100055";
 
-	/** 文件名称长度过长*/
+	/** 文件名称过长*/
 	String FILE_NAME_UPPER_LIMIT = "100056";
 }

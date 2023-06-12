@@ -2007,3 +2007,8 @@ INSERT INTO `cr_constants_config` (`resource_id`, `code`, `type`, `cn_name`, `en
 -- ----------------------------
 ALTER TABLE `oj_practice_paper`
 MODIFY COLUMN `direction` VARCHAR(3000) NOT NULL;
+
+ALTER TABLE cr_mark CONVERT TO CHARACTER
+    SET utf8mb4 COLLATE utf8mb4_general_ci;
+ALTER TABLE cr_notice CONVERT TO CHARACTER
+    SET utf8mb4 COLLATE utf8mb4_general_ci;

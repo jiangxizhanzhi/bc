@@ -49,10 +49,11 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
         try {
             // 更新日志文件保留天数
             logFileKeepDays = Integer.valueOf(systemConfigService.getSystemConfig(LOG_FILE_KEEP_DAYS_KEY));
-            log.info("Update log_file_max_history to {}", logFileKeepDays);
+            log.info("Set log_file_max_history to {}", logFileKeepDays);
         } catch (Exception e) {
-            log.error("Update log_file_max_history error", e);
-            log.info("Use default log_file_max_history {}", logFileKeepDays);
+            // 更新配置失败，保持原有配置
+            log.error("Set log_file_max_history error", e);
+            log.info("Keep current log_file_max_history value {}", logFileKeepDays);
         }
     }
 
@@ -93,6 +94,7 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
 
         Integer currentDays = getLogFileKeepDays();
 
+        // 本系统只使用接口获取的配置，但当消息与接口值不一致时，打印日志进行记录
         if (!currentDays.equals(days)) {
             log.error("Log config error, current log_file_max_history is {}, but mq message is {}", currentDays, days);
             return true;
@@ -128,7 +130,10 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
             try {
                 switch (type) {
                     case LOG_FILE_KEEP_DAYS:
-                        String logFileMaxHistory = object.getJSONObject("data").getString("log_file_max_history");
+                        String logFileMaxHistory = null;
+                        if (LOG_FILE_KEEP_DAYS_KEY.equals(object.getJSONObject("data").getString("keyName"))) {
+                            logFileMaxHistory = object.getJSONObject("data").getString("value");
+                        }
                         if (StringUtils.isNotEmpty(logFileMaxHistory)) {
                             Integer days = Integer.valueOf(logFileMaxHistory);
                             realListener.onLogConfigUpdate(days);

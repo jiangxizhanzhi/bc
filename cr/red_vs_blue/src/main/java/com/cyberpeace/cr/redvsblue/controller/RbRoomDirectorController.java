@@ -214,7 +214,10 @@ public class RbRoomDirectorController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String>
 			addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
-
+		rbRoomService.checkRoomOpening(rbMissionDeleteReq.getRoomId());
+		if (CollectionUtils.isEmpty(rbMissionDeleteReq.getMissionConfig())) {
+			return new BaseRsp<>();
+		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

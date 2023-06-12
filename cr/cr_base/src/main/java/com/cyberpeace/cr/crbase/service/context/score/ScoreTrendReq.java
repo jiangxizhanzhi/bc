@@ -19,13 +19,13 @@ public class ScoreTrendReq {
 
     private String replaySceneId;
 
-    public ScoreTrendReq(TrainRecord trainRecord, Date roomStartTime, Integer scoreCount, String replaySceneId) {
+    public ScoreTrendReq(TrainRecord trainRecord, Date roomStartTime, Date roomEndTime, Integer scoreCount, String replaySceneId) {
         if (trainRecord!=null) {
             this.startTime = trainRecord.getStartTime();
             this.endTime = trainRecord.getEndTime() == null? new Date(): trainRecord.getEndTime();
         } else {
             this.startTime = roomStartTime;
-            this.endTime = new Date();
+            this.endTime = roomEndTime;
         }
 
         this.scoreCount = scoreCount;

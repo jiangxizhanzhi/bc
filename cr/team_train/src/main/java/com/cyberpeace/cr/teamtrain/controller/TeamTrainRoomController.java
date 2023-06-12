@@ -937,7 +937,10 @@ public class TeamTrainRoomController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
 	addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
-
+		teamRoomService.checkRoomOpening(rbMissionDeleteReq.getRoomId());
+		if (CollectionUtils.isEmpty(rbMissionDeleteReq.getMissionConfig())) {
+			return new BaseRsp<>();
+		}
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			@Override

@@ -947,6 +947,10 @@ public class TeamTrainRoomController {
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				List<MissionConfig> missionConfigList = rbMissionDeleteReq.getMissionConfig();
 				for (MissionConfig missionConfig : missionConfigList) {
+					List<String> deleteMissions = missionConfig.getMissions();
+					if (CollectionUtils.isEmpty(deleteMissions)) {
+						return;
+					}
 					CrRole crRole = crRoleService.getById(missionConfig.getRoleResourceId());
 					if (!crRole.isTeamStudent()) {
 						log.error("student role  does not exist！roleId=[{}] ",
@@ -954,7 +958,7 @@ public class TeamTrainRoomController {
 						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 
 					}
-					List<String> deleteMissions = missionConfig.getMissions();
+
 
 					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
 							.size() > 0) {

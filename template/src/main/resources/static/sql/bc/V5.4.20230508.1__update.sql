@@ -1996,12 +1996,6 @@ CREATE TABLE `cr_team_device`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- ----------------------------
--- 我的笔记添加常量
--- ----------------------------
-INSERT INTO `cr_constants_config` (`resource_id`, `code`, `type`, `cn_name`, `en_name`) VALUES (NULL, 0, 39, '尝试过', 'Attempted');
-
 -- ----------------------------
 -- oj_practice_paper direction 题目方向字段加长
 -- ----------------------------

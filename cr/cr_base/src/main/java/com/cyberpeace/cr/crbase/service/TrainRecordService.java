@@ -79,4 +79,6 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	 * @return {@code String}
 	 */
 	String getTimeCost(String roomId);
+
+    String getColonTimeCost(String roomId);
 }

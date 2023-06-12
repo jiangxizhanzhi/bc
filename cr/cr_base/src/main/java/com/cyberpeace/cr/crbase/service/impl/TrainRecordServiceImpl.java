@@ -88,4 +88,17 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 		}
 	}
 
+	@Override
+	public String getColonTimeCost(String roomId) {
+		TrainRecord trainRecord = trainRecordMapper.getByRoomId(roomId);
+		if(null == trainRecord){
+			return TimeUtil.duration2String(0L);
+		}
+		if (trainRecord.getEndTime() != null) {
+			return TimeUtil.getColonTimeInterval(trainRecord.getStartTime(), trainRecord.getEndTime());
+		} else {
+			return TimeUtil.getColonTimeInterval(trainRecord.getStartTime(), new Date());
+		}
+	}
+
 }

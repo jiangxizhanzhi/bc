@@ -121,4 +121,18 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 			return TimeUtil.getTimeInterval(timeManagement.getCreateTime(), new Date());
 		}
 	}
+
+	@Override
+	public String getColonTimeCost(String roomId) {
+		RbTimeManagement timeManagement = getByRoomId(roomId);
+		if (timeManagement == null) {
+			return TimeUtil.duration2String(0L);
+		}
+		if (timeManagement.isStopped()) {
+			return TimeUtil.getColonTimeInterval(timeManagement.getCreateTime(),
+					timeManagement.getUpdateTime());
+		} else {
+			return TimeUtil.getColonTimeInterval(timeManagement.getCreateTime(), new Date());
+		}
+	}
 }

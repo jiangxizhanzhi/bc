@@ -619,12 +619,12 @@ public class RbRoomController {
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
 			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		//开始时间  结束时间从训练记录表取
-		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
+		RbTimeManagement management = rbTimeManagementService.getByRoomId(resource_id);
 		RbRoom rbRoom = rbRoomService.getById(resource_id);
 		if (scoreCount == null || scoreCount == 0) {
 			scoreCount = 10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord,
+		ScoreTrendReq scoreTrendReq = initScoreTrendReq(management,
 				rbRoom.getStartTime(), scoreCount, rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
@@ -635,10 +635,30 @@ public class RbRoomController {
 		rbRoom.setStartTime(scoreTrendReq.getStartTime());
 		rbRoom.setEndTime(scoreTrendReq.getEndTime());
 		initRbReport(rbRoom, trainReport);
-		if (trainRecord == null) {
+		if (management == null) {
 			trainReport.getRoomBaseInfo().setTimeCost(trainReport.getRoomBaseInfo().getDurationTime()+"小时");
 		}
 		return new BaseRsp<>(trainReport);
+	}
+
+	public ScoreTrendReq initScoreTrendReq(RbTimeManagement management, Date roomStartTime, Integer scoreCount, String replaySceneId) {
+		ScoreTrendReq res = new ScoreTrendReq();
+		if (management!=null) {
+			res.setStartTime(management.getCreateTime());
+			if (RbTimeManagement.TimeManagementStatus.STOP.getCode().equals(management.getStatus())) {
+				res.setEndTime(management.getUpdateTime() == null? new Date(): management.getUpdateTime());
+			} else {
+				res.setEndTime(new Date());
+			}
+
+		} else {
+			res.setStartTime(roomStartTime);
+			res.setEndTime(new Date());
+		}
+
+		res.setScoreCount(scoreCount);
+		res.setReplaySceneId(replaySceneId);
+		return res;
 	}
 
 	@ApiOperation("红蓝对抗-任务导调-训练报告导出")

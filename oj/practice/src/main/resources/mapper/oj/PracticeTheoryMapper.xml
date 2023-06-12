@@ -220,4 +220,25 @@
             </if>
         </where>
     </select>
+
+    <select id="selectByGroup" resultType="com.cyberpeace.oj.practice.controller.res.CategoryProgressRes">
+        select category_id categoryId,count(1) sum, SUM(if( b.solved is null ,0,1)) count from oj_practice_theory a
+        LEFT JOIN oj_practice_solved b  on a.resource_id=b.resource_id
+        AND b.submit_user_id = #{userId}  AND b.practice_type = #{practiceType} and b.solved in (0,1)
+        <where>
+            <if test="listQuery.resourceIds != null and listQuery.resourceIds.size() != 0">
+                a.resource_id in
+                <foreach collection="listQuery.resourceIds" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="listQuery.questionType != null">
+                and a.theory_type = #{listQuery.questionType}
+            </if>
+            <if test="isPublic != null and isPublic">
+                and a.`public` = #{isPublic}
+            </if>
+        </where>
+        GROUP BY a.category_id
+    </select>
 </mapper>

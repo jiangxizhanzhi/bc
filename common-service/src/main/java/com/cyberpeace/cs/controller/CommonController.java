@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
 @Api(tags = "公共服务接口")
@@ -41,6 +42,13 @@ public class CommonController {
 
 	@Autowired
 	private UtilService utilService;
+
+	private String MD_UPLOAD_NAME_LEN;
+
+	@PostConstruct
+	public void init() {
+		MD_UPLOAD_NAME_LEN = ConfigUtil.getContextProperty("md.upload.name.len.max");
+	}
 
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
@@ -59,6 +67,12 @@ public class CommonController {
 			filePermission.validatePermission(false);
 			String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 			filePermission.validateFileSuffix(fileName);
+
+			if (fileName == null || fileName.length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+				log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+						MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileName.length());
+				throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
+			}
 		} else {
 			FileUtil.validateFileSuffix(fileCommonUploadReq.getFile().getOriginalFilename(),
 					FileTypeContant.PICTURE_TYPE);
@@ -91,6 +105,17 @@ public class CommonController {
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 
+		String limitLength = ConfigUtil.getContextProperty("md.upload.name.len.max");
+		if (fileName == null || fileName.length() > Integer.parseInt(limitLength)) {
+			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+					limitLength, fileName == null ? 0 : fileName.length());
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
+		}
+		if (fileName == null || fileName.length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+					MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileName.length());
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
+		}
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadDest(
 				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());
@@ -109,6 +134,11 @@ public class CommonController {
 		suffix = suffix.toLowerCase();
 		if (!suffix.equals(FileSunffixConstant.ZIP.getDesc()) ){
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, FileSunffixConstant.ZIP.getDesc());
+		}
+		if (md.getOriginalFilename().length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+					MD_UPLOAD_NAME_LEN, md.getOriginalFilename().length());
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, md.getOriginalFilename());
 		}
 		// 文件上传至服务器 原始文件地址存储
 		String markdownPath = AttachmentPath.UPLOAD_ATTACHMENT.getDesc();

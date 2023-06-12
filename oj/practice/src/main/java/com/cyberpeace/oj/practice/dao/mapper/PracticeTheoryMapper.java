@@ -3,6 +3,7 @@ package com.cyberpeace.oj.practice.dao.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
@@ -68,4 +69,10 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 												@Param("types") List<Integer> types,
 												@Param("directions") List<String> directions,
 												@Param("practiceIds") List<String> practiceIds);
+
+	List<CategoryProgressRes> selectByGroup(@Param("listQuery") TheoryListQuery theoryListQuery,
+											@Param("isPublic") Boolean isPublic,
+											@Param("userId") String userId,
+											@Param("practiceType") Integer practiceType);
+
 }

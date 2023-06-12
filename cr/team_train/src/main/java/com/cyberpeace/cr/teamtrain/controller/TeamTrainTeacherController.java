@@ -134,7 +134,7 @@ public class TeamTrainTeacherController {
 		// validate
 		teamRoomService.checkTeacherPermission(rbRoomMissionReq.getRoomId(),
 				UserInfoContext.getUserContext().getUserId());
-
+		teamRoomService.checkRoomOpening(rbRoomMissionReq.getRoomId());
 		// new mission
 		Mission mission = BeanUtils.copy(rbRoomMissionReq, Mission.class);
 		mission.setCategoryId(rbRoomMissionReq.getCategory());

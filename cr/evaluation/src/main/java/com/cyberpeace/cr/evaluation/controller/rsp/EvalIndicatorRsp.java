@@ -32,6 +32,9 @@ public class EvalIndicatorRsp {
 	@ApiModelProperty(value = "指标属性值", required = false)
 	private Integer attributeValue;
 
+	@ApiModelProperty(value = "指标属性值", required = false)
+	private String attributeVal;
+
 	@ApiModelProperty(value = "数据类型", required = true)
 	@NotNull
 	private Integer datatype;

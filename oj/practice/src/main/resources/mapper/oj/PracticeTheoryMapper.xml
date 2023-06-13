@@ -112,6 +112,7 @@
                 and `public` = #{isPublic}
             </if>
         </where>
+        order by `update_time` desc,`id`;
     </select>
 
     <select id="selectBySetIds" resultType="java.lang.String">

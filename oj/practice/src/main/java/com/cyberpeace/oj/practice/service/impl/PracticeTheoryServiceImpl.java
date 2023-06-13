@@ -771,8 +771,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
 		List<String> practiceIds = getPracticeIdsByUserAndSet(authContext, null);
 		//获取练习记录
+		Date startDate = StringUtils.isEmpty(webTheoryRecordReq.getStartTime()) ? null :
+				TimeUtil.toDate4(webTheoryRecordReq.getStartTime() + " 00:00:00");
+		Date endDate = StringUtils.isEmpty(webTheoryRecordReq.getEndTime()) ? null :
+				TimeUtil.toDate4(webTheoryRecordReq.getEndTime() + " 23:59:59");
+
 		List<PracticeTheoryListBo> practiceTheoryList = practiceSolvedMapper.selectPracticeTheoryRecord(UserInfoContext.getUserContext().getUserId(), practiceIds,
-				TimeUtil.toDate2(webTheoryRecordReq.getStartTime()), TimeUtil.toDate2(webTheoryRecordReq.getEndTime()), webTheoryRecordReq.getSolved());
+				startDate,
+				endDate,
+				webTheoryRecordReq.getSolved());
 		//设置习题集名称
 		List<String> practiceSetIds = StreamApiUtils.map(practiceTheoryList, PracticeTheoryListBo::getPracticeSetId);
 		if (practiceSetIds.size() == 0) {

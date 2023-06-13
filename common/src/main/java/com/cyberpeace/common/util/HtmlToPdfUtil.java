@@ -41,6 +41,7 @@ public class HtmlToPdfUtil {
 		command.append(" --enable-local-file-access");
 		command.append(" --javascript-delay 2000");
 		command.append(" --margin-right  5");
+		command.append(" --dpi 300");
 		command.append(" ");
 		command.append(htmlFilePath);
 		command.append(" ");

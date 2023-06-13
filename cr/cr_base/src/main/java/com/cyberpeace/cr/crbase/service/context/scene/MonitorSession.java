@@ -20,6 +20,12 @@ public class MonitorSession implements Serializable {
 	@ApiModelProperty(value = "节点id")
 	private String nodeId;
 
+	@ApiModelProperty("CPU使用率")
+	private Double cpuPercent;
+
+	@ApiModelProperty("内存使用率")
+	private Double memoryPercent;
+
 	@ApiModelProperty(value = "节点名称")
 	private String nodeName;
 

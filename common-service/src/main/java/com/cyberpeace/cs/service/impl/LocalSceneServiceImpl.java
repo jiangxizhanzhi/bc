@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.integratation.model.mp.MpHostState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -386,6 +388,14 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return new JSONArray();
 		}
 		return remoteSceneService.getMonitorSessions(localScene.getMpSceneId(), studentId);
+	}
+
+	@Override
+	public List<MpHostState> getHostStateList(String mpSceneId, List<String> nodeIds) {
+		ElementCommonContext context = new ElementCommonContext();
+		context.setSceneId(mpSceneId);
+		context.setElementIds(String.join(CommonConstant.CODE_COMMA, nodeIds));
+		return remoteSceneService.getHostState(context);
 	}
 
 	@Override

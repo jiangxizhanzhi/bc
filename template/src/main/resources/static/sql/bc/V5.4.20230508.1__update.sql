@@ -2012,5 +2012,6 @@ ALTER TABLE cr_single_template MODIFY COLUMN pre_skills text NOT NULL COMMENT '�
 ALTER TABLE cr_single_template MODIFY COLUMN train_skills text NOT NULL COMMENT '训练目标';
 ALTER TABLE cr_team_template MODIFY COLUMN pre_skills text NOT NULL COMMENT '前置技能';
 ALTER TABLE cr_team_template MODIFY COLUMN train_skills text NOT NULL COMMENT '训练目标';
-ALTER TABLE cr_rb_template MODIFY COLUMN pre_skills text NOT NULL COMMENT '前置技能';
-ALTER TABLE cr_rb_template MODIFY COLUMN train_skills text NOT NULL COMMENT '训练目标';
+ALTER TABLE cr_rb_template MODIFY COLUMN pre_skill text NOT NULL COMMENT '前置技能';
+ALTER TABLE cr_rb_template MODIFY COLUMN train_skill text NOT NULL COMMENT '训练目标';
+

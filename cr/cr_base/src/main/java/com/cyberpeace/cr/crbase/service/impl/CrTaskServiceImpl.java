@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.MissionWsIdentifier;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionWsUpdateStatusMessage;
 import com.cyberpeace.cr.crbase.service.context.mission.TaskWsData;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
+import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.ImmutableMap;
@@ -608,8 +608,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 	}
 
 	@Override
-	public Boolean isCorrectByObjective(String userAnswer, String missionAnswer,
-			Integer missionType) {
+	public Boolean judgeObjective(String userAnswer, String missionAnswer, Integer missionType) {
 		return isCorrect(userAnswer, missionAnswer, missionType);
 	}
 

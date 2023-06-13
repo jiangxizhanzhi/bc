@@ -88,7 +88,7 @@ public class CrSceneController {
 	 */
 	@ApiOperation("资产清单, 需要开启场景(团队、红蓝)")
 	@GetMapping("/asset/list")
-	@RequiresPermissions(value = { MenuConstant.CMS_RED_VS_BLUE, MenuConstant.CMS_CR_TEAM_TRAIN },
+	@RequiresPermissions(value = { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
 		CrCommonValidator.validateId(req.getResource_id());

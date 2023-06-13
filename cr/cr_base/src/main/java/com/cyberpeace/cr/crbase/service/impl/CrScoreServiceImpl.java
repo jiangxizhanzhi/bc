@@ -379,7 +379,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 
 
 		getScoreRsps.sort(Comparator.comparing(GetScoreRsp::getSynthesisScore,
-				Comparator.nullsLast(Integer::compareTo)).thenComparing(GetScoreRsp::getName,Comparator.nullsLast(String::compareTo)));
+				Comparator.nullsFirst(Integer::compareTo).reversed()).thenComparing(GetScoreRsp::getName,Comparator.nullsLast(String::compareTo)));
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
 		trainReportContext.setUserRoles(userRoles);

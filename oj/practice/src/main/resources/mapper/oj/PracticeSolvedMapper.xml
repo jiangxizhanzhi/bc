@@ -66,10 +66,10 @@
                 </foreach>
             </if>
             <if test="startTime != null">
-                and oj_practice_solved.update_time &gt; #{startTime}
+                and oj_practice_solved.update_time &gt;= #{startTime}
             </if>
             <if test="endTime != null">
-                and oj_practice_solved.update_time &lt; #{endTime}
+                and oj_practice_solved.update_time &lt;= #{endTime}
             </if>
             <if test="solved != null">
                 and solved = #{solved}

@@ -89,7 +89,10 @@ public class EvalAlgorithmRefController {
 		}
 		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
 			String matrixData = req.getMatrixData();
-			checkMatrixData(req, res, evalAlgorithmRef, matrixData);
+			LambdaQueryWrapper<EvalAlgorithmRef> queryFilter = new LambdaQueryWrapper<>();
+			queryFilter.eq(EvalAlgorithmRef::getId, 1);
+			EvalAlgorithmRef checkAhpMatrixDataRef = evalAlgorithmRefMapper.selectOne(queryFilter);
+			checkMatrixData(req, res, checkAhpMatrixDataRef, matrixData);
 			LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
 			query.eq(EvalIndexRef::getAlgorithmId, evalAlgorithmId);
 			EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);

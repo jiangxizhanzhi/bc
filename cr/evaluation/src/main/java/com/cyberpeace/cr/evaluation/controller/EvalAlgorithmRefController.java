@@ -37,6 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -83,6 +84,7 @@ public class EvalAlgorithmRefController {
 		EvalAlgorithmEditRsp res = new EvalAlgorithmEditRsp();
 		String evalAlgorithmId = req.getResourceId();
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(evalAlgorithmId);
+		BeanUtils.copyProperties(req, evalAlgorithmRef);
 		if(null == evalAlgorithmRef){
 			log.error("Resource not found! evalAlgorithmId = [{}]", evalAlgorithmId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -126,7 +128,7 @@ public class EvalAlgorithmRefController {
 		try {
 			List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
 			Integer cr = remotePythonService.indexAhpPerform(req.getResourceId(), matrixData,
-					evalAlgorithmRef.getCode(), null, otherArguments);
+					evalAlgorithmRef.getCode(), new ArrayList<>(), otherArguments);
 			if (null != cr) {
 				res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
 			}

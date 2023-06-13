@@ -625,7 +625,7 @@ public class RbRoomController {
 			scoreCount = 10;
 		}
 		ScoreTrendReq scoreTrendReq = initScoreTrendReq(management,
-				rbRoom.getStartTime(), scoreCount, rbRoom.getReplaySceneId());
+				rbRoom.getStartTime(),rbRoom.getEndTime(), scoreCount, rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
 				scoreTrendReq);
@@ -641,7 +641,7 @@ public class RbRoomController {
 		return new BaseRsp<>(trainReport);
 	}
 
-	public ScoreTrendReq initScoreTrendReq(RbTimeManagement management, Date roomStartTime, Integer scoreCount, String replaySceneId) {
+	public ScoreTrendReq initScoreTrendReq(RbTimeManagement management, Date roomStartTime,Date roomEndTime, Integer scoreCount, String replaySceneId) {
 		ScoreTrendReq res = new ScoreTrendReq();
 		if (management!=null) {
 			res.setStartTime(management.getCreateTime());
@@ -653,7 +653,7 @@ public class RbRoomController {
 
 		} else {
 			res.setStartTime(roomStartTime);
-			res.setEndTime(new Date());
+			res.setEndTime(roomEndTime);
 		}
 
 		res.setScoreCount(scoreCount);
@@ -713,6 +713,8 @@ public class RbRoomController {
 	public void initRbReport(RbRoom rbRoom, TrainReportContext trainReport) {
 		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(rbRoom, RoomBaseInfo.class);
+		roomBaseInfo.setPreSkills(rbRoom.getPreSkill());
+		roomBaseInfo.setTrainSkills(rbRoom.getTrainSkill());
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
 		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
 		roomBaseInfo.initExportString();

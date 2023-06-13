@@ -341,7 +341,7 @@ public class TeamTrainRoomController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp>
-			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
+	update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 		// 校验
 		teamTrainRoomModifyReq.validate();
 		TeamRoom teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
@@ -539,7 +539,7 @@ public class TeamTrainRoomController {
 		// 记录远程操作日志
 		OperationType operationType = Objects.equals(status,
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
-						: OperationType.START;
+				: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
@@ -629,7 +629,7 @@ public class TeamTrainRoomController {
 	@PostMapping("/missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+	releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 
@@ -844,7 +844,7 @@ public class TeamTrainRoomController {
 		if (scoreCount==null||scoreCount==0) {
 			scoreCount=10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(), scoreCount,teamRoom.getReplaySceneId());
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(), teamRoom.getEndTime(), scoreCount,teamRoom.getReplaySceneId());
 		// 得分趋势
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
 				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);

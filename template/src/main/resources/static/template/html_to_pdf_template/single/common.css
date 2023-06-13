@@ -117,3 +117,6 @@ button:active {
   -webkit-box-align: end;
   -webkit-align-items: flex-end;
 }
+.outer-block {
+  page-break-inside: avoid !important;
+}

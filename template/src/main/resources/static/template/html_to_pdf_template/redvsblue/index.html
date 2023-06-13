@@ -85,7 +85,7 @@
               referrerpolicy="no-referrer"
               src="../img/SketchPng79f783db593d06afae87d3c61d9ad376b0a706aa4d7b613fe3d617f86e61f7f5.png"
             />
-            <span class="text_5">推荐时长：</span>
+            <span class="text_5">时长：</span>
             <span class="text_6">${roomBaseInfo.durationTime}h</span>
             <img
               class="thumbnail_5"
@@ -134,8 +134,8 @@
           </div>
           <div class="group_5 flex-row">
             <span class="text_22">角色信息：</span>
+            <div class="role-content">
             <#list userRoles as userRole>
-              <div class="role-content">
                 <div class="flex-row role-item">
                     <img
                     class="label_1"
@@ -149,8 +149,8 @@
                     </div>
                   </div>
                 </div>
-              </div>
             </#list>
+          </div>
           </div>
 
           <div class="group_7 flex-row justify-between">
@@ -167,7 +167,7 @@
             />
           </div>
           <div class="list_1 flex-col">
-            <div class="list-items_1-0 flex-col">
+            <div class="outer-block list-items_1-0 flex-col">
               <div class="group_8-0 flex-row">
                 <div class="image-text_3-0 flex-row justify-between">
                   <div class="block_6-0 flex-col"></div>
@@ -180,7 +180,7 @@
               </div>
 
             </div>
-            <div class="list-items_1-1 flex-col">
+            <div class="outer-block list-items_1-1 flex-col">
               <div class="group_8-1 flex-row">
                 <div class="image-text_3-1 flex-row justify-between">
                   <div class="block_6-1 flex-col"></div>
@@ -194,7 +194,7 @@
 
             </div>
           </div>
-          <div class="group_20 flex-col">
+          <div class="outer-block group_20 flex-col">
             <div class="box_2 flex-row justify-between">
               <div class="box_3 flex-col"></div>
               <span class="text_38">攻击趋势</span>
@@ -217,7 +217,7 @@
               src="../img/SketchPnga31724b98ccda1c49a4c9b708dea360e9a893ee05dd919774540a38d509812b8.png"
             />
           </div>
-          <div class="group_21 flex-col">
+          <div class="outer-block group_21 flex-col">
             <div class="box_5 flex-row justify-between">
               <div class="box_6 flex-col"></div>
               <span class="text_45">任务分类</span>
@@ -227,7 +227,7 @@
               <div id="red-task"></div>
             </div>
           </div>
-          <div class="group_21 flex-col">
+          <div class="outer-block group_21 flex-col">
             <div class="box_5 flex-row justify-between">
               <div class="box_6 flex-col"></div>
               <span class="text_45">得分趋势</span>
@@ -238,11 +238,11 @@
             </div>
           </div>
           <div class="group_25 flex-col">
-            <div class="image-text_4 flex-row justify-between">
+            <div class="outer-block image-text_4 flex-row justify-between">
               <div class="group_26 flex-col"></div>
               <span class="text-group_4">人员得分</span>
             </div>
-            <div class="text-wrapper_21 flex-row">
+            <div class="outer-block text-wrapper_21 flex-row">
               <span class="text_title">排名</span>
               <span class="text_title">人员</span>
               <span class="text_title">角色</span>
@@ -253,7 +253,7 @@
               <span class="text_title">综合得分</span>
             </div>
             <#list redGetScoreRsps as score>
-              <div class="group_27 flex-row">
+              <div class="outer-block group_27 flex-row">
                 <span class="content_1">${score.index}</span>
                 <span class="content_1">${score.name}</span>
                 <span class="content_1">${score.roleName}</span>
@@ -278,7 +278,7 @@
                     src="../img/SketchPnga31724b98ccda1c49a4c9b708dea360e9a893ee05dd919774540a38d509812b8.png"
             />
           </div>
-          <div class="group_21 flex-col">
+          <div class="outer-block group_21 flex-col">
             <div class="box_5 flex-row justify-between">
               <div class="box_6 flex-col"></div>
               <span class="text_45">任务分类</span>
@@ -288,7 +288,7 @@
               <div id="blue-task"></div>
             </div>
           </div>
-          <div class="group_21 flex-col">
+          <div class="outer-block group_21 flex-col">
             <div class="box_5 flex-row justify-between">
               <div class="box_6 flex-col"></div>
               <span class="text_45">得分趋势</span>
@@ -314,7 +314,7 @@
               <span class="text_title">综合得分</span>
             </div>
             <#list blueGetScoreRsps as score>
-              <div class="group_27 flex-row">
+              <div class="outer-block group_27 flex-row">
                 <span class="content_1">${score.index}</span>
                 <span class="content_1">${score.name}</span>
                 <span class="content_1">${score.roleName}</span>

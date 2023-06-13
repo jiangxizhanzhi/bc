@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -104,6 +105,12 @@ public class BusinessTemplateController {
 		List<String> userIds = Lists.newArrayList();
 		for (BusinessTemplateData businessTemplateData : data.getRecords()) {
 			userIds.add(businessTemplateData.getCreateUserId());
+		}
+		String sort = listReq.getSort();
+		if(StringUtils.isNotBlank(sort)){
+			List<BusinessTemplateData> records = data.getRecords();
+			records.sort(Comparator.comparing(BusinessTemplateData::getCreateTime));
+			data.setRecords(records);
 		}
 		Map<String, String> idNameMap = remoteUserService.getIdNameMap(userIds);
 

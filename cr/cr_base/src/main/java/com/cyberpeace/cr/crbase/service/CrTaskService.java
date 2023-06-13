@@ -292,9 +292,13 @@ public interface CrTaskService {
 
 	/**
 	 * 客观题对错判断
+	 *
+	 * @param userAnswer    用户答案
+	 * @param missionAnswer 任务答案
+	 * @param missionType   任务类型
 	 * @return bool
 	 */
-	Boolean isCorrectByObjective(String userAnswer, String missionAnswer, Integer missionType);
+	Boolean judgeObjective(String userAnswer, String missionAnswer, Integer missionType);
 
 	/**
 	 * 统计未完成任务

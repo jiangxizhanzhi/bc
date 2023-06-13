@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1063,7 +1062,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					missionBo.setOption(
 							JsonUtil.toJsonObjectArray(mission.getOption(), JSONObject.class));
 				}
-				missionBo.setAnswer(mission.getAnswer());
+				missionBo.setAnswer(
+						CrCommonUtil.getHandledAnswer(mission.getAnswer(), mission.getType()));
 				// get user answer
 				JSONObject missionRecord = missionRecordCol.getJSONObject(missionId);
 				if (null == missionRecord) {
@@ -1072,9 +1072,11 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				} else {
 					String userAnswer = missionRecord
 							.getString(SingleRoom.MissionsRecordFields.ANSWER);
-					missionBo.setUserAnswer(userAnswer);
+					missionBo.setUserAnswer(
+							CrCommonUtil.getHandledAnswer(userAnswer, mission.getType()));
 					// judge
-					if (userAnswer.equals(mission.getAnswer())) {
+					if (crTaskService.judgeObjective(userAnswer, mission.getAnswer(),
+							mission.getType())) {
 						CrCommonUtil.integratePoints(pointsGet, points);
 						successful += 1;
 						missionBo.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());
@@ -1136,7 +1138,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					// get user answer
 					String userAnswer = missionRecord
 							.getString(SingleRoom.MissionsRecordFields.ANSWER);
-					if (userAnswer.equals(mission.getAnswer())) {
+					if (Boolean.TRUE.equals(crTaskService.judgeObjective(userAnswer,
+							mission.getAnswer(), mission.getType()))) {
 						// right
 						matrixMission.setStatus(CrTask.SingleTaskStatus.SUCCESS.getCode());
 						score += mission.getScore();

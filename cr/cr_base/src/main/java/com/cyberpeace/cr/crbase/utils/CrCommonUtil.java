@@ -17,6 +17,7 @@ import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cs.service.context.IdNameType;
@@ -180,6 +181,21 @@ public class CrCommonUtil {
 		// natural order
 		characterList.sort(Comparator.naturalOrder());
 		return String.join(",", characterList);
+	}
+
+	/**
+	 * 获取处理后的答案
+	 * 处理多选题的答案
+	 *
+	 * @param answerString 回答字符串
+	 * @param missionType  任务类型
+	 * @return {@code String}
+	 */
+	public static String getHandledAnswer(String answerString, Integer missionType) {
+		if (missionType.equals(MissionBase.MissionType.MULTIPLE_CHOICE.getCode())) {
+			return handleMultiAnswer(answerString);
+		}
+		return answerString;
 	}
 
 	/**

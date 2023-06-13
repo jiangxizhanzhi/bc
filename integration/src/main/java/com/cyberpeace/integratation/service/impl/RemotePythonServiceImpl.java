@@ -134,7 +134,7 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 			List<Serializable> otherArguments) {
 		JSONObject json = buildRequestData(algorithmId, algorithmCode, otherArguments);
 		json.put("data", data);
-		json.put("matrix_data", getFormatMatrixData(matrixData));
+		json.put("matrix_data", getFormatMatrixData(matrixData, data));
 
 		String resp;
 		try {
@@ -145,9 +145,12 @@ public class RemotePythonServiceImpl implements RemotePythonService {
 		return JsonUtil.toJsonObject(resp, Integer.class);
 	}
 
-	public List<List<String>> getFormatMatrixData(String matrixData){
+	public List<List<String>> getFormatMatrixData(String matrixData, List<Integer> scores){
 		JSONArray objects = JSONArray.parseArray(matrixData);
 		List<List<String>> res = new ArrayList<>();
+		if(objects.size() != scores.size()){
+			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
+		}
 		for (int i = 0; i < objects.size(); i++) {
 			JSONObject jsonObject = objects.getJSONObject(i);
 			String data = jsonObject.get("data").toString();

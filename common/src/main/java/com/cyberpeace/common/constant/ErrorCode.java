@@ -178,4 +178,7 @@ public interface ErrorCode {
 
 	/** 场景未启动*/
 	String NOT_STARTED_SCENE = "100057";
+
+	/** 矩阵数据与指标项数量不一致*/
+	String UNFIT_MATRIX_DATA = "100058";
 }

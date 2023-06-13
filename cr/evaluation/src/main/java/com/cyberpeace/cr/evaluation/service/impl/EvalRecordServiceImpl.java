@@ -330,7 +330,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if(evalAlgorithmMap.containsKey(detectionAlgorithmId)) {
                 detectionAlgorithmId = IDGeneratorUtil.getID();
                 evalAlgorithmMap.put(detectionAlgorithmId, evalAlgorithmMap.get(evalCollection.getDetectionAlgorithmId()));
-                evalVariableRef.setFormatAlgorithmId(detectionAlgorithmId);
+                evalVariableRef.setMatchAlgorithmId(detectionAlgorithmId);
             }
             EvalAlgorithmRef newMatchAlgorithm = generateAlgorithmRef(detectionAlgorithmId, evalAlgorithmMap, evalAlgorithmRefMap);
             evalVariableRef.setMatchAlgorithmId(newMatchAlgorithm.getResourceId());

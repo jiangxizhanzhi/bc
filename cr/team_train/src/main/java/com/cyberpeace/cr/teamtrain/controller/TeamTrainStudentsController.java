@@ -519,9 +519,8 @@ public class TeamTrainStudentsController {
 			availableDevices = crSceneService.getAssetList(assetPageReq);
 		} catch (BusinessException e) {
 			if(StringUtils.isNotEmpty(e.getMessage())
-					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
-				log.error("localscene: [{}], is not started", resource_id);
-				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
+					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) { // 如果是场景未启动导致的就返回空数组
+				return new BaseRsp<>(new ArrayList<>());
 			}
 		}
 

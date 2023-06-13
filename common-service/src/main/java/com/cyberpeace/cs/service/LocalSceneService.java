@@ -10,6 +10,7 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.CreateSnapshotContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.scene.SceneData;
+import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.model.scene.MergeSnapshotContext;
 import com.cyberpeace.integratation.model.scene.SceneNodeListReq;
 
@@ -117,6 +118,16 @@ public interface LocalSceneService extends IService<LocalScene> {
 	 * @return
 	 */
 	JSONArray getMonitorSessions(LocalScene localScene, String studentId);
+
+
+	/**
+	 * 获取多个节点的主机状态列表
+	 *
+	 * @param mpSceneId 场景id
+	 * @param nodeIds   节点id列表
+	 * @return {@code List<MpHostState>}
+	 */
+	List<MpHostState> getHostStateList(String mpSceneId, List<String> nodeIds);
 
 	/**
 	 * 节点快照

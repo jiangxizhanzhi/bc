@@ -54,6 +54,6 @@ public class TaskStatistics {
 		this.unfinishedPercentage = MathUtils.roundDivide(this.unfinished * 100, this.missionCount);
 		this.successfulPercentage = MathUtils.roundDivide(this.successful * 100, this.missionCount);
 		this.failedPercentage = MathUtils.roundDivide(this.failed * 100, this.missionCount);
-		this.notEvaluatedPercentage = MathUtils.roundDivide(this.failed * 100, this.notEvaluated);
+		this.notEvaluatedPercentage = MathUtils.roundDivide(this.failed * 100, this.missionCount);
 	}
 }

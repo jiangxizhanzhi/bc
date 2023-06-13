@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrMark;
@@ -30,6 +32,7 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.scene.Port;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.cs.service.context.scene.SceneElement;
+import com.cyberpeace.integratation.model.mp.MpHostState;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -62,7 +65,17 @@ public class CrCommonServiceImpl implements CrCommonService {
 		}
 		// 2. 获取中台会话数据
 		JSONArray sessions = localSceneService.getMonitorSessions(localScene, studentId);
+		if (sessions.isEmpty()) {
+			return Lists.newArrayList();
+		}
 		List<MonitorSession> sessionList = sessions.toJavaList(MonitorSession.class);
+		List<String> nodeIds = sessionList.stream().map(MonitorSession::getNodeId).distinct()
+				.collect(Collectors.toList());
+		// 2.1 获取节点状态信息
+		List<MpHostState> stateList = localSceneService.getHostStateList(localScene.getMpSceneId(),
+				nodeIds);
+		Map<String, MpHostState> stateMap = StreamApiUtils.toMap(stateList,
+				MpHostState::getElementId, state -> state);
 		// 3. 获取用户名、用户头像、ip
 		JSONObject sceneData = localSceneService.getSceneData(localScene,
 				UserInfoContext.getUserContext().getUserId());
@@ -89,6 +102,12 @@ public class CrCommonServiceImpl implements CrCommonService {
 			session.setUsername(userInfo.getUserName());
 			session.setAvatar(userInfo.getAvatarUrl());
 			session.setIp(ipMap.get(session.getNodeId()));
+			// cpu, memory
+			MpHostState state = stateMap.get(session.getNodeId());
+			if (null != state) {
+				session.setCpuPercent(state.getCpuPercent());
+				session.setMemoryPercent(state.getMemoryPercent());
+			}
 		}
 
 		return sessionList;

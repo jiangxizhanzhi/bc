@@ -150,7 +150,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.stop");
 
-		NODE_SESSION_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.session");
 		FLOW_UPDATE_PARAM_URL = MP_HOST
 				+ ConfigUtil.getContextProperty("scene.node.flow.param.update");
 

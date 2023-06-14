@@ -2,12 +2,18 @@
 var myChart = echarts.init(document.getElementById('score'));
 option= {
   color: [
-    '#0acff2',
+    '#25c1d9',
     '#448aff',
     '#36d94c',
     '#ff7d2c',
     '#f2a92a',
     '#ff6652',
+    '#1f606d',
+    '#2b4a7c',
+    '#266a34',
+    '#764528',
+    '#715727',
+    '#763c37',
   ],
   legend: {
     show: true,

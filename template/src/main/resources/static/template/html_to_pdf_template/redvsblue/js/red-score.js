@@ -29,7 +29,7 @@ redScoreOption= {
   grid: {
     show: false,
     top: 40,
-    left: 16,
+    left: 50,
     right: 150,
     bottom: 16,
     containLabel: true,

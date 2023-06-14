@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.context;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.mp.AttackTypeCount;
 import com.cyberpeace.cr.crbase.service.context.mp.SceneTrend;
@@ -11,11 +12,10 @@ import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreTrend;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.time.DateUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.Year;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -63,6 +63,8 @@ public class TrainReportContext {
     private String refereesName;
     private List<Date> timeList = new ArrayList<>();
 
+    private List<String> timeStringList = new ArrayList<>();
+
     @ApiModelProperty("攻击流量各类别统计")
     private List<AttackTypeCount> attackTypeCount;
     @ApiModelProperty("场景流量趋势图")
@@ -77,11 +79,18 @@ public class TrainReportContext {
     public void initTimeList(ScoreTrendReq scoreTrendReq) {
         long start = scoreTrendReq.getStartTime().getTime();
         long end = scoreTrendReq.getEndTime().getTime();
+        boolean isSameYear = DateUtil.isSameYear(scoreTrendReq.getStartTime(),scoreTrendReq.getEndTime());
         //间隔
         long interval = (end-start)/scoreTrendReq.getScoreCount();
         timeList.add(scoreTrendReq.getStartTime());
         for (int i = 0; i < scoreTrendReq.getScoreCount()-1; i++) {
-            timeList.add(new Date(start+interval*(i+1)));
+            Date date = new Date(start + interval * (i + 1));
+            timeList.add(date);
+            if (isSameYear) {
+                timeStringList.add(DateUtil.DateToString(date,"MM-dd HH:mm:ss"));
+            } else {
+                timeStringList.add(DateUtil.DateToString(date,"yyyy-MM-dd HH:mm:ss"));
+            }
         }
         timeList.add(scoreTrendReq.getEndTime());
 

@@ -89,7 +89,7 @@ public interface CrCommonConstants {
 
 	String TEAM_GROUP_JAR_AVATAR = "teamtrain/team_group_avatar.png";
 
-	String RED_GROUP_JAR_AVATAR = "redvsblue/red_group_avatar_1.png";
+	String RED_GROUP_JAR_AVATAR = "redvsblue/red_group_avatar_v1.png";
 
 	String BLUE_GROUP_JAR_AVATAR = "redvsblue/blue_group_avatar_v1.png";
 

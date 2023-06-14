@@ -9,5 +9,5 @@ import java.util.Date;
 public class ScoreTrend extends NameScore{
 
     @ApiModelProperty("得分时间")
-    private Date scoreTime;
+    private String scoreTime;
 }

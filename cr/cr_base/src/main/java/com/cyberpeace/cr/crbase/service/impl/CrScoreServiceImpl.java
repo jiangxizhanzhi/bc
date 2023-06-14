@@ -349,7 +349,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			List<CrTask> successList = userTaskList.stream().filter(CrTask::isSuccess)
 					.collect(Collectors.toList());
 			scoreTrends.add(new StudentScoreTrend(userData, successList, roleGroup,
-					trainReportContext.getTimeList()));
+					trainReportContext.getTimeList(),trainReportContext.getTimeStringList()));
 			// 人员得分
 			List<MissionSchemeObject<MissionContext>> userMissionList = crRoleService
 					.getCrRoleMissionByRoomIdAndUserId(roomId, userData.getResourceId());

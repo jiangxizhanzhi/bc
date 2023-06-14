@@ -1178,7 +1178,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         result.setIndexes(Lists.newArrayList());
         for (EvalIndexRef evalIndexRef : evalIndexRefs) {
             if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
-                result.getIndexes().add(generateNextIndexes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, true));
+                result.getIndexes().add(generateNextIndexes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, false));
             } else {
                 break;
             }

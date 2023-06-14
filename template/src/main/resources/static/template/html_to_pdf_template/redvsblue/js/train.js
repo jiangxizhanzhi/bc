@@ -32,7 +32,7 @@
          style: {
            text: '任务总数',
            fontSize: 14,
-           fill: 'rgba(255,255,255,0.7)',
+           fill: 'rgba(255,255,255,0.9)',
            textAlign: 'center',
          },
        },
@@ -52,14 +52,14 @@
            formatter: '{b|{b}：}{c}\n{per|{d}%}',
            minMargin: 5,
            edgeDistance: 30,
-           color: 'rgba(255,255,255,0.7)',
+           color: 'rgba(255,255,255,0.9)',
            fontSize: 14,
            lineHeight: 18,
            rich: {
              b: {
                fontSize: 14,
                padding: [0, 0, 0, -25],
-               color: 'rgba(255,255,255,0.7)',
+               color: 'rgba(255,255,255,0.9)',
              },
              per: {
                fontSize: 14,
@@ -72,7 +72,7 @@
            length2: 40,
            maxSurfaceAngle: 80,
            lineStyle: {
-             color: 'rgba(255,255,255,0.2)',
+             color: 'rgba(255,255,255,0.9)',
            },
          },
          //  labelLayout: (params) => {

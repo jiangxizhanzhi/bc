@@ -19,7 +19,7 @@ redScoreOption= {
     itemHeight: 0,
     orient: 'vertical',
     textStyle: {
-      color: 'rgba(255, 255, 255, 0.7)',
+      color: 'rgba(255, 255, 255, 0.9)',
       fontSize: 14,
     },
     //暂不支持设置data，显示legend时，series的name必须设置
@@ -48,7 +48,7 @@ redScoreOption= {
     //toolTip显示时,线的显示样式
     axisPointer: {
       lineStyle: {
-        color: 'rgba(255, 255, 255, 0.3)',
+        color: 'rgba(255, 255, 255, 0.9)',
         width: 1,
         type: 'solid',
       },
@@ -61,7 +61,7 @@ redScoreOption= {
     // x轴名称样式
     nameTextStyle: {
       fontSize: 14,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
       verticalAlign: 'top',
       padding: [6, 0, 0, 0],
     },
@@ -80,14 +80,14 @@ redScoreOption= {
     axisLabel: {
       // interval: 0,
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
     },
   },
   yAxis: {
     name: '分',
     nameTextStyle: {
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
       padding: [0, 45, 10, 20],
     },
     type: 'value',
@@ -102,12 +102,12 @@ redScoreOption= {
     splitLine: {
       show: true,
       lineStyle: {
-        color: 'rgba(255, 255, 255, 0.05)',
+        color: 'rgba(255, 255, 255, 0.9)',
       },
     },
     axisLabel: {
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
     },
   },
   series: [

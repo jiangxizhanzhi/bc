@@ -136,7 +136,7 @@
             <span class="text_22">角色信息：</span>
             <div class="role-content">
             <#list userRoles as userRole>
-                <div class="flex-row role-item">
+                <div class="role-item">
                     <img
                     class="label_1"
                     referrerpolicy="no-referrer"
@@ -144,7 +144,12 @@
                   />
                   <div class="block_2 flex-col justify-between">
                     <span class="text_23">${userRole.name}</span>
-                    <div class="text-wrapper_10 flex-col">
+                    <div class="text-wrapper_10 flex-row">
+                      <#if userRole.type??&&userRole.type==4>
+                      <span class="role red">红方</span>
+                      <#else>
+                      <span class="role blue">蓝方</span>
+                      </#if>
                       <span class="text_24">${userRole.roleName}</span>
                     </div>
                   </div>

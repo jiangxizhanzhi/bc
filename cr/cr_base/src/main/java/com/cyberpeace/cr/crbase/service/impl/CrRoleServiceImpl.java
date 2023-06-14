@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
+import com.cyberpeace.cr.crbase.service.CrScoreService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -171,9 +172,11 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 				crRole);
 		// 获取当前学员的每项总分
 		List<Integer> allPoints = CrCommonUtil.getInitPoints();
-
+		List<TaskContext> taskList = crTaskService.getByRoomIdAndUser(roomId, userId);
+		Set<String> missionIds = taskList.stream().map(TaskContext::getMissionId).collect(Collectors.toSet());
 		for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
 			for (MissionContext mission : missionSchemeObject.getMissions()) {
+				if (!missionIds.contains(mission.getResourceId())) continue;
 				String skillPoints = mission.getSkillPoints();
 				List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
 

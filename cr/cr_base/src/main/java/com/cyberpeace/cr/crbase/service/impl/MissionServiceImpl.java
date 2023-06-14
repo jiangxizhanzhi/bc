@@ -467,7 +467,7 @@ public class MissionServiceImpl extends ServiceImpl<MissionMapper, Mission> impl
 					if ("first".equals(afterMissionId)) {
 						missions.add(0,missionId);
 					} else if (StringUtils.isNotBlank(afterMissionId)&&i!=-1) {
-						missions.add(i,missionId);
+						missions.add(i+1,missionId);
 					}else {
 						missions.add(missionId);
 					}

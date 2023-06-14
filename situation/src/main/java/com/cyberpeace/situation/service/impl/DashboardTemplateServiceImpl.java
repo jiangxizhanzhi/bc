@@ -796,6 +796,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 		apiConnectReq.setRequestUrl(url);
 		apiConnectReq.setRequestMethod(method);
 		apiConnectReq.setResponseKey(responseKey);
+		apiConnectReq.setResourceId(jsonObject.getString("chartApi"));
 
 		try {
 			// 设置请求头

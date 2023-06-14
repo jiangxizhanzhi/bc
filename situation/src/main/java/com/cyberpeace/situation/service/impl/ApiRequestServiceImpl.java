@@ -109,7 +109,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         ApiRequest apiRequest = apiConnectReqToApiRequest(apiConnectReq);
         String message = null;
         try {
-            if("demo".equals(body.getString("taskId")) && "demo".equals(body.getString("subjectId"))) {
+            if( body !=null && "demo".equals(body.getString("taskId")) && "demo".equals(body.getString("subjectId"))) {
                 message = apiRequestMapper.selectById(apiConnectReq.getResourceId()).getResponseDemo();
             } else {
                 ResponseEntity response = restTemplate.exchange(requestUrl, Objects.requireNonNull(HttpMethod.resolve(requestMethod)), httpEntity, String.class);

@@ -410,7 +410,7 @@ public class HttpClientUtil {
 	private static List<Header> defaultHeader() {
 
 		// 如果是可视化系统，直接返回默认的请求头
-		if (Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+		if (Boolean.parseBoolean(SystemPropUtil.getProp("IS_VIEW"))) {
 			return defaultHeaders;
 		}
 

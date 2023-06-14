@@ -79,7 +79,9 @@ public class TrainReportContext {
     public void initTimeList(ScoreTrendReq scoreTrendReq) {
         long start = scoreTrendReq.getStartTime().getTime();
         long end = scoreTrendReq.getEndTime().getTime();
-        boolean isSameYear = DateUtil.isSameYear(scoreTrendReq.getStartTime(),scoreTrendReq.getEndTime());
+        //需求改回  永远输出年月日格式
+//        boolean isSameYear = DateUtil.isSameYear(scoreTrendReq.getStartTime(), scoreTrendReq.getEndTime());
+        boolean isSameYear = false;
         //间隔
         long interval = (end-start)/scoreTrendReq.getScoreCount();
         timeList.add(scoreTrendReq.getStartTime());

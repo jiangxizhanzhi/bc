@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.integratation.service.RemoteSceneService;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +169,8 @@ public class TeamTrainTemplateController {
 
 	@ApiOperation("查询")
 	@GetMapping()
-	@RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN)
+	@RequiresPermissions(value = { MenuConstant.CMS_CR_TEAM_TRAIN, MenuConstant.WEB_CR_TEAM_TRAIN },
+		logical = Logical.OR)
 	public BaseRsp<TeamTrainTemplateRsp> getTeamTemplate(String resource_id) {
 		businessTemplateService.checkPermission(resource_id,
 				UserInfoContext.getUserContext().getUserId());

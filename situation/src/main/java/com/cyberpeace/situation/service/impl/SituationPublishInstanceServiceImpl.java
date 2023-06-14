@@ -289,6 +289,7 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
                     positionAdjust(situationPublishInstance.getSubRangeId(), situationPublishInstance.getTaskId(),
                             situationPublishInstance.getSubjectId(), dashboardAttribute.getEnvId());
                 } catch (DuplicateKeyException e) {
+                    log.error("新增大屏错误",e);
                     throw new BusinessException(ErrorCode.NAME_DUPLICATE);
                 }
             }

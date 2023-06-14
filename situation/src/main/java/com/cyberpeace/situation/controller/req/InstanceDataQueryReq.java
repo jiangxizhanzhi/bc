@@ -71,4 +71,9 @@ public class InstanceDataQueryReq {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private String currentTime;
 
+	/**
+	 * 大屏特定事件
+	 */
+	@ApiModelProperty(value = "大屏特定事件")
+	private Object typicalEvent;
 }

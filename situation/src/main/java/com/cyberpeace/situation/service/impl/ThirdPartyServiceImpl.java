@@ -171,9 +171,10 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 				stationCache.get(rangeId).add(station);
 			}
 		});
-		rangeContexts.forEach(rangeContext -> {
-			stationCache.put(rangeContext.getSubRangeId(), stations);
-		});
+		//6月8日徐老师说已修改逻辑，联管中心降级，只展示自己的场站，不再全部展示
+//		rangeContexts.forEach(rangeContext -> {
+//			stationCache.put(rangeContext.getSubRangeId(), stations);
+//		});
 	}
 
 	@Override

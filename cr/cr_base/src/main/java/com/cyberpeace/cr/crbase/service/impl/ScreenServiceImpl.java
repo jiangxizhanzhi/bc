@@ -1,9 +1,6 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.exception.BusinessException;
@@ -38,7 +35,7 @@ public class ScreenServiceImpl implements ScreenService {
     private CrRoleService crRoleService;
 
     @Override
-	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId) {
+	public List<ScreenRecordUserRole> getReplayUserTimeInfo(String roomId, String replaySceneId , String nodeId, Collection<Integer> groups) {
         LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
         //如果场景已关闭获取上次的场景Id
         String mpSceneId =localScene == null?replaySceneId : localScene.getMpSceneId();
@@ -50,7 +47,7 @@ public class ScreenServiceImpl implements ScreenService {
         if (CollectionUtils.isEmpty(list)) {
             return new ArrayList<>();
         }
-        List<CrRole> roles = crRoleService.getRolesByRoomId(roomId);
+        List<CrRole> roles = crRoleService.getRolesByRoomAndGroups(roomId,groups);
         Map<String,Integer> map = new HashMap<>();
         for (CrRole role : roles) {
             for (String userId : role.getUserIdList()) {

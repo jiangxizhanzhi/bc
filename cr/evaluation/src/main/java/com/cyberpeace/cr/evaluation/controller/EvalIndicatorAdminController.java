@@ -7,10 +7,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.BatchDeleteReq;
@@ -19,6 +16,7 @@ import com.cyberpeace.cr.evaluation.controller.req.EvalAhpAlgorithmReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalIndicatorReq;
 import com.cyberpeace.cr.evaluation.controller.req.EvalNameListReq;
 import com.cyberpeace.cr.evaluation.controller.rsp.EvalIndicatorRsp;
+import com.cyberpeace.cr.evaluation.dao.entity.EvalIndexRef;
 import com.cyberpeace.cr.evaluation.dao.entity.EvalIndicator;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndicatorMapper;
@@ -250,6 +248,8 @@ public class EvalIndicatorAdminController {
 		data.convert(evalIndicator -> {
 			EvalIndicatorRsp evalAlgorithmRsp = BeanUtils.copy(evalIndicator,
 					EvalIndicatorRsp.class);
+			String desc = EnumUtils.getEnumByCode(evalIndicator.getAttribute(), EvalIndexRef.DataAttr.class).getDesc();
+			evalAlgorithmRsp.setAttributeVal(desc);
 			evalAlgorithmRsp.setEvalCollectionNum(JsonUtil
 					.toJsonObjectArray(evalIndicator.getCollectionIds(), String.class).size());
 			evalAlgorithmRsp.setEvalAggregationNum(JsonUtil

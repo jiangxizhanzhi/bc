@@ -885,5 +885,6 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 		}
 		timeLineData.setStartTime(startTime);
 		timeLineData.setEndTime(endTime);
+		timeLineData.setCurrentTime(new Date());
 	}
 }

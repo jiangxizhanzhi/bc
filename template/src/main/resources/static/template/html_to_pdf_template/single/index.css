@@ -31,7 +31,7 @@
 }
 .box_16 img{
   display: inline-block;
-  margin-left: 5px;
+  margin-left: 2px;
 }
 
 .thumbnail_18 {
@@ -48,7 +48,6 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 5px;
 }
 
 .icon_7 {
@@ -65,7 +64,6 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 5px;
 }
 
 .icon_8 {
@@ -82,7 +80,6 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 5px;
 }
 
 .thumbnail_19 {
@@ -99,7 +96,6 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 5px;
 }
 
 .box_2 {
@@ -535,7 +531,7 @@
   width: 140px;
   height: 140px;
   background: url(./img/SketchPng55a6e948ad75a37e2b67ee9b506ee5ffa9a416ba56f5dae253b6f52db52203b4.png)
-    0px 0px no-repeat;
+  0px 0px no-repeat;
   background-size: 141px 140px;
   padding: 43px 42px 43px 42px;
 }

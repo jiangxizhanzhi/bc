@@ -382,6 +382,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 				Comparator.nullsFirst(Integer::compareTo).reversed()).thenComparing(GetScoreRsp::getName,Comparator.nullsLast(String::compareTo)));
 		trainReportContext.initScoreTrends(scoreTrends);
 		trainReportContext.setGetScoreRsps(getScoreRsps);
+		userRoles.sort(Comparator.comparing(UserRole::getType));
 		trainReportContext.setUserRoles(userRoles);
 		// 任务分类图
 		trainReportContext.setKindMap(dealCateMap(taskList, userIds));

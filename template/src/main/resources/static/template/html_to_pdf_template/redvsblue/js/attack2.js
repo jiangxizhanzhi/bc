@@ -35,7 +35,7 @@
       //toolTip显示时,线的显示样式
       axisPointer: {
         lineStyle: {
-          color: 'rgba(255, 255, 255, 0.3)',
+          color: 'rgba(255, 255, 255, 0.9)',
           width: 1,
           type: 'solid',
         },
@@ -48,7 +48,7 @@
       // x轴名称样式
       nameTextStyle: {
         fontSize: 14,
-        color: 'rgba(255, 255, 255, 0.4)',
+        color: 'rgba(255, 255, 255, 0.9)',
         verticalAlign: 'top',
         padding: [6, 0, 0, 0],
       },
@@ -68,14 +68,14 @@
         show: true,
         // interval: 20,
         fontSize: 12,
-        color: 'rgba(255, 255, 255, 0.4)',
+        color: 'rgba(255, 255, 255, 0.9)',
       },
     },
     yAxis: {
       name: 'kb',
       nameTextStyle: {
         fontSize: 12,
-        color: 'rgba(255, 255, 255, 0.4)',
+        color: 'rgba(255, 255, 255, 0.9)',
         padding: [0, 55, 0, 20],
       },
       type: 'value',
@@ -90,12 +90,12 @@
       splitLine: {
         show: true,
         lineStyle: {
-          color: 'rgba(255, 255, 255, 0.05)',
+          color: 'rgba(255, 255, 255, 0.9)',
         },
       },
       axisLabel: {
         fontSize: 12,
-        color: 'rgba(255, 255, 255, 0.4)',
+        color: 'rgba(255, 255, 255, 0.9)',
       },
     },
     series: [
@@ -119,7 +119,7 @@
             colorStops: [
               {
                 offset: 0,
-                color: 'rgba(10, 207, 242, 0.3)',
+                color: 'rgba(10, 207, 242, 0.9)',
               },
               {
                 offset: 1,

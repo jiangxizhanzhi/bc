@@ -30,7 +30,7 @@
         style: {
           text: '任务分类',
           fontSize: 14,
-          fill: 'rgba(255,255,255,0.7)',
+          fill: 'rgba(255,255,255,0.9)',
           textAlign: 'center',
         },
       },
@@ -49,7 +49,7 @@
           formatter: '{b|{b}}\n{per|{c}}',
           minMargin: 5,
           edgeDistance: 30,
-          color: 'rgba(255,255,255,0.7)',
+          color: 'rgba(255,255,255,0.9)',
           fontSize: 14,
           lineHeight: 18,
           distanceToLabelLine: 0, // label距离引导线距离
@@ -57,7 +57,7 @@
             b: {
               fontSize: 14,
               padding: [0, 0, 0, -25],
-              color: 'rgba(255,255,255,0.7)',
+              color: 'rgba(255,255,255,0.9)',
             },
             per: {
               fontSize: 14,
@@ -70,7 +70,7 @@
           length2: 40,
           maxSurfaceAngle: 80,
           lineStyle: {
-            color: 'rgba(255,255,255,0.2)',
+            color: 'rgba(255,255,255,0.9)',
           },
         },
         // labelLayout: (params) => {

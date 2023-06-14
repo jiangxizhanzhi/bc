@@ -6,12 +6,18 @@ var blueScoreChart = echarts.init(element);
 
 blueScoreOption= {
   color: [
-    '#0acff2',
+    '#25c1d9',
     '#448aff',
     '#36d94c',
     '#ff7d2c',
     '#f2a92a',
     '#ff6652',
+    '#1f606d',
+    '#2b4a7c',
+    '#266a34',
+    '#764528',
+    '#715727',
+    '#763c37',
   ],
   legend: {
     show: true,
@@ -20,7 +26,7 @@ blueScoreOption= {
     itemHeight: 0,
     orient: 'vertical',
     textStyle: {
-      color: 'rgba(255, 255, 255, 0.7)',
+      color: 'rgba(255, 255, 255, 0.9)',
       fontSize: 14,
     },
     //暂不支持设置data，显示legend时，series的name必须设置
@@ -49,7 +55,7 @@ blueScoreOption= {
     //toolTip显示时,线的显示样式
     axisPointer: {
       lineStyle: {
-        color: 'rgba(255, 255, 255, 0.3)',
+        color: 'rgba(255, 255, 255, 0.9)',
         width: 1,
         type: 'solid',
       },
@@ -62,7 +68,7 @@ blueScoreOption= {
     // x轴名称样式
     nameTextStyle: {
       fontSize: 14,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
       verticalAlign: 'top',
       padding: [6, 0, 0, 0],
     },
@@ -81,14 +87,14 @@ blueScoreOption= {
     axisLabel: {
       // interval: 0,
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
     },
   },
   yAxis: {
     name: '分',
     nameTextStyle: {
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
       padding: [0, 45, 10, 20],
     },
     type: 'value',
@@ -103,12 +109,12 @@ blueScoreOption= {
     splitLine: {
       show: true,
       lineStyle: {
-        color: 'rgba(255, 255, 255, 0.05)',
+        color: 'rgba(255, 255, 255, 0.9)',
       },
     },
     axisLabel: {
       fontSize: 12,
-      color: 'rgba(255, 255, 255, 0.4)',
+      color: 'rgba(255, 255, 255, 0.9)',
     },
   },
   series: [

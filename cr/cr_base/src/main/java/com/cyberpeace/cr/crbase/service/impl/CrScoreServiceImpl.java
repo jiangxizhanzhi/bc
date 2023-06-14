@@ -385,6 +385,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		trainReportContext.setUserRoles(userRoles);
 		// 任务分类图
 		trainReportContext.setKindMap(dealCateMap(taskList, userIds));
+		trainReportContext.setTaskKindCount(trainReportContext.getKindMap().size());
 		trainReportContext.setRedMap(dealCateMap(taskList, redUserIds));
 		trainReportContext.setBlueMap(dealCateMap(taskList, blueUserIds));
 

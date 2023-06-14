@@ -509,28 +509,28 @@ public class ClassroomServiceImpl extends ServiceImpl<ClassroomMapper, Classroom
 	public List<ClassroomBo> selectList(ClassRoomListQuery roomListQuery, AuthContext authContext) {
 
 		List<Classroom> classrooms = classroomMapper.selectList(roomListQuery);
-
+		Set<String> existClassroom = classrooms.stream().map(Classroom::getResourceId).collect(Collectors.toSet());
 		//管理员用户增加admin用户在自己创建的计划中的创建的计划
 		if (authContext.getIsAdmin()) {
 			roomListQuery.setUserId(null);
 			List<Classroom> superAdminClassrooms = classroomMapper.selectList(roomListQuery);
-			superAdminClassrooms = superAdminClassrooms.stream().filter(classroom -> {
+			for (Classroom classroom : superAdminClassrooms) {
 				if (classroom.getTrainPlanId() != null) {
 					TrainPlan trainPlan = trainPlanMapper.selectById(classroom.getTrainPlanId());
-					if (trainPlan != null && trainPlan.getCreateUserId().equals(authContext.getUserId())) {
-						return true;
+					if (trainPlan != null
+							&& trainPlan.getCreateUserId().equals(authContext.getUserId())
+							&& existClassroom.add(classroom.getResourceId())) {
+						classrooms.add(classroom);
 					}
 				}
-				return false;
-			}).collect(Collectors.toList());
-			classrooms.addAll(superAdminClassrooms);
+			}
 		}
 
 		// 过滤已删除组织关联数据
 		List<String> orgs = remoteOrganizationService.childrenList("", true);
 		classrooms = classrooms.stream().filter(classroom -> orgs.contains(classroom.getOrganizationId())).collect(Collectors.toList());
 
-		return StreamApiUtils.map(classrooms, classroom -> entityToBo(classroom));
+		return StreamApiUtils.map(classrooms, this::entityToBo);
 	}
 
 	@Override

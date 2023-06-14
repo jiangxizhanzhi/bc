@@ -99,7 +99,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 
 		UserInfo userInfo = null;
 
-		if (!Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+		if (!Boolean.parseBoolean(SystemPropUtil.getProp("IS_VIEW"))) {
 			// 1、调用mp
 			String targetUrl = TOKEN_AUTHENTICATE_URL + token;
 
@@ -212,7 +212,7 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 		Set<String> idsSet = Sets.newHashSet(ids);
 
 		// 如果不是可视化系统，则调用mp接口
-		if (!Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+		if (!Boolean.parseBoolean(SystemPropUtil.getProp("IS_VIEW"))) {
 			List<UserInfo> userInfos = getByIdList(ids);
 			if (idsSet.size() != userInfos.size()) {
 				for (UserInfo info : userInfos) {

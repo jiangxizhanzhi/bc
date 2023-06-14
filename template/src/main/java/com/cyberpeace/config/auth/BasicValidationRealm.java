@@ -70,7 +70,7 @@ public class BasicValidationRealm extends AuthorizingRealm {
             CommonContext.setAuthorization(token);
 
             // 设置权限，当系统为可视化时，不进行此步骤
-            if (!Boolean.parseBoolean(System.getProperty("IS_VIEW"))) {
+            if (!Boolean.parseBoolean(SystemPropUtil.getProp("IS_VIEW"))) {
                 Set<String> userPermission = remoteUserService.getUserPermission(userInfo.getUserId());
                 userInfo.setPermissions(userPermission);
             }

@@ -83,6 +83,11 @@ public class TrainReportContext {
         //间隔
         long interval = (end-start)/scoreTrendReq.getScoreCount();
         timeList.add(scoreTrendReq.getStartTime());
+        if (isSameYear) {
+            timeStringList.add(DateUtil.DateToString(scoreTrendReq.getStartTime(),"MM-dd HH:mm:ss"));
+        } else {
+            timeStringList.add(DateUtil.DateToString(scoreTrendReq.getStartTime(),"yyyy-MM-dd HH:mm:ss"));
+        }
         for (int i = 0; i < scoreTrendReq.getScoreCount()-1; i++) {
             Date date = new Date(start + interval * (i + 1));
             timeList.add(date);
@@ -93,7 +98,11 @@ public class TrainReportContext {
             }
         }
         timeList.add(scoreTrendReq.getEndTime());
-
+        if (isSameYear) {
+            timeStringList.add(DateUtil.DateToString(scoreTrendReq.getEndTime(),"MM-dd HH:mm:ss"));
+        } else {
+            timeStringList.add(DateUtil.DateToString(scoreTrendReq.getEndTime(),"yyyy-MM-dd HH:mm:ss"));
+        }
 
     }
 

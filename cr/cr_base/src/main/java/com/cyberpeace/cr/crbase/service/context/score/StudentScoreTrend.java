@@ -25,7 +25,7 @@ public class StudentScoreTrend {
 	public StudentScoreTrend() {}
 
 	public StudentScoreTrend(UserData user, List<CrTask> successList, Integer role,
-			List<Date> timeList) {
+			List<Date> timeList,List<String> timeStringList) {
 		this.userData = user;
 		this.scoreTrends = new ArrayList<>();
 		this.role = role;
@@ -41,7 +41,7 @@ public class StudentScoreTrend {
 				score += crTask.getScore();
 			}
 			scoreTrend.setScore(score);
-			scoreTrend.setScoreTime(date);
+			scoreTrend.setScoreTime(timeStringList.get(i));
 			scoreTrends.add(scoreTrend);
 		}
 	}

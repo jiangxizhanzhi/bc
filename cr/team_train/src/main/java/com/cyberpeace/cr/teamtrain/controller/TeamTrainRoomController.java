@@ -151,12 +151,12 @@ public class TeamTrainRoomController {
 	@Autowired
 	private CrScoreService crScoreService;
 
-
 	@Autowired
 	private ScreenService screenService;
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -326,9 +326,10 @@ public class TeamTrainRoomController {
 				JsonUtil.toJsonObjectArray(teamTrainRoomReq.getTrainSkill(), String.class));
 		TeamRoom teamRoom = teamRoomService.create(teamTrainRoomContext);
 
-//		TeamTemplate teamTemplate = teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
-//		String teamTemplateName = businessTemplateMapper
-//				.selectById(teamTemplate.getBusinessTemplateId()).getName();
+		// TeamTemplate teamTemplate =
+		// teamTemplateMapper.selectById(teamTrainRoomReq.getTemplate());
+		// String teamTemplateName = businessTemplateMapper
+		// .selectById(teamTemplate.getBusinessTemplateId()).getName();
 		remoteLogService.addOjLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				OperationType.CREATE, teamTrainRoomReq.getName(),
 				LogContent.CR_FORMAT.format(OperationType.CREATE,
@@ -341,7 +342,7 @@ public class TeamTrainRoomController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<TeamRoomRsp>
-	update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
+			update(@RequestBody @Validated TeamTrainRoomModifyReq teamTrainRoomModifyReq) {
 		// 校验
 		teamTrainRoomModifyReq.validate();
 		TeamRoom teamRoom = teamRoomService.getById(teamTrainRoomModifyReq.getResourceId());
@@ -539,7 +540,7 @@ public class TeamTrainRoomController {
 		// 记录远程操作日志
 		OperationType operationType = Objects.equals(status,
 				TeamRoom.TrainingStatusCode.ENDED.getCode()) ? OperationType.STOP
-				: OperationType.START;
+						: OperationType.START;
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.TEAM_TRAIN,
 				operationType, teamRoomService.getById(resourceIdReq.getResourceId()).getName());
 		return new BaseRsp<>(map);
@@ -629,7 +630,7 @@ public class TeamTrainRoomController {
 	@PostMapping("/missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-	releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+			releaseMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 
 		CrRole crRole = crRoleService.getById(releaseMissionReq.getRoleResourceId());
 
@@ -682,7 +683,7 @@ public class TeamTrainRoomController {
 				baseRole.setDescription(crRole.getDescription());
 				baseRole.setRoleGroup(crRole.getRoleGroup());
 			}
-//			if (crRole.isTeamStudent()) {
+			// if (crRole.isTeamStudent()) {
 			RoleUsers roleUsers = new RoleUsers();
 			roleUsers.setRoleName(crRole.getName());
 			roleUsers.setRoleGroup(crRole.getRoleGroup());
@@ -692,7 +693,7 @@ public class TeamTrainRoomController {
 			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
 			roleUsers.setUserInfos(userDatas);
 			roleUsersList.add(roleUsers);
-//			}
+			// }
 		});
 
 		baseRole.setRoleDataList(roleUsersList);
@@ -704,7 +705,7 @@ public class TeamTrainRoomController {
 	@PostMapping("/batchMissions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<Boolean>
-	releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
+			releaseBatchMissions(@RequestBody @Validated ReleaseMissionReq releaseMissionReq) {
 		if (CollectionUtils.isEmpty(releaseMissionReq.getMissionResourceIds())) {
 			return new BaseRsp<>(true);
 		}
@@ -803,19 +804,21 @@ public class TeamTrainRoomController {
 	@ApiOperation("团队对抗-训练手册")
 	@GetMapping("/manual")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+	public BaseRsp<List<TrainTaskReleaseInfoRsp>> getManual(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {
 			log.error("resource_id_missing");
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
-		if(crRole.isTeamStudent()) {
+		if (crRole.isTeamStudent()) {
 			log.error("role team_student is forbidden");
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
 
-		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id, CrRole.TeamRoleGroup.STUDENT.getCode());
+		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id,
+				CrRole.TeamRoleGroup.STUDENT.getCode());
 		return new BaseRsp<>(res);
 	}
 
@@ -841,38 +844,44 @@ public class TeamTrainRoomController {
 		TrainRecord trainRecord = trainRecordService.getByRoomId(resource_id);
 
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
-		if (scoreCount==null||scoreCount==0) {
-			scoreCount=10;
+		if (scoreCount == null || scoreCount == 0) {
+			scoreCount = 10;
 		}
-		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(), teamRoom.getEndTime(), scoreCount,teamRoom.getReplaySceneId());
+		ScoreTrendReq scoreTrendReq = new ScoreTrendReq(trainRecord, teamRoom.getStartTime(),
+				teamRoom.getEndTime(), scoreCount, teamRoom.getReplaySceneId());
 		// 得分趋势
-		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
-				.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()),scoreTrendReq);
-		//训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
-		//训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
-		//训练已结束，训练时间显示的启动训练时间，训练时长是结束训练-启动训练时间
+		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id,
+				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()), scoreTrendReq);
+		// 训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
+		// 训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
+		// 训练已结束，训练时间显示的启动训练时间，训练时长是结束训练-启动训练时间
 		teamRoom.setStartTime(scoreTrendReq.getStartTime());
 		teamRoom.setEndTime(scoreTrendReq.getEndTime());
-		initTeamReport(teamRoom,trainReport);
+		initTeamReport(teamRoom, trainReport);
 		if (trainRecord == null) {
-			trainReport.getRoomBaseInfo().setTimeCost(trainReport.getRoomBaseInfo().getDurationTime()+"小时");
+			trainReport.getRoomBaseInfo()
+					.setTimeCost(trainReport.getRoomBaseInfo().getDurationTime() + "小时");
 		}
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
+
 	@ApiOperation("团队对抗-任务导调-训练报告导出")
 	@GetMapping("/mission/TrainReportsPdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public void TrainReportsPdf(HttpServletResponse httpServletResponse,
-								@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-								@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "scoreCount", value = "节点数", required = true) Integer scoreCount) {
 		TrainReportContext originData = this.getTrainReports(resource_id, scoreCount).getData();
-		TrainReportExportContext data = BeanUtils.deepCopy(originData, TrainReportExportContext.class);
+		TrainReportExportContext data = BeanUtils.deepCopy(originData,
+				TrainReportExportContext.class);
 		data.initExport();
 		Path destHtmlPathObj = Paths.get(AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),
 				String.format("%s-%s", resource_id, UserInfoContext.getUserContext().getUserId()),
 				String.format("%s.html", resource_id));
-		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath()+"/img",AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),true);
-		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath()+"/js",AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(),true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/img",
+				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.TEAM.getTemplatePath() + "/js",
+				AttachmentPath.TEAM_HTML_TEMPLATE.getDesc(), true);
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {
@@ -904,25 +913,30 @@ public class TeamTrainRoomController {
 		}
 
 	}
-	public void initTeamReport(TeamRoom room,TrainReportContext trainReport) {
-		//基础信息
+
+	public void initTeamReport(TeamRoom room, TrainReportContext trainReport) {
+		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(room, RoomBaseInfo.class);
 		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
 		roomBaseInfo.setDurationTime(template.getDurationTime());
 		roomBaseInfo.initExportString();
-		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),roomBaseInfo.getDifficulty()));
+		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(
+				CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),
+				roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
-		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(room.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
+		List<UserRole> teachers = crRoleService.getUserRolesByRoomIdAndRoleGroups(
+				room.getResourceId(), Lists.newArrayList(CrRole.TeamRoleGroup.TEACHER.getCode()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
-		trainReport.setTeacherName(UserRole.getName(UserRole::getName,teachers));
+		trainReport.setTeacherName(UserRole.getName(UserRole::getName, teachers));
 		trainReport.initRbGetScoreRsps(false);
 	}
 
 	@ApiOperation("获取聊天框群组成员列表")
 	@GetMapping("/members_info")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<JSONObject> getMembersInfo(@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
-											  @ApiParam(name = "id", value = "房间id", required = true) String id) {
+	public BaseRsp<JSONObject> getMembersInfo(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id,
+			@ApiParam(name = "id", value = "房间id", required = true) String id) {
 		String userId = UserInfoContext.getUserContext().getUserId();
 		CrRole crRole = teamRoomService.checkRoomPermission(resource_id, userId);
 
@@ -932,11 +946,12 @@ public class TeamTrainRoomController {
 
 		return new BaseRsp(json);
 	}
+
 	@ApiOperation("任务删除")
 	@PostMapping("/mission_delete")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-	addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
+			addMissionInfo(@RequestBody @Validated MissionDeleteReq rbMissionDeleteReq) {
 		teamRoomService.checkRoomOpening(rbMissionDeleteReq.getRoomId());
 		if (CollectionUtils.isEmpty(rbMissionDeleteReq.getMissionConfig())) {
 			return new BaseRsp<>();
@@ -958,7 +973,6 @@ public class TeamTrainRoomController {
 						throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 
 					}
-
 
 					if (crTaskService.getByMissions(rbMissionDeleteReq.getRoomId(), deleteMissions)
 							.size() > 0) {
@@ -995,6 +1009,7 @@ public class TeamTrainRoomController {
 
 		return new BaseRsp<>();
 	}
+
 	@ApiOperation("团队对抗-复盘设备")
 	@GetMapping("/task/replayUserTimeInfo")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -1007,7 +1022,9 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
-		List<ScreenRecordUserRole> resList= screenService.getReplayUserTimeInfo(resource_id,teamRoom.getReplaySceneId(),node_id);
+		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
+				teamRoom.getReplaySceneId(), node_id, Lists.newArrayList(
+						CrRole.TeamRoleGroup.STUDENT.getCode()));
 		return new BaseRsp<>(resList);
 	}
 }

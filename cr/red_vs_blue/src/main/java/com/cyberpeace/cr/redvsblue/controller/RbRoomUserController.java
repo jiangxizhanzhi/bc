@@ -372,7 +372,7 @@ public class RbRoomUserController {
 		}
 		RbRoom room = rbRoomService.getById(resource_id);
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
-				room.getReplaySceneId(), node_id);
+				room.getReplaySceneId(), node_id,Lists.newArrayList(CrRole.RbRoleGroup.RED.getCode(),CrRole.RbRoleGroup.BLUE.getCode()));
 		return new BaseRsp<>(resList);
 	}
 

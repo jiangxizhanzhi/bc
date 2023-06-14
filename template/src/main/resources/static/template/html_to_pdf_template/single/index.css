@@ -23,14 +23,20 @@
 }
 
 .box_16 {
-  width: 656px;
-  margin: 10px auto;
+  /*width: 656px;*/
+  margin: 10px 15px;
+  display: block;
+  word-wrap:break-word;
+  white-space: normal;
+}
+.box_16 img{
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .thumbnail_18 {
   width: 14px;
   height: 14px;
-  margin: 4px 0 4px 0;
 }
 
 .text_2 {
@@ -42,13 +48,12 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 9px;
+  margin-left: 5px;
 }
 
 .icon_7 {
   width: 14px;
   height: 14px;
-  margin: 4px 0 4px 25px;
 }
 
 .text_3 {
@@ -60,13 +65,12 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 9px;
+  margin-left: 5px;
 }
 
 .icon_8 {
   width: 14px;
   height: 14px;
-  margin: 4px 0 4px 25px;
 }
 
 .text_4 {
@@ -78,13 +82,12 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 9px;
+  margin-left: 5px;
 }
 
 .thumbnail_19 {
   width: 14px;
   height: 14px;
-  margin: 4px 0 4px 25px;
 }
 
 .text_5 {
@@ -96,7 +99,7 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  margin-left: 9px;
+  margin-left: 5px;
 }
 
 .box_2 {

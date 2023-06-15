@@ -14,6 +14,7 @@ import com.cyberpeace.cr.evaluation.controller.rsp.EvalRoomPairRsp;
 import com.cyberpeace.cr.evaluation.dao.entity.*;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalAlgorithmMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
+import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
@@ -52,6 +53,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	@Autowired
 	private EvalAlgorithmMapper evalAlgorithmMapper;
 
+	@Autowired
+	private EvalVariableRefMapper evalVariableRefMapper;
+
 	private final Map<Integer, String> int2cn = new HashMap<Integer, String>() {
 
 		{
@@ -69,11 +73,10 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		return int2cn.get(level);
 	}
 
-
 	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
-		int res =0;
+		int res = 0;
 		JSONArray objects = JSONArray.parseArray(matrixData);
-		if(objects.size() != data.size()){
+		if (objects.size() != data.size()) {
 			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
 		}
 		double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
@@ -81,13 +84,11 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		double[] weight = new double[N];
 		AHPComputeWeight instance = AHPComputeWeight.getInstance();
 		instance.weight(formatMatrixData, weight, N);
-		for(int i =0; i < N;i++){
+		for (int i = 0; i < N; i++) {
 			res += weight[i] * data.get(i);
 		}
 		return res;
 	}
-
-
 
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
@@ -120,21 +121,25 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (scoreList.contains(null)) {
 			return;
 		}
-		List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
+		List<Serializable> otherArguments = evalAlgorithmRefService
+				.buildOtherArguments(evalIndexRef.getAlgorithmParams());
 
-		EvalLog.debug(evalRecord, evalIndexRef, String.format("code: %s", evalAlgorithmRef.getCode()));
-		EvalLog.debug(evalRecord, evalIndexRef, String.format("other arguments: %s", otherArguments));
-		EvalLog.debug(evalRecord, evalIndexRef, String.format("data argument: %s", JsonUtil.toJsonString(scoreList)));
+		EvalLog.debug(evalRecord, evalIndexRef,
+				String.format("code: %s", evalAlgorithmRef.getCode()));
+		EvalLog.debug(evalRecord, evalIndexRef,
+				String.format("other arguments: %s", otherArguments));
+		EvalLog.debug(evalRecord, evalIndexRef,
+				String.format("data argument: %s", JsonUtil.toJsonString(scoreList)));
 
 		Integer score;
 		try {
 			String algorithmId = evalAlgorithmRef.getResourceId();
 			EvalAlgorithmRef algorithmRef = evalAlgorithmRefService.getById(algorithmId);
-			if(algorithmRef.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())){
+			if (algorithmRef.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())) {
 				score = indexAhpPerform(evalIndexRef.getMatrixData(), scoreList);
 			} else {
-				score = remotePythonService.indexPerform(algorithmId,
-						evalAlgorithmRef.getCode(), scoreList, otherArguments);
+				score = remotePythonService.indexPerform(algorithmId, evalAlgorithmRef.getCode(),
+						scoreList, otherArguments);
 			}
 			EvalLog.debug(evalRecord, evalIndexRef,
 					String.format("system evaluation type index result: %s.", score));
@@ -182,7 +187,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			// 非指标项id, 查询变量项
 			EvalVariableRef evalVariableRef = evalVariableRefService.getById(indexId);
 			if (evalVariableRef == null) {
-				log.error("Resource not found! indexId = [{}]",indexId);
+				log.error("Resource not found! indexId = [{}]", indexId);
 				throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 			}
 			EvalRoomPairRsp evalRoomPairRsp = new EvalRoomPairRsp();
@@ -304,7 +309,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	public EvalRecordResultIndexRsp resultIndex(String indexId) {
 		EvalIndexRef evalIndexRef = getById(indexId);
 		if (evalIndexRef == null) {
-			log.error("Resource not found! indexId = [{}]",indexId);
+			log.error("Resource not found! indexId = [{}]", indexId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
 
@@ -325,7 +330,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		} else if (evalIndexRef.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
 			firstIndex.setChildren(collectionIndexes(firstIndex, 2, evalRecordResultIndexRspMap));
 		} else {
-			log.error("Invalid parameter! level = [{}]",evalIndexRef.getLevel());
+			log.error("Invalid parameter! level = [{}]", evalIndexRef.getLevel());
 			throw new BusinessException(ErrorCode.METHOD_ARG_NOT_VALID);
 		}
 		return firstIndex;
@@ -342,8 +347,8 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				.toJsonObjectArray(evalRecordResultIndexRsp.getNextIds(), String.class);
 
 		if (evalRecordResultIndexRsp.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
-			evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, nextLevelIdList).orderByAsc(EvalVariableRef::getId)
-					.list().forEach(evalVariableRef -> {
+			evalVariableRefMapper.getVariableIdByRecordIds(nextLevelIdList)
+					.forEach(evalVariableRef -> {
 						EvalRecordResultIndexRsp evalRecordResultIndexRsp1 = new EvalRecordResultIndexRsp();
 						BeanUtils.copyProperties(evalVariableRef, evalRecordResultIndexRsp1);
 						results.add(evalRecordResultIndexRsp1);

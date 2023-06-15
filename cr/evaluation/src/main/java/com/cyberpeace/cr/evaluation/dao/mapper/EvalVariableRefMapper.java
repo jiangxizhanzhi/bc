@@ -24,4 +24,8 @@ public interface EvalVariableRefMapper extends BaseMapper<EvalVariableRef> {
      * @return
      */
     List<EvalVariableRef> getByRecordId(@Param("recordId") String recordId);
+
+
+
+    List<EvalVariableRef> getVariableIdByRecordIds(List<String> evalIndicatorIds);
 }

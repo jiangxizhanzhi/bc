@@ -96,6 +96,8 @@ public interface CrSceneService {
 	 */
 	List<JSONObject> getAssetList(AssetPageReq req);
 
+	List<JSONObject> getAssetList(AssetPageReq req, Boolean realTimeHostState);
+
 	/**
 	 * 获取操作系统名字
 	 *

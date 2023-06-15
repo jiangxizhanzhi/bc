@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -21,6 +22,8 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.dao.mapper.EvalVariableRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.context.AlgorithmParamContext;
+import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
+import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -126,12 +129,14 @@ public class EvalAlgorithmRefController {
 			throw new BusinessException(CrBusinessErrorCode.MATRIX_DATA_EMPTY_ERROR);
 		}
 		try {
-			List<Serializable> otherArguments = evalAlgorithmRefService.buildOtherArguments(evalIndexRef.getAlgorithmParams());
-			Integer cr = remotePythonService.indexAhpPerform(req.getResourceId(), matrixData,
-					evalAlgorithmRef.getCode(), new ArrayList<>(), otherArguments);
-			if (null != cr) {
-				res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
-			}
+			double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
+			JSONArray objects = JSONArray.parseArray(matrixData);
+			int N = objects.size();
+			double[] weight = new double[N];
+			AHPComputeWeight instance = AHPComputeWeight.getInstance();
+			instance.weight(formatMatrixData, weight, N);
+			double cr = instance.getCR();
+			res.setCr(Boolean.parseBoolean(String.valueOf(cr < 0.1)));
 		} catch (RemoteServiceException e) {
 			String msg;
 			if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {

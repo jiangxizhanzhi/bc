@@ -192,31 +192,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 
 	@Override
 	public List<JSONObject> getAssetList(AssetPageReq req) {
-		String roomId = req.getResource_id();
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// make req
-		SceneNodeListReq listReq = new SceneNodeListReq();
-		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(roomId);
-		listReq.setId(mpSceneId);
-		listReq.setName(req.getPattern());
-		listReq.setSystemTypeName(req.getSystemTypeName());
-		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
-		// get role assets
-		if (role.isRvbStudent() || role.isTeamStudent()) {
-			// if student
-			CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(),
-					CrRoleNodesData.class);
-			List<String> assetNodeIds = nodesData.getAssetNodes().stream().map(CrRoleNode::getId)
-					.collect(Collectors.toList());
-			if (assetNodeIds.isEmpty()) {
-				// 没有资产，直接返回空列表
-				return Lists.newArrayList();
-			} else {
-				// 有资产，传入节点id
-				listReq.setElementIds(assetNodeIds);
-			}
-		}
-		return localSceneService.getAssetList(listReq);
+		return getAssetListWithHostState(req, false);
+	}
+
+	@Override
+	public List<JSONObject> getAssetList(AssetPageReq req, Boolean realTimeHostState) {
+		return getAssetListWithHostState(req, realTimeHostState);
 	}
 
 	@Override
@@ -402,5 +383,34 @@ public class CrSceneServiceImpl implements CrSceneService {
 		}
 
 		return true;
+	}
+
+	private List<JSONObject> getAssetListWithHostState(AssetPageReq req, Boolean realTimeHostState) {
+		String roomId = req.getResource_id();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// make req
+		SceneNodeListReq listReq = new SceneNodeListReq();
+		String mpSceneId = localSceneService.getMpSceneIdByBusinessInstanceId(roomId);
+		listReq.setId(mpSceneId);
+		listReq.setName(req.getPattern());
+		listReq.setSystemTypeName(req.getSystemTypeName());
+		listReq.setRealTimeHostState(realTimeHostState);
+		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+		// get role assets
+		if (role.isRvbStudent() || role.isTeamStudent()) {
+			// if student
+			CrRoleNodesData nodesData = JsonUtil.toJsonObject(role.getNodes(),
+					CrRoleNodesData.class);
+			List<String> assetNodeIds = nodesData.getAssetNodes().stream().map(CrRoleNode::getId)
+					.collect(Collectors.toList());
+			if (assetNodeIds.isEmpty()) {
+				// 没有资产，直接返回空列表
+				return Lists.newArrayList();
+			} else {
+				// 有资产，传入节点id
+				listReq.setElementIds(assetNodeIds);
+			}
+		}
+		return localSceneService.getAssetList(listReq);
 	}
 }

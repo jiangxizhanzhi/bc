@@ -456,7 +456,7 @@ public class TeamTrainStudentsController {
 		assetPageReq.setResource_id(resource_id);
 		List<JSONObject> availableDevices = null;
 		try {
-			availableDevices = crSceneService.getAssetList(assetPageReq);
+			availableDevices = crSceneService.getAssetList(assetPageReq, true);
 		} catch (BusinessException e) {
 			if(StringUtils.isNotEmpty(e.getMessage())
 					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
@@ -516,7 +516,7 @@ public class TeamTrainStudentsController {
 		assetPageReq.setResource_id(resource_id);
 		List<JSONObject> availableDevices = null;
 		try {
-			availableDevices = crSceneService.getAssetList(assetPageReq);
+			availableDevices = crSceneService.getAssetList(assetPageReq, true);
 		} catch (BusinessException e) {
 			if(StringUtils.isNotEmpty(e.getMessage())
 					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) { // 如果是场景未启动导致的就返回空数组

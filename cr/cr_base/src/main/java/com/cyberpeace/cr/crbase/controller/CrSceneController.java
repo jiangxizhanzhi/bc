@@ -92,7 +92,7 @@ public class CrSceneController {
 			logical = Logical.OR)
 	public BaseRsp<ListRsp<JSONObject>> getAssets(@Validated AssetPageReq req) {
 		CrCommonValidator.validateId(req.getResource_id());
-		List<JSONObject> res = crSceneService.getAssetList(req);
+		List<JSONObject> res = crSceneService.getAssetList(req, false);
 		return new BaseRsp<>(PageUtil.pageList(res, req.getPage(), req.getPerPage()));
 	}
 

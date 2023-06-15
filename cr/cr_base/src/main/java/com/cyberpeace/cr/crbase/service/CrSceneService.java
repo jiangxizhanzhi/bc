@@ -90,13 +90,13 @@ public interface CrSceneService {
 
 	/**
 	 * 获取资产列表
+	 * 不做分页
 	 *
-	 * @param req 请求体
+	 * @param req               请求体
+	 * @param withHostState 实时主机状态
 	 * @return {@code List<JSONObject>}
 	 */
-	List<JSONObject> getAssetList(AssetPageReq req);
-
-	List<JSONObject> getAssetList(AssetPageReq req, Boolean realTimeHostState);
+	List<JSONObject> getAssetList(AssetPageReq req, Boolean withHostState);
 
 	/**
 	 * 获取操作系统名字

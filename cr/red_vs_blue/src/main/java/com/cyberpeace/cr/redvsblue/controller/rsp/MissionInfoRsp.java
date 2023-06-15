@@ -60,6 +60,7 @@ public class MissionInfoRsp implements Serializable {
 	@ApiModelProperty("展示题解")
 	private Boolean writeUpShow;
 
+	private String remark;
 
 	public void initUserMissionStatus(TaskContext taskContext) {
 		if (CrTask.TaskStatus.RELEASED.getCode().equals(taskContext.getStatus())) {

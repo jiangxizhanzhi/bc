@@ -8,6 +8,7 @@ import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 标记新增请求体
@@ -32,7 +33,7 @@ public class MarkAddReq implements Serializable {
 
 	public void validate() {
 		CrCommonValidator.validateNameLen(this.name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		if (this.description.length() != 0) {
+		if (!StringUtils.isEmpty(description)) {
 			CrCommonValidator.validateDescLen(this.description,
 					CrBusinessErrorCode.ILLEGAL_DESC_LEN);
 		}

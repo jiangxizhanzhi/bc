@@ -451,8 +451,6 @@ public class TeamTrainStudentsController {
 
 		// 1.拉取场景中可用 设备
 		AssetPageReq assetPageReq = new AssetPageReq();
-		assetPageReq.setPage(1);
-		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
 		List<JSONObject> availableDevices = null;
 		try {
@@ -511,8 +509,6 @@ public class TeamTrainStudentsController {
 			@ApiParam(name = "name", value = "搜索关键字", required = false) String name) {
 		// 2.拉取场景中可用 设备
 		AssetPageReq assetPageReq = new AssetPageReq();
-		assetPageReq.setPage(1);
-		assetPageReq.setPerPage(Integer.MAX_VALUE);
 		assetPageReq.setResource_id(resource_id);
 		List<JSONObject> availableDevices = null;
 		try {

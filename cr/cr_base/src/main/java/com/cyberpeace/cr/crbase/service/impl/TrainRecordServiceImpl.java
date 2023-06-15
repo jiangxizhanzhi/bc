@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.Date;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.cyberpeace.cr.crbase.dao.mapper.TrainRecordMapper;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 
 @Service
+@Slf4j
 public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, TrainRecord> implements TrainRecordService {
 
 	@Autowired
@@ -100,5 +102,16 @@ public class TrainRecordServiceImpl extends ServiceImpl<TrainRecordMapper, Train
 			return TimeUtil.getColonTimeInterval(trainRecord.getStartTime(), new Date());
 		}
 	}
+
+    @Override
+    public Date getActualEndTime(String roomId) {
+		TrainRecord trainRecord = this.getByRoomId(roomId);
+		if(null != trainRecord && null != trainRecord.getEndTime()){
+			return trainRecord.getEndTime();
+		} else {
+			log.error("training not existing or not ended: [{}]", roomId);
+			return null;
+		}
+    }
 
 }

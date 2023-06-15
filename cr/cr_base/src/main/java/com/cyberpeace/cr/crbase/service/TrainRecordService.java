@@ -81,4 +81,12 @@ public interface TrainRecordService extends IService<TrainRecord> {
 	String getTimeCost(String roomId);
 
     String getColonTimeCost(String roomId);
+
+	/**
+	 * 获取实际结束时间
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Date}
+	 */
+	Date getActualEndTime(String roomId);
 }

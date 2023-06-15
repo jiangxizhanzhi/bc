@@ -76,6 +76,10 @@ public class RtksResourceServiceImpl implements RtksResourceService {
 	}
 
 	private void saveResource(RtksRoleResource resource) {
+		if (Boolean.TRUE.equals(roleService.ifNameDuplicate(resource.getName(), ""))) {
+			log.info("duplicated rtks role: [{}]", resource.getName());
+			return;
+		}
 		String levelName = resource.getLevel().split("/")[2].trim();
 		String levelId = levelMapper.getLevelIdByName(levelName);
 		if (null == levelId) {

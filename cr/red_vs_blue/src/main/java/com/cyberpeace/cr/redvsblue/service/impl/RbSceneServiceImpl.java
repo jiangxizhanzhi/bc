@@ -230,11 +230,16 @@ public class RbSceneServiceImpl implements RbSceneService {
 		if (StringUtils.isBlank(room.getLocalSceneId())) {
 			return true;
 		}
-
-		Boolean stopResult = localSceneService.stopScene(room.getLocalSceneId());
+		LocalScene localScene = localSceneService.getById(room.getLocalSceneId());
+		Boolean stopResult = localSceneService.stopScene(localScene);
 		if (stopResult) {
 			// 记录复盘用的scene_id
-			room.setReplaySceneId(localSceneService.getMpSceneIdByBusinessInstanceId(roomId));
+			// 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
+			// 只有训练已结束且场景开启时间在训练结束之后，才不更新
+			if (!(room.isEnded() && localScene.getCreateTime()
+					.after(rbTimeManagementService.getActualEndTime(roomId)))) {
+				room.setReplaySceneId(localScene.getMpSceneId());
+			}
 			// 清除localScene
 			clearLocal(room);
 			// 清理 device

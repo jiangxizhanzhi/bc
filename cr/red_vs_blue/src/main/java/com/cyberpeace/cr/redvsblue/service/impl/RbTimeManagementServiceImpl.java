@@ -3,6 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -135,4 +137,15 @@ public class RbTimeManagementServiceImpl extends ServiceImpl<RbTimeManagementMap
 			return TimeUtil.getColonTimeInterval(timeManagement.getCreateTime(), new Date());
 		}
 	}
+
+    @Override
+    public Date getActualEndTime(String roomId) {
+		RbTimeManagement management = this.getByRoomId(roomId);
+		if(null != management && management.isStopped()){
+			return management.getUpdateTime();
+		} else {
+			log.error("training not existing or not ended: [{}]", roomId);
+			return null;
+		}
+    }
 }

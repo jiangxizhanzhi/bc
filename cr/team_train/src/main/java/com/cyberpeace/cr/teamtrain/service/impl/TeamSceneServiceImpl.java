@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
+import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
@@ -58,6 +59,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 	@Autowired
 	private SceneFilterService sceneFilterService;
+
+	@Autowired
+	private TrainRecordService trainRecordService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -176,11 +180,17 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		if (StringUtils.isBlank(teamRoom.getLocalSceneId())) {
 			return true;
 		}
+		LocalScene localScene = localSceneService.getById(teamRoom.getLocalSceneId());
 
-		Boolean stopResult = localSceneService.stopScene(teamRoom.getLocalSceneId());
+		Boolean stopResult = localSceneService.stopScene(localScene);
 		if (stopResult) {
-			// 记录复盘sceneId
-			teamRoom.setReplaySceneId(localSceneService.getMpSceneIdByBusinessInstanceId(roomId));
+			// 记录复盘sceneId,
+			// 是否需要更新replay_scene_id。训练未结束，更新；训练已结束，场景开始时间在训练结束之前才更新。
+			// 只有训练已结束且场景开启时间在训练结束之后，才不更新
+			if (!(teamRoom.isEnded() && localScene.getCreateTime()
+					.after(trainRecordService.getActualEndTime(roomId)))) {
+				teamRoom.setReplaySceneId(localScene.getMpSceneId());
+			}
 			// 清除localScene
 			clearLocal(teamRoom);
 		}

@@ -51,7 +51,7 @@ public class ScreenServiceImpl implements ScreenService {
         Map<String,Integer> map = new HashMap<>();
         for (CrRole role : roles) {
             for (String userId : role.getUserIdList()) {
-                map.put(userId,role.getBusinessType());
+                map.put(userId,role.getRoleGroup());
             }
         }
         List<ScreenRecordRsp> userNodes = BeanUtils.deepCopyList(list, ScreenRecordRsp.class);
@@ -59,6 +59,9 @@ public class ScreenServiceImpl implements ScreenService {
         List<ScreenRecordUserRole> resList= new ArrayList<>();
         for (Map.Entry<String, List<ScreenRecordRsp>> entry : userMap.entrySet()) {
             String userId = entry.getKey();
+            if (!map.containsKey(userId)){
+                continue;
+            }
             List<ScreenRecordRsp> recordRsps = entry.getValue();
             ScreenRecordUserRole recordUserRole = new ScreenRecordUserRole();
             recordUserRole.setName(recordRsps.get(0).getUser_name());

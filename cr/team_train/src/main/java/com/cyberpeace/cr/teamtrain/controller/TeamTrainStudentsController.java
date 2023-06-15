@@ -661,12 +661,14 @@ public class TeamTrainStudentsController {
 
 			for(TeamCommonDevice commonDevice : collectedCommonDevices) {
 				if(!commonDevice.getDeviceId().equals(availableDevice.getString("id"))) {
-					continue outer;
+					continue;
 				}
 				org.springframework.beans.BeanUtils.copyProperties(commonDevice, context);
+				context.setDeviceInfo(availableDevice);
+				context.setOccupyFlag(1);
+				commonDeviceContexts.add(context);
+				continue outer;
 			}
-			context.setDeviceInfo(availableDevice);
-			commonDeviceContexts.add(context);
 		}
 		return commonDeviceContexts;
 	}

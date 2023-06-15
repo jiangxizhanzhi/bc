@@ -454,12 +454,14 @@ public class RbSceneController {
 
 			for(RbCommonDevice commonDevice : collectedCommonDevices) {
 				if(!commonDevice.getDeviceId().equals(availableDevice.getString("id"))) {
-					continue outer;
+					continue;
 				}
 				BeanUtils.copyProperties(commonDevice, context);
+				context.setDeviceInfo(availableDevice);
+				context.setOccupyFlag(1);
+				commonDeviceContexts.add(context);
+				continue outer;
 			}
-			context.setDeviceInfo(availableDevice);
-			commonDeviceContexts.add(context);
 		}
 		return commonDeviceContexts;
 	}

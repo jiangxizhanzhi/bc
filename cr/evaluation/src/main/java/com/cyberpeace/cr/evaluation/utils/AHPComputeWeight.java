@@ -116,6 +116,8 @@ public class AHPComputeWeight {
             w1[i] = round(w1[i], 4);
             w2[i] = round(w2[i], 4);
         }
+
+        System.arraycopy(w2, 0, weight, 0, N);
     }
 
 

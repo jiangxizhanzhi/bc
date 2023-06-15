@@ -323,7 +323,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				.toJsonObjectArray(evalRecordResultIndexRsp.getNextIds(), String.class);
 
 		if (evalRecordResultIndexRsp.getLevel().equals(EvalIndexRef.Level.AGGREGATION.getCode())) {
-			evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, nextLevelIdList)
+			evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, nextLevelIdList).orderByAsc(EvalVariableRef::getId)
 					.list().forEach(evalVariableRef -> {
 						EvalRecordResultIndexRsp evalRecordResultIndexRsp1 = new EvalRecordResultIndexRsp();
 						BeanUtils.copyProperties(evalVariableRef, evalRecordResultIndexRsp1);

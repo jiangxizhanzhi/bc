@@ -1,16 +1,11 @@
 
 
--- TODO 修改py内容
+
 ALTER TABLE cr_eval_algorithm  add column `mode` int(1) NOT NULL DEFAULT 0 COMMENT '0为其他算法，1为层次分析法';
 ALTER TABLE cr_eval_algorithm  add column `builtin` int(1) NOT NULL DEFAULT 0 COMMENT '0为内置算法，1为用户自定义算法';
 
-INSERT INTO `cr_eval_algorithm` VALUES (17, '230ced924ec485dd37c3945b4d4c13d4', '层次分析法', NULL , 0, 4, 0,
+INSERT INTO `cr_eval_algorithm` VALUES (NULL, '230ced924ec485dd37c3945b4d4c13d4', '层次分析法', NULL , 0, 4, 0,
 'import numpy as np\n\n\ndef solution(matrix_data, data, other_arguments):\n    RI = (0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49)\n    input_matrix = np.array(matrix_data)\n    n, n1 = input_matrix.shape\n    assert n == n1, ''不是一个方阵''\n    for i in range(n):\n        for j in range(n):\n            if np.abs(input_matrix[i, j] * input_matrix[j, i] - 1) > 1e-7:\n                raise ValueError(''不是反互对称矩阵'')\n\n    eigenvalues, eigenvectors = np.linalg.eig(input_matrix)\n\n    max_idx = np.argmax(eigenvalues)\n    eigen = eigenvectors[:, max_idx].real\n    eigen = eigen / eigen.sum()\n\n    res = 0\n    if n > 9:\n        return res\n    for i in range(len(eigen)):\n        res += data[i] * eigen[i]\n    return round(res, 2)', '[]', 0, '3f655d87112f4ae094bbaf70830e20aa', '2023-05-05 16:25:14', '2023-05-05 16:25:45',1, 0);
-
--- 新增层次分析法参数校验一致性
-INSERT INTO `cr_eval_algorithm_ref` VALUES (1, '731d327c7983448ca42c47faae38df58', '层次分析法', NULL, 4, 0,
-'import numpy as np\nimport logging\n\n\ndef solution(matrix_data, data, other_arguments):\n    """\n    聚合算法层次分析法模板\n    :param matrix_data: 矩阵数据 [[1, 2, 7, 5, 5],\n                         [1 / 2, 1, 4, 3, 3],\n                         [1 / 7, 1 / 4, 1, 1 / 2, 1 / 3],\n                         [1 / 5, 1 / 3, 2, 1, 1],\n                         [1 / 5, 1 / 3, 3, 1, 1]]\n    :param data: 包含元素均为0~100 int\n    :param other_arguments: List[int, str, bool], 可配置参数列表, 长度、索引一致\n    :return: 聚合算法结果, 0~100\n    """\n    RI = (0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49)\n    logging.info("matrix_data: ", matrix_data)\n    input_matrix = np.array(matrix_data)\n    n, n1 = input_matrix.shape\n    assert n == n1, \'不是一个方阵\'\n    for i in range(n):\n        for j in range(n):\n            if np.abs(input_matrix[i, j] * input_matrix[j, i] - 1) > 1e-7:\n                raise ValueError(\'不是反互对称矩阵\')\n\n    eigenvalues, eigenvectors = np.linalg.eig(input_matrix)\n\n    max_idx = np.argmax(eigenvalues)\n    max_eigen = eigenvalues[max_idx].real\n    if n > 9:\n        return None\n    else:\n        CI = (max_eigen - n) / (n - 1)\n        CR = CI / RI[n]\n    logging.info(\'CR:\', CR)\n    return round(CR, 2)',
- '2023-06-05 17:21:50', '2023-06-06 16:31:33', 0, NULL);
 
 
 ALTER TABLE cr_eval_indicator  add column `matrix_data` longtext NULL COMMENT '层次分析法矩阵参数';

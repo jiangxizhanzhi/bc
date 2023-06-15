@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
@@ -16,6 +17,8 @@ import com.cyberpeace.cr.evaluation.dao.mapper.EvalIndexRefMapper;
 import com.cyberpeace.cr.evaluation.service.EvalAlgorithmRefService;
 import com.cyberpeace.cr.evaluation.service.EvalIndexRefService;
 import com.cyberpeace.cr.evaluation.service.EvalVariableRefService;
+import com.cyberpeace.cr.evaluation.utils.AHPComputeWeight;
+import com.cyberpeace.cr.evaluation.utils.MatrixData;
 import com.cyberpeace.integratation.service.RemotePythonService;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,6 +68,26 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		}
 		return int2cn.get(level);
 	}
+
+
+	private Integer indexAhpPerform(String matrixData, List<Integer> data) {
+		int res =0;
+		JSONArray objects = JSONArray.parseArray(matrixData);
+		if(objects.size() != data.size()){
+			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
+		}
+		double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
+		int N = objects.size();
+		double[] weight = new double[N];
+		AHPComputeWeight instance = AHPComputeWeight.getInstance();
+		instance.weight(formatMatrixData, weight, N);
+		for(int i =0; i < N;i++){
+			res += weight[i] * data.get(i);
+		}
+		return res;
+	}
+
+
 
 	@Override
 	public void startIndex(EvalIndexRef evalIndexRef, EvalAlgorithmRef evalAlgorithmRef,
@@ -111,8 +131,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 			String algorithmId = evalAlgorithmRef.getResourceId();
 			EvalAlgorithmRef algorithmRef = evalAlgorithmRefService.getById(algorithmId);
 			if(algorithmRef.getMode().equals(EvalAlgorithm.Mode.FORMAT_ALGORITHM.getCode())){
-				score = remotePythonService.indexAhpPerform(algorithmId, evalIndexRef.getMatrixData(),
-						evalAlgorithmRef.getCode(), scoreList, otherArguments);
+				score = indexAhpPerform(evalIndexRef.getMatrixData(), scoreList);
 			} else {
 				score = remotePythonService.indexPerform(algorithmId,
 						evalAlgorithmRef.getCode(), scoreList, otherArguments);

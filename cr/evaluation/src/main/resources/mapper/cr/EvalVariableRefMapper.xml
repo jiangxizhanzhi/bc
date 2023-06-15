@@ -12,4 +12,16 @@
         select resource_id, name, format_algorithm_id, match_algorithm_id, mark_algorithm_id from cr_eval_variable_ref
         where record_id = #{recordId}
     </select>
+    <select id="getVariableIdByRecordIds" resultType="com.cyberpeace.cr.evaluation.dao.entity.EvalVariableRef">
+        select * from cr_eval_variable_ref
+        where resource_id in
+        <foreach collection="evalIndicatorIds" open="(" close=")" separator="," item="resource_id">
+            #{resource_id}
+        </foreach>
+        order by field(resource_id,
+        <foreach item="resource_id" collection="evalIndicatorIds" separator=",">
+            #{resource_id}
+        </foreach>
+        );
+    </select>
 </mapper>

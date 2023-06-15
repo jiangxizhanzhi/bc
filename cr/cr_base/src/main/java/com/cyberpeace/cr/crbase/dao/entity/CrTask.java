@@ -46,6 +46,8 @@ public class CrTask extends BaseTable {
 
 	private String missionTemplateId;
 
+	private String remark;
+
 	public Boolean isFinished() {
 		boolean result = status.intValue() == TaskStatus.SUCCESS.getCode();
 		result = result || status.intValue() == TaskStatus.FAIL.getCode();

@@ -363,7 +363,12 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 	@Override
 	public void submitAnswer(String missionId, String answer, String userId,
-			String answerExtension) {
+							 String answerExtension){
+		submitAnswer(missionId,answer,userId,answerExtension,"");
+	}
+
+	public void submitAnswer(String missionId, String answer, String userId,
+			String answerExtension,String remark) {
 		Mission mission = missionMapper.selectById(missionId);
 		if (mission == null) {
 			log.error("mission does not exist, id=[{}]", missionId);
@@ -430,6 +435,7 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 
 		task.setUserAnswer(answer);
 		task.setLastSubmitTime(new Date());
+		task.setRemark(remark);
 
 		crTaskSubmit.setScore(task.getScore());
 		crTaskSubmit.setEvaluateStatus(task.getStatus());
@@ -744,6 +750,11 @@ public class CrTaskServiceImpl extends ServiceImpl<CrTaskMapper, CrTask> impleme
 		}
 
 		return rejectLogs;
+	}
+
+	@Override
+	public void submitMissions(String roomId, String missionId, String answer, String remark) {
+		submitAnswer(missionId, answer, UserInfoContext.getUserContext().getUserId(), "",remark);
 	}
 
 }

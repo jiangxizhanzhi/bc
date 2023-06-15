@@ -266,7 +266,7 @@ public class TeamTrainStudentsController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),submitMissionsReq.getRemark());
 				teamTeacherService.notifySubmission(submitMissionsReq.getMissionHash());
 			}
 		});

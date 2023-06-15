@@ -18,4 +18,8 @@ public class SubmitMissionsReq {
 
 	@ApiModelProperty(required = true, value = "提交答案")
  	private String answer;
+
+	@ApiModelProperty(required = true, value = "备注")
+	private String remark;
+
 }

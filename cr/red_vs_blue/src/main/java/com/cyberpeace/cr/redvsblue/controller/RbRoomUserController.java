@@ -242,7 +242,7 @@ public class RbRoomUserController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer());
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),submitMissionsReq.getRemark());
 				rbRefereeService.notifySubmission(submitMissionsReq.getMissionHash());
 			}
 		});

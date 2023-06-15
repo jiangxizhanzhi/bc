@@ -360,4 +360,7 @@ public interface CrTaskService {
 
 	List<CrTaskRejectRsp> getTaskRejctsByTaskId(String taskId);
 
+	void submitAnswer(String missionId, String answer, String userId, String answerExtension,String remark);
+
+	void submitMissions(String roomId, String missionId, String answer,String remark);
 }

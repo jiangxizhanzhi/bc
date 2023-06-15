@@ -65,6 +65,9 @@ public interface MenuConstant {
     //课程表
     String CMS_CLASS_ROOM = "class-card";
 
+    //课程管理
+    String CMS_TRAIN_MANAGE = "course-train";
+
     //学习统计
     String CMS_COURSE_STATISTICS = "learn-statistics";
 

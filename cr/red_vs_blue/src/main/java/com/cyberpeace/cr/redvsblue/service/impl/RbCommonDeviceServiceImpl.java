@@ -69,4 +69,9 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	public void deleteByDeviceId(String deviceId) {
 		rbCommonDeviceMapper.deleteByDeviceId(deviceId);
 	}
+
+    @Override
+    public void delByRoomId(String roomId) {
+        rbCommonDeviceMapper.deleteByRoomId(roomId);
+    }
 }

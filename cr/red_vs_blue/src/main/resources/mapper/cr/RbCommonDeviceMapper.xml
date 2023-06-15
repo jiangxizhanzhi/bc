@@ -58,4 +58,10 @@
         from cr_rb_common_device
         where device_id = #{deviceId}
     </delete>
+
+    <delete id="deleteByRoomId">
+        DELETE
+        FROM cr_rb_common_device
+        WHERE room_id = #{roomId}
+    </delete>
 </mapper>

@@ -69,4 +69,9 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	public void deleteByDeviceId(String nodeId) {
 		teamCommonDeviceMapper.deleteByDeviceId(nodeId);
 	}
+
+    @Override
+    public void delByRoomId(String roomId) {
+
+    }
 }

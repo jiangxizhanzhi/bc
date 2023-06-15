@@ -46,4 +46,10 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * @param nodeId 节点id
 	 */
 	void deleteByDeviceId(String nodeId);
+
+	/**
+	 * 根据房间id删除 常用设备
+	 * @param roomId 房间id
+	 */
+	void delByRoomId(String roomId);
 }

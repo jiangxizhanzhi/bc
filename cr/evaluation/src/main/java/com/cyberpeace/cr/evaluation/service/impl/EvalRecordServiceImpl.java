@@ -139,7 +139,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
     private EvalRecordMapper evalRecordMapper;
 
     @Autowired
-    private EvalIndexRefMapper evalIndexRefMapper;
+    private EvalIndexMapper evalIndexMapper;
 
     private static final long onceProbeDataSize = 1000L;  // 10/100/1000
 
@@ -401,7 +401,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         // 前三级指标按照"level"降序排序
         evalIndexList = evalIndexList.stream().sorted(Comparator.comparing(EvalIndex::getLevel).reversed()).collect(Collectors.toList());
+        List<EvalIndex> evalIndices = evalIndexMapper.selectList(null);
 
+        Map<String, EvalIndex> evalIndexMap = StreamApiUtils.toMap(evalIndices, EvalIndex::getResourceId, s -> s);
         // 生成一、二、三级指标
         evalIndexList.forEach(evalIndex -> {
             EvalIndexRef evalIndexRef = new EvalIndexRef();
@@ -464,7 +466,26 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     matrixData = matrixData.replaceAll(nextId, currentId);
                 }
             }
-            evalIndexRef.setMatrixData(matrixData);
+            if(evalIndex.getLevel().equals(EvalIndex.Level.SECOND.getCode()) && StringUtils.isNotBlank(matrixData)){
+                // 三级指标的 indicator id与 三级指标 resource_id 关联
+                Map<String, String> tmp = new HashMap<>();
+                for(String id:nextIdLists){
+                    EvalIndex index = evalIndexMap.get(id);
+                    String evalIndicatorId = index.getEvalIndicatorId();
+                    tmp.put(evalIndicatorId, index.getResourceId());
+                }
+                JSONArray objects = JsonUtil.stringToArray(matrixData);
+                // 从上面的map 中获取三级指标的indicator 对应的id 并替换成当前新生成的id
+                for(int i = 0;i< objects.size();i++){
+                    JSONObject object = objects.getJSONObject(i);
+                    String key = object.getString("key");
+                    String resourceId = tmp.get(key);
+                    String currentId = evalIndexIdsMap.get(resourceId);
+                    matrixData = matrixData.replaceAll(key, currentId);
+                    evalIndexRef.setMatrixData(matrixData);
+                }
+            }
+
             indexRefs.add(evalIndexRef);
             evalIndexIdsMap.put(evalIndex.getResourceId(), evalIndexRef.getResourceId());
         });

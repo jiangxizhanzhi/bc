@@ -418,6 +418,7 @@ public class RbRoomUserController {
 		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
 		missionRsp.setDescription(taskContext.getMission().getDescription());
 		missionRsp.setUserAnswer(taskContext.getUserAnswer());
+		missionRsp.setRemark(taskContext.getRemark());
 		if (!taskContext.getMission().getShowWriteup()) {
 			missionRsp.setWriteUp("");
 		}

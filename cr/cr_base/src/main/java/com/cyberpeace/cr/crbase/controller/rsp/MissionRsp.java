@@ -34,4 +34,7 @@ public class MissionRsp implements Serializable {
 
 	@ApiModelProperty("用户答案")
 	private String userAnswer;
+
+	@ApiModelProperty("备注")
+	private String remark;
 }

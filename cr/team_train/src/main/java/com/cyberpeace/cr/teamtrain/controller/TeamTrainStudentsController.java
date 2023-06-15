@@ -296,7 +296,7 @@ public class TeamTrainStudentsController {
 		missionRsp.setShowWriteup(taskContext.getMission().getShowWriteup());
 		missionRsp.setWriteUp(taskContext.getMission().getWriteUp());
 		missionRsp.setDescription(taskContext.getMission().getDescription());
-
+		missionRsp.setRemark(taskContext.getRemark());
 		missionRsp.setUserAnswer(taskContext.getUserAnswer());
 		if (!taskContext.getMission().getShowWriteup()) {
 			missionRsp.setWriteUp("");

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -67,4 +68,12 @@ public interface RbTimeManagementService extends IService<RbTimeManagement> {
 	String getTimeCost(String roomId);
 
 	String getColonTimeCost(String roomId);
+
+	/**
+	 * 获取实际的训练结束时间
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Date}
+	 */
+	Date getActualEndTime(String roomId);
 }

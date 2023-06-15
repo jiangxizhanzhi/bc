@@ -64,12 +64,16 @@ public class SingleRoomScoreController {
 
 	@Autowired
 	SingleRoomService singleRoomService;
+
 	@Autowired
 	TrainRecordService trainRecordService;
+
 	@Autowired
 	private CrRoleService crRoleService;
+
 	@Autowired
 	private CrScoreController crScoreController;
+
 	@Autowired
 	private MissionService missionService;
 
@@ -81,6 +85,7 @@ public class SingleRoomScoreController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
 	/**
 	 * 5.4弃用
 	 * /single_train/single_train/record/detail 替代
@@ -139,19 +144,27 @@ public class SingleRoomScoreController {
 	@GetMapping("/train2pdf")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public void dumpTrainRecord2PDF(HttpServletResponse httpServletResponse,
-			@RequestParam("room_id") String roomId) {
+			@RequestParam("room_id") String roomId, @RequestParam("index") Integer index) {
 		RecordDetail data = getRecordDetail(roomId).getData();
+		data.setIndex(index);
 		List<RadarLabel> radarLabels = missionService.getRadarLabel();
-		data.setTrainingTimeString(DateUtil.DateToString(data.getTrainingTime(),"yyyy-MM-dd HH:mm:ss"));
-		data.setSubTypeString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.TRAINING_CATEGORY.getCode(),data.getSubType()));
-		data.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),data.getDifficulty()));
-		data.setRadarsString(data.getRadars().stream().map(a->Integer.toString(a)).collect(Collectors.joining(",")));
+		data.setTrainingTimeString(
+				DateUtil.DateToString(data.getTrainingTime(), "yyyy-MM-dd HH:mm:ss"));
+		data.setSubTypeString(crConstantsService.geCnNameByTypeAndCode(
+				CrConstantsConfig.ConstantsType.TRAINING_CATEGORY.getCode(), data.getSubType()));
+		data.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(
+				CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(), data.getDifficulty()));
+		data.setRadarsString(data.getRadars().stream().map(a -> Integer.toString(a))
+				.collect(Collectors.joining(",")));
 
-		data.setRadarNamesString(radarLabels.stream().map(a->"{ name: '"+a.getLabel()+"', max: 100 }").collect(Collectors.joining(",")));
+		data.setRadarNamesString(
+				radarLabels.stream().map(a -> "{ name: '" + a.getLabel() + "', max: 100 }")
+						.collect(Collectors.joining(",")));
 		Path destHtmlPathObj = Paths.get(AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),
 				String.format("%s-%s", roomId, UserInfoContext.getUserContext().getUserId()),
 				String.format("%s.html", roomId));
-		FileUtil.copyDirectory(HtmlTemplateEnum.SINGLE.getTemplatePath()+"/img",AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(),true);
+		FileUtil.copyDirectory(HtmlTemplateEnum.SINGLE.getTemplatePath() + "/img",
+				AttachmentPath.SINGLE_HTML_TEMPLATE.getDesc(), true);
 		// 临时存放目录
 		File directory = destHtmlPathObj.getParent().toFile();
 		if (!directory.exists()) {

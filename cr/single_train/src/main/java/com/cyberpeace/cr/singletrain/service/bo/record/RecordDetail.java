@@ -55,4 +55,5 @@ public class RecordDetail extends RecordRspBase implements Serializable {
 	@ApiModelProperty(value = "任务详情")
 	private List<RecordStageBo> stages = Lists.newArrayList();
 
+	private Integer index;
 }

@@ -32,6 +32,9 @@ public class MarkAddReq implements Serializable {
 
 	public void validate() {
 		CrCommonValidator.validateNameLen(this.name, CrBusinessErrorCode.ILLEGAL_NAME_LEN);
-		CrCommonValidator.validateDescLen(this.description, CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		if (this.description.length() != 0) {
+			CrCommonValidator.validateDescLen(this.description,
+					CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
 	}
 }

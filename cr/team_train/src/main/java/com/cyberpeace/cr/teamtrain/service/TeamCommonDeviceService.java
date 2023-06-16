@@ -20,7 +20,7 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * 获取所有已添加为常用资产的 resourceIds
 	 * @return 常用资产的 deviceIds
 	 */
-	List<TeamCommonDevice> getAllCollectedCommonDeviceDevices();
+	List<TeamCommonDevice> getAllCollectedCommonDeviceDevices(String roomId);
 
 	/**
 	 * 批量添加常用资产
@@ -46,4 +46,10 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * @param nodeId 节点id
 	 */
 	void deleteByDeviceId(String nodeId);
+
+	/**
+	 * 根据房间id删除 常用设备
+	 * @param roomId 房间id
+	 */
+	void delByRoomId(String roomId);
 }

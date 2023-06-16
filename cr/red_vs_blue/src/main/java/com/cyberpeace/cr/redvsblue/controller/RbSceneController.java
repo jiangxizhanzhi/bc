@@ -100,6 +100,7 @@ public class RbSceneController {
 		String roomId = sceneStopReq.getRoomId();
 
 		Boolean result = rbSceneService.stopScene(roomId);
+		rbCommonDeviceService.delByRoomId(roomId);
 		return new BaseRsp(result);
 	}
 
@@ -323,7 +324,7 @@ public class RbSceneController {
 		// 2.获取占用的设备
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
-		List<RbCommonDevice> allCollectedCommonDeviceDevices = rbCommonDeviceService.getAllCollectedCommonDeviceDevices();
+		List<RbCommonDevice> allCollectedCommonDeviceDevices = rbCommonDeviceService.getAllCollectedCommonDeviceDevices(resource_id);
 
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
 		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceDevices);

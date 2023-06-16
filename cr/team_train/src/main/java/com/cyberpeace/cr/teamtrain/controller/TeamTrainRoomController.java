@@ -30,7 +30,6 @@ import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.TrainRecord;
-import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.*;
@@ -51,6 +50,7 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
+import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
@@ -65,7 +65,6 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
@@ -131,22 +130,13 @@ public class TeamTrainRoomController {
 	private TrainRecordService trainRecordService;
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private TeamTemplateMapper teamTemplateMapper;
-
-	@Autowired
-	private BusinessTemplateMapper businessTemplateMapper;
 
 	@Autowired
 	private TeamRoomMapper teamRoomMapper;
 
 	@Autowired
 	private RtksRelatedService rtksRelatedService;
-
-	@Autowired
-	private RemoteUserService remoteUserService;
 
 	@Autowired
 	private CrScoreService crScoreService;
@@ -156,6 +146,9 @@ public class TeamTrainRoomController {
 
 	@Autowired
 	private CrConstantsService crConstantsService;
+
+	@Autowired
+	private TeamCommonDeviceService teamCommonDeviceService;
 
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")

@@ -28,8 +28,8 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
     }
 
     @Override
-    public List<TeamCommonDevice> getAllCollectedCommonDeviceDevices() {
-        return teamCommonDeviceMapper.selectAllDevices();
+    public List<TeamCommonDevice> getAllCollectedCommonDeviceDevices(String roomId) {
+        return teamCommonDeviceMapper.selectAllDevices(roomId);
     }
 
     @Override
@@ -69,4 +69,9 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 	public void deleteByDeviceId(String nodeId) {
 		teamCommonDeviceMapper.deleteByDeviceId(nodeId);
 	}
+
+    @Override
+    public void delByRoomId(String roomId) {
+        teamCommonDeviceMapper.deleteByRoomId(roomId);
+    }
 }

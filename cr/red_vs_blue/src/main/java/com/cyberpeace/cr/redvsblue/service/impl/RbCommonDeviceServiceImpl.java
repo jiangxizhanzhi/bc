@@ -28,8 +28,8 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
     }
 
     @Override
-    public List<RbCommonDevice> getAllCollectedCommonDeviceDevices() {
-        return rbCommonDeviceMapper.selectAllDevices();
+    public List<RbCommonDevice> getAllCollectedCommonDeviceDevices(String roomId) {
+        return rbCommonDeviceMapper.selectAllDevices(roomId);
     }
 
     @Override
@@ -69,4 +69,9 @@ public class RbCommonDeviceServiceImpl extends ServiceImpl<RbCommonDeviceMapper,
 	public void deleteByDeviceId(String deviceId) {
 		rbCommonDeviceMapper.deleteByDeviceId(deviceId);
 	}
+
+    @Override
+    public void delByRoomId(String roomId) {
+        rbCommonDeviceMapper.deleteByRoomId(roomId);
+    }
 }

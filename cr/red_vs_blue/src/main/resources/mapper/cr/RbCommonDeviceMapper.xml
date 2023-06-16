@@ -22,6 +22,7 @@
             device_id deviceId,
             collect_user_id collectUserId
         FROM cr_rb_common_device
+        WHERE room_id = #{roomId}
     </select>
 
     <insert id="insertList">
@@ -57,5 +58,11 @@
         delete
         from cr_rb_common_device
         where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteByRoomId">
+        DELETE
+        FROM cr_rb_common_device
+        WHERE room_id = #{roomId}
     </delete>
 </mapper>

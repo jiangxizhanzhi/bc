@@ -208,6 +208,13 @@ public class CourseDumpServiceImpl implements CourseDumpService {
 			LessonConfig chapterSecond, String chapterFileName,
 			Map<String, List<CourseLesson>> lessons, Boolean isDumpTopo, String sceneNumber, Boolean disableImageExport) {
 		CourseLesson lesson = lessons.get(chapterSecond.getLessonId()).get(0);
+
+		String courseId = lesson.getCourseId();
+		Integer minIndex = courseLessonMapper.selectMinIndex(courseId);
+		Integer chapterCount = courseLessonMapper.selectChapterCount(courseId);
+		if(minIndex.equals(0) && chapterCount != 0){
+			lastChapter += 1;
+		}
 		String pathname = chapterFileName + File.separator + lastChapter + "-" + index + "_"
 				+ lesson.getName();
 

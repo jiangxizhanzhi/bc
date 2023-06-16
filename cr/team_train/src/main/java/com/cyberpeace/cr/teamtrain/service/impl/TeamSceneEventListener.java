@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,8 +70,14 @@ public class TeamSceneEventListener extends MessageListener {
 				BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("data")
-				.getJSONObject("scene_element").getString("id");
+		JSONObject jsonData = wsSceneReportBO.getData().getData().getJSONObject("data");
+		JSONObject sceneElement = jsonData.getJSONObject("scene_element");
+		String nodeId;
+		if (sceneElement!=null) {
+			nodeId = sceneElement.getString("id");
+		} else {
+			nodeId = jsonData.getString("node_id");
+		}
 		for (CrRole role : roles) {
 			String filteredData = crEventListenerHelper.filterDataByRole(role, data, nodeId);
 			if (filteredData == null) {

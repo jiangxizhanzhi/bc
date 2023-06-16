@@ -2,10 +2,10 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
@@ -71,13 +71,17 @@ public class TeamSceneEventListener extends MessageListener {
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
 		JSONObject jsonData = wsSceneReportBO.getData().getData().getJSONObject("data");
-		JSONObject sceneElement = jsonData.getJSONObject("scene_element");
-		String nodeId;
-		if (sceneElement!=null) {
-			nodeId = sceneElement.getString("id");
-		} else {
-			nodeId = jsonData.getString("node_id");
+		// 区分场景节点消息推送和节点登录信息推送
+		if (jsonData.containsKey("call_action")) {
+			for (CrRole role : roles) {
+				// 只推送给教员
+				if (role.isTeamTeacher()) {
+					pushDataToWebByUserIds(data, businessId, role.getUserIdList());
+				}
+			}
+			return true;
 		}
+		String nodeId = jsonData.getJSONObject("scene_element").getString("id");
 		for (CrRole role : roles) {
 			String filteredData = crEventListenerHelper.filterDataByRole(role, data, nodeId);
 			if (filteredData == null) {

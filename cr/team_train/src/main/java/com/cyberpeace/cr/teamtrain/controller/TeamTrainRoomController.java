@@ -908,7 +908,9 @@ public class TeamTrainRoomController {
 		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(room, RoomBaseInfo.class);
 		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
-		roomBaseInfo.setDurationTime(template.getDurationTime());
+		if (template!=null) {
+			roomBaseInfo.setDurationTime(template.getDurationTime());
+		}
 		roomBaseInfo.initExportString();
 		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(
 				CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),

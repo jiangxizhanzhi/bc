@@ -716,7 +716,9 @@ public class RbRoomController {
 		roomBaseInfo.setPreSkills(rbRoom.getPreSkill());
 		roomBaseInfo.setTrainSkills(rbRoom.getTrainSkill());
 		RbTemplate rbTemplate = rbTemplateMapper.selectById(rbRoom.getTemplateId());
-		roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
+		if (rbTemplate!=null) {
+			roomBaseInfo.setDurationTime(rbTemplate.getDurationTime());
+		}
 		roomBaseInfo.initExportString();
 		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);

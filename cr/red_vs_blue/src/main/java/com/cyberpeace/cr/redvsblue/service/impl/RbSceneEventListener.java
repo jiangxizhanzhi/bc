@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
@@ -66,8 +67,18 @@ public class RbSceneEventListener extends MessageListener {
 				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		String nodeId = wsSceneReportBO.getData().getData().getJSONObject("data")
-				.getJSONObject("scene_element").getString("id");
+		JSONObject jsonData = wsSceneReportBO.getData().getData().getJSONObject("data");
+		// 区分场景节点消息推送和节点登录信息推送
+		if (jsonData.containsKey("call_action")) {
+			for (CrRole role : roles) {
+				// 只推送给白方
+				if (role.isRvbStaff()) {
+					pushDataToWebByUserIds(data, businessId, role.getUserIdList());
+				}
+			}
+			return true;
+		}
+		String nodeId = jsonData.getJSONObject("scene_element").getString("id");
 		for (CrRole role : roles) {
 			String filteredData = crEventListenerHelper.filterDataByRole(role, data, nodeId);
 			if (filteredData == null) {

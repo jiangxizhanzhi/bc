@@ -198,7 +198,14 @@ public class MessageListener implements ChannelAwareMessageListener {
 
 	private JSONObject replaceAccessIp(JSONObject topoData) {
 		try {
-			JSONObject elementPorts = topoData.getJSONObject("scene_element_port_plugin_data").getJSONObject("cpcloud");
+			JSONObject pluginData = topoData.getJSONObject("scene_element_port_plugin_data");
+			if (pluginData == null) {
+				return topoData;
+			}
+			JSONObject elementPorts = pluginData.getJSONObject("cpcloud");
+			if (elementPorts == null) {
+				return topoData;
+			}
 			remoteSceneService.replaceAccessIpExe(elementPorts);
 		} catch (Exception e) {
 			log.error("[dispatch] access ip replacement failed:", e);

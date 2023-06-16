@@ -8,7 +8,6 @@ import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
-import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
@@ -183,6 +182,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 		Map<String, String> userInfoMap = StreamApiUtils.toMap(remoteUserService.getByIdList(userIdList), UserInfo::getUserId, UserInfo::getUserName);
 		Map<String, String> practiceSetMap = StreamApiUtils.toMap(practiceSetMapper.selectBatchIds(practiceIdList), PracticeSet::getResourceId, PracticeSet::getName);
+		LambdaQueryWrapper<PracticeSolved> practiceSolvedQuery = new LambdaQueryWrapper<>();
+		practiceSolvedQuery.eq(PracticeSolved::getSubmitUserId, authContext.getUserId());
+		practiceSolvedQuery.eq(PracticeSolved::getPracticeType, PracticeCategory.PracticeType.THEORY.getCode());
+		Map<String, PracticeSolved> practiceSolvedMap = StreamApiUtils.toMap(practiceSolvedMapper.selectList(practiceSolvedQuery), PracticeSolved::getResourceId, item -> item);
 
 		return iPage.convert(practiceTheory -> {
 			PracticeTheoryListBo theoryListBo = BeanUtils.copy(practiceTheory,PracticeTheoryListBo.class);
@@ -192,9 +195,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				if (null != listQuery.getSolved()) {
 					theoryListBo.setSolved(listQuery.getSolved());
 				} else {
-					PracticeSolved practiceSolved = practiceSolvedMapper.selectUserAndId(
-							authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-							practiceTheory.getResourceId(), IS_COLLECTED);
+					PracticeSolved practiceSolved = practiceSolvedMap.get(practiceTheory.getResourceId());
 					if (practiceSolved == null) {
 						theoryListBo.setSolved(PracticeSolved.SolvedStatus.NOT_START.getCode());
 					}else {
@@ -210,72 +211,6 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 			theoryListBo.setPracticeSetName(null != practiceSetName ? practiceSetName : "");
 			return theoryListBo;
 		});
-	}
-
-	private List<CategoryProgressRes> getAllPracticeTheoryByAuth() {
-
-		TheoryListQueryBo listQuery = new TheoryListQueryBo();
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-
-		// 过滤无权限习题集
-		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
-		if (CollectionUtils.isEmpty(authSetIds)) {
-			return null;
-		}
-
-		// 过滤非公开习题集
-		List<PracticeSet> practiceSets = practiceSetMapper
-				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
-		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
-		authSetIds.retainAll(setIds);
-		if (CollectionUtils.isEmpty(authSetIds)
-				|| (StringUtils.isNotBlank(listQuery.getPracticeSetId())
-				&& !authSetIds.contains(listQuery.getPracticeSetId()))) {
-			return null;
-		}
-
-		TheoryListQuery theoryListQuery = BeanUtils.copy(listQuery, TheoryListQuery.class);
-		theoryListQuery.setQuestionType(listQuery.getTheoryType());
-		// 根据习题集过滤习题编号
-		if (StringUtils.isNotBlank(listQuery.getPracticeSetId())) {
-			authSetIds.clear();
-			authSetIds.add(listQuery.getPracticeSetId());
-		}
-		List<String> practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
-		if (CollectionUtils.isEmpty(practiceIds)) {
-			return null;
-		}
-		theoryListQuery.setResourceIds(practiceIds);
-
-		// 答题记录过滤习题
-		if (authContext.getIsWeb() && null != listQuery.getSolved()) {
-			List<String> solvedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.TRUE, IS_COLLECTED);
-			List<String> triedIds = practiceSolvedMapper.selectUserAndSolved(
-					authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode(),
-					CommonConstant.FALSE, IS_COLLECTED);
-
-			// 求交集 空则返回为空
-			if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode())) {
-				theoryListQuery.getResourceIds().retainAll(solvedIds);
-			} else if (listQuery.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode())) {
-				theoryListQuery.getResourceIds().retainAll(triedIds);
-			} else {
-				theoryListQuery.getResourceIds().removeAll(solvedIds);
-				theoryListQuery.getResourceIds().removeAll(triedIds);
-			}
-
-			// 资源数据判空
-			if (CollectionUtils.isEmpty(theoryListQuery.getResourceIds())) {
-				return null;
-			}
-		}
-		return practiceTheoryMapper.selectByGroup(theoryListQuery,
-				authContext.getIsWeb(), authContext.getUserId(), PracticeCategory.PracticeType.THEORY.getCode());
 	}
 
 	@Override
@@ -713,32 +648,36 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public ProgressStatisticsRes getProgressStatistics(String practiceSetId) {
 		ProgressStatisticsRes progressStatisticsRes = new ProgressStatisticsRes();
-		List<PracticeTheoryListBo> practiceTheoryListBoList = getAllPracticeTheoryByAuthAndSetId(practiceSetId);
-		ProgressProportion simple = new ProgressProportion();
-		simple.setCount((int) practiceTheoryListBoList.stream()
-													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())
-															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
-															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
-		simple.setSum((int) practiceTheoryListBoList.stream()
-													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.PRIMARY.getCode())).count());
+
+		TheoryListQuery listQuery = new TheoryListQuery();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+				CommonConstant.TRUE);
+
+		// 过滤无权限习题集
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		List<ProgressProportion> progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
+				authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+		Map<Integer, ProgressProportion> progressProportionMap = progressProportionList.stream().collect(Collectors.toMap(ProgressProportion::getDifficulty, item -> item));
+
+		ProgressProportion zero = new ProgressProportion();
+		zero.setCount(0);
+		zero.setSum(0);
+
+		ProgressProportion simple = progressProportionMap.get(Difficulty.PRIMARY.getCode());
+		simple=simple==null?zero:simple;
 		progressStatisticsRes.setSimple(simple);
 
-		ProgressProportion medium = new ProgressProportion();
-		medium.setCount((int) practiceTheoryListBoList.stream()
-													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())
-															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
-															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
-		medium.setSum((int) practiceTheoryListBoList.stream()
-													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.MIDDLE.getCode())).count());
+		ProgressProportion medium = progressProportionMap.get(Difficulty.MIDDLE.getCode());
+		medium=medium==null?zero:medium;
 		progressStatisticsRes.setMedium(medium);
 
-		ProgressProportion difficulty = new ProgressProportion();
-		difficulty.setCount((int) practiceTheoryListBoList.stream()
-													  .filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())
-															  && (practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.SOLVED.getCode()) ||
-															  practiceTheoryListBo.getSolved().equals(PracticeSolved.SolvedStatus.TRIED.getCode()))).count());
-		difficulty.setSum((int) practiceTheoryListBoList.stream()
-													.filter(practiceTheoryListBo -> practiceTheoryListBo.getDifficulty().equals(Difficulty.HIGH.getCode())).count());
+		ProgressProportion difficulty = progressProportionMap.get(Difficulty.HIGH.getCode());
+		difficulty=difficulty==null?zero:difficulty;
 		progressStatisticsRes.setDifficulty(difficulty);
 
 		ProgressProportion sum = new ProgressProportion();
@@ -751,7 +690,17 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 	@Override
 	public List<CategoryProgressRes> getProgressByCategory() {
 		List<CategoryProgressRes> categoryProgressResList = new ArrayList<>();
-		List<CategoryProgressRes> allPracticeTheoryByAuth = getAllPracticeTheoryByAuth();
+
+		TheoryListQuery listQuery = new TheoryListQuery();
+		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),CommonConstant.TRUE);
+		List<String> authSetIds = practiceSetMapper.selectByAuthContext(authContext);
+		// 过滤非公开习题集
+		List<PracticeSet> practiceSets = practiceSetMapper
+				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
+		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
+		authSetIds.retainAll(setIds);
+		List<CategoryProgressRes> allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+
 		Map<String, CategoryProgressRes> categoryProgressResMap = StreamApiUtils.toMap(allPracticeTheoryByAuth, CategoryProgressRes::getCategoryId, item -> item);
 		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
 		for (PracticeCategory practiceCategory : practiceCategoryList) {
@@ -853,17 +802,5 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 
 	}
 
-	private List<PracticeTheoryListBo> getAllPracticeTheoryByAuthAndSetId (String practiceSetId){
-		PageReqBase pageReqBase = new PageReqBase();
-		pageReqBase.setPer_page(2147483647);
-		TheoryListQueryBo listQueryBo = new TheoryListQueryBo();
-		listQueryBo.setPracticeSetId(practiceSetId);
-		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-				CommonConstant.TRUE);
-		IPage<PracticeTheoryListBo> practiceTheoryListBoIPage = pageByQuery(pageReqBase.toPageParam(), listQueryBo, authContext);
-		if (practiceTheoryListBoIPage == null) {
-			return new ArrayList<>();
-		}
-		return practiceTheoryListBoIPage.getRecords();
-	}
+
 }

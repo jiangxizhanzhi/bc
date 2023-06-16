@@ -82,7 +82,7 @@
         select
         cr_task_submit.resource_id,
         cr_task_submit.evaluate_time,
-        cr_task.last_submit_time as submit_time,
+        cr_task_submit.create_time as submit_time,
         cr_task.user_id as submit_user,
         cr_task.role_id,
         cr_role.name as role_name,

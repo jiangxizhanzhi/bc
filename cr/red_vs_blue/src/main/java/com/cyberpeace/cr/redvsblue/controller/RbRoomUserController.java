@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.redvsblue.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -373,6 +374,12 @@ public class RbRoomUserController {
 		RbRoom room = rbRoomService.getById(resource_id);
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
 				room.getReplaySceneId(), node_id,Lists.newArrayList(CrRole.RbRoleGroup.RED.getCode(),CrRole.RbRoleGroup.BLUE.getCode()));
+
+		// 得到场景真实结束时间
+		Date actualEndTime = rbTimeManagementService.getActualEndTime(resource_id);
+		// 过滤出结束时间之前的数据
+		resList = screenService.filterBeforeActualEndTime(resList, actualEndTime);
+
 		return new BaseRsp<>(resList);
 	}
 

@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
-import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -29,6 +26,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
+import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.TaskContext;
@@ -37,11 +35,13 @@ import com.cyberpeace.cr.crbase.service.context.mark.MarkAddReq;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.screen.ScreenRecordUserRole;
+import com.cyberpeace.cr.crbase.service.context.task.CrTaskRejectRsp;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbDeviceReq;
 import com.cyberpeace.cr.redvsblue.controller.rsp.CrTaskReject;
 import com.cyberpeace.cr.redvsblue.controller.rsp.MissionInfoRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbDevice;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
@@ -372,6 +372,10 @@ public class RbRoomUserController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		RbRoom room = rbRoomService.getById(resource_id);
+		if (!room.isEnded()) {
+			log.error("rb room [{}] not ended", room.getResourceId());
+			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
+		}
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
 				room.getReplaySceneId(), node_id,Lists.newArrayList(CrRole.RbRoleGroup.RED.getCode(),CrRole.RbRoleGroup.BLUE.getCode()));
 

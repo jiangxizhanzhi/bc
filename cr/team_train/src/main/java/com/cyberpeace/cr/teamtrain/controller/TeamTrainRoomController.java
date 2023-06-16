@@ -1012,6 +1012,10 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
+		if(!teamRoom.isEnded()){
+			log.error("team training [{}] not ended", resource_id);
+			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
+		}
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
 				teamRoom.getReplaySceneId(), node_id, Lists.newArrayList(
 						CrRole.TeamRoleGroup.STUDENT.getCode()));

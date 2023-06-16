@@ -24,7 +24,6 @@
                 and `platforms` like #{platforms}
             </if>
         </where>
-        order by id desc
     </select>
 
     <select id="selectByName" resultType="com.cyberpeace.cr.tool.dao.entity.Tool">

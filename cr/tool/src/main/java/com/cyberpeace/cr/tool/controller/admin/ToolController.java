@@ -60,12 +60,6 @@ public class ToolController {
 		Page page = pageReqBase.toPageParam();
 		ToolListQuery listQuery = BeanUtils.copy(pageReqBase, ToolListQuery.class);
 		IPage<ToolRsp> toolBoListRsp = toolService.selectPage(page, listQuery, isAdmin);
-		String sort = pageReqBase.getSort();
-		if (StringUtils.isNotBlank(sort)) {
-			List<ToolRsp> records = toolBoListRsp.getRecords();
-			records.sort(Comparator.comparing(ToolRsp::getCreateTime));
-			toolBoListRsp.setRecords(records);
-		}
 		return new BaseRsp(PageUtil.getListResult(toolBoListRsp));
 	}
 

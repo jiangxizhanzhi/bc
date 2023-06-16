@@ -785,6 +785,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		return practiceIds;
 	}
 
+	@Override
+	public List<PracticeTheory> getCategoryIdAndSetIds() {
+		return practiceTheoryMapper.selectAllCategoryIds();
+	}
+
 	private void changeTitleToTheoryBaseMd(PracticeTheory theory, TheoryBaseMd theoryBaseMd) {
 		String[] split = theoryBaseMd.getTitle().split("\n");
 		List<String> content = Arrays.asList(split);
@@ -805,6 +810,4 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		theoryBaseMd.setTitle(title);
 
 	}
-
-
 }

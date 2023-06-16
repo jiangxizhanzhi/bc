@@ -83,4 +83,9 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 													 @Param("authSetIds")List<String> authSetIds,
 													 @Param("practiceType") Integer practiceType);
 
+	/**
+	 * 查询现有题目的方向id和习题集id
+	 * @return
+	 */
+	List<PracticeTheory> selectAllCategoryIds();
 }

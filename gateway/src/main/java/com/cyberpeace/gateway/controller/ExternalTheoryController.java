@@ -5,14 +5,12 @@ import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.common.constant.WebConstant;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -96,13 +94,29 @@ public class ExternalTheoryController {
 
 	@ApiOperation("理论基础分类-全量获取")
 	@GetMapping("/category/list")
-	@AuthOjKey
-	public BaseRsp<List<ExternalPracticeCategoryBo>> getCategoryList() {
+	public BaseRsp<List<ExternalPracticeCategoryBo>> getCategoryList(
+			@RequestParam(name = "practice_set_id", required = false) String practiceSetId) {
 
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
+
 		List<ExternalPracticeCategoryBo> categoryBoList = BeanUtils.deepCopyList(categoryList,
 				ExternalPracticeCategoryBo.class);
+
+		if(StringUtils.isEmpty(practiceSetId)) {
+			return new BaseRsp<>(categoryBoList);
+		}
+
+		// 将理论题的方向和习题集全部查出来
+		List<PracticeTheory> allCategoryIds = practiceTheoryService.getCategoryIdAndSetIds();
+		// 筛选出对应习题集的方向id
+		if(CollectionUtils.isEmpty(allCategoryIds)) {
+			return new BaseRsp<>();
+		}
+		List<String> categoryIds = allCategoryIds.stream().filter(item -> item.getPracticeSetId().equals(practiceSetId))
+				.map(PracticeTheory::getCategoryId).collect(Collectors.toList());
+		// 将对应的方向数据筛选出来
+		categoryBoList = categoryBoList.stream().filter(item -> categoryIds.contains(item.getResourceId())).collect(Collectors.toList());
 
 		return new BaseRsp<>(categoryBoList);
 	}

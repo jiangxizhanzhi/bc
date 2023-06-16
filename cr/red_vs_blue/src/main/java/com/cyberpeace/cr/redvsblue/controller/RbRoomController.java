@@ -747,8 +747,20 @@ public class RbRoomController {
 		if (CollectionUtils.isEmpty(allStages)) {
 			return res;
 		}
+		Comparator<MissionReleaseStageInfo> comparator = (o1, o2) -> {
+			if(o1 == null || CollectionUtils.isEmpty(o1.getMissionInfos())) {
+				return 1;
+			}
+			if(o2 == null || CollectionUtils.isEmpty(o2.getMissionInfos())) {
+				return -1;
+			}
+			Date o1Time = o1.getMissionInfos().get(0).getCreateTime();
+			Date o2Time = o2.getMissionInfos().get(0).getCreateTime();
+			return o1Time.before(o2Time) ? 1 : o1Time.equals(o2Time) ? 0 : -1;
+		};
+
 		List<MissionReleaseStageInfo> sortedStages = allStages.stream()
-				.sorted(Comparator.comparing(item -> item.getMissionInfos().get(0).getCreateTime()))
+				.sorted(comparator)
 				.collect(Collectors.toList());
 
 		TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();

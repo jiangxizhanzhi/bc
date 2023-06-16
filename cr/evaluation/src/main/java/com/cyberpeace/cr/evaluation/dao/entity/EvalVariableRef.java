@@ -23,6 +23,12 @@ public class EvalVariableRef extends BaseTable {
      */
     private Integer score;
 
+
+    /**
+     * 变量项得分
+     */
+    private Integer type;
+
     /**
      * 场景主机节点ID
      */

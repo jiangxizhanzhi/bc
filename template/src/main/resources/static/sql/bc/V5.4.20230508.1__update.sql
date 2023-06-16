@@ -2013,3 +2013,5 @@ ALTER TABLE cr_rb_template MODIFY COLUMN pre_skill text NOT NULL COMMENT '前置
 ALTER TABLE cr_rb_template MODIFY COLUMN train_skill text NOT NULL COMMENT '训练目标';
 
 ALTER TABLE  cr_task ADD COLUMN `remark` longtext DEFAULT NULL COMMENT '备注';
+
+ALTER TABLE cr_eval_variable_ref  add column `type` int(1) DEFAULT 0 COMMENT '评分类型';

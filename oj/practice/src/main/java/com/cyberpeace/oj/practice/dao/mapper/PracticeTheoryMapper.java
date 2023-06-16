@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.service.bo.ProgressProportion;
 import com.cyberpeace.oj.practice.service.externalbo.TheorySimpleBo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -70,9 +71,16 @@ public interface PracticeTheoryMapper extends BaseMapper<PracticeTheory> {
 												@Param("directions") List<String> directions,
 												@Param("practiceIds") List<String> practiceIds);
 
-	List<CategoryProgressRes> selectByGroup(@Param("listQuery") TheoryListQuery theoryListQuery,
+	List<CategoryProgressRes> selectByGroupCategory(@Param("listQuery") TheoryListQuery theoryListQuery,
 											@Param("isPublic") Boolean isPublic,
 											@Param("userId") String userId,
+											@Param("authSetIds")List<String> authSetIds,
 											@Param("practiceType") Integer practiceType);
+
+	List<ProgressProportion> selectByGroupDifficulty(@Param("listQuery") TheoryListQuery theoryListQuery,
+													 @Param("isPublic") Boolean isPublic,
+													 @Param("userId") String userId,
+													 @Param("authSetIds")List<String> authSetIds,
+													 @Param("practiceType") Integer practiceType);
 
 }

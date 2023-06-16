@@ -614,6 +614,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         // 同三级指标项下变量项过滤
         Set<String> variablesMap = Sets.newHashSet();
         nextIds.forEach(nextId -> {
+            evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
+            evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
+            evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
             EvalIndexRef evalIndexRef1 = fullIndexesMap.get(nextId);
             // 如果"ifFull"为真，跳过第四级直接由"EvalVariableRef"获取第五级
             Integer condition = isFull ? EvalIndexRef.Level.AGGREGATION.getCode() : EvalIndex.Level.THIRD.getCode();
@@ -623,10 +626,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
                 } else {
                     variableIds = JsonUtil.toJsonObjectArray(evalIndexRef1.getNextIds(), String.class);
-
-                    evalSystemIndexesContext.setSpecialist(new EvalRecordSpecialistContext());
-                    evalSystemIndexesContext.getSpecialist().setValue(evalIndexRef.getSpecialistValue());
-                    evalSystemIndexesContext.getSpecialist().setType(evalIndexRef.getSpecialistType());
                 }
                 variableIds.forEach(variableId -> {
                     if (variablesMap.contains(variableId)) {
@@ -1199,7 +1198,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         result.setIndexes(Lists.newArrayList());
         for (EvalIndexRef evalIndexRef : evalIndexRefs) {
             if (evalIndexRef.getLevel().equals(EvalIndex.Level.FIRST.getCode())) {
-                result.getIndexes().add(generateNextIndexes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, false));
+                result.getIndexes().add(generateNextIndexes(evalIndexRef, evalIndexRefMap, evalVariableRefMap, true));
             } else {
                 break;
             }

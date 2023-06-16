@@ -275,20 +275,10 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
 
-		// 如果删除额定字段，删除本题，改为新增
-		if(isModifySpecify(updateOperation, practiceOperation)) {
-			List<String> resourceIds = new ArrayList<String>() {{ add(updateOperation.getResourceId()); }};
-			AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
-					false);
-			// 删除本题
-			batchDelete(resourceIds, authContext);
+		// 如果修改了额定字段
+		if (isModifySpecify(updateOperation, practiceOperation)) {
 			// 删除题解和错题集
 			delMappedSolvedAndMistake(updateOperation);
-			// 新增一道题
-			updateOperation.setResourceId(null);
-			addPracticeOperation(updateOperation, ojSceneConfig, authContext);
-
-			return null;
 		}
 
 		if(null == practiceOperation){

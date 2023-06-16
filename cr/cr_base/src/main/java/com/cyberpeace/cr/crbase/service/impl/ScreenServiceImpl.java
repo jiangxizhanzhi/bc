@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.DateUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -70,5 +71,28 @@ public class ScreenServiceImpl implements ScreenService {
             resList.add(recordUserRole);
         }
         return resList;
+    }
+
+    @Override
+    public List<ScreenRecordUserRole> filterBeforeActualEndTime(List<ScreenRecordUserRole> screenRecordUserRoles, Date actualEndTime) {
+        if(CollectionUtils.isEmpty(screenRecordUserRoles) || actualEndTime == null) {
+            return screenRecordUserRoles;
+        }
+        for(ScreenRecordUserRole screenRecordUserRole : screenRecordUserRoles) {
+            List<ScreenRecordRsp> screenRecords = screenRecordUserRole.getScreenRecords();
+            if(CollectionUtils.isEmpty(screenRecords)) {
+                continue;
+            }
+            List<ScreenRecordRsp> collect = screenRecords.stream().filter(item -> {
+                if (StringUtils.isEmpty(item.getEnd_time())) {
+                    return false;
+                }
+                Date endDate = DateUtil.StringToDate(item.getEnd_time(), "yyyy-MM-dd HH:mm:ss");
+                return endDate.before(actualEndTime) || endDate.equals(actualEndTime);
+            }).collect(Collectors.toList());
+            screenRecordUserRole.setScreenRecords(collect);
+        }
+
+        return screenRecordUserRoles;
     }
 }

@@ -59,9 +59,11 @@ public class EvalIndexRefController {
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
                 evalVariableRef.setScore(specialist.getValue());
                 evalVariableRef.setProgress(EvalIndexRef.Progress.END.getCode());
+                evalVariableRef.setType(EvalIndexRef.Type.SPECIALIST.getCode());
             } else if(type.equals(EvalIndexRef.Type.SYSTEM.getCode())){
                 evalVariableRef.setDeviceId(requestData.getDeviceId());
                 evalVariableRef.setProbeId(requestData.getProbeId());
+                evalVariableRef.setType(EvalIndexRef.Type.SYSTEM.getCode());
             } else {
                 throw new BusinessException(CrBusinessErrorCode.INVALID_TYPE);
             }

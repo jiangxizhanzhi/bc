@@ -313,6 +313,8 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalVariableRef.setRecordId(evalRecord.getResourceId());
             evalVariableRef.setName(evalCollection.getName());
             evalVariableRef.setProgress(EvalVariableRef.Progress.NOT_START.getCode());
+            // 新增5级默认评分方式
+            evalVariableRef.setType(EvalIndexRef.Type.SYSTEM.getCode());
 
             // 构建变量项新的算法数据 - 格式化算法
             String formatAlgorithmId = evalCollection.getFormatAlgorithmId();
@@ -829,7 +831,6 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             return;
         }
 
-//        List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.NOT_START.getCode()).ne(EvalVariableRef::getProgress, EvalVariableRef.Progress.END.getCode()).list();
         List<EvalVariableRef> evalVariableRefList = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list();
 
         // 运行中变量项为空, 退出执行下一步

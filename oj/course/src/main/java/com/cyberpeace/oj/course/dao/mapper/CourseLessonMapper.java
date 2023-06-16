@@ -41,4 +41,8 @@ public interface CourseLessonMapper extends BaseMapper<CourseLesson> {
 	String selectByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
 
 	CourseLesson selectCourseByCourseAndName(@Param("courseId") String courseId, @Param("name") String name);
+
+	Integer selectMinIndex(@Param("courseId") String courseId);
+
+	Integer selectChapterCount(@Param("courseId") String courseId);
 }

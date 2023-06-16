@@ -89,7 +89,7 @@
         cr_role.role_group,
         cr_mission.title as mission_title,
         cr_task_submit.evaluate_status,
-        if(cr_task_submit.evaluator_id, 1, 0) as evaluate_type,
+        if(length(evaluator_id)>0, 1, 0) as evaluate_type,
         cr_task_submit.score
         from cr_task_submit
         left join cr_task on cr_task_submit.task_id = cr_task.resource_id

@@ -22,6 +22,7 @@
             device_id deviceId,
             collect_user_id collectUserId
         FROM cr_rb_common_device
+        WHERE room_id = #{roomId}
     </select>
 
     <insert id="insertList">

@@ -20,7 +20,7 @@ public interface RbCommonDeviceService extends IService<RbCommonDevice> {
 	 * 获取全部常用设备resourceIds
 	 * @return 常用设备ids
 	 */
-	List<RbCommonDevice> getAllCollectedCommonDeviceDevices();
+	List<RbCommonDevice> getAllCollectedCommonDeviceDevices(String roomId);
 
 
 	/**

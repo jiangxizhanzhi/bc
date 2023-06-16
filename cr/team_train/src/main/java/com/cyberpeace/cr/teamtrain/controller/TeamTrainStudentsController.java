@@ -466,7 +466,7 @@ public class TeamTrainStudentsController {
 		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
 		// 3.查询已添加设备
 		// 所有已添加为常用资产的deviceIds
-		List<TeamCommonDevice> allCollectedCommonDevices = teamCommonDeviceService.getAllCollectedCommonDeviceDevices();
+		List<TeamCommonDevice> allCollectedCommonDevices = teamCommonDeviceService.getAllCollectedCommonDeviceDevices(resource_id);
 
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
 		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDevices);

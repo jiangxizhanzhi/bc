@@ -36,6 +36,12 @@
         where device_id = #{nodeId}
     </delete>
 
+    <delete id="deleteByRoomId">
+        delete
+        from cr_team_common_device
+        where room_id = #{roomId}
+    </delete>
+
     <insert id="insertList">
         INSERT INTO cr_team_common_device
         (

@@ -49,4 +49,10 @@ public interface RbCommonDeviceService extends IService<RbCommonDevice> {
 	 * @param nodeId 节点id
 	 */
 	void deleteByDeviceId(String nodeId);
+
+	/**
+	 * 按照房间id删除常用资产
+	 * @param roomId
+	 */
+	void delByRoomId(String roomId);
 }

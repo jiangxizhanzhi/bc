@@ -17,4 +17,6 @@ public interface RbCommonDeviceMapper extends BaseMapper<RbCommonDevice> {
     void deleteByResourceId(@Param("resourceId") String resourceId);
 
 	void deleteByDeviceId(@Param("deviceId") String deviceId);
+
+    void deleteByRoomId(@Param("roomId") String roomId);
 }

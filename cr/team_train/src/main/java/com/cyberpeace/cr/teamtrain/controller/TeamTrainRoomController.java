@@ -147,9 +147,6 @@ public class TeamTrainRoomController {
 	@Autowired
 	private CrConstantsService crConstantsService;
 
-	@Autowired
-	private TeamCommonDeviceService teamCommonDeviceService;
-
 	@ApiOperation("启动场景")
 	@PostMapping("/scene")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -1018,6 +1015,11 @@ public class TeamTrainRoomController {
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
 				teamRoom.getReplaySceneId(), node_id, Lists.newArrayList(
 						CrRole.TeamRoleGroup.STUDENT.getCode()));
+
+		// 得到场景真实结束时间
+		Date actualEndTime = trainRecordService.getActualEndTime(resource_id);
+		// 过滤出结束时间之前的数据
+		resList = screenService.filterBeforeActualEndTime(resList, actualEndTime);
 		return new BaseRsp<>(resList);
 	}
 }

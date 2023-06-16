@@ -324,11 +324,13 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<CrTaskLog> crTaskLogs = crTaskLogMapper.selectReleaseByRoomId(roomId);
 		List<TaskLogRsp> taskLogRsps = BeanUtils.deepCopyList(crTaskLogs, TaskLogRsp.class);
 		for (TaskLogRsp taskLogRsp : taskLogRsps) {
-			taskLogRsp.setName(missionMap.get(taskLogRsp.getMissionId()).getTitle());
-			taskLogRsp.setActionName(EnumUtils.getEnumDescByCode(taskLogRsp.getActionCode(),
-					TaskLogRsp.ActionCode.class));
-			taskLogRsp.setCreateTimeString(
-					DateUtil.DateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
+			if (missionMap.containsKey(taskLogRsp.getMissionId())) {
+				taskLogRsp.setName(missionMap.get(taskLogRsp.getMissionId()).getTitle());
+				taskLogRsp.setActionName(EnumUtils.getEnumDescByCode(taskLogRsp.getActionCode(),
+						TaskLogRsp.ActionCode.class));
+				taskLogRsp.setCreateTimeString(
+						DateUtil.DateToString(taskLogRsp.getCreateTime(), "MM-dd HH:mm:ss"));
+			}
 		}
 //		Map<String, List<TaskLogRsp>> taskLogMap = taskLogRsps.stream()
 //				.collect(Collectors.groupingBy(TaskLogRsp::getUserId));

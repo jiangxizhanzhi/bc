@@ -468,6 +468,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     matrixData = matrixData.replaceAll(nextId, currentId);
                 }
             }
+            evalIndexRef.setMatrixData(matrixData);
             if(evalIndex.getLevel().equals(EvalIndex.Level.SECOND.getCode()) && StringUtils.isNotBlank(matrixData)){
                 // 三级指标的 indicator id与 三级指标 resource_id 关联
                 Map<String, String> tmp = new HashMap<>();

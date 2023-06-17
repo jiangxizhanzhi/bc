@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -849,9 +850,11 @@ public class TeamTrainRoomController {
 		teamRoom.setEndTime(scoreTrendReq.getEndTime());
 		initTeamReport(teamRoom, trainReport);
 		if (trainRecord == null) {
-			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() ==null?"-":trainReport.getRoomBaseInfo().getDurationTime()+"小时";
-			trainReport.getRoomBaseInfo()
-					.setTimeCost( timeCost);
+			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() == null
+					? CommonConstant.SHORT_TRANSVERSE_LINE
+					: trainReport.getRoomBaseInfo().getDurationTime()
+							+ TrainingReport.TIME.HOUR.getMsg();
+			trainReport.getRoomBaseInfo().setTimeCost(timeCost);
 		}
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}
@@ -909,7 +912,7 @@ public class TeamTrainRoomController {
 		// 基础信息
 		RoomBaseInfo roomBaseInfo = BeanUtils.copy(room, RoomBaseInfo.class);
 		TeamTemplate template = teamTemplateMapper.selectById(room.getTeamTemplateId());
-		if (template!=null) {
+		if (template != null) {
 			roomBaseInfo.setDurationTime(template.getDurationTime());
 		}
 		roomBaseInfo.initExportString();
@@ -1015,13 +1018,13 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
 		}
 		TeamRoom teamRoom = teamRoomService.getById(resource_id);
-		if(!teamRoom.isEnded()){
+		if (!teamRoom.isEnded()) {
 			log.error("team training [{}] not ended", resource_id);
 			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
 		}
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
-				teamRoom.getReplaySceneId(), node_id, Lists.newArrayList(
-						CrRole.TeamRoleGroup.STUDENT.getCode()));
+				teamRoom.getReplaySceneId(), node_id,
+				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
 
 		// 得到场景真实结束时间
 		Date actualEndTime = trainRecordService.getActualEndTime(resource_id);

@@ -869,7 +869,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 	 */
 	private void setTime(TimeLineData timeLineData, String roomId) {
 		// get start time and endtime
-		RbRoom rbRoom = getById(roomId);
+		RbRoom rbRoom = getOrExceptionById(roomId);
 		Date startTime = rbRoom.getStartTime();
 		Date endTime = rbRoom.getEndTime();
 

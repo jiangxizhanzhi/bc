@@ -20,6 +20,8 @@ public class StudentScoreTrend {
 	private List<ScoreTrend> scoreTrends;
 
 	private Integer role;
+	@ApiModelProperty("最终得分用于排序")
+	private Integer scoreSum;
 
 
 	public StudentScoreTrend() {}
@@ -44,5 +46,6 @@ public class StudentScoreTrend {
 			scoreTrend.setScoreTime(timeStringList.get(i));
 			scoreTrends.add(scoreTrend);
 		}
+		scoreSum = score;
 	}
 }

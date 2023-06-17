@@ -19,8 +19,12 @@
 
     <select id="selectAllDevices" resultType="com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice">
         SELECT
-            room_id         roomId,
-            device_id       deviceId
+            resource_id resourceId,
+            room_id roomId,
+            device_id deviceId,
+            collect_user_id collectUserId,
+            create_user_id createUserId,
+            create_time createTime
         FROM cr_team_common_device
         WHERE room_id = #{roomId}
     </select>

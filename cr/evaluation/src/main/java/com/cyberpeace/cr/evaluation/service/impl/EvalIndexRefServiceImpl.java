@@ -79,6 +79,9 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (objects.size() != data.size()) {
 			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
 		}
+		if(objects.size() == 1){
+			return data.get(0);
+		}
 		double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
 		int N = objects.size();
 		double[] weight = new double[N];

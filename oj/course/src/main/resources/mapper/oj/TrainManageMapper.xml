@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper">
+
+    <resultMap id="trainCourseResultMap" type="com.cyberpeace.oj.course.service.bo.TrainCourseBo" >
+            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+        <collection property="knowledgeList" ofType="java.lang.String" column="resource_id"
+                    select="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper.selectCourseLessonBycourseId"/>
+    </resultMap>
+
+    <select id="selectCourseInfo" resultType="com.cyberpeace.oj.course.service.bo.TrainCourseBo">
+        SELECT a.resource_id,
+               a.name,
+               b.name directionName,
+               a.difficulty,
+               if(SUM(c.duration) IS NULL, 0, SUM(c.duration))
+        FROM oj_course a
+        LEFT JOIN oj_course_category b ON a.category_id = b.resource_id
+        LEFT JOIN oj_course_lesson c ON a.resource_id = c.course_id
+        WHERE a.resource_id in
+        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+            #{courseId}
+        </foreach>
+        GROUP BY a.resource_id
+    </select>
+
+    <select id="selectCourseIntroduce" resultMap="trainCourseResultMap">
+        SELECT resource_id, name, description
+        FROM oj_course
+        WHERE resource_id IN
+        <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
+            #{courseId}
+        </foreach>
+        GROUP BY resource_id
+    </select>
+
+    <select id="selectCourseLessonBycourseId" resultType="java.lang.String">
+        SELECT  knowledge FROM oj_course_lesson WHERE course_id = #{courseId}
+    </select>
+</mapper>

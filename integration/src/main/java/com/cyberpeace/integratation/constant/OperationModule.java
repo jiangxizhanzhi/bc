@@ -26,7 +26,8 @@ public enum OperationModule implements BaseI18n {
 	DEVICE(15, "靶标", "target"),
 	RED_VS_BLUE(16, "红蓝对抗", "cyber wargame"),
 	SINGLE_TRAIN(17, "单兵训练", "individual train"),
-	TEAM_TRAIN(18, "团队训练", "team train");
+	TEAM_TRAIN(18, "团队训练", "team train"),
+	TRAIN_MANAGE(19, "课程培训管理", "train manage");
 
 	@Getter
 	private final Integer code;

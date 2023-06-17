@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
 import com.cyberpeace.common.util.*;
@@ -636,7 +637,10 @@ public class RbRoomController {
 		rbRoom.setEndTime(scoreTrendReq.getEndTime());
 		initRbReport(rbRoom, trainReport);
 		if (management == null) {
-			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() == null?"-":trainReport.getRoomBaseInfo().getDurationTime()+"小时";
+			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() == null
+					? CommonConstant.SHORT_TRANSVERSE_LINE
+					: trainReport.getRoomBaseInfo().getDurationTime()
+							+ TrainingReport.TIME.HOUR.getMsg();
 			trainReport.getRoomBaseInfo().setTimeCost(timeCost);
 		}
 		return new BaseRsp<>(trainReport);

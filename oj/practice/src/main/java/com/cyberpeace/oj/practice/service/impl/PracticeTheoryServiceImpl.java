@@ -664,8 +664,11 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
-		List<ProgressProportion> progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
-				authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+		List<ProgressProportion> progressProportionList = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(authSetIds)){
+			progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
+					authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+		}
 		Map<Integer, ProgressProportion> progressProportionMap = progressProportionList.stream().collect(Collectors.toMap(ProgressProportion::getDifficulty, item -> item));
 
 		ProgressProportion zero = new ProgressProportion();
@@ -703,8 +706,10 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 				.selectByType(PracticeSet.PracticeType.THEORY.getCode(), authContext.getIsWeb());
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
-		List<CategoryProgressRes> allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
-
+		List<CategoryProgressRes> allPracticeTheoryByAuth =new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(setIds)){
+			 allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
+		}
 		Map<String, CategoryProgressRes> categoryProgressResMap = StreamApiUtils.toMap(allPracticeTheoryByAuth, CategoryProgressRes::getCategoryId, item -> item);
 		List<PracticeCategory> practiceCategoryList = practiceCategoryMapper.listByTypeAndName(PracticeCategory.PracticeType.THEORY.getCode(), null);
 		for (PracticeCategory practiceCategory : practiceCategoryList) {

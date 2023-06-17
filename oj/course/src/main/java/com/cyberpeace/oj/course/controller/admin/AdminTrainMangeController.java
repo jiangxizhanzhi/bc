@@ -37,7 +37,7 @@ public class AdminTrainMangeController {
     private RemoteLogService remoteLogService;
 
     @ApiOperation("培训框架列表查询")
-    @GetMapping("/trainMangeList")
+    @GetMapping("/list")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     public BaseRsp<List<TrainManageTreeBo>> trainMangeList() {
         List<TrainManageTreeBo> trainPlanBos = trainManageService.trainMangeList();
@@ -45,7 +45,7 @@ public class AdminTrainMangeController {
     }
 
     @ApiOperation("培训框架新增")
-    @PostMapping("/addLevel")
+    @PostMapping("")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     public BaseRsp<Boolean> addLevel(@Validated(Create.class) TrainMangeAddReq req) {
         Boolean result = trainManageService.add(req);
@@ -56,7 +56,7 @@ public class AdminTrainMangeController {
     }
 
     @ApiOperation("培训框架修改")
-    @PatchMapping("/updateLevel")
+    @PatchMapping("")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     public BaseRsp<Boolean> updateLevel(@Validated(Update.class) TrainMangeUpdateReq req) {
         Boolean result = trainManageService.update(req);
@@ -67,7 +67,7 @@ public class AdminTrainMangeController {
     }
 
     @ApiOperation("培训框架复制")
-    @PatchMapping("/copy")
+    @PatchMapping("")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<Boolean> copy(@RequestParam(value = "resource_id") String resourceId) {
@@ -79,7 +79,7 @@ public class AdminTrainMangeController {
     }
 
     @ApiOperation("培训框架删除")
-    @DeleteMapping("/deleteLevel")
+    @DeleteMapping("")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<Boolean> deleteLevel(@RequestParam(value = "resource_id") String resourceId) {
@@ -92,7 +92,7 @@ public class AdminTrainMangeController {
 
 
     @ApiOperation("培训框架课程查询")
-    @GetMapping("/getDetail")
+    @GetMapping("/detail")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<List<TrainCourseBo>> getDetail(@RequestParam(value = "resource_id") String resourceId) {
@@ -101,7 +101,7 @@ public class AdminTrainMangeController {
     }
 
     @ApiOperation("培训课程修改")
-    @PatchMapping("/updateCourse")
+    @PatchMapping("")
 //    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
     public BaseRsp<Boolean> updateCourse(@Validated(Update.class) TrainMangeCourseUpdateReq req) {
         Boolean result = trainManageService.updateCourse(req);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -106,13 +108,29 @@ public class ExternalOperationController {
 	@AuthOjKey
 	@ApiOperation("实操习题分类查询")
 	@GetMapping("/category/list")
-	public BaseRsp<List<ExternalPracticeCategoryBo>> categoryList() {
+	public BaseRsp<List<ExternalPracticeCategoryBo>> categoryList(@RequestParam(name = "practice_set_id", required = false) String practiceSetId) {
 
 		List<PracticeCategory> categoryList = practiceCategoryMapper
 				.listByTypeAndName(PracticeCategory.PracticeType.OPERATION.getCode(), null);
 		List<ExternalPracticeCategoryBo> categoryBos = BeanUtils.deepCopyList(categoryList,
 				ExternalPracticeCategoryBo.class);
-		return new BaseRsp(categoryBos);
+
+		if(StringUtils.isEmpty(practiceSetId)) {
+			return new BaseRsp<>(categoryBos);
+		}
+
+		// 将实操题的方向和习题集全部查出来
+		List<PracticeOperation> allCategoryIds = practiceOperationService.getCategoryIdAndSetIds();
+// 筛选出对应习题集的方向id
+		if(org.apache.commons.collections.CollectionUtils.isEmpty(allCategoryIds)) {
+			return new BaseRsp<>();
+		}
+		List<String> categoryIds = allCategoryIds.stream().filter(item -> item.getPracticeSetId().equals(practiceSetId))
+				.map(PracticeOperation::getCategoryId).collect(Collectors.toList());
+		// 将对应的方向数据筛选出来
+		categoryBos = categoryBos.stream().filter(item -> categoryIds.contains(item.getResourceId())).collect(Collectors.toList());
+
+		return new BaseRsp<>(categoryBos);
 	}
 
 	@AuthOjKey

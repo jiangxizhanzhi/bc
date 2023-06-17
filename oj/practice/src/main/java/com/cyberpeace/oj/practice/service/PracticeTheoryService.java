@@ -129,4 +129,11 @@ public interface PracticeTheoryService extends IService<PracticeTheory> {
 	List<PracticeTheoryListBo> getPracticeRecord(WebTheoryRecordReq webTheoryRecordReq);
 
 	List<String> getPracticeIdsByUserAndSet(AuthContext authContext, String practiceSetId);
+
+	/**
+	 * 查询题库中的所有的方向
+	 * @return
+	 */
+	List<PracticeTheory> getCategoryIdAndSetIds();
+
 }

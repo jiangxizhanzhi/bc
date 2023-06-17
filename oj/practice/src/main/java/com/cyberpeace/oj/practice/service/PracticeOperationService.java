@@ -12,6 +12,7 @@ import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 
@@ -242,4 +243,10 @@ public interface PracticeOperationService extends IService<PracticeOperation> {
 	 * @return
 	 */
 	EvaluateResult submitAnswerAgain(String userId, String resourceId, String submitAnswer);
+
+	/**
+	 * 实操题方向和习题集
+	 * @return
+	 */
+    List<PracticeOperation> getCategoryIdAndSetIds();
 }

@@ -156,4 +156,9 @@
         </foreach>
         and builtin = 1 limit 1
     </select>
+
+    <select id="selectAllCategoryIds" resultMap="operation">
+        SELECT distinct category_id, practice_set_id
+        FROM oj_practice_operation
+    </select>
 </mapper>

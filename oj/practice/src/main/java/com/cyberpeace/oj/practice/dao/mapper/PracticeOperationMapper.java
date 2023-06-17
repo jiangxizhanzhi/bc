@@ -47,4 +47,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 			@Param("isPublic") Boolean isPublic);
 
 	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
+
+	List<PracticeOperation> selectAllCategoryIds();
 }

@@ -670,21 +670,17 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 					authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
 		}
 		Map<Integer, ProgressProportion> progressProportionMap = progressProportionList.stream().collect(Collectors.toMap(ProgressProportion::getDifficulty, item -> item));
-
-		ProgressProportion zero = new ProgressProportion();
-		zero.setCount(0);
-		zero.setSum(0);
-
+		
 		ProgressProportion simple = progressProportionMap.get(Difficulty.PRIMARY.getCode());
-		simple=simple==null?zero:simple;
+		simple = simple == null ? setProgressProportionZero(Difficulty.PRIMARY.getCode()) : simple;
 		progressStatisticsRes.setSimple(simple);
 
 		ProgressProportion medium = progressProportionMap.get(Difficulty.MIDDLE.getCode());
-		medium=medium==null?zero:medium;
+		medium = medium == null ? setProgressProportionZero(Difficulty.MIDDLE.getCode()) : medium;
 		progressStatisticsRes.setMedium(medium);
 
 		ProgressProportion difficulty = progressProportionMap.get(Difficulty.HIGH.getCode());
-		difficulty=difficulty==null?zero:difficulty;
+		difficulty = difficulty == null ? setProgressProportionZero(Difficulty.HIGH.getCode()): difficulty;
 		progressStatisticsRes.setDifficulty(difficulty);
 
 		ProgressProportion sum = new ProgressProportion();
@@ -692,6 +688,14 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		sum.setCount(simple.getCount() + medium.getCount() + difficulty.getCount());
 		progressStatisticsRes.setSum(sum);
 		return progressStatisticsRes;
+	}
+
+	public ProgressProportion setProgressProportionZero(int type) {
+		ProgressProportion progressProportion = new ProgressProportion();
+		progressProportion.setDifficulty(type);
+		progressProportion.setCount(0);
+		progressProportion.setSum(0);
+		return progressProportion;
 	}
 
 	@Override
@@ -707,7 +711,7 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
 		List<CategoryProgressRes> allPracticeTheoryByAuth =new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(setIds)){
+		if (CollectionUtils.isNotEmpty(authSetIds)){
 			 allPracticeTheoryByAuth = practiceTheoryMapper.selectByGroupCategory(listQuery, authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());
 		}
 		Map<String, CategoryProgressRes> categoryProgressResMap = StreamApiUtils.toMap(allPracticeTheoryByAuth, CategoryProgressRes::getCategoryId, item -> item);

@@ -636,8 +636,8 @@ public class RbRoomController {
 		rbRoom.setEndTime(scoreTrendReq.getEndTime());
 		initRbReport(rbRoom, trainReport);
 		if (management == null) {
-			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() == null?"":trainReport.getRoomBaseInfo().getDurationTime()+"";
-			trainReport.getRoomBaseInfo().setTimeCost(timeCost+"小时");
+			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() == null?"-":trainReport.getRoomBaseInfo().getDurationTime()+"小时";
+			trainReport.getRoomBaseInfo().setTimeCost(timeCost);
 		}
 		return new BaseRsp<>(trainReport);
 	}

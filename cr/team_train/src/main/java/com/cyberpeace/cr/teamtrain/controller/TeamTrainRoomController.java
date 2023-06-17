@@ -849,9 +849,9 @@ public class TeamTrainRoomController {
 		teamRoom.setEndTime(scoreTrendReq.getEndTime());
 		initTeamReport(teamRoom, trainReport);
 		if (trainRecord == null) {
-			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() ==null?"":trainReport.getRoomBaseInfo().getDurationTime()+"";
+			String timeCost = trainReport.getRoomBaseInfo().getDurationTime() ==null?"-":trainReport.getRoomBaseInfo().getDurationTime()+"小时";
 			trainReport.getRoomBaseInfo()
-					.setTimeCost( timeCost + "小时");
+					.setTimeCost( timeCost);
 		}
 		return new BaseRsp<TrainReportContext>(trainReport);
 	}

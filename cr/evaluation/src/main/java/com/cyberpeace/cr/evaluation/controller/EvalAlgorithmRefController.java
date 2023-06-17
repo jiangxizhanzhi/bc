@@ -130,8 +130,7 @@ public class EvalAlgorithmRefController {
 		}
 		try {
 			double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
-			JSONArray objects = JSONArray.parseArray(matrixData);
-			int N = objects.size();
+			int N = formatMatrixData[0].length;
 			double[] weight = new double[N];
 			AHPComputeWeight instance = AHPComputeWeight.getInstance();
 			instance.weight(formatMatrixData, weight, N);

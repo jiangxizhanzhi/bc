@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
+import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -43,6 +45,9 @@ public class PracticeCategoryController {
 	@Autowired
 	private PracticeTheoryService practiceTheoryService;
 
+	@Autowired
+	private PracticeOperationService practiceOperationService;
+
 	@ApiOperation("查询习题分类列表")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "practice_type", value = "分类类型 0=理论基础 2=实践操作", dataTypeClass = Integer.class),
@@ -68,16 +73,31 @@ public class PracticeCategoryController {
 			return new BaseRsp<>(boList);
 		}
 
-		// 将理论题的方向和习题集全部查出来
-		List<PracticeTheory> allCategoryIds = practiceTheoryService.getCategoryIdAndSetIds();
-		// 筛选出对应习题集的方向id
-		if(CollectionUtils.isEmpty(allCategoryIds)) {
-			return new BaseRsp<>();
+		if(practiceType == 2) {
+			List<PracticeOperation> categoryIdAndSetIds = practiceOperationService.getCategoryIdAndSetIds();
+
+			// 筛选出对应习题集的方向id
+			if(CollectionUtils.isEmpty(categoryIdAndSetIds)) {
+				return new BaseRsp<>();
+			}
+			List<String> categoryIds = categoryIdAndSetIds.stream().filter(item -> item.getPracticeSetId().equals(practiceSetId))
+					.map(PracticeOperation::getCategoryId).collect(Collectors.toList());
+			// 将对应的方向数据筛选出来
+			boList = boList.stream().filter(item -> categoryIds.contains(item.getResourceId())).collect(Collectors.toList());
+
+		} else {
+			// 将理论题的方向和习题集全部查出来
+			List<PracticeTheory> allCategoryIds = practiceTheoryService.getCategoryIdAndSetIds();
+
+			// 筛选出对应习题集的方向id
+			if(CollectionUtils.isEmpty(allCategoryIds)) {
+				return new BaseRsp<>();
+			}
+			List<String> categoryIds = allCategoryIds.stream().filter(item -> item.getPracticeSetId().equals(practiceSetId))
+					.map(PracticeTheory::getCategoryId).collect(Collectors.toList());
+			// 将对应的方向数据筛选出来
+			boList = boList.stream().filter(item -> categoryIds.contains(item.getResourceId())).collect(Collectors.toList());
 		}
-		List<String> categoryIds = allCategoryIds.stream().filter(item -> item.getPracticeSetId().equals(practiceSetId))
-				.map(PracticeTheory::getCategoryId).collect(Collectors.toList());
-		// 将对应的方向数据筛选出来
-		boList = boList.stream().filter(item -> categoryIds.contains(item.getResourceId())).collect(Collectors.toList());
 
 		return new BaseRsp<>(boList);
 	}

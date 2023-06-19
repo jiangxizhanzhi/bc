@@ -1,6 +1,7 @@
 package com.cyberpeace.common.util;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
@@ -200,4 +201,12 @@ public class StreamApiUtils {
 				.collect(Collectors.toList());
 	}
 
+
+	public static <K, V, E> Map<K, V> toMap(Collection<E> collection, Function<E, K> keyMapper,
+											Function<E, V> valueMapper, BinaryOperator<V> mergeFunction) {
+		if (CollectionUtils.isEmpty(collection)) {
+			return Maps.newHashMap();
+		}
+		return collection.stream().collect(Collectors.toMap(keyMapper, valueMapper,mergeFunction));
+	}
 }

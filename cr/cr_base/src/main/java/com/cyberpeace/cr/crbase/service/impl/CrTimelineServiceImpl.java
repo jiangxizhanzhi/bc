@@ -142,7 +142,7 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 				.collect(Collectors.toList());
 		List<Mission> missions = missionService.batchGet(missionIds);
 		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
-				mission -> mission);
+				mission -> mission,(a,b)->a);
 
 		// task events
 		for (CrTask crTask : taskList) {

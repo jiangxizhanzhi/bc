@@ -3,9 +3,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 CREATE TABLE `oj_train_manage` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-    `resource_id` varchar(255) NOT NULL COMMENT '资源id',
-    `name` varchar(255) NOT NULL COMMENT '名称',
-    `parent` varchar(255) DEFAULT NULL COMMENT '父级id',
+    `resource_id` varchar(64) NOT NULL COMMENT '资源id',
+    `name` varchar(128) NOT NULL COMMENT '名称',
+    `parent` varchar(64) DEFAULT NULL COMMENT '父级id',
     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
     `course_ids` text COMMENT '课程ids',

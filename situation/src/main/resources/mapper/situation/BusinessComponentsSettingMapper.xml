@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberpeace.situation.dao.mapper.BusinessComponentsSettingMapper">
+
+    <insert id="batchInsert">
+        insert into situation_business_components_setting (resource_id, type, component_index, datasource_id, datasource_setting
+        ,components_id, component_setting, create_time, update_time) values
+        <foreach collection="dashboardComponentsList" separator="," item="dashboardComponents">
+            (#{dashboardComponents.resourceId}, #{dashboardComponents.type}, #{dashboardComponents.componentIndex}, #{dashboardComponents.datasourceId},
+            #{dashboardComponents.datasourceSetting}, #{dashboardComponents.componentsId}, #{dashboardComponents.componentSetting},
+            now(), now())
+        </foreach>
+    </insert>
+</mapper>

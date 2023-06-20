@@ -2,6 +2,7 @@ package com.cyberpeace.config.auth;
 
 import java.util.Set;
 
+import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;

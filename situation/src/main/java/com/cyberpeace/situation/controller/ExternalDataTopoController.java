@@ -54,7 +54,7 @@ public class ExternalDataTopoController {
 	@Autowired
 	private SituationHandlerService situationHandlerService;
 
-	private volatile Boolean demo = true;
+	private volatile Boolean demo = false;
 
 	/**
 	 * 获取节点链路状态

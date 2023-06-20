@@ -314,6 +314,13 @@ public class ExternalSituationController {
 		}
 	}
 
+	/**
+	 * 通过id和任务id，获取env_id
+	 *
+	 * @param subjectId 对象id
+	 * @param taskId    任务id
+	 * @return {@link BaseRsp}<{@link String}>
+	 */
 	@ApiOperation("根据subjectId和taskId返回envId")
 	@GetMapping("/get_env_id")
 	public BaseRsp<String> getEnvIdBySubjectIdAndTaskId(

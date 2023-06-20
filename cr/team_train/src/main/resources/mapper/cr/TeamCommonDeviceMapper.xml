@@ -57,7 +57,7 @@
             create_time
         )
         VALUES
-        <foreach collection="teamCommonDeviceList" item="teamCommonDevice">
+        <foreach collection="teamCommonDeviceList" item="teamCommonDevice" separator=",">
             (
              #{teamCommonDevice.resourceId},
              #{teamCommonDevice.roomId},

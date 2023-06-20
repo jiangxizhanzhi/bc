@@ -160,4 +160,9 @@ public class NoteServiceImpl extends ServiceImpl<NoteMapper, Note> implements No
 	public Integer getCount(String userId, Integer noteType, List<String> resourceIds) {
 		return noteMapper.countByUserId(userId, noteType, resourceIds);
 	}
+
+	@Override
+	public void deleteByBusiness(String businessId, Integer noteType, Integer businessType) {
+		noteMapper.deleteByBusiness(businessId,noteType,businessType);
+	}
 }

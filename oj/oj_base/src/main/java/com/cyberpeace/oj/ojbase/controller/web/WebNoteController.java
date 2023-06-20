@@ -1,6 +1,8 @@
 package com.cyberpeace.oj.ojbase.controller.web;
 
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -22,6 +24,7 @@ import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.context.NoteAddContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/oj/note")
 @RequiresAuthentication
+@Slf4j
 public class WebNoteController {
 
 	@Autowired
@@ -57,6 +61,10 @@ public class WebNoteController {
 			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
 			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
+		if (StringUtils.isBlank(noteReq.getContent())) {
+			log.error("note content can not be blank!");
+			throw new BusinessException(ErrorCode.BLANK_NOTE);
+		}
 
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());

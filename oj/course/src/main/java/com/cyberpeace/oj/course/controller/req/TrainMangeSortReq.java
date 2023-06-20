@@ -6,17 +6,19 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ApiModel
-public class TrainMangeAddReq implements Serializable {
+public class TrainMangeSortReq implements Serializable {
 
 
-    @ApiModelProperty("培训框架名称")
+    @ApiModelProperty("父resourceId")
     @NotBlank
-    private String name;
-
-    @ApiModelProperty("父级resourceId")
     private String parent;
+
+    @ApiModelProperty("框架resourceId")
+    @NotBlank
+    private List<String> resourceIdList;
 
 }

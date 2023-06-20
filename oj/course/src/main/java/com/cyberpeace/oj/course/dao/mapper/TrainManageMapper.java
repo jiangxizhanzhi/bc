@@ -15,5 +15,8 @@ public interface TrainManageMapper extends BaseMapper<TrainManage> {
 
     List<TrainCourseBo> selectCourseIntroduce(@Param("courseIds") List<String> courseIds);
 
-    List<String> selectCourseLessonBycourseId(@Param("courseId") String courseId);
+    List<String> selectContentByCourseId(@Param("courseId") String courseId);
+
+    int batchUpdateById(@Param("list") List<TrainManage> list);
+
 }

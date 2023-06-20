@@ -8,7 +8,7 @@
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
         <collection property="knowledgeList" ofType="java.lang.String" column="resource_id"
-                    select="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper.selectCourseLessonBycourseId"/>
+                    select="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper.selectContentByCourseId"/>
     </resultMap>
 
     <select id="selectCourseInfo" resultType="com.cyberpeace.oj.course.service.bo.TrainCourseBo">
@@ -28,7 +28,7 @@
     </select>
 
     <select id="selectCourseIntroduce" resultMap="trainCourseResultMap">
-        SELECT resource_id, name, description
+        SELECT resource_id, `name`, description
         FROM oj_course
         WHERE resource_id IN
         <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
@@ -37,7 +37,19 @@
         GROUP BY resource_id
     </select>
 
-    <select id="selectCourseLessonBycourseId" resultType="java.lang.String">
-        SELECT  knowledge FROM oj_course_lesson WHERE course_id = #{courseId}
+    <select id="selectContentByCourseId" resultType="java.lang.String">
+        SELECT  DISTINCT(b.content) knowledge FROM rtks_course_related a INNER JOIN rtks_knowledge b ON
+        a.related_id=b.resource_id
+        WHERE a.resource_id = #{courseId}
     </select>
+
+    <update id="batchUpdateById" >
+            <foreach collection="list" item="item" separator=";">
+                update
+                `oj_train_manage`
+                set sort = #{item.sort}
+                where
+                resource_id = #{item.resourceId}
+            </foreach>
+    </update>
 </mapper>

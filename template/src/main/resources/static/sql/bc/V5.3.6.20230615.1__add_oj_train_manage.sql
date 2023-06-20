@@ -1,16 +1,21 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE IF NOT EXISTS `oj_train_manage` (
+CREATE TABLE `oj_train_manage` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-    `resource_id` varchar(255) NOT NULL COMMENT '资源id',
-    `name` varchar(255) NOT NULL COMMENT '名称',
-    `parent` varchar(255) DEFAULT NULL COMMENT '父级id',
+    `resource_id` varchar(64) NOT NULL COMMENT '资源id',
+    `name` varchar(128) NOT NULL COMMENT '名称',
+    `parent` varchar(64) DEFAULT NULL COMMENT '父级id',
+    `course_ids` text COMMENT '课程ids',
+    `sort` int(10) DEFAULT NULL COMMENT '排序',
     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-    `course_ids` tinytext COMMENT '课程ids',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `resource_id` (`resource_id`) USING BTREE
     ) ENGINE=InnoDB AUTO_INCREMENT=1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic COMMENT='oj课程培训管理表';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('default', '全部', NULL, NULL, NULL, NULL, '2023-06-15 17:54:56');
+
+

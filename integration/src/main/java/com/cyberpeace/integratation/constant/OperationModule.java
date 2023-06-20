@@ -29,6 +29,7 @@ public enum OperationModule implements BaseI18n {
 	TEAM_TRAIN(18, "团队训练", "team train"),
 	TRAIN_MANAGE(19, "课程培训管理", "train manage");
 
+
 	@Getter
 	private final Integer code;
 

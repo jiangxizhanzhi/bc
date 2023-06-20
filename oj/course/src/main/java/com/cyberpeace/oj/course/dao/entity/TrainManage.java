@@ -29,4 +29,9 @@ public class TrainManage extends BaseTable {
      */
     private String courseIds;
 
+    /**
+     * 当前层级的父级resourceId 如果是顶级(Frame)则为空
+     */
+    private Integer sort;
+
 }

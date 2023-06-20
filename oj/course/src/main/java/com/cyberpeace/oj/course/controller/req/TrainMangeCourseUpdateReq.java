@@ -17,7 +17,7 @@ public class TrainMangeCourseUpdateReq implements Serializable {
     private String resourceId;
 
     @ApiModelProperty("课程ids")
-    @NotEmpty
+    @NotBlank
     private String courseIds;
 
 }

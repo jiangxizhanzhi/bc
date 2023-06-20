@@ -26,6 +26,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -61,18 +62,18 @@ public class WebNoteController {
 			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION },
 			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> add(@RequestBody @Validated NoteAddReq noteReq) {
-		if (StringUtils.isBlank(noteReq.getContent())) {
-			log.error("note content can not be blank!");
-			throw new BusinessException(ErrorCode.BLANK_NOTE);
-		}
-
 		NoteAddContext noteAddContext = BeanUtils.copy(noteReq, NoteAddContext.class);
 		noteAddContext.setUserId(UserInfoContext.getUserContext().getUserId());
-		Note newNote = noteService.addNote(noteAddContext);
-
-		WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
-
-		return new BaseRsp<>(webNoteRes);
+		//如果笔记内容为空改为删除逻辑
+		if (StringUtils.isBlank(noteReq.getContent())) {
+			noteService.deleteByBusiness(noteAddContext.getBusinessId(), noteReq.getNoteType(),
+					noteReq.getBusinessType());
+			return new BaseRsp<>(null);
+		} else {
+			Note newNote = noteService.addNote(noteAddContext);
+			WebNoteRes webNoteRes = BeanUtils.copy(newNote, WebNoteRes.class);
+			return new BaseRsp<>(webNoteRes);
+		}
 	}
 
 	@ApiOperation("笔记修改")
@@ -92,8 +93,8 @@ public class WebNoteController {
 
 	@ApiOperation("单条笔记查询")
 	@GetMapping("")
-	@RequiresPermissions(
-			value = { MenuConstant.WEB_OJ_ALL_COURSE, MenuConstant.WEB_OJ_PRACTICE_OPERATION, MenuConstant.CMS_CLASS_ROOM },
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_OJ_PRACTICE_OPERATION, MenuConstant.CMS_CLASS_ROOM },
 			logical = Logical.OR)
 	public BaseRsp<WebNoteRes> getNote(@Validated GetNoteReq getNoteReq) {
 
@@ -101,7 +102,7 @@ public class WebNoteController {
 				.noteType(getNoteReq.getNoteType()).businessType(getNoteReq.getResourceType())
 				.businessId(getNoteReq.getResourceId())
 				.userId(UserInfoContext.getUserContext().getUserId()).build();
-		if (StringUtils.isNotBlank(getNoteReq.getUserId())){
+		if (StringUtils.isNotBlank(getNoteReq.getUserId())) {
 			uniqueContext.setUserId(getNoteReq.getUserId());
 		}
 		NoteBo noteBo = noteService.selectByUnique(uniqueContext);
@@ -147,8 +148,8 @@ public class WebNoteController {
 
 	@ApiOperation("实验报告/笔记文件上传")
 	@PostMapping("/upload_attachment")
-	@RequiresPermissions(value = {MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
-			MenuConstant.WEB_OJ_PRACTICE_OPERATION}, logical = Logical.OR)
+	@RequiresPermissions(value = { MenuConstant.WEB_OJ_COURSE, MenuConstant.WEB_OJ_ALL_COURSE,
+			MenuConstant.WEB_OJ_PRACTICE_OPERATION }, logical = Logical.OR)
 	public BaseRsp<AttachmentBo> uploadAttachment(NoteAttachmentReq attachmentReq) {
 
 		Integer type;

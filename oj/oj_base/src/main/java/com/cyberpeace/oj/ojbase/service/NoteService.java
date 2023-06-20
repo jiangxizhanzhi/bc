@@ -45,4 +45,6 @@ public interface NoteService extends IService<Note> {
     Note addAndUpdateReport(ReportAddReq reportAddReq);
 
     Integer getCount(String userId, Integer noteType, List<String> resourceType);
+
+    void deleteByBusiness(String businessId, Integer noteType, Integer businessType);
 }

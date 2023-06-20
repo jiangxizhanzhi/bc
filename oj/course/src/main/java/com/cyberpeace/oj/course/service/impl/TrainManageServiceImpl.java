@@ -7,9 +7,10 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.oj.course.controller.req.TrainMangeAddReq;
+import com.cyberpeace.oj.course.controller.req.TrainCourseReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeCourseUpdateReq;
-import com.cyberpeace.oj.course.controller.req.TrainMangeUpdateReq;
+import com.cyberpeace.oj.course.controller.req.TrainMangeReq;
+import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.TrainManage;
@@ -18,11 +19,15 @@ import com.cyberpeace.oj.course.service.TrainManageService;
 import com.cyberpeace.oj.course.service.bo.TrainCourseBo;
 import com.cyberpeace.oj.course.service.bo.TrainManageTreeBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,55 +39,57 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
     @Autowired
     private TrainManageMapper trainManageMapper;
 
-    @Override
-    public List<TrainManageTreeBo> trainMangeList() {
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-        List<TrainManageTreeBo> resultList = new ArrayList<>();
+    @Override
+    public TrainManageTreeBo trainMangeList() {
+
+        TrainManageTreeBo result = new TrainManageTreeBo();
+
         List<TrainManage> trainManageList = trainManageMapper.selectList(new LambdaQueryWrapper<>());
-        if (CollectionUtils.isEmpty(trainManageList)) {
-            return new ArrayList<>();
-        }
         //查询课程信息
-        List<String> totalCourseIds = trainManageList.stream().filter(item -> Objects.nonNull(item.getCourseIds()))
-                .map(item -> Arrays.stream(item.getCourseIds().split(",")).collect(Collectors.toList()))
+        List<String> totalCourseIds = trainManageList.stream().filter(item -> !"default".equals(item.getResourceId()))
+                .map(item -> JSONArray.parseArray(item.getCourseIds(), String.class))
                 .flatMap(Collection::stream).distinct().collect(Collectors.toList());
         LambdaQueryWrapper<Course> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Course::getId, totalCourseIds);
-        Map<String, TrainCourseBo> courseMap = trainManageMapper.selectCourseInfo(totalCourseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
-
-        Map<String, List<TrainManage>> mapByPatent = getMapByPatent(resultList, trainManageList);
-        for (TrainManageTreeBo parentTrainManage : resultList) {
+        Map<String, List<TrainManage>> mapByPatent = getMapByPatent(result, trainManageList);
+        for (TrainManageTreeBo parentTrainManage : result.getChildrenList()) {
             List<TrainManage> trainManages = mapByPatent.get(parentTrainManage.getResourceId());
             if (CollectionUtils.isEmpty(trainManages)) {
                 continue;
             }
-            List<TrainManageTreeBo> childrenList = trainManages.stream().map(item -> getTrainManageTreeBo(courseMap, parentTrainManage, item)).collect(Collectors.toList());
-            parentTrainManage.setChildrenList(childrenList);
+            List<TrainManageTreeBo> childList = new ArrayList<>();
+            for (TrainManage child : trainManages) {
+                TrainManageTreeBo children = new TrainManageTreeBo();
+                children.setResourceId(child.getResourceId());
+                children.setName(child.getName());
+                children.setParent(parentTrainManage.getResourceId());
+                childList.add(children);
+            }
+            parentTrainManage.setChildrenList(childList);
         }
-
-        return resultList;
+        return result;
     }
 
     @Override
     public List<TrainManageTreeBo> webTrainMangeList() {
-        List<TrainManageTreeBo> resultList = new ArrayList<>();
+        TrainManageTreeBo result = new TrainManageTreeBo();
         List<TrainManage> trainManageList = trainManageMapper.selectList(new LambdaQueryWrapper<>());
-        if (CollectionUtils.isEmpty(trainManageList)) {
-            return new ArrayList<>();
-        }
-
         //查询课程信息
-        List<String> totalCourseIds = trainManageList.stream().filter(item -> Objects.nonNull(item.getCourseIds()))
-                .map(item -> Arrays.stream(item.getCourseIds().split(",")).collect(Collectors.toList()))
+        List<String> totalCourseIds = trainManageList.stream().filter(item -> !"default".equals(item.getResourceId()))
+                .map(item -> JSONArray.parseArray(item.getCourseIds(),String.class))
                 .flatMap(Collection::stream).distinct().collect(Collectors.toList());
         LambdaQueryWrapper<CourseLesson> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(CourseLesson::getCourseId, totalCourseIds);
-        List<TrainCourseBo> trainCourseBoList = trainManageMapper.selectCourseIntroduce(totalCourseIds);
 
-        Map<String, TrainCourseBo> courseMap = trainCourseBoList.stream().peek(this::jsonStrToStr).collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
-        Map<String, List<TrainManage>> mapByPatent = getMapByPatent(resultList, trainManageList);
+        List<TrainCourseBo> trainCourseBoList = CollectionUtils.isEmpty(totalCourseIds) ? new ArrayList<>() : trainManageMapper.selectCourseIntroduce(totalCourseIds);
 
-        for (TrainManageTreeBo trainManageTreeBo : resultList) {
+        Map<String, TrainCourseBo> courseMap = trainCourseBoList.stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
+        Map<String, List<TrainManage>> mapByPatent = getMapByPatent(result, trainManageList);
+
+        for (TrainManageTreeBo trainManageTreeBo : result.getChildrenList()) {
             List<TrainManage> trainManages = mapByPatent.get(trainManageTreeBo.getResourceId());
             if (CollectionUtils.isEmpty(trainManages)) {
                 continue;
@@ -96,9 +103,11 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
                 }
                 //组装第二层级
                 List<TrainCourseBo> courseList = new ArrayList<>();
-                for (String courseId : item.getCourseIds().split(",")) {
-                    TrainCourseBo trainCourseBo = courseMap.get(courseId);
-                    courseList.add(trainCourseBo);
+                if (StringUtils.isNotBlank(item.getCourseIds())) {
+                    for (String courseId : JSONArray.parseArray(item.getCourseIds(), String.class)) {
+                        TrainCourseBo trainCourseBo = courseMap.get(courseId);
+                        courseList.add(trainCourseBo);
+                    }
                 }
                 children.setCourseList(courseList);
                 return children;
@@ -106,30 +115,38 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
 
             trainManageTreeBo.setChildrenList(childrenList);
         }
-        return resultList;
+        return result.getChildrenList();
     }
 
     @Override
-    public Boolean add(TrainMangeAddReq req) {
-        verifyNameExists(req.getName(), null);
-        if (StringUtils.isNotBlank(req.getParent())) {
-            LambdaQueryWrapper<TrainManage> queryPatent = new LambdaQueryWrapper<>();
-            queryPatent.eq(TrainManage::getParent, req.getParent());
-            TrainManage parent = trainManageMapper.selectOne(queryPatent);
-            if (Objects.isNull(parent) || StringUtils.isNotBlank(parent.getParent())) {
-                log.error("parent TrainManage error! parent=[{}]", req.getParent());
-                throw new BusinessException(OjBusinessErrorCode.TRAIN_MANAGE_LEVEL_ERROR);
-            }
-        }
+    public Boolean addLevel(TrainMangeReq req) {
+
+        verifyNameExists(req.getName(), null, req.getParent());
         TrainManage trainManage = new TrainManage();
+
+        LambdaQueryWrapper<TrainManage> queryPatent = new LambdaQueryWrapper<>();
+        queryPatent.eq(TrainManage::getResourceId, req.getParent());
+        TrainManage parent = trainManageMapper.selectOne(queryPatent);
+        if (Objects.isNull(parent)) {
+            log.error("parent TrainManage error! parent=[{}]", req.getParent());
+            throw new BusinessException(OjBusinessErrorCode.TRAIN_MANAGE_LEVEL_ERROR);
+        }
         trainManage.setResourceId(IDGeneratorUtil.getID());
         trainManage.setName(req.getName());
         trainManage.setParent(req.getParent());
+        trainManage.setCourseIds(new JSONArray().toJSONString());
+        trainManage.setSort(getCurrentLevelSize(req.getParent()) + 1);
         return trainManageMapper.insert(trainManage) > 0;
     }
 
+    private int getCurrentLevelSize(String parent) {
+        LambdaQueryWrapper<TrainManage> currentLevel = new LambdaQueryWrapper<>();
+        currentLevel.eq(TrainManage::getParent, parent);
+        return trainManageMapper.selectCount(currentLevel);
+    }
+
     @Override
-    public Boolean update(TrainMangeUpdateReq req) {
+    public Boolean updateLevel(TrainMangeReq req) {
         LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
         queryResource.eq(TrainManage::getResourceId, req.getResourceId());
         TrainManage trainByResource = trainManageMapper.selectOne(queryResource);
@@ -137,33 +154,70 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        verifyNameExists(req.getName(), req.getResourceId());
+        verifyNameExists(req.getName(), req.getResourceId(), req.getParent());
         trainByResource.setName(req.getName());
         return trainManageMapper.updateById(trainByResource) > 0;
     }
 
     @Override
-    public Boolean updateCourse(TrainMangeCourseUpdateReq req) {
-        LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
-        queryResource.eq(TrainManage::getResourceId, req.getResourceId());
-        TrainManage trainByResource = trainManageMapper.selectOne(queryResource);
-        if (Objects.isNull(trainByResource)) {
-            log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
+    public Boolean deleteLevel(String resourceId) {
+        if ("default".equals(resourceId)) {
+            return false;
+        }
+        LambdaQueryWrapper<TrainManage> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TrainManage::getResourceId, resourceId);
+        TrainManage deleteTrainManage = trainManageMapper.selectOne(queryWrapper);
+        if (Objects.isNull(deleteTrainManage)) {
+            log.error("TrainManage not found! resourceId=[{}]", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        trainByResource.setCourseIds(req.getCourseIds());
-        return trainManageMapper.updateById(trainByResource) > 0;
+        List<TrainManage> updateList = new ArrayList<>();
+        LambdaQueryWrapper<TrainManage> parentWrapper = new LambdaQueryWrapper<>();
+        parentWrapper.eq(TrainManage::getParent, deleteTrainManage.getParent());
+        parentWrapper.orderByAsc(TrainManage::getSort);
+        List<TrainManage> trainManages = trainManageMapper.selectList(parentWrapper);
+        int count = 0;
+        for (TrainManage trainManage : trainManages) {
+            if (!resourceId.equals(trainManage.getResourceId())) {
+                trainManage.setSort(count);
+                updateList.add(trainManage);
+                count++;
+            }
+        }
+        LambdaQueryWrapper<TrainManage> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.eq(TrainManage::getResourceId, resourceId).or().eq(TrainManage::getParent, resourceId);
 
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                trainManageMapper.delete(deleteWrapper);
+                if (CollectionUtils.isNotEmpty(updateList)) {
+                    updateList.forEach( item ->trainManageMapper.updateById(item));
+                }
+            }
+        });
+        return true;
     }
 
-    private void verifyNameExists(String name, String resourceId) {
-        LambdaQueryWrapper<TrainManage> queryName = new LambdaQueryWrapper<>();
-        queryName.eq(TrainManage::getName, name);
-        TrainManage trainByName = trainManageMapper.selectOne(queryName);
-
-        if (Objects.nonNull(trainByName) && !trainByName.getResourceId().equals(resourceId)) {
-            throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+    @Override
+    public Boolean move(TrainMangeSortReq req) {
+        LambdaQueryWrapper<TrainManage> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(TrainManage::getParent, req.getParent());
+        List<TrainManage> trainManages = trainManageMapper.selectList(queryWrapper);
+        Map<String, TrainManage> map = trainManages.stream().collect(Collectors.toMap(TrainManage::getResourceId, item -> item));
+        List<String> currentResource = trainManages.stream().map(TrainManage::getResourceId).collect(Collectors.toList());
+        if (trainManages.size() == req.getResourceIdList().size() && currentResource.containsAll(req.getResourceIdList())) {
+            List<TrainManage> updateList = new ArrayList<>();
+            int count = 0;
+            for (String id : req.getResourceIdList()) {
+                TrainManage trainManage = map.get(id);
+                trainManage.setSort(count);
+                updateList.add(trainManage);
+                count++;
+            }
+            updateList.forEach(item -> trainManageMapper.updateById(item));
         }
+        return true;
     }
 
     @Override
@@ -180,16 +234,76 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         newTrainManage.setName(trainManage.getName() + "（复制）");
         newTrainManage.setParent(trainManage.getParent());
         newTrainManage.setCourseIds(trainManage.getCourseIds());
+        newTrainManage.setSort(getCurrentLevelSize(trainManage.getParent()) + 1);
         return trainManageMapper.insert(newTrainManage) > 0;
 
     }
 
     @Override
-    public Boolean delete(String resourceId) {
+    public Boolean addCourse(TrainCourseReq req) {
         LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
-        queryResource.eq(TrainManage::getResourceId, resourceId).or().in(TrainManage::getParent, resourceId);
-        return trainManageMapper.delete(queryResource) > 0;
+        queryResource.eq(TrainManage::getResourceId, req.getResourceId());
+        TrainManage trainByResource = trainManageMapper.selectOne(queryResource);
+        if (Objects.isNull(trainByResource)) {
+            log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
+            return false;
+        }
+        List<String> courseIds = StringUtils.isBlank(trainByResource.getCourseIds()) ? new ArrayList<>() : JSONArray.parseArray(trainByResource.getCourseIds(), String.class);
+        Set<String> courseSet = new HashSet<>(courseIds);
+        courseSet.addAll(req.getCourseIdList());
+        trainByResource.setCourseIds(JSONArray.toJSONString(courseSet));
+        return trainManageMapper.updateById(trainByResource) > 0;
     }
+
+    @Override
+    public Boolean updateCourse(TrainCourseReq req) {
+        LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
+        queryResource.eq(TrainManage::getResourceId, req.getResourceId());
+        TrainManage trainByResource = trainManageMapper.selectOne(queryResource);
+        if (Objects.isNull(trainByResource)) {
+            log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
+            return false;
+        }
+        trainByResource.setCourseIds(JSONArray.toJSONString(req.getCourseIdList()));
+        return trainManageMapper.updateById(trainByResource) > 0;
+    }
+
+
+    @Override
+    public Boolean deleteCourse(TrainCourseReq req) {
+        LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
+        queryResource.eq(TrainManage::getResourceId, req.getResourceId());
+        TrainManage trainByResource = trainManageMapper.selectOne(queryResource);
+        if (Objects.isNull(trainByResource)) {
+            log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+        if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
+            return false;
+        }
+        List<String> courseIds = StringUtils.isAllBlank(trainByResource.getCourseIds())?new ArrayList<>(): JSONArray.parseArray(trainByResource.getCourseIds(),String.class);
+        courseIds.removeAll(req.getCourseIdList());
+        trainByResource.setCourseIds(JSONArray.toJSONString(courseIds));
+        return trainManageMapper.updateById(trainByResource) > 0;
+    }
+
+    private void verifyNameExists(String name, String resourceId, String parent) {
+        LambdaQueryWrapper<TrainManage> queryName = new LambdaQueryWrapper<>();
+        queryName.eq(TrainManage::getName, name);
+        queryName.eq(TrainManage::getParent, parent);
+        TrainManage trainByName = trainManageMapper.selectOne(queryName);
+
+        if (Objects.nonNull(trainByName) && !trainByName.getResourceId().equals(resourceId)) {
+            throw new BusinessException(OjBusinessErrorCode.NAME_IS_EXIST);
+        }
+    }
+
 
     @Override
     public List<TrainCourseBo> getDetail(String resourceId) {
@@ -197,72 +311,37 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         LambdaQueryWrapper<TrainManage> queryTrain = new LambdaQueryWrapper<>();
         queryTrain.eq(TrainManage::getResourceId, resourceId);
         TrainManage trainManage = trainManageMapper.selectOne(queryTrain);
-        if (StringUtils.isBlank(trainManage.getCourseIds())) {
+        if (Objects.isNull(trainManage)) {
             return resultList;
         }
-        List<String> courseIds = Arrays.stream(trainManage.getCourseIds().split(",")).collect(Collectors.toList());
-        Map<String, TrainCourseBo> courseMap = trainManageMapper.selectCourseInfo(courseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
+        List<String> courseIds =  JSONArray.parseArray(trainManage.getCourseIds(), String.class);
+        Map<String, TrainCourseBo> courseMap = CollectionUtils.isEmpty(courseIds) ? Maps.newHashMap() : trainManageMapper.selectCourseInfo(courseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
         for (String courseId : courseIds) {
             resultList.add(courseMap.get(courseId));
         }
         return resultList;
     }
 
-    @Override
-    public List<TrainCourseBo> getWebDetail(String resourceId) {
-
-        LambdaQueryWrapper<TrainManage> queryTrain = new LambdaQueryWrapper<>();
-        queryTrain.eq(TrainManage::getResourceId, resourceId);
-        TrainManage trainManage = trainManageMapper.selectOne(queryTrain);
-        if (StringUtils.isBlank(trainManage.getCourseIds())) {
-            return new ArrayList<>();
-        }
-        List<String> courseIds = Arrays.stream(trainManage.getCourseIds().split(",")).collect(Collectors.toList());
-        List<TrainCourseBo> resultList = trainManageMapper.selectCourseIntroduce(courseIds);
-        resultList.forEach(this::jsonStrToStr);
-        return resultList;
-    }
-
-    private TrainManageTreeBo getTrainManageTreeBo(Map<String, TrainCourseBo> courseMap, TrainManageTreeBo parentTrainManage, TrainManage item) {
-        List<TrainCourseBo> trainCourseBoList = new ArrayList<>();
-        TrainManageTreeBo children = new TrainManageTreeBo();
-        children.setResourceId(item.getResourceId());
-        children.setName(item.getName());
-        children.setParent(parentTrainManage.getResourceId());
-        if (null != item.getCourseIds()) {
-            List<String> courseIds = Arrays.stream(item.getCourseIds().split(",")).collect(Collectors.toList());
-            for (String courseId : courseIds) {
-                trainCourseBoList.add(courseMap.get(courseId));
-            }
-        }
-        children.setCourseList(trainCourseBoList);
-        return children;
-    }
-
-    private Map<String, List<TrainManage>> getMapByPatent(List<TrainManageTreeBo> resultList, List<TrainManage> trainManageList) {
+    private Map<String, List<TrainManage>> getMapByPatent(TrainManageTreeBo top, List<TrainManage> trainManageList) {
+        List<TrainManageTreeBo> second = new ArrayList<>();
         List<TrainManage> secondTrainManageList = new ArrayList<>();
         for (TrainManage trainManage : trainManageList) {
-            if (StringUtils.isBlank(trainManage.getParent())) {
+            if ("default".equals(trainManage.getResourceId())) {
+                top.setName(trainManage.getName());
+                top.setResourceId(trainManage.getResourceId());
+            } else if ("default".equals(trainManage.getParent())) {
                 TrainManageTreeBo trainManageTreeBo = new TrainManageTreeBo();
                 trainManageTreeBo.setResourceId(trainManage.getResourceId());
                 trainManageTreeBo.setName(trainManage.getName());
-                trainManageTreeBo.setParent(null);
-                resultList.add(trainManageTreeBo);
+                trainManageTreeBo.setParent(trainManage.getParent());
+                second.add(trainManageTreeBo);
             } else {
                 secondTrainManageList.add(trainManage);
             }
         }
+        top.setChildrenList(second);
         return StreamApiUtils.groupBy(secondTrainManageList, TrainManage::getParent);
     }
 
-    private void jsonStrToStr(TrainCourseBo item) {
-        List<String> knowledgeList = new ArrayList<>();
-        for (String str : item.getKnowledgeList()) {
-            String collect = String.join(",", JSONArray.parseArray(str, String.class));
-            if (StringUtils.isNotBlank(collect)) {
-                knowledgeList.add(collect);
-            }
-        }
-        item.setKnowledgeList(knowledgeList);
-    }
+
 }

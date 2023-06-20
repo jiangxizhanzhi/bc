@@ -181,4 +181,7 @@ public interface ErrorCode {
 
 	/** 矩阵数据与指标项数量不一致*/
 	String UNFIT_MATRIX_DATA = "100058";
+
+	/** 笔记为空*/
+	String BLANK_NOTE = "100059";
 }

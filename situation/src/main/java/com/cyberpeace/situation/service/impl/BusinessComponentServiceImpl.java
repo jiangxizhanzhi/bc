@@ -7,12 +7,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.situation.dao.mapper.BusinessComponentsSettingMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +18,19 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.controller.req.*;
 import com.cyberpeace.situation.dao.entity.*;
 import com.cyberpeace.situation.dao.mapper.BusinessComponentMapper;
+import com.cyberpeace.situation.dao.mapper.BusinessComponentsSettingMapper;
 import com.cyberpeace.situation.dao.mapper.SituationCategoryMapper;
 import com.cyberpeace.situation.service.ApiRequestService;
 import com.cyberpeace.situation.service.BusinessComponentService;
@@ -105,25 +104,15 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 		// 3-2 组件ID列表不为空，提取控件数据
 		dashboardComponents = businessComponentsSettingMapper.selectBatchIds(componentIds);
 		List<BusinessComponentsSetting> sortBusinessComponentsSetting = new ArrayList<>();
-		// 3-3 根据type参数，过滤不同视角下的组件
-		if (type == null) {
-			// 3-3-1 如果未指定视角，默认返回全部组件
-			sortBusinessComponentsSetting.addAll(dashboardComponents);
-		} else {
-			// 3-3-2 存在视角时，按视角类型筛选数据
-			dashboardComponents.forEach(dashboardComponent -> {
-				String componentType = dashboardComponent.getType();
-				// 3-3-2-1 过滤当前视角类型控件及全局控件
-				if (Objects.equals(componentType, type) || "all".equals(type)) {
-					sortBusinessComponentsSetting.add(dashboardComponent);
-				}
-			});
-		}
 
-		// 3-4 处理控件顺序
-		return sortBusinessComponentsSetting.stream()
-				.sorted(Comparator.comparing(BusinessComponentsSetting::getComponentIndex).reversed())
-				.collect(Collectors.toList());
+ 		dashboardComponents.forEach(dashboardComponent -> {
+			dashboardComponent.setComponentSettingObject(JSONObject.parseObject(dashboardComponent.getComponentSetting()));
+  			sortBusinessComponentsSetting.add(dashboardComponent);
+
+		});
+
+		// 3-3 返回组件信息
+		return sortBusinessComponentsSetting;
 	}
 
 	/**
@@ -147,8 +136,8 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 		checkTemplateName(businessComponentReq.getName(), null);
 
 		// 2.2、根据图层配置对组件配置进行排序
-//		sortComponentByLayer(businessComponentReq.getBusinessComponentsSettings(),
-//				businessComponentReq.getLayerShow());
+		// sortComponentByLayer(businessComponentReq.getBusinessComponentsSettings(),
+		// businessComponentReq.getLayerShow());
 
 		// 2.3、转换配置数据为业务组件实体
 		BusinessComponent businessComponent = convertComponent(businessComponentReq);
@@ -238,7 +227,6 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 
 	}
 
-
 	/**
 	 * 导入业务组件
 	 *
@@ -289,7 +277,8 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 * @param dashboardComponentsList 仪表板组件列表
 	 * @return {@link List}<{@link String}>
 	 */
-	private List<String> getComponentsFilePaths(List<BusinessComponentsSetting> dashboardComponentsList) {
+	private List<String>
+			getComponentsFilePaths(List<BusinessComponentsSetting> dashboardComponentsList) {
 		List<String> files = Lists.newArrayList();
 		for (BusinessComponentsSetting dashboardComponent : dashboardComponentsList) {
 			String componentSetting = dashboardComponent.getComponentSetting();
@@ -415,7 +404,6 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 		return resourceId;
 	}
 
-
 	/**
 	 * 得到业务组件信息
 	 *
@@ -425,20 +413,20 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 * @return {@link BusinessComponentRes}
 	 */
 	@Override
-		public BusinessComponentRes getBusinessComponentInfo(String resourceId, String type,
-															 Boolean isPreview) {
-			// 1、获取大屏业务组件数据
-			BusinessComponent businessComponent = selectBusinessComponentById(resourceId, true);
-	
-			// 2、构造返回业务组件数据
-			BusinessComponentRes businessComponentRes = BeanUtils.copy(businessComponent,
-					BusinessComponentRes.class);
-			// 2-1 处理组件配置数据
-			businessComponentRes.setBusinessComponentsSettings(
-					convertComponents(businessComponent.getComponentsSetting(), type));
-	
-			return businessComponentRes;
-		}
+	public BusinessComponentRes getBusinessComponentInfo(String resourceId, String type,
+			Boolean isPreview) {
+		// 1、获取大屏业务组件数据
+		BusinessComponent businessComponent = selectBusinessComponentById(resourceId, true);
+
+		// 2、构造返回业务组件数据
+		BusinessComponentRes businessComponentRes = BeanUtils.copy(businessComponent,
+				BusinessComponentRes.class);
+		// 2-1 处理组件配置数据
+		businessComponentRes.setBusinessComponentsSettings(
+				convertComponents(businessComponent.getComponentsSetting(), type));
+
+		return businessComponentRes;
+	}
 
 	/**
 	 * 删除业务组件
@@ -447,28 +435,27 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 * @return {@link Integer}
 	 */
 	@Override
-		public Integer deleteBusinessComponent(List<String> idList) {
-			if (CollectionUtils.isNotEmpty(idList)) {
-				List<BusinessComponent> businessComponents = businessComponentMapper
-						.selectBatchIds(idList);
-				List<String> dashboardComponentsIdList = new ArrayList<>();
-				businessComponents.forEach(businessComponent -> dashboardComponentsIdList
-						.addAll(JsonUtil.toJsonObjectArray(businessComponent.getComponentsSetting(),
-								String.class)));
-				transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-	
-					@Override
-					protected void doInTransactionWithoutResult(TransactionStatus status) {
-						businessComponentMapper.deleteBatchIds(idList);
-						if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
-							businessComponentsSettingMapper.deleteBatchIds(dashboardComponentsIdList);
-						}
-					}
-				});
-			}
-			return idList.size();
-		}
+	public Integer deleteBusinessComponent(List<String> idList) {
+		if (CollectionUtils.isNotEmpty(idList)) {
+			List<BusinessComponent> businessComponents = businessComponentMapper
+					.selectBatchIds(idList);
+			List<String> dashboardComponentsIdList = new ArrayList<>();
+			businessComponents.forEach(businessComponent -> dashboardComponentsIdList
+					.addAll(JsonUtil.toJsonObjectArray(businessComponent.getComponentsSetting(),
+							String.class)));
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					businessComponentMapper.deleteBatchIds(idList);
+					if (CollectionUtils.isNotEmpty(dashboardComponentsIdList)) {
+						businessComponentsSettingMapper.deleteBatchIds(dashboardComponentsIdList);
+					}
+				}
+			});
+		}
+		return idList.size();
+	}
 
 	/**
 	 * 获得业务组件页面
@@ -478,19 +465,21 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 */
 	@Override
 	public ListRsp<BusinessComponentRes>
-	getBusinessComponentPage(BusinessComponentPageReq businessComponentPageReq) {
+			getBusinessComponentPage(BusinessComponentPageReq businessComponentPageReq) {
 		Page page = businessComponentPageReq.toPageParam();
 
-		IPage<BusinessComponent> businessComponentIPage = businessComponentMapper.selectPage(page, businessComponentPageReq);
-		IPage<BusinessComponentRes> businessComponentResIPage = businessComponentIPage.convert((businessComponent -> {
-			BusinessComponentRes businessComponentRes = BeanUtils.copy(businessComponent, BusinessComponentRes.class);
- 			businessComponentRes.setBusinessComponentsSettings(
-					convertComponents(businessComponent.getComponentsSetting(), null));
-			return businessComponentRes;
-		}));
+		IPage<BusinessComponent> businessComponentIPage = businessComponentMapper.selectPage(page,
+				businessComponentPageReq);
+		IPage<BusinessComponentRes> businessComponentResIPage = businessComponentIPage
+				.convert((businessComponent -> {
+					BusinessComponentRes businessComponentRes = BeanUtils.copy(businessComponent,
+							BusinessComponentRes.class);
+					businessComponentRes.setBusinessComponentsSettings(
+							convertComponents(businessComponent.getComponentsSetting(), null));
+					return businessComponentRes;
+				}));
 
-		return PageUtil
-				.getListResult(businessComponentResIPage);
+		return PageUtil.getListResult(businessComponentResIPage);
 	}
 
 	/**
@@ -554,13 +543,13 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 * @param dashboardComponentsReqList 指示板组件请求列表
 	 * @return {@link List}<{@link BusinessComponentsSetting}>
 	 */
-	private List<BusinessComponentsSetting>
-			changeToBusinessComponentsSetting(List<BusinessComponentsSettingReq> dashboardComponentsReqList) {
+	private List<BusinessComponentsSetting> changeToBusinessComponentsSetting(
+			List<BusinessComponentsSettingReq> dashboardComponentsReqList) {
 		List<BusinessComponentsSetting> dashboardComponentsList = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(dashboardComponentsReqList)) {
 			for (BusinessComponentsSettingReq dashboardComponentsReq : dashboardComponentsReqList) {
-				BusinessComponentsSetting dashboardComponents = BeanUtils.deepCopy(dashboardComponentsReq,
-						BusinessComponentsSetting.class);
+				BusinessComponentsSetting dashboardComponents = BeanUtils
+						.deepCopy(dashboardComponentsReq, BusinessComponentsSetting.class);
 				Object componentSetting = dashboardComponentsReq.getComponentSetting();
 				Object datasourceSetting = dashboardComponentsReq.getDatasourceSetting();
 				if (componentSetting != null) {
@@ -576,8 +565,6 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 		}
 		return dashboardComponentsList;
 	}
-
-
 
 	/**
 	 * 处理echarts的dataset数据集结构
@@ -928,7 +915,8 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 */
 	@Override
 	public List<BusinessComponentsSettingReq> sortComponentByLayer(
-			List<BusinessComponentsSettingReq> componentsSettingList, List<LayerShowReq> layerShow) {
+			List<BusinessComponentsSettingReq> componentsSettingList,
+			List<LayerShowReq> layerShow) {
 
 		List<Integer> sortComponentIndexs = new ArrayList<>();
 

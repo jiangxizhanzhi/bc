@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import com.cyberpeace.common.cache.CrRoleCache;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +40,20 @@ public class CrEventListenerHelper {
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),
 					CrRoleNode::getId);
 			if (!visibleNodeIds.contains(nodeId)) {
-				// 不推送
-				return null;
+				try {
+					CrRole roleOld = (CrRole)CrRoleCache.cache.get(role.getResourceId());
+					CrRoleNodesData nodesDataOld = roleOld.getNodeData();
+					// filter visible nodes
+					List<String> oldVisibleNodeIds = StreamApiUtils.map(nodesDataOld.getVisibleNodes(),
+							CrRoleNode::getId);
+					if (!oldVisibleNodeIds.contains(nodeId)) {
+						// 不推送
+						return null;
+					}
+				} catch (ExecutionException e) {
+					//异常不处理
+					return null;
+				}
 			}
 			// filter asset nodes
 			List<String> assetNodeIds = StreamApiUtils.map(nodesData.getAssetNodes(),

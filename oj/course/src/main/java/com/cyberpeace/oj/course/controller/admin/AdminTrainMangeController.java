@@ -1,6 +1,5 @@
 package com.cyberpeace.oj.course.controller.admin;
 
-import com.baomidou.mybatisplus.core.injector.methods.Delete;
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
 import com.cyberpeace.common.model.BaseRsp;
@@ -10,7 +9,6 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.oj.course.controller.req.TrainCourseReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeReq;
-import com.cyberpeace.oj.course.controller.req.TrainMangeCourseUpdateReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
 import com.cyberpeace.oj.course.service.TrainManageService;
 import com.cyberpeace.oj.course.service.bo.TrainCourseBo;

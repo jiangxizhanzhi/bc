@@ -3,14 +3,6 @@
 
 <mapper namespace="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper">
 
-    <resultMap id="trainCourseResultMap" type="com.cyberpeace.oj.course.service.bo.TrainCourseBo" >
-            <result property="resourceId" column="resource_id" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-        <collection property="knowledgeList" ofType="java.lang.String" column="resource_id"
-                    select="com.cyberpeace.oj.course.dao.mapper.TrainManageMapper.selectContentByCourseId"/>
-    </resultMap>
-
     <select id="selectCourseInfo" resultType="com.cyberpeace.oj.course.service.bo.TrainCourseBo">
         SELECT a.resource_id,
                a.name,
@@ -27,29 +19,15 @@
         GROUP BY a.resource_id
     </select>
 
-    <select id="selectCourseIntroduce" resultMap="trainCourseResultMap">
-        SELECT resource_id, `name`, description
-        FROM oj_course
-        WHERE resource_id IN
+    <select id="selectCourseKnowleage" resultType="com.cyberpeace.oj.course.service.bo.CourseKnowledgeInfoBo">
+        SELECT b.resource_id, a.related_id, b.`name`, b.description, b.logo, c.content
+        FROM rtks_course_related a
+        LEFT JOIN oj_course b  ON a.resource_id=b.resource_id
+        LEFT JOIN rtks_knowledge c ON  a.related_id=c.resource_id
+        WHERE a.resource_id  IN
         <foreach collection="courseIds" item="courseId" open="(" close=")" separator=",">
             #{courseId}
         </foreach>
-        GROUP BY resource_id
     </select>
 
-    <select id="selectContentByCourseId" resultType="java.lang.String">
-        SELECT  DISTINCT(b.content) knowledge FROM rtks_course_related a INNER JOIN rtks_knowledge b ON
-        a.related_id=b.resource_id
-        WHERE a.resource_id = #{courseId}
-    </select>
-
-    <update id="batchUpdateById" >
-            <foreach collection="list" item="item" separator=";">
-                update
-                `oj_train_manage`
-                set sort = #{item.sort}
-                where
-                resource_id = #{item.resourceId}
-            </foreach>
-    </update>
 </mapper>

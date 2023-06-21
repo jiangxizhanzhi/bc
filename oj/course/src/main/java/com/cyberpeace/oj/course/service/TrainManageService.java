@@ -2,7 +2,6 @@ package com.cyberpeace.oj.course.service;
 
 import com.cyberpeace.oj.course.controller.req.TrainCourseReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeReq;
-import com.cyberpeace.oj.course.controller.req.TrainMangeCourseUpdateReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
 import com.cyberpeace.oj.course.service.bo.TrainCourseBo;
 import com.cyberpeace.oj.course.service.bo.TrainManageTreeBo;

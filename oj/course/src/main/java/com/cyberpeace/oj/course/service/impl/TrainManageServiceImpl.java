@@ -5,10 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.course.controller.req.TrainCourseReq;
-import com.cyberpeace.oj.course.controller.req.TrainMangeCourseUpdateReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
@@ -16,8 +17,7 @@ import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.TrainManage;
 import com.cyberpeace.oj.course.dao.mapper.TrainManageMapper;
 import com.cyberpeace.oj.course.service.TrainManageService;
-import com.cyberpeace.oj.course.service.bo.TrainCourseBo;
-import com.cyberpeace.oj.course.service.bo.TrainManageTreeBo;
+import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +42,16 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Autowired
+    CourseStatisticsServiceImpl courseStatisticsService;
+
     @Override
     public TrainManageTreeBo trainMangeList() {
 
         TrainManageTreeBo result = new TrainManageTreeBo();
-
-        List<TrainManage> trainManageList = trainManageMapper.selectList(new LambdaQueryWrapper<>());
+        LambdaQueryWrapper<TrainManage> queryAllWrapper = new LambdaQueryWrapper<>();
+        queryAllWrapper.orderByAsc(TrainManage::getSort);
+        List<TrainManage> trainManageList = trainManageMapper.selectList(queryAllWrapper);
         //查询课程信息
         List<String> totalCourseIds = trainManageList.stream().filter(item -> !"default".equals(item.getResourceId()))
                 .map(item -> JSONArray.parseArray(item.getCourseIds(), String.class))
@@ -76,19 +80,41 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
     @Override
     public List<TrainManageTreeBo> webTrainMangeList() {
         TrainManageTreeBo result = new TrainManageTreeBo();
-        List<TrainManage> trainManageList = trainManageMapper.selectList(new LambdaQueryWrapper<>());
-        //查询课程信息
+        String userId = UserInfoContext.getUserContext().getUserId();
+
+        LambdaQueryWrapper<TrainManage> queryAllWrapper = new LambdaQueryWrapper<>();
+        queryAllWrapper.orderByAsc(TrainManage::getSort);
+        List<TrainManage> trainManageList = trainManageMapper.selectList(queryAllWrapper);
+
+        //根据课程培训trainManageList获取课程ids
         List<String> totalCourseIds = trainManageList.stream().filter(item -> !"default".equals(item.getResourceId()))
-                .map(item -> JSONArray.parseArray(item.getCourseIds(),String.class))
+                .map(item -> JSONArray.parseArray(item.getCourseIds(), String.class))
                 .flatMap(Collection::stream).distinct().collect(Collectors.toList());
         LambdaQueryWrapper<CourseLesson> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(CourseLesson::getCourseId, totalCourseIds);
 
-        List<TrainCourseBo> trainCourseBoList = CollectionUtils.isEmpty(totalCourseIds) ? new ArrayList<>() : trainManageMapper.selectCourseIntroduce(totalCourseIds);
+        //获取课程关联知识点内容
+        List<CourseKnowledgeInfoBo> trainCourseBoList = CollectionUtils.isEmpty(totalCourseIds) ? new ArrayList<>() : trainManageMapper.selectCourseKnowleage(totalCourseIds);
 
-        Map<String, TrainCourseBo> courseMap = trainCourseBoList.stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
+        //课程关联知识点内容-->课程列表和知识点
+        List<TrainCourseBo> trainCourseList = new ArrayList<>();
+        List<CourseKnowledgeBo> courseKnowledgeBoList = new ArrayList<>();
+        transferCourseAndCourseKnowledge(trainCourseBoList, trainCourseList, courseKnowledgeBoList);
+
+        //获取学习进度
+        List<CourseStudyProcessBo> processBos = courseStatisticsService.statisticByIds(totalCourseIds, userId);
+        Map<String, CourseStudyProcessBo> processBoMap = processBos.stream().collect(Collectors.toMap(CourseStudyProcessBo::getCourseId, bo -> bo));
+
+        Map<String, List<CourseKnowledgeBo>> courseKnowledgeMap = courseKnowledgeBoList.stream().collect(Collectors.groupingBy(CourseKnowledgeBo::getResourceId));
+        trainCourseList.forEach(item -> {
+            item.setKnowledgeList(courseKnowledgeMap.get(item.getResourceId()));
+            CourseStudyProcessBo courseStudyProcessBo = processBoMap.get(item.getResourceId());
+            item.setProcess(courseStudyProcessBo == null ? 0 : MathUtils.ceil(courseStudyProcessBo.getProcess()));
+        });
+        Map<String, TrainCourseBo> courseMap = StreamApiUtils.toMap(trainCourseList, TrainCourseBo::getResourceId, item -> item);
+
+        //组装结果集(课程训练框架)
         Map<String, List<TrainManage>> mapByPatent = getMapByPatent(result, trainManageList);
-
         for (TrainManageTreeBo trainManageTreeBo : result.getChildrenList()) {
             List<TrainManage> trainManages = mapByPatent.get(trainManageTreeBo.getResourceId());
             if (CollectionUtils.isEmpty(trainManages)) {
@@ -98,9 +124,6 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
                 TrainManageTreeBo children = new TrainManageTreeBo();
                 children.setResourceId(item.getResourceId());
                 children.setName(item.getName());
-                if (null == item.getCourseIds()) {
-                    return children;
-                }
                 //组装第二层级
                 List<TrainCourseBo> courseList = new ArrayList<>();
                 if (StringUtils.isNotBlank(item.getCourseIds())) {
@@ -116,6 +139,21 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             trainManageTreeBo.setChildrenList(childrenList);
         }
         return result.getChildrenList();
+    }
+
+    private void transferCourseAndCourseKnowledge(List<CourseKnowledgeInfoBo> trainCourseBoList, List<TrainCourseBo> trainCourseList, List<CourseKnowledgeBo> courseKnowledgeBoList) {
+        Set<String> setId = new HashSet<>();
+        for (CourseKnowledgeInfoBo courseKnowledgeInfoBo : trainCourseBoList) {
+            if (setId.add(courseKnowledgeInfoBo.getResourceId())) {
+                TrainCourseBo trainCourseBo = TrainCourseBo.getTrainCourseBoFromKnowledge(courseKnowledgeInfoBo);
+                trainCourseList.add(trainCourseBo);
+            }
+            CourseKnowledgeBo courseKnowledgeBo = new CourseKnowledgeBo();
+            courseKnowledgeBo.setResourceId(courseKnowledgeInfoBo.getResourceId());
+            courseKnowledgeBo.setRelatedId(courseKnowledgeInfoBo.getRelatedId());
+            courseKnowledgeBo.setContent(courseKnowledgeInfoBo.getContent());
+            courseKnowledgeBoList.add(courseKnowledgeBo);
+        }
     }
 
     @Override
@@ -192,7 +230,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 trainManageMapper.delete(deleteWrapper);
                 if (CollectionUtils.isNotEmpty(updateList)) {
-                    updateList.forEach( item ->trainManageMapper.updateById(item));
+                    updateList.forEach(item -> trainManageMapper.updateById(item));
                 }
             }
         });
@@ -287,7 +325,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
             return false;
         }
-        List<String> courseIds = StringUtils.isAllBlank(trainByResource.getCourseIds())?new ArrayList<>(): JSONArray.parseArray(trainByResource.getCourseIds(),String.class);
+        List<String> courseIds = StringUtils.isAllBlank(trainByResource.getCourseIds()) ? new ArrayList<>() : JSONArray.parseArray(trainByResource.getCourseIds(), String.class);
         courseIds.removeAll(req.getCourseIdList());
         trainByResource.setCourseIds(JSONArray.toJSONString(courseIds));
         return trainManageMapper.updateById(trainByResource) > 0;
@@ -304,7 +342,6 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         }
     }
 
-
     @Override
     public List<TrainCourseBo> getDetail(String resourceId) {
         List<TrainCourseBo> resultList = new ArrayList<>();
@@ -314,7 +351,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         if (Objects.isNull(trainManage)) {
             return resultList;
         }
-        List<String> courseIds =  JSONArray.parseArray(trainManage.getCourseIds(), String.class);
+        List<String> courseIds = JSONArray.parseArray(trainManage.getCourseIds(), String.class);
         Map<String, TrainCourseBo> courseMap = CollectionUtils.isEmpty(courseIds) ? Maps.newHashMap() : trainManageMapper.selectCourseInfo(courseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
         for (String courseId : courseIds) {
             resultList.add(courseMap.get(courseId));
@@ -340,8 +377,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             }
         }
         top.setChildrenList(second);
-        return StreamApiUtils.groupBy(secondTrainManageList, TrainManage::getParent);
+        return secondTrainManageList.stream().collect(Collectors.groupingBy(TrainManage::getParent, LinkedHashMap::new, Collectors.toList()));
     }
-
 
 }

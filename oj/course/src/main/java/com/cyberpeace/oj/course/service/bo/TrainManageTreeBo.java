@@ -22,4 +22,5 @@ public class TrainManageTreeBo {
 
 	@ApiModelProperty(value = "课程列表，不存在则为null")
 	private List<TrainCourseBo> courseList;
+
 }

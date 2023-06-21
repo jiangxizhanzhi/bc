@@ -1,4 +1,5 @@
 package com.cyberpeace.oj.course.service.bo;
+import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,7 +28,33 @@ public class TrainCourseBo implements Serializable {
     @ApiModelProperty("介绍")
     private String description;
 
-    @ApiModelProperty("知识点")
-    private List<String> knowledgeList;
+    @ApiModelProperty("课程学习进度")
+    private Integer process ;
 
+    @ApiModelProperty("课程关联知识点信息")
+    private List<CourseKnowledgeBo> knowledgeList;
+
+    @ApiModelProperty("课程logo")
+    private String logo;
+
+    @ApiModelProperty("课程关联的知识点或技能id")
+    private String relatedId ;
+
+    @ApiModelProperty("是否具有课程访问权限")
+    private Boolean interview;
+
+    public static TrainCourseBo getTrainCourseBoFromKnowledge(CourseKnowledgeInfoBo courseKnowledge) {
+        TrainCourseBo trainCourseBo = new TrainCourseBo();
+        trainCourseBo.setResourceId(courseKnowledge.getResourceId());
+        trainCourseBo.setName(courseKnowledge.getName());
+        trainCourseBo.setDirectionName(courseKnowledge.getDirectionName());
+        trainCourseBo.setDifficulty(courseKnowledge.getDifficulty());
+        trainCourseBo.setLessonCount(courseKnowledge.getLessonCount());
+        trainCourseBo.setDescription(courseKnowledge.getDescription());
+        trainCourseBo.setProcess(courseKnowledge.getProcess());
+        trainCourseBo.setLogo(courseKnowledge.getLogo());
+        trainCourseBo.setRelatedId(courseKnowledge.getRelatedId());
+        trainCourseBo.setInterview(false);
+        return trainCourseBo;
+    }
 }

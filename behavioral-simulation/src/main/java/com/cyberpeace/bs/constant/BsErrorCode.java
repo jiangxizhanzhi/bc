@@ -100,4 +100,14 @@ public interface BsErrorCode {
 	 * 错误的时间范围；开始时间不能在结束时间之后
 	 */
 	String TIME_RANGE_ERROR = "105019";
+
+	/**
+	 * 设备没有找到
+	 */
+	String DEVICE_NOT_FOUND = "105020";
+
+	/**
+	 * 空设备id
+	 */
+	String EMPTY_DEVICE_ID = "105021";
 }

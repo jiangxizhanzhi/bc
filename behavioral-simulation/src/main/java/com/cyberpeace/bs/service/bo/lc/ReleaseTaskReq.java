@@ -1,10 +1,11 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+
+import lombok.Data;
 
 /**
  * 下发任务请求体
@@ -48,7 +49,7 @@ public class ReleaseTaskReq implements Serializable {
     /**
      * 是否使用ip识别设备
      */
-    private Boolean isUsingIp;
+	private Boolean isUsingIp = false;
 
     /**
      * 变量

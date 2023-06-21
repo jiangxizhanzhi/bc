@@ -1,8 +1,8 @@
 package com.cyberpeace.bs.service.bo.lc;
 
-import lombok.Data;
-
 import java.io.Serializable;
+
+import lombok.Data;
 
 /**
  * 停止任务请求体
@@ -31,5 +31,5 @@ public class StopTaskReq implements Serializable {
     /**
      * 是否使用ip识别设备
      */
-    private Boolean isUsingIp;
+	private Boolean isUsingIp = false;
 }

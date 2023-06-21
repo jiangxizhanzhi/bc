@@ -3,7 +3,6 @@ package com.cyberpeace.bs.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.MeterService;
@@ -40,13 +39,12 @@ public class MeterServiceImpl implements MeterService {
 		// 组装任务下发请求体
 		ReleaseTaskReq taskReq = new ReleaseTaskReq();
 		// 区分实体设备和虚拟设备
-		taskReq.setIsUsingIp(!simulator.getIsEntity());
-		if (taskReq.getIsUsingIp()) {
-			taskReq.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
+			taskReq.setDeviceId(simulator.getYwId());
 		} else {
-			taskReq.setDeviceId(simulator.getDeviceId());
+			taskReq.setDeviceId(lcService.getDeviceIdByUuid(simulator.getDeviceId()));
 		}
-		taskReq.setIp(simulator.getDeviceIp());
+		// taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setFlowChart(behaviorId);
 		// 设置行为变量
 		req.getVariables().forEach(
@@ -65,11 +63,11 @@ public class MeterServiceImpl implements MeterService {
 		StopTaskReq stopTaskReq = new StopTaskReq();
 		stopTaskReq.setChartId(new Long(behaviorId));
 		// 区分实体设备、虚拟设备
-		stopTaskReq.setIsUsingIp(!simulator.getIsEntity());
-		if (simulator.getIsEntity()) {
-			stopTaskReq.setDeviceId(new Integer(simulator.getDeviceId()));
+		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
+			stopTaskReq.setDeviceId(new Integer(simulator.getYwId()));
 		} else {
-			stopTaskReq.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
+			stopTaskReq
+					.setDeviceId(new Integer(lcService.getDeviceIdByUuid(simulator.getDeviceId())));
 		}
 		stopTaskReq.setIp(simulator.getDeviceIp());
 		// 发送停止任务请求

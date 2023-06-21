@@ -1,5 +1,20 @@
 package com.cyberpeace.bs.service.impl;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
@@ -12,23 +27,13 @@ import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.bs.service.bo.variable.VariableSimple;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.LcHttpClient;
+import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
 import com.cyberpeace.common.util.TimeUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 远程Service实现
@@ -377,4 +382,28 @@ public class LcServiceImpl implements LcService {
         Integer rsp = LcHttpClient.rawGet(targetUrl, Integer.class);
         return rsp;
     }
+
+	@Override
+	public String getDeviceIdByUuid(String uuid) {
+		// 请求地址
+		String targetUrl = LC_HOST_PORT + DEVICE_URL;
+		// req
+		LcDeviceReq req = new LcDeviceReq();
+		req.setUuid(uuid);
+		// get device
+		LcDevicePageRes res = LcHttpClient.post(targetUrl, req, LcDevicePageRes.class);
+		List<LcDevice> deviceList = res.getRecords();
+
+		if (CollectionUtils.isEmpty(deviceList)) {
+			log.error("cant find device by uuid: [{}]", uuid);
+			throw new BusinessException(BsErrorCode.DEVICE_NOT_FOUND);
+		}
+		// get device
+		LcDevice device = deviceList.get(0);
+		if (StringUtils.isBlank(device.getId())) {
+			log.error("empty device id by uuid: [{}]", uuid);
+			throw new BusinessException(BsErrorCode.EMPTY_DEVICE_ID);
+		}
+		return device.getId();
+	}
 }

@@ -1,12 +1,13 @@
 package com.cyberpeace.bs.dao.entity;
 
+import java.time.LocalTime;
+
 import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.BaseTable;
+
 import lombok.Data;
 import lombok.Getter;
-
-import java.time.LocalTime;
 
 /**
  * 用户行为仿真仪表
@@ -78,6 +79,11 @@ public class UserSimulator extends BaseTable {
      * 执行设备id
      */
     private String deviceId;
+
+	/**
+	 * 行为节点运维靶标id
+	 */
+	private String ywId;
 
     /**
      * 执行设备名称

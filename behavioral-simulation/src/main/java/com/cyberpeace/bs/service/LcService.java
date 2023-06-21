@@ -1,5 +1,12 @@
 package com.cyberpeace.bs.service;
 
+import java.util.Collection;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cyberpeace.bs.service.bo.behavior.Behavior;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorPageReq;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
@@ -7,11 +14,6 @@ import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.variable.VariableListBo;
 import com.cyberpeace.bs.service.bo.variable.VariableModifyReq;
 import com.cyberpeace.common.model.ListRsp;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 远程Service
@@ -134,5 +136,13 @@ public interface LcService {
      * @return {@code Integer}
      */
     Integer getBandwidthSum();
+
+	/**
+	 * 通过uuid获取设备id
+	 *
+	 * @param uuid uuid
+	 * @return {@code Integer}
+	 */
+	String getDeviceIdByUuid(String uuid);
 
 }

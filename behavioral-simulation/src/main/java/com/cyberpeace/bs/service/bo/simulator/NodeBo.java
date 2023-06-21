@@ -22,6 +22,12 @@ public class NodeBo implements Serializable {
 	private String nodeId;
 
 	/**
+	 * 运维靶标id
+	 */
+	@ApiModelProperty(value = "运维靶标id")
+	private String ywId;
+
+	/**
 	 * 节点操作系统类型
 	 */
 	@ApiModelProperty(value = "节点操作系统类型", required = true)

@@ -1,6 +1,8 @@
 package com.cyberpeace.bs.service.bo;
 
-import com.cyberpeace.bs.constant.BsConstants;
+import java.util.List;
+import java.util.TimerTask;
+
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.LcService;
 import com.cyberpeace.bs.service.UserSimulatorService;
@@ -8,10 +10,8 @@ import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
 import com.cyberpeace.bs.service.bo.simulator.VariableBo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SpringContextUtil;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.TimerTask;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 行为模拟定时任务
@@ -29,9 +29,14 @@ public class BsTimerTask extends TimerTask {
     private final String deviceIp;
 
     /**
-     * 设备id
-     */
+	 * 配管设备id
+	 */
     private final String deviceId;
+
+	/**
+	 * 运维靶标id
+	 */
+	private final String ywId;
 
     /**
      * 是否在实体设备上执行
@@ -56,6 +61,7 @@ public class BsTimerTask extends TimerTask {
 
     public BsTimerTask(UserSimulator simulator, String behaviorId, String variable) {
         this.deviceId = simulator.getDeviceId();
+		this.ywId = simulator.getYwId();
         this.deviceIp = simulator.getDeviceIp();
         this.isEntity = simulator.getIsEntity();
         this.behaviorId = behaviorId;
@@ -70,24 +76,23 @@ public class BsTimerTask extends TimerTask {
                     simulatorId, variable);
 
             ReleaseTaskReq req = new ReleaseTaskReq();
+			// 获取service
+			LcService lcService = SpringContextUtil.getBeanByClass(LcService.class);
             // if executed in actual device
-            req.setIsUsingIp(!isEntity);
-            if (isEntity) {
-                // actual device identified by device_id
-                req.setDeviceId(deviceId);
+			if (Boolean.TRUE.equals(this.isEntity)) {
+				// 实体设备的运维id就是lc的device id
+				req.setDeviceId(this.ywId);
             } else {
-                // virtual device, default device_id
-                req.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+				// 查询lc device 的id
+				req.setDeviceId(lcService.getDeviceIdByUuid(this.deviceId));
             }
-            // virtual device identified by device_ip
+			// set ip
             req.setIp(deviceIp);
             // 设置行为id
             req.setFlowChart(behaviorId);
             // 解析行为变量
             List<VariableBo> variableBos = JsonUtil.toJsonObjectArray(variable, VariableBo.class);
             variableBos.forEach(variableBo -> req.addVariable(variableBo.getName(), variableBo.getValue()));
-            // 获取service
-            LcService lcService = SpringContextUtil.getBeanByClass(LcService.class);
             // 启动行为
             lcService.startBehavior(req);
 

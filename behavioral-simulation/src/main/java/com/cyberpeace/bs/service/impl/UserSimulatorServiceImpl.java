@@ -1,5 +1,23 @@
 package com.cyberpeace.bs.service.impl;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -39,23 +57,8 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.*;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 用户仪表Service实现
@@ -238,6 +241,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		simulator.setStatus(UserSimulator.Status.NOT_STARTED.getCode());
 		// device
 		simulator.setDeviceId(nodeBo.getNodeId());
+		simulator.setYwId(nodeBo.getYwId());
 		simulator.setDeviceName(nodeBo.getNodeName());
 		simulator.setDeviceIp(getIp(nodeBo.getIpConfig()));
 		simulator.setIsEntity(nodeBo.getIsEntity());
@@ -442,7 +446,7 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 	public void startSimulator(String resourceId) {
 		UserSimulator simulator = getOrException(resourceId);
 		// 不能重复开始
-		if (!simulator.getStatus().equals(UserSimulator.Status.NOT_STARTED.getCode())) {
+		if (simulator.getStatus().equals(UserSimulator.Status.RUNNING.getCode())) {
 			throw new BusinessException(BsErrorCode.ALREADY_STARTED);
 		}
 		start(simulator);
@@ -557,14 +561,14 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 			try {
 				StopTaskReq req = new StopTaskReq();
 				req.setChartId(new Long(latestBehaviorId));
-				req.setIsUsingIp(!simulator.getIsEntity());
 				// 根据是否使用ip识别设备，设置不同的设备id
 				if (Boolean.TRUE.equals(req.getIsUsingIp())) {
-					req.setDeviceId(new Integer(BsConstants.DEFAULT_DEVICE_ID));
+					req.setDeviceId(new Integer(simulator.getYwId()));
 				} else {
-					req.setDeviceId(new Integer(simulator.getDeviceId()));
+					req.setDeviceId(
+							new Integer(lcService.getDeviceIdByUuid(simulator.getDeviceId())));
 				}
-				req.setIp(simulator.getDeviceIp());
+				// req.setIp(simulator.getDeviceIp());
 				lcService.stopBehavior(req);
 			} catch (Exception e) {
 				// 出错时日志记录错误
@@ -847,11 +851,10 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		// 组装任务下发请求体
 		ReleaseTaskReq taskReq = new ReleaseTaskReq();
 		// 区分实体设备和虚拟设备
-		taskReq.setIsUsingIp(!simulator.getIsEntity());
-		if (taskReq.getIsUsingIp()) {
-			taskReq.setDeviceId(BsConstants.DEFAULT_DEVICE_ID);
+		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
+			taskReq.setDeviceId(simulator.getYwId());
 		} else {
-			taskReq.setDeviceId(simulator.getDeviceId());
+			taskReq.setDeviceId(lcService.getDeviceIdByUuid(simulator.getDeviceId()));
 		}
 		taskReq.setIp(simulator.getDeviceIp());
 		taskReq.setFlowChart(behaviorId);

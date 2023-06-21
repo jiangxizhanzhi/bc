@@ -124,6 +124,7 @@ public class SituationHandlerServiceImpl implements SituationHandlerService {
 			areaInfo.setScope(scope);
 			areaInfo.setStyle(getLineStyle());
 			areaInfo.setEffect(getLineEffect());
+			areaInfo.setName(area.getString("name"));
 
 			// 提取自定义配置
 			Map<Integer, String> areaConfig = getNodeConfig(areaConfigMap, area.getString("id"),

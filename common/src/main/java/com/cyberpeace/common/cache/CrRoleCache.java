@@ -7,7 +7,7 @@ import com.google.common.cache.LoadingCache;
 import java.util.concurrent.TimeUnit;
 
 public class CrRoleCache {
-    public static LoadingCache<String, Object> cache = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(10, TimeUnit.SECONDS).build(new CacheLoader<String, Object>() {
+    public static LoadingCache<String, Object> cache = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(60, TimeUnit.SECONDS).build(new CacheLoader<String, Object>() {
         public Object load(String key)  {
             return null;
         }

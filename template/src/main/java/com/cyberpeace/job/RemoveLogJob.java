@@ -22,13 +22,17 @@ public class RemoveLogJob {
      * @return {@code Integer}
      */
     public Integer getLogFileKeepDays() {
-        return logConfigMessageListener.getLogFileKeepDays();
+
+        Integer logFileKeepDays = logConfigMessageListener.getLogFileKeepDays();
+
+        // 默认最少保留一天
+        return logFileKeepDays < 1 ? 1 : logFileKeepDays;
     }
 
-    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+    @Scheduled(cron = "0 0 0 * * ?")
     public void removeLogFiles() {
         String logRootPath = System.getProperty("catalina.base") + "/logs/";
-        String cmd = String.format("find %s -type 'f' -mtime +%d | xargs rm -f", logRootPath, getLogFileKeepDays());
+        String cmd = String.format("find %s -type 'f' -mtime +%d | xargs rm -f", logRootPath, (getLogFileKeepDays() - 1));
         log.info("Remove overdue logs, command=[{}]", cmd);
         DataOutputStream dos = null;
         try {
@@ -40,8 +44,9 @@ public class RemoveLogJob {
             dos.writeBytes("exit\n");
             dos.flush();
             p.waitFor();
+            log.info("Remove overdue logs successfully!");
         } catch (Exception e) {
-            log.error("Exec shell error! command=[{}], catch error:", cmd, e);
+            log.info("Remove overdue logs error! command=[{}], catch error:", cmd, e);
         } finally {
             if (dos != null) {
                 try {
@@ -51,6 +56,5 @@ public class RemoveLogJob {
                 }
             }
         }
-        log.info("Successfully remove overdue logs.");
     }
 }

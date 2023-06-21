@@ -49,11 +49,11 @@ public class LogConfigMessageListener implements ChannelAwareMessageListener {
         try {
             // 更新日志文件保留天数
             logFileKeepDays = Integer.valueOf(systemConfigService.getSystemConfig(LOG_FILE_KEEP_DAYS_KEY));
-            log.info("Set log_file_max_history to {}", logFileKeepDays);
+            log.info("Update log file keep days successfully, current value is {}", logFileKeepDays);
+
         } catch (Exception e) {
             // 更新配置失败，保持原有配置
-            log.error("Set log_file_max_history error", e);
-            log.info("Keep current log_file_max_history value {}", logFileKeepDays);
+            log.error("Update log file keep days failed, keep current value {}", logFileKeepDays);
         }
     }
 

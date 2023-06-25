@@ -3,6 +3,7 @@ package com.cyberpeace.cr.crbase.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.room.DashboardInfo;
@@ -174,4 +175,12 @@ public interface CrRoleService extends IService<CrRole> {
 	void combineRoleConst(DashboardInfo dashboardInfo);
 
 	List<UserRole> getUserRolesByRoomIdAndRoleGroups(String roomId, List<Integer> groups);
+
+	/**
+	 * 获取房间中所有用户和对应的角色map
+	 *
+	 * @param roomId 房间id
+	 * @return {@code Map<String, CrRole>}
+	 */
+	Map<String, CrRole> getUserRoleMapByRoomId(String roomId);
 }

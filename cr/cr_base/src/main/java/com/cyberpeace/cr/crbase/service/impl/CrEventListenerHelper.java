@@ -37,13 +37,12 @@ public class CrEventListenerHelper {
 		if (role.isRvbStudent() || role.isTeamStudent()) {
 			CrRoleNodesData nodesData = role.getNodeData();
 			// filter visible nodes
-			CrRole roleOld;
+			CrRole roleOld = null;
 			try {
 
 				roleOld = (CrRole) CrRoleCache.cache.get(role.getResourceId()+nodeId);
-			} catch (ExecutionException e) {
+			} catch (Exception e) {
 				// 异常不处理
-				return null;
 			}
 			CrRoleNodesData nodesDataOld = roleOld==null?new CrRoleNodesData():roleOld.getNodeData();
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),

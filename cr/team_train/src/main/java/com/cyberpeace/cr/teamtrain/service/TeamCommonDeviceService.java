@@ -9,6 +9,14 @@ import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 
 	/**
+	 * 过滤可视常用资产
+	 * @param roomId 红蓝房间id
+	 * @param allCommonDevices 全部常用资产
+	 * @return 已过滤常用资产
+	 */
+	List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId, List<TeamCommonDeviceContext> allCommonDevices);
+
+	/**
 	 * 根据团队房间id和设备添加人 查询已添加的常用设别列表
 	 * @param roomId 团队房间id
 	 * @param collectUserId 设备添加人

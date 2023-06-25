@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.model.user.UserInfo;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbCommonDeviceReq;
@@ -325,9 +326,11 @@ public class RbSceneController {
 		List<RbDeviceContext> occupyDevices = rbDeviceService.getByRoomIdAndOptionalDevice(resource_id, null);
 		// 3.查询已添加设备
 		List<RbCommonDevice> allCollectedCommonDeviceDevices = rbCommonDeviceService.getAllCollectedCommonDeviceDevices(resource_id);
-
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
 		List<RbCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDeviceDevices);
+		// 5.过滤可视设备
+		commonDeviceContexts = rbCommonDeviceService.filterVisibleCommonDevices(resource_id, commonDeviceContexts);
+
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}

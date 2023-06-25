@@ -1,10 +1,17 @@
 package com.cyberpeace.cr.teamtrain.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +28,41 @@ public class TeamCommonDeviceServiceImpl extends ServiceImpl<TeamCommonDeviceMap
 
     @Autowired
     private TeamCommonDeviceMapper teamCommonDeviceMapper;
+
+    @Autowired
+    private CrRoleService crRoleService;
+
+    @Override
+    public List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId, List<TeamCommonDeviceContext> allCommonDevices) {
+        List<TeamCommonDeviceContext> commonDeviceList = new ArrayList<>();
+
+        String userId = UserInfoContext.getUserContext().getUserId();
+        CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
+        CrRoleNodesData nodesData = role.getNodeData();
+        if(nodesData == null) {
+            return commonDeviceList;
+        }
+
+        List<CrRoleNode> visibleNodes = nodesData.getVisibleNodes();
+        if(CollectionUtils.isEmpty(visibleNodes) || CollectionUtils.isEmpty(allCommonDevices)) {
+            return commonDeviceList;
+        }
+
+        commonDeviceList = allCommonDevices.stream().filter(item -> {
+            for(CrRoleNode visibleNode : visibleNodes) {
+                if(visibleNode == null ||
+                        StringUtils.isEmpty(visibleNode.getId()) ||
+                        !visibleNode.getId().equals(item.getDeviceId())
+                ) {
+                    continue;
+                }
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+
+        return commonDeviceList;
+    }
 
     @Override
     public List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId) {

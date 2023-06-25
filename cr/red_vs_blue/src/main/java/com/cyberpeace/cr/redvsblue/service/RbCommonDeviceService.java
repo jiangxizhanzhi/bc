@@ -9,6 +9,14 @@ import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;
 public interface RbCommonDeviceService extends IService<RbCommonDevice> {
 
 	/**
+	 * 过滤可视常用资产
+	 * @param roomId 红蓝房间id
+	 * @param commonDeviceContextList 可占用资产
+	 * @return 已过滤常用资产
+	 */
+	List<RbCommonDeviceContext> filterVisibleCommonDevices(String roomId, List<RbCommonDeviceContext> commonDeviceContextList);
+
+	/**
 	 * 根据红蓝房间id和设备添加人 查询常用设备列表
 	 * @param roomId 红蓝房间id
 	 * @param collectUserId 常用设备添加人

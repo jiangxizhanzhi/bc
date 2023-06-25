@@ -86,6 +86,10 @@ public interface LocalSceneService extends IService<LocalScene> {
 
 	Boolean stopFlow(LocalScene localScene, String nodeId, String flowId);
 
+	Boolean parseFlow(LocalScene localScene, String nodeId, String flowId);
+
+	Boolean resumeFlow(LocalScene localScene, String nodeId, String flowId);
+
 	/**
 	 * 获取场景流量映射表
 	 * @param sceneData

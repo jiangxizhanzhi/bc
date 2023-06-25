@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.cache.CrRoleCache;
+import com.cyberpeace.common.util.BeanUtils;
 import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.common.util.JsonUtil;
@@ -109,7 +110,8 @@ public abstract class BaseCrSceneUpdateHandler {
 	protected List<CrRole> getAffectedRoles(List<CrRole> roleList, String nodeId) {
 		List<CrRole> modifiedRoles = Lists.newArrayList();
 		for (CrRole role : roleList) {
-			CrRoleCache.cache.put(role.getResourceId(),role);
+			CrRole oldRole = BeanUtils.copy(role, CrRole.class);
+			CrRoleCache.cache.put(role.getResourceId(),oldRole);
 			String filteredNodesJson = getFilteredNodesData(role, nodeId);
 			if (!filteredNodesJson.equals(role.getNodes())) {
 				role.setNodes(filteredNodesJson);

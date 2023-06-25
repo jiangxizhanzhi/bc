@@ -186,8 +186,6 @@ public class WebLessonController {
             @ApiParam(name = "lesson_id", value = "课时id") @RequestParam(name = "lesson_id") String lessonId,
             @ApiParam(name = "start_lesson_id", value = "第一次进入的课时id") @RequestParam(name = "start_lesson_id") String startLessonId,
             @ApiParam(name = "navigate", value = "操作提示参数：1=下一题，0=当前题，-1=上一题") Integer navigate) {
-        // TODO
-
         AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
                 true);
         //  1.查询课时编排，

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
+import com.cyberpeace.cr.crbase.service.context.scene.MonitorSession;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
 
@@ -44,4 +45,12 @@ public interface RbRefereeService {
 	 * @param missionId 任务id
 	 */
 	void notifySubmission(String missionId);
+
+	/**
+	 * 获取监控会话
+	 *
+	 * @param roomId 房间id
+	 * @return {@code List<MonitorSession>}
+	 */
+	List<MonitorSession> getMonitorSessions(String roomId);
 }

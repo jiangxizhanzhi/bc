@@ -4,9 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.EnumUtils;
-import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
-import com.cyberpeace.cr.crbase.service.CrScoreService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +18,13 @@ import com.cyberpeace.common.model.room.DashboardRole;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
+import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -578,6 +577,18 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 			return userRole;
 		}).collect(Collectors.toList());
 		return userRoleList;
+	}
+
+	@Override
+	public Map<String, CrRole> getUserRoleMapByRoomId(String roomId) {
+		Map<String, CrRole> res = Maps.newHashMap();
+		List<CrRole> roleList = this.getRolesByRoomId(roomId);
+		for (CrRole role : roleList) {
+			for (String userId : role.getUserIdList()) {
+				res.put(userId, role);
+			}
+		}
+		return res;
 	}
 
 }

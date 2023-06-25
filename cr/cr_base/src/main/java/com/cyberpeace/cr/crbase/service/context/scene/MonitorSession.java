@@ -44,6 +44,9 @@ public class MonitorSession implements Serializable {
 	@ApiModelProperty(value = "用户名")
 	private String username;
 
+	@ApiModelProperty(value = "角色类型")
+	private Integer roleGroup;
+
 	@ApiModelProperty(value = "头像")
 	private String avatar;
 

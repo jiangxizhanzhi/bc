@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,7 @@ import com.cyberpeace.cr.crbase.controller.req.SubmitEvaluationReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.service.CrBadgeService;
 import com.cyberpeace.cr.crbase.service.CrCommonService;
+import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationContext;
 import com.cyberpeace.cr.crbase.service.context.MissionEvaluationQuery;
@@ -35,7 +34,6 @@ import com.cyberpeace.cr.crbase.service.context.score.StudentScoreListRsp;
 import com.cyberpeace.cr.crbase.service.context.statistics.TaskStatisticsInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbMissionEvaluationListReq;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRefereeService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.context.evaluation.RbRoleIdNameType;
@@ -69,6 +67,9 @@ public class RbRoomRefereeController {
 
 	@Autowired
 	private CrBadgeService crBadgeService;
+	
+	@Autowired
+	private CrRoleService crRoleService;
 
 	@ApiOperation("获取角色列表")
 	@GetMapping("/roles")
@@ -213,12 +214,9 @@ public class RbRoomRefereeController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<List<MonitorSession>> getSessions(
 			@ApiParam(name = "room_id", value = "训练实例id", required = true) String room_id) {
-		RbRoom room = rbRoomService.getById(room_id);
-		rbRoomService.checkTeacherPermission(room_id, UserInfoContext.getUserContext().getUserId());
-		if (room == null || StringUtils.isBlank(room.getLocalSceneId())) {
-			return new BaseRsp<>(Lists.newArrayList());
-		}
-		return new BaseRsp<>(crCommonService.getMonitorSessions(room.getLocalSceneId(), null));
+		CrCommonValidator.validateId(room_id);
+		List<MonitorSession> res = rbRefereeService.getMonitorSessions(room_id);
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("获取评分列表")

@@ -37,35 +37,41 @@ public class CrEventListenerHelper {
 		if (role.isRvbStudent() || role.isTeamStudent()) {
 			CrRoleNodesData nodesData = role.getNodeData();
 			// filter visible nodes
+			CrRole roleOld;
+			try {
+
+				roleOld = (CrRole) CrRoleCache.cache.get(role.getResourceId());
+			} catch (ExecutionException e) {
+				// 异常不处理
+				return null;
+			}
+			CrRoleNodesData nodesDataOld = roleOld==null?new CrRoleNodesData():roleOld.getNodeData();
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),
 					CrRoleNode::getId);
 			if (!visibleNodeIds.contains(nodeId)) {
-				try {
-					CrRole roleOld = (CrRole)CrRoleCache.cache.get(role.getResourceId());
-					CrRoleNodesData nodesDataOld = roleOld.getNodeData();
-					// filter visible nodes
-					List<String> oldVisibleNodeIds = StreamApiUtils.map(nodesDataOld.getVisibleNodes(),
-							CrRoleNode::getId);
-					if (!oldVisibleNodeIds.contains(nodeId)) {
-						// 不推送
-						return null;
-					}
-				} catch (ExecutionException e) {
-					//异常不处理
+				// filter visible nodes
+				List<String> oldVisibleNodeIds = StreamApiUtils.map(nodesDataOld.getVisibleNodes(),
+						CrRoleNode::getId);
+				if (!oldVisibleNodeIds.contains(nodeId)) {
+					// 不推送
 					return null;
 				}
+
 			}
 			// filter asset nodes
 			List<String> assetNodeIds = StreamApiUtils.map(nodesData.getAssetNodes(),
 					CrRoleNode::getId);
 			if (!assetNodeIds.contains(nodeId)) {
+				List<String> oldAssetNodeIds = StreamApiUtils.map(nodesDataOld.getAssetNodes(),
+						CrRoleNode::getId);
 				// remove ports & access modes
-				report = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-				JSONObject coreData = report.getData().getData().getJSONObject("data");
-				coreData.getJSONObject("scene_element").put("ports", Lists.newArrayList());
-				coreData.put("scene_element_port_plugin_data", new JSONObject());
-
-				return JsonUtil.toJsonString(report);
+				if (!oldAssetNodeIds.contains(nodeId)) {
+					report = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
+					JSONObject coreData = report.getData().getData().getJSONObject("data");
+					coreData.getJSONObject("scene_element").put("ports", Lists.newArrayList());
+					coreData.put("scene_element_port_plugin_data", new JSONObject());
+					return JsonUtil.toJsonString(report);
+				}
 			}
 		}
 		// 教员不过滤, 学员拥有完整权限（战争迷雾和资产）不过滤

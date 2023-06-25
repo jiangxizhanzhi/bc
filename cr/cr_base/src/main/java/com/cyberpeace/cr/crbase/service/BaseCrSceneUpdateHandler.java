@@ -111,7 +111,7 @@ public abstract class BaseCrSceneUpdateHandler {
 		List<CrRole> modifiedRoles = Lists.newArrayList();
 		for (CrRole role : roleList) {
 			CrRole oldRole = BeanUtils.copy(role, CrRole.class);
-			CrRoleCache.cache.put(role.getResourceId(),oldRole);
+			CrRoleCache.cache.put(role.getResourceId()+nodeId,oldRole);
 			String filteredNodesJson = getFilteredNodesData(role, nodeId);
 			if (!filteredNodesJson.equals(role.getNodes())) {
 				role.setNodes(filteredNodesJson);

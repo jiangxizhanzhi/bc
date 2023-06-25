@@ -1,9 +1,18 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.integratation.service.RemoteTopoService;
+import com.cyberpeace.oj.course.controller.res.WebContextInfoStatusRes;
+import com.cyberpeace.oj.course.service.CourseLessonService;
+import com.cyberpeace.oj.course.service.bo.*;
+import com.cyberpeace.oj.ojbase.constant.SceneShare;
+import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +38,6 @@ import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonConfigMapper;
 import com.cyberpeace.oj.course.dao.mapper.LessonRecordMapper;
 import com.cyberpeace.oj.course.service.LessonConfigService;
-import com.cyberpeace.oj.course.service.bo.AddLessonConfigContext;
-import com.cyberpeace.oj.course.service.bo.LessonConfigBo;
-import com.cyberpeace.oj.course.service.bo.LessonConfigDumpBo;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +60,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CourseValidateHandler courseValidateHandler;
+
+	@Autowired
+	private RemoteTopoService remoteTopoService;
 
 	@Override
 	public LessonConfigBo getLessonConfig(String courseId, AuthContext authContext) {
@@ -179,6 +191,193 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
 		lessonConfigs.add(CommonConstant.ZERO, lessonConfig);
 
 		return lessonConfigs;
+	}
+
+	/**
+	 * 将课时编排的树形数据展开
+	 * @param lessonConfigBo
+	 * @return
+	 */
+	@Override
+	public List<LessonConfigBo> expandLessonConfig(LessonConfigBo lessonConfigBo) {
+		List<LessonConfigBo> lessonConfigBos = new ArrayList<>();
+		if(lessonConfigBo == null) {
+			return lessonConfigBos;
+		}
+
+		// 不管第一层的课程数据，直接将课时找出来
+		List<LessonConfigBo> lessonConfigs = lessonConfigBo.getChildren();
+		if(CollectionUtils.isEmpty(lessonConfigs)) {
+			return lessonConfigBos;
+		}
+
+		for(LessonConfigBo lessonConfig : lessonConfigs) {
+			addLessonConfigChildren(lessonConfig, lessonConfigBos);
+
+		}
+
+		return lessonConfigBos;
+	}
+
+	@Override
+	public WebContextInfoStatusRes lessonIdOfExpandedLessonConfigs(int navigate,
+																   String lessonId,
+																   List<LessonConfigBo> lessonConfigBos,
+																   AuthContext authContext,
+																   String startLessonId) {
+		WebContextInfoStatusRes webContextInfoStatusRes = null;
+		if(StringUtils.isEmpty(lessonId) || CollectionUtils.isEmpty(lessonConfigBos)) {
+			return webContextInfoStatusRes;
+		}
+
+		LessonConfigBo wantedPrev = null;
+		LessonConfigBo wantedNext = null;
+		LessonConfigBo wanted = null;
+		int i = -1;
+		for(LessonConfigBo lessonConfigBo : lessonConfigBos) {
+			i ++;
+			String dbLessonId = lessonConfigBo.getLessonId();
+			if(StringUtils.isEmpty(lessonId) || StringUtils.isEmpty(dbLessonId)) {
+				continue;
+			}
+			if(!lessonId.equals(dbLessonId)) {
+				continue;
+			}
+			wanted = lessonConfigBo;
+			if(i != 0) {
+				wantedPrev = lessonConfigBos.get(i - 1);
+			}
+			if(i != lessonConfigBos.size() - 1) {
+				wantedNext = lessonConfigBos.get(i + 1);
+			}
+
+			break;
+		}
+		if(wanted == null) {
+			return webContextInfoStatusRes;
+		}
+		webContextInfoStatusRes = new WebContextInfoStatusRes();
+		if(wantedPrev != null) {
+			webContextInfoStatusRes.setPrevFlg(1);
+			webContextInfoStatusRes.setPrev(buildContextInfoStatus(wantedPrev, authContext));
+		}
+		if(wantedNext != null) {
+			webContextInfoStatusRes.setNextFlg(1);
+			webContextInfoStatusRes.setNext(buildContextInfoStatus(wantedNext, authContext));
+		}
+		webContextInfoStatusRes.setCurr(buildContextInfoStatus(wanted, authContext));
+
+		// navigate == 1证明从上一题切到了当前题目
+		if(navigate == 1) {
+			// 校验题型
+			assertSameLessonType(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr());
+			// 校验场景
+			assertSameLessonScene(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr(), startLessonId);
+		}
+		// navigate == -1证明从下一题切到了当前题目
+		if(navigate == -1) {
+			assertSameLessonType(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr());
+			assertSameLessonScene(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr(), startLessonId);
+		}
+
+
+		return webContextInfoStatusRes;
+	}
+
+	/**
+	 * 校验两个课时的场景是否同一个
+	 * @param c1
+	 * @param curr
+	 */
+	private void assertSameLessonScene(ContextInfoStatus c1, ContextInfoStatus curr, String startLessonId) {
+		if(c1 == null || curr == null) {
+			log.error("lesson configs not found!");
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		// 如果切回第一课时则不需要校验
+		if(c1.getCourseId().equals(startLessonId)) {
+			return;
+		}
+		// 如果切到其他课时，必须确保其他课时的场景为空
+		CourseLesson lesson = c1.getLesson();
+		// 查询课时场景信息
+		if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
+				&& StringUtils.isNotBlank(lesson.getTopoId())) {
+
+			// 拓扑信息查询
+			JSONObject topoData = remoteTopoService.getTopoById(lesson.getTopoId());
+			if(topoData == null || topoData.isEmpty()) {
+				return;
+			}
+			JSONObject sceneConfig = topoData.getJSONObject("scene_config");
+			if(sceneConfig == null || sceneConfig.isEmpty()) {
+				return;
+			}
+			JSONObject topology = sceneConfig.getJSONObject("topology");
+			if(topology == null || topology.isEmpty()) {
+				return;
+			}
+			JSONArray areas = topology.getJSONArray("areas");
+			JSONArray connec = topology.getJSONArray("areas");
+			JSONArray elements = topology.getJSONArray("elements");
+			JSONArray pieces = topology.getJSONArray("pieces");
+			if(CollectionUtils.isEmpty(areas) && CollectionUtils.isEmpty(connec) &&
+				CollectionUtils.isEmpty(elements) && CollectionUtils.isEmpty(pieces)) {
+				return;
+			}
+
+			log.error("new lesson scene used! lesson_id=[{}]", lesson.getResourceId());
+			throw new BusinessException(ErrorCode.USE_NEW_SCENE);
+		}
+	}
+
+	/**
+	 * 校验两个课时的类型
+	 * @param c1
+	 * @param curr
+	 */
+	private void assertSameLessonType(ContextInfoStatus c1, ContextInfoStatus curr) {
+		if(c1 == null || curr == null) {
+			log.error("lesson configs not found!");
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+		if(c1.getLessonType() != curr.getLessonType()) {
+			log.error("lesson type is not same!");
+			throw new BusinessException(ErrorCode.LESSON_TYPE_NOT_SAME);
+		}
+	}
+
+	private ContextInfoStatus buildContextInfoStatus(LessonConfigBo lessonConfigBo, AuthContext authContext) {
+		if(lessonConfigBo == null) {
+			return null;
+		}
+		ContextInfoStatus contextInfoStatus = new ContextInfoStatus();
+		contextInfoStatus.setLessonId(lessonConfigBo.getLessonId());
+		contextInfoStatus.setCourseId(lessonConfigBo.getCourseId());
+		contextInfoStatus.setLessonType(lessonConfigBo.getType());
+		CourseLesson lesson = courseValidateHandler.validateLessonPermission(lessonConfigBo.getLessonId(), authContext);
+		contextInfoStatus.setHandoutFlg(StringUtils.isEmpty(lesson.getHandoutUrl()) ? 0 : 1);
+		contextInfoStatus.setLesson(lesson);
+		return contextInfoStatus;
+	}
+
+	/**
+	 * 递归展开子节点
+	 * @param lessonConfigBo 孩子
+	 * @param lessonConfigs 要组装的结果
+	 */
+	private void addLessonConfigChildren(LessonConfigBo lessonConfigBo, List<LessonConfigBo> lessonConfigs) {
+		if(lessonConfigBo == null) {
+			return;
+		}
+		lessonConfigs.add(lessonConfigBo);
+		List<LessonConfigBo> children = lessonConfigBo.getChildren();
+		if(CollectionUtils.isEmpty(children)) {
+			return;
+		}
+		for(LessonConfigBo child : children) {
+			addLessonConfigChildren(child, lessonConfigs);
+		}
 	}
 
 	/**

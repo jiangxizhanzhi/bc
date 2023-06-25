@@ -99,6 +99,7 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+
 	@Autowired
 	private CrCommonService crCommonService;
 
@@ -196,8 +197,8 @@ public class TeamTrainStudentsController {
 			teamRoomRsp.setRolesData(rolesData);
 			teamRoomRsp.setNodesCount(
 					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			teamRoomRsp.setResourceOccupiedNums(
-					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
+			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
+					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
 			teamRoomRsp.setPreSkill(
 					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 			teamRoomRsp.setTrainSkill(
@@ -253,7 +254,7 @@ public class TeamTrainStudentsController {
 	@PostMapping("/submit_missions")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<String>
-	changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
+			changeTrainingStatus(@RequestBody @Validated SubmitMissionsReq submitMissionsReq) {
 		CrCommonValidator.checkStringExist(submitMissionsReq.getAnswer(),
 				CrBusinessErrorCode.ANSWER_NOT_NULLABLE);
 
@@ -266,7 +267,8 @@ public class TeamTrainStudentsController {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 				crTaskService.submitMissions(submitMissionsReq.getResourceId(),
-						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),submitMissionsReq.getRemark());
+						submitMissionsReq.getMissionHash(), submitMissionsReq.getAnswer(),
+						submitMissionsReq.getRemark());
 				teamTeacherService.notifySubmission(submitMissionsReq.getMissionHash());
 			}
 		});
@@ -323,7 +325,7 @@ public class TeamTrainStudentsController {
 	@ApiOperation("新增标记")
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req){
+	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
 		crCommonService.addMark(req, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
 		return new BaseRsp();
 	}
@@ -346,9 +348,10 @@ public class TeamTrainStudentsController {
 					user_id);
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,
+				user_id);
 		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		teamTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.MATRIX.getDesc());
+		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);
 	}
 
@@ -367,11 +370,12 @@ public class TeamTrainStudentsController {
 			user_id = UserInfoContext.getUserContext().getUserId();
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,user_id);
+		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
 		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole,TaskMatrix.SORT.REPLAY.getDesc());
+		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);
 	}
+
 	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")
 	@GetMapping("/task/matrix/badge")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
@@ -407,7 +411,7 @@ public class TeamTrainStudentsController {
 
 		// 校验主机是否被占用
 		TeamTrainDevice occupied = teamDeviceService.getOccupied(roomId, deviceId);
-		if(occupied != null) {
+		if (occupied != null) {
 			throw new BusinessException(CrBusinessErrorCode.MACHINE_OCCUPIED);
 		}
 
@@ -435,7 +439,8 @@ public class TeamTrainStudentsController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<List<TeamTrainDeviceContext>> getOccupiedDevices(
 			@ApiParam(value = "room_id", name = "团队房间id", required = true) String room_id,
-			@ApiParam(value = "standard_device", name = "主机", required = false) String standard_device) {
+			@ApiParam(value = "standard_device", name = "主机",
+					required = false) String standard_device) {
 		List<TeamTrainDeviceContext> ret = teamDeviceService.getOccupies(room_id, standard_device);
 
 		return new BaseRsp<>(ret);
@@ -456,21 +461,25 @@ public class TeamTrainStudentsController {
 		try {
 			availableDevices = crSceneService.getAssetList(assetPageReq, true);
 		} catch (BusinessException e) {
-			if(StringUtils.isNotEmpty(e.getMessage())
+			if (StringUtils.isNotEmpty(e.getMessage())
 					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) {
 				log.error("localscene: [{}], is not started", resource_id);
 				throw new BusinessException(ErrorCode.NOT_STARTED_SCENE);
 			}
 		}
 		// 2.获取占用的设备
-		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id, null);
+		List<TeamTrainDeviceContext> occupyDevices = teamDeviceService.getOccupies(resource_id,
+				null);
 		// 3.查询已添加设备
 		// 所有已添加为常用资产的deviceIds
-		List<TeamCommonDevice> allCollectedCommonDevices = teamCommonDeviceService.getAllCollectedCommonDeviceDevices(resource_id);
+		List<TeamCommonDevice> allCollectedCommonDevices = teamCommonDeviceService
+				.getAllCollectedCommonDeviceDevices(resource_id);
 		// 4.装配设备信息和设置占用标志 并过滤 已添加设备
-		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, occupyDevices, resource_id, allCollectedCommonDevices);
+		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(
+				availableDevices, occupyDevices, resource_id, allCollectedCommonDevices);
 		// 5.过滤可视设备
-		commonDeviceContexts = teamCommonDeviceService.filterVisibleCommonDevices(resource_id, commonDeviceContexts);
+		commonDeviceContexts = teamCommonDeviceService.filterVisibleCommonDevices(resource_id,
+				commonDeviceContexts);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -479,14 +488,17 @@ public class TeamTrainStudentsController {
 	@PostMapping("/device/common_device")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp addDevice(@RequestBody TeamCommonDeviceReq teamCommonDeviceReq) {
-		if(StringUtils.isEmpty(teamCommonDeviceReq.getRoomId())) {
+		if (StringUtils.isEmpty(teamCommonDeviceReq.getRoomId())) {
 			throw new BusinessException(CrBusinessErrorCode.ROOM_NOT_EXIST);
 		}
-		List<TeamCommonDeviceContext> commonDeviceContextList = teamCommonDeviceReq.getTeamCommonDeviceContextList();
-		if(CollectionUtils.isEmpty(commonDeviceContextList)) {
+		List<TeamCommonDeviceContext> commonDeviceContextList = teamCommonDeviceReq
+				.getTeamCommonDeviceContextList();
+		if (CollectionUtils.isEmpty(commonDeviceContextList)) {
 			throw new BusinessException(CrBusinessErrorCode.INVALID_COMMON_DEVICE);
 		}
-		commonDeviceContextList.forEach(item -> {item.setRoomId(teamCommonDeviceReq.getRoomId());});
+		commonDeviceContextList.forEach(item -> {
+			item.setRoomId(teamCommonDeviceReq.getRoomId());
+		});
 		teamCommonDeviceService.addListToCollect(commonDeviceContextList);
 		return new BaseRsp();
 	}
@@ -499,7 +511,6 @@ public class TeamTrainStudentsController {
 		teamCommonDeviceService.delCollect(resourceId);
 		return new BaseRsp();
 	}
-
 
 	@ApiOperation("常用资产已添加列表")
 	@GetMapping("/device/common_device/already")
@@ -515,7 +526,7 @@ public class TeamTrainStudentsController {
 		try {
 			availableDevices = crSceneService.getAssetList(assetPageReq, true);
 		} catch (BusinessException e) {
-			if(StringUtils.isNotEmpty(e.getMessage())
+			if (StringUtils.isNotEmpty(e.getMessage())
 					&& e.getMessage().equals(ErrorCode.UNKNOWN_SCENE)) { // 如果是场景未启动导致的就返回空数组
 				return new BaseRsp<>(new ArrayList<>());
 			}
@@ -523,10 +534,12 @@ public class TeamTrainStudentsController {
 
 		// 3.查询已添加的设备
 		String userId = UserInfoContext.getUserContext().getUserId();
-		List<TeamCommonDevice> collectedCommonDevices = teamCommonDeviceService.getCollectedCommonDevices(resource_id, userId);
+		List<TeamCommonDevice> collectedCommonDevices = teamCommonDeviceService
+				.getCollectedCommonDevices(resource_id, userId);
 
 		// 4.装配设备信息
-		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(availableDevices, collectedCommonDevices);
+		List<TeamCommonDeviceContext> commonDeviceContexts = combineAvailableDevices(
+				availableDevices, collectedCommonDevices);
 
 		return new BaseRsp<>(commonDeviceContexts);
 	}
@@ -590,11 +603,10 @@ public class TeamTrainStudentsController {
 	 * @return 可添加的常用资产列表
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
-																  List<TeamTrainDeviceContext> occupyDevices,
-																  String roomId,
-																  List<TeamCommonDevice> allCollectedCommonDevices) {
+			List<TeamTrainDeviceContext> occupyDevices, String roomId,
+			List<TeamCommonDevice> allCollectedCommonDevices) {
 		// 如果场景中可用设备为空，直接返回空数组
-		if(CollectionUtils.isEmpty(availableDevices)) {
+		if (CollectionUtils.isEmpty(availableDevices)) {
 			return new ArrayList<>();
 		}
 
@@ -602,32 +614,33 @@ public class TeamTrainStudentsController {
 				.map(TeamCommonDevice::getCollectUserId).collect(Collectors.toList());
 		List<UserInfo> userInfos = remoteUserService.getByIdList(userIds);
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		for(int i = 0; i < availableDevices.size(); i ++) {
+		for (int i = 0; i < availableDevices.size(); i++) {
 			JSONObject availableDevice = availableDevices.get(i);
 
 			// 根据占用设备情况 设置标志位
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
-			for(TeamCommonDevice collectedCommonDeviceDevice : allCollectedCommonDevices) {
-				if(!collectedCommonDeviceDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+			for (TeamCommonDevice collectedCommonDeviceDevice : allCollectedCommonDevices) {
+				if (!collectedCommonDeviceDevice.getDeviceId()
+						.equals(availableDevice.getString("id"))) {
 					continue;
 				}
 				context.setOccupyFlag(1);
-				UserInfo userInfo = remoteUserService.searchUserByUserIdInUserList(collectedCommonDeviceDevice.getCollectUserId(), userInfos);
-				if(userInfo == null) {
+				UserInfo userInfo = remoteUserService.searchUserByUserIdInUserList(
+						collectedCommonDeviceDevice.getCollectUserId(), userInfos);
+				if (userInfo == null) {
 					continue;
 				}
 				context.setCollectUserId(userInfo.getUserId());
 				context.setCollectUser(userInfo.getUserName());
 			}
 
-
 			// 如果 已添加常用设备 包含 场景中可用设备
-			if(allCollectedCommonDevices.contains(availableDevice.getString("id"))) {
+			if (allCollectedCommonDevices.contains(availableDevice.getString("id"))) {
 				context.setOccupyFlag(1);;
 			}
 
-			for(TeamTrainDeviceContext occupyDevice : occupyDevices) {
-				if(!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+			for (TeamTrainDeviceContext occupyDevice : occupyDevices) {
+				if (!occupyDevice.getDeviceId().equals(availableDevice.getString("id"))) {
 					context.setOccupyFlag(0);
 				} else {
 					context.setOccupyFlag(1);
@@ -650,18 +663,18 @@ public class TeamTrainStudentsController {
 	 * @return 已添加常用资产列表
 	 */
 	private List<TeamCommonDeviceContext> combineAvailableDevices(List<JSONObject> availableDevices,
-																  List<TeamCommonDevice> collectedCommonDevices) {
-		if(CollectionUtils.isEmpty(availableDevices) || CollectionUtils.isEmpty(collectedCommonDevices)) {
+			List<TeamCommonDevice> collectedCommonDevices) {
+		if (CollectionUtils.isEmpty(availableDevices)
+				|| CollectionUtils.isEmpty(collectedCommonDevices)) {
 			return new ArrayList<>();
 		}
 		List<TeamCommonDeviceContext> commonDeviceContexts = new ArrayList<>();
-		outer:
-		for(int i = 0; i < availableDevices.size(); i ++) {
+		outer: for (int i = 0; i < availableDevices.size(); i++) {
 			JSONObject availableDevice = availableDevices.get(i);
 			TeamCommonDeviceContext context = new TeamCommonDeviceContext();
 
-			for(TeamCommonDevice commonDevice : collectedCommonDevices) {
-				if(!commonDevice.getDeviceId().equals(availableDevice.getString("id"))) {
+			for (TeamCommonDevice commonDevice : collectedCommonDevices) {
+				if (!commonDevice.getDeviceId().equals(availableDevice.getString("id"))) {
 					continue;
 				}
 				org.springframework.beans.BeanUtils.copyProperties(commonDevice, context);

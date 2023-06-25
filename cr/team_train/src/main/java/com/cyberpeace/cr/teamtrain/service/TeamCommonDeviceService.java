@@ -14,7 +14,8 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * @param allCommonDevices 全部常用资产
 	 * @return 已过滤常用资产
 	 */
-	List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId, List<TeamCommonDeviceContext> allCommonDevices);
+	List<TeamCommonDeviceContext> filterVisibleCommonDevices(String roomId,
+			List<TeamCommonDeviceContext> allCommonDevices);
 
 	/**
 	 * 根据团队房间id和设备添加人 查询已添加的常用设别列表
@@ -22,7 +23,7 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * @param collectUserId 设备添加人
 	 * @return 常用设备列表
 	 */
-    List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId);
+	List<TeamCommonDevice> getCollectedCommonDevices(String roomId, String collectUserId);
 
 	/**
 	 * 获取所有已添加为常用资产的 resourceIds
@@ -40,13 +41,13 @@ public interface TeamCommonDeviceService extends IService<TeamCommonDevice> {
 	 * 添加常用设备
 	 * @param commonDeviceContext 常用设备json
 	 */
-    void addToCollect(TeamCommonDeviceContext commonDeviceContext);
+	void addToCollect(TeamCommonDeviceContext commonDeviceContext);
 
 	/**
 	 * 根据常用设备uuid删除
 	 * @param resourceId 常用设备uuid
 	 */
-    void delCollect(String resourceId);
+	void delCollect(String resourceId);
 
 	/**
 	 * 按节点id删除

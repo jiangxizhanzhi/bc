@@ -28,6 +28,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
+import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamSceneViewContext;
@@ -62,6 +63,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 
 	@Autowired
 	private TrainRecordService trainRecordService;
+	
+	@Autowired
+	private TeamCommonDeviceService teamCommonDeviceService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -191,8 +195,18 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 					.after(trainRecordService.getActualEndTime(roomId)))) {
 				teamRoom.setReplaySceneId(localScene.getMpSceneId());
 			}
-			// 清除localScene
-			clearLocal(teamRoom);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// 清除localScene
+					clearLocal(teamRoom);
+					// 恢复创建房间时的角色资产配置
+					crRoleService.recoverNodesConfig(roomId);
+					// 删除常用资产
+					teamCommonDeviceService.delByRoomId(roomId);
+				}
+			});
 		}
 
 		return stopResult;

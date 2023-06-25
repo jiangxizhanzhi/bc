@@ -184,6 +184,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					nodesData.setAssetNodes(originRole.getAssetNodes());
 					nodesData.setVisibleNodes(originRole.getVisibleNodes());
 					crRole.setNodesData(nodesData);
+					// 创建房间时保存原始节点配置快照，用于动态更新场景后恢复
+					crRole.setNodesSnapshot(crRole.getNodes());
 					crRoleService.save(crRole);
 
 					index++;

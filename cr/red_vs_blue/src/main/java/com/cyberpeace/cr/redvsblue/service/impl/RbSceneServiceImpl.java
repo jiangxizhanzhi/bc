@@ -30,10 +30,7 @@ import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.scene.Flow;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
-import com.cyberpeace.cr.redvsblue.service.RbDeviceService;
-import com.cyberpeace.cr.redvsblue.service.RbRoomService;
-import com.cyberpeace.cr.redvsblue.service.RbSceneService;
-import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
+import com.cyberpeace.cr.redvsblue.service.*;
 import com.cyberpeace.cr.redvsblue.service.context.RbSceneViewContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
@@ -76,6 +73,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Autowired
 	private RbDeviceService rbDeviceService;
+
+	@Autowired
+	private RbCommonDeviceService rbCommonDeviceService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -240,10 +240,20 @@ public class RbSceneServiceImpl implements RbSceneService {
 					.after(rbTimeManagementService.getActualEndTime(roomId)))) {
 				room.setReplaySceneId(localScene.getMpSceneId());
 			}
-			// 清除localScene
-			clearLocal(room);
-			// 清理 device
-			rbDeviceService.removeByRoomId(roomId);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// 清除localScene
+					clearLocal(room);
+					// 恢复创建房间时的角色资产配置
+					crRoleService.recoverNodesConfig(roomId);
+					// 清理 device
+					rbDeviceService.removeByRoomId(roomId);
+					// 删除常用资产
+					rbCommonDeviceService.delByRoomId(roomId);
+				}
+			});
 		}
 
 		return stopResult;

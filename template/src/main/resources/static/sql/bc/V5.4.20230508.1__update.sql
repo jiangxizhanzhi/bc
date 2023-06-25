@@ -2015,3 +2015,9 @@ ALTER TABLE cr_rb_template MODIFY COLUMN train_skill text NOT NULL COMMENT '训�
 ALTER TABLE  cr_task ADD COLUMN `remark` longtext DEFAULT NULL COMMENT '备注';
 
 ALTER TABLE cr_eval_variable_ref  add column `type` int(1) DEFAULT 1 COMMENT '评分类型';
+
+-- ----------------------------
+-- 角色节点配置快照，用于动态编辑场景后恢复
+-- ----------------------------
+ALTER TABLE `cr_role` ADD COLUMN `nodes_snapshot` text NULL COMMENT '角色节点快照' AFTER `nodes`;
+UPDATE `cr_role` SET `nodes_snapshot`=`cr_role`.`nodes` WHERE `nodes` is not null;

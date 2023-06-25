@@ -60,6 +60,12 @@ public class CrRole extends BaseTable {
 	 */
 	private String nodes;
 
+
+	/**
+	 * 节点配置快照
+	 */
+	private String nodesSnapshot;
+
 	/**
 	 *
 	 */

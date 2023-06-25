@@ -175,7 +175,9 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		Set<String> missionIds = taskList.stream().map(TaskContext::getMissionId).collect(Collectors.toSet());
 		for (MissionSchemeObject<MissionContext> missionSchemeObject : missionSchemeObjectList) {
 			for (MissionContext mission : missionSchemeObject.getMissions()) {
-				if (!missionIds.contains(mission.getResourceId())) continue;
+				if (!missionIds.contains(mission.getResourceId())) {
+					continue;
+				}
 				String skillPoints = mission.getSkillPoints();
 				List<Integer> points = JSON.parseArray(skillPoints, Integer.class);
 
@@ -590,5 +592,10 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		}
 		return res;
 	}
+
+    @Override
+    public void recoverNodesConfig(String roomId) {
+        crRoleMapper.recoverNodesByRoomId(roomId);
+    }
 
 }

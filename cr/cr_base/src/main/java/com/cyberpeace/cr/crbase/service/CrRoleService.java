@@ -183,4 +183,11 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @return {@code Map<String, CrRole>}
 	 */
 	Map<String, CrRole> getUserRoleMapByRoomId(String roomId);
+
+	/**
+	 * 恢复角色节点配置到创建房间时的快照
+	 *
+	 * @param roomId 房间id
+	 */
+	void recoverNodesConfig(String roomId);
 }

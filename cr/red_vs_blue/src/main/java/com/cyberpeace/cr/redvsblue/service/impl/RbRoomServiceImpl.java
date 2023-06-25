@@ -187,7 +187,7 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 						log.error("role users cannot be empty！rbRoomName=[{}]", rbRoom.getName());
 						throw new BusinessException(CrBusinessErrorCode.ROLE_USERS_NOT_BE_EMPTY);
 					}
-
+					// 前端传的数据的问题
 					if (users.get(index).getUsers().size() == 0) {
 						index += 2;
 					}
@@ -195,10 +195,10 @@ public class RbRoomServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> impleme
 					crRole.setUserIdList(users.get(index++).getUsers());
 					crRole.setRoomId(rbRoom.getResourceId());
 					crRole.setBusinessType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
-
-					crRoleService.save(crRole);
-
+					// 创建房间时保存原始节点配置快照，用于动态更新场景后恢复
+					crRole.setNodesSnapshot(crRole.getNodes());
 				}
+				crRoleService.saveBatch(crRoles);
 
 			}
 

@@ -101,7 +101,6 @@ public class RbSceneController {
 		String roomId = sceneStopReq.getRoomId();
 
 		Boolean result = rbSceneService.stopScene(roomId);
-		rbCommonDeviceService.delByRoomId(roomId);
 		return new BaseRsp(result);
 	}
 

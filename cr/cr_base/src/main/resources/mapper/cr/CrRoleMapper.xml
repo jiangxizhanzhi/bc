@@ -3,6 +3,12 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper">
+    <update id="recoverNodesByRoomId">
+        update cr_role
+        set nodes = cr_role.nodes_snapshot
+        where room_id = #{roomId}
+          and nodes_snapshot is not null
+    </update>
     <delete id="batchDeleteByRoomId">
         delete
         from cr_role

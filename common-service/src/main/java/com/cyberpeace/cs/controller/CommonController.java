@@ -68,14 +68,16 @@ public class CommonController {
 			String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 			filePermission.validateFileSuffix(fileName);
 
-			if (fileName == null || fileName.length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
-				log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-						MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileName.length());
-				throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
-			}
 		} else {
 			FileUtil.validateFileSuffix(fileCommonUploadReq.getFile().getOriginalFilename(),
 					FileTypeContant.PICTURE_TYPE);
+		}
+
+		int fileNameLen = fileCommonUploadReq.getFile().getOriginalFilename() == null ? 0 : fileCommonUploadReq.getFile().getOriginalFilename().lastIndexOf(".");
+		if (fileCommonUploadReq.getFile().getOriginalFilename() == null || fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
+					MD_UPLOAD_NAME_LEN, fileCommonUploadReq.getFile().getOriginalFilename() == null ? 0 : fileNameLen);
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
 		}
 
 		// 文件上传
@@ -105,16 +107,11 @@ public class CommonController {
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 
-		String limitLength = ConfigUtil.getContextProperty("md.upload.name.len.max");
-		if (fileName == null || fileName.length() > Integer.parseInt(limitLength)) {
+		int fileNameLen = fileName == null ? 0 : fileName.lastIndexOf(".");
+		if (fileName == null || fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
 			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					limitLength, fileName == null ? 0 : fileName.length());
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
-		}
-		if (fileName == null || fileName.length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
-			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileName.length());
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, fileName);
+					MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileNameLen);
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
 		}
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadDest(
@@ -135,11 +132,14 @@ public class CommonController {
 		if (!suffix.equals(FileSunffixConstant.ZIP.getDesc()) ){
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, FileSunffixConstant.ZIP.getDesc());
 		}
-		if (md.getOriginalFilename().length() > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+
+		int fileNameLen = md.getOriginalFilename() == null ? 0 : md.getOriginalFilename().lastIndexOf(".");
+		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
 			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, md.getOriginalFilename().length());
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, md.getOriginalFilename());
+					MD_UPLOAD_NAME_LEN, fileNameLen);
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
 		}
+
 		// 文件上传至服务器 原始文件地址存储
 		String markdownPath = AttachmentPath.UPLOAD_ATTACHMENT.getDesc();
 		AttachmentBo attachmentBo = attachmentService.uploadDest(markdownPath, false, md);

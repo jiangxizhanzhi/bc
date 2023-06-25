@@ -110,6 +110,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             item.setKnowledgeList(courseKnowledgeMap.get(item.getResourceId()));
             CourseStudyProcessBo courseStudyProcessBo = processBoMap.get(item.getResourceId());
             item.setProcess(courseStudyProcessBo == null ? 0 : MathUtils.ceil(courseStudyProcessBo.getProcess()));
+            item.setInterview(courseStudyProcessBo != null ? courseStudyProcessBo.getInterview() : false);
         });
         Map<String, TrainCourseBo> courseMap = StreamApiUtils.toMap(trainCourseList, TrainCourseBo::getResourceId, item -> item);
 
@@ -214,7 +215,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         parentWrapper.eq(TrainManage::getParent, deleteTrainManage.getParent());
         parentWrapper.orderByAsc(TrainManage::getSort);
         List<TrainManage> trainManages = trainManageMapper.selectList(parentWrapper);
-        int count = 0;
+        int count = 1;
         for (TrainManage trainManage : trainManages) {
             if (!resourceId.equals(trainManage.getResourceId())) {
                 trainManage.setSort(count);
@@ -246,7 +247,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         List<String> currentResource = trainManages.stream().map(TrainManage::getResourceId).collect(Collectors.toList());
         if (trainManages.size() == req.getResourceIdList().size() && currentResource.containsAll(req.getResourceIdList())) {
             List<TrainManage> updateList = new ArrayList<>();
-            int count = 0;
+            int count = 1;
             for (String id : req.getResourceIdList()) {
                 TrainManage trainManage = map.get(id);
                 trainManage.setSort(count);
@@ -260,6 +261,9 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
 
     @Override
     public Boolean copy(String resourceId) {
+        if ("default".equals(resourceId)) {
+            return false;
+        }
         LambdaQueryWrapper<TrainManage> queryResource = new LambdaQueryWrapper<>();
         queryResource.eq(TrainManage::getResourceId, resourceId);
         TrainManage trainManage = trainManageMapper.selectOne(queryResource);
@@ -267,14 +271,44 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             log.error("TrainManage not found! resourceId=[{}]", resourceId);
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
+        LambdaQueryWrapper<TrainManage> queryParent = new LambdaQueryWrapper<>();
+        queryParent.eq(TrainManage::getParent, trainManage.getParent());
+        List<String> nameList = trainManageMapper.selectList(queryParent).stream().map(TrainManage::getName).collect(Collectors.toList());
+
         TrainManage newTrainManage = new TrainManage();
         newTrainManage.setResourceId(IDGeneratorUtil.getID());
-        newTrainManage.setName(trainManage.getName() + "（复制）");
+        String name = trainManage.getName() + "(复制)";
+        while (nameList.contains(name)) {
+            name = name + "(复制)";
+        }
+        newTrainManage.setName(name);
         newTrainManage.setParent(trainManage.getParent());
         newTrainManage.setCourseIds(trainManage.getCourseIds());
         newTrainManage.setSort(getCurrentLevelSize(trainManage.getParent()) + 1);
-        return trainManageMapper.insert(newTrainManage) > 0;
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                trainManageMapper.insert(newTrainManage);
 
+                //多层复制
+                LambdaQueryWrapper<TrainManage> queryChild = new LambdaQueryWrapper<>();
+                queryChild.eq(TrainManage::getParent, resourceId);
+                List<TrainManage> childList = trainManageMapper.selectList(queryChild);
+                if (CollectionUtils.isNotEmpty(childList)) {
+                    for (TrainManage manage : childList) {
+                        TrainManage newChild = new TrainManage();
+                        newChild.setResourceId(IDGeneratorUtil.getID());
+                        newChild.setName(manage.getName() + "（复制）");
+                        newChild.setParent(newTrainManage.getResourceId());
+                        newChild.setCourseIds(manage.getCourseIds());
+                        newChild.setSort(getCurrentLevelSize(newTrainManage.getResourceId()) + 1);
+                        trainManageMapper.insert(newChild);
+                    }
+                }
+
+            }
+        });
+        return true;
     }
 
     @Override
@@ -308,7 +342,8 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
             return false;
         }
-        trainByResource.setCourseIds(JSONArray.toJSONString(req.getCourseIdList()));
+        String courseIds = CollectionUtils.isNotEmpty(req.getCourseIdList()) ? new JSONArray().toJSONString() : JSONArray.toJSONString(req.getCourseIdList());
+        trainByResource.setCourseIds(courseIds);
         return trainManageMapper.updateById(trainByResource) > 0;
     }
 

@@ -237,6 +237,53 @@ public class TeamTrainRoomController {
 		return new BaseRsp();
 	}
 
+	@ApiOperation("暂停流量")
+	@PostMapping("/flow/parse")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp parseFlow(@RequestBody FlowOpsReq req) {
+		String roomId = req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、鉴权
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		// 2、确认场景已开启
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 3、暂停流量
+		Boolean result = localSceneService.parseFlow(localScene, req.getNodeId(), req.getFlowId());
+		if (!result) {
+			log.error("parse flow failure,req =[{}]", JsonUtil.toJsonString(req));
+			throw new BusinessException(CrBusinessErrorCode.PARSE_FLOW_FAILURE);
+		}
+		return new BaseRsp();
+	}
+
+	@ApiOperation("恢复流量")
+	@PostMapping("/flow/resume")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp resumeFlow(@RequestBody FlowOpsReq req) {
+		String roomId = req.getRoomId();
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 1、鉴权
+		teamRoomService.checkTeacherPermission(roomId, userId);
+		// 2、确认场景已开启
+		LocalScene localScene = localSceneService.getByBusinessInstanceId(roomId);
+		if (!localSceneService.ensureSceneStarted(localScene)) {
+			log.error("scene not started,req =[{}]", JsonUtil.toJsonString(req));
+			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
+		}
+		// 3、恢复流量
+		Boolean result = localSceneService.resumeFlow(localScene, req.getNodeId(), req.getFlowId());
+		if (!result) {
+			log.error("resume flow failure,req =[{}]", JsonUtil.toJsonString(req));
+			throw new BusinessException(CrBusinessErrorCode.RESUME_FLOW_FAILURE);
+		}
+		return new BaseRsp();
+	}
+
+
 	@ApiOperation("重启节点")
 	@PostMapping("/scene/node/restart")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)

@@ -414,4 +414,10 @@ public interface CrBusinessErrorCode {
 
 	/** 题解长度超长 */
 	String ILLEGAL_WRITEUP_LEN = "101125";
+
+	// 暂停流量失败
+	String PARSE_FLOW_FAILURE = "101126";
+
+	// 恢复流量失败
+	String RESUME_FLOW_FAILURE = "101127";
 }

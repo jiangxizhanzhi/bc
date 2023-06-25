@@ -1,5 +1,4 @@
 package com.cyberpeace.oj.course.service.bo;
-import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,7 +28,7 @@ public class TrainCourseBo implements Serializable {
     private String description;
 
     @ApiModelProperty("课程学习进度")
-    private Integer process ;
+    private Integer process;
 
     @ApiModelProperty("课程关联知识点信息")
     private List<CourseKnowledgeBo> knowledgeList;
@@ -38,7 +37,7 @@ public class TrainCourseBo implements Serializable {
     private String logo;
 
     @ApiModelProperty("课程关联的知识点或技能id")
-    private String relatedId ;
+    private String relatedId;
 
     @ApiModelProperty("是否具有课程访问权限")
     private Boolean interview;

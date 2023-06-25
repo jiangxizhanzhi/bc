@@ -64,6 +64,18 @@ public interface RemoteSceneService {
 	Boolean stopFlow(FlowOpsContext context);
 
 	/**
+	 * 启动流量
+	 */
+	Boolean parseFlow(FlowOpsContext flowOpsContext);
+
+	/**
+	 * 停止流量
+	 * @param context
+	 * @return
+	 */
+	Boolean resumeFlow(FlowOpsContext context);
+
+	/**
 	 * 批量启动流量
 	 * @param flowBatchOpsContext
 	 * @return Boolean

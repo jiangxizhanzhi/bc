@@ -15,7 +15,8 @@ public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
      * 根据课程编号用户编号查询课程目录
-     * @param courseId 课程编号
+     *
+     * @param courseId    课程编号
      * @param authContext
      * @return
      */
@@ -23,6 +24,7 @@ public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
      * 更新课时配置
+     *
      * @param configBo
      * @return
      */
@@ -30,6 +32,7 @@ public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
      * 根据课时数据 组装课程目录数据
+     *
      * @param configContext
      * @return
      */
@@ -37,6 +40,7 @@ public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
      * 导出课程数据目录
+     *
      * @param courseId
      * @param authContext
      * @return
@@ -45,6 +49,7 @@ public interface LessonConfigService extends IService<LessonConfig> {
 
     /**
      * 章节数据
+     *
      * @param lessonConfig
      * @param courseId
      * @param courseLessons
@@ -53,6 +58,12 @@ public interface LessonConfigService extends IService<LessonConfig> {
     List<LessonConfig> loadLessonConfig(LessonConfigDumpBo lessonConfig, String courseId,
                                         List<CourseLesson> courseLessons);
 
+    /**
+     * 展开课时编排的树形数据
+     *
+     * @return 课时编排数据
+     */
+    List<LessonConfigBo> expandLessonConfig(LessonConfigBo lessonConfigBo);
 
     /**
      * 判断展开的课时数据是否包含
@@ -64,5 +75,6 @@ public interface LessonConfigService extends IService<LessonConfig> {
      */
     WebContextInfoStatusRes lessonIdOfExpandedLessonConfigs(int navigate, String lessonId,
                                                             List<LessonConfigBo> lessonConfigBos,
-                                                            AuthContext authContext, String startLessonId);
+                                                            AuthContext authContext,
+                                                            String startLessonId);
 }

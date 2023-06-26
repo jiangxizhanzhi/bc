@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.controller.res.WebContextInfoStatusRes;
 import com.cyberpeace.oj.course.service.CourseLessonService;
@@ -273,12 +275,12 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
             // 校验题型
             assertSameLessonType(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr());
             // 校验场景
-            assertSameLessonScene(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr(), startLessonId);
+            assertSameLessonScene(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr(), startLessonId, navigate);
         }
         // navigate == -1证明从下一题切到了当前题目
         if (navigate == -1) {
             assertSameLessonType(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr());
-            assertSameLessonScene(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr(), startLessonId);
+            assertSameLessonScene(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr(), startLessonId, navigate);
         }
 
 
@@ -291,17 +293,17 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
      * @param c1
      * @param curr
      */
-    private void assertSameLessonScene(ContextInfoStatus c1, ContextInfoStatus curr, String startLessonId) {
+    private void assertSameLessonScene(ContextInfoStatus c1, ContextInfoStatus curr, String startLessonId, int navigate) {
         if (c1 == null || curr == null) {
             log.error("lesson configs not found!");
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         // 如果切回第一课时则不需要校验
-        if (c1.getCourseId().equals(startLessonId)) {
+        if (curr.getCourseId().equals(startLessonId)) {
             return;
         }
         // 如果切到其他课时，必须确保其他课时的场景为空
-        CourseLesson lesson = c1.getLesson();
+        CourseLesson lesson = curr.getLesson();
         // 查询课时场景信息
         if (lesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode().intValue()
                 && StringUtils.isNotBlank(lesson.getTopoId())) {
@@ -320,7 +322,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
                 return;
             }
             JSONArray areas = topology.getJSONArray("areas");
-            JSONArray connec = topology.getJSONArray("areas");
+            JSONArray connec = topology.getJSONArray("connec");
             JSONArray elements = topology.getJSONArray("elements");
             JSONArray pieces = topology.getJSONArray("pieces");
             if (CollectionUtils.isEmpty(areas) && CollectionUtils.isEmpty(connec) &&
@@ -329,7 +331,14 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
             }
 
             log.error("new lesson scene used! lesson_id=[{}]", lesson.getResourceId());
-            throw new BusinessException(ErrorCode.USE_NEW_SCENE);
+			String errorTip = "";
+			if(navigate == 1) {
+				errorTip = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "Next" : "下";
+			}
+			if(navigate == -1) {
+				errorTip = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "Previous" : "上";
+			}
+            throw new BusinessException(ErrorCode.USE_NEW_SCENE, errorTip);
         }
     }
 

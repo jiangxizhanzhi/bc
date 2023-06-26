@@ -58,10 +58,25 @@ public class DashboardServiceImpl implements DashboardService {
 		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
 				.getByResourceId(situationPublishInstances.getAttributeId());
 
+
 		if (dashboardAttribute != null) {
 			DashboardBasicAttributeRes dashboardBasicAttributeRes = BeanUtils
 					.deepCopy(dashboardAttribute, DashboardBasicAttributeRes.class);
 			dashboardBasicAttributeRes.setViewAngle(dashboardAttribute.getViewAngle());
+
+			DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefMapper.selectByOriginTemplateId(situationPublishInstances.getTemplateId());
+			//编辑大屏可能会修改部分值，需要从situation_dashboard_template_ref表获取
+			if (dashboardTemplateRef != null) {
+
+				DashboardConfigContext dashboardConfigContext = JsonUtil
+						.toJsonObject(dashboardTemplateRef.getConfig(), DashboardConfigContext.class);
+
+				dashboardBasicAttributeRes.setMapSource(dashboardConfigContext.getGisConfig().getMapSource());
+				dashboardBasicAttributeRes.setViewAngle(dashboardTemplateRef.getViewAngle());
+				dashboardBasicAttributeRes.setRefresh(dashboardTemplateRef.getRefresh());
+				dashboardBasicAttributeRes.setLevel(dashboardTemplateRef.getLevel());
+
+			}
 
 			List<String> events = Lists.newArrayList();
 			Map<String, String> typicalEventMap = thirdPartyService.getTypicalEventsMap();

@@ -105,4 +105,7 @@ public class DashboardBasicAttributeRes implements Serializable {
 		this.mapSource = MapSource.getMapSourceByCode(mapSource).getName();
 	}
 
+	public void setMapSource(String mapSource) {
+		this.mapSource = mapSource;
+	}
 }

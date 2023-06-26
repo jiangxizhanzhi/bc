@@ -30,4 +30,13 @@ public interface DashboardTemplateRefMapper extends BaseMapper<DashboardTemplate
 	 * @return {@code String}
 	 */
 	String selectOriginTemplateId(@Param("resourceId") String resourceId);
+
+	/**
+	 * 通过起源模板id查找
+	 *
+	 * @param originTemplateId 模板id
+	 * @return {@link DashboardTemplateRef}
+	 */
+	DashboardTemplateRef selectByOriginTemplateId(String originTemplateId);
+
 }

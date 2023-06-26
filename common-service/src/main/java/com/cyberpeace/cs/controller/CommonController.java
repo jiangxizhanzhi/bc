@@ -1,22 +1,9 @@
 package com.cyberpeace.cs.controller;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.FileSunffixConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ExtractBase;
-import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.constant.UploadAttachmentPermission;
-import com.cyberpeace.cs.constant.UploadImagePermission;
-import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
-import com.cyberpeace.cs.service.AttachmentService;
-import com.cyberpeace.cs.service.UtilService;
-import com.cyberpeace.cs.service.context.AttachmentBo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -27,8 +14,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.FileSunffixConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ExtractBase;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.constant.FileTypeContant;
+import com.cyberpeace.cs.constant.UploadAttachmentPermission;
+import com.cyberpeace.cs.constant.UploadImagePermission;
+import com.cyberpeace.cs.controller.req.AdMdUploadReq;
+import com.cyberpeace.cs.controller.req.FileCommonUploadReq;
+import com.cyberpeace.cs.service.AttachmentService;
+import com.cyberpeace.cs.service.UtilService;
+import com.cyberpeace.cs.service.context.AttachmentBo;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
 @Api(tags = "公共服务接口")
 @RestController
@@ -53,7 +57,7 @@ public class CommonController {
 	@ApiOperation("图片上传")
 	@PostMapping("/image_upload")
 	public BaseRsp<AttachmentBo> imageUpload(FileCommonUploadReq fileCommonUploadReq) {
-
+		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		if (null != fileCommonUploadReq.getType()) {
 			// 获取需要校验的数据
 			UploadImagePermission filePermission = EnumUtils
@@ -65,20 +69,13 @@ public class CommonController {
 
 			// 校验权限和文件
 			filePermission.validatePermission(false);
-			String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 			filePermission.validateFileSuffix(fileName);
 
 		} else {
-			FileUtil.validateFileSuffix(fileCommonUploadReq.getFile().getOriginalFilename(),
-					FileTypeContant.PICTURE_TYPE);
+			FileUtil.validateFileSuffix(fileName, FileTypeContant.PICTURE_TYPE);
 		}
 
-		int fileNameLen = fileCommonUploadReq.getFile().getOriginalFilename() == null ? 0 : fileCommonUploadReq.getFile().getOriginalFilename().lastIndexOf(".");
-		if (fileCommonUploadReq.getFile().getOriginalFilename() == null || fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
-			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, fileCommonUploadReq.getFile().getOriginalFilename() == null ? 0 : fileNameLen);
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
-		}
+		validateFileNameLen(fileName);
 
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadFile(
@@ -107,15 +104,35 @@ public class CommonController {
 		String fileName = fileCommonUploadReq.getFile().getOriginalFilename();
 		filePermission.validateFileSuffix(fileName);
 
-		int fileNameLen = fileName == null ? 0 : fileName.lastIndexOf(".");
-		if (fileName == null || fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
-			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, fileName == null ? 0 : fileNameLen);
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
-		}
+		validateFileNameLen(fileName);
 		// 文件上传
 		AttachmentBo attachmentBo = attachmentService.uploadDest(
 				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, fileCommonUploadReq.getFile());
+
+		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
+		attachmentBo.setFilePath(viewPath);
+
+		return new BaseRsp(attachmentBo);
+	}
+
+	/**
+	 * 竞赛md统一上传接口
+	 * 去掉权限校验
+	 * 
+	 * @param adMdUploadReq 文件常见上传请求体
+	 * @return {@code BaseRsp<AttachmentBo>}
+	 */
+	@ApiOperation("竞赛md统一上传接口")
+	@PostMapping("/ad_upload")
+	public BaseRsp<AttachmentBo> mdUpload(AdMdUploadReq adMdUploadReq) {
+
+		// 校验权限和文件
+		String fileName = adMdUploadReq.getFile().getOriginalFilename();
+
+		validateFileNameLen(fileName);
+		// 文件上传
+		AttachmentBo attachmentBo = attachmentService.uploadDest(
+				AttachmentPath.UPLOAD_ATTACHMENT.getDesc(), true, adMdUploadReq.getFile());
 
 		String viewPath = utilService.handlerFileUrl(attachmentBo.getFilePath());
 		attachmentBo.setFilePath(viewPath);
@@ -133,12 +150,7 @@ public class CommonController {
 			throw new BusinessException(ErrorCode.NOT_SUPPORT_FILE_TYPE, FileSunffixConstant.ZIP.getDesc());
 		}
 
-		int fileNameLen = md.getOriginalFilename() == null ? 0 : md.getOriginalFilename().lastIndexOf(".");
-		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
-			log.error("upload fileName length cannot be larger than [{}] m! name.length = [{}]",
-					MD_UPLOAD_NAME_LEN, fileNameLen);
-			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT, Integer.parseInt(MD_UPLOAD_NAME_LEN));
-		}
+		validateFileNameLen(md.getOriginalFilename());
 
 		// 文件上传至服务器 原始文件地址存储
 		String markdownPath = AttachmentPath.UPLOAD_ATTACHMENT.getDesc();
@@ -168,6 +180,16 @@ public class CommonController {
 		extractBase.setContent(realContent);
 		extractBase.setIsExtract(Boolean.TRUE);
 		return new BaseRsp<>(extractBase);
+	}
+
+	private void validateFileNameLen(String fileName) {
+		int fileNameLen = fileName == null ? 0 : fileName.length();
+		if (fileNameLen > Integer.parseInt(MD_UPLOAD_NAME_LEN)) {
+			log.error("upload fileName length cannot be larger than [{}] ! name.length = [{}]",
+					MD_UPLOAD_NAME_LEN, fileNameLen);
+			throw new BusinessException(ErrorCode.FILE_NAME_UPPER_LIMIT,
+					Integer.parseInt(MD_UPLOAD_NAME_LEN));
+		}
 	}
 
 }

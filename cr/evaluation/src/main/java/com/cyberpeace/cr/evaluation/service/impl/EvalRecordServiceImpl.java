@@ -857,7 +857,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             if (!StringUtils.isEmpty(result)) {
                 evalVariableRef.setScore(0);
                 evalVariableRef.setProgress(EvalVariableRef.Progress.EXCEPTION.getCode());
-                evalRecord.setMessage(evalRecord.getMessage() + result + "\n");
+                evalRecord.setMessage(result + "\n");
                 transactionTemplate.execute(status -> {
                     evalVariableRefService.updateById(evalVariableRef);
                     return updateById(evalRecord);
@@ -959,7 +959,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 EvalLog.error(evalRecord, evalVariableRef, "invoke mp probe data api Exception.");
                 // 采集数据报错, 采集变量项中止
                 String msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.GET_PROBE_DATA_FAILED), evalVariableRef.getName());
-                evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+                evalRecord.setMessage(msg + "\n");
                 updateById(evalRecord);
 
                 evalVariableRef.setProgress(EvalVariableRef.Progress.END.getCode());

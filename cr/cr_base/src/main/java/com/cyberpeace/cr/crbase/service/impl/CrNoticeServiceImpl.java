@@ -83,9 +83,9 @@ public class CrNoticeServiceImpl extends ServiceImpl<CrNoticeMapper, CrNotice> i
 			roles = crRoleService.getRolesByRoomAndGroups(crNoticeReq.getRoomId(), Lists.newArrayList(groups));
 		}
 		List<String> userIds = roles.stream().map(CrRole::getUserIdList).flatMap(Collection::stream).filter(a->!UserInfoContext.getUserContext().getUserId().equals(a)).collect(Collectors.toList());
+		notice.setNoticeUsers(JsonUtil.toJsonString(userIds));
 		this.save(notice);
 		webSocketPushService.notice(userIds,MissionWsCode.NOTICE_Code,crNoticeReq.getRoomId(),WsPath.NOTICE);
-		notice.setNoticeUsers(JsonUtil.toJsonString(userIds));
 	}
 
 	@Override

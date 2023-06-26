@@ -159,7 +159,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 								.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
 						this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
 			}
-			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+			evalRecord.setMessage(msg + "\n");
 			EvalLog.error(evalRecord, evalIndexRef, "system evaluation type index on failure.");
 		}
 
@@ -169,7 +169,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 					BusinessException.getMessageByLanguage(
 							CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
 					this.getLevelText(evalIndexRef.getLevel()), evalIndexRef.getName());
-			evalRecord.setMessage(evalRecord.getMessage() + msg + "\n");
+			evalRecord.setMessage(msg + "\n");
 			score = 0;
 		}
 

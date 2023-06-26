@@ -273,13 +273,13 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
         // navigate == 1证明从上一题切到了当前题目
         if (navigate == 1) {
             // 校验题型
-            assertSameLessonType(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr());
+            assertSameLessonType(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr(), navigate);
             // 校验场景
             assertSameLessonScene(webContextInfoStatusRes.getPrev(), webContextInfoStatusRes.getCurr(), startLessonId, navigate);
         }
         // navigate == -1证明从下一题切到了当前题目
         if (navigate == -1) {
-            assertSameLessonType(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr());
+            assertSameLessonType(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr(), navigate);
             assertSameLessonScene(webContextInfoStatusRes.getNext(), webContextInfoStatusRes.getCurr(), startLessonId, navigate);
         }
 
@@ -299,7 +299,7 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         // 如果切回第一课时则不需要校验
-        if (curr.getCourseId().equals(startLessonId)) {
+        if (curr.getLessonId().equals(startLessonId)) {
             return;
         }
         // 如果切到其他课时，必须确保其他课时的场景为空
@@ -348,14 +348,21 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
      * @param c1
      * @param curr
      */
-    private void assertSameLessonType(ContextInfoStatus c1, ContextInfoStatus curr) {
+    private void assertSameLessonType(ContextInfoStatus c1, ContextInfoStatus curr, int navigate) {
         if (c1 == null || curr == null) {
-            log.error("lesson configs not found!");
+            log.error("lesson configs not found! lesson_id = [{}]", curr.getLessonId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
         if (c1.getLessonType() != curr.getLessonType()) {
-            log.error("lesson type is not same!");
-            throw new BusinessException(ErrorCode.LESSON_TYPE_NOT_SAME);
+			String errorTip = "";
+			if(navigate == 1) {
+				errorTip = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "Next" : "下";
+			}
+			if(navigate == -1) {
+				errorTip = CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "Previous" : "上";
+			}
+            log.error("lesson type is not same! lesson_id = [{}]", curr.getLessonId());
+            throw new BusinessException(ErrorCode.LESSON_TYPE_NOT_SAME, errorTip);
         }
     }
 

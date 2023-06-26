@@ -86,7 +86,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	 * @param components 组件
 	 * @param type       类型
 	 * @return {@link List}<{@link BusinessComponentsSetting}>
-	 */// 转换大屏组件配置（字符串 -> 列表）
+	 */// 转换业务组件配置（字符串 -> 列表）
 	public List<BusinessComponentsSetting> convertComponents(String components, String type) {
 
 		// 1、构建返回结构
@@ -157,7 +157,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 			dashboardComponentsIdList.add(resourceId);
 		}
 
-		// 写入大屏配置
+		// 写入组件配置
 		businessComponent.setComponentsSetting(dashboardComponentsIdList.toString());
 		insertTemplate(businessComponent, dashboardComponentsList);
 
@@ -171,7 +171,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 
-				// 写入大屏业务组件
+				// 写入业务组件
 				businessComponentMapper.insert(businessComponent);
 
 				// 如果组件列表不为空，写入组件数据
@@ -244,11 +244,15 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 		// situationHandlerService.checkFieldLen(exportTemplateContext.getBusinessComponent().getName(),
 		// null);
 
+		// 2.列出要导入的所有可能的文件路径
 		List<String> filePaths = getComponentsFilePaths(
 				exportTemplateContext.getBusinessComponentsSettingList());
+		filePaths.add(exportTemplateContext.getBusinessComponent().getThumbnail());
 
+		// 3.列出要导入的实际的文件路径（都在同一级目录）
 		List<String> files = FileUtil.listFileNamesByDir(absolutePath, false);
 
+		// 4.获取要导入的文件路径对应服务器应该存放的路径map
 		Map<String, String> filePathMap = StreamApiUtils.toMap(files, file -> file, file -> {
 			for (String filePath : filePaths) {
 				if (filePath != null && filePath.contains(file)) {
@@ -258,6 +262,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 			return file;
 		});
 
+		// 5.移动文件到对应服务器应该存放的路径
 		for (String file : files) {
 			String targetPath = filePathMap.get(file);
 			if (targetPath.startsWith(ConfigUtil.getContextProperty("cr.local.file.prefix"))) {
@@ -266,9 +271,15 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 
 		}
 
+		// 6.导入实际数据
 		insertTemplate(exportTemplateContext.getBusinessComponent(),
 				exportTemplateContext.getBusinessComponentsSettingList());
 
+	}
+
+	@Override
+	public BusinessComponent selectBusinessComponentById(String businessComponentId) {
+		return businessComponentMapper.selectById(businessComponentId);
 	}
 
 	/**
@@ -316,6 +327,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 
 		// 3. 获取业务组件中各种文件路径
 		List<String> filePaths = getComponentsFilePaths(dashboardComponentsList);
+		filePaths.add(businessComponent.getThumbnail());
 
 		// 4. 拷贝文件
 		for (String direction : filePaths) {
@@ -415,7 +427,7 @@ public class BusinessComponentServiceImpl extends ServiceImpl<BusinessComponentM
 	@Override
 	public BusinessComponentRes getBusinessComponentInfo(String resourceId, String type,
 			Boolean isPreview) {
-		// 1、获取大屏业务组件数据
+		// 1、获取业务组件数据
 		BusinessComponent businessComponent = selectBusinessComponentById(resourceId, true);
 
 		// 2、构造返回业务组件数据

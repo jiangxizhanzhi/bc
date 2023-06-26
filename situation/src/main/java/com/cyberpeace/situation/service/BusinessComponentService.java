@@ -94,4 +94,12 @@ public interface BusinessComponentService {
 	 * @param absolutePath 绝对路径
 	 */
 	void importBusinessComponent(String dataJson, String absolutePath);
+
+	/**
+	 * 查找业务组件id
+	 *
+	 * @param businessComponentId 业务组件id
+	 * @return {@link BusinessComponent}
+	 */
+	BusinessComponent selectBusinessComponentById(String businessComponentId);
 }

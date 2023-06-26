@@ -399,10 +399,12 @@ public class PracticeValidateHandler {
 	public void validateFillBlankKeyword(Integer theoryType, String keyword) {
 		if (theoryType == PracticeTheory.TheoryType.SHORT_ANSWER.getCode().intValue()) {
 			JSONArray objects = JSON.parseArray(keyword);
-			for (Object obj : objects) {
-				if (StringUtils.isBlank(obj.toString())) {
-					log.error("keyword empty error!theoryType=[{}],keyword.size()=[{}] ",theoryType,keyword);
-					throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
+			if (objects!=null) {
+				for (Object obj : objects) {
+					if (StringUtils.isBlank(obj.toString())) {
+						log.error("keyword empty error!theoryType=[{}],keyword.size()=[{}] ",theoryType,keyword);
+						throw new BusinessException(OjBusinessErrorCode.KEYWORD_EMPTY_ERROR);
+					}
 				}
 			}
 		}

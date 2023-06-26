@@ -2,9 +2,16 @@ package com.cyberpeace.oj.course.controller.web;
 
 import java.util.List;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.oj.course.controller.res.WebContextInfoStatusRes;
+import com.cyberpeace.oj.course.service.LessonConfigService;
+import com.cyberpeace.oj.course.service.bo.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +27,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.oj.course.controller.req.LessonPracticeSubmitReq;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.LessonSceneService;
-import com.cyberpeace.oj.course.service.bo.LessonInfoBo;
-import com.cyberpeace.oj.course.service.bo.LessonPracticeBo;
-import com.cyberpeace.oj.course.service.bo.PracticeAnswerContext;
-import com.cyberpeace.oj.course.service.bo.SubmitAnswerContext;
 import com.cyberpeace.oj.ojbase.controller.req.SceneNodeReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
@@ -45,6 +48,9 @@ public class WebLessonController {
 
 	@Autowired
 	private LessonSceneService lessonSceneService;
+
+	@Autowired
+	private LessonConfigService lessonConfigService;
 
 	@ApiOperation("课时详情查询")
 	@GetMapping("")
@@ -171,5 +177,33 @@ public class WebLessonController {
 				sceneStatusReq.getStatus(), authContext);
 		return new BaseRsp<>(result);
 	}
+
+    @ApiOperation("前台课时场景-接入：上一题当前题下一题lessionid")
+    @GetMapping("/context_info_status")
+    @RequiresPermissions(MenuConstant.WEB_OJ_ALL_COURSE)
+    public BaseRsp<WebContextInfoStatusRes> contextInfoStatus(
+            @ApiParam(name = "course_id", value = "课程id") @RequestParam(name = "course_id") String courseId,
+            @ApiParam(name = "lesson_id", value = "课时id") @RequestParam(name = "lesson_id") String lessonId,
+            @ApiParam(name = "start_lesson_id", value = "第一次进入的课时id") @RequestParam(name = "start_lesson_id") String startLessonId,
+            @ApiParam(name = "navigate", value = "操作提示参数：1=下一题，0=当前题，-1=上一题") Integer navigate) {
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
+                true);
+        //  1.查询课时编排，
+        LessonConfigBo lessonConfig = lessonConfigService.getLessonConfig(courseId, authContext);
+        // 2.按顺序展开课时编排
+        List<LessonConfigBo> lessonConfigBos = lessonConfigService.expandLessonConfig(lessonConfig);
+        // 3.找到要查询的课时在列表中的定位，校验前端传的lessonId和navigate的是否合理
+        if (CollectionUtils.isEmpty(lessonConfigBos)) {
+            log.error("lesson configs not found! course_id=[{}]", courseId);
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        // 4.1.查询上/下是否实操课，若否：navigate=-1/1则抛出（上/下一节是理论课，无法在当前操作环境中切换）
+        // 4.2.查询上/下的实操课的场景是否为空，若非空则抛出（上/下一节使用新的环境，无法在当前操作环境中切换）
+        WebContextInfoStatusRes webContextInfoStatusRes = lessonConfigService.lessonIdOfExpandedLessonConfigs(navigate, lessonId, lessonConfigBos, authContext, startLessonId);
+        webContextInfoStatusRes.setStartLessonId(startLessonId);
+
+        return new BaseRsp<>(webContextInfoStatusRes);
+    }
 
 }

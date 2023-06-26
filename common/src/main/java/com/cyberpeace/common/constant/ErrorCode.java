@@ -158,4 +158,14 @@ public interface ErrorCode {
 
 	/** 图片后缀不为jpg */
 	String ILLEGAL_PICTURE_SUFFIX = "100051";
+
+	/**
+	 * 课程类型不一致
+	 */
+	String LESSON_TYPE_NOT_SAME = "100052";
+
+	/**
+	 * 使用了新的场景
+	 */
+	String USE_NEW_SCENE = "100053";
 }

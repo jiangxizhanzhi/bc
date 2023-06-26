@@ -665,6 +665,15 @@ public class PracticeTheoryServiceImpl extends ServiceImpl<PracticeTheoryMapper,
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
 		List<ProgressProportion> progressProportionList = new ArrayList<>();
+		// 根据习题集过滤习题编号
+		if (StringUtils.isNotBlank(practiceSetId)) {
+			if (authSetIds.contains(practiceSetId)){
+				authSetIds.clear();
+				authSetIds.add(practiceSetId);
+			}else {
+				authSetIds.clear();
+			}
+		}
 		if (CollectionUtils.isNotEmpty(authSetIds)){
 			progressProportionList = practiceTheoryMapper.selectByGroupDifficulty(listQuery,
 					authContext.getIsWeb(), authContext.getUserId(), authSetIds, PracticeCategory.PracticeType.THEORY.getCode());

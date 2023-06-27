@@ -151,6 +151,12 @@ public class PracticeTheoryController {
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
 		String userId = authContext.getUserId();
 		List<String> practiceIds = practiceTheoryService.getPracticeIdsByUserAndSet(authContext, null);
+		if (CollectionUtils.isEmpty(practiceIds)){
+			theoryStatisticsRes.setCollection(0);
+			theoryStatisticsRes.setNote(0);
+			theoryStatisticsRes.setMistake(0);
+			return new BaseRsp<>(theoryStatisticsRes);
+		}
 		theoryStatisticsRes.setMistake(practiceMistakeService.getTheoryMistakeCount(userId,practiceIds));
 		theoryStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
 				ResourceCollection.BusinessType.THEORY.getCode(), practiceIds));

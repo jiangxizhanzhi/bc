@@ -909,14 +909,14 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         }
 
         // 获取需要同步数据的变量项
-        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).in(EvalVariableRef::getProgress, Arrays.asList(EvalVariableRef.Progress.NOT_START.getCode(), EvalVariableRef.Progress.START.getCode())).list();
+        List<EvalVariableRef> evalVariableRefs = evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list();
 
         // 没有需要同步数据变量项, 跳过
         if (evalVariableRefs.isEmpty()) {
             EvalLog.info(evalRecord, "variables probe data has been sync, continue.");
             return;
         }
-
+        evalVariableRefs.forEach(a->a.setProgress(EvalVariableRef.Progress.NOT_START.getCode()));
         // 终端节点IP <nodeId, nodeIp>
         Map<String, String> ipMap = nodeIpMap(evalTask.getMpSceneId());
 

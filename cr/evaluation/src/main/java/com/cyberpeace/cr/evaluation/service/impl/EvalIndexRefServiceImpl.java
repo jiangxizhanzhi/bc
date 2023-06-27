@@ -175,6 +175,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 
 		evalIndexRef.setScore(score);
 		if (StringUtils.isEmpty(msg)) {
+			evalRecord.setMessage("");
 			evalIndexRef.setProgress(EvalIndexRef.Progress.END.getCode());
 		} else {
 			evalIndexRef.setProgress(EvalIndexRef.Progress.EXCEPTION.getCode());

@@ -207,11 +207,11 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	@Override
-	public Boolean parseFlow(LocalScene localScene, String nodeId, String flowId) {
+	public Boolean pauseFlow(LocalScene localScene, String nodeId, String flowId) {
 		FlowOpsContext context = getFlowOpsContext(localScene, nodeId, flowId);
-		Boolean result = remoteSceneService.parseFlow(context);
+		Boolean result = remoteSceneService.pauseFlow(context);
 		if (!result) {
-			log.error("failed to parse flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
+			log.error("failed to pause flow [{}] of node [{}] in scene [{}]", flowId, nodeId,
 					localScene.getMpSceneId());
 			return false;
 		}

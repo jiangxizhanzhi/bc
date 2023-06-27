@@ -238,9 +238,9 @@ public class TeamTrainRoomController {
 	}
 
 	@ApiOperation("暂停流量")
-	@PostMapping("/flow/parse")
+	@PostMapping("/flow/pause")
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp parseFlow(@RequestBody FlowOpsReq req) {
+	public BaseRsp pauseFlow(@RequestBody FlowOpsReq req) {
 		String roomId = req.getRoomId();
 		String userId = UserInfoContext.getUserContext().getUserId();
 		// 1、鉴权
@@ -252,9 +252,9 @@ public class TeamTrainRoomController {
 			throw new BusinessException(CrBusinessErrorCode.SCENE_NOT_STARTED);
 		}
 		// 3、暂停流量
-		Boolean result = localSceneService.parseFlow(localScene, req.getNodeId(), req.getFlowId());
+		Boolean result = localSceneService.pauseFlow(localScene, req.getNodeId(), req.getFlowId());
 		if (!result) {
-			log.error("parse flow failure,req =[{}]", JsonUtil.toJsonString(req));
+			log.error("pause flow failure,req =[{}]", JsonUtil.toJsonString(req));
 			throw new BusinessException(CrBusinessErrorCode.PARSE_FLOW_FAILURE);
 		}
 		return new BaseRsp();

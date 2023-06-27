@@ -56,7 +56,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String FLOW_STOP_URL;
 
-	private String FLOW_PARSE_URL;
+	private String FLOW_PAUSE_URL;
 
 	private String FLOW_RESUME_URL;
 
@@ -125,7 +125,7 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 		FLOW_STOP_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.stop");
 
-		FLOW_PARSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.parse");
+		FLOW_PAUSE_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.pause");
 
 		FLOW_RESUME_URL = MP_HOST + ConfigUtil.getContextProperty("scene.node.flow.resume");
 
@@ -241,8 +241,8 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	@Override
-	public Boolean parseFlow(FlowOpsContext context) {
-		return HttpClientUtil.post(FLOW_PARSE_URL, context, Boolean.class);
+	public Boolean pauseFlow(FlowOpsContext context) {
+		return HttpClientUtil.post(FLOW_PAUSE_URL, context, Boolean.class);
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.oj.ojbase.constant.Difficulty;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.practice.controller.req.PracticePaperCreateReq;
@@ -73,6 +75,8 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 
 	@Override
 	public PracticePaper createPaper(PracticePaperCreateReq practicePaperCreateReq) {
+		int countMax = Integer.parseInt(ConfigUtil.getContextProperty("oj.practice.count.max"));
+		CrCommonValidator.validateRange(practicePaperCreateReq.getCount(), CrCommonConstants.MIN_STR_LEN,countMax,OjBusinessErrorCode.PRACTICE_RANGE_ERROR);
 		//按条件获取所有可组卷的题目
 		PracticePaper practicePaper = new PracticePaper();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);

@@ -335,4 +335,7 @@ public interface OjBusinessErrorCode {
 
 	/** 题目方向未选 */
 	String QUESTION_DIRECTION_NOT_SELECTED = "102130";
+
+	/** 出题范围错误 */
+	String PRACTICE_RANGE_ERROR = "102131";
 }

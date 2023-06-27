@@ -79,7 +79,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 		if (objects.size() != data.size()) {
 			throw new RemoteServiceException(ErrorCode.UNFIT_MATRIX_DATA);
 		}
-		if(objects.size() == 1){
+		if (objects.size() == 1) {
 			return data.get(0);
 		}
 		double[][] formatMatrixData = MatrixData.getFormatMatrixData(matrixData);
@@ -205,7 +205,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 				.collect(Collectors.toMap(EvalIndexRef::getResourceId,
 						evalIndexRef1 -> evalIndexRef1));
 
-		Set<String> variableIds = Sets.newHashSet();
+		List<String> variableIds = Lists.newArrayList();
 		collectionVariableIds(evalIndexRef, evalIndexRefMap, variableIds);
 
 		evalVariableRefService.lambdaQuery().in(EvalVariableRef::getResourceId, variableIds).list()
@@ -217,7 +217,18 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 					results.add(evalRoomPairRsp);
 				});
 
-		return results;
+		// 排序results，让它按照variableIds列表的顺序排列
+		List<EvalRoomPairRsp> sortedResults = new ArrayList<>(results.size());
+		for (String variableId : variableIds) {
+			for (EvalRoomPairRsp result : results) {
+				if (variableId.equals(result.getId())) {
+					sortedResults.add(result);
+					break;
+				}
+			}
+		}
+
+		return sortedResults;
 	}
 
 	/**
@@ -227,7 +238,7 @@ public class EvalIndexRefServiceImpl extends ServiceImpl<EvalIndexRefMapper, Eva
 	 * @param variableIds 收集变量项id集合
 	 */
 	private void collectionVariableIds(EvalIndexRef evalIndexRef,
-			Map<String, EvalIndexRef> evalIndexRefMap, Set<String> variableIds) {
+			Map<String, EvalIndexRef> evalIndexRefMap, List<String> variableIds) {
 		List<String> nextIds = JsonUtil.toJsonObjectArray(evalIndexRef.getNextIds(), String.class);
 		nextIds.forEach(nextId -> {
 			variableIds.add(nextId);

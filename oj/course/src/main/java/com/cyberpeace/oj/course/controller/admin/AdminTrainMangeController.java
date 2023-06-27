@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.controller.admin;
 
 import com.cyberpeace.common.baseinterface.Create;
 import com.cyberpeace.common.baseinterface.Update;
+import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.integratation.constant.OperationModule;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,14 +40,14 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架列表查询")
     @GetMapping("/list")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<TrainManageTreeBo> trainMangeList() {
         return new BaseRsp(trainManageService.trainMangeList());
     }
 
     @ApiOperation("培训框架新增")
     @PostMapping("/add_level")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> addLevel(@RequestBody @Validated(Create.class) TrainMangeReq req) {
         Boolean result = trainManageService.addLevel(req);
         if (result) {
@@ -56,7 +58,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架修改")
     @PostMapping("/update_level")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> updateLevel(@RequestBody @Validated(Update.class) TrainMangeReq req) {
         Boolean result = trainManageService.updateLevel(req);
         if (result) {
@@ -67,7 +69,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架复制")
     @GetMapping("/copy")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<Boolean> copy(@RequestParam(value = "resource_id") String resourceId) {
         Boolean result = trainManageService.copy(resourceId);
@@ -79,7 +81,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架删除")
     @DeleteMapping("/delete_level")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<Boolean> deleteLevel(@RequestParam(value = "resource_id") String resourceId) {
         Boolean result = trainManageService.deleteLevel(resourceId);
@@ -91,7 +93,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架移动")
     @PostMapping("/move_level")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> moveLevel(@RequestBody TrainMangeSortReq req) {
         Boolean result = trainManageService.move(req);
         return new BaseRsp(result);
@@ -100,7 +102,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训框架课程查询")
     @GetMapping("/detail")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     @ApiImplicitParams({@ApiImplicitParam(name = "resource_id", value = "框架id", dataTypeClass = String.class)})
     public BaseRsp<List<TrainCourseBo>> getDetail(@RequestParam(value = "resource_id") String resourceId) {
         List<TrainCourseBo> detailList = trainManageService.getDetail(resourceId);
@@ -110,7 +112,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训课程新增")
     @PostMapping("/add_course")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> addCourse(@RequestBody @Validated TrainCourseReq req) {
         Boolean result = trainManageService.addCourse(req);
         return new BaseRsp(result);
@@ -118,7 +120,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训课程修改")
     @PatchMapping("/update_course")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> updateCourse(@RequestBody @Validated TrainCourseReq req) {
         Boolean result = trainManageService.updateCourse(req);
         return new BaseRsp(result);
@@ -126,7 +128,7 @@ public class AdminTrainMangeController {
 
     @ApiOperation("培训课程删除")
     @DeleteMapping("/delete_course")
-//    @RequiresPermissions(MenuConstant.CMS_TRAIN_MANAGE)
+    @RequiresPermissions(MenuConstant.CMS_CULTIVATE)
     public BaseRsp<Boolean> deleteCourse(@RequestBody  @Validated TrainCourseReq req) {
         Boolean result = trainManageService.deleteCourse(req);
         return new BaseRsp(result);

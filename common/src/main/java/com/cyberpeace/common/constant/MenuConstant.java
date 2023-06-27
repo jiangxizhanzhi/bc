@@ -17,6 +17,9 @@ public interface MenuConstant {
     // 全部课程
     String WEB_OJ_ALL_COURSE = "course-folder";
 
+    // 教学培训
+    String WEB_OJ_TEACH_COURSE = "oj-teach-course";
+
     //知识课程
     String WEB_OJ_KNOWLEDGE_COURSE = "oj-knowledge-course";
 
@@ -65,8 +68,8 @@ public interface MenuConstant {
     //课程表
     String CMS_CLASS_ROOM = "class-card";
 
-    //课程管理
-    String CMS_TRAIN_MANAGE = "course-train";
+    //培训管理
+    String CMS_CULTIVATE = "cultivate";
 
     //学习统计
     String CMS_COURSE_STATISTICS = "learn-statistics";

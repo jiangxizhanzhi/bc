@@ -3,7 +3,9 @@ package com.cyberpeace.oj.course.controller.web;
 import java.util.List;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.CommonContext;
 import com.cyberpeace.oj.course.controller.res.WebContextInfoStatusRes;
 import com.cyberpeace.oj.course.service.LessonConfigService;
 import com.cyberpeace.oj.course.service.bo.*;
@@ -203,7 +205,11 @@ public class WebLessonController {
         WebContextInfoStatusRes webContextInfoStatusRes = lessonConfigService.lessonIdOfExpandedLessonConfigs(navigate, lessonId, lessonConfigBos, authContext, startLessonId);
         webContextInfoStatusRes.setStartLessonId(startLessonId);
 
-        return new BaseRsp<>(webContextInfoStatusRes);
+		BaseRsp<WebContextInfoStatusRes> webContextInfoStatusResBaseRsp = new BaseRsp<>(webContextInfoStatusRes);
+		if(navigate != 0) {
+			webContextInfoStatusResBaseRsp.setMessage(CommonContext.getLanguage().equals(WebConstant.LANGUAGE_EN) ? "switch success" : "切换成功");
+		}
+		return webContextInfoStatusResBaseRsp;
     }
 
 }

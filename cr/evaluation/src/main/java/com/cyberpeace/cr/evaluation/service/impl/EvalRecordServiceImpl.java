@@ -850,8 +850,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
 
         evalVariableRefList.forEach(evalVariableRef -> {
             // 采集变量项算法依次执行
+            String result = null;
             EvalLog.info(evalRecord, evalVariableRef, "start calculate...");
-            String result = evalVariableRefService.startVariableAlgorithm(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            if (evalVariableRef.getType().equals(EvalIndexRef.Type.SYSTEM.getCode())) {
+                result = evalVariableRefService.startVariableAlgorithm(evalVariableRef, evalAlgorithmRefMap, evalRecord, evalTask);
+            }
 
             // 非null返回值为采集变量项运行失败
             if (!StringUtils.isEmpty(result)) {

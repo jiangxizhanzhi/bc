@@ -390,7 +390,10 @@ public class LessonConfigServiceImpl extends ServiceImpl<LessonConfigMapper, Les
         if (lessonConfigBo == null) {
             return;
         }
-        lessonConfigs.add(lessonConfigBo);
+		// 通过type是否为null确定是否是课时
+		if(lessonConfigBo.getType() != null) {
+			lessonConfigs.add(lessonConfigBo);
+		}
         List<LessonConfigBo> children = lessonConfigBo.getChildren();
         if (CollectionUtils.isEmpty(children)) {
             return;

@@ -243,6 +243,11 @@ public class PracticeOperationController {
 		AuthContext authContext = AuthContextUtils.constructAuth(userInfo, true);
 		String userId = userInfo.getUserId();
 		List<String> operationIds = practiceOperationService.getOptionIdsByAuth(authContext, null);
+		if (CollectionUtils.isEmpty(operationIds)){
+			optionStatisticsRes.setCollection(0);
+			optionStatisticsRes.setNote(0);
+			return new BaseRsp<>(optionStatisticsRes);
+		}
 		optionStatisticsRes.setCollection(resourceCollectionService.countCollectionByUserIdAndBusinessId(userId,
 				ResourceCollection.BusinessType.OPERATION.getCode(), operationIds));
 		optionStatisticsRes.setNote(noteService.getCount(userId, Note.NoteType.NOTE.getCode(), operationIds));

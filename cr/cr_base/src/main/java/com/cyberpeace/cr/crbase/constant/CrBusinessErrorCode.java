@@ -468,4 +468,8 @@ public interface CrBusinessErrorCode {
 	 * 请关闭训练场景后查看
 	 */
 	String PLZ_REPLAY_AFTER_SCENE_IS_STOPPED = "101138";
+
+
+	/** 训练手册内容过长 */
+	String INVALID_TRAINING_MANUAL_CONTENT = "101139";
 }

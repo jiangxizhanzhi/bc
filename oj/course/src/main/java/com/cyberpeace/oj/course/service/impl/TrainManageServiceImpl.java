@@ -342,7 +342,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
             return false;
         }
-        String courseIds = CollectionUtils.isNotEmpty(req.getCourseIdList()) ? new JSONArray().toJSONString() : JSONArray.toJSONString(req.getCourseIdList());
+        String courseIds = CollectionUtils.isEmpty(req.getCourseIdList()) ? new JSONArray().toJSONString() : JSONArray.toJSONString(req.getCourseIdList());
         trainByResource.setCourseIds(courseIds);
         return trainManageMapper.updateById(trainByResource) > 0;
     }

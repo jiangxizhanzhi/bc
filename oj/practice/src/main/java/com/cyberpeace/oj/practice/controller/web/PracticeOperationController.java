@@ -272,8 +272,13 @@ public class PracticeOperationController {
 			@ApiParam(name = "start_time", value = "开始时间") @RequestParam(name = "start_time", required = false) String startTime,
 			@ApiParam(name = "end_time", value = "开始时间") @RequestParam(name = "end_time", required = false) String endTime) {
 		Map<String, List<OperationRecordRes>> operationRecordMap = new HashMap<>();
-		List<OperationRecordRes> operationRecordResList = practiceOperationService.getOperationRecord(
-				UserInfoContext.getUserContext(), TimeUtil.toDate2(startTime), TimeUtil.toDate2(endTime));
+		Date startDate = TimeUtil.toDate2(startTime);
+		startDate = startDate == null ? null : TimeUtil.getStartOfDay(startDate);
+		Date endDate = TimeUtil.toDate2(endTime);
+		endDate = endDate == null ? null : TimeUtil.getEndOfDay(endDate);
+
+		List<OperationRecordRes> operationRecordResList = practiceOperationService
+				.getOperationRecord(UserInfoContext.getUserContext(), startDate, endDate);
 		for (OperationRecordRes operationRecordRes : operationRecordResList) {
 			String time = TimeUtil.format6(TimeUtil.toDate1(operationRecordRes.getTime()));
 			if (operationRecordMap.get(time) == null) {

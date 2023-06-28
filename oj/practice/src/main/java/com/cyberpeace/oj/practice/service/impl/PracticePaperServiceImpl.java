@@ -81,8 +81,11 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		PracticePaper practicePaper = new PracticePaper();
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
 		List<String> practiceIds = getPracticeIdsByQueryAndSolved(practicePaperCreateReq.getStatus(), authContext);
-		List<PracticeTheory> practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(practicePaperCreateReq.getDifficulty(),
-				practicePaperCreateReq.getType(), practicePaperCreateReq.getDirection(), practiceIds);
+		List<PracticeTheory> practiceTheorySumList =new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(practiceIds)){
+			 practiceTheorySumList = practiceTheoryMapper.selectAllByCreatePaper(practicePaperCreateReq.getDifficulty(),
+					practicePaperCreateReq.getType(), practicePaperCreateReq.getDirection(), practiceIds);
+		}
 		if (practiceTheorySumList.size() < practicePaperCreateReq.getCount()) {
 			log.error("practiceTheorySumList.size() < practicePaperCreateReq.getCount()! practicePaperCreateReq=[{}]", JsonUtil.toJsonString(practicePaperCreateReq));
 			throw new BusinessException(OjBusinessErrorCode.NOT_ENOUGH_PRACTICE);
@@ -280,9 +283,10 @@ public class PracticePaperServiceImpl extends ServiceImpl<PracticePaperMapper, P
 		List<String> setIds = StreamApiUtils.map(practiceSets, PracticeSet::getResourceId);
 		authSetIds.retainAll(setIds);
 
-		practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
-				authContext.getIsWeb());
-
+		if (CollectionUtils.isNotEmpty(authSetIds)){
+			practiceIds = practiceTheoryMapper.selectBySetIds(authSetIds,
+					authContext.getIsWeb());
+		}
 		if (CollectionUtils.isEmpty(practiceIds)) {
 			return new ArrayList<>();
 		}

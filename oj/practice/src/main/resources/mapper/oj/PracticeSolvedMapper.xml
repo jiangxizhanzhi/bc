@@ -97,6 +97,9 @@
                 <if test="solved.totalScore != null">
                     , total_score = #{solved.totalScore}
                 </if>
+                <if test="solved.isPaper != null">
+                    , is_paper = #{solved.isPaper}
+                </if>
             </if>
         </set>
         where submit_user_id = #{solved.submitUserId}

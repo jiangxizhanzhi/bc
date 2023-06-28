@@ -2,9 +2,13 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.lock.BusinessType;
+import com.cyberpeace.common.lock.DefaultLockFactory;
+import com.cyberpeace.common.lock.LockFactory;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrSceneService;
@@ -83,6 +87,8 @@ public class RbSceneController {
 	@Autowired
 	private RemoteUserService remoteUserService;
 
+	private LockFactory lockFactory = DefaultLockFactory.getInstance();
+
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -120,9 +126,14 @@ public class RbSceneController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> pauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
-
-		Boolean ret = rbSceneService.pauseScene(roomId);
-
+		Lock lock = lockFactory.getLock(BusinessType.RB_SCENE_SWITCH, roomId);
+		Boolean ret;
+		try {
+			lock.lock();
+			ret = rbSceneService.pauseScene(roomId);
+		}  finally {
+			lock.unlock();
+		}
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,
 				OperationType.PAUSE, rbRoomService.getById(roomId).getName());
@@ -135,8 +146,14 @@ public class RbSceneController {
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Boolean> unpauseScene(@RequestBody SceneOpsReq sceneOpsReq) {
 		String roomId = sceneOpsReq.getRoomId();
-
-		Boolean ret = rbSceneService.unpauseScene(roomId);
+		Lock lock = lockFactory.getLock(BusinessType.RB_SCENE_SWITCH, roomId);
+		Boolean ret;
+		try {
+			lock.lock();
+			ret = rbSceneService.unpauseScene(roomId);
+		} finally {
+			lock.unlock();
+		}
 
 		// 记录远程操作日志
 		remoteLogService.addCrLog(UserInfoContext.getUserContext(), OperationModule.RED_VS_BLUE,

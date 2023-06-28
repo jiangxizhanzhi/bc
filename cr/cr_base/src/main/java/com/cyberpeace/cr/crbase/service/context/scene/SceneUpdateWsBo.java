@@ -39,5 +39,10 @@ public class SceneUpdateWsBo implements Serializable {
 		 * 资产更新
 		 */
 		public static final Integer ASSET_UPDATED = 1;
+
+		/**
+		 * 场景停止
+		 */
+		public static final Integer SCENE_STOPPED = 2;
 	}
 }

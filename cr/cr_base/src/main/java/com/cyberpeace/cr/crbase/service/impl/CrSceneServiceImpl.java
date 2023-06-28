@@ -248,6 +248,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 		sendWsData(bo, businessId);
 	}
 
+	@Override
+	public void sendSceneStopMessage(String businessId) {
+		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.SCENE_STOPPED);
+		sendWsData(bo, businessId);
+	}
+
 	/**
 	 * 发送ws数据
 	 *

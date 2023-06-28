@@ -472,4 +472,7 @@ public interface CrBusinessErrorCode {
 
 	/** 训练手册内容过长 */
 	String INVALID_TRAINING_MANUAL_CONTENT = "101139";
+
+	/** 场景切换中 */
+	String SCENE_SWITCHING = "101140";
 }

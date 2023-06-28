@@ -2,6 +2,16 @@ package com.cyberpeace.common.constant;
 
 public interface MpSceneStatusConstant {
 
+
+	/**
+	 * 暂停
+	 */
+	Integer MP_SCENE_PAUSE_EVENT_CODE = 6;
+
+	/**
+	 * 恢复
+	 */
+	Integer MP_SCENE_UNPAUSE_EVENT_CODE = 7;
 	/**
 	 * 场景删除事件代号
 	 */

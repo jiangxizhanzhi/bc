@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -126,6 +127,9 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	private CrScoreService crScoreService;
 
 	@ApiOperation("查询")
 	@GetMapping()
@@ -350,6 +354,8 @@ public class TeamTrainStudentsController {
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id,
 				user_id);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
+		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
 		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
 		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(teamTaskMatrix);

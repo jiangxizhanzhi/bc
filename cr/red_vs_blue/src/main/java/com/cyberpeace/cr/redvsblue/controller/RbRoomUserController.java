@@ -99,6 +99,8 @@ public class RbRoomUserController {
 	@Autowired
 	private MissionService missionService;
 
+	@Autowired
+	private CrScoreService crScoreService;
 	@ApiOperation("获取红蓝实例运行状态")
 	@GetMapping("/get_running_status")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -311,6 +313,8 @@ public class RbRoomUserController {
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
+		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.MATRIX.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);

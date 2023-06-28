@@ -47,6 +47,9 @@ public class TaskMatrix {
     @ApiModelProperty(value = "用户头像")
     private String logo;
 
+    @ApiModelProperty(value = "综合得分")
+    private Integer finalScore;
+
     public TaskMatrix() {
     }
 

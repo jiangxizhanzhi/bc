@@ -109,7 +109,9 @@ public class RbSituationJob {
 			channel.basicPublish(RbSituationExchange, sceneId, null,
 					msgObject.toString().getBytes(StandardCharsets.UTF_8));
 			// 打印消息
-            log.info("Send rbSituation message successfully, sceneId: {}, msg: {}", sceneId, JsonUtil.toJsonString(msgObject));
+			log.info(
+					"Send rbSituation message successfully, total: {}, count: {}, sceneId: {}, msg: {}",
+					flowLogs.size(), count, sceneId, JsonUtil.toJsonString(msgObject));
 			count++;
 			Thread.sleep(900);
 		}

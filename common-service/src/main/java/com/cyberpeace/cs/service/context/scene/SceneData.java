@@ -24,8 +24,7 @@ public class SceneData implements Serializable {
 
 
 	public Boolean isPause() {
-		return this.topology.getScene().getEvent().equals(MP_SCENE_PAUSE_EVENT_CODE)
-				&& this.topology.getScene().getEventStatus().equals(MP_SCENE_PROGRESS_FINISH_CODE);
+		return this.topology.getScene().getEvent().equals(MP_SCENE_PAUSE_EVENT_CODE);
 	}
 
 	public Boolean isUnPause() {

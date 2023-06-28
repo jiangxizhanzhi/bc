@@ -221,11 +221,6 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 		RbRoom room = rbRoomService.getById(roomId);
 
-		// 训练已暂停，不能删除场景
-		if (room.isPaused()) {
-			log.error("The training is paused, can not delete scene, roomId:{}", roomId);
-			throw new BusinessException(CrBusinessErrorCode.TRAINING_PAUSED);
-		}
 		// 2、如果场景已经停止，返回成功
 		if (StringUtils.isBlank(room.getLocalSceneId())) {
 			return true;
@@ -482,7 +477,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneData;
 	}
 
-	private SceneData getSceneData(RbRoom room) {
+	public SceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
 		return sceneData.toJavaObject(SceneData.class);
 	}

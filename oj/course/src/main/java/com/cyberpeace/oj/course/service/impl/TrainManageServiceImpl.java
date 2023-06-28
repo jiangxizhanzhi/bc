@@ -9,6 +9,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
+import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.course.controller.req.TrainCourseReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeReq;
 import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
@@ -44,6 +45,10 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
 
     @Autowired
     CourseStatisticsServiceImpl courseStatisticsService;
+
+    @Autowired
+    private UtilService utilService;
+
 
     @Override
     public TrainManageTreeBo trainMangeList() {
@@ -111,6 +116,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             CourseStudyProcessBo courseStudyProcessBo = processBoMap.get(item.getResourceId());
             item.setProcess(courseStudyProcessBo == null ? 0 : MathUtils.ceil(courseStudyProcessBo.getProcess()));
             item.setInterview(courseStudyProcessBo != null ? courseStudyProcessBo.getInterview() : false);
+            item.setLogo(utilService.handlerFileUrl(item.getLogo()));
         });
         Map<String, TrainCourseBo> courseMap = StreamApiUtils.toMap(trainCourseList, TrainCourseBo::getResourceId, item -> item);
 
@@ -389,7 +395,11 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         List<String> courseIds = JSONArray.parseArray(trainManage.getCourseIds(), String.class);
         Map<String, TrainCourseBo> courseMap = CollectionUtils.isEmpty(courseIds) ? Maps.newHashMap() : trainManageMapper.selectCourseInfo(courseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
         for (String courseId : courseIds) {
-            resultList.add(courseMap.get(courseId));
+            TrainCourseBo trainCourseBo = courseMap.get(courseId);
+            if (Objects.nonNull(trainCourseBo)){
+                trainCourseBo.setLogo(utilService.handlerFileUrl(trainCourseBo.getLogo()));
+                resultList.add(trainCourseBo);
+            }
         }
         return resultList;
     }

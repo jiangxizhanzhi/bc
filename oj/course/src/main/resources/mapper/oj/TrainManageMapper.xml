@@ -8,7 +8,8 @@
                a.name,
                b.name directionName,
                a.difficulty,
-               if(SUM(c.duration) IS NULL, 0, SUM(c.duration)) lessonCount
+               COUNT(c.duration) lessonCount,
+               if(SUM(c.duration) IS NULL, 0, SUM(c.duration)) courseDuration
         FROM oj_course a
         LEFT JOIN oj_course_category b ON a.category_id = b.resource_id
         LEFT JOIN oj_course_lesson c ON a.resource_id = c.course_id

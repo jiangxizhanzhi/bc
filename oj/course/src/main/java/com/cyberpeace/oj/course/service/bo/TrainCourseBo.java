@@ -24,6 +24,9 @@ public class TrainCourseBo implements Serializable {
     @ApiModelProperty("课时数量")
     private Integer lessonCount;
 
+    @ApiModelProperty("课程课时时长")
+    private Integer courseDuration;
+
     @ApiModelProperty("介绍")
     private String description;
 

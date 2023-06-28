@@ -376,10 +376,12 @@ public class TeamTrainStudentsController {
 			user_id = UserInfoContext.getUserContext().getUserId();
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
-		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
-		rbTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
-		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
-		return new BaseRsp<>(rbTaskMatrix);
+		TaskMatrix teamTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
+		teamTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
+		teamTaskMatrix.setTimeCost(trainRecordService.getTimeCost(resource_id));
+		teamTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
+		return new BaseRsp<>(teamTaskMatrix);
 	}
 
 	@ApiOperation("团队对抗-学员任务矩阵-是否显示红点")

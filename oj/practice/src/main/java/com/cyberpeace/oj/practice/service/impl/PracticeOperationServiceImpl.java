@@ -275,12 +275,6 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		PracticeOperation practiceOperation = practiceOperationMapper.selectById(updateOperation.getResourceId());
 
-		// 如果修改了额定字段
-		if (isModifySpecify(updateOperation, practiceOperation)) {
-			// 删除题解和错题集
-			delMappedSolvedAndMistake(updateOperation);
-		}
-
 		if(null == practiceOperation){
 			log.error("practiceOperation is null,ResourceId =[{}]", updateOperation.getResourceId());
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
@@ -312,8 +306,9 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 							PracticeRandomFlag.FlagType.PRACTICE.getCode());
 				}
 
-				//如果对应的几个字段被修改则删除对应的错题记录和做题记录
-				if(!originalBean.toString().equals(changeBean.toString())) {
+				// 如果修改了额定字段
+				if (isModifySpecify(updateOperation, practiceOperation)) {
+					// 删除题解和错题集
 					delMappedSolvedAndMistake(updateOperation);
 				}
 			}

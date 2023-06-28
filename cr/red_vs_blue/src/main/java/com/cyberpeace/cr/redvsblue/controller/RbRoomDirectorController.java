@@ -40,10 +40,12 @@ import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
 import com.cyberpeace.cr.redvsblue.service.RbDirectorService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
+import com.cyberpeace.cr.redvsblue.service.RbSceneService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
+import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
@@ -101,6 +103,10 @@ public class RbRoomDirectorController {
 
 	@Autowired
 	private WebSocketPushService webSocketPushService;
+
+
+	@Autowired
+	RbSceneService rbSceneService;
 	@ApiOperation("提交演习文书")
 	@PostMapping("/add_exercise_paper")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -441,6 +447,12 @@ public class RbRoomDirectorController {
 
 		// 推送ws
 		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
+
+		//如果场景是暂停状态直接关闭
+		SceneData sceneData = rbSceneService.getSceneData(room);
+		if (sceneData.isPause()) {
+			rbSceneService.stopScene(roomId);
+		}
 
 		// 记录远程操作日志
 

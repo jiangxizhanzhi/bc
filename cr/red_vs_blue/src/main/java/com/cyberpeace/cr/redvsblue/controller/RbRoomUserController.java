@@ -336,6 +336,8 @@ public class RbRoomUserController {
 		}
 		CrRole crRole = crRoleService.getCrRoleByRoomIdAndUserId(resource_id, user_id);
 		TaskMatrix rbTaskMatrix = crTaskService.getTaskMatrixExcludeTimeCost(resource_id, user_id);
+		CrScore crScore = crScoreService.getByRoomIdAndUser(resource_id, user_id);
+		rbTaskMatrix.setFinalScore(crScore==null?0:crScore.getFinalScore());
 		rbTaskMatrix.setTimeCost(rbTimeManagementService.getTimeCost(resource_id));
 		rbTaskMatrix.initTaskListStage(crRole, TaskMatrix.SORT.REPLAY.getDesc());
 		return new BaseRsp<>(rbTaskMatrix);

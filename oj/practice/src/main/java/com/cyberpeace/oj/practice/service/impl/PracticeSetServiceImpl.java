@@ -470,7 +470,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	@Override
 	public String createImg(String setName) {
 		List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
-		int i = (int) Math.floor(Math.random() * 6);
+		int i = (int) Math.floor(Math.random() * 5);
 		CustomFont customFont = new CustomFont();
 		Font font = customFont.loadFonts("static/YouSheBiaoTiHei.ttf", Font.PLAIN, 47);
 		String id = IDGeneratorUtil.getID();

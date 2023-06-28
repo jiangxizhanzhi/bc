@@ -22,6 +22,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.TrainRecordService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -66,6 +67,9 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 	
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@Override
 	public String startScene(String roomId, String userId) {
@@ -207,6 +211,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 					teamCommonDeviceService.delByRoomId(roomId);
 				}
 			});
+			crSceneService.sendSceneStopMessage(roomId);
 		}
 
 		return stopResult;

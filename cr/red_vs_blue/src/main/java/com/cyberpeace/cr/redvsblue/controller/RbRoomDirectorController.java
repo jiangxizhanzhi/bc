@@ -448,7 +448,7 @@ public class RbRoomDirectorController {
 		// 推送ws
 		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
 
-		//如果场景是暂停状态直接关闭
+		//5.4 如果场景是暂停状态直接关闭
 		SceneData sceneData = rbSceneService.getSceneData(room);
 		if (sceneData.isPause()) {
 			rbSceneService.stopScene(roomId);

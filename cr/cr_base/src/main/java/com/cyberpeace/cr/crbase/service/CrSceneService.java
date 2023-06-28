@@ -112,4 +112,11 @@ public interface CrSceneService {
 	 * @param businessId 业务标识
 	 */
 	void sendAssetUpdateSceneWs(String businessId);
+
+	/**
+	 * 发送场景停止消息
+	 *
+	 * @param businessId 业务标识
+	 */
+	void sendSceneStopMessage(String businessId);
 }

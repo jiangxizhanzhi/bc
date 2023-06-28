@@ -23,6 +23,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
+import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
 import com.cyberpeace.cr.crbase.service.SceneFilterService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
@@ -70,6 +71,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	@Autowired
 	private CrTaskService crTaskService;
+
+	@Autowired
+	private CrSceneService crSceneService;
 
 	@Autowired
 	private RbDeviceService rbDeviceService;
@@ -249,6 +253,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 					rbCommonDeviceService.delByRoomId(roomId);
 				}
 			});
+			crSceneService.sendSceneStopMessage(roomId);
 		}
 
 		return stopResult;

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.CrMark;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
@@ -57,9 +56,7 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 		List<CrTask> taskList = crTaskService.getByRoomIdAndUserId(roomId, userId);
 		List<String> missionIds = taskList.stream().map(CrTask::getMissionId)
 				.collect(Collectors.toList());
-		List<Mission> missions = missionService.batchGet(missionIds);
-		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
-				mission -> mission);
+		Map<String, Mission> missionMap = missionService.getMissionMapByIds(missionIds);
 		// get dynamic missions
 		CrRole role = crRoleService.getCrRoleByRoomIdAndUserId(roomId, userId);
 		List<String> dynamicMissionIds = CrCommonUtil
@@ -140,9 +137,7 @@ public class CrTimelineServiceImpl implements CrTimelineService {
 		// missions
 		List<String> missionIds = taskList.stream().map(CrTask::getMissionId)
 				.collect(Collectors.toList());
-		List<Mission> missions = missionService.batchGet(missionIds);
-		Map<String, Mission> missionMap = StreamApiUtils.toMap(missions, Mission::getResourceId,
-				mission -> mission,(a,b)->a);
+		Map<String, Mission> missionMap = missionService.getMissionMapByIds(missionIds);
 
 		// task events
 		for (CrTask crTask : taskList) {

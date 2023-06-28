@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "oj-前台自由组卷相关api")
 @RestController
@@ -69,13 +69,16 @@ public class PracticePaperController {
 	@GetMapping("/category_top6")
 	@RequiresPermissions(MenuConstant.WEB_OJ_THEORY_PRACTICE)
 	public BaseRsp<List<CategoryProgressRes>> getCategoryTop6() {
-		List<CategoryProgressRes> categoryProgressResList = practiceTheoryService.getProgressByCategory();
-		categoryProgressResList.sort(Comparator.comparing(categoryProgressRes -> categoryProgressRes.getCount() * 1.0 / categoryProgressRes.getSum()));
-		Collections.reverse(categoryProgressResList);
-		if (categoryProgressResList.size() > 6) {
-			return new BaseRsp<>(categoryProgressResList.subList(0, 6));
-		}
-		return new BaseRsp<>(categoryProgressResList);
+		List<CategoryProgressRes> list = practiceTheoryService.getProgressByCategory();
+		//总题数可能为0,无法正常排序,先过滤sum不为0的排序,后加入为0的数据
+		LinkedHashSet<CategoryProgressRes> existSet = list.stream().filter(item -> 0 != item.getSum()).sorted((o1, o2) -> {
+			Double one = o1.getCount() * 1.0 / o1.getSum();
+			Double two = o2.getCount() * 1.0 / o2.getSum();
+			return two.compareTo(one);
+		}).collect(Collectors.toCollection(LinkedHashSet::new));
+		existSet.addAll(list);
+		List<CategoryProgressRes> result = existSet.stream().limit(6).collect(Collectors.toList());
+		return new BaseRsp<>(result);
 	}
 
 	@ApiOperation("试卷概要")

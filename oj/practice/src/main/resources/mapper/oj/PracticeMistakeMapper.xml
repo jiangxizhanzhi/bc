@@ -53,5 +53,6 @@
                 and user_id = #{userId}
             </if>
         </where>
+        order by mistake.update_time desc
     </select>
 </mapper>

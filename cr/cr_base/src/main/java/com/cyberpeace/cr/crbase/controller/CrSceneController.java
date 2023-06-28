@@ -134,7 +134,11 @@ public class CrSceneController {
 				localSceneService.deleteNode(req.getMpSceneId(), req.getNodeId());
 			}
 		});
-
+		// 5.4仅限红蓝、团队
+		if (null != handler) {
+			// 发送ws提示前端刷新场景数据，包括查看场景、教员资产清单、学员常用资产3个接口
+			crSceneService.sendAssetUpdateSceneWs(localScene.getBusinessInstanceId());
+		}
 		return new BaseRsp<>(true);
 	}
 }

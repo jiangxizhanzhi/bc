@@ -278,7 +278,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
-
+		//如果场景在切换中不允许操作
+		SceneData sceneData = getSceneData(room);
+		if (!sceneData.isFinish()) {
+			log.error("Scene is switching, roomId:{}", roomId);
+			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
+		}
 		// 2、 场景开启的状态下发送mp暂停请求
 		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
 				&& !localSceneService.pauseScene(room.getLocalSceneId())) {
@@ -302,7 +307,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
-
+		//如果场景在切换中不允许操作
+		SceneData sceneData = getSceneData(room);
+		if (!sceneData.isFinish()) {
+			log.error("Scene is switching, roomId:{}", roomId);
+			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
+		}
 		// 2、 如果mp场景存在，发送mp解除暂停请求
 		if (localSceneService.ensureSceneStarted(room.getLocalSceneId())
 				&& !localSceneService.unpauseScene(room.getLocalSceneId())) {
@@ -470,6 +480,11 @@ public class RbSceneServiceImpl implements RbSceneService {
 		}
 		sceneData.put(CrCommonConstants.MP_SCENE_ID_KEY, mpSceneId);
 		return sceneData;
+	}
+
+	private SceneData getSceneData(RbRoom room) {
+		JSONObject sceneData = getMpSceneData(room);
+		return sceneData.toJavaObject(SceneData.class);
 	}
 
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {

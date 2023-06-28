@@ -108,6 +108,8 @@ public class RbSituationJob {
 			JSONObject msgObject = new JSONObject(msgMap);
 			channel.basicPublish(RbSituationExchange, sceneId, null,
 					msgObject.toString().getBytes(StandardCharsets.UTF_8));
+			// 打印消息
+            log.info("Send rbSituation message successfully, sceneId: {}, msg: {}", sceneId, JsonUtil.toJsonString(msgObject));
 			count++;
 			Thread.sleep(900);
 		}

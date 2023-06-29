@@ -413,12 +413,20 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 			}
 		}
 
+		int percentSum = 0;
 		for (int i = 0; i < indicators.size(); i++) {
 			// 填充最大值
 			JSONObject indicator = indicators.getJSONObject(i);
 			indicator.put("max", ((max - 1) / 100 + 1) * 100);
 			// 填充百分比
-			int value = indicator.getInteger("value") / sum * 100;
+			int value = indicator.getInteger("value") * 100 / sum ;
+
+			if(i == indicators.size() - 1) {
+				value = 100 - percentSum;
+			} else {
+				percentSum += value;
+			}
+
 			indicator.put("name", value + "%" + " " + indicator.getString("name"));
 
 		}

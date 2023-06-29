@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.IDGeneratorUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
@@ -16,6 +18,8 @@ import com.cyberpeace.oj.course.controller.req.TrainMangeSortReq;
 import com.cyberpeace.oj.course.dao.entity.Course;
 import com.cyberpeace.oj.course.dao.entity.CourseLesson;
 import com.cyberpeace.oj.course.dao.entity.TrainManage;
+import com.cyberpeace.oj.course.dao.mapper.CourseLessonMapper;
+import com.cyberpeace.oj.course.dao.mapper.CourseMapper;
 import com.cyberpeace.oj.course.dao.mapper.TrainManageMapper;
 import com.cyberpeace.oj.course.service.TrainManageService;
 import com.cyberpeace.oj.course.service.bo.*;
@@ -49,6 +53,11 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
     @Autowired
     private UtilService utilService;
 
+    @Autowired
+    private CourseMapper courseMapper;
+
+    @Autowired
+    private CourseLessonMapper courseLessonMapper;
 
     @Override
     public TrainManageTreeBo trainMangeList() {
@@ -393,10 +402,16 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             return resultList;
         }
         List<String> courseIds = JSONArray.parseArray(trainManage.getCourseIds(), String.class);
-        Map<String, TrainCourseBo> courseMap = CollectionUtils.isEmpty(courseIds) ? Maps.newHashMap() : trainManageMapper.selectCourseInfo(courseIds).stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
+        List<TrainCourseBo> trainCourseBoList = trainManageMapper.selectCourseInfo(courseIds);
+        if (CollectionUtils.isEmpty(trainCourseBoList)) {
+            return resultList;
+        }
+        //设置 是否具有课程访问权限
+        setCourseInterview(trainCourseBoList);
+        Map<String, TrainCourseBo> courseMap = CollectionUtils.isEmpty(courseIds) ? Maps.newHashMap() : trainCourseBoList.stream().collect(Collectors.toMap(TrainCourseBo::getResourceId, item -> item));
         for (String courseId : courseIds) {
             TrainCourseBo trainCourseBo = courseMap.get(courseId);
-            if (Objects.nonNull(trainCourseBo)){
+            if (Objects.nonNull(trainCourseBo)) {
                 trainCourseBo.setLogo(utilService.handlerFileUrl(trainCourseBo.getLogo()));
                 resultList.add(trainCourseBo);
             }
@@ -425,4 +440,21 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         return secondTrainManageList.stream().collect(Collectors.groupingBy(TrainManage::getParent, LinkedHashMap::new, Collectors.toList()));
     }
 
+    private void setCourseInterview(List<TrainCourseBo> courses) {
+        List<String> ids = courses.stream().map(TrainCourseBo::getResourceId).collect(Collectors.toList());
+        // 查询有权访问课程
+        AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(), true);
+        List<String> webCourses = courseMapper.selectByAuth(authContext);
+
+        // 课程数量 以课程编号进行分组
+        List<CourseLesson> courseLessons = courseLessonMapper.listByCourses(ids, authContext.getIsWeb());
+        Map<String, List<CourseLesson>> courseMap = courseLessons.stream().collect(Collectors.groupingBy(CourseLesson::getCourseId));
+
+        // 课程为零或者课程无权限,都禁止访问访问
+        for (TrainCourseBo course : courses) {
+            boolean interview = course.getIsPublic() && webCourses.contains(course.getResourceId()) && CollectionUtils.isNotEmpty(courseMap.get(course.getResourceId()));
+            course.setInterview(interview);
+            course.setIsPublic(null);
+        }
+    }
 }

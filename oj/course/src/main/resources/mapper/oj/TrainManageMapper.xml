@@ -8,6 +8,8 @@
                a.name,
                b.name directionName,
                a.difficulty,
+               a.logo,
+               a.public isPublic,
                COUNT(c.duration) lessonCount,
                if(SUM(c.duration) IS NULL, 0, SUM(c.duration)) courseDuration
         FROM oj_course a

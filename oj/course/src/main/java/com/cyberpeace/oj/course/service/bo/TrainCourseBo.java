@@ -45,6 +45,9 @@ public class TrainCourseBo implements Serializable {
     @ApiModelProperty("是否具有课程访问权限")
     private Boolean interview;
 
+    @ApiModelProperty("课程是否公开")
+    private Boolean isPublic;
+
     public static TrainCourseBo getTrainCourseBoFromKnowledge(CourseKnowledgeInfoBo courseKnowledge) {
         TrainCourseBo trainCourseBo = new TrainCourseBo();
         trainCourseBo.setResourceId(courseKnowledge.getResourceId());

@@ -814,6 +814,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				InstanceDataQueryReq instanceDataQueryReq = componentsDataReq
 						.getInstanceDataQueryReq();
 				if (instanceDataQueryReq != null) {
+					if (method.equals("GET")){
+						instanceDataQueryReq.setTypicalEvent(null);
+					}
 					parseParam(instanceDataQueryReq, apiRequestParams);
 				}
 				apiConnectReq.setRequestParams(apiRequestParams);

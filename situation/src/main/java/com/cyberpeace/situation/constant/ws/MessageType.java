@@ -123,7 +123,12 @@ public enum MessageType {
 	/**
 	 * 链路状态
 	 */
-	TaskEventLink(23, "connection_status");
+	TaskEventLink(23, "connection_status"),
+
+	/**
+	 * 刷新大屏所有接口
+	 */
+	REFRESH(24, "refresh");
 
 	/**
 	 * 代码

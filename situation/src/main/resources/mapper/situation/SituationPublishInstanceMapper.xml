@@ -140,4 +140,13 @@
         </where>
     </select>
 
+    <select id="getDashboardIdBySubjectIdAndTaskId" resultType="java.lang.String">
+        select resource_id
+        from situation_dashboard_instance
+        <where>
+            subject_id = #{subjectId}
+            and task_id = #{taskId}
+        </where>
+    </select>
+
 </mapper>

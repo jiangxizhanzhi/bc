@@ -1,10 +1,15 @@
 package com.cyberpeace.gateway.controller;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
+import cn.hutool.json.JSONObject;
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.gateway.controller.res.DashboardTitleRes;
+import com.cyberpeace.situation.dao.entity.DashboardAttribute;
+import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
 import com.cyberpeace.situation.dao.mapper.SituationTopoMapper;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +86,9 @@ public class ExternalSituationController {
 
 	@Autowired
 	private SituationTopoMapper situationTopoMapper;
+
+	@Autowired
+	private DashboardAttributeMapper dashboardAttributeMapper;
 
 	/**
 	 * 接收任务指挥命令
@@ -327,5 +335,48 @@ public class ExternalSituationController {
 			@ApiParam(required = true, name = "subject_id", value = "科目id") @RequestParam("subject_id") String subjectId,
 			@ApiParam(required = true, name = "task_id", value = "任务id") @RequestParam("task_id") String taskId) {
 		return new BaseRsp<>(situationTopoMapper.getEnvIdBySubjectIdAndTaskId(subjectId,taskId));
+	}
+
+
+	@ApiOperation("获取大屏title")
+	@PostMapping("/get_title")
+	public BaseRsp<Map<String, List<DashboardTitleRes>>>
+	getDashboardTitle(@RequestBody String dashboardJson) {
+
+		JSONObject object = JsonUtil.toJsonObject(dashboardJson, JSONObject.class);
+		String dashboardId = object.getStr("dashboardId");
+		// 获取属性对象
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(dashboardId);
+
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstances.getAttributeId());
+		DashboardTitleRes dashboardTitleRes = null;
+
+		if (dashboardAttribute != null) {
+			dashboardTitleRes = BeanUtils
+					.deepCopy(dashboardAttribute, DashboardTitleRes.class);
+		}
+		Map<String, List<DashboardTitleRes>> map = new HashMap<>();
+		List<DashboardTitleRes> dashboardTitleResList = new ArrayList<>();
+		dashboardTitleResList.add(dashboardTitleRes);
+		map.put("title", dashboardTitleResList);
+		return new BaseRsp<>(map);
+	}
+
+	@ApiOperation("提示大屏接口进行刷新")
+	@PostMapping("/refresh")
+	public BaseRsp<Boolean> refresh(@RequestBody SituationSchemeBo situationSchemeBo) {
+		List<String> dashboardIds = situationPublishInstanceMapper.getDashboardIdBySubjectIdAndTaskId(situationSchemeBo.getSubjectId(), situationSchemeBo.getTaskId());
+		log.info("subjectId: [{}] taskId: [{}]",situationSchemeBo.getSubjectId(), situationSchemeBo.getTaskId());
+		WsMessage<String> message = new WsMessage<>(MessageType.REFRESH.getDesc(), null);
+		for (String dashboardId : dashboardIds) {
+			situationHandlerService.pushDataToDashboard(message, dashboardId);
+		}
+		return new BaseRsp<>(true);
 	}
 }

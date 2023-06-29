@@ -228,6 +228,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 //		situationHandlerService.checkFieldLen(exportTemplateContext.getDashboardTemplate().getName(), null);
 
 		List<String> filePaths  = getComponentsFilePaths(exportTemplateContext.getDashboardComponentsList());
+		filePaths.add(exportTemplateContext.getDashboardTemplate().getThumbnail());
 
 		List<String> files = FileUtil.listFileNamesByDir(absolutePath,false);
 
@@ -282,6 +283,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 
 		// 3. 获取模板中各种文件路径
 		List<String> filePaths  = getComponentsFilePaths(dashboardComponentsList);
+		filePaths.add(dashboardTemplate.getThumbnail());
 
 		// 4. 拷贝文件
 		for (String direction : filePaths) {

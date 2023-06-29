@@ -278,9 +278,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
-		//如果场景在切换中不允许操作
+		// 如果场景在切换中不允许操作
 		SceneData sceneData = getSceneData(room);
-		if (!sceneData.isFinish()) {
+		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
 		}
@@ -307,9 +307,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 		// 1. 校验场景存在和用户权限
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
-		//如果场景在切换中不允许操作
+		// 如果场景在切换中不允许操作
 		SceneData sceneData = getSceneData(room);
-		if (!sceneData.isFinish()) {
+		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
 		}
@@ -484,6 +484,9 @@ public class RbSceneServiceImpl implements RbSceneService {
 
 	public SceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
+		if (sceneData == null) {
+			return null;
+		}
 		return sceneData.toJavaObject(SceneData.class);
 	}
 

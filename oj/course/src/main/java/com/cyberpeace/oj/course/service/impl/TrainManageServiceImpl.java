@@ -145,7 +145,9 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
                 if (StringUtils.isNotBlank(item.getCourseIds())) {
                     for (String courseId : JSONArray.parseArray(item.getCourseIds(), String.class)) {
                         TrainCourseBo trainCourseBo = courseMap.get(courseId);
-                        courseList.add(trainCourseBo);
+                        if (Objects.nonNull(trainCourseBo)) {
+                            courseList.add(trainCourseBo);
+                        }
                     }
                 }
                 children.setCourseList(courseList);
@@ -313,7 +315,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
                     for (TrainManage manage : childList) {
                         TrainManage newChild = new TrainManage();
                         newChild.setResourceId(IDGeneratorUtil.getID());
-                        newChild.setName(manage.getName() + "（复制）");
+                        newChild.setName(manage.getName() + "(复制)");
                         newChild.setParent(newTrainManage.getResourceId());
                         newChild.setCourseIds(manage.getCourseIds());
                         newChild.setSort(getCurrentLevelSize(newTrainManage.getResourceId()) + 1);
@@ -338,10 +340,13 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
         if ("default".equals(trainByResource.getResourceId()) || "default".equals(trainByResource.getParent())) {
             return false;
         }
+        //过滤无效的课程(包括原有的)
         List<String> courseIds = StringUtils.isBlank(trainByResource.getCourseIds()) ? new ArrayList<>() : JSONArray.parseArray(trainByResource.getCourseIds(), String.class);
-        Set<String> courseSet = new HashSet<>(courseIds);
-        courseSet.addAll(req.getCourseIdList());
-        trainByResource.setCourseIds(JSONArray.toJSONString(courseSet));
+        courseIds.addAll(req.getCourseIdList());
+        LambdaQueryWrapper<Course> courseQuery = new LambdaQueryWrapper<>();
+        courseQuery.in(Course::getResourceId, courseIds);
+        List<String> existCourse = courseMapper.selectList(courseQuery).stream().map(Course::getResourceId).collect(Collectors.toList());
+        trainByResource.setCourseIds(JSONArray.toJSONString(existCourse));
         return trainManageMapper.updateById(trainByResource) > 0;
     }
 
@@ -402,6 +407,9 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             return resultList;
         }
         List<String> courseIds = JSONArray.parseArray(trainManage.getCourseIds(), String.class);
+        if (CollectionUtils.isEmpty(courseIds)) {
+            return resultList;
+        }
         List<TrainCourseBo> trainCourseBoList = trainManageMapper.selectCourseInfo(courseIds);
         if (CollectionUtils.isEmpty(trainCourseBoList)) {
             return resultList;

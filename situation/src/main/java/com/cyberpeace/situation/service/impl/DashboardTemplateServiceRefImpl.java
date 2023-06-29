@@ -448,7 +448,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 				field.setAccessible(true);
 				// 获取字段属性名称
 				String name = field.getName();
-				if (!StringUtils.equals(name, "dashboardId")) {
+//				if (!StringUtils.equals(name, "dashboardId")) {
 					Object value = field.get(context);
 					if (value != null) {
 						JSONObject jsonObject = new JSONObject();
@@ -456,7 +456,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 						jsonObject.put("value", value.toString());
 						jsonArray.add(jsonObject);
 					}
-				}
+//				}
 			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

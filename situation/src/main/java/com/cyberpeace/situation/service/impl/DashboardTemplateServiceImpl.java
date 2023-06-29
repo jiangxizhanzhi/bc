@@ -962,7 +962,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				field.setAccessible(true);
 				// 获取字段属性名称
 				String name = field.getName();
-				if (!StringUtils.equals(name, "dashboardId")) {
+//				if (!StringUtils.equals(name, "dashboardId")) {
 					Object value = field.get(instanceDataQueryReq);
 					if (value != null) {
 						ApiRequestParams requestParams = new ApiRequestParams();
@@ -970,7 +970,7 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 						requestParams.setValue(value);
 						apiRequestParams.add(requestParams);
 					}
-				}
+//				}
 			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

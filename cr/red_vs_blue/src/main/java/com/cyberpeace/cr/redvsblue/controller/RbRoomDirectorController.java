@@ -450,7 +450,7 @@ public class RbRoomDirectorController {
 
 		//5.4 如果场景是暂停状态直接关闭
 		SceneData sceneData = rbSceneService.getSceneData(room);
-		if (sceneData.isPause()) {
+		if (sceneData!=null&&sceneData.isPause()) {
 			rbSceneService.stopScene(roomId);
 		}
 

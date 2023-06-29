@@ -48,7 +48,7 @@ public class UserSimulatorController {
     @PostMapping("/create")
     public BaseRsp batchCreate(@RequestBody @Validated CommandBo<SimulatorAddBo> commandBo) {
         SimulatorAddBo addBo = commandBo.getCommandBody();
-        new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "创建仪表失败") {
+        new CommandExecutor(commandBo.getConfigTaskId(), commandBo.getReportUrl(), "创建仪表失败") {
 
             @Override
             protected void doBusiness() {
@@ -69,7 +69,7 @@ public class UserSimulatorController {
     @PatchMapping("/modify")
     public BaseRsp modifySimulator(@RequestBody @Validated CommandBo<SimulatorModifyBo> commandBo) {
         SimulatorModifyBo modifyBo = commandBo.getCommandBody();
-        new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "更新仪表用户失败") {
+        new CommandExecutor(commandBo.getConfigTaskId(), commandBo.getReportUrl(), "更新仪表用户失败") {
 
             @Override
             protected void doBusiness() {
@@ -90,7 +90,7 @@ public class UserSimulatorController {
     @PatchMapping("/update")
     public BaseRsp modifyScene(@RequestBody @Validated CommandBo<SimulatorAddBo> commandBo) {
         SimulatorAddBo updateBo = commandBo.getCommandBody();
-        new CommandExecutor(commandBo.getTaskId(), commandBo.getReportUrl(), "更新场景失败") {
+        new CommandExecutor(commandBo.getConfigTaskId(), commandBo.getReportUrl(), "更新场景失败") {
 
             @Override
             protected void doBusiness() {

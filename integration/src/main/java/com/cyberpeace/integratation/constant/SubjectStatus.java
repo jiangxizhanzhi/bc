@@ -17,7 +17,8 @@ public enum SubjectStatus {
 	CSH("2", "初始化完成"),
 	JXZ("3", "进行中"),
 	ZTZ("4", "暂停中"),
-	ZZ("5", "终止");
+	ZZ("5", "终止"),
+	YWC("6", "已完成");
 
 	@Getter
 	private String code;

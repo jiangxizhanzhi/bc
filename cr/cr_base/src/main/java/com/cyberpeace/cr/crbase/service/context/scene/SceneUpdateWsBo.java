@@ -22,7 +22,7 @@ public class SceneUpdateWsBo implements Serializable {
 	 */
 	private Integer code = SceneWsCode.SCENE_UPDATED;
 
-	private WsData data;
+	private WsData data = new WsData();
 
 	public SceneUpdateWsBo(Integer type) {
 		this.data.setType(type);

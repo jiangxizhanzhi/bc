@@ -2,7 +2,7 @@ package com.cyberpeace.cr.crbase.service.context.scene;
 
 import java.io.Serializable;
 
-import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.constant.SceneWsCode;
 
 import lombok.Data;
 
@@ -20,15 +20,12 @@ public class SceneUpdateWsBo implements Serializable {
 	 * 代码
 	 * 更新场景
 	 */
-	private Integer code = MissionWsCode.SCENE_UPDATED;
+	private Integer code = SceneWsCode.SCENE_UPDATED;
 
-	/**
-	 * 类型
-	 */
-	private Integer type;
+	private WsData data;
 
 	public SceneUpdateWsBo(Integer type) {
-		this.type = type;
+		this.data.setType(type);
 	}
 
 	public static class SceneUpdateType {
@@ -45,4 +42,13 @@ public class SceneUpdateWsBo implements Serializable {
 		 */
 		public static final Integer SCENE_STOPPED = 2;
 	}
+}
+
+@Data
+class WsData implements Serializable {
+
+	/**
+	 * 类型
+	 */
+	private Integer type;
 }

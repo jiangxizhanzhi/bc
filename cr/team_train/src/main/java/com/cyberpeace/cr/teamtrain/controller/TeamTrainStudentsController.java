@@ -152,6 +152,15 @@ public class TeamTrainStudentsController {
 				.setPreSkill(JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
 		teamRoomRsp.setTrainSkill(
 				JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+
+		String copyedTopoId = teamRoomData.getCopyedTopoId();
+		List<String> copyedTopoIds = new ArrayList<>();
+		copyedTopoIds.add(copyedTopoId);
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+				.batchGetTopoDigest(copyedTopoIds);
+		teamRoomRsp.setNodesCount(
+				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
 	}
 

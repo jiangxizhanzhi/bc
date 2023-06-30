@@ -44,4 +44,7 @@ public class EventDataBo implements Serializable {
 	@ApiModelProperty(value = "LOGO")
 	private String logo;
 
+	@ApiModelProperty(value = "节点数量")
+	private Integer nodesCount;
+
 }

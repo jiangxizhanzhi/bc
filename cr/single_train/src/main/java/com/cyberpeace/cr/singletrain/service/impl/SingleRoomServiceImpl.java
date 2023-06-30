@@ -252,6 +252,19 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				.setRunningTime(TimeUtil.getIntervalSeconds(singleRoom.getStartTime(), new Date()));
 		singleRoomBo.setRoomInfo(singleRoomInfoBo);
 
+		// 节点数量
+		EventDataBo eventData = singleTemplateBo.getEventData();
+		if(eventData != null) {
+			String localSceneId = singleRoom.getLocalSceneId();
+			LocalScene localScene = localSceneService.getById(localSceneId);
+			List<String> copyedTopoIds = new ArrayList<>();
+			copyedTopoIds.add(localScene.getTopoId());
+			// 训练场景拓扑节点数量获取
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+			eventData.setNodesCount(
+					topologyNodesStats.get(localScene.getTopoId()).getNodeCounts());
+		}
 		return singleRoomBo;
 	}
 

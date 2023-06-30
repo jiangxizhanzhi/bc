@@ -462,6 +462,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             evalIndexRef.setNextIds(JsonUtil.toJsonString(JsonUtil.toJsonObjectArray(nextIds, String.class).stream().map(evalIndexIdsMap::get).collect(Collectors.toList())));
             List<String> nextIdLists = JsonUtil.toJsonObjectArray(nextIds, String.class);
             String matrixData = evalIndex.getMatrixData();
+            if(evalIndex.getLevel().equals(EvalIndex.Level.THIRD.getCode())){
+                matrixData = evalIndicatorService.getById(evalIndex.getEvalIndicatorId()).getMatrixData();
+            }
             for(String nextId:nextIdLists){
                 String currentId = evalIndexIdsMap.get(nextId);
                 if (StringUtils.isNotBlank(matrixData)) {

@@ -472,7 +472,7 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		List<String> practiceSetLogo = ResourceImportConstant.PRACTICE_SET_LOGO;
 		int i = (int) Math.floor(Math.random() * 5);
 		CustomFont customFont = new CustomFont();
-		Font font = customFont.loadFonts("static/YouSheBiaoTiHei.ttf", Font.PLAIN, 47);
+		Font font = customFont.loadFonts("static/YouSheBiaoTiHei.ttf", Font.PLAIN, 46);
 		String id = IDGeneratorUtil.getID();
 		try {
 			return ImgUtil.addTextToImage(practiceSetLogo.get(i), font, setName, AttachmentPath.LOGO.getDesc() + id + ".png").replace("/cpms/", "");

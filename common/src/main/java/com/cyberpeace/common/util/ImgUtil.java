@@ -94,6 +94,9 @@ public class ImgUtil {
 		// Create a graphics context on the buffered image
 		Graphics2D g2d = img.createGraphics();
 
+		// 文字平滑处理，不是最优方案，只是减小了尖锐度，会增加模糊度！！如果依然不能验收应该需要修改jre配置
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
 		// Set the font and color for the text
 		Color color = Color.WHITE;
 		g2d.setFont(font);
@@ -123,6 +126,15 @@ public class ImgUtil {
 			int lineWidth = fm.stringWidth(line);
 			int lineX = (g2d.getDeviceConfiguration()
 							.getBounds().width - lineWidth) / 2;
+
+			// 先画阴影
+			for(int i = 1; i <= 2; i ++) {
+				Color shadowRgba = new Color(0, 0, 0, 0x33);
+				g2d.setColor(shadowRgba);
+				g2d.drawString(line, lineX, y + i);
+			}
+
+			g2d.setColor(Color.WHITE);
 			g2d.drawString(line, lineX, y);
 			y += lineHeight;
 		}

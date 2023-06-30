@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.singletrain.controller.admin;
 
 import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.RemoteServiceException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -62,8 +61,8 @@ public class SingleTemplateController {
 	public BaseRsp<SingleTemplateBo> get(@RequestParam("resource_id") String businessTemplateId) {
 		businessTemplateService.checkPermission(businessTemplateId,
 				UserInfoContext.getUserContext().getUserId());
-		throw new RemoteServiceException("USB已被场景1700使用");
-		// return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
+
+		return new BaseRsp<>(singleTemplateService.get(businessTemplateId));
 	}
 
 	@PostMapping

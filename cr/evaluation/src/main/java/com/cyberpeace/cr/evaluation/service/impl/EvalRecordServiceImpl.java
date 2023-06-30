@@ -1,8 +1,10 @@
 package com.cyberpeace.cr.evaluation.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -808,9 +810,9 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                 }
             }
             evalResult.setSecondIndexRes(JsonUtil.toJsonString(secondObj));
-            evalResult.setThirdIndexRes(JsonUtil.toJsonString(thirdObj));
-            evalResult.setFourthIndexRes(JsonUtil.toJsonString(fourthObj));
-            evalResult.setFifthIndexRes(JsonUtil.toJsonString(fifthObj));
+            evalResult.setThirdIndexRes(JSON.toJSONString(thirdObj, SerializerFeature.WriteMapNullValue));
+            evalResult.setFourthIndexRes(JSON.toJSONString(fourthObj, SerializerFeature.WriteMapNullValue));
+            evalResult.setFifthIndexRes(JSON.toJSONString(fifthObj, SerializerFeature.WriteMapNullValue));
 
         }
 
@@ -1359,15 +1361,20 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalResult evalResult = evalResults.get(i);
             String fourthIndexRes = evalResult.getFourthIndexRes();
             JSONObject jsonObject = JsonUtil.toJsonObject(fourthIndexRes, JSONObject.class);
-            int score = 0;
+            Integer score = 0;
             if(null != jsonObject && jsonObject.size() > 0){
-                score = Integer.parseInt(jsonObject.get(nextId).toString());
+                Object obj = jsonObject.get(nextId);
+                if(null == obj){
+                    score = null;
+                } else {
+                    score = Integer.parseInt(obj.toString());
+                }
             }
             setCycleResult(rsp, i, score);
         }
     }
 
-    private void setCycleResult(EvalSystemResultRsp rsp, int i, int score) {
+    private void setCycleResult(EvalSystemResultRsp rsp, int i, Integer score) {
         if(0 == i) {
             rsp.setFirstScore(score);
         } else if( i == 1 ) {

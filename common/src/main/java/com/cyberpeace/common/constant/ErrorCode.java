@@ -22,6 +22,8 @@ public interface ErrorCode {
 
 	String REMOTE_SERVICE_EXCEPTION = "010000";
 
+	String DIRECT_MSG_EXCEPTION = "010001";
+
 	String INTERNAL_ERROR = "099999";
 
 	// 文件上传失败

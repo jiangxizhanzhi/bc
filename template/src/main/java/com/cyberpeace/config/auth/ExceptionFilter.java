@@ -134,7 +134,7 @@ public class ExceptionFilter implements Filter {
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
 		BusinessException businessException = new BusinessException(
-				ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
+				ErrorCode.DIRECT_MSG_EXCEPTION, e.getMessage());
 		parseBusinessException(httpServletResponse, businessException);
 	}
 

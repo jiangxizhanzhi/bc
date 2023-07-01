@@ -87,10 +87,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
@@ -810,7 +807,7 @@ public class TeamTrainRoomController {
 
 		List<TrainTaskReleaseInfoRsp> res = crRoleService.getTrainManual(resource_id,
 				CrRole.TeamRoleGroup.STUDENT.getCode());
-		return new BaseRsp<>(res);
+		return new BaseRsp<>(mergeStageByCreateTime(res));
 	}
 
 	@ApiOperation("获取聊天框用户列表")
@@ -1031,5 +1028,36 @@ public class TeamTrainRoomController {
 		// 过滤出结束时间之前的数据
 		resList = screenService.filterBeforeActualEndTime(resList, actualEndTime);
 		return new BaseRsp<>(resList);
+	}
+
+	private List<TrainTaskReleaseInfoRsp> mergeStageByCreateTime(List<TrainTaskReleaseInfoRsp> manuals) {
+		List<TrainTaskReleaseInfoRsp> res = new ArrayList<>(1);
+
+		List<MissionReleaseStageInfo> allStages = new ArrayList<>();
+		manuals.stream().filter(item -> CollectionUtils.isNotEmpty(item.getMissionStages()))
+				.forEach(item -> allStages.addAll(item.getMissionStages()));
+		if (CollectionUtils.isEmpty(allStages)) {
+			return res;
+		}
+		Comparator<MissionReleaseStageInfo> comparator = (o1, o2) -> {
+			if(o1 == null || CollectionUtils.isEmpty(o1.getMissionInfos())) {
+				return 1;
+			}
+			if(o2 == null || CollectionUtils.isEmpty(o2.getMissionInfos())) {
+				return -1;
+			}
+			Date o1Time = o1.getMissionInfos().get(0).getCreateTime();
+			Date o2Time = o2.getMissionInfos().get(0).getCreateTime();
+			return o1Time.before(o2Time) ? 1 : o1Time.equals(o2Time) ? 0 : -1;
+		};
+
+		List<MissionReleaseStageInfo> sortedStages = allStages.stream()
+				.sorted(comparator)
+				.collect(Collectors.toList());
+
+		TrainTaskReleaseInfoRsp taskReleaseInfoRsp = new TrainTaskReleaseInfoRsp();
+		taskReleaseInfoRsp.setMissionStages(sortedStages);
+		res.add(taskReleaseInfoRsp);
+		return res;
 	}
 }

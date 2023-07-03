@@ -133,6 +133,13 @@
         from cr_role
         where room_id = #{roomId}
     </select>
+    <select id="selectBatchByRoomIds" resultType="com.cyberpeace.cr.crbase.dao.entity.CrRole">
+        select * from cr_role
+        where room_id in
+        <foreach collection="roomIdList" separator="," item="roomId" open="(" close=")">
+            #{roomId}
+        </foreach>
+    </select>
 
 
 </mapper>

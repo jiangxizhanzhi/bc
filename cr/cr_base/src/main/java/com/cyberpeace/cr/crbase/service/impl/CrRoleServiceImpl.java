@@ -598,4 +598,29 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
         crRoleMapper.recoverNodesByRoomId(roomId);
     }
 
+	@Override
+	public Map<String, List<CrRole>> getRoomRoleMapByRoomIdList(List<String> roomIdList) {
+		Map<String, List<CrRole>> map = Maps.newHashMap();
+		if (CollectionUtils.isEmpty(roomIdList)) {
+			return map;
+		}
+		for (String roomId : roomIdList) {
+			map.put(roomId, Lists.newArrayList());
+		}
+		List<CrRole> roleList = this.getBatchByRoomIds(roomIdList);
+		// 按room分类收集
+		for (CrRole role : roleList) {
+			map.get(role.getRoomId()).add(role);
+		}
+		return map;
+	}
+
+	@Override
+	public List<CrRole> getBatchByRoomIds(List<String> roomIdList) {
+		if (CollectionUtils.isEmpty(roomIdList)) {
+			return Lists.newArrayList();
+		}
+		return crRoleMapper.selectBatchByRoomIds(roomIdList);
+	}
+
 }

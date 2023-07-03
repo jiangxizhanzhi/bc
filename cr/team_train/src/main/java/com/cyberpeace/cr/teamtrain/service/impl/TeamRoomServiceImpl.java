@@ -22,6 +22,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
+import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.room.DashboardFriend;
 import com.cyberpeace.common.model.room.DashboardGroup;
 import com.cyberpeace.common.model.room.DashboardInfo;
@@ -35,19 +37,15 @@ import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;
 import com.cyberpeace.cr.crbase.service.*;
-import com.cyberpeace.cr.crbase.service.context.AddTemplateMission;
-import com.cyberpeace.cr.crbase.service.context.ColorMission;
-import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
-import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
-import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.crbase.service.context.role.*;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
@@ -59,6 +57,7 @@ import com.cyberpeace.cr.teamtrain.service.context.RoleListContext;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -103,16 +102,13 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	private TransactionTemplate transactionTemplate;
 
 	@Autowired
-	private CrTaskLogMapper crTaskLogMapper;
-
-	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
-	private CrCommonService crCommonService;
+	private CrTimelineService crTimelineService;
 
 	@Autowired
-	private CrTimelineService crTimelineService;
+	private RtksRelatedService rtksRelatedService;
 
 	@Override
 	public TeamRoomData getTeamRoomDataByRoomId(String resourceId) {
@@ -644,6 +640,89 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 		return timeLineData;
 	}
 
+	@Override
+	public ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery) {
+		String userId = UserInfoContext.getUserContext().getUserId();
+		// 默认时间排序
+		listQuery.setSort("-cr_team_room.create_time");
+
+		IPage<TeamRoomData> data = this.list(listQuery);
+
+		// 训练场景拓扑节点数量获取
+		Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+				.batchGetTopoDigest(data.getRecords().stream().map(TeamRoomData::getCopyedTopoId)
+						.collect(Collectors.toList()));
+		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp<>();
+
+		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
+
+		// attack engage relation
+		List<String> businessTemplateIds = data.getRecords().stream()
+				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
+
+		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
+				.countAttackRel(businessTemplateIds);
+		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
+				.countEngageRel(businessTemplateIds);
+
+		// get roles and users
+		List<String> roomIdList = data.getRecords().stream().map(TeamRoomData::getResourceId)
+				.collect(Collectors.toList());
+		Map<String, List<CrRole>> roomRoleMap = crRoleService
+				.getRoomRoleMapByRoomIdList(roomIdList);
+		List<String> userIds = Lists.newArrayList();
+		for (List<CrRole> roleList : roomRoleMap.values()) {
+			for (CrRole role : roleList) {
+				userIds.addAll(role.getUserIdList());
+			}
+		}
+		Map<String, UserInfo> userInfoMap = remoteUserService.getIdUserInfoMap(userIds);
+
+		// 填充数据
+		for (TeamRoomData teamRoomData : data.getRecords()) {
+			RoleQuery roleQuery = new RoleQuery();
+			roleQuery.setRoomId(teamRoomData.getResourceId());
+
+			List<CrRole> crRoles = roomRoleMap.get(teamRoomData.getResourceId());
+
+			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
+			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId, userInfoMap));
+			teamRoomRsp.setRolesData(Lists.newArrayList());
+			teamRoomRsp.setNodesCount(
+					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
+			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
+					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
+			teamRoomRsp.setPreSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
+			teamRoomRsp.setTrainSkill(
+					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
+			// set attack engage relation
+			teamRoomRsp.setIsAttackRelated(
+					attackRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setAttackCount(attackRelCount
+					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
+			teamRoomRsp
+					.setIsIcsRelated(icsRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setIcsCount(icsRelCount.getOrDefault(teamRoomRsp.getBusinessTemplateId(),
+					Lists.newArrayList()));
+			teamRoomRsp.setIsEngageRelated(
+					engageRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
+			teamRoomRsp.setEngageCount(engageRelCount
+					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
+
+			teamRoomRspList.add(teamRoomRsp);
+		}
+
+		teamRoomRspListRsp.setList(teamRoomRspList);
+		teamRoomRspListRsp.setTotal(data.getTotal());
+		teamRoomRspListRsp.setLastPage(data.getPages());
+		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
+
+		return teamRoomRspListRsp;
+	}
+
 	private String confirmAvatarFile(String filePath, String jarFilePath) {
 		File file = new File(filePath);
 		if(file.exists()) {
@@ -811,6 +890,35 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 			log.error("training name duplicate！name=[{}]", name);
 			throw new BusinessException(CrBusinessErrorCode.TRAINING_NAME_DUPLICATE);
 		}
+	}
+
+	// 先获取实例列表中自己的角色，再获取所有的学员角色
+	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId,
+			Map<String, UserInfo> userInfoMap) {
+		BaseRole baseRole = new BaseRole();
+		List<RoleUsers> roleUsersList = Lists.newArrayList();
+		crRoles.forEach(crRole -> {
+			if (crRole.containsUser(userId)) {
+				baseRole.setResourceId(crRole.getResourceId());
+				baseRole.setName(crRole.getName());
+				baseRole.setDescription(crRole.getDescription());
+				baseRole.setRoleGroup(crRole.getRoleGroup());
+			}
+			RoleUsers roleUsers = new RoleUsers();
+			roleUsers.setRoleName(crRole.getName());
+			roleUsers.setRoleGroup(crRole.getRoleGroup());
+			List<String> userNamesByRoleUsers = CrCommonUtil
+					.getUserNamesByUserIds(crRole.getUserIdList(), userInfoMap);
+			List<UserData> userDataList = CrCommonUtil.getUserDataList(crRole.getUserIdList(),
+					userInfoMap);
+			roleUsers.setUsers(userNamesByRoleUsers);
+			roleUsers.setUserInfos(userDataList);
+			roleUsersList.add(roleUsers);
+		});
+
+		baseRole.setRoleDataList(roleUsersList);
+
+		return baseRole;
 	}
 
 }

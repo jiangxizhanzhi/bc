@@ -2,6 +2,7 @@ package com.cyberpeace.cr.crbase.utils;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,12 +13,14 @@ import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.cyberpeace.common.model.scene.AssetProperty;
+import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;
 import com.cyberpeace.common.util.MathUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.dao.entity.MissionBase;
+import com.cyberpeace.cr.crbase.service.context.UserData;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionOption;
 import com.cyberpeace.cr.crbase.service.context.role.*;
 import com.cyberpeace.cs.service.context.IdNameType;
@@ -246,4 +249,44 @@ public class CrCommonUtil {
 		return res;
 	}
 
+	/**
+	 * 获取username列表
+	 *
+	 * @param userIdList  用户id列表
+	 * @param userInfoMap 用户信息
+	 * @return {@code String}
+	 */
+	public static List<String> getUserNamesByUserIds(List<String> userIdList,
+			Map<String, UserInfo> userInfoMap) {
+		List<String> usernames = Lists.newArrayList();
+		for (String userId : userIdList) {
+			if (userInfoMap.containsKey(userId)) {
+				usernames.add(userInfoMap.get(userId).getUserName());
+			}
+		}
+		return usernames;
+	}
+
+	/**
+	 * 获取用户数据列表
+	 *
+	 * @param userIdList  用户id列表
+	 * @param userInfoMap 用户信息
+	 * @return {@code List<UserData>}
+	 */
+	public static List<UserData> getUserDataList(List<String> userIdList,
+			Map<String, UserInfo> userInfoMap) {
+		List<UserData> userDataList = Lists.newArrayList();
+		for (String userId : userIdList) {
+			if (userInfoMap.containsKey(userId)) {
+				UserInfo userInfo = userInfoMap.get(userId);
+				UserData userData = new UserData();
+				userData.setResourceId(userInfo.getUserId());
+				userData.setRepName(userInfo.getName());
+				userData.setLogo(userInfo.getAvatarUrl());
+				userDataList.add(userData);
+			}
+		}
+		return userDataList;
+	}
 }

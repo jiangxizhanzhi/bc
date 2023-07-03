@@ -243,7 +243,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	}
 
 	@Override
-	public void sendAssetUpdateSceneWs(String businessId) {
+	public void sendSceneUpdateSceneWs(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.ASSET_UPDATED);
 		sendWsData(bo, businessId);
 	}
@@ -251,6 +251,12 @@ public class CrSceneServiceImpl implements CrSceneService {
 	@Override
 	public void sendSceneStopMessage(String businessId) {
 		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.SCENE_STOPPED);
+		sendWsData(bo, businessId);
+	}
+
+	@Override
+	public void sendNodeDeleteSceneWs(String businessId) {
+		SceneUpdateWsBo bo = new SceneUpdateWsBo(SceneUpdateWsBo.SceneUpdateType.NODE_DELETED);
 		sendWsData(bo, businessId);
 	}
 

@@ -779,7 +779,7 @@
   border-radius: 2px;
   height: 292px;
   width: 772px;
-  position: relative;
+  margin-left: 24px;
 }
 
 .group_8-0 {
@@ -788,7 +788,7 @@
   margin: 16px 0 0 17px;
 }
 .task_content{
-  height: 230px;
+  height: 280px;
   width: 772px;
 }
 #task,#red-task,#blue-task,#attack,#attack2,#score{
@@ -997,7 +997,7 @@
   border-radius: 2px;
   height: 292px;
   width: 772px;
-  position: relative;
+  margin-left: 24px;
 }
 
 .group_8-1 {

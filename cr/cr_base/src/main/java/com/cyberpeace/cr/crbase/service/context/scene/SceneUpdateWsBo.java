@@ -41,6 +41,11 @@ public class SceneUpdateWsBo implements Serializable {
 		 * 场景停止
 		 */
 		public static final Integer SCENE_STOPPED = 2;
+
+		/**
+		 * 节点动态删除
+		 */
+		public static final Integer NODE_DELETED = 3;
 	}
 }
 

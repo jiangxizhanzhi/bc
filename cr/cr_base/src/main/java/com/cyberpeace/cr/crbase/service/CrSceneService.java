@@ -107,11 +107,11 @@ public interface CrSceneService {
 	List<IdNameType> getOsNames(String roomId);
 
 	/**
-	 * 发送资产更新场景ws
+	 * 发送场景动态更新ws
 	 *
 	 * @param businessId 业务标识
 	 */
-	void sendAssetUpdateSceneWs(String businessId);
+	void sendSceneUpdateSceneWs(String businessId);
 
 	/**
 	 * 发送场景停止消息
@@ -119,4 +119,11 @@ public interface CrSceneService {
 	 * @param businessId 业务标识
 	 */
 	void sendSceneStopMessage(String businessId);
+
+	/**
+	 * 发送节点动态删除ws
+	 *
+	 * @param businessId 业务标识
+	 */
+	void sendNodeDeleteSceneWs(String businessId);
 }

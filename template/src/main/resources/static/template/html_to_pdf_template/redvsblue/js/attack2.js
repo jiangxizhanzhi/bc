@@ -16,7 +16,7 @@
     grid: {
       show: false,
       top: 50,
-      left: 16,
+      left: 50,
       right: 16,
       bottom: 16,
       containLabel: true,

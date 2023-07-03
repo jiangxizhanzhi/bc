@@ -84,6 +84,11 @@ public class TrainReportExportContext extends TrainReportContext {
 	public String getTrendString(List<StudentScoreTrend> list) {
 		if (list == null || list.size() == 0)
 			return "";
+		for (StudentScoreTrend trend : list) {
+			if(trend.getUserData().getRepName().getBytes().length>19) {
+				trend.getUserData().setRepName(getName(trend.getUserData().getRepName()));
+			}
+		}
 		return list.stream()
 				.map(a -> "{name:'" + a.getUserData().getRepName() + "',type: 'line',data:[" + a.getScoreTrends().stream().map(b->b.getScore()+"").collect(Collectors.joining(",")) + "],\n" +
 						"      showSymbol: false,\n" +
@@ -96,4 +101,47 @@ public class TrainReportExportContext extends TrainReportContext {
 				.collect(Collectors.joining(","));
 	}
 
+	public static String getName(String name) {
+		String startName = name;
+		//获取name中的前13个字符  一个汉字等于两个字符
+		int num = 0;
+		int index = 0;
+		if (getLength(name) <= 13) {
+			return name;
+		}
+		for (int i = 0; i < name.length(); i++) {
+			if (num >= 12) {
+				index = i;
+				break;
+			}
+			if (name.charAt(i) > 255) {
+				num += 2;
+				if (num > 12) {
+					index = i ;
+					break;
+				}
+			} else {
+				num++;
+			}
+		}
+		if (index > 0) {
+			name = name.substring(0, index);
+			if (!name.equals(startName)) {
+				name += "...";
+			}
+		}
+		return name;
+	}
+
+	public static int getLength (String name) {
+		int num = 0;
+		for (int i = 0; i < name.length(); i++) {
+			if (name.charAt(i) > 255) {
+				num += 2;
+			} else {
+				num++;
+			}
+		}
+		return num;
+	}
 }

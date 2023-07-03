@@ -1816,35 +1816,35 @@
 
 
 .group_33 {
-  width: 466px;
-  height: 19px;
   margin: 24px auto;
+  width: 626px;
+  overflow: hidden;
+  text-align: center;
 }
 
 .image_8 {
   width: 147px;
   height: 4px;
   margin-top: 7px;
+  float: left;
 }
 
 .text_70 {
-  width: 140px;
-  height: 19px;
-  overflow-wrap: break-word;
+  width: 250px;
   color: rgba(255, 255, 255, 1);
   font-size: 14px;
   font-family: MicrosoftYaHei-Bold;
   font-weight: 700;
   text-align: left;
-  white-space: nowrap;
-  line-height: 19px;
-  margin-left: 16px;
+  float: left;
+  text-align: center;
 }
 
 .image_9 {
   width: 147px;
   height: 4px;
   margin: 7px 0 0 16px;
+  float: left;
 }
 
 .group_34 {
@@ -3108,8 +3108,7 @@
 }
 
 .text-wrapper_27 {
-  width: 156px;
-  height: 22px;
+  width: 728px;
   
 }
 
@@ -3127,16 +3126,14 @@
 }
 
 .text_99 {
-  width: 112px;
-  height: 22px;
-  overflow-wrap: break-word;
+  width: 668px;
   color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
   font-family: PingFangSC-Regular;
   font-weight: NaN;
   text-align: left;
-  white-space: nowrap;
   line-height: 22px;
+  word-wrap:break-word;
 }
 
 .text_100 {
@@ -3295,9 +3292,9 @@
   margin: 24px 0 0 16px;
 }
 
+
 .text_110 {
-  width: 38px;
-  height: 22px;
+  width: 60px;
   overflow-wrap: break-word;
   color: rgba(54, 217, 76, 1);
   font-size: 14px;

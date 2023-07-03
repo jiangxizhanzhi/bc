@@ -1,7 +1,25 @@
 package com.cyberpeace.cr.teamtrain.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.HtmlTemplateEnum;
@@ -10,7 +28,6 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.exception.ResourceNotFoundException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.NameCount;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.common.model.user.UserInfoContext;
@@ -51,7 +68,6 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplate;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
-import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
 import com.cyberpeace.cr.teamtrain.service.context.RoomRole;
@@ -63,32 +79,15 @@ import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
-import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Api(tags = "团队训练实例")
 @RestController
@@ -441,78 +440,8 @@ public class TeamTrainRoomController {
 	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
 		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
 		listQuery.setPer_page(listReq.getPerPage());
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 默认时间排序
-		listQuery.setSort("-cr_team_room.create_time");
-
-		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
-
-		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
-						.collect(Collectors.toList()));
-		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp();
-
-		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
-
-		// attack engage relation
-		List<String> businessTemplateIds = data.getRecords().stream()
-				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
-
-		Map<String, List<NameCount>> attackRelCount = rtksRelatedService
-				.countAttackRel(businessTemplateIds);
-		Map<String, List<NameCount>> icsRelCount = rtksRelatedService
-				.countAttackRel(businessTemplateIds);
-		Map<String, List<NameCount>> engageRelCount = rtksRelatedService
-				.countEngageRel(businessTemplateIds);
-
-		for (TeamRoomData teamRoomData : data.getRecords()) {
-			RoleQuery roleQuery = new RoleQuery();
-			roleQuery.setRoomId(teamRoomData.getResourceId());
-
-			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-
-			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
-			crRoles.forEach(crRole -> {
-				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes
-						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
-			});
-
-			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-			teamRoomRsp.setRolesData(rolesData);
-			teamRoomRsp.setNodesCount(
-					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
-					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
-			teamRoomRsp.setPreSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-			teamRoomRsp.setTrainSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
-			// set attack engage relation
-			teamRoomRsp.setIsAttackRelated(
-					attackRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
-			teamRoomRsp.setAttackCount(attackRelCount
-					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
-			teamRoomRsp
-					.setIsIcsRelated(icsRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
-			teamRoomRsp.setIcsCount(icsRelCount.getOrDefault(teamRoomRsp.getBusinessTemplateId(),
-					Lists.newArrayList()));
-			teamRoomRsp.setIsEngageRelated(
-					engageRelCount.containsKey(teamRoomRsp.getBusinessTemplateId()));
-			teamRoomRsp.setEngageCount(engageRelCount
-					.getOrDefault(teamRoomRsp.getBusinessTemplateId(), Lists.newArrayList()));
-
-			teamRoomRspList.add(teamRoomRsp);
-		}
-
-		teamRoomRspListRsp.setList(teamRoomRspList);
-		teamRoomRspListRsp.setTotal(data.getTotal());
-		teamRoomRspListRsp.setLastPage(data.getPages());
-		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
-
-		return new BaseRsp(teamRoomRspListRsp);
+		ListRsp<TeamRoomRsp> rsp = teamRoomService.listRoom(listQuery);
+		return new BaseRsp<>(rsp);
 	}
 
 	@ApiOperation("修改团队训练状态")
@@ -659,35 +588,6 @@ public class TeamTrainRoomController {
 		return baseRole;
 	}
 
-	// 先获取实例列表中自己的角色，再获取所有的学员角色
-	private BaseRole getSelfRoleUsers(List<CrRole> crRoles, String userId) {
-		BaseRole baseRole = new BaseRole();
-		List<RoleUsers> roleUsersList = Lists.newArrayList();
-		crRoles.forEach(crRole -> {
-			if (crRole.containsUser(userId)) {
-				baseRole.setResourceId(crRole.getResourceId());
-				baseRole.setName(crRole.getName());
-
-				baseRole.setDescription(crRole.getDescription());
-				baseRole.setRoleGroup(crRole.getRoleGroup());
-			}
-			// if (crRole.isTeamStudent()) {
-			RoleUsers roleUsers = new RoleUsers();
-			roleUsers.setRoleName(crRole.getName());
-			roleUsers.setRoleGroup(crRole.getRoleGroup());
-			String userNamesByRoleUsers = crRoleService
-					.getUserNamesByRoleUsers(crRole.getUserIdList());
-			List<UserData> userDatas = crRoleService.getUserDatas(crRole.getUserIdList());
-			roleUsers.setUsers(JsonUtil.toJsonObjectArray(userNamesByRoleUsers, String.class));
-			roleUsers.setUserInfos(userDatas);
-			roleUsersList.add(roleUsers);
-			// }
-		});
-
-		baseRole.setRoleDataList(roleUsersList);
-
-		return baseRole;
-	}
 
 	@ApiOperation("批量任务下发")
 	@PostMapping("/batchMissions")

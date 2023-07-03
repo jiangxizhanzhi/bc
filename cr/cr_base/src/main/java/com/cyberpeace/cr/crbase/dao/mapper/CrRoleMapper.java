@@ -65,4 +65,6 @@ public interface CrRoleMapper extends BaseMapper<CrRole> {
 	List<CrRole> getRolesByRoomId(@Param("roomId") String roomId);
 
     void recoverNodesByRoomId(@Param("roomId") String roomId);
+
+	List<CrRole> selectBatchByRoomIds(@Param("roomIdList") List<String> roomIdList);
 }

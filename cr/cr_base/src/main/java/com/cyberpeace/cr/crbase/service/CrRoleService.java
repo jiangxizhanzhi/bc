@@ -1,6 +1,5 @@
 package com.cyberpeace.cr.crbase.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -190,4 +189,20 @@ public interface CrRoleService extends IService<CrRole> {
 	 * @param roomId 房间id
 	 */
 	void recoverNodesConfig(String roomId);
+
+	/**
+	 * 通过房间id列表获取全部角色
+	 *
+	 * @param roomIdList 房间id列表
+	 * @return {@code Map<String, List<CrRole>>}
+	 */
+	Map<String, List<CrRole>> getRoomRoleMapByRoomIdList(List<String> roomIdList);
+
+	/**
+	 * 获取批量通过房间id列表
+	 *
+	 * @param roomIdList 房间id列表
+	 * @return {@code List<CrRole>}
+	 */
+	List<CrRole> getBatchByRoomIds(List<String> roomIdList);
 }

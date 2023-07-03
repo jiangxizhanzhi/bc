@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.redvsblue.controller.rsp.RbRoomRsp;
 import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomData;
@@ -188,4 +190,20 @@ public interface RbRoomService extends IService<RbRoom> {
 	 * @return {@code TimeLineData}
 	 */
 	TimeLineData getStudentsTimeLine(String roomId);
+
+	/**
+	 * 房间列表
+	 *
+	 * @param listQuery 列表查询
+	 * @return {@code ListRsp<RbRoomRsp>}
+	 */
+	ListRsp<RbRoomRsp> listRoom(ListQuery listQuery);
+
+	/**
+	 * 获取房间详情
+	 *
+	 * @param roomId 房间id
+	 * @return {@code RbRoomRsp}
+	 */
+	RbRoomRsp getRoomRsp(String roomId);
 }

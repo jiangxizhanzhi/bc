@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -20,24 +18,23 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
-import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrBadge;
 import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.cr.crbase.dao.entity.CrScore;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
@@ -51,9 +48,7 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
-import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRoleRes;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
@@ -162,75 +157,6 @@ public class TeamTrainStudentsController {
 		teamRoomRsp.setNodesCount(
 				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
-	}
-
-	@ApiOperation("列表查询")
-	@GetMapping("/list")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
-	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
-		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
-		listQuery.setPer_page(listReq.getPerPage());
-		String userId = UserInfoContext.getUserContext().getUserId();
-		// 默认时间排序
-		listQuery.setSort("-cr_team_room.create_time");
-
-		IPage<TeamRoomData> data = teamRoomService.list(listQuery);
-
-		// 训练场景拓扑节点数量获取
-		Map<String, TopoDigest> topologyNodesStats = remoteTopoService.batchGetTopoDigest(
-				data.getRecords().stream().map(rbRoomData -> rbRoomData.getCopyedTopoId())
-						.collect(Collectors.toList()));
-		ListRsp<TeamRoomRsp> teamRoomRspListRsp = new ListRsp();
-
-		List<TeamRoomRsp> teamRoomRspList = Lists.newArrayList();
-
-		// attack engage relation
-		List<String> businessTemplateIds = data.getRecords().stream()
-				.map(TeamRoomData::getBusinessTemplateId).collect(Collectors.toList());
-		List<String> attackRelatedIds = businessTemplateService
-				.getAttackRelatedIds(businessTemplateIds);
-		List<String> engageRelatedIds = businessTemplateService
-				.getEngageRelatedIds(businessTemplateIds);
-
-		for (TeamRoomData teamRoomData : data.getRecords()) {
-			RoleQuery roleQuery = new RoleQuery();
-			roleQuery.setRoomId(teamRoomData.getResourceId());
-
-			List<CrRole> crRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
-
-			List<TeamRoomRoleRes> rolesData = Lists.newArrayList();
-			crRoles.forEach(crRole -> {
-				TeamRoomRoleRes teamRoomRoleRes = BeanUtils.copy(crRole, TeamRoomRoleRes.class);
-				teamRoomRoleRes
-						.setUserIds(crRoleService.getUserNamesByRoleUsers(crRole.getUserIdList()));
-			});
-
-			TeamRoomRsp teamRoomRsp = BeanUtils.copy(teamRoomData, TeamRoomRsp.class);
-			teamRoomRsp.setTrainingRoleData(getSelfRoleUsers(crRoles, userId));
-			teamRoomRsp.setRolesData(rolesData);
-			teamRoomRsp.setNodesCount(
-					topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
-			teamRoomRsp.setResourceOccupiedNums(topologyNodesStats
-					.get(teamRoomData.getCopyedTopoId()).getResourceOccupiedNums());
-			teamRoomRsp.setPreSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getPreSkill(), String.class));
-			teamRoomRsp.setTrainSkill(
-					JsonUtil.toJsonObjectArray(teamRoomData.getTrainSkill(), String.class));
-			// set attack engage relation
-			teamRoomRsp.setIsAttackRelated(
-					attackRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
-			teamRoomRsp.setIsEngageRelated(
-					engageRelatedIds.contains(teamRoomRsp.getBusinessTemplateId()));
-
-			teamRoomRspList.add(teamRoomRsp);
-		}
-
-		teamRoomRspListRsp.setList(teamRoomRspList);
-		teamRoomRspListRsp.setTotal(data.getTotal());
-		teamRoomRspListRsp.setLastPage(data.getPages());
-		teamRoomRspListRsp.setCurrentPage(data.getCurrent());
-
-		return new BaseRsp(teamRoomRspListRsp);
 	}
 
 	/**

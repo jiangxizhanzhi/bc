@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.room.DashboardInfo;
 import com.cyberpeace.common.model.room.DashboardUser;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
@@ -12,6 +13,7 @@ import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListRsp;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
+import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainRoomContext;
@@ -161,4 +163,12 @@ public interface TeamRoomService extends IService<TeamRoom> {
 	 * @return {@code TimeLineData}
 	 */
 	TimeLineData getTimeLine(String roomId, String userId);
+
+	/**
+	 * 房间列表
+	 *
+	 * @param listQuery 列表查询
+	 * @return {@code ListRsp<TeamRoomRsp>}
+	 */
+	ListRsp<TeamRoomRsp> listRoom(ListQuery listQuery);
 }

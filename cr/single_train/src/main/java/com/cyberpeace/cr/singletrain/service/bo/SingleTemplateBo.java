@@ -19,4 +19,8 @@ public class SingleTemplateBo implements Serializable {
 
     @ApiModelProperty("任务方案")
     private JSONObject missionsScheme;
+
+    @ApiModelProperty("拓扑id")
+    private String copiedTopoId;
+
 }

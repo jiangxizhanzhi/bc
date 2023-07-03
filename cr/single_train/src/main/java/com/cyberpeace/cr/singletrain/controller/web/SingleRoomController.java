@@ -1,8 +1,12 @@
 package com.cyberpeace.cr.singletrain.controller.web;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
+import com.cyberpeace.integratation.model.scene.TopoDigest;
+import com.cyberpeace.integratation.service.RemoteTopoService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -56,10 +60,10 @@ public class SingleRoomController {
 	private LocalSceneService localSceneService;
 
 	@Autowired
-	private SingleTemplateService singleTemplateService;
+	private RemoteLogService remoteLogService;
 
 	@Autowired
-	private RemoteLogService remoteLogService;
+	private RemoteTopoService remoteTopoService;
 
 	@PostMapping
 	@ApiOperation("创建")
@@ -79,7 +83,20 @@ public class SingleRoomController {
 	@ApiOperation("详情")
 	@RequiresPermissions(MenuConstant.WEB_CR_SINGLE_TRAIN)
 	public BaseRsp<SingleRoomBo> get(@RequestParam("resource_id") String businessTrainId) {
-		return new BaseRsp<>(singleRoomService.getRoomInfo(businessTrainId));
+		SingleRoomBo roomInfo = singleRoomService.getRoomInfo(businessTrainId);
+
+		if(roomInfo != null && roomInfo.getEventData() != null) {
+			// 训练场景拓扑节点数量获取
+			String copyedTopoId = roomInfo.getCopiedTopoId();
+			List<String> copyedTopoIds = new ArrayList<>();
+			copyedTopoIds.add(copyedTopoId);
+			// 训练场景拓扑节点数量获取
+			Map<String, TopoDigest> topologyNodesStats = remoteTopoService
+					.batchGetTopoDigest(copyedTopoIds);
+
+			roomInfo.getEventData().setNodesCount(topologyNodesStats.get(copyedTopoId).getNodeCounts());
+		}
+		return new BaseRsp<>();
 	}
 
 	@ApiOperation("单兵场景详情")

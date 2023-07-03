@@ -81,6 +81,7 @@ public class SingleTemplateServiceImpl extends ServiceImpl<SingleTemplateMapper,
 		singleTemplateBo.setResourceId(businessTemplate.getResourceId());
 		singleTemplateBo.setEventData(eventData);
 		singleTemplateBo.setMissionsScheme(getMissionTemplates(trainObject.getMissionsScheme()));
+		singleTemplateBo.setCopiedTopoId(businessTemplate.getTopoId());
 
 		return singleTemplateBo;
 	}

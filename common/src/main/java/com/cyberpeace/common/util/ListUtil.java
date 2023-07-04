@@ -1,5 +1,6 @@
 package com.cyberpeace.common.util;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -183,5 +184,25 @@ public class ListUtil {
 			points.add(element);
 		}
 		return points;
+	}
+
+	/**
+	 * 取交集
+	 *
+	 * @param c1 l1
+	 * @param c2 l2
+	 * @return {@code List<E>}
+	 */
+	public static <E> List<E> intersect(Collection<E> c1, Collection<E> c2) {
+		List<E> res = Lists.newArrayList();
+		if (CollectionUtils.isEmpty(c1) || CollectionUtils.isEmpty(c2)) {
+			return res;
+		}
+		for (E e : c1) {
+			if (c2.contains(e)) {
+				res.add(e);
+			}
+		}
+		return res;
 	}
 }

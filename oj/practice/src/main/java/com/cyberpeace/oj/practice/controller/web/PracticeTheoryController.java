@@ -1,6 +1,7 @@
 package com.cyberpeace.oj.practice.controller.web;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -28,6 +29,7 @@ import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeMistakeService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import com.cyberpeace.oj.practice.service.bo.*;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -82,7 +84,9 @@ public class PracticeTheoryController {
 		// 设置默认排序字段
 		Page page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
-			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+			OrderItem orderItem1 = new OrderItem("update_time", false);
+			OrderItem orderItem2 = new OrderItem("id", true);
+			page.setOrders(Lists.newArrayList(orderItem1, orderItem2));
 		}
 
 		// 查询子分类信息

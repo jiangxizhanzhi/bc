@@ -12,6 +12,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.cyberpeace.common.model.NameCount;
+import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.service.RtksRelatedService;
 import com.cyberpeace.rtks.dao.mapper.AttackIcsMapper;
 import com.cyberpeace.rtks.dao.mapper.AttackMapper;
@@ -109,6 +110,21 @@ public class RtksRelatedServiceImpl implements RtksRelatedService {
 				engageIds.add(code);
 			}
 		}
+		// 过滤可能存在的非法数据
+		List<String> existingAttackIds = StreamApiUtils.distinctFlatMap(attackService.getCache(),
+				category -> StreamApiUtils.map(category.getAttacks(),
+						FrameItemBase::getResourceId));
+		attackIds.removeIf(id -> !existingAttackIds.contains(id));
+		List<String> existingEngageIds = StreamApiUtils.distinctFlatMap(engageService.getCache(),
+				category -> StreamApiUtils.distinctFlatMap(category.getSubCategories(),
+						subCategory -> StreamApiUtils.map(subCategory.getEngages(),
+								FrameItemBase::getResourceId)));
+		engageIds.removeIf(id -> !existingEngageIds.contains(id));
+		List<String> existingIcsIds = StreamApiUtils.distinctFlatMap(attackIcsService.getCache(),
+				category -> StreamApiUtils.map(category.getAttacks(),
+						FrameItemBase::getResourceId));
+		attackIcsIds.removeIf(id -> !existingIcsIds.contains(id));
+
 		// 忽略已存在关联的可能
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 

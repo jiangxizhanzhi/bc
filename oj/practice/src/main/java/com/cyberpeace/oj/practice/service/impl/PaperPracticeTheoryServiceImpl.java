@@ -143,7 +143,8 @@ public class PaperPracticeTheoryServiceImpl extends ServiceImpl<PaperPracticeThe
 				if (originPracticeSolved == null || !originPracticeSolved.getSolved()) {
 					try {
 						practiceSolvedMapper.insert(practiceSolved);
-					} catch (DuplicateKeyException e) {
+					} catch (DuplicateKeyException e) { // 如果存在解题记录，则设置isPaper false，防止自由练习的解题记录被过滤掉
+						practiceSolved.setIsPaper(false);
 						practiceSolvedMapper.updateSolved(practiceSolved);
 					}
 				}

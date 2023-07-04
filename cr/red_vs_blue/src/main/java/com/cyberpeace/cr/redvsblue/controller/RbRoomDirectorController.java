@@ -546,7 +546,7 @@ public class RbRoomDirectorController {
 	 */
 	@ApiOperation("查询复盘所需scene_id")
 	@GetMapping("/replay/enable")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<String> isReplayEnabled(
 			@ApiParam(name = "resource_id", value = "红蓝训练id", required = true) String resource_id) {
 		CrCommonValidator.validateId(resource_id);

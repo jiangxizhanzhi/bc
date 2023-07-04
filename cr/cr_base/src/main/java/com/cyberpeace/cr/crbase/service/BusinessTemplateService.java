@@ -144,6 +144,14 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	void checkPermission(String businessId, String userId);
 
 	/**
+	 * 校验当前用户对训练模板的权限
+	 *
+	 * @param resourceId 业务模板id
+	 * @return boolean
+	 */
+	boolean checkPermission(String resourceId);
+
+	/**
 	 * 查询以该名称命名的模板是否存在
 	 *
 	 * @param templateName 业务模板id
@@ -220,4 +228,5 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	ListRsp<BusinessTemplateSimple> pageSimple(BTPageReq btPageReq);
 
 	void clearUserAuth(String user);
+
 }

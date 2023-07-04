@@ -475,4 +475,8 @@ public interface CrBusinessErrorCode {
 
 	/** 场景切换中 */
 	String SCENE_SWITCHING = "101140";
+	/**
+	 * 模板删除或未授权
+	 */
+	String TEMPLATE_DELETED_OR_NOT_PERMITTED = "101141";
 }

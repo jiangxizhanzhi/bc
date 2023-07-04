@@ -20,7 +20,7 @@
             resultType="com.cyberpeace.situation.dao.entity.DashboardTemplateRef">
         SELECT *
         FROM situation_dashboard_template_ref
-        WHERE origin_template_id = #{originTemplateId}
+        WHERE resource_id = #{originTemplateId}
     </select>
 
 </mapper>

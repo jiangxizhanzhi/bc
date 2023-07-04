@@ -10,6 +10,7 @@ import com.cyberpeace.situation.model.ViewAngle;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 
 /**
@@ -106,6 +107,11 @@ public class DashboardBasicAttributeRes implements Serializable {
 	}
 
 	public void setMapSource(String mapSource) {
-		this.mapSource = mapSource;
+		try {
+			Integer type = Integer.parseInt(mapSource);
+			this.mapSource = MapSource.getMapSourceByCode(type).getName();
+		} catch (NumberFormatException e) {
+			this.mapSource = mapSource;
+		}
 	}
 }

@@ -153,6 +153,7 @@ public class DashboardTemplateServiceRefImpl extends ServiceImpl<DashboardTempla
 
 		DashboardTemplateRef toDashboardTemplateRef = changeToDashboardTemplateRef(
 				dashBoardTemplateReq);
+		toDashboardTemplateRef.setOriginTemplateId(dashboardTemplateRef.getOriginTemplateId());
 		toDashboardTemplateRef.setComponentsSetting(newComponentsList.toString());
 		List<DashboardComponents> dashboardComponentsList = changeToDashboardComponents(
 				sortDashboardComponentsReqList);

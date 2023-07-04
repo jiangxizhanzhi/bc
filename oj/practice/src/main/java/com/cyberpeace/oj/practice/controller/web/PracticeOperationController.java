@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.controller.web;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -34,6 +35,7 @@ import com.cyberpeace.oj.practice.service.bo.AdminOperationListBo;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.bo.WebOperationBo;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -91,7 +93,9 @@ public class PracticeOperationController {
 
 		Page page = listReq.toPageParam();
 		if (CollectionUtils.isEmpty(page.getOrders())) {
-			PageUtil.setPageOrder(page, OrderNameConstant.UPDATE_TIME, false);
+			OrderItem orderItem1 = new OrderItem("update_time", false);
+			OrderItem orderItem2 = new OrderItem("id", true);
+			page.setOrders(Lists.newArrayList(orderItem1, orderItem2));
 		}
 
 		OperationListQueryBo listQueryBo = BeanUtils.copy(listReq, OperationListQueryBo.class);

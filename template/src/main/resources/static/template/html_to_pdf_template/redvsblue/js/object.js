@@ -22,7 +22,7 @@ function object(elementId,score,allscore) {
         "fontSize": 12,
         "color": "rgba(255, 255, 255, 0.9)"
       },
-      "data": ["得分", "总分"]
+      "data": ["得分 "+score, "总分 "+allscore]
     },
     "toolbox": {
       "show": false
@@ -58,10 +58,10 @@ function object(elementId,score,allscore) {
       },
       "data": [{
         "value": score,
-        "name": "得分"
+        "name": "得分 "+score
       }, {
         "value": allscore,
-        "name": "总分"
+        "name": "总分 "+allscore
       }]
     }, {
       "name": "",

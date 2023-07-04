@@ -4,10 +4,11 @@ import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Data;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class TaskLogRsp {
+public class TaskLogRsp implements Serializable {
     private String roomId;
 
     private String missionId;

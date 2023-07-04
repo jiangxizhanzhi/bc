@@ -95,13 +95,14 @@ public class GetScoreRsp implements Serializable {
 	private BigDecimal trainScoreRate;
 
 	private Integer abilityScoreRate;
-	public GetScoreRsp() {
-	}
+
+	public GetScoreRsp() {}
 
 	public GetScoreRsp(UserData userData, List<CrTask> userTaskList,
-					   Map<String, Mission> missionMap, Map<String, CrScore> scoreMap, CrRole crRole, UserSkillScoreContext userSkillScoreContext,
-					   List<MissionSchemeObject<MissionContext>> userMissionList,
-					   List<TaskLogRsp> taskLogRspList) {
+			Map<String, Mission> missionMap, Map<String, CrScore> scoreMap, CrRole crRole,
+			UserSkillScoreContext userSkillScoreContext,
+			List<MissionSchemeObject<MissionContext>> userMissionList,
+			List<TaskLogRsp> taskLogRspList) {
 		this.userId = userData.getResourceId();
 		this.name = userData.getRepName();
 		this.roleName = crRole.getName();
@@ -112,7 +113,7 @@ public class GetScoreRsp implements Serializable {
 		this.failTaskCount = finishTaskCount - successTaskCount;
 		this.subjectiveScore = userTaskList.stream()
 				.filter(a -> missionMap.containsKey(a.getMissionId())
-						&& !missionMap.get(a.getMissionId()).isObjective()&&a.getScore()!=null)
+						&& !missionMap.get(a.getMissionId()).isObjective() && a.getScore() != null)
 				.mapToInt(CrTask::getScore).sum();
 		this.objectiveScore = userTaskList.stream()
 				.filter(a -> missionMap.containsKey(a.getMissionId())
@@ -120,10 +121,10 @@ public class GetScoreRsp implements Serializable {
 				.mapToInt(CrTask::getScore).sum();
 		CrScore crScore = scoreMap.getOrDefault(userId, new CrScore());
 		this.abilityScore = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class)
-						.stream().filter(a -> a != null).mapToInt(Integer::intValue).sum();
+				.stream().filter(a -> a != null).mapToInt(Integer::intValue).sum();
 		this.abilityScoreList = JsonUtil.toJsonObjectArray(crScore.getSkillScore(), Integer.class);
 		if (CollectionUtils.isEmpty(this.abilityScoreList)) {
-			this.abilityScoreList = Arrays.asList(0,0,0,0,0);
+			this.abilityScoreList = Arrays.asList(0, 0, 0, 0, 0);
 		}
 		this.scoreRemark = crScore.getComment();
 		this.synthesisScore = scoreMap.containsKey(userId) ? scoreMap.get(userId).getFinalScore()
@@ -138,20 +139,22 @@ public class GetScoreRsp implements Serializable {
 
 		for (String missionId : new CrRoleSimple(crRole).getMissionIds()) {
 			Mission mission = missionMap.get(missionId);
-			if (mission==null){
+			if (mission == null) {
 				continue;
 			}
-			this.allTrainScore +=mission.getScore();
+			this.allTrainScore += mission.getScore();
 			if (mission.isObjective()) {
-				this.allObjectiveScore+=mission.getScore();
+				this.allObjectiveScore += mission.getScore();
 			} else {
-				this.allSubjectiveScore+=mission.getScore();
+				this.allSubjectiveScore += mission.getScore();
 			}
 		}
-		Integer trainingPercentage= crScore.getTrainingPercentage()==null?0 :Integer.parseInt(crScore.getTrainingPercentage());
-		Integer skillPercentage= crScore.getSkillPercentage()==null?0 :Integer.parseInt(crScore.getSkillPercentage());
-		this.allScore = this.allTrainScore * trainingPercentage/100 + skillPercentage;
-		this.trainScoreRate = allTrainScore!=0? new BigDecimal(subjectiveScore).add(new BigDecimal(objectiveScore)).multiply(new BigDecimal(100)).divide(new BigDecimal(allTrainScore),0, RoundingMode.HALF_UP) : new BigDecimal(0);
-		this.abilityScoreRate = abilityScore*4;
+		this.allScore = 100;
+		this.trainScoreRate = crScore.getTrainingPercentage() != null
+				? new BigDecimal(crScore.getTrainingPercentage()).setScale(0)
+				: new BigDecimal(0);
+		this.abilityScoreRate = crScore.getSkillPercentage() != null
+				? Integer.parseInt(crScore.getSkillPercentage())
+				: 0;
 	}
 }

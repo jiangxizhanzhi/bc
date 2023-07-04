@@ -232,7 +232,7 @@ public class RbRoomController {
 
 	@ApiOperation("红蓝对抗-训练手册")
 	@GetMapping("/manual")
-	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp<Map<String, List<TrainTaskReleaseInfoRsp>>> getManual(
 			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
 		if (StringUtils.isBlank(resource_id)) {

@@ -96,7 +96,7 @@ public class SingleRoomController {
 
 			roomInfo.getEventData().setNodesCount(topologyNodesStats.get(copyedTopoId).getNodeCounts());
 		}
-		return new BaseRsp<>();
+		return new BaseRsp<>(roomInfo);
 	}
 
 	@ApiOperation("单兵场景详情")

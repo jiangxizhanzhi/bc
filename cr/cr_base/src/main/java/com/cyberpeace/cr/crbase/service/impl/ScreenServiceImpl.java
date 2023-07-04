@@ -84,11 +84,11 @@ public class ScreenServiceImpl implements ScreenService {
                 continue;
             }
             List<ScreenRecordRsp> collect = screenRecords.stream().filter(item -> {
-                if (StringUtils.isEmpty(item.getEnd_time())) {
+                if (StringUtils.isEmpty(item.getCreate_time())) {
                     return false;
                 }
-                Date endDate = DateUtil.StringToDate(item.getEnd_time(), "yyyy-MM-dd HH:mm:ss");
-                return endDate.before(actualEndTime) || endDate.equals(actualEndTime);
+                Date createDate = DateUtil.StringToDate(item.getCreate_time(), "yyyy-MM-dd HH:mm:ss");
+                return createDate.before(actualEndTime) || createDate.equals(actualEndTime);
             }).collect(Collectors.toList());
             screenRecordUserRole.setScreenRecords(collect);
         }

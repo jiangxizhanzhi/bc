@@ -43,6 +43,7 @@ import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
+import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -144,6 +145,21 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			log.error("businessId is illegal,businessId =[{}],userId =[{}]", businessId,userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+	}
+
+	@Override
+	public boolean checkPermission(String resourceId) {
+		BusinessTemplate template = businessTemplateMapper.selectById(resourceId);
+		if (null == template) {
+			return false;
+		}
+		UserInfo userInfo = UserInfoContext.getUserContext();
+		// admin，模板授权所有，是创建者，或者被授权
+		return userInfo.isSuperuser()
+				|| template.getOperationAuthType()
+						.equals(AuthTable.AuthType.ALL_SHARE_MODE.getCode())
+				|| template.getCreateUserId().equals(userInfo.getUserId())
+				|| template.getOperationAuthIds().contains(userInfo.getUserId());
 	}
 
 	@Override
@@ -264,6 +280,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	public List<String> selectAuthIdsByUserId(String userId) {
 		UserInfo userInfo = UserInfoContext.getUserContext();
 		if (userInfo.isSuperuser()) {
+			// ??? 传 userId 的意义何在？
 			return businessTemplateMapper.getAllIds();
 		} else {
 			return businessTemplateMapper.selectIdsByUserId(userId);

@@ -1,5 +1,26 @@
 package com.cyberpeace.cr.crbase.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.constant.FileSunffixConstant;
 import com.cyberpeace.common.constant.MenuConstant;
@@ -28,6 +49,7 @@ import com.cyberpeace.cr.crbase.service.context.Share;
 import com.cyberpeace.cr.crbase.service.context.ShareContext;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.constant.LogContent;
@@ -36,30 +58,12 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.exception.ZipException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.Logical;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Api(tags = "基础模板")
 @RestController
@@ -404,6 +408,24 @@ public class BusinessTemplateController {
 		ListRsp<BusinessTemplateSimple> res = businessTemplateService.pageSimple(btPageReq);
 
 		return new BaseRsp(res);
+	}
+
+	@ApiOperation("创建训练时校验用户是否拥有模板权限")
+	@GetMapping("/check/template/permission")
+	@RequiresPermissions(
+			value = { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN },
+			logical = Logical.OR)
+	public BaseRsp<Boolean> checkTemplateAccessPermission(
+			@ApiParam(value = "训练模板id", name = "resource_id") String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		boolean res = businessTemplateService.checkPermission(resource_id);
+		if (!res) {
+			log.error(
+					"template deleted or current user not permitted: template_id:[{}], userId:[{}]",
+					resource_id, UserInfoContext.getUserContext().getUserId());
+			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_DELETED_OR_NOT_PERMITTED);
+		}
+		return new BaseRsp<>(true);
 	}
 
 	private void checkBeforeTestingScene(String templateId) {

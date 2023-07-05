@@ -831,7 +831,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             EvalVariableRef fifthVariableRef = fifthEvalIndexRefMap.get(fifthId);
             if(null != fifthVariableRef){
                 Integer score = fifthVariableRef.getScore();
-                fifthObj.put(fifthId, null == score ? 0 : score);
+                if(fifthVariableRef.getType().equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                    score = current.getSpecialistValue();
+                }
+                fifthObj.put(fifthId, score);
             }
         }
     }
@@ -1318,7 +1321,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     EvalResult evalResult = evalResults.get(i);
                     String fifthIndexRes = evalResult.getFifthIndexRes();
                     JSONObject jsonObject = JsonUtil.toJsonObject(fifthIndexRes, JSONObject.class);
-                    int score = Integer.parseInt(jsonObject.get(nextId).toString());
+                    Integer score = null;
+                    Object obj = jsonObject.get(nextId);
+                    if(null != obj){
+                        score = Integer.parseInt(obj.toString());
+                    }
                     setCycleResult(rsp, i, score);
                 }
                 rsp.setChildren(null);

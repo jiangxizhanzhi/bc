@@ -49,6 +49,7 @@ public class EvalIndexRefController {
             EvalRecordSpecialistContext specialist = requestData.getSpecialist();
             evalIndexRef.setType(type);
             if(type.equals(EvalIndexRef.Type.SPECIALIST.getCode())){
+                evalIndexRef.setSpecialistValue(specialist.getValue());
                 evalIndexRef.setScore(specialist.getValue());
             }
             evalIndexRefMapper.updateById(evalIndexRef);

@@ -1,15 +1,12 @@
 package com.cyberpeace.config.auth;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,9 +36,6 @@ import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -134,7 +128,7 @@ public class ExceptionFilter implements Filter {
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
 		BusinessException businessException = new BusinessException(
-				ErrorCode.DIRECT_MSG_EXCEPTION, e.getMessage());
+				ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
 		parseBusinessException(httpServletResponse, businessException);
 	}
 

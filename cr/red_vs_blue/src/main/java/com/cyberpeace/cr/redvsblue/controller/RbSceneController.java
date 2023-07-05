@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,8 @@ import com.cyberpeace.cr.crbase.service.CrSceneService;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbCommonDeviceReq;
 import com.cyberpeace.integratation.service.RemoteUserService;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -89,6 +92,9 @@ public class RbSceneController {
 
 	private LockFactory lockFactory = DefaultLockFactory.getInstance();
 
+	Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.SECONDS)
+			.build();
+
 	@ApiOperation("启动场景")
 	@PostMapping("")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
@@ -130,6 +136,10 @@ public class RbSceneController {
 		Boolean ret;
 		try {
 			lock.lock();
+			if (cache.getIfPresent(roomId) != null) {
+				throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
+			}
+			cache.put(roomId, roomId);
 			ret = rbSceneService.pauseScene(roomId);
 		}  finally {
 			lock.unlock();
@@ -150,6 +160,10 @@ public class RbSceneController {
 		Boolean ret;
 		try {
 			lock.lock();
+			if (cache.getIfPresent(roomId) != null) {
+				throw new BusinessException(ErrorCode.OPERATION_TOO_FREQUENT);
+			}
+			cache.put(roomId, roomId);
 			ret = rbSceneService.unpauseScene(roomId);
 		} finally {
 			lock.unlock();

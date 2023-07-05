@@ -67,7 +67,7 @@ public class RbSceneEventListener extends MessageListener {
 				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-		JSONObject jsonData = wsSceneReportBO.getData().getData().getJSONObject("data");
+		JSONObject jsonData = wsSceneReportBO.getData().getData();
 		// 区分场景节点消息推送和节点登录信息推送
 		if (jsonData.containsKey("call_action")) {
 			pushDataToWeb(data, businessId);

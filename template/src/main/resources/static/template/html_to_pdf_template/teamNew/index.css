@@ -2847,8 +2847,7 @@
 }
 
 .text_95-0 {
-  width: 112px;
-  height: 22px;
+  width: 110px;
   overflow-wrap: break-word;
   font-size: 14px;
   font-family: PingFangSC-Regular;
@@ -2913,7 +2912,7 @@
 }
 
 .text_95-2 {
-  height: 22px;
+  width: 540px;
   overflow-wrap: break-word;
   font-size: 14px;
   font-family: PingFangSC-Regular;
@@ -2922,6 +2921,8 @@
   white-space: nowrap;
   line-height: 22px;
   color: rgba(255, 255, 255, 0.9);
+  word-wrap:break-word;
+  white-space: normal;
 }
 
 .text_96-2 {
@@ -2980,8 +2981,8 @@
 }
 
 .text_95-4 {
+  width: 80px;
   margin-right: 4px;
-  height: 22px;
   overflow-wrap: break-word;
   font-size: 14px;
   font-family: PingFangSC-Regular;

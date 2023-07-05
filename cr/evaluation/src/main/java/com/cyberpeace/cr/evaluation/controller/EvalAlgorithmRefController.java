@@ -42,8 +42,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
-
 
 @Slf4j
 @Api(tags = "前台-测试靶场-算法管理")
@@ -88,11 +88,11 @@ public class EvalAlgorithmRefController {
 		String evalAlgorithmId = req.getResourceId();
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(evalAlgorithmId);
 		BeanUtils.copyProperties(req, evalAlgorithmRef);
-		if(null == evalAlgorithmRef){
+		if (null == evalAlgorithmRef) {
 			log.error("Resource not found! evalAlgorithmId = [{}]", evalAlgorithmId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
-		if(req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())){
+		if (req.getMode().equals(EvalAlgorithmRef.Mode.FORMAT_ALGORITHM.getCode())) {
 			String matrixData = req.getMatrixData();
 			LambdaQueryWrapper<EvalAlgorithmRef> queryFilter = new LambdaQueryWrapper<>();
 			queryFilter.eq(EvalAlgorithmRef::getId, 1);
@@ -103,10 +103,11 @@ public class EvalAlgorithmRefController {
 			EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
 			evalIndexRef.setMatrixData(matrixData);
 			evalAlgorithmRef.setMatrixData(matrixData);
-			if(StringUtils.isNotBlank(req.getCode())){
+			if (StringUtils.isNotBlank(req.getCode())) {
 				evalAlgorithmRef.setCode(req.getCode());
 			}
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
 					evalAlgorithmRefMapper.updateById(evalAlgorithmRef);
@@ -120,12 +121,12 @@ public class EvalAlgorithmRefController {
 		return new BaseRsp(res);
 	}
 
-
-	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res, EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
+	void checkMatrixData(EvalAlgorithmRefReq req, EvalAlgorithmEditRsp res,
+			EvalAlgorithmRef evalAlgorithmRef, String matrixData) {
 		LambdaQueryWrapper<EvalIndexRef> query = new LambdaQueryWrapper<>();
 		query.eq(EvalIndexRef::getAlgorithmId, req.getResourceId());
 		EvalIndexRef evalIndexRef = evalIndexRefMapper.selectOne(query);
-		if(StringUtils.isBlank(matrixData)){
+		if (StringUtils.isBlank(matrixData)) {
 			throw new BusinessException(CrBusinessErrorCode.MATRIX_DATA_EMPTY_ERROR);
 		}
 		try {
@@ -139,40 +140,64 @@ public class EvalAlgorithmRefController {
 		} catch (RemoteServiceException e) {
 			String msg;
 			if (e.getMessage().equals(ErrorCode.ALGORITHM_RETURN_NULL)) {
-				msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID), EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
+				msg = String.format(
+						BusinessException.getMessageByLanguage(
+								CrBusinessErrorCode.AGG_ALGORITHM_RESULT_IS_INVALID),
+						EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
 			} else {
-				msg = String.format(BusinessException.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED), EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
+				msg = String.format(
+						BusinessException
+								.getMessageByLanguage(CrBusinessErrorCode.INDEX_EXECUTE_FAILED),
+						EvalIndexRef.Level.VARIABLE.getCode(), evalAlgorithmRef.getName());
 			}
 			res.setMsg(msg);
 			log.error(evalIndexRef.getName(), "[{}]consistency check failure.");
 		}
 	}
 
-
 	@ApiOperation("查询算法")
 	@GetMapping("")
 	@RequiresPermissions(MenuConstant.CMS_CR_EVALUATION_ALGORITHM)
 	public BaseRsp<EvalAlgorithmRsp> getEvalAlgorithmRef(
-			@ApiParam(name = "resourceId", value = "id", required = true) @RequestParam(name = "resourceId") String resourceId,
-			@ApiParam(name = "type", value = "算法类型", required = true) @RequestParam(name = "type") Integer type) {
+			@ApiParam(name = "resourceId", value = "id",
+					required = true) @RequestParam(name = "resourceId") String resourceId,
+			@ApiParam(name = "type", value = "算法类型",
+					required = true) @RequestParam(name = "type") Integer type) {
 
 		EvalAlgorithmRsp evalAlgorithmRsp;
-		if(EvalAlgorithm.Type.valid(type)){
-			if(type.equals(EvalAlgorithm.Type.AGGREGATING_ALGORITHM.getCode())){
+		if (EvalAlgorithm.Type.valid(type)) {
+			if (type.equals(EvalAlgorithm.Type.AGGREGATING_ALGORITHM.getCode())) {
 				LambdaQueryWrapper<EvalIndexRef> queryWrapper = new LambdaQueryWrapper<>();
 				queryWrapper.eq(EvalIndexRef::getAlgorithmId, resourceId);
 				List<EvalIndexRef> evalIndexRefs = evalIndexRefMapper.selectList(queryWrapper);
 				EvalIndexRef evalIndexRef = evalIndexRefs.get(0);
 				EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(resourceId);
-				if(null == evalAlgorithmRef){
+				if (null == evalAlgorithmRef) {
 					log.error("Resource not found! resourceId = [{}]", resourceId);
 					throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 				}
 				evalAlgorithmRsp = BeanUtils.copy(evalAlgorithmRef, EvalAlgorithmRsp.class);
-				evalAlgorithmRsp.setMatrixData(evalIndexRef.getMatrixData());
+
+				String nextIds = evalIndexRef.getNextIds();
+				List<String> next = JsonUtil.toJsonObjectArray(nextIds, String.class);
+				List<Object> choices = JsonUtil.toJsonObjectArray(evalIndexRef.getMatrixData(),
+						Object.class);
+				List<Object> choicesNew = new ArrayList<>();
+				for (String s : next) {
+					for (Object obj : choices) {
+						Map<String, Object> map = (Map<String, Object>) obj;
+						String key = (String) map.get("key");
+						if (s.equals(key)) {
+							choicesNew.add(obj);
+						}
+					}
+				}
+				evalAlgorithmRsp.setMatrixData(JsonUtil.toJsonString(choicesNew));
+
+				// evalAlgorithmRsp.setMatrixData(evalIndexRef.getMatrixData());
 				evalAlgorithmRsp.setEvalAlgorithmId(evalAlgorithmRef.getResourceId());
-				evalAlgorithmRsp.setParams(
-						JsonUtil.toJsonObjectArray(evalIndexRef.getAlgorithmParams(), AlgorithmParamContext.class));
+				evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(
+						evalIndexRef.getAlgorithmParams(), AlgorithmParamContext.class));
 				evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
 
 				return new BaseRsp(evalAlgorithmRsp);
@@ -180,20 +205,20 @@ public class EvalAlgorithmRefController {
 
 		}
 		EvalVariableRef evalVariableRef;
-		LambdaQueryWrapper<EvalVariableRef> query =  new LambdaQueryWrapper<>();
+		LambdaQueryWrapper<EvalVariableRef> query = new LambdaQueryWrapper<>();
 		String params = "";
 		String algorithmId = "";
-		if(type.equals(EvalAlgorithm.Type.SCORING_ALGORITHM.getCode())){
+		if (type.equals(EvalAlgorithm.Type.SCORING_ALGORITHM.getCode())) {
 			query.eq(EvalVariableRef::getMarkAlgorithmId, resourceId);
 			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getMarkParams();
 			algorithmId = evalVariableRef.getMarkAlgorithmId();
-		} else if(type.equals(EvalAlgorithm.Type.FORMAT_ALGORITHM.getCode())){
+		} else if (type.equals(EvalAlgorithm.Type.FORMAT_ALGORITHM.getCode())) {
 			query.eq(EvalVariableRef::getFormatAlgorithmId, resourceId);
 			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getFormatParams();
 			algorithmId = evalVariableRef.getFormatAlgorithmId();
-		} else if(type.equals(EvalAlgorithm.Type.MATCHING_ALGORITHM.getCode())){
+		} else if (type.equals(EvalAlgorithm.Type.MATCHING_ALGORITHM.getCode())) {
 			query.eq(EvalVariableRef::getMatchAlgorithmId, resourceId);
 			evalVariableRef = evalVariableRefMapper.selectOne(query);
 			params = evalVariableRef.getMatchParams();
@@ -202,8 +227,7 @@ public class EvalAlgorithmRefController {
 		EvalAlgorithmRef evalAlgorithmRef = evalAlgorithmRefMapper.selectById(algorithmId);
 		evalAlgorithmRsp = BeanUtils.copy(evalAlgorithmRef, EvalAlgorithmRsp.class);
 		evalAlgorithmRsp.setEvalAlgorithmId(algorithmId);
-		evalAlgorithmRsp.setParams(
-				JsonUtil.toJsonObjectArray(params, AlgorithmParamContext.class));
+		evalAlgorithmRsp.setParams(JsonUtil.toJsonObjectArray(params, AlgorithmParamContext.class));
 		evalAlgorithmRsp.setParamsNum(evalAlgorithmRsp.getParams().size());
 
 		return new BaseRsp<>(evalAlgorithmRsp);

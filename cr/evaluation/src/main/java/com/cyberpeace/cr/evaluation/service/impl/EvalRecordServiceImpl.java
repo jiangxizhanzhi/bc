@@ -273,6 +273,7 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
         evalAggregations.forEach(evalAggregation -> {
             List<String> collectionIds = JsonUtil.toJsonObjectArray(evalAggregation.getCollectionIds(), String.class);
             collectionIds.forEach(collectionId->{
+                String matrixData = evalAggregation.getMatrixData();
                 if(!collections.contains(collectionId)){
                     collections.add(collectionId);
                 } else {
@@ -283,6 +284,10 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
                     collectionIds.set(collectionIds.indexOf(collectionId), id);
                     EvalRecordVariableContext evalRecordVariableContext = evalRecordVariableContextMap.get(collectionId);
                     evalRecordVariableContextMap.put(id, evalRecordVariableContext);
+                    if(StringUtils.isNotBlank(matrixData)){
+                        String currentMatrixData = matrixData.replaceAll(collectionId, id);
+                        evalAggregation.setMatrixData(currentMatrixData);
+                    }
                 }
             });
             String currentCollectionIds = JsonUtil.arrayToString(collectionIds);

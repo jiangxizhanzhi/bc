@@ -30,6 +30,7 @@ public class Log4JLevelConfig {
 		Logger.getLogger("mp").setLevel(level);
 		Logger.getLogger("resourceImport").setLevel(level);
 		Logger.getLogger("eval").setLevel(level);
+		Logger.getLogger("audit").setLevel(level);
 		log.info("Init log level end!.....");
 	}
 

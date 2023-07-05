@@ -5,8 +5,10 @@ import java.io.Serializable;
 import com.alibaba.fastjson.JSONObject;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class WsSceneReportBO implements Serializable {
 
 	private String code;

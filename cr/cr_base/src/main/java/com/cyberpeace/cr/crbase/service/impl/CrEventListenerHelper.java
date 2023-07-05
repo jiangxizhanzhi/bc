@@ -1,13 +1,12 @@
 package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import com.cyberpeace.common.cache.CrRoleCache;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cyberpeace.common.cache.CrRoleCache;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
@@ -39,12 +38,12 @@ public class CrEventListenerHelper {
 			// filter visible nodes
 			CrRole roleOld = null;
 			try {
-
-				roleOld = (CrRole) CrRoleCache.cache.get(role.getResourceId()+nodeId);
+				roleOld = (CrRole) CrRoleCache.cache.get(role.getResourceId() + nodeId);
 			} catch (Exception e) {
 				// 异常不处理
 			}
-			CrRoleNodesData nodesDataOld = roleOld==null?new CrRoleNodesData():roleOld.getNodeData();
+			CrRoleNodesData nodesDataOld = roleOld == null ? new CrRoleNodesData()
+					: roleOld.getNodeData();
 			List<String> visibleNodeIds = StreamApiUtils.map(nodesData.getVisibleNodes(),
 					CrRoleNode::getId);
 			if (!visibleNodeIds.contains(nodeId)) {
@@ -55,7 +54,6 @@ public class CrEventListenerHelper {
 					// 不推送
 					return null;
 				}
-
 			}
 			// filter asset nodes
 			List<String> assetNodeIds = StreamApiUtils.map(nodesData.getAssetNodes(),
@@ -66,7 +64,7 @@ public class CrEventListenerHelper {
 				// remove ports & access modes
 				if (!oldAssetNodeIds.contains(nodeId)) {
 					report = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
-					JSONObject coreData = report.getData().getData().getJSONObject("data");
+					JSONObject coreData = report.getData().getData();
 					coreData.getJSONObject("scene_element").put("ports", Lists.newArrayList());
 					coreData.put("scene_element_port_plugin_data", new JSONObject());
 					return JsonUtil.toJsonString(report);

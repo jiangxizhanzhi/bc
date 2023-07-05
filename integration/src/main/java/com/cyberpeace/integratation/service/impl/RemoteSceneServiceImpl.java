@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -365,7 +367,15 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	}
 
 	private String startScene(SceneStartContext context, String url) {
-		JSONObject data = HttpClientUtil.post(url, context, JSONObject.class);
+		JSONObject data = null;
+		try {
+			data = HttpClientUtil.post(url, context, JSONObject.class);
+		} catch (Exception e) {
+			log.error("topoId=[{}] startScene error, [{}]", context.getId(), e.getMessage());
+			if(e instanceof RemoteServiceException) {
+				throw new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION, e.getMessage());
+			}
+		}
 
 		if (null == data) {
 			log.error("topoId=[{}] startScene error, response data is null", context.getId());

@@ -3104,7 +3104,8 @@
   text-align: left;
   white-space: nowrap;
   line-height: 22px;
-  
+  word-wrap: break-word;
+  white-space: normal;
   
 }
 

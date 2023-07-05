@@ -73,12 +73,7 @@ public class TeamSceneEventListener extends MessageListener {
 		JSONObject jsonData = wsSceneReportBO.getData().getData().getJSONObject("data");
 		// 区分场景节点消息推送和节点登录信息推送
 		if (jsonData.containsKey("call_action")) {
-			for (CrRole role : roles) {
-				// 只推送给教员
-				if (role.isTeamTeacher()) {
-					pushDataToWebByUserIds(data, businessId, role.getUserIdList());
-				}
-			}
+			pushDataToWeb(data, businessId);
 			return true;
 		}
 		String nodeId = jsonData.getJSONObject("scene_element").getString("id");

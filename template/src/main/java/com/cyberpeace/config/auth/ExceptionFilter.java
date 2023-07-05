@@ -19,6 +19,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.WebConstant;
@@ -35,7 +36,6 @@ import com.cyberpeace.common.util.LocalStringUtil;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 @Slf4j
 public class ExceptionFilter implements Filter {
@@ -127,8 +127,14 @@ public class ExceptionFilter implements Filter {
 	 */
 	private void parseRemoteServiceException(HttpServletResponse httpServletResponse,
 			RemoteServiceException e) {
-		BusinessException businessException = new BusinessException(
-				ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
+		// mp返回msg则采用mp的msg，否则使用默认的msg
+		BusinessException businessException;
+		if (StringUtils.isBlank(e.getMessage())) {
+			businessException = new BusinessException(ErrorCode.REMOTE_SERVICE_EXCEPTION);
+		} else {
+			businessException = new BusinessException(ErrorCode.DIRECT_MSG_EXCEPTION,
+					e.getMessage());
+		}
 		parseBusinessException(httpServletResponse, businessException);
 	}
 

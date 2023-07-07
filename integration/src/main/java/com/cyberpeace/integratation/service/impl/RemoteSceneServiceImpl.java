@@ -113,8 +113,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 
 	private String SCENE_NODE_STATISTICS;
 
-	private String NODE_SCENE_URL;
-
 	private String NODE_SCREEN_RECORD;
 
 	private String ATTACK_TYPE_COUNT;
@@ -201,8 +199,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 		SCENE_NODE_LIST = MP_HOST + ConfigUtil.getContextProperty("scene.node.list");
 
 		SCENE_NODE_STATISTICS = MP_HOST + ConfigUtil.getContextProperty("scene.node.statistics");
-
-		NODE_SCENE_URL = MP_HOST + ConfigUtil.getContextProperty("mp.scene.cscenes");
 
 		NODE_SCREEN_RECORD = MP_HOST + ConfigUtil.getContextProperty("mp.screen.record");
 
@@ -307,11 +303,6 @@ public class RemoteSceneServiceImpl implements RemoteSceneService {
 	public JSONArray sceneTrend(String mpSceneId) {
 		String targetUrl = SCENE_TREND + "?sceneId=" + mpSceneId;
 		return HttpClientUtil.rawGet(targetUrl, JSONArray.class);
-	}
-
-	@Override
-	public JSONObject getCscene(String id) {
-		return HttpClientUtil.rawGet(NODE_SCENE_URL+"?id="+id, JSONObject.class);
 	}
 
 	@Override

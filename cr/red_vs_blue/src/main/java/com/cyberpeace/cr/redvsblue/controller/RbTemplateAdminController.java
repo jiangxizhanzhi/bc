@@ -195,11 +195,7 @@ public class RbTemplateAdminController {
 
 		BusinessTemplate businessTemplate = businessTemplateService
 				.getById(template.getBusinessTemplateId());
-		JSONObject cscene = remoteSceneService.getCscene(businessTemplate.getTopoId());
-		String logo="";
-		if (cscene!=null) {
-			logo= cscene.getObject("logo", String.class);
-		}
+
 		// 获取红蓝角色
 		String roleString = template.getRoleConfig();
 		JSONObject roleObject = JsonUtil.toJsonObject(roleString, JSONObject.class);
@@ -221,7 +217,11 @@ public class RbTemplateAdminController {
 			sceneManagerId = localScene.getResourceId();
 		}
 		baseInfoRsp.setSceneManagerId(sceneManagerId);
-		baseInfoRsp.setTopo(logo);
+
+		// 如果场景信息不为null，提取logo参数（默认为空字符串）
+		if (baseInfoRsp.getSceneConfigData() != null) {
+			baseInfoRsp.setTopo(baseInfoRsp.getSceneConfigData().getString("logo"));
+		}
 
 		// 获取返回对象
 		RbTemplateRsp teamTrainTemplateRsp = new RbTemplateRsp();

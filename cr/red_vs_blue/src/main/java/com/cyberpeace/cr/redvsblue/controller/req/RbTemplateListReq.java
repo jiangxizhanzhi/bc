@@ -22,6 +22,6 @@ public class RbTemplateListReq extends PageReqBase {
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
 
-	@ApiModelProperty(value = "id列表")
+	@ApiModelProperty(value = "id列表，传入字符串，多个用逗号分隔", dataType = "java.lang.String")
 	private List<String> ids;
 }

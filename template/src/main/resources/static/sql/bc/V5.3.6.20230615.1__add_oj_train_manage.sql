@@ -16,6 +16,10 @@ CREATE TABLE `oj_train_manage` (
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('default', '全部', NULL, NULL, NULL, NULL, '2023-06-15 17:54:56');
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('default', '全部', NULL, NULL, NULL, NOW(), NOW());
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('d86c5c66c84543a094f8f7de70b721ae', 'CISP培训框架', 'default', '[]', 1, NOW(), NOW());
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('e606c24294224adc8bab42a71e60a8ae', '网络安全概念', 'd86c5c66c84543a094f8f7de70b721ae', '[]', 1,  NOW(), NOW());
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('4aea1f4bf8fb487db2f3a6d2ba1f6ee6', '网络安全防护', 'd86c5c66c84543a094f8f7de70b721ae', '[]', 2, NOW(), NOW());
+INSERT INTO `oj_train_manage`(`resource_id`, `name`, `parent`, `course_ids`, `sort`, `create_time`, `update_time`) VALUES ('96b959611678417caa997dff270ac3c7', 'WEB安全', 'd86c5c66c84543a094f8f7de70b721ae', '[]', 3, NOW(), NOW());
 
 

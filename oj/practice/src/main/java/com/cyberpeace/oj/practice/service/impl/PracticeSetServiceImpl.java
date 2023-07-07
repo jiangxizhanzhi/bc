@@ -1,5 +1,23 @@
 package com.cyberpeace.oj.practice.service.impl;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,7 +31,6 @@ import com.cyberpeace.common.mdparser.MdParser;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.CustomFont;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.SystemPropertyService;
@@ -36,22 +53,8 @@ import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.md.MdTheoryPractice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -103,8 +106,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			log.error("Practice set not found! practice_set_id=[{}]", resourceId);
 			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
 		}
+		
+		// 获取习题集创建人ID、名称映射
+		Map<String, String> userNameMap = remoteUserService
+				.getIdNameMap(Lists.newArrayList(practiceSet.getCreateUserId()));
 
-		return entityToSetBo(practiceSet, authContext);
+		return entityToSetBo(practiceSet, authContext, userNameMap);
 	}
 
 	@Override
@@ -142,12 +149,12 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	 * @param practiceSet
 	 * @return
 	 */
-	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext) {
+	private AdminPracticeSetBo entityToSetBo(PracticeSet practiceSet, AuthContext authContext,
+			Map<String, String> userNameMap) {
 
 		AdminPracticeSetBo setBo = BeanUtils.copy(practiceSet, AdminPracticeSetBo.class);
 		setBo.setLogo(utilService.handlerFileUrl(practiceSet.getLogo()));
-		UserInfo userInfo = remoteUserService.getById(practiceSet.getCreateUserId());
-		setBo.setCreateUserName(null != userInfo ? userInfo.getUserName() : "");
+		setBo.setCreateUserName(userNameMap.getOrDefault(practiceSet.getCreateUserId(), ""));
 
 		if (practiceSet.getPracticeType().intValue() == PracticeSet.PracticeType.OPERATION.getCode()
 				.intValue()) {
@@ -187,7 +194,11 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		IPage<PracticeSet> iPage = practiceSetMapper.pageByNameAndType(page, listQuery,
 				authContext.getIsWeb());
 
-		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, authContext));
+		// 获取习题集创建人ID、名称映射
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
+				PracticeSet::getCreateUserId);
+
+		return iPage.convert(practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
 	}
 
 	@Override
@@ -464,7 +475,13 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 			return new ArrayList<>();
 		}
 		List<PracticeSet> practiceSets = practiceSetMapper.selectByIdsAndType(authIds, setType);
-		return StreamApiUtils.map(practiceSets, practiceSet -> entityToSetBo(practiceSet, authContext));
+
+		// 获取习题集创建人ID、名称映射
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(practiceSets,
+				PracticeSet::getCreateUserId);
+
+		return StreamApiUtils.map(practiceSets,
+				practiceSet -> entityToSetBo(practiceSet, authContext, userNameMap));
 	}
 
 	@Override

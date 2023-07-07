@@ -431,7 +431,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public void checkPermission(String roomId, String userId) {
+	public CrRole checkPermission(String roomId, String userId) {
 		CrRole crRole = crRoleMapper.getCrRoleByRoomIdAndUserId(roomId, userId);
 
 		if (crRole == null) {
@@ -439,6 +439,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 					userId);
 			throw new BusinessException(CrBusinessErrorCode.PERMISSION_DENIED);
 		}
+		return crRole;
 	}
 
 	@Override

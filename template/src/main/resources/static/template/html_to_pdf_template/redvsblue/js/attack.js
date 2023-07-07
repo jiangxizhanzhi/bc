@@ -1,6 +1,6 @@
 
 
-  // 攻击手法
+  // 攻击事件
   var attackChart = echarts.init(document.getElementById('attack'));
 
   attackOption = {
@@ -29,7 +29,7 @@
       left: 'center',
       top: '52%',
       style: {
-        text: '攻击手法',
+        text: '攻击事件',
         fontSize: 14,
         fill: 'rgba(255,255,255,0.9)',
         textAlign: 'center',

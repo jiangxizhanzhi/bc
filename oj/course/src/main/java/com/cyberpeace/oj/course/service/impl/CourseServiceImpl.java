@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.cs.service.SystemPropertyService;
-import com.cyberpeace.oj.course.dao.entity.*;
-import com.cyberpeace.oj.course.dao.mapper.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +24,15 @@ import com.cyberpeace.common.constant.PatternConstant;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.AuthTable;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
+import com.cyberpeace.cs.service.SystemPropertyService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.dao.context.SpecialCourseContext;
+import com.cyberpeace.oj.course.dao.entity.*;
+import com.cyberpeace.oj.course.dao.mapper.*;
 import com.cyberpeace.oj.course.service.CourseCategoryService;
 import com.cyberpeace.oj.course.service.CourseLessonService;
 import com.cyberpeace.oj.course.service.CourseService;
@@ -285,15 +284,25 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 			}
 			allCourseList.removeAll(studyCourseList);
 			studyCourseList.addAll(allCourseList);
-			List<CourseWebBo> courseWebBoList = studyCourseList.stream().map(course -> transferToBo(course, authContext))
-															   .collect(Collectors.toList());
+
+			// 提取用户名映射
+			Map<String, String> userNameMap = remoteUserService.getIdNameMap(studyCourseList,
+					Course::getCreateUserId);
+			List<CourseWebBo> courseWebBoList = studyCourseList.stream()
+					.map(course -> transferToBo(course, authContext, userNameMap))
+					.collect(Collectors.toList());
 			return PageUtil.getListResult(courseWebBoList, page, studyCourseList.size());
 		}
 		// 常规条件过滤
 		IPage<Course> iPage = courseMapper.listByPage(page, courseContext, courseIds,
 				authContext.getIsWeb());
 
-		IPage<CourseWebBo> webBoIPage = iPage.convert(course -> transferToBo(course, authContext));
+		// 提取用户名映射
+		Map<String, String> userNameMap = remoteUserService.getIdNameMap(iPage.getRecords(),
+				Course::getCreateUserId);
+
+		IPage<CourseWebBo> webBoIPage = iPage
+				.convert(course -> transferToBo(course, authContext, userNameMap));
 		return PageUtil.getListResult(webBoIPage);
 	}
 
@@ -304,7 +313,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 	 * @param authContext
 	 * @return
 	 */
-	private CourseWebBo transferToBo(Course course, AuthContext authContext) {
+	private CourseWebBo transferToBo(Course course, AuthContext authContext,
+			Map<String, String> userNameMap) {
 
 		if (null != authContext && !authContext.getIsWeb()) {
 			CourseInfoBo courseInfoBo = courseToBo(course, authContext.getIsWeb());
@@ -325,8 +335,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 				courseAdminBo.setShareCount(shares.size());
 			}
 
-			UserInfo userInfo = remoteUserService.getById(course.getCreateUserId());
-			courseAdminBo.setCreateUserName(null != userInfo ? userInfo.getName() : "");
+			courseAdminBo.setCreateUserName(userNameMap.getOrDefault(course.getCreateUserId(), ""));
 			return courseAdminBo;
 
 		} else {

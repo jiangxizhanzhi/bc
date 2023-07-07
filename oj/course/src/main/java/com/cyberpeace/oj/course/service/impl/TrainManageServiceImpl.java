@@ -210,7 +210,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
             log.error("TrainManage not found! resourceId=[{}]", req.getResourceId());
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
-        verifyNameExists(req.getName(), req.getResourceId(), req.getParent());
+        verifyNameExists(req.getName(), req.getResourceId(), trainByResource.getParent());
         trainByResource.setName(req.getName());
         return trainManageMapper.updateById(trainByResource) > 0;
     }
@@ -315,7 +315,7 @@ public class TrainManageServiceImpl extends ServiceImpl<TrainManageMapper, Train
                     for (TrainManage manage : childList) {
                         TrainManage newChild = new TrainManage();
                         newChild.setResourceId(IDGeneratorUtil.getID());
-                        newChild.setName(manage.getName() + "(复制)");
+                        newChild.setName(manage.getName());
                         newChild.setParent(newTrainManage.getResourceId());
                         newChild.setCourseIds(manage.getCourseIds());
                         newChild.setSort(getCurrentLevelSize(newTrainManage.getResourceId()) + 1);

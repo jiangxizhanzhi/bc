@@ -81,6 +81,9 @@ public interface CrRoleService extends IService<CrRole> {
 	List<MissionSchemeObject<MissionContext>> getCrRoleMissionByRoomIdAndUserId(String roomId,
 			String userId);
 
+
+	Map<String,List<MissionSchemeObject<MissionContext>>> getCrRoleMissionByRoomIdAndCrRoles(String roomId,
+																				List<CrRole> crRoles);
 	/** 计算当前角色的任务数量
 	 * @param crRole 角色
 	 * @return 任务数量

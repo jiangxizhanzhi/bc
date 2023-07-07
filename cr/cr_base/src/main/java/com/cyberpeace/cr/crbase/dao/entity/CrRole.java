@@ -1,7 +1,9 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -124,6 +126,17 @@ public class CrRole extends BaseTable {
 			}
 		}
 		return null;
+	}
+
+	public static Map<String, CrRole> getUserIdCrRoleMap(List<CrRole> crRoles) {
+		Map<String, CrRole> res =new HashMap<>();
+		for (CrRole crRole : crRoles) {
+			for (String userId : crRole.getUserIdList()) {
+				res.put(userId, crRole);
+			}
+
+		}
+		return res;
 	}
 
 	public void setRoleGroup(Integer roleGroup) {

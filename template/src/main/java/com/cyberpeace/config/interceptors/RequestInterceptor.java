@@ -42,7 +42,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 				request.getMethod(), request.getRequestURI());
 
 		// 记录接口调用参数
-		logger.info(REQUEST_PARAM_LOG_FORMATTER, JsonUtil.toJsonString(request.getParameterMap()));
+		logger.debug(REQUEST_PARAM_LOG_FORMATTER, JsonUtil.toJsonString(request.getParameterMap()));
 	}
 
 }

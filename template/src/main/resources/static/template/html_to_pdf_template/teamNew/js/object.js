@@ -60,7 +60,7 @@ function object(elementId,score,allscore) {
         "value": score,
         "name": "得分 "+score
       }, {
-        "value": allscore,
+        "value": allscore-score,
         "name": "总分 "+allscore
       }]
     }, {

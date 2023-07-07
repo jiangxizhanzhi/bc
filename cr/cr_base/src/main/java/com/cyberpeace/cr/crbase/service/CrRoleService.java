@@ -155,8 +155,9 @@ public interface CrRoleService extends IService<CrRole> {
 	 * 查询用户是否有接入训练实例权限
 	 * @param roomId 训练实例id
 	 * @param userId 用户id
+	 * @return
 	 */
-	void checkPermission(String roomId, String userId);
+	CrRole checkPermission(String roomId, String userId);
 
 	/**
 	 * 通过房间和组获取角色

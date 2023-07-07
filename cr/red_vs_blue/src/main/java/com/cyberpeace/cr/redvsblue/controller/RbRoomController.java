@@ -45,8 +45,10 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReleaseStageInfo;
+import com.cyberpeace.cr.crbase.service.context.role.BaseRole;
 import com.cyberpeace.cr.crbase.service.context.role.UserRole;
 import com.cyberpeace.cr.crbase.service.context.score.ScoreTrendReq;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomModifyReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbRoomReq;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateListReq;
@@ -156,6 +158,19 @@ public class RbRoomController {
 		crRoleService.checkPermission(resource_id, UserInfoContext.getUserContext().getUserId());
 		RbRoomRsp rsp = rbRoomService.getRoomRsp(resource_id);
 		return new BaseRsp<>(rsp);
+	}
+
+	@ApiOperation("查询当前用户角色")
+	@GetMapping("get_role")
+	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
+	public BaseRsp<BaseRole> getRbRoomRole(
+			@ApiParam(name = "resource_id", value = "训练id", required = true) String resource_id) {
+		CrCommonValidator.validateId(resource_id);
+		CrRole role = crRoleService.checkPermission(resource_id,
+				UserInfoContext.getUserContext().getUserId());
+		BaseRole res = new BaseRole();
+		res.setRoleGroup(role.getRoleGroup());
+		return new BaseRsp<>(res);
 	}
 
 	@ApiOperation("训练说明")

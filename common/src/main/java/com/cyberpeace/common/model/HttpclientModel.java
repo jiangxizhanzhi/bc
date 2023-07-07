@@ -14,7 +14,7 @@ public class HttpclientModel {
 
 	private static final Logger LOG = LoggerFactory.getLogger("mp");
 
-	private static final String LOG_FORMATTER = "httpclientutil |{}|{}|{}";
+	private static final String LOG_FORMATTER = "httpclientutil |{}|{}|{}|{}";
 
 	/**
 	 * 发送给对端系统的跟踪路由
@@ -35,6 +35,8 @@ public class HttpclientModel {
 
 	private String url;
 
+	private String method;
+
 	public HttpclientModel(String traceId, String url) {
 		if (StringUtils.isBlank(traceId)) {
 			this.traceId = IDGeneratorUtil.getID();
@@ -49,17 +51,17 @@ public class HttpclientModel {
 
 	public void doRemoteException(Exception e) {
 		callTime = System.currentTimeMillis() - startTime;
-		LOG.error(LOG_FORMATTER, new Object[] { callTime, url, null }, e);
+		LOG.error(LOG_FORMATTER, new Object[] { callTime, method, url, null }, e);
 	}
 
 	public void addLog(String httpResponse) {
 		callTime = System.currentTimeMillis() - startTime;
 		// debug的时候才输出接口返回， 正常情况下输出调用时间，结果可以忽略
 		if (LOG.isDebugEnabled()) {
-			LOG.debug(LOG_FORMATTER, new Object[] { callTime, url, httpResponse });
+			LOG.debug(LOG_FORMATTER, new Object[] { callTime, method, url, httpResponse });
 		}
 		if (LOG.isInfoEnabled()) {
-			LOG.info(LOG_FORMATTER, new Object[] { callTime, url, "success" });
+			LOG.info(LOG_FORMATTER, new Object[] { callTime, method, url, "success" });
 		}
 	}
 }

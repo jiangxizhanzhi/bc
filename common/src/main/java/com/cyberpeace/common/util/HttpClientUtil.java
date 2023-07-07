@@ -156,6 +156,7 @@ public class HttpClientUtil {
 	private static <T> T doHttp(HttpUriRequest httpRequest, Class<T> resultType) {
 		HttpResponse response = null;
 		String httpResponse = null;
+		HttpclientContext.getContext().setMethod(httpRequest.getMethod());
 		try {
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);

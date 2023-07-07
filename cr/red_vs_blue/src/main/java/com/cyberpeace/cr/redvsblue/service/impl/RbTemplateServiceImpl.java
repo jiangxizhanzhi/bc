@@ -122,9 +122,11 @@ public class RbTemplateServiceImpl extends ServiceImpl<RbTemplateMapper, RbTempl
 	@Override
 	public IPage<RbTemplateData> page(ListQuery listQuery) {
 		Page page = listQuery.toPageParam();
+		if (listQuery.getIds() == null || listQuery.getIds().isEmpty()) {
+			listQuery.setIds(businessTemplateService
+					.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));
+		}
 
-		listQuery.setIds(businessTemplateService
-				.selectAuthIdsByUserId(UserInfoContext.getUserContext().getUserId()));
 
 		return rbTemplateMapper.listRbTemplate(page, listQuery);
 	}

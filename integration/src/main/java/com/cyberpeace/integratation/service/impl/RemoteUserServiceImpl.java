@@ -1,12 +1,10 @@
 package com.cyberpeace.integratation.service.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -205,6 +203,21 @@ public class RemoteUserServiceImpl implements RemoteUserService {
 			log.error("invalid user_id: " + idsSet);
 		}
 		return userInfos.stream().collect(Collectors.toMap(UserInfo::getUserId, UserInfo::getName));
+	}
+
+	@Override
+	public <T> Map<String, String> getIdNameMap(List<T> entities, Function<T, String> userIdGetter) {
+
+		// 如果传入的实体列表为空，则直接返回空map
+		if (CollectionUtils.isEmpty(entities)) {
+			return Collections.emptyMap();
+		}
+
+		// 使用方法参数提取用户ID列表，忽略结果为空的值，并对结果进行去重
+		List<String> userIds = entities.stream().map(userIdGetter).filter(StringUtils::isNotBlank)
+				.distinct().collect(Collectors.toList());
+
+		return getIdNameMap(userIds);
 	}
 
 	@Override

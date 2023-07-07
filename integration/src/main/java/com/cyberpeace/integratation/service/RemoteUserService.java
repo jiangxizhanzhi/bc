@@ -3,6 +3,7 @@ package com.cyberpeace.integratation.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.model.user.UserInfo;
@@ -27,6 +28,15 @@ public interface RemoteUserService {
 	List<UserInfo> getByIdList(List<String> ids);
 
 	Map<String, String> getIdNameMap(List<String> ids);
+
+	/**
+	 * 通过实体列表查询用户名映射
+	 *
+	 * @param entities 实体列表
+	 * @param userIdGetter 获取用户名的方法
+	 * @return {@code Map<String, String>}
+	 */
+	<T> Map<String, String> getIdNameMap(List<T> entities, Function<T, String> userIdGetter);
 
 	Map<String, UserInfo> getIdUserInfoMap(List<String> userIds);
 

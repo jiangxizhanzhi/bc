@@ -198,18 +198,15 @@ public class TeamTrainTemplateController {
 		LocalScene localScene = localSceneService
 				.getByBusinessInstanceId(businessTemplate.getResourceId());
 
-		JSONObject cscene = remoteSceneService.getCscene(businessTemplate.getTopoId());
-		String logo="";
-		if (cscene!=null) {
-			logo= cscene.getObject("logo", String.class);
-		}
-
 		if (localScene != null) {
 			sceneManagerId = localScene.getResourceId();
 		}
 		baseInfoRsp.setSceneManagerId(sceneManagerId);
 
-		baseInfoRsp.setTopo(logo);
+		// 如果场景信息不为null，提取logo参数（默认为空字符串）
+		if (baseInfoRsp.getSceneConfigData() != null) {
+			baseInfoRsp.setTopo(baseInfoRsp.getSceneConfigData().getString("logo"));
+		}
 
 		TeamTrainTemplateRsp teamTrainTemplateRsp = new TeamTrainTemplateRsp();
 

@@ -339,6 +339,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 		List<GetScoreRsp> getScoreRsps = new ArrayList<>();
 		List<UserData> userDataList = crRoleService.getUserDatas(userIds);
 		List<UserRole> userRoles = new ArrayList<>();
+		Map<String, List<MissionSchemeObject<MissionContext>>> missionSchemeMap = crRoleService.getCrRoleMissionByRoomIdAndCrRoles(roomId, crRoles);
 		for (UserData userData : userDataList) {
 			CrRole crRole = userIdRoleMap.getOrDefault(userData.getResourceId(), new CrRole());
 			Integer type = crRole.getRoleGroup();
@@ -353,8 +354,7 @@ public class CrScoreServiceImpl extends ServiceImpl<CrScoreMapper, CrScore> impl
 			scoreTrends.add(new StudentScoreTrend(userData, successList, roleGroup,
 					trainReportContext.getTimeList(),trainReportContext.getTimeStringList()));
 			// 人员得分
-			List<MissionSchemeObject<MissionContext>> userMissionList = crRoleService
-					.getCrRoleMissionByRoomIdAndUserId(roomId, userData.getResourceId());
+			List<MissionSchemeObject<MissionContext>> userMissionList = missionSchemeMap.getOrDefault(userData.getResourceId(), new ArrayList<>());
 			List<TaskLogRsp> logRsps = taskLogRsps.stream().filter(a -> taskIds.contains(a.getTaskId())).collect(Collectors.toList());
 			getScoreRsps.add(new GetScoreRsp(userData, userTaskList, missionMap, scoreMap, crRole, skillScoreContextMap.get(userData.getResourceId()), userMissionList,
 					logRsps));

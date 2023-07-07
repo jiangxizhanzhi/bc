@@ -270,6 +270,64 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 		return missionSchemeObjectList;
 	}
 
+	public Map<String, List<MissionSchemeObject<MissionContext>>> getCrRoleMissionByRoomIdAndCrRoles(String roomId, List<CrRole> crRoles) {
+		List<String> userIds = crRoles.stream().map(a -> a.getUserIdList())
+				.flatMap(Collection::stream).collect(Collectors.toList());
+		//通过crRoles获取userId为key，crRole为value的map
+		Map<String,CrRole> userIdCrRoleMap = CrRole.getUserIdCrRoleMap(crRoles);
+		//获取所有用户的任务
+		List<TaskContext> tasks = crTaskService.getTaskContextByRoomIdAndUsers(roomId, userIds);
+		Map<String, List<TaskContext>> taskContextMap = tasks.stream().collect(Collectors.groupingBy(TaskContext::getUserId));
+		//获取所有角色对应的任务模板
+		Map<String, List<MissionSchemeObject<MissionContext>>> missionSchemeMap = Maps.newHashMap();
+		for (CrRole crRole : crRoles) {
+			List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = getBaseMissionByRole(
+					crRole);
+			missionSchemeMap.put(crRole.getResourceId(), missionSchemeObjectList);
+		}
+		//用户对应的训练记录
+		Map<String, List<MissionSchemeObject<MissionContext>>> resMap = new HashMap<>();
+		for (String userId : userIds) {
+			List<TaskContext> userTaskContextList = taskContextMap.getOrDefault(userId, new ArrayList<>());
+			Map<String, TaskContext> taskStatusMap = userTaskContextList.stream().collect(Collectors
+					.toMap(TaskContext::getMissionId, Function.identity()));
+			String resourceId = userIdCrRoleMap.getOrDefault(userId, new CrRole()).getResourceId();
+			List<MissionSchemeObject<MissionContext>> missionSchemeObjectList = missionSchemeMap.getOrDefault(resourceId, new ArrayList<>());
+			List<MissionSchemeObject<MissionContext>> missionSchemeObjects = Lists.newArrayList();
+			for (MissionSchemeObject<MissionContext> schemeObject : missionSchemeObjectList) {
+				//复制一份schemeObject
+				MissionSchemeObject<MissionContext> newSchemeObject = new MissionSchemeObject<>();
+				newSchemeObject.setStage(schemeObject.getStage());
+				newSchemeObject.setMissions(BeanUtils.deepCopyList(schemeObject.getMissions(),MissionContext.class));
+				newSchemeObject.setDynamic(schemeObject.getDynamic());
+				missionSchemeObjects.add(newSchemeObject);
+			}
+			missionSchemeObjects.forEach(missionSchemeObject -> {
+
+				List<MissionContext> missionContextList = Lists.newArrayList();
+				missionSchemeObject.getMissions().forEach(mission -> {
+					if (taskStatusMap.containsKey(mission.getResourceId())) {
+						MissionContext newMission = new MissionContext();
+						newMission.setResourceId(mission.getResourceId());
+						newMission.setTitle(mission.getTitle());
+						newMission.setCategoryId(mission.getCategoryId());
+						newMission.setDescription(mission.getDescription());
+						TaskContext taskContext = taskStatusMap.get(mission.getResourceId());
+						newMission.setState(taskContext.getStatus());
+						newMission.setTrainingRecord(new TrainingRecord(taskContext.getLastSubmitTime(),taskContext.getUserAnswer()));
+						newMission.setStateString(EnumUtils.getEnumDescByCode(newMission.getState(),CrTask.TaskStatus.class));
+						missionContextList.add(newMission);
+					}
+
+				});
+				missionSchemeObject.setMissions(missionContextList);
+
+			});
+			resMap.put(userId,missionSchemeObjects);
+		}
+
+		return resMap;
+	}
 	@Override
 	public Integer getMissionCount(CrRole crRole) {
 		int count = 0;

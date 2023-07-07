@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @ApiModel
 @Data
 public class TeamTemplateListReq extends PageReqBase {
@@ -21,5 +23,7 @@ public class TeamTemplateListReq extends PageReqBase {
 
 	@ApiModelProperty(value = "难度")
 	private Integer difficult;
+
+	private List<String> ids;
 
 }

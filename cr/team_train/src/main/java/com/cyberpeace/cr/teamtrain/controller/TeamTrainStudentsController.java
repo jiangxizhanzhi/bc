@@ -22,12 +22,14 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.MissionWsCode;
+import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.SubmitMissionsReq;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SchemeListMissionRsp;
@@ -48,12 +50,16 @@ import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUsers;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamCommonDeviceReq;
+import com.cyberpeace.cr.teamtrain.controller.req.TeamRoomListReq;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainDeviceReq;
 import com.cyberpeace.cr.teamtrain.controller.rsp.TeamRoomRsp;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamCommonDevice;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoomData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamTrainDevice;
-import com.cyberpeace.cr.teamtrain.service.*;
+import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
+import com.cyberpeace.cr.teamtrain.service.TeamDeviceService;
+import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
+import com.cyberpeace.cr.teamtrain.service.TeamTeacherService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamCommonDeviceContext;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainDeviceContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
@@ -85,9 +91,6 @@ public class TeamTrainStudentsController {
 	private CrTaskService crTaskService;
 
 	@Autowired
-	private BusinessTemplateService businessTemplateService;
-
-	@Autowired
 	private RemoteTopoService remoteTopoService;
 
 	@Autowired
@@ -104,9 +107,6 @@ public class TeamTrainStudentsController {
 
 	@Autowired
 	private TeamCommonDeviceService teamCommonDeviceService;
-
-	@Autowired
-	private TeamSceneService teamSceneService;
 
 	@Autowired
 	private CrSceneService crSceneService;
@@ -157,6 +157,22 @@ public class TeamTrainStudentsController {
 		teamRoomRsp.setNodesCount(
 				topologyNodesStats.get(teamRoomData.getCopyedTopoId()).getNodeCounts());
 		return new BaseRsp<TeamRoomRsp>(teamRoomRsp);
+	}
+
+	/**
+	 * 5.4弃用
+	 *
+	 * @param listReq 列表请求体
+	 * @return {@code BaseRsp<ListRsp<TeamRoomRsp>>}
+	 */
+	@ApiOperation("列表查询")
+	@GetMapping("/list")
+	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
+	public BaseRsp<ListRsp<TeamRoomRsp>> list(@Validated TeamRoomListReq listReq) {
+		ListQuery listQuery = BeanUtils.copy(listReq, ListQuery.class);
+		listQuery.setPer_page(listReq.getPerPage());
+		ListRsp<TeamRoomRsp> rsp = teamRoomService.listRoom(listQuery);
+		return new BaseRsp<>(rsp);
 	}
 
 	/**

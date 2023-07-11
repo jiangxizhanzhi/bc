@@ -288,4 +288,14 @@ public class CourseValidateHandler {
 					EnumUtils.getEnumDescByCode(lessonType, CourseLesson.LessonType.class));
 		}
 	}
+
+	/**
+	 * 校验是否为内置课程
+	 * @param course
+	 */
+	public void validateBuiltin(Course course) {
+		if (course.getBuiltin()) {
+			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_COURSES, course.getName());
+		}
+	}
 }

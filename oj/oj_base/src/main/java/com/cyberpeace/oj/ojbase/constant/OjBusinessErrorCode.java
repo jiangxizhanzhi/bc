@@ -285,8 +285,11 @@ public interface OjBusinessErrorCode {
 	/** 课时类型不正确，当前类型为xxx*/
 	String ACCESS_LESSON_TYPE = "102093";
 
+	/** xxx为内置课程，无法导出*/
+	String UNABLE_TO_EXPORT_BUILTIN_COURSES = "102094";
+
 	/** 课程培训管路框架错误*/
-	String TRAIN_MANAGE_LEVEL_ERROR= "102094";
+	String TRAIN_MANAGE_LEVEL_ERROR= "102095";
 
 
 }

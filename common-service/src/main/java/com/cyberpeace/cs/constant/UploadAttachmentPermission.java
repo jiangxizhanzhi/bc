@@ -1,9 +1,9 @@
 package com.cyberpeace.cs.constant;
 
-import com.cyberpeace.common.baseinterface.GenericEnum;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 
+import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.util.FileUtil;
 
@@ -25,7 +25,10 @@ public enum UploadAttachmentPermission implements GenericEnum {
     CMS_MISSION_MD_ATTACHMENT(8,"后台任务编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_CR_MISSION_SCHEME}),
     CMS_LESSON_HANDOUT_ATTACHMENT(9,"后台课时讲义附件上传", FileTypeContant.HANDOUT_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
     CMS_LESSON_VIDEO_ATTACHMENT(10,"后台课时视频附件上传", FileTypeContant.VIDEO_ATTACHMENT_TYPE, new String[]{MenuConstant.CMS_COURSES}),
-    WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[]{MenuConstant.WEB_OJ_THEORY_PRACTICE});
+	WEB_OJ_THEORY_PRACTICE(11, "前台理论题MD编辑器附件上传", FileTypeContant.MD_ATTACHMENT_TYPE, new String[] { MenuConstant.WEB_OJ_THEORY_PRACTICE }),
+    WEB_MISSION_MD_ATTACHMENT(12, "前台学员答题编辑MD附件上传", FileTypeContant.MD_ATTACHMENT_TYPE,
+					new String[] { MenuConstant.WEB_CR_RED_VS_BLUE, MenuConstant.WEB_CR_TEAM_TRAIN,
+							MenuConstant.WEB_CR_SINGLE_TRAIN });
 
     @Getter
     public final Integer code;

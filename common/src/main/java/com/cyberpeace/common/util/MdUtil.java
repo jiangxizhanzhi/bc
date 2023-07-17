@@ -3,6 +3,7 @@ package com.cyberpeace.common.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -209,25 +210,33 @@ public class MdUtil {
 		File markdownFile = new File(markdownPath);
 		String content = FileUtil.getContent(markdownFile);
 
-		// 文件路径替换
+		// 文件路径./xxx/xxx.png或/xxx/xxx.png -> xxx/xxx.png
+		Set<String> imagePathSet = new HashSet<>();
 		for (String imagePath : matchStrSet) {
-			// 部分markdown文件中文件路径 存在./xxx/xxx.png 所以要把逗点给去掉
 			String relativePath = imagePath;
-			if (imagePath.startsWith(CommonConstant.PERIOD)) {
-				relativePath = imagePath.replaceFirst(CommonConstant.PERIOD,
-						CommonConstant.EMPTY_STRING);
+			if (imagePath.startsWith(CommonConstant.LEFT_PERIOD_OBLIQUE_LINE)) {
+				relativePath = imagePath.replaceFirst(CommonConstant.LEFT_PERIOD_OBLIQUE_LINE,CommonConstant.EMPTY_STRING);
 			}
+			if (imagePath.startsWith(CommonConstant.LEFT_OBLIQUE_LINE)) {
+				relativePath = imagePath.replaceFirst(CommonConstant.LEFT_OBLIQUE_LINE,CommonConstant.EMPTY_STRING);
+			}
+			imagePathSet.add(relativePath);
+		}
+		log.info("replaceImgContent matchStrSet:{}; imagePathSet:{}", matchStrSet, imagePathSet);
+		// 文件路径替换
+		for (String imagePath : imagePathSet) {
 
-			File replaceFile = new File(currentDir, relativePath);
+			File replaceFile = new File(currentDir, imagePath);
 			if (!replaceFile.exists()) {
 				log.error("File not exist! file_path=[{}]", replaceFile.getAbsolutePath());
 				String path = StringUtils.isBlank(handoutPath) ? replaceFile.getAbsolutePath()
 						: handoutPath + CommonConstant.LEFT_OBLIQUE_LINE + imagePath;
 				throw new BusinessException(ErrorCode.FILE_ERROR_FAIL, path);
 			}
+			content = content.replace(CommonConstant.LEFT_PERIOD_OBLIQUE_LINE + imagePath, CommonConstant.LEFT_OBLIQUE_LINE + imagePath);
+			content = content.replace(CommonConstant.LEFT_OBLIQUE_LINE + imagePath, imagePath);
 			content = content.replace(imagePath, replaceFile.getAbsolutePath());
 		}
-		
 		return content;
 	}
 

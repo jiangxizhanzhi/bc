@@ -1,14 +1,13 @@
 package com.cyberpeace.gateway.controller;
 
-import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.mapper.BusinessTemplateMapper;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.situation.controller.res.SceneAllDataRes;
 import com.cyberpeace.situation.constant.SituationErrorCode;
+import com.cyberpeace.situation.controller.res.SceneAllDataRes;
 import com.cyberpeace.situation.model.DynamicSchemeProcess;
 import com.cyberpeace.situation.model.Instruction;
 import com.cyberpeace.situation.model.SceneData;
@@ -97,12 +96,8 @@ public class ExternalSituationController {
 	@PostMapping("/recovery")
 	public void recovery(
 			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId){
-		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
-		if (businessTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 		//恢复场景下的节点状态
-		attackMessageHistoryService.recovery(businessTemplate.getTopoId());
+		attackMessageHistoryService.recovery(convertId(resourceId));
 	}
 
 	@ApiOperation("情况回放")
@@ -111,22 +106,14 @@ public class ExternalSituationController {
 			@ApiParam(name = "scene_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId,
 			@ApiParam(value = "开始时间") @RequestParam(value = "start_time", required = false) String startTime,
 			@ApiParam(value = "截止时间") @RequestParam(value = "end_time", required = false) String endTime){
-		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(resourceId);
-		if (businessTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
 		//回放当前场景动效
-		dynamicSchemeService.playbackPushDynamicSchemeToRoom(businessTemplate.getTopoId(), TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
+		dynamicSchemeService.playbackPushDynamicSchemeToRoom(convertId(resourceId), TimeUtil.toDate1(startTime), TimeUtil.toDate1(endTime));
 	}
 
 	@ApiOperation("接收指令")
 	@PostMapping("/receive_instruction")
 	public BaseRsp	receiveInstruction(@RequestBody @Validated Instruction instruction) {
-		BusinessTemplate businessTemplate = businessTemplateMapper.selectById(instruction.getResourceId());
-		if (businessTemplate == null) {
-			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
-		}
-		situationTimeService.executeInstruction(instruction, businessTemplate.getTopoId());
+		situationTimeService.executeInstruction(instruction, convertId(instruction.getResourceId()));
 		return new BaseRsp();
 	}
 
@@ -134,22 +121,22 @@ public class ExternalSituationController {
 	@GetMapping("/scene_data")
 	public BaseRsp<SceneAllDataRes> getSceneData(
 			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
-		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
-		if(businessTemplate == null){
-			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
-		}
-		return new BaseRsp<>(situationHandlerService.getSceneAllDate(businessTemplate.getTopoId()));
+		return new BaseRsp<>(situationHandlerService.getSceneAllDate(convertId(resourceId)));
 	}
 
 	@ApiOperation("获取拓扑数据")
 	@GetMapping("/topo")
 	public BaseRsp<SceneData> getTopoData(
 			@ApiParam(name = "resource_id", value = "场景编号", required = true) @RequestParam(value = "resource_id") String resourceId) {
+		return new BaseRsp<>(topoHandlerService.getSceneData(null, convertId(resourceId)));
+	}
+
+	private String convertId(String resourceId) {
 		BusinessTemplate businessTemplate = businessTemplateService.getById(resourceId);
-		if(businessTemplate == null){
+		if (businessTemplate == null) {
 			throw new BusinessException(SituationErrorCode.CANNOT_FIND_TOPO);
 		}
-		return new BaseRsp<>(topoHandlerService.getSceneData(null, businessTemplate.getTopoId()));
+		return businessTemplate.getTopoId();
 	}
 
 }

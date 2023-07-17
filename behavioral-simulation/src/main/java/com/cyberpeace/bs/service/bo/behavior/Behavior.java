@@ -1,12 +1,13 @@
 package com.cyberpeace.bs.service.bo.behavior;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.compress.utils.Lists;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.compress.utils.Lists;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 网络行为
@@ -35,7 +36,7 @@ public class Behavior extends BehaviorSimple implements Serializable {
     /**
      * 网络类型
      */
-    @ApiModelProperty(value = "网络模型")
+	@ApiModelProperty(value = "网络模型，1：公网，2：场景内网")
     private Integer networkType;
 
     /**

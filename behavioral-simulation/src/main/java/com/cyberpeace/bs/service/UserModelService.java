@@ -1,12 +1,12 @@
 package com.cyberpeace.bs.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorWithVariable;
 import com.cyberpeace.bs.service.bo.model.*;
 import com.cyberpeace.common.model.ListRsp;
-
-import java.util.List;
 
 /**
  * 用户模型Service
@@ -81,10 +81,11 @@ public interface UserModelService {
     UserModel getOrException(String resourceId);
 
     /**
-     * 批量获取用户模型包含的行为列表，并附带行为变量值
-     *
-     * @param userModelIds
-     * @return
-     */
+	 * 批量获取用户模型包含的行为列表，并附带行为变量值
+	 * 去掉内网行为的host变量
+	 *
+	 * @param userModelIds
+	 * @return
+	 */
     List<UserModelWithVariable> getBehaviorsBatchWithVariables(List<String> userModelIds);
 }

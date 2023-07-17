@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.constant.BsConstants;
 import com.cyberpeace.bs.constant.BsErrorCode;
 import com.cyberpeace.bs.dao.entity.UserModel;
 import com.cyberpeace.bs.dao.mapper.UserModelMapper;
@@ -212,7 +213,10 @@ public class UserModelServiceImpl implements UserModelService {
 			behaviorIdsAll.addAll(behaviorIds);
 		}
 		// get behaviors and variables
-		List<LcBehaviorRspBo> rspBos = lcService.getLcBehaviorListByIds(behaviorIdsAll, true);
+		List<LcBehaviorRspBo> rspBos = Lists.newArrayList();
+		if (!behaviorIdsAll.isEmpty()) {
+			rspBos = lcService.getLcBehaviorListByIds(behaviorIdsAll, true);
+		}
 		Map<String, BehaviorWithVariable> behaviorMap = StreamApiUtils.toMap(rspBos,
 				LcBehaviorRspBo::getId, this::createBehaviorWithVariable);
 		// 组装响应数据
@@ -279,7 +283,13 @@ public class UserModelServiceImpl implements UserModelService {
 				VariableSimple variableSimple = new VariableSimple();
 				variableSimple.setId(lcVariable.getDataId());
 				variableSimple.setName(lcVariable.getName());
-				variableSimple.setValue(lcVariable.getVarValue());
+				// 去掉内网行为的host变量
+				if (BsConstants.NetworkType.INTRANET.equals(rspBo.getNetModel())
+						&& "host".equals(variableSimple.getName())) {
+					variableSimple.setValue("");
+				} else {
+					variableSimple.setValue(lcVariable.getVarValue());
+				}
 				variableSimple.setNote(lcVariable.getNote());
 				behavior.getVariables().add(variableSimple);
 			}

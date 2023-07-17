@@ -51,4 +51,23 @@ public interface BsConstants {
      * 小时的汉字
      */
     String HOUR = "时";
+
+	/**
+	 * 网络类型
+	 *
+	 * @author SN
+	 * @date 2023/07/17
+	 */
+	interface NetworkType {
+
+		/**
+		 * 互联网
+		 */
+		Integer INTERNET = 1;
+
+		/**
+		 * 内网
+		 */
+		Integer INTRANET = 2;
+	}
 }

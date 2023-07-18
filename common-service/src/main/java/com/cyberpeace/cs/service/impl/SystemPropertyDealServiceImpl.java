@@ -17,7 +17,7 @@ public class SystemPropertyDealServiceImpl implements SystemPropertyDealService 
 
     @PostConstruct
     public void init() {
-        systemPropertyDealServiceMap.put(1, SpringContextUtil.getBean("systemPropertyUrlDealServiceImpl"));
+        systemPropertyDealServiceMap.put(1, new SystemPropertyUrlDealServiceImpl());
     }
 
 

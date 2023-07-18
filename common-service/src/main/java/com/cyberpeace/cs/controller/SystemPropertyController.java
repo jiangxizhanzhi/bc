@@ -2,9 +2,11 @@ package com.cyberpeace.cs.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.cs.dao.entity.SystemProperty;
+import com.cyberpeace.cs.service.SystemPropertyDealService;
 import com.cyberpeace.cs.service.SystemPropertyService;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +32,10 @@ public class SystemPropertyController {
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 
+	@Qualifier("systemPropertyDealServiceImpl")
+	@Autowired
+	private SystemPropertyDealService systemPropertyDealService;
+
 	@ApiOperation("配置信息查询")
 	@GetMapping("/list_by_type")
 	public BaseRsp<List<SystemProperty>>
@@ -38,7 +44,11 @@ public class SystemPropertyController {
 		if (type != null) {
 			queryWrapper.lambda().eq(SystemProperty::getType, type);
 		}
-		return new BaseRsp<>(systemPropertyService.list(queryWrapper));
+		List<SystemProperty> list = systemPropertyService.list(queryWrapper);
+		if (type != null) {
+			systemPropertyDealService.dealSystemPropertyListByType(list, type);
+		}
+		return new BaseRsp<>(list);
 	}
 
 }

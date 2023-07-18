@@ -30,7 +30,7 @@ public class SystemPropertyController {
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 
-	@ApiOperation("靶场应用运行图")
+	@ApiOperation("配置信息查询")
 	@GetMapping("/list_by_type")
 	public BaseRsp<List<SystemProperty>>
 			appRunningInfo(@RequestParam(value = "type", required = false) Integer type) {

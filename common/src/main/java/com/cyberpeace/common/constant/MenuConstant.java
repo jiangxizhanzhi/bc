@@ -51,7 +51,7 @@ public interface MenuConstant {
     String WEB_CR_TOOL_GHDB = "ghdb-library";
 
     //个人中心
-    String WEB_PERSON_CENTER = "personal-folder";
+    String WEB_PERSON_CENTER = "personal-center";
 
     //靶场测评
     String WEB_CR_EVALUATION = "range-test";

@@ -1,12 +1,18 @@
 package com.cyberpeace.bs.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSON;
+import com.cyberpeace.bs.constant.BsErrorCode;
+import com.cyberpeace.bs.utils.model.LcResponse;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.LcServiceException;
+import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.HttpclientContext;
+import com.cyberpeace.common.model.HttpclientModel;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.SystemPropUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -22,19 +28,11 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.impl.TraceIdContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-import com.cyberpeace.bs.constant.BsErrorCode;
-import com.cyberpeace.bs.utils.model.LcResponse;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.HttpclientContext;
-import com.cyberpeace.common.model.HttpclientModel;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.SystemPropUtil;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * 远程http客户端
@@ -110,7 +108,7 @@ public class LcHttpClient {
 			// 1、调用远程服务
 			response = getClient().execute(httpRequest);
 			if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-				throw new RemoteServiceException(response.getStatusLine().getStatusCode() + "");
+				throw new LcServiceException(response.getStatusLine().getStatusCode());
 			}
 
 			// 2、解析远程服务的返回值
@@ -125,14 +123,14 @@ public class LcHttpClient {
 				log.error("remote error logging Exception", e1);
 			} finally {
 				HttpclientContext.removeContext();
-				throw new RemoteServiceException(e.getMessage());
+				throw new LcServiceException(e.getMessage());
 			}
 		}
 
 		if (StringUtils.isBlank(httpResponse)) {
 			HttpclientContext.getContext().addLog(httpRequest, "httpResponse is null", false);
 			HttpclientContext.removeContext();
-			throw new RemoteServiceException();
+			throw new LcServiceException();
 		}
 
 		// 4、解析结果并返回

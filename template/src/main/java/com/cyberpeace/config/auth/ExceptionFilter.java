@@ -1,17 +1,16 @@
 package com.cyberpeace.config.auth;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.constant.WebConstant;
+import com.cyberpeace.common.exception.*;
+import com.cyberpeace.common.model.BaseRsp;
+import com.cyberpeace.common.model.CommonContext;
+import com.cyberpeace.common.model.user.UserInfoContext;
+import com.cyberpeace.common.util.ConfigUtil;
+import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.common.util.LocalStringUtil;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -23,24 +22,13 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.constant.WebConstant;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.common.exception.InvalidParamException;
-import com.cyberpeace.common.exception.RemoteServiceException;
-import com.cyberpeace.common.exception.ResourceNotFoundException;
-import com.cyberpeace.common.model.BaseRsp;
-import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.common.util.ConfigUtil;
-import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.common.util.LocalStringUtil;
-import com.google.common.collect.Maps;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 异常过滤器
@@ -115,6 +103,8 @@ public class ExceptionFilter implements Filter {
 			parseDuplicateKeyException(servletResponse, (DuplicateKeyException) e);
 		} else if (e instanceof RemoteServiceException) {
 			parseRemoteServiceException(servletResponse, (RemoteServiceException) e);
+		} else if (e instanceof LcServiceException){
+			parseLcServiceException(servletResponse, (LcServiceException) e);
 		} else if (e instanceof BusinessException) {
 			parseBusinessException(servletResponse, (BusinessException) e);
 		} else {
@@ -144,6 +134,20 @@ public class ExceptionFilter implements Filter {
 		BusinessException businessException = new BusinessException(
 				ErrorCode.REMOTE_SERVICE_EXCEPTION, e.getMessage());
 		parseBusinessException(httpServletResponse, businessException);
+	}
+
+
+	/**
+	 * 解析LcService异常
+	 *
+	 * @param httpServletResponse servlet响应
+	 * @param e                   e
+	 */
+	private void parseLcServiceException(HttpServletResponse httpServletResponse, LcServiceException e) {
+		BaseRsp<String> errorInfo = new BaseRsp<>();
+		errorInfo.setCode("OJ-010000");
+		errorInfo.setMessage(e.getMessage());
+		flushErrorInfo(httpServletResponse, errorInfo);
 	}
 
 	/**

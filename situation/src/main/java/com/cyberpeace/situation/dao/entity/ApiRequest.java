@@ -56,6 +56,9 @@ public class ApiRequest extends BaseTable {
 	@ApiModelProperty("返回数据")
 	private String responseDemo;
 
+	@ApiModelProperty("依赖数据")
+	private String relyOn;
+
 	@NotBlank(groups = { Create.class })
 	@ApiModelProperty("创建人")
 	private String createUserId;

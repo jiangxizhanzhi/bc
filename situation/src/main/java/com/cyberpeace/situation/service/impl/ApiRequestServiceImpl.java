@@ -89,7 +89,11 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         ApiConnectReq apiConnectReq = apiRequestToApiConnectReq(apiRequest);
         ApiRequestInfoRes apiRequestRes = BeanUtils.copy(apiRequest, ApiRequestInfoRes.class);
         apiRequestRes.setDescription(apiConnectTest(apiConnectReq));
-        return BeanUtils.copy(apiRequest, ApiRequestInfoRes.class);
+        String relyOn = apiRequest.getRelyOn();
+        if (relyOn != null) {
+            apiRequestRes.setRelyOnRes(JsonUtil.toJsonObjectArray(relyOn, String.class));
+        }
+        return apiRequestRes;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         ApiRequest apiRequest = apiConnectReqToApiRequest(apiConnectReq);
         String message = null;
         try {
-            if( body !=null && "demo".equals(body.getString("taskId")) && "demo".equals(body.getString("subjectId"))) {
+            if( body != null && ("demo".equals(body.getString("dashboardId")) || ("demo".equals(body.getString("taskId")) && "demo".equals(body.getString("subjectId"))))) {
                 message = apiRequestMapper.selectById(apiConnectReq.getResourceId()).getResponseDemo();
             } else {
                 ResponseEntity response = restTemplate.exchange(requestUrl, Objects.requireNonNull(HttpMethod.resolve(requestMethod)), httpEntity, String.class);
@@ -162,6 +166,7 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
         List<ApiRequestHeaders> requestHeaders = apiConnectReq.getRequestHeaders();
         List<ApiResponseParams> responseParams = apiConnectReq.getResponseParams();
         List<ApiRequestParams> requestParams = apiConnectReq.getRequestParams();
+        List<String> relyOn = apiConnectReq.getRelyOn();
 
         try {
             if (CollectionUtils.isNotEmpty(requestHeaders)) {
@@ -174,6 +179,10 @@ public class ApiRequestServiceImpl extends ServiceImpl<ApiRequestMapper, ApiRequ
 
             if (CollectionUtils.isNotEmpty(responseParams)) {
                 apiRequest.setResponseParams(JsonUtil.toJsonString(responseParams));
+            }
+
+            if (relyOn != null) {
+                apiRequest.setRelyOn(JsonUtil.toJsonString(relyOn));
             }
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.UNSUPPORTED_JSON_TYPE);

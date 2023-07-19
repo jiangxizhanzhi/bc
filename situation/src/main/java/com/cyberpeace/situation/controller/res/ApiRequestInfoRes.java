@@ -1,6 +1,7 @@
 package com.cyberpeace.situation.controller.res;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.cyberpeace.situation.dao.entity.ApiRequest;
 
@@ -21,4 +22,7 @@ public class ApiRequestInfoRes extends ApiRequest implements Serializable {
 	 */
 	@ApiModelProperty("请求返回参数")
 	private String response;
+
+	@ApiModelProperty("依赖数据")
+	private List<String> relyOnRes;
 }

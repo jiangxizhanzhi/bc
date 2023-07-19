@@ -84,4 +84,7 @@ public class ApiConnectReq implements Serializable {
 	 */
 	@ApiModelProperty("返回参数")
 	private List<ApiResponseParams> responseParams;
+
+	@ApiModelProperty("依赖数据")
+	private List<String> relyOn;
 }

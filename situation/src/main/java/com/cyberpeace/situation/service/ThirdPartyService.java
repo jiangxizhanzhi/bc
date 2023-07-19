@@ -8,6 +8,7 @@ import com.cyberpeace.situation.controller.res.EventTypeRes;
 import com.cyberpeace.situation.service.context.EventTypeContext;
 import com.cyberpeace.situation.service.context.site.CenterContext;
 import com.cyberpeace.situation.service.context.site.RangeContext;
+import com.cyberpeace.situation.service.context.site.RangeDetailContext;
 import com.cyberpeace.situation.service.context.site.StationContext;
 
 /**
@@ -81,4 +82,5 @@ public interface ThirdPartyService {
 	 */
 	Map<String, String> getTypicalEventsMap();
 
+	List<RangeDetailContext>  getRangeDetails(String type);
 }

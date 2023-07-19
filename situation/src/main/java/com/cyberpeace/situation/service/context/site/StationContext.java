@@ -23,6 +23,9 @@ public class StationContext extends SiteContext implements Serializable {
 	@ApiModelProperty("场站类型")
 	private String stationType;
 
+	@ApiModelProperty("资源数量")
+	private Integer resourceCount = 0;
+
 	@Override
 	public String getId() {
 		return this.stationId;

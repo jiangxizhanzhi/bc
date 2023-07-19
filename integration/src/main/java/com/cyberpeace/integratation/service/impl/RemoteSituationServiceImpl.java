@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.integratation.model.mp.MpDeviceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,6 +123,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 
 	private String TS_NODE_PROTOCOL;
 
+	private String TS_ZH_STAT_NUM;
+
 	private String PLATFORM_LINK_LIST_URL;
 
 	@Autowired
@@ -182,6 +185,8 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		TS_NODE_MIGRATION = outerHostTs + ConfigUtil.getContextProperty("node.migration");
 		TS_NODE_PROTOCOL = outerHostTs
 				+ ConfigUtil.getContextProperty("protocol.statistics.status");
+		TS_ZH_STAT_NUM = outerHostTs
+				+ ConfigUtil.getContextProperty("zh.stat.num");
 
 	}
 
@@ -632,6 +637,12 @@ public class RemoteSituationServiceImpl implements RemoteSituationService {
 		String rsp = HttpClientUtil.tsPost(TS_NODE_PROTOCOL, taskBaseReq, String.class,
 				"获取态势系统节点协议数据失败");
 		return JsonUtil.toJsonObjectArray(rsp, NodeProtocolContext.class);
+	}
+
+	@Override
+	public RangeData getRangeData(String bcId) {
+		String targetUrl = TS_ZH_STAT_NUM;
+		return  HttpClientUtil.rawGet(targetUrl+bcId, RangeData.class);
 	}
 
 }

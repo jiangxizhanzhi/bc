@@ -2,6 +2,7 @@ package com.cyberpeace.situation.controller;
 
 import java.util.List;
 
+import com.cyberpeace.situation.service.context.site.RangeDetailContext;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -54,14 +55,27 @@ public class ExternalDataGisController {
 	}
 
 	/**
-	 * 获取分靶场列表
+	 * 获取分靶场列表（带统计数字）
 	 *
 	 * @param type 靶场类型
 	 * @return {@code BaseRsp<List<RangeContext>>}
 	 */
 	@ApiOperation("运维-获取分靶场列表")
 	@GetMapping("/range/list/")
-	public BaseRsp<List<RangeContext>> getSubRanges(@ApiParam(name = "type", value = "靶场类型",
+	public BaseRsp<List<RangeDetailContext>> getSubRanges(@ApiParam(name = "type", value = "靶场类型",
+			required = false) @RequestParam(value = "type", required = false) String type) {
+
+		return new BaseRsp<>(thirdPartyService.getRangeDetails(type));
+	}
+
+	/**
+	 * 获取分靶场列表(原本的不带统计数字)
+	 *
+	 * @return {@code BaseRsp<List<RangeContext>>}
+	 */
+	@ApiOperation("运维-获取分靶场详情列表")
+	@GetMapping("/range/detail/list/")
+	public BaseRsp<List<RangeContext>> getLastSubRanges(@ApiParam(name = "type", value = "靶场类型",
 			required = false) @RequestParam(value = "type", required = false) String type) {
 
 		return new BaseRsp<>(thirdPartyService.getRanges(type));

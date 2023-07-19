@@ -1,11 +1,13 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.cyberpeace.integratation.service.bo.situation.ChildLevelData;
+import com.cyberpeace.integratation.service.bo.situation.ElementData;
+import com.cyberpeace.integratation.service.bo.situation.RangeData;
 import com.cyberpeace.situation.service.context.EventTypeContext;
+import com.cyberpeace.situation.service.context.site.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,6 @@ import com.cyberpeace.situation.dao.entity.EventType;
 import com.cyberpeace.situation.dao.mapper.EventTypeMapper;
 import com.cyberpeace.situation.service.SituationPublishInstanceService;
 import com.cyberpeace.situation.service.ThirdPartyService;
-import com.cyberpeace.situation.service.context.site.CenterContext;
-import com.cyberpeace.situation.service.context.site.RangeContext;
-import com.cyberpeace.situation.service.context.site.SiteContext;
-import com.cyberpeace.situation.service.context.site.StationContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -131,6 +129,48 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	}
 
 	@Override
+	public List<RangeDetailContext> getRangeDetails(String type) {
+		checkRangeData();
+		List<RangeContext> rangeContexts = getSiteList(rangeCache);
+
+		Map locationTypeMap =Maps.newHashMap();
+		Set<String> locationTypeSet = rangeContexts.stream().map(RangeContext::getLocation).collect(Collectors.toSet());
+		int index = 1;
+		for (String locationType : locationTypeSet) {
+			locationTypeMap.put(locationType,index++);
+		}
+
+		RangeData rangeData = remoteSituationService.getRangeData("");
+		Map<String,List<ElementData>> childLevelDatumMap = Maps.newHashMap();
+
+		for (ChildLevelData childLevelDatum : rangeData.getChildLevelData()) {
+			childLevelDatumMap.put(childLevelDatum.getKeyWord(),childLevelDatum.getValueWord());
+		}
+		List<RangeDetailContext> finalResult = Lists.newArrayList();
+		rangeContexts.forEach(range -> {
+			if (range.getSubRangeName().endsWith(type)) {
+
+				RangeDetailContext rangeDetailContext= BeanUtils.copy(range, RangeDetailContext.class);
+				rangeDetailContext.setLocationType((Integer) locationTypeMap.getOrDefault(rangeDetailContext.getLocation() ,0));
+
+				List<ElementData> elementDatas = childLevelDatumMap.get(rangeDetailContext.getSubRangeName());
+				for (ElementData elementData : elementDatas) {
+					if("资源".equals(elementData.getKeyWord())){
+						rangeDetailContext.setResourceCount(Integer.valueOf(elementData.getValueWord()));
+					}else if("场站".equals(elementData.getKeyWord())){
+						rangeDetailContext.setStationCount(Integer.valueOf(elementData.getValueWord()));
+					}else if("任务".equals(elementData.getKeyWord())){
+						rangeDetailContext.setCurrentTaskCount(Integer.valueOf(elementData.getValueWord()));
+					}
+				}
+				finalResult.add(rangeDetailContext);
+			}
+		});
+
+		return finalResult;
+	}
+
+	@Override
 	public RangeContext getRangeById(String rangeId) {
 		checkRangeData();
 		return rangeCache.get(rangeId);
@@ -180,7 +220,25 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 	@Override
 	public List<StationContext> getStations(String rangeId) {
 		checkStationData(rangeId);
-		return stationCache.get(rangeId) == null ? Lists.newArrayList() : stationCache.get(rangeId);
+		List<StationContext> stationContexts = stationCache.get(rangeId) == null ? Lists.newArrayList() : stationCache.get(rangeId);
+
+		RangeData rangeData = remoteSituationService.getRangeData(rangeId);
+		Map<String,List<ElementData>> childLevelDatumMap = Maps.newHashMap();
+
+		for (ChildLevelData childLevelDatum : rangeData.getChildLevelData()) {
+			childLevelDatumMap.put(childLevelDatum.getKeyWord(),childLevelDatum.getValueWord());
+		}
+		stationContexts.forEach(stationContext -> {
+
+			List<ElementData> elementDatas = childLevelDatumMap.get(stationContext.getStationName());
+			for (ElementData elementData : elementDatas) {
+				if("资源".equals(elementData.getKeyWord())){
+					stationContext.setResourceCount(Integer.valueOf(elementData.getValueWord()));
+				}
+			}
+		});
+
+		return stationContexts;
 	}
 
 	private synchronized void eventTypesInit() {

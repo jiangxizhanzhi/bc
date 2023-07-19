@@ -196,4 +196,6 @@ public interface RemoteSituationService {
 	List<NodeMigrationContext> getNodeMigrations(EventReq eventReq, String featureId);
 
 	List<NodeProtocolContext> getNodeProtocols(TaskBaseReq taskBaseReq);
+
+	RangeData getRangeData (String bcId);
 }

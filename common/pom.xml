@@ -55,10 +55,10 @@
             <artifactId>orika-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--导入log4j2日志依赖-->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -169,7 +169,8 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-all</artifactId>
-            <version>0.42.0</version>
+            <version>0.62.0</version>
+<!--            <version>0.42.0</version>-->
             <exclusions>
                 <exclusion>
                     <artifactId>jsoup</artifactId>

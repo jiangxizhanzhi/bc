@@ -7,12 +7,12 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.impl.TraceIdContext;
 
 import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.model.CommonContext;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.ThreadContext;
 
 @Slf4j
 public class MyFilter implements Filter {
@@ -54,7 +54,9 @@ public class MyFilter implements Filter {
 		CommonContext.setLanguage(language);
 		CommonContext.setIp(getIpAddr(request));
 
-		TraceIdContext.setTraceId(traceId);
+//		TraceIdContext.setTraceId(traceId);
+		ThreadContext.put("logId", traceId);
+
 	}
 
 	public String getIpAddr(ServletRequest servletRequest) {

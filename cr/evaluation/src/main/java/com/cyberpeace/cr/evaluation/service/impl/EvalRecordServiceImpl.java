@@ -1098,11 +1098,11 @@ public class EvalRecordServiceImpl extends ServiceImpl<EvalRecordMapper, EvalRec
             // 读取探针采集时间
 			if (BASE.contains(mpCollectionEvent.getProbeId())) {
                 JSONObject scanAttr = content.getJSONObject("scan");
-                probeDataItem.setCollectionTime(scanAttr.getTimestamp("time"));
+                probeDataItem.setCollectionTime(scanAttr.getDate("time"));
             } else if (mpCollectionEvent.getProbeId().equals("011")) {
-                probeDataItem.setCollectionTime(content.getTimestamp("updateTime"));
+                probeDataItem.setCollectionTime(content.getDate("updateTime"));
             } else {
-                probeDataItem.setCollectionTime(content.getTimestamp("time"));
+                probeDataItem.setCollectionTime(content.getDate("time"));
             }
 
             evalProbeDataList.add(probeDataItem);

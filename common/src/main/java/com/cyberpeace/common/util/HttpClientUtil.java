@@ -22,9 +22,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.TraceIdContext;
 
 import com.alibaba.fastjson.JSON;
 import com.cyberpeace.common.constant.WebConstant;
@@ -58,7 +58,7 @@ public class HttpClientUtil {
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
 		HttpPost post = new HttpPost(url);
-		post.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+    post.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
 		post.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		post.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		post.setEntity(entity);
@@ -75,7 +75,7 @@ public class HttpClientUtil {
 		StringEntity entity = new StringEntity(JsonUtil.toJsonString(body), WebConstant.ENCODING);
 
 		HttpDeleteWithBody delete = new HttpDeleteWithBody(url);
-		delete.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		delete.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
 		delete.setHeader("Content-Type", WebConstant.CONTENT_TYPE);
 		delete.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		delete.setEntity(entity);
@@ -108,7 +108,7 @@ public class HttpClientUtil {
 		}
 
 		HttpGet httpGet = new HttpGet(uri);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 
 		String jwt = CommonContext.getAuthorization();
@@ -134,7 +134,7 @@ public class HttpClientUtil {
 
 		// 2、生成get请求
 		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader(WebConstant.TRACE_HEADER, TraceIdContext.getTraceId());
+		httpGet.setHeader(WebConstant.TRACE_HEADER, ThreadContext.get("logId"));
 		httpGet.setHeader(WebConstant.LANGUAGE, CommonContext.getLanguage());
 		String authorization = CommonContext.getAuthorization();
 		if (null != authorization) { // 调用竞赛接口需要
@@ -149,7 +149,7 @@ public class HttpClientUtil {
 	 * @param url
 	 */
 	private static void setContext(String url) {
-		HttpclientModel httpclientModel = new HttpclientModel(TraceIdContext.getTraceId(), url);
+		HttpclientModel httpclientModel = new HttpclientModel(ThreadContext.get("logId"), url);
 		HttpclientContext.setContext(httpclientModel);
 	}
 

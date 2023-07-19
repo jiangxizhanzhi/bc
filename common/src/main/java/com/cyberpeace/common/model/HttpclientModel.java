@@ -1,9 +1,9 @@
 package com.cyberpeace.common.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.TraceIdContext;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
 
@@ -40,7 +40,8 @@ public class HttpclientModel {
 	public HttpclientModel(String traceId, String url) {
 		if (StringUtils.isBlank(traceId)) {
 			this.traceId = IDGeneratorUtil.getID();
-			TraceIdContext.setTraceId(this.traceId);
+			ThreadContext.put("logId", traceId);
+
 		} else {
 			this.traceId = traceId;
 		}

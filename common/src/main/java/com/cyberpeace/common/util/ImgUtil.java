@@ -1,5 +1,10 @@
 package com.cyberpeace.common.util;
 
+import com.cyberpeace.common.constant.ErrorCode;
+import com.cyberpeace.common.exception.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,38 +14,20 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.FileImageInputStream;
-
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.luciad.imageio.webp.WebPReadParam;
-
-import com.openhtmltopdf.util.ImageUtil;
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 public class ImgUtil {
 
 	//webp格式的图片转成jpg格式的图片
 	public static void webpToJpg(String webpPath, String jpgPath) throws IOException {
 		if(!jpgPath.endsWith("jpg")){
-			log.error("Illegal Picture Suffix! jpgPath = [{}]", jpgPath);
 			throw new BusinessException(ErrorCode.ILLEGAL_PICTURE_SUFFIX);
 		}
 
-		// Obtain a WebP ImageReader instance
-		ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
-		// Configure decoding parameters
-		WebPReadParam readParam = new WebPReadParam();
-		readParam.setBypassFiltering(true);
-		// Configure the input on the ImageReader
-		reader.setInput(new FileImageInputStream(new File(webpPath)));
-		// Decode the image
-		BufferedImage image = reader.read(0, readParam);
-		// the `jpg` can use `png`
-		ImageIO.write(image, "jpg", new File(jpgPath));
+		BufferedImage webpImage = ImageIO.read(new File(webpPath));
+		// 创建一个新的JPG图片文件
+		File jpgFile = new File(jpgPath);
+		// 将WebP图片写入到JPG文件中
+		ImageIO.write(webpImage, "jpg", jpgFile);
 	}
 
 	//获取图片的真实格式

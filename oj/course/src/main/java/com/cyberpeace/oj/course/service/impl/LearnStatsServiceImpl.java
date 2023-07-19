@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.impl.TraceIdContext;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 	static final int TOP_FIVE = 5;
 
 	static final int MIN_SCORE = 80; // 获取竞赛-理论赛的百分换算后的最低分数标准
-	
+
 	private static final String USER_ID = "user_id";
 
 	private static final String COUNT = "count";
@@ -192,8 +192,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		}
 		UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
-		String traceId = TraceIdContext.getTraceId();
-
+//		String traceId = TraceIdContext.getTraceId();
+		String traceId =ThreadContext.get("logId");
 		CountDownLatch countDownLatch = new CountDownLatch(3);
 
 		// 课时学习排行

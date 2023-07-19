@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.parser.ParserConfig;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.impl.TraceIdContext;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -327,9 +327,9 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	@Override
 	public String copyTopo(String topoId, String name) {
 		String copiedTopoId = remoteTopoService.copyTopo(topoId);
-		String traceId = TraceIdContext.getTraceId();
+		String traceId = ThreadContext.get("logId");
 		executor.execute(() -> {
-			TraceIdContext.setTraceId(traceId);
+			ThreadContext.put("logId",traceId);
 			this.renameTopo(copiedTopoId, name);
 		});
 		return copiedTopoId;

@@ -10,10 +10,10 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.slf4j.impl.TraceIdContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -62,7 +62,7 @@ public class ExceptionFilter implements Filter {
 		} finally {
 			UserInfoContext.removeUserContext();
 
-			TraceIdContext.removeTraceId();
+			ThreadContext.remove("logId");
 
 			CommonContext.removeLanguage();
 			CommonContext.removeIp();

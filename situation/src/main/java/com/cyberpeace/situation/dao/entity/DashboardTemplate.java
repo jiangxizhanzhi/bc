@@ -2,9 +2,7 @@ package com.cyberpeace.situation.dao.entity;
 
 import java.util.HashMap;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.situation.constant.dashboard.CustomCode;
 
@@ -60,6 +58,7 @@ public class DashboardTemplate extends BaseTable {
 	private String componentsSetting;
 
 	@ApiModelProperty("图层信息")
+	@TableField(updateStrategy = FieldStrategy.IGNORED)
 	private String layerShow;
 
 	@ApiModelProperty("视角配置")

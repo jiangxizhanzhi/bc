@@ -941,10 +941,9 @@ public class DashboardTemplateServiceImpl extends ServiceImpl<DashboardTemplateM
 				for (LayerShowReq childLayerShowReq : layerShowReq.getChildren()) {
 					sortComponentIndexs.add(childLayerShowReq.getComponentIndex());
 				}
-			} else {
-				// 否则，将当前图层的组件ID添加到组件ID列表中
-				sortComponentIndexs.add(layerShowReq.getComponentIndex());
 			}
+			// 否则，将当前图层的组件ID添加到组件ID列表中
+			sortComponentIndexs.add(layerShowReq.getComponentIndex());
 		}
 
 		// 如果图层列表与控件列表长度不一致，抛出异常

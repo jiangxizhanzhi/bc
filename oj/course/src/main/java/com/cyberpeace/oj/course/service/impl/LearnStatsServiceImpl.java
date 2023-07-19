@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.impl.TraceIdContext;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -190,8 +190,8 @@ public class LearnStatsServiceImpl implements LearnStatsService {
 		}
 		UserStatsRankBo userStatsRankBo = new UserStatsRankBo();
 
-		String traceId = TraceIdContext.getTraceId();
-
+//		String traceId = TraceIdContext.getTraceId();
+		String traceId =ThreadContext.get("logId");
 		CountDownLatch countDownLatch = new CountDownLatch(3);
 
 		// 课时学习排行

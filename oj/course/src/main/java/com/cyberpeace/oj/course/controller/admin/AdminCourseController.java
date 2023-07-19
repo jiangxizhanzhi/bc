@@ -40,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -250,11 +252,12 @@ public class AdminCourseController extends AuthAndPublicController<CourseService
 		return new BaseRsp<>(attachmentBo);
 	}
 
+
+
 	@ApiOperation("查询全部课程信息")
 	@GetMapping("/all/course")
 	@RequiresPermissions(MenuConstant.CMS_COURSES)
 	public BaseRsp<List<SimpleDataRes>> allCourse() {
-
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
 		List<String> courseIds = courseMapper.selectByAuth(authContext);

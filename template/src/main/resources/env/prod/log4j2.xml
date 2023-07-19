@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="180" packages="">
+    <properties>
+        <property name="LOG_HOME">/usr/local/tomcat</property>
+    </properties>
+
+    <Appenders>
+        <!--这个输出控制台的配置-->
+        <console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+        </console>
+        <!-- FileAppender-->
+        <RollingFile name="log" fileName="${LOG_HOME}/logs/bc.log"
+                     filePattern="${LOG_HOME}/logs/bc_%d{yyyy-MM-dd}.%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+        <!--*********************文件日志***********************-->
+        <RollingFile name="resourceImport"
+                     fileName="${LOG_HOME}/logs/bcResourceImport.log"
+                     filePattern="${LOG_HOME}/logs/bcResourceImport_%d{yyyy-MM-dd}.%i.log">
+            <!--设置日志格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+
+        <RollingFile name="mp"
+                     fileName="${LOG_HOME}/logs/bcMp.log"
+                     filePattern="${LOG_HOME}/logs/bcMp_%d{yyyy-MM-dd}.%i.log">
+            <!--设置日志格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c  %X{logId} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5">
+
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="mq"
+                     fileName="${LOG_HOME}/logs/bcMq.log"
+                     filePattern="${LOG_HOME}/logs/bcMq_%d{yyyy-MM-dd}.%i.log">
+            <!--设置日志格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c  %X{logId} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+
+        <RollingFile name="eval"
+                     fileName="${LOG_HOME}/logs/bcEval.log"
+                     filePattern="${LOG_HOME}/logs/bcEval_%d{yyyy-MM-dd}.%i.log">
+            <!--设置日志格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-4r [%t] %-5p %c %X{logId:defaultValue} - %m%n"/>
+            <!-- 使用自定义过滤器 -->
+            <Filters>
+                <MdcUuidFilter key="logId"/>
+            </Filters>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!-- 根日志设置 -->
+        <Root level="info">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="log">
+            </appender-ref>
+        </Root>
+        <Logger name="resourceImport" additivity="false" level="info">
+            <appender-ref ref="resourceImport" level="info"/>
+        </Logger>
+        <Logger name="mp" additivity="false" level="debug">
+            <appender-ref ref="mp" level="debug"/>
+        </Logger>
+        <Logger name="mq" additivity="false" level="debug">
+            <appender-ref ref="mq" level="debug"/>
+        </Logger>
+        <Logger name="eval" additivity="false" level="info">
+            <appender-ref ref="eval" level="info"/>
+        </Logger>
+
+        <Logger name="com.cyberpeace.oj.rtks.dao.mapper" level="DEBUG" additivity="false"/>
+        <Logger name="com.cyberpeace.cr.tool.dao.mapper" level="DEBUG" additivity="false"/>
+        <Logger name="com.cyberpeace.oj.rtks.service.impl" level="DEBUG" additivity="false"/>
+
+
+    </Loggers>
+
+</Configuration>

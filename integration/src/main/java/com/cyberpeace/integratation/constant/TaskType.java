@@ -1,9 +1,6 @@
 package com.cyberpeace.integratation.constant;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import lombok.Getter;
 
@@ -70,5 +67,10 @@ public enum TaskType {
 			map.put("code", taskType.code);
 		}
 		return hashMap;
+	}
+
+	public static <T extends TaskType> T getEnumByCode(String name, Class<T> enumClass) {
+		return Arrays.stream(enumClass.getEnumConstants()).filter(t -> t.getName().equals(name))
+				.findFirst().orElse(null);
 	}
 }

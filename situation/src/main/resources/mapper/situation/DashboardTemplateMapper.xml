@@ -39,4 +39,15 @@
         FROM situation_dashboard_template
         WHERE edit_status = 0
     </select>
+    <select id="selectVisualzationModel" resultType="com.cyberpeace.situation.model.outer.VisualzationModel">
+        select template.resource_id as uuid, template.`name`, thumbnail
+        from situation_dashboard_template as template
+        left join situation_common_category as category
+        on template.type = category.resource_id
+        <where>
+            <if test="type != null and type != ''">
+                task_type = #{type}
+            </if>
+        </where>
+    </select>
 </mapper>

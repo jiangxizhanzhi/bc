@@ -2,15 +2,24 @@ package com.cyberpeace.gateway.controller;
 
 import java.util.*;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.hutool.json.JSONObject;
+import com.cyberpeace.gateway.service.bo.CommandExecutor;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.util.*;
+import com.cyberpeace.gateway.controller.req.*;
+import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.gateway.controller.res.DashboardTitleRes;
+import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.dao.entity.DashboardAttribute;
 import com.cyberpeace.situation.dao.mapper.DashboardAttributeMapper;
+import com.cyberpeace.situation.dao.mapper.DashboardTemplateMapper;
 import com.cyberpeace.situation.dao.mapper.SituationTopoMapper;
+import com.cyberpeace.situation.model.outer.Command;
+import com.cyberpeace.situation.service.DashboardTemplateRefService;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -19,18 +28,11 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.CommonContext;
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.common.util.FileUtil;
-import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.constant.FileTypeContant;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.cs.service.context.AttachmentBo;
-import com.cyberpeace.gateway.controller.req.ControlCommandReq;
-import com.cyberpeace.gateway.controller.req.NodeMigrationReq;
-import com.cyberpeace.gateway.controller.req.SituationSchemeBo;
-import com.cyberpeace.gateway.controller.req.ThirdDashboardReq;
 import com.cyberpeace.gateway.controller.res.ControlRes;
 import com.cyberpeace.gateway.controller.res.ScreenPathRes;
 import com.cyberpeace.integratation.constant.OrderType;
@@ -89,6 +91,13 @@ public class ExternalSituationController {
 
 	@Autowired
 	private DashboardAttributeMapper dashboardAttributeMapper;
+
+	private String CALL_BACK_URL;
+
+	@PostConstruct
+	public void init() {
+		CALL_BACK_URL = "http://" + SystemPropUtil.getProp("PG_HOST") + ":" + SystemPropUtil.getProp("PG_PORT") + ConfigUtil.getContextProperty("pg.call.back");
+	}
 
 	/**
 	 * 接收任务指挥命令
@@ -368,6 +377,32 @@ public class ExternalSituationController {
 		return new BaseRsp<>(map);
 	}
 
+	@ApiOperation("获取大屏time")
+	@PostMapping("/get_time")
+	public BaseRsp<Map<String, Long>>
+	getDashboardTime(@RequestBody String dashboardJson) {
+
+		JSONObject object = JsonUtil.toJsonObject(dashboardJson, JSONObject.class);
+		String dashboardId = object.getStr("dashboardId");
+		// 获取属性对象
+		SituationPublishInstance situationPublishInstances = situationPublishInstanceMapper
+				.selectById(dashboardId);
+
+		if (null == situationPublishInstances) {
+			throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+		}
+
+		DashboardAttribute dashboardAttribute = dashboardAttributeMapper
+				.getByResourceId(situationPublishInstances.getAttributeId());
+
+		Map<String, Long> map = new HashMap<>();
+
+		map.put("exec_time", TimeUtil.getIntervalSeconds(dashboardAttribute.getStartTime(), new Date()) );
+		map.put("least_time", TimeUtil.getIntervalSeconds(new Date(), dashboardAttribute.getEndTime()) );
+
+		return new BaseRsp<>(map);
+	}
+
 	@ApiOperation("提示大屏接口进行刷新")
 	@PostMapping("/refresh")
 	public BaseRsp<Boolean> refresh(@RequestBody SituationSchemeBo situationSchemeBo) {
@@ -379,4 +414,56 @@ public class ExternalSituationController {
 		}
 		return new BaseRsp<>(true);
 	}
+
+	@ApiOperation("更新拓扑数据")
+	@PostMapping("/update_topo")
+	public BaseRsp<Boolean> topoRefresh(@RequestBody UpdateTopoInfoReq updateTopoInfoReq) {
+		situationPublishInstanceService.updatePosition(updateTopoInfoReq.getSubRangeId(), updateTopoInfoReq.getTaskId(),
+				updateTopoInfoReq.getSubjectId(), updateTopoInfoReq.getEnvId());
+		return new BaseRsp<>(true);
+	}
+
+	@ApiOperation("想定")
+	@PostMapping("/xd")
+	public BaseRsp<Command> execCommand(@RequestBody JSONObject jsonObject) {
+		log.info("xd:[{}]", jsonObject.toString());
+		Command result;
+		String commandSubtype = jsonObject.getStr("commandSubtype");
+
+		if (commandSubtype.equals("getPlanParams")) {
+			//获取配置项
+			result = situationPublishInstanceService.getTemplateList(jsonObject);
+		} else if (commandSubtype.equals("getPlanStatus")) {
+			//查看方案状态
+			result = new CommandExecutor(jsonObject.getStr("configTaskId"), CALL_BACK_URL, "方案检测指令执行失败") {
+
+				@Override
+				protected Command doBusiness() {
+					return situationPublishInstanceService.checkDashboard(jsonObject);
+				}
+			}.execute(jsonObject);
+		} else if (commandSubtype.equals("setPlanInfo")) {
+			//新增、修改可视化方案
+			result = new CommandExecutor(jsonObject.getStr("configTaskId"), CALL_BACK_URL, "方案下发指令执行失败") {
+
+				@Override
+				protected Command doBusiness() {
+					return situationPublishInstanceService.addDashboard(jsonObject);
+				}
+			}.execute(jsonObject);
+		} else if (commandSubtype.equals("deletePlanInfo")) {
+			//删除可视化方案
+			result = new CommandExecutor(jsonObject.getStr("configTaskId"), CALL_BACK_URL, "方案删除指令执行失败") {
+
+				@Override
+				protected Command doBusiness() {
+					return situationPublishInstanceService.deleteDashboard(jsonObject);
+				}
+			}.execute(jsonObject);
+		} else {
+			throw new BusinessException(SituationErrorCode.NOT_KNOWN_COMMAND);
+		}
+		return new BaseRsp<>(result);
+	}
+
 }

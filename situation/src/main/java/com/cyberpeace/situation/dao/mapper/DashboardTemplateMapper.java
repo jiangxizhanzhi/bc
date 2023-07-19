@@ -2,6 +2,7 @@ package com.cyberpeace.situation.dao.mapper;
 
 import java.util.List;
 
+import com.cyberpeace.situation.model.outer.VisualzationModel;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -61,4 +62,6 @@ public interface DashboardTemplateMapper extends BaseMapper<DashboardTemplate> {
 	 * @return {@code List<String>}
 	 */
 	List<String> selectCustomTypes();
+
+	List<VisualzationModel> selectVisualzationModel(String type);
 }

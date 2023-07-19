@@ -108,4 +108,6 @@ public interface SituationPublishInstanceMapper extends BaseMapper<SituationPubl
 
 	List<String> getDashboardIdBySubjectIdAndTaskId(@Param("subjectId") String subjectId, @Param("taskId") String taskId);
 
+	String getTemplateId(@Param("resourceId") String resourceId);
+
 }

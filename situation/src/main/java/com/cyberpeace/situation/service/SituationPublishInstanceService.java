@@ -1,5 +1,6 @@
 package com.cyberpeace.situation.service;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.integratation.model.situation.BcContext;
@@ -10,6 +11,7 @@ import com.cyberpeace.situation.controller.req.SituationPublishInstanceFilterReq
 import com.cyberpeace.situation.controller.req.SituationPublishInstanceUpdateReq;
 import com.cyberpeace.situation.controller.res.SituationPublishInstancePageRes;
 import com.cyberpeace.situation.dao.entity.SituationPublishInstance;
+import com.cyberpeace.situation.model.outer.Command;
 
 public interface SituationPublishInstanceService extends IService<SituationPublishInstance> {
 
@@ -46,4 +48,14 @@ public interface SituationPublishInstanceService extends IService<SituationPubli
 
 	Boolean changeInstancePublicStatus(SituationPublishInstance situationPublishInstance,
 			PublicStatus publicStatus);
+
+	void updatePosition(String subRangeId, String taskId, String subjectId, String envId);
+
+	Command getTemplateList(JSONObject jsonObject);
+
+	Command addDashboard(JSONObject jsonObject);
+
+	Command checkDashboard(JSONObject jsonObject);
+
+	Command deleteDashboard(JSONObject jsonObject);
 }

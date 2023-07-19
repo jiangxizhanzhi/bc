@@ -337,4 +337,12 @@ public interface SituationErrorCode {
 	 * 动效分组正在使用
 	 */
 	String DYNAMIC_EFFECTS_CATEGORY_USED = "106025";
+
+	String CANT_FIND_SCHEME = "106026";
+
+	String CHOOSE_TEMPLATE = "106027";
+
+	String BLANK_NAME = "106028";
+
+	String NOT_KNOWN_COMMAND = "106029";
 }

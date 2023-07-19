@@ -1,13 +1,14 @@
 package com.cyberpeace.situation.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import com.cyberpeace.situation.constant.dashboard.*;
 import com.cyberpeace.situation.constant.gis.MapSource;
 import com.cyberpeace.situation.constant.gis.MapView;
+import com.cyberpeace.situation.controller.res.ApiRequestInfoRes;
+import com.cyberpeace.situation.model.outer.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -437,9 +438,11 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 
         subjectListReq.setSubjectIds(StreamApiUtils.map(situationPublishInstancePageResList,
                 SituationPublishInstancePageRes::getSubjectId));
-
-        //任务科目列表
-        List<SubjectContext> subjectList = remoteSituationService.getSubjectList(subjectListReq);
+        List<SubjectContext> subjectList = new ArrayList<>();
+        if (subjectListReq.getSubjectIds().size() != 0) {
+            //任务科目列表
+            subjectList = remoteSituationService.getSubjectList(subjectListReq);
+        }
 
 
         List<DashboardAttribute> dashboardAttributes = dashboardAttributeMapper.selectList(null);
@@ -588,5 +591,282 @@ public class SituationPublishInstanceServiceImpl extends ServiceImpl<SituationPu
 		situationPublishInstanceMapper.updateById(situationPublishInstance);
 		return true;
 	}
+
+    @Override
+    public void updatePosition(String subRangeId, String taskId, String subjectId, String envId) {
+        TopoConfig topoConfig = topoConfigMapper.selectByEnvId(envId);
+        Boolean update = false;
+        String resourceId = null;
+        if (topoConfig != null) {
+            resourceId = topoConfig.getResourceId();
+            update = true;
+        }
+        TopoReq req = new TopoReq(subRangeId, taskId, subjectId, envId);
+        TopoContext topoContext = remoteSituationService.getTopo(req, true);
+        topoConfig = new TopoConfig(subRangeId, taskId, subjectId, envId, topoContext);
+        if (update) {
+            topoConfig.setResourceId(resourceId);
+            topoConfigMapper.updateById(topoConfig);
+        }else {
+            topoConfigMapper.insert(topoConfig);
+        }
+    }
+
+    @Override
+    public Command getTemplateList(JSONObject jsonObject) {
+        Command command = new Command();
+        command.setSrcSystemCode("05");
+        command.setDstSystemCode("03");
+        command.setCommand("infoResponse");
+        command.setCommandType("get");
+        command.setCommandSubtype("getPlanParams");
+        command.setCommandResult("success");
+        command.setResultDesc("查询方案配置项成功");
+
+        List<Param> paramList = new ArrayList<>();
+        paramList.add(new Param(IDGeneratorUtil.get16Id(), "大屏名称", "string", "", "可视化大屏名称"));
+        String name = jsonObject.getJSONObject("getPlanParams").getStr("taskSubtype");
+//        TaskType type = TaskType.getEnumByCode(name, TaskType.class);
+        List<VisualzationModel> models = dashboardTemplateMapper.selectVisualzationModel(null);
+        List<JSONObject> objects = new ArrayList<>();
+        for (VisualzationModel visualzationModel : models) {
+            Map<String, List<String>> map = new HashMap<>();
+            map.put(visualzationModel.getUuid(), Arrays.asList(visualzationModel.getName(), visualzationModel.getThumbnail()));
+            objects.add(new JSONObject(map));
+        }
+
+        paramList.add(new Param(IDGeneratorUtil.get16Id(), "可视化模型", "visualzationModel", objects, "可视化模型配置项"));
+
+        GetPlanParams getPlanParams = new GetPlanParams();
+        getPlanParams.setTaskType(jsonObject.getJSONObject("getPlanParams").getStr("taskType"));
+        getPlanParams.setTaskSubtype(name);
+        getPlanParams.setCommandData(new Params(paramList));
+        command.setGetPlanParams(getPlanParams);
+        return command;
+    }
+
+    @Override
+    public Command addDashboard(JSONObject jsonObject) {
+        String setPlanInfo = "setPlanInfo";
+        String defaultValue = "defaultValue";
+        String commandDataString = "commandData";
+
+        Command command = new Command();
+        command.setSrcSystemCode("05");
+        command.setDstSystemCode("03");
+        command.setCommand("orderResponse");
+        command.setCommandType("check");
+        command.setCommandSubtype("setPlanInfo");
+        command.setCommandResult("success");
+        command.setResultDesc("可视化方案配置项成功");
+
+        PlanInfo oldPlanInfo = jsonObject.get(setPlanInfo, PlanInfo.class);
+        oldPlanInfo.setSchemeId(oldPlanInfo.getSubPlanId());
+
+        JSONArray array = jsonObject.getJSONObject(setPlanInfo).getJSONObject(commandDataString).getJSONArray("dataIn");
+        String templateId = null;
+        String name = null;
+        String description = null;
+        for (Object object: array) {
+            JSONObject param = new JSONObject(object);
+            String paramName = param.getStr("name");
+            if (paramName.equals("可视化模型")) {
+                JSONObject object1 = param.getJSONArray(defaultValue).getJSONObject(0);
+                for(String s :object1.keySet()) {
+                    templateId = s;
+                }
+            } else if (paramName.equals("大屏名称")) {
+                name = param.getStr(defaultValue);
+            } else if (paramName.equals("大屏描述")) {
+                description = param.getStr(defaultValue);
+            }
+        }
+
+        if (templateId == null) {
+            throw new BusinessException(SituationErrorCode.CHOOSE_TEMPLATE);
+        }
+        if (name == null) {
+            throw new BusinessException(SituationErrorCode.BLANK_NAME);
+        }
+
+        PlanInfo newPlanInfo = BeanUtils.copy(oldPlanInfo, PlanInfo.class);
+
+        // 判断是否存在已有想定大屏
+        String xdDashboardId = situationPublishInstanceMapper
+                .selectXdInstanceBySchemeId(oldPlanInfo.getSchemeId());
+
+        String dashboardId;
+
+        if (StringUtils.isNotBlank(xdDashboardId)) {
+            SituationPublishInstanceUpdateReq situationPublishInstanceUpdateReq = BeanUtils.copy(oldPlanInfo,
+                    SituationPublishInstanceUpdateReq.class);
+            DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefService
+                    .createDashboardTemplate(templateId);
+            situationPublishInstanceUpdateReq.setTemplateId(dashboardTemplateRef.getResourceId());
+            situationPublishInstanceUpdateReq.setName(name);
+            situationPublishInstanceUpdateReq.setDescription(description);
+
+            SituationPublishInstance situationPublishInstance = updateOne(situationPublishInstanceUpdateReq);
+
+            dashboardId = situationPublishInstance.getResourceId();
+
+        } else {
+            // 如果没有找到大屏，进行新增
+            SituationPublishInstanceAddReq situationPublishInstanceAddReq = BeanUtils.copy(oldPlanInfo,
+                    SituationPublishInstanceAddReq.class);
+
+
+            DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefService
+                    .createDashboardTemplate(templateId);
+
+
+            situationPublishInstanceAddReq.setTemplateId(dashboardTemplateRef.getResourceId());
+            situationPublishInstanceAddReq.setName(name);
+            situationPublishInstanceAddReq.setDescription(description);
+
+
+            SituationPublishInstance situationPublishInstance = insertOne(situationPublishInstanceAddReq, true);
+            dashboardId = situationPublishInstance.getResourceId();
+        }
+
+        templateId = situationPublishInstanceMapper.getTemplateId(dashboardId);
+        DashboardPath dashboardPath = DashboardPath.getEnumByCode(templateId, DashboardPath.class);
+        String path;
+        if (dashboardPath == null) {
+            path = "/cr/admin/situation-release/preview/" + dashboardId;
+        } else {
+            path = dashboardPath.getPath() + dashboardId;
+        }
+        List<Param> paramList = Arrays.asList(new Param(IDGeneratorUtil.get16Id(), "可视化方案访问地址", "string", path, "这是可视化方案访问地址"));
+
+        //获取视图模板对应的依赖数据
+        DashboardTemplateRef dashboardTemplateRef = dashboardTemplateRefService.createDashboardTemplate(templateId);
+        List<JSONObject> componentsSettings =  JsonUtil.toJsonObjectArray(dashboardTemplateRef.getComponentsSetting(), JSONObject.class);
+        List<String> relyOnList = new ArrayList<>();
+        for (JSONObject setting : componentsSettings) {
+            ApiRequestInfoRes apiRequestInfoRes = setting.getJSONObject("dataSourceConfig").get("apiDataSource", ApiRequestInfoRes.class);
+            List<String> relyOnRes = apiRequestInfoRes.getRelyOnRes();
+            if (relyOnRes != null) {
+                relyOnList.addAll(apiRequestInfoRes.getRelyOnRes());
+            }
+        }
+        relyOnList = new ArrayList<>(new HashSet<>(relyOnList));
+        paramList.add(new Param(IDGeneratorUtil.get16Id(), "依赖数据", "list<String>", relyOnList ,"该可视化方案所依赖的采集数据"));
+
+        CommandData commandData = new CommandData();
+        commandData.setDataOutput(paramList);
+        newPlanInfo.setCommandData(commandData);
+        command.setSetPlanInfo(newPlanInfo);
+
+        JSONObject commandDataJsonObject = jsonObject.getJSONObject("setPlanInfo").getJSONObject("commandData");
+        commandDataJsonObject.put("dataOutput", commandDataJsonObject.getJSONArray("dataIn"));
+        commandDataJsonObject.remove("dataIn");
+
+        return command;
+    }
+
+    @Override
+    public Command checkDashboard(JSONObject jsonObject) {
+        Command command = new Command();
+        command.setSrcSystemCode("05");
+        command.setDstSystemCode("03");
+        command.setCommand("orderResponse");
+        command.setCommandType("check");
+        command.setCommandSubtype("getPlanStatus");
+
+        String schemeId = jsonObject.getJSONObject("getPlanStatus").getStr("subPlanId");
+        String resourceId = situationPublishInstanceMapper.selectXdInstanceBySchemeId(schemeId);
+//        if (resourceId != null) {
+//            command.setResultDesc("可视化方案配置成功");
+//            command.setCommandResult("success");
+//            Param param = new Param();
+//            param.setId(IDGeneratorUtil.get16Id());
+//            param.setName("可视化方案名称");
+//            param.setDataType("string");
+//            param.setDataDescripe("可视化方案名称");
+//            JSONObject dashboardName = new JSONObject(param);
+//            dashboardName.put("dataValue", situationPublishInstanceMapper.selectById(resourceId).getName());
+//            PlanInfo planInfo = new PlanInfo();
+//            planInfo.setSubPlanId(schemeId);
+//            JSONObject dataOutput = new JSONObject();
+//            dataOutput.put("dataOutput", Arrays.asList(dashboardName));
+//            planInfo.setCommandData(dataOutput);
+//            command.setSetPlanInfo(planInfo);
+//        } else {
+//            command.setResultDesc("可视化方案配置失败");
+//            command.setCommandResult("fail");
+//            PlanInfo planInfo = new PlanInfo();
+//            planInfo.setSubPlanId(schemeId);
+//            Param param = new Param();
+//            param.setId(IDGeneratorUtil.get16Id());
+//            param.setName("可视化方案配置信息错误");
+//            param.setDataType("string");
+//            param.setDataDescripe("查询不到对应的可视化方案");
+//            JSONObject jsonObject1 = new JSONObject();
+//            planInfo.setCommandData(jsonObject1.put("dataErrOutput", Arrays.asList(param)));
+//            command.setSetPlanInfo(planInfo);
+//        }
+        if (resourceId != null) {
+            command.setResultDesc("指令执行成功");
+            command.setCommandResult("success");
+            JSONObject object = new JSONObject();
+            object.put("subPlanId", schemeId);
+            object.put("subPlanStatusCode", "01");
+            command.setGetPlanStatus(object);
+        } else {
+            command.setResultDesc("指令执行失败");
+            command.setCommandResult("fail");
+            JSONObject object = new JSONObject();
+            object.put("subPlanId", schemeId);
+            command.setGetPlanStatus(object);
+        }
+        return command;
+
+    }
+
+    @Override
+    public Command deleteDashboard(JSONObject jsonObject) {
+        String schemeId = jsonObject.getJSONObject("deletePlanInfo").getStr("subPlanId");
+        String dashboardId = situationPublishInstanceMapper.selectXdInstanceBySchemeId(schemeId);
+        Command command = new Command();
+        command.setSrcSystemCode("05");
+        command.setDstSystemCode("04");
+        command.setCommand("orderResponse");
+        command.setCommandType("start");
+        command.setCommandSubtype("deletePlanInfo");
+        if (dashboardId == null) {
+            command.setCommandResult("fail");
+            command.setResultDesc("方案删除失败");
+            PlanInfo planInfo = new PlanInfo();
+            planInfo.setSubPlanId(schemeId);
+            command.setSetPlanInfo(planInfo);
+            return command;
+        }
+        try {
+            SituationPublishInstance instance = situationPublishInstanceMapper.selectById(dashboardId);
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    situationPublishInstanceMapper.deleteBatchIds(Arrays.asList(instance.getResourceId()));
+                    dashboardTemplateRefService.deleteDashboardTemplate(Arrays.asList(instance.getTemplateId()));
+                    dashboardAttributeMapper.deleteBatchIds(Arrays.asList(instance.getAttributeId()));
+                }
+            });
+        } catch (Exception e) {
+            command.setCommandResult("fail");
+            command.setResultDesc("方案删除失败");
+            PlanInfo planInfo = new PlanInfo();
+            planInfo.setSubPlanId(schemeId);
+            command.setSetPlanInfo(planInfo);
+            return command;
+        }
+        command.setCommandResult("success");
+        command.setResultDesc("方案删除成功");
+        PlanInfo planInfo = new PlanInfo();
+        planInfo.setSubPlanId(schemeId);
+        command.setSetPlanInfo(planInfo);
+        return command;
+    }
 
 }

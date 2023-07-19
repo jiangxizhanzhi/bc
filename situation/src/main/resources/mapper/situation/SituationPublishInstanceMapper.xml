@@ -149,4 +149,16 @@
         </where>
     </select>
 
+    <select id="getTemplateId" resultType="java.lang.String">
+        select template.resource_id
+        from situation_dashboard_instance as instance
+        left join situation_dashboard_template_ref as template_ref on instance.template_id = template_ref.resource_id
+        left join situation_dashboard_template as template on template.resource_id = template_ref.origin_template_id
+        <where>
+            <if test="resourceId != null and resourceId != ''">
+                instance.resource_id = #{resourceId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

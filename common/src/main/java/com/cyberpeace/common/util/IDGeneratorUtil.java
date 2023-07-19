@@ -23,4 +23,8 @@ public class IDGeneratorUtil {
 	public static String getID() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
+
+	public static String get16Id() {
+		return getID().substring(0,16);
+	}
 }

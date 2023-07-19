@@ -154,7 +154,7 @@ public class LcHttpClient {
 				// 只要lc的状态码不是0，都认为是有问题的
 				log.error("url=[{}], result=[{}] error, code=[{}]",
 						HttpclientContext.getContext().getUrl(), httpResponse, baseRsp.getCode());
-				throw new RemoteServiceException(baseRsp.getMsg());
+				throw new LcServiceException(baseRsp.getMsg());
 			}
 			if (null == baseRsp.getData()) {
 				return null;
@@ -162,7 +162,7 @@ public class LcHttpClient {
 			// 特殊处理要求返回类型为string的情形
 			String jsonString = BsUtil.handleStringData(baseRsp.getData().toString(), resultType);
 			return JsonUtil.toJsonObject(jsonString, resultType);
-		} catch (RemoteServiceException e) {
+		} catch (LcServiceException e) {
 			throw e;
 		} catch (Exception e) {
 			// 遇到不能解析的返回结果，直接报错

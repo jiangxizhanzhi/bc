@@ -7,3 +7,7 @@ CREATE TABLE `system_property` (
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `idx_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+INSERT INTO `bc`.`system_property`(`id`, `name`, `desc`, `content`, `type`) VALUES (1, 'jingsai', '安全竞赛', 'www.baidu.com', 1);
+INSERT INTO `bc`.`system_property`(`id`, `name`, `desc`, `content`, `type`) VALUES (2, 'yanlian', '实战演练', 'www.baidu.com', 1);
+INSERT INTO `bc`.`system_property`(`id`, `name`, `desc`, `content`, `type`) VALUES (3, 'shixun', '安全实训', 'www.baidu.com', 1);
+INSERT INTO `bc`.`system_property`(`id`, `name`, `desc`, `content`, `type`) VALUES (4, 'pinggu', '渗透评估', 'www.baidu.com', 1);

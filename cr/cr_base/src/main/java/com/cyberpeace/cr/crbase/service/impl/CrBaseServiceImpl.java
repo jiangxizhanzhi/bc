@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
+import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
@@ -31,7 +32,8 @@ public class CrBaseServiceImpl implements CrBaseService {
 	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
 	@Override
-	public TrainingStatisticsRsp getTrainingStatistics(String userId, TrainingStatisticsPage page) {
+	public TrainingStatisticsRsp getTrainingStatistics(String userId, PageReqBase pageReqBase) {
+		TrainingStatisticsPage page = new TrainingStatisticsPage(pageReqBase);
 		// 1. define variables
 		List<TrainingCountRsp> completeList = Lists.newArrayList();
 		List<TrainingCountRsp> incompleteList = Lists.newArrayList();

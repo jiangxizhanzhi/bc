@@ -53,10 +53,10 @@ public class CrBaseController {
 	public BaseRsp<TrainingStatisticsRsp>
 			getTrainingStatistics(@ApiParam @Validated PageReqBase req) {
 
-		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
+//		TrainingStatisticsPage page = new TrainingStatisticsPage(req);
 
 		String userId = UserInfoContext.getUserContext().getUserId();
-		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, page);
+		TrainingStatisticsRsp rsp = crBaseService.getTrainingStatistics(userId, req);
 
 		return new BaseRsp<>(rsp);
 	}

@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
-import com.cyberpeace.common.model.scene.AssetProperty;
+import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.ListUtil;

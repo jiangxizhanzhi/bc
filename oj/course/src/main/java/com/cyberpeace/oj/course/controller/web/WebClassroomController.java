@@ -9,7 +9,7 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.AuthContextUtils;
 import com.cyberpeace.common.util.TimeUtil;
 import com.cyberpeace.oj.course.controller.req.ClassroomSignInReq;
-import com.cyberpeace.oj.course.controller.res.RemoteHelpReq;
+import com.cyberpeace.oj.course.controller.req.RemoteHelpReq;
 import com.cyberpeace.oj.course.dao.context.ClassRoomListQuery;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import com.cyberpeace.oj.course.service.ClassroomSignService;

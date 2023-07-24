@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.course.controller.res;
+package com.cyberpeace.oj.course.controller.req;
 
 import java.io.Serializable;
 

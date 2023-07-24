@@ -15,7 +15,7 @@ import com.cyberpeace.common.constant.WebConstant;
 import com.cyberpeace.common.constant.WsPath;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.ListRsp;
-import com.cyberpeace.common.model.scene.AssetProperty;
+import com.cyberpeace.cr.crbase.service.context.scene.AssetProperty;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;

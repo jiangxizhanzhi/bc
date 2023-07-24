@@ -1,4 +1,4 @@
-package com.cyberpeace.common.model.scene;
+package com.cyberpeace.cr.crbase.service.context.scene;
 
 /**
  * 资产属性

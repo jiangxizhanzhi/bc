@@ -6,6 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
+import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainStatisticsDetailReq;
 import com.cyberpeace.cr.singletrain.service.SingleTrainStatisticsService;
 import com.cyberpeace.cr.singletrain.service.bo.SingleOrganizationStatisticsBo;
@@ -30,6 +34,8 @@ public class SingleTrainStatisticsController {
 
     @Autowired
     SingleTrainStatisticsService singleTrainStatistics;
+    @Autowired
+    TrainStatisticsService trainStatisticsService;
 
 
     @GetMapping("/personal_rank")
@@ -52,9 +58,9 @@ public class SingleTrainStatisticsController {
     @GetMapping("/detail")
     @ApiOperation("单兵训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_SINGLE_TRAIN_STATISTICS)
-    public BaseRsp<ListRsp<SingleStatisticsDetailBo>> getAllDetail(SingleTrainStatisticsDetailReq detailReq) {
+    public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
-        ListRsp<SingleStatisticsDetailBo> rsp = singleTrainStatistics.getAllStatisticsDetail(detailReq, page);
+        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
         return new BaseRsp<>(rsp);
     }
 

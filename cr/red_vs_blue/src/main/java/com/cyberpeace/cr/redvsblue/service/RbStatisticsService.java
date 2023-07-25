@@ -29,6 +29,6 @@ public interface RbStatisticsService {
 	 * @param page 分页
 	 * @return 红蓝对抗统计详情
 	 */
-	ListRsp<RbStatisticsDetailBo> getAllStatisticsDetail(RbStatisticsDetailReq detailReq, Page page);
+//	ListRsp<RbStatisticsDetailBo> getAllStatisticsDetail(RbStatisticsDetailReq detailReq, Page page);
 
 }

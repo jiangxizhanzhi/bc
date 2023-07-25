@@ -29,6 +29,6 @@ public interface SingleTrainStatisticsService{
 	 * @param page 分页
 	 * @return 单兵训练统计分页数据
 	 */
-	ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page);
+//	ListRsp<SingleStatisticsDetailBo> getAllStatisticsDetail(SingleTrainStatisticsDetailReq detailReq, Page page);
 
 }

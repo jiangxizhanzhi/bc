@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
+import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
 import com.cyberpeace.cr.redvsblue.controller.req.RbStatisticsDetailReq;
 import com.cyberpeace.cr.redvsblue.service.RbStatisticsService;
 import com.cyberpeace.cr.redvsblue.service.bo.RbOrganizationStatisticsBo;
@@ -30,8 +34,8 @@ public class RbStatisticsController {
 
     @Autowired
     RbStatisticsService RbTrainStatistics;
-
-
+    @Autowired
+    TrainStatisticsService trainStatisticsService;
     @GetMapping("/personal_rank")
     @ApiOperation("红蓝对抗个人排名TOP5")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
@@ -52,9 +56,10 @@ public class RbStatisticsController {
     @GetMapping("/detail")
     @ApiOperation("红蓝对抗统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_RB_TRAIN_STATISTICS)
-    public BaseRsp<ListRsp<RbStatisticsDetailBo>> getDetailAll(RbStatisticsDetailReq detailReq) {
+    public BaseRsp<ListRsp<StatisticsDetail>> getDetailAll(TrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
-        ListRsp<RbStatisticsDetailBo> rsp = RbTrainStatistics.getAllStatisticsDetail(detailReq, page);
+//        ListRsp<RbStatisticsDetailBo> rsp = RbTrainStatistics.getAllStatisticsDetail(detailReq, page);
+        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
         return new BaseRsp<>(rsp);
     }
 

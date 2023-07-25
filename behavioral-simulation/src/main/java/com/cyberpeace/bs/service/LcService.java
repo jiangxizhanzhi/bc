@@ -145,4 +145,20 @@ public interface LcService {
 	 */
 	String getDeviceIdByUuid(String uuid);
 
+	/**
+	 * 通过uuid获取设备
+	 *
+	 * @param uuid uuid
+	 * @return {@code Integer}
+	 */
+	LcDevice getDeviceOrEmptyByUuid(String uuid);
+
+	/**
+	 * 通过id获取设备
+	 *
+	 * @param id id
+	 * @return {@code LcDevice}
+	 */
+	LcDevice getDeviceOrEmptyById(String id);
+
 }

@@ -42,4 +42,9 @@ public class LcDevice implements Serializable {
 	 * 出地址
 	 */
 	private String outAddress;
+
+	/**
+	 * 状态
+	 */
+	private Integer status;
 }

@@ -1,13 +1,13 @@
 package com.cyberpeace.bs.service;
 
+import java.util.List;
+
 import com.cyberpeace.bs.dao.entity.UserSimulator;
 import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.simulator.*;
 import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.common.model.ListRsp;
-
-import java.util.List;
 
 /**
  * 用户仪表Service
@@ -171,4 +171,12 @@ public interface UserSimulatorService {
      * @param behaviorId  行为id
      */
     void startSingle(String simulatorId, String userModelId, String behaviorId);
+
+	/**
+	 * 获取在线状态
+	 *
+	 * @param simulatorIds 仪表id列表
+	 * @return {@code OnlineStatusRsp}
+	 */
+	OnlineStatusRsp getOnlineStatus(List<String> simulatorIds);
 }

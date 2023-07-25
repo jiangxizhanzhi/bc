@@ -1,5 +1,11 @@
 package com.cyberpeace.bs.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import com.cyberpeace.bs.controller.req.IdListReq;
 import com.cyberpeace.bs.controller.req.IdReq;
 import com.cyberpeace.bs.service.UserSimulatorService;
@@ -11,14 +17,10 @@ import com.cyberpeace.bs.service.bo.statistics.BehaviorMeterBo;
 import com.cyberpeace.bs.service.bo.statistics.StatisticsRsp;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 /**
@@ -299,5 +301,19 @@ public class UserSimulatorController {
         MonitorDataRes res = userSimulatorService.getMonitorData(resource_id, duration);
         return new BaseRsp(res);
     }
+
+	/**
+	 * 获取设备在线状态
+	 *
+	 * @param idListReq id列表请求体
+	 * @return {@code BaseRsp<OnlineStatusRsp>}
+	 */
+	@ApiOperation("检查仪表在线状态")
+	@PostMapping("/check_status")
+	public BaseRsp<OnlineStatusRsp>
+			getDeviceOnlineStatus(@Validated @RequestBody IdListReq idListReq) {
+		OnlineStatusRsp rsp = userSimulatorService.getOnlineStatus(idListReq.getIds());
+		return new BaseRsp<>(rsp);
+	}
 
 }

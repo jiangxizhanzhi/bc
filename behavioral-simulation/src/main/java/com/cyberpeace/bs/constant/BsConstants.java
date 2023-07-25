@@ -70,4 +70,28 @@ public interface BsConstants {
 		 */
 		Integer INTRANET = 2;
 	}
+
+	/**
+	 * 远程设备状态
+	 *
+	 * @author SN
+	 * @date 2023/07/25
+	 */
+	interface LcDeviceStatus {
+
+		/**
+		 * 可用
+		 */
+		Integer AVAILABLE = 1;
+
+		/**
+		 * 被占用
+		 */
+		Integer OCCUPIED = 2;
+
+		/**
+		 * 离线
+		 */
+		Integer OFFLINE = 3;
+	}
 }

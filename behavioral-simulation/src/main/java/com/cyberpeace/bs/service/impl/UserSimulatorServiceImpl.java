@@ -39,10 +39,7 @@ import com.cyberpeace.bs.service.bo.BsTimerTask;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorInstance;
 import com.cyberpeace.bs.service.bo.behavior.BehaviorSimple;
 import com.cyberpeace.bs.service.bo.behavior.LcBehavior;
-import com.cyberpeace.bs.service.bo.lc.LcBehaviorRspBo;
-import com.cyberpeace.bs.service.bo.lc.LcMonitorRsp;
-import com.cyberpeace.bs.service.bo.lc.ReleaseTaskReq;
-import com.cyberpeace.bs.service.bo.lc.StopTaskReq;
+import com.cyberpeace.bs.service.bo.lc.*;
 import com.cyberpeace.bs.service.bo.meter.SimulatorTimer;
 import com.cyberpeace.bs.service.bo.monitor.MonitorDataRes;
 import com.cyberpeace.bs.service.bo.monitor.MonitorSimulatorDetail;
@@ -871,6 +868,22 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 		lcService.startBehavior(taskReq);
 	}
 
+	@Override
+	public OnlineStatusRsp getOnlineStatus(List<String> simulatorIds) {
+		List<UserSimulator> simulatorList = this.userSimulatorMapper.selectBatchIds(simulatorIds);
+		OnlineStatusRsp rsp = new OnlineStatusRsp();
+		for (UserSimulator simulator : simulatorList) {
+			LcDevice device = this.getLcDevice(simulator);
+			if (null == device.getStatus()
+					|| BsConstants.LcDeviceStatus.OFFLINE.equals(device.getStatus())) {
+				rsp.getOffline().add(simulator.getResourceId());
+			} else {
+				rsp.getOnline().add(simulator.getResourceId());
+			}
+		}
+		return rsp;
+	}
+
 	private void deleteSimulatorByIds(Collection<String> simulatorIds) {
 		if (CollectionUtils.isEmpty(simulatorIds)) {
 			return;
@@ -1001,6 +1014,20 @@ public class UserSimulatorServiceImpl implements UserSimulatorService {
 
 			createTimerTask(simulator,
 					instanceMap.getOrDefault(simulator.getResourceId(), Lists.newArrayList()));
+		}
+	}
+
+	/**
+	 * 获取远程设备,返回有可能为空对象
+	 *
+	 * @param simulator 仪表
+	 * @return {@code LcDevice}
+	 */
+	private LcDevice getLcDevice(UserSimulator simulator) {
+		if (Boolean.TRUE.equals(simulator.getIsEntity())) {
+			return lcService.getDeviceOrEmptyById(simulator.getYwId());
+		} else {
+			return lcService.getDeviceOrEmptyByUuid(simulator.getDeviceId());
 		}
 	}
 }

@@ -28,6 +28,7 @@ import com.cyberpeace.bs.service.bo.variable.VariableSimple;
 import com.cyberpeace.bs.utils.BsUtil;
 import com.cyberpeace.bs.utils.LcHttpClient;
 import com.cyberpeace.common.exception.BusinessException;
+import com.cyberpeace.common.exception.LcServiceException;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.SystemPropUtil;
@@ -69,6 +70,8 @@ public class LcServiceImpl implements LcService {
      * 查询设备
      */
     private String DEVICE_URL = "api/v1/devices/find-by-page";
+
+	private String DEVICE_BY_ID = "api/v1/devices/";
 
     /**
      * 行为列表
@@ -405,5 +408,35 @@ public class LcServiceImpl implements LcService {
 			throw new BusinessException(BsErrorCode.EMPTY_DEVICE_ID);
 		}
 		return device.getId();
+	}
+
+	@Override
+	public LcDevice getDeviceOrEmptyByUuid(String uuid) {
+		// 请求地址
+		String targetUrl = LC_HOST_PORT + DEVICE_URL;
+		// req
+		LcDeviceReq req = new LcDeviceReq();
+		req.setUuid(uuid);
+		// get device
+		LcDevicePageRes res = LcHttpClient.post(targetUrl, req, LcDevicePageRes.class);
+		List<LcDevice> deviceList = res.getRecords();
+
+		if (CollectionUtils.isEmpty(deviceList)) {
+			return new LcDevice();
+		}
+		// get device
+		return deviceList.get(0);
+	}
+
+	@Override
+	public LcDevice getDeviceOrEmptyById(String id) {
+		// 请求地址
+		String targetUrl = LC_HOST_PORT + DEVICE_BY_ID + id;
+		// get device
+		try {
+			return LcHttpClient.rawGet(targetUrl, LcDevice.class);
+		} catch (LcServiceException e) {
+			return new LcDevice();
+		}
 	}
 }

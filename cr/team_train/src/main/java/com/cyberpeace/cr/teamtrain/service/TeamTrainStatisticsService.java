@@ -29,6 +29,6 @@ public interface TeamTrainStatisticsService {
 	 * @param page 分页
 	 * @return 团队训练统计详情
 	 */
-	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page);
+//	ListRsp<TeamStatisticsDetailBo> getAllStatisticsDetail(TeamTrainStatisticsDetailReq detailReq, Page page);
 
 }

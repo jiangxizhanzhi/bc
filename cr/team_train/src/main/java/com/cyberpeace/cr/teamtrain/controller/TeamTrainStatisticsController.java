@@ -5,6 +5,10 @@ import com.cyberpeace.common.constant.MenuConstant;
 import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 
+import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
+import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
+import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
 import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
@@ -31,7 +35,8 @@ public class TeamTrainStatisticsController {
 
     @Autowired
     TeamTrainStatisticsService TeamTrainStatistics;
-
+    @Autowired
+    TrainStatisticsService trainStatisticsService;
 
     @GetMapping("/personal_rank")
     @ApiOperation("团队训练个人排名TOP5")
@@ -53,9 +58,10 @@ public class TeamTrainStatisticsController {
     @GetMapping("/detail")
     @ApiOperation("团队训练统计详情")
     @RequiresPermissions(MenuConstant.CMS_CR_TEAM_TRAIN_STATISTICS)
-    public BaseRsp<ListRsp<TeamStatisticsDetailBo>> getAllDetail(TeamTrainStatisticsDetailReq detailReq) {
+    public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
-        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);
+//        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);
+        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
         return new BaseRsp<>(rsp);
     }
 

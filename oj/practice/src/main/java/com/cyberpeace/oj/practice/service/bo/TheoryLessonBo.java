@@ -45,4 +45,7 @@ public class TheoryLessonBo implements Serializable {
 
     @ApiModelProperty("分值")
     private Double score;
+
+    @ApiModelProperty("是否内置")
+    private Boolean builtin;
 }

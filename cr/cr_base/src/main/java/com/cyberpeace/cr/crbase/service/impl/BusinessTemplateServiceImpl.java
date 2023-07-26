@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -685,7 +686,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		SceneData data = sceneData.toJavaObject(SceneData.class);
+		BaseSceneData data = sceneData.toJavaObject(BaseSceneData.class);
 		if (data.isStopped()) {
 			clearLocal(template);
 			return null;

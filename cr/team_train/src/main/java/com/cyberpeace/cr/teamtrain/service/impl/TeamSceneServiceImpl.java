@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.cr.teamtrain.service.context.TeamSceneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -431,7 +433,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		SceneData data = sceneData.toJavaObject(SceneData.class);
+		TeamSceneData data = sceneData.toJavaObject(TeamSceneData.class);
 		if (data.isStopped()) {
 			clearLocal(room);
 			return null;

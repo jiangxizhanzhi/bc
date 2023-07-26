@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.cr.redvsblue.service.context.RbSceneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -279,7 +281,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, PAUSE_FLAG);
 		// 如果场景在切换中不允许操作
-		SceneData sceneData = getSceneData(room);
+		RbSceneData sceneData = getSceneData(room);
 		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
@@ -308,7 +310,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 		RbRoom room = rbRoomService.getById(roomId);
 		checkBeforePauseOps(room, UNPAUSE_FLAG);
 		// 如果场景在切换中不允许操作
-		SceneData sceneData = getSceneData(room);
+		RbSceneData sceneData = getSceneData(room);
 		if (sceneData != null && !sceneData.isFinish()) {
 			log.error("Scene is switching, roomId:{}", roomId);
 			throw new BusinessException(CrBusinessErrorCode.SCENE_SWITCHING);
@@ -473,7 +475,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 			return null;
 		}
 		// 场景实际已被删除，清除本地脏数据
-		SceneData data = sceneData.toJavaObject(SceneData.class);
+		RbSceneData data = sceneData.toJavaObject(RbSceneData.class);
 		if (data.isStopped()) {
 			clearLocal(room);
 			return null;
@@ -482,12 +484,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 		return sceneData;
 	}
 
-	public SceneData getSceneData(RbRoom room) {
+	public RbSceneData getSceneData(RbRoom room) {
 		JSONObject sceneData = getMpSceneData(room);
 		if (sceneData == null) {
 			return null;
 		}
-		return sceneData.toJavaObject(SceneData.class);
+		return sceneData.toJavaObject(RbSceneData.class);
 	}
 
 	private CrRoleNodesData getNodes(CrRole selfRole, List<CrRole> roleList, String roleId) {

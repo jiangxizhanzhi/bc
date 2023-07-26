@@ -25,7 +25,7 @@ public interface CrCommonService {
 	 * @param sceneData 场景数据
 	 * @return 场景是否停止
 	 */
-	Boolean isStopped(JSONObject sceneData);
+//	Boolean isStopped(JSONObject sceneData);
 
 	/**
 	 * 校验前端输入的 role config

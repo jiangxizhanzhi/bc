@@ -1,4 +1,4 @@
-package com.cyberpeace.cs.service.context.scene;
+package com.cyberpeace.common.context.scene;
 
 import java.io.Serializable;
 

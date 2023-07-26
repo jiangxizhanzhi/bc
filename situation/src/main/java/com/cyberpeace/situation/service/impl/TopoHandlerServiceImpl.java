@@ -319,7 +319,8 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Override
 	public Boolean enableFlowAutoRun(MpSceneData mpSceneData) {
-		return !localSceneService.getSceneFlowList(mpSceneData, null).isEmpty();
+		com.cyberpeace.cs.service.context.scene.SceneData sceneData = BeanUtils.copy(mpSceneData, com.cyberpeace.cs.service.context.scene.SceneData.class);
+		return !localSceneService.getSceneFlowList(sceneData, null).isEmpty();
 	}
 
 	@Override
@@ -342,8 +343,9 @@ public class TopoHandlerServiceImpl implements TopoHandlerService {
 
 	@Override
 	public Boolean flowAutoRun(String sceneId, MpSceneData mpSceneData, Integer interactiveType) {
+		com.cyberpeace.cs.service.context.scene.SceneData sceneData = BeanUtils.copy(mpSceneData, com.cyberpeace.cs.service.context.scene.SceneData.class);
 		Map<String, SceneFlowContext> sceneFlowContextMap = localSceneService
-				.getSceneFlowList(mpSceneData, interactiveType);
+				.getSceneFlowList(sceneData, interactiveType);
 
 		return localSceneService.startRandomFlow(sceneId, sceneFlowContextMap);
 	}

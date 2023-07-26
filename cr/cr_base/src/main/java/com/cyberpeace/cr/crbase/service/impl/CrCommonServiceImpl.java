@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,11 +114,11 @@ public class CrCommonServiceImpl implements CrCommonService {
 		return sessionList;
 	}
 
-	@Override
-	public Boolean isStopped(JSONObject sceneData) {
-		SceneData data = sceneData.toJavaObject(SceneData.class);
-		return data.isStopped();
-	}
+//	@Override
+//	public Boolean isStopped(JSONObject sceneData) {
+//		BaseSceneData data = sceneData.toJavaObject(BaseSceneData.class);
+//		return data.isStopped();
+//	}
 
 	@Override
 	public List<String> validateRoleConfig(List<CrRoleConfig> roleConfigs) {

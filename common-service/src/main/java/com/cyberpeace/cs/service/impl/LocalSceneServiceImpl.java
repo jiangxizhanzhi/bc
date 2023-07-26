@@ -31,7 +31,7 @@ import com.cyberpeace.cs.service.context.RenameTopoContext;
 import com.cyberpeace.cs.service.context.SceneFlowContext;
 import com.cyberpeace.cs.service.context.TopoSwitchRecordingContext;
 import com.cyberpeace.cs.service.context.scene.CpFlow;
-import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.cs.service.context.scene.ElementFlowList;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.*;

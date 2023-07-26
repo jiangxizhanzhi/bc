@@ -29,7 +29,7 @@ import com.cyberpeace.cs.constant.Operator;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.cs.service.context.WsMessageBO;
-import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.google.common.collect.Lists;
 

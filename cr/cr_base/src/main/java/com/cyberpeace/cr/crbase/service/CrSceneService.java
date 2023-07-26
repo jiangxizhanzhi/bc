@@ -10,7 +10,7 @@ import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.IdNameType;
-import com.cyberpeace.cs.service.context.scene.ElementFlow;
+import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.integratation.model.scene.FlowInfo;
 import com.cyberpeace.integratation.model.scene.FlowOpsContext;
 

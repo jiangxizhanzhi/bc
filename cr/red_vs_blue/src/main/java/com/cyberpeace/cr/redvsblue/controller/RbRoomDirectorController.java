@@ -45,6 +45,7 @@ import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;
 import com.cyberpeace.cr.redvsblue.service.context.CrRbRoleContext;
 import com.cyberpeace.cr.redvsblue.service.context.GroupData;
 import com.cyberpeace.cr.redvsblue.service.context.GroupRole;
+import com.cyberpeace.cr.redvsblue.service.context.RbSceneData;
 import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.constant.OperationModule;
 import com.cyberpeace.integratation.constant.OperationType;
@@ -449,7 +450,7 @@ public class RbRoomDirectorController {
 		crTaskService.pushStatusWs(roomId, RbTimeManagement.TimeManagementStatus.STOP.getCode());
 
 		//5.4 如果场景是暂停状态直接关闭
-		SceneData sceneData = rbSceneService.getSceneData(room);
+		RbSceneData sceneData = rbSceneService.getSceneData(room);
 		if (sceneData!=null&&sceneData.isPause()) {
 			rbSceneService.stopScene(roomId);
 		}

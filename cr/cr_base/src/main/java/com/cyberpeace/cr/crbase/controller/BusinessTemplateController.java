@@ -39,7 +39,7 @@ import com.cyberpeace.cr.crbase.controller.req.scene.SceneNodeOpsReq;
 import com.cyberpeace.cr.crbase.controller.req.scene.TestSceneReq;
 import com.cyberpeace.cr.crbase.controller.rsp.BusinessTemplateRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.SceneConfigRsp;
-import com.cyberpeace.cr.crbase.controller.rsp.StartSceneRsp;
+import com.cyberpeace.cr.crbase.service.context.score.StartSceneRsp;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplateData;
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;

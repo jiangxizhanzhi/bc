@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.controller.rsp;
+package com.cyberpeace.cr.crbase.service.context.score;
 
 import java.io.Serializable;
 

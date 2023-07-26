@@ -4,9 +4,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.constant.ErrorCode;
-import com.cyberpeace.common.exception.BusinessException;
-import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
@@ -18,7 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cr.crbase.controller.rsp.StudentScoreRsp;
+import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.dao.mapper.CrScoreMapper;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskLogMapper;

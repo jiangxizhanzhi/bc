@@ -205,17 +205,14 @@ public class AdminPracticeSetController extends AuthAndPublicController<Practice
 	@ApiOperation("习题集资源数据导出")
 	@GetMapping("/batch_dumps")
 	@RequiresPermissions(MenuConstant.CMS_EXERCISES)
-	public BaseRsp<Boolean> exportPracticeSet(
+	public BaseRsp<String> exportPracticeSet(
 			@ApiParam(name = "ids",
 					value = "习题集编号") @RequestParam("ids") @NotEmpty List<String> ids,
 			HttpServletResponse response) {
 
 		AuthContext authContext = AuthContextUtils.constructAuth(UserInfoContext.getUserContext(),
 				false);
-		File dumpFile = practiceSetService.dumpPracticeSet(ids, authContext);
-		FileUtil.setResponse(dumpFile, true, response);
-
-		return new BaseRsp(Boolean.TRUE);
+		return new BaseRsp(practiceSetService.dumpPracticeSet(ids, authContext));
 	}
 
 	@ApiOperation("习题集资源数据导入")

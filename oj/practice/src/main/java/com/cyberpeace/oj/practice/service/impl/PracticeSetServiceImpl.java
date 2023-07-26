@@ -330,18 +330,21 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 	}
 
 	@Override
-	public File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext) {
+	public String dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext) {
 
 		// 权限校验
 		practiceSetIds.forEach(practiceSetId -> practiceValidateHandler
 				.validatePracticeSetPermission(practiceSetId, authContext));
+		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
+		if (!SystemPropUtil.getExportBuiltin()) {
+			practiceSets.forEach(practiceSet -> practiceValidateHandler.validateBuiltin(practiceSet));
+		}
 
 		// 设置数据存储
-		String destDir = AttachmentPath.OTHER.getDesc() + IDGeneratorUtil.getID();
+		String destDir = AttachmentPath.DOWNLOAD.getDesc() + IDGeneratorUtil.getID();
 		String destFilePath = destDir + File.separatorChar
 				+ ResourceImportConstant.DUMP_LOAD_FILE_STORE_PATH;
 
-		List<PracticeSet> practiceSets = practiceSetMapper.selectBatchIds(practiceSetIds);
 		List<PracticeSetDumpLoadBo> setDumpLoadBos = StreamApiUtils.map(practiceSets,
 				practiceSet -> {
 					Map<String, String> pathMap = Maps.newHashMap();
@@ -364,9 +367,16 @@ public class PracticeSetServiceImpl extends ServiceImpl<PracticeSetMapper, Pract
 		FileUtil.writeToDestFile(JsonUtil.arrayToString(setDumpLoadBos), dataPath);
 
 		// 压缩当前文件夹
-		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.OTHER.getDesc());
+		String zipDest = ZipUtil.toZipDest(destDir, AttachmentPath.DOWNLOAD.getDesc());
 		FileUtil.deleteDir(destDir, true);
-		return new File(zipDest);
+		String fileName = AttachmentPath.DOWNLOAD.getDesc() + "PracticeSet.zip";
+		if (practiceSets.size() == 1) {
+			fileName = AttachmentPath.DOWNLOAD.getDesc() + "PracticeSet_" + practiceSets.get(0).getName() + ".zip";
+		}
+		File file = new File(zipDest);
+		File newFile = new File(fileName);
+		file.renameTo(newFile);
+		return fileName;
 	}
 
 	@Override

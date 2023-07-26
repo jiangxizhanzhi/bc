@@ -45,4 +45,6 @@ public interface PracticeOperationMapper extends BaseMapper<PracticeOperation> {
 
 	List<PracticeOperation> listByQuery(@Param("listQuery") OperationListQuery listQuery,
 			@Param("isPublic") Boolean isPublic);
+
+	String searchBuiltinBySetIds(@Param("setIds") List<String> setIds);
 }

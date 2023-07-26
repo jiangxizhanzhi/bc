@@ -390,4 +390,26 @@ public class PracticeValidateHandler {
 			}
 		}
 	}
+
+	/**
+	 * 校验是否为内置资源
+	 * @param practiceSet
+	 */
+	public void validateBuiltin(PracticeSet practiceSet) {
+		if (practiceSet.isBuiltin()) {
+			throw new BusinessException(OjBusinessErrorCode.UNABLE_TO_EXPORT_BUILTIN_RESOURCE, practiceSet.getName());
+		}
+		if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.THEORY.getCode())) {
+			String practiceTheoryName = practiceTheoryMapper.searchBuiltinBySetIds(Arrays.asList(practiceSet.getResourceId()));
+			if (practiceTheoryName != null) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE, practiceSet.getName(), practiceTheoryName);
+			}
+		}else if (practiceSet.getPracticeType().equals(PracticeSet.PracticeType.OPERATION.getCode())) {
+			String practiceOperationName = practiceOperationMapper.searchBuiltinBySetIds(Arrays.asList(practiceSet.getResourceId()));
+			if (practiceOperationName != null) {
+				throw new BusinessException(OjBusinessErrorCode.PRACTICE_SET_CONTAIN_BUILTIN_PRACTICE, practiceSet.getName(), practiceOperationName);
+			}
+		}
+	}
+
 }

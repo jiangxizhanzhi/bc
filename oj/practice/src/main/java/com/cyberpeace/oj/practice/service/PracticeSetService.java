@@ -95,7 +95,7 @@ public interface PracticeSetService extends IService<PracticeSet> {
      * @param authContext
      * @return
      */
-    File dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
+    String dumpPracticeSet(List<String> practiceSetIds, AuthContext authContext);
 
     /**
      * 习题集数据加载

@@ -145,4 +145,14 @@
             </if>
         </where>
     </select>
+
+    <select id="searchBuiltinBySetIds" resultType="java.lang.String">
+        select title
+        from oj_practice_operation
+        where practice_set_id in
+        <foreach collection="setIds" separator="," open="(" close=")" item="setId">
+            #{setId}
+        </foreach>
+        and builtin = 1 limit 1
+    </select>
 </mapper>

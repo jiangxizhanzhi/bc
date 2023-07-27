@@ -17,7 +17,7 @@ import com.cyberpeace.cr.crbase.service.context.mission.RoleTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.mission.StageTaskReleaseProgress;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbDirectorService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 

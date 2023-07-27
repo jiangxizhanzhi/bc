@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 
 public interface RbTimeManagementService extends IService<RbTimeManagement> {
 

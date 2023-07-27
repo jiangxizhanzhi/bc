@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.dao.entity;
+package com.cyberpeace.cr.redvsblue.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModelProperty;

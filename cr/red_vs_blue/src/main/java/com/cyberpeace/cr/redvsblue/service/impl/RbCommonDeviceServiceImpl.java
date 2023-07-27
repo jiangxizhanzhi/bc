@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cyberpeace.common.model.user.UserInfoContext;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
+import com.cyberpeace.cr.redvsblue.entity.RbCommonDevice;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbCommonDeviceMapper;
 import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
 import com.cyberpeace.cr.redvsblue.service.context.RbCommonDeviceContext;

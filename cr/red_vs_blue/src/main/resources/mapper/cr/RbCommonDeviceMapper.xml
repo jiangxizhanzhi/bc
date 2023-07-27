@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbCommonDeviceMapper">
-    <select id="selectByCollectUserAndRoomId" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice">
+    <select id="selectByCollectUserAndRoomId" resultType="com.cyberpeace.cr.redvsblue.entity.RbCommonDevice">
         SELECT
             id,
             resource_id     resourceId,
@@ -17,7 +17,7 @@
           AND collect_user_id = #{collectUserId}
     </select>
 
-    <select id="selectAllDevices" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice">
+    <select id="selectAllDevices" resultType="com.cyberpeace.cr.redvsblue.entity.RbCommonDevice">
         SELECT
             device_id deviceId,
             collect_user_id collectUserId

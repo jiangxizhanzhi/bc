@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 
+import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
+import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import org.apache.commons.collections.SetUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -154,7 +157,7 @@ public class RoleController {
 	@PostMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> create(@RequestBody @Validated RoleAddInput input) {
-		input.validate();
+		validate(input);
 		if (roleService.ifNameDuplicate(input.getName(), "")) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}
@@ -185,7 +188,7 @@ public class RoleController {
 	@PutMapping()
 	@RequiresPermissions(MenuConstant.CMS_RTKS_NCWF_FRAME)
 	public BaseRsp<RoleDetailOutput> update(@RequestBody @Validated RoleModifyInput input) {
-		input.validate();
+		validate(input);
 		if (roleService.ifNameDuplicate(input.getName(), input.getResourceId())) {
 			throw new BusinessException(RtksBusinessErrorCode.ROLE_ALREADY_EXISTS, input.getName());
 		}
@@ -637,5 +640,25 @@ public class RoleController {
 			return service.listByIds(relatedIds);
 		}
 
+	}
+	public void validate(RoleInput roleInput) {
+		roleInput.getKnowledgeIdWeights().forEach((knowledgeIdWeight) -> {
+			CrCommonValidator.validateRange(knowledgeIdWeight.getWeight(),
+					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+					RtksBusinessErrorCode.INVALID_WEIGHT);
+		});
+		roleInput.getSkillIdWeights().forEach((skillIdWeight) -> {
+			CrCommonValidator.validateRange(skillIdWeight.getWeight(),
+					CrCommonConstants.MIN_SKILL_WEIGHT, CrCommonConstants.MAX_SKILL_WEIGHT,
+					RtksBusinessErrorCode.INVALID_WEIGHT);
+		});
+
+		if (roleInput.getDescription() != null && roleInput.getDescription().length() > 0) {
+			CrCommonValidator.validateDescLen(roleInput.getDescription(), CrBusinessErrorCode.ILLEGAL_DESC_LEN);
+		}
+
+		if (roleInput.getName() != null) {
+			CrCommonValidator.validateNameLen(roleInput.getName(), CrBusinessErrorCode.ILLEGAL_NAME_LEN);
+		}
 	}
 }

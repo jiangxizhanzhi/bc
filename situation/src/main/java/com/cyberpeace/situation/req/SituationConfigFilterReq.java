@@ -1,4 +1,4 @@
-package com.cyberpeace.situation.controller.req;
+package com.cyberpeace.situation.req;
 
 import java.io.Serializable;
 

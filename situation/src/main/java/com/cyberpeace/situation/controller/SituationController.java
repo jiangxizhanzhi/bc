@@ -16,7 +16,7 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.situation.constant.SituationErrorCode;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.controller.req.FlowAutoRunReq;
-import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.controller.req.SceneConfigReq;
 import com.cyberpeace.situation.controller.req.SceneIdListReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;

@@ -15,7 +15,7 @@ import com.cyberpeace.situation.constant.*;
 import com.cyberpeace.situation.constant.ws.ActionType;
 import com.cyberpeace.situation.constant.ws.MessageType;
 import com.cyberpeace.situation.constant.ws.MpEventType;
-import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.model.*;
 import com.cyberpeace.situation.model.ws.*;

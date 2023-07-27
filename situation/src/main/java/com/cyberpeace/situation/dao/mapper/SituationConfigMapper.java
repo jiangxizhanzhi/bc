@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
+import com.cyberpeace.situation.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 
 @Mapper

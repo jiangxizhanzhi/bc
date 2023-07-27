@@ -10,7 +10,7 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.situation.controller.req.SituationConfigAddReq;
-import com.cyberpeace.situation.controller.req.SituationConfigFilterReq;
+import com.cyberpeace.situation.req.SituationConfigFilterReq;
 import com.cyberpeace.situation.dao.entity.SituationConfig;
 import com.cyberpeace.situation.dao.mapper.SituationConfigMapper;
 

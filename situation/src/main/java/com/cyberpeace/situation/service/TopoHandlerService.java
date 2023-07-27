@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.situation.controller.req.FlowLogReq;
+import com.cyberpeace.situation.req.FlowLogReq;
 import com.cyberpeace.situation.controller.res.ElementStateRes;
 import com.cyberpeace.situation.model.CategorieMap;
 import com.cyberpeace.situation.model.MpSceneData;

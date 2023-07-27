@@ -13,7 +13,7 @@ import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.statistics.RoomRoleContext;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;

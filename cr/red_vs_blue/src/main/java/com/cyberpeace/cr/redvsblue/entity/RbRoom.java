@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.redvsblue.dao.entity;
+package com.cyberpeace.cr.redvsblue.entity;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.model.BaseTable;
 import com.cyberpeace.common.util.JsonUtil;
+import com.cyberpeace.cr.redvsblue.dao.entity.RbTemplate;
 import com.cyberpeace.cr.redvsblue.service.context.RbRoomContext;
 
 import lombok.Data;

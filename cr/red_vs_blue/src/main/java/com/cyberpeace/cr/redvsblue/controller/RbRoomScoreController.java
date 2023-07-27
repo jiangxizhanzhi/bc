@@ -41,7 +41,7 @@ import com.cyberpeace.cr.crbase.service.context.UserReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionReport;
 import com.cyberpeace.cr.crbase.service.context.mission.MissionsStatistic;
 import com.cyberpeace.cr.crbase.service.context.mission.StageExport;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbRoom;
+import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomScoreService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbTimeManagementService;

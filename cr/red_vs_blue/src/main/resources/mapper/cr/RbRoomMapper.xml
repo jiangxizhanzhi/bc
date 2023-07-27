@@ -5,12 +5,12 @@
 <mapper namespace="com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper">
 
     <sql id="share_constant">
-        <bind name="PAUSE_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@PAUSE.code"/>
-        <bind name="RUNNING_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@RUNNING.code"/>
-        <bind name="RECOVERY_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.dao.entity.RbRoom$TrainingStatusCode@RECOVERY.code"/>
+        <bind name="PAUSE_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.entity.RbRoom$TrainingStatusCode@PAUSE.code"/>
+        <bind name="RUNNING_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.entity.RbRoom$TrainingStatusCode@RUNNING.code"/>
+        <bind name="RECOVERY_STATUS_CODE" value="@com.cyberpeace.cr.redvsblue.entity.RbRoom$TrainingStatusCode@RECOVERY.code"/>
     </sql>
 
-    <select id="selectAll" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbRoom">
+    <select id="selectAll" resultType="com.cyberpeace.cr.redvsblue.entity.RbRoom">
         select *
         from cr_rb_room
     </select>
@@ -131,7 +131,7 @@
             #{roomId}
         </foreach>
     </select>
-    <select id="selectUnfinishedByIds" resultType="com.cyberpeace.cr.redvsblue.dao.entity.RbRoom">
+    <select id="selectUnfinishedByIds" resultType="com.cyberpeace.cr.redvsblue.entity.RbRoom">
         select *
         from cr_rb_room
         where training_status != #{endStatus}

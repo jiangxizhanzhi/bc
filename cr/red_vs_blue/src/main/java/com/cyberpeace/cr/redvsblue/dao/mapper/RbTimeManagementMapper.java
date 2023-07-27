@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbTimeManagement;
+import com.cyberpeace.cr.redvsblue.entity.RbTimeManagement;
 
 @Mapper
 public interface RbTimeManagementMapper extends BaseMapper<RbTimeManagement> {

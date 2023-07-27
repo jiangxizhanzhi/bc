@@ -1,8 +1,7 @@
 package com.cyberpeace.cr.redvsblue.service.context;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.cr.redvsblue.dao.entity.RbCommonDevice;
+import com.cyberpeace.cr.redvsblue.entity.RbCommonDevice;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

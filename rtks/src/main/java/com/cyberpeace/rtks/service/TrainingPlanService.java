@@ -5,9 +5,9 @@ import java.util.List;
 import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
-import com.cyberpeace.rtks.controller.res.KnowledgeTreeRes;
-import com.cyberpeace.rtks.controller.res.RoleDetailRes;
+import com.cyberpeace.rtks.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeTreeRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.dao.entity.Role;
 
 public interface TrainingPlanService {

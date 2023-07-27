@@ -1,4 +1,4 @@
-package com.cyberpeace.rtks.controller.res;
+package com.cyberpeace.rtks.res;
 
 import java.io.Serializable;
 import java.util.List;

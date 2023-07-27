@@ -1,10 +1,11 @@
-package com.cyberpeace.rtks.controller.res;
+package com.cyberpeace.rtks.res;
 
 import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

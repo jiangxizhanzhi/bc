@@ -16,7 +16,7 @@ import com.cyberpeace.oj.course.service.CourseStatisticsService;
 import com.cyberpeace.oj.course.service.bo.CourseInfoBo;
 import com.cyberpeace.oj.course.service.bo.CourseStudyProcessBo;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
-import com.cyberpeace.rtks.controller.res.RoleDetailRes;
+import com.cyberpeace.rtks.res.RoleDetailRes;
 import com.cyberpeace.rtks.dao.entity.CourseName;
 import com.cyberpeace.rtks.service.CourseNameService;
 import com.cyberpeace.rtks.service.RelatedCourseService;

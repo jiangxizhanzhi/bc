@@ -8,7 +8,7 @@ import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.rtks.controller.course.CourseConfig;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 
 /**

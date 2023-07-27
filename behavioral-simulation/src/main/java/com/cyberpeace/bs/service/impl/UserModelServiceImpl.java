@@ -121,6 +121,8 @@ public class UserModelServiceImpl implements UserModelService {
 
 	@Override
 	public void create(UserModelAddBo addBo) {
+		// check name
+		checkName(addBo.getUserName(), "");
 		// 生成用户模型
 		UserModel userModel = req2Entity(addBo);
 		// 插入数据库
@@ -129,6 +131,8 @@ public class UserModelServiceImpl implements UserModelService {
 
 	@Override
 	public void update(UserModelModifyBo modifyBo) {
+		// check name
+		checkName(modifyBo.getUserName(), modifyBo.getResourceId());
 		// 判断更新的实体是否有id
 		if (StringUtils.isBlank(modifyBo.getResourceId())) {
 			throw new BusinessException(CrBusinessErrorCode.RESOURCE_ID_MISSING);
@@ -331,5 +335,17 @@ public class UserModelServiceImpl implements UserModelService {
 			return null;
 		}
 		return userModelMapper.selectById(userModelId);
+	}
+
+	/**
+	 * 检查名称
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 */
+	private void checkName(String name, String resourceId) {
+		if (userModelMapper.existByName(name, resourceId)) {
+			throw new BusinessException(ErrorCode.NAME_DUPLICATE);
+		}
 	}
 }

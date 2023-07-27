@@ -1,15 +1,16 @@
 package com.cyberpeace.bs.dao.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.bs.dao.entity.UserModel;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyberpeace.bs.dao.entity.UserModel;
 
 /**
  * 用户模型Mapper
@@ -43,4 +44,13 @@ public interface UserModelMapper extends BaseMapper<UserModel> {
      */
     List<UserModel>
     selectBatchIdsOrderByIdDesc(@Param("userModelIds") Collection<String> userModelIds);
+
+	/**
+	 * 检查是否重名
+	 *
+	 * @param name       名称
+	 * @param resourceId 资源id
+	 * @return boolean
+	 */
+	boolean existByName(@Param("name") String name, @Param("resourceId") String resourceId);
 }

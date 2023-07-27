@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cyberpeace.bs.dao.mapper.BehaviorCollectionMapper">
+    <select id="pageCollection" resultType="com.cyberpeace.bs.dao.entity.BehaviorCollection">
+        <if test="pattern != null and pattern != ''">
+            <bind name="search" value="'%' + pattern + '%'"/>
+        </if>
+        select * from bs_behavior_collection
+        <where>
+            <if test="accessOs != null">
+                and access_os = #{accessOs}
+            </if>
+            <if test="pattern != null and pattern != ''">
+                and `name` like #{search}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="existByName" resultType="java.lang.Boolean">
+        select case
+        when exists(select 1
+        from bs_behavior_collection
+        where `name` = #{name}
+        <if test="resourceId != null and resourceId != ''">
+            and resource_id != #{resourceId}
+        </if>)
+        then 1
+        else 0
+        end
+        as result;
+    </select>
+</mapper>

@@ -1,13 +1,15 @@
-package com.cyberpeace.rtks.controller.res;
+package com.cyberpeace.rtks.res;
 
 import java.io.Serializable;
 import java.util.List;
 
 import com.cyberpeace.rtks.controller.frame.LevelTreeOutput;
+import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.Ability;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 import com.cyberpeace.rtks.dao.entity.Skill;
 import com.cyberpeace.rtks.dao.entity.Task;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.service.bo.skill.MissionTemplateSimple;
 import com.cyberpeace.rtks.service.bo.skill.SkillRes;
 

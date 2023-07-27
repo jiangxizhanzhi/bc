@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
 import com.cyberpeace.rtks.controller.res.CourseRelatedRes;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.Knowledge;
 
 @Mapper

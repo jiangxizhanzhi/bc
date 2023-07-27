@@ -23,7 +23,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.constant.RtksBusinessErrorCode;
 import com.cyberpeace.rtks.controller.req.KnowledgeCategoryAddReq;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.dao.entity.KnowledgeCategory;
 import com.cyberpeace.rtks.service.KnowledgeCategoryService;
 import com.cyberpeace.rtks.service.KnowledgeService;

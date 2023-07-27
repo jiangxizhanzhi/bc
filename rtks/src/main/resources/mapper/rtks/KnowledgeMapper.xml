@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cyberpeace.rtks.dao.mapper.KnowledgeMapper">
 
-    <select id="listKnowledge" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
+    <select id="listKnowledge" resultType="com.cyberpeace.rtks.res.KnowledgeRes">
         <if test="knowledgeListReq.pattern != null and knowledgeListReq.pattern != ''">
             <bind name="pattern" value="'%' + knowledgeListReq.pattern + '%'"/>
         </if>
@@ -32,7 +32,7 @@
         </where>
     </select>
 
-    <select id="getKnowledgeByResourceId" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
+    <select id="getKnowledgeByResourceId" resultType="com.cyberpeace.rtks.res.KnowledgeRes">
         select
         rtks_knowledge.id,
         rtks_knowledge.resource_id,
@@ -67,7 +67,7 @@
         </where>
 
     </select>
-    <select id="getKnowledgeListByIds" resultType="com.cyberpeace.rtks.controller.res.KnowledgeRes">
+    <select id="getKnowledgeListByIds" resultType="com.cyberpeace.rtks.res.KnowledgeRes">
         select
         rtks_knowledge.id,
         rtks_knowledge.resource_id,

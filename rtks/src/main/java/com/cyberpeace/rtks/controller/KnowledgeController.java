@@ -25,7 +25,7 @@ import com.cyberpeace.integratation.constant.OperationType;
 import com.cyberpeace.integratation.service.RemoteLogService;
 import com.cyberpeace.rtks.controller.req.KnowledgeAddReq;
 import com.cyberpeace.rtks.controller.req.KnowledgeListReq;
-import com.cyberpeace.rtks.controller.res.KnowledgeRes;
+import com.cyberpeace.rtks.res.KnowledgeRes;
 import com.cyberpeace.rtks.controller.res.RelatedCourse;
 import com.cyberpeace.rtks.dao.entity.CourseRelated;
 import com.cyberpeace.rtks.dao.entity.Knowledge;

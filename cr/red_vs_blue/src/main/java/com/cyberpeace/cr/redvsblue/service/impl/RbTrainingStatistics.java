@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,6 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.dao.mapper.RbRoomMapper;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -29,8 +29,8 @@ public class RbTrainingStatistics extends CrEventStatistics {
 	RbRoomMapper rbRoomMapper;
 
 	@Override
-	public LocalScene.BusinessCode getCode() {
-		return LocalScene.BusinessCode.RED_VS_BLUE;
+	public BusinessCode getCode() {
+		return BusinessCode.RED_VS_BLUE;
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class RbTrainingStatistics extends CrEventStatistics {
 		for (RbRoom room : rooms) {
 
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
-			data.setAppId(LocalScene.BusinessCode.RED_VS_BLUE.getCode());
-			data.setAppName(LocalScene.BusinessCode.RED_VS_BLUE.getDesc());
+			data.setAppId(BusinessCode.RED_VS_BLUE.getCode());
+			data.setAppName(BusinessCode.RED_VS_BLUE.getDesc());
 			// 计算持续时长
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));

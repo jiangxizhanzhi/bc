@@ -5,6 +5,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.common.context.scene.ElementFlow;
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,6 @@ import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateWsBo;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.cs.service.context.IdNameType;
@@ -75,7 +75,7 @@ public class CrSceneServiceImpl implements CrSceneService {
 	private MyWebSocketHandler webSocketHandler;
 
 	@Override
-	public String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
+	public String saveTopo(SceneConfigData sceneConfigData, BusinessCode businessCode,
 			String topoId) {
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", sceneConfigData.getSceneConfig());

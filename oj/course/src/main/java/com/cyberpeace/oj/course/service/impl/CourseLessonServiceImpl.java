@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
-import com.cyberpeace.cs.constant.FileTypeContant;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.cs.service.UtilService;
@@ -398,7 +397,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (courseLesson.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				&& null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig,
-					LocalScene.BusinessCode.LESSON.getCode());
+					BusinessCode.LESSON.getCode());
 			courseLesson.setTopoId(topoId);
 		}
 
@@ -449,7 +448,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 				courseLesson.setTopoId(topoId);
 			} else {
 				String topo = localSceneService.saveTopo(ojSceneConfig,
-						LocalScene.BusinessCode.LESSON.getCode());
+						BusinessCode.LESSON.getCode());
 				courseLesson.setTopoId(topo);
 			}
 		}
@@ -1459,7 +1458,7 @@ public class CourseLessonServiceImpl extends ServiceImpl<CourseLessonMapper, Cou
 		if (lessonDumpLoadBo.getType().intValue() == CourseLesson.LessonType.EXPERIMENT.getCode()
 				.intValue() && null != lessonDumpLoadBo.getTopoConfig()) {
 			String topoId = localSceneService.saveTopo(lessonDumpLoadBo.getTopoConfig(),
-					LocalScene.BusinessCode.LESSON.getCode());
+					BusinessCode.LESSON.getCode());
 			lesson.setTopoId(topoId);
 		}
 

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.evaluation.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,6 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cs.constant.Operator;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.FlowUpdateContext;
 import com.cyberpeace.cs.service.context.WsMessageBO;
 import com.cyberpeace.common.context.scene.ElementFlow;
@@ -61,7 +61,7 @@ public class EvalSceneEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.RANGE_EVALUATION.getCode();
+		return BusinessCode.RANGE_EVALUATION.getCode();
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import com.cyberpeace.cr.crbase.service.context.resource.ResourceDumpContext;
 import com.cyberpeace.cr.crbase.service.context.template.BTPageReq;
 import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
@@ -107,7 +108,7 @@ public interface BusinessTemplateService extends IService<BusinessTemplate> {
 	 * @param type 类型
 	 * @return 类型代号
 	 */
-	LocalScene.BusinessCode convertTypeToCode(Integer type);
+	BusinessCode convertTypeToCode(Integer type);
 
 	/**
 	 * 导出训练模板

@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.singletrain.service.impl;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,6 @@ import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.cr.crbase.service.context.scene.CrSceneWsMessageIdentifier;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.service.SingleRoomService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class SingleSceneEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.SINGLE_TRAINING.getCode();
+		return BusinessCode.SINGLE_TRAINING.getCode();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.Date;
 import java.util.Map;
 
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.oj.ojbase.constant.ClassroomRole;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +147,7 @@ public class ClassroomSignServiceImpl extends ServiceImpl<ClassroomSignMapper, C
 		}
 
 		LocalScene localScene = localSceneMapper.selectById(ojLocalScene.getLocalSceneId());
-		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode()
+		if (localScene.getSceneStatus().intValue() == SceneStatusEnum.PAUSE.getCode()
 				.intValue()) {
 			log.error("[{}] is pause", localScene.getResourceId());
 			throw new BusinessException(OjBusinessErrorCode.SCENE_IS_PAUSE);

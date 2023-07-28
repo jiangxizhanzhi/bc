@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -841,8 +843,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		LocalScene localScene = new LocalScene();
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
-		localScene.setBusinessCode(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
+		localScene.setBusinessCode(BusinessCode.TEAM_TRAINING.getCode());
 
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setBusinessInstanceId(teamRoomId);

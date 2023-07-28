@@ -3,7 +3,9 @@ package com.cyberpeace.job;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.RemoteServiceException;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.service.impl.SceneStatusCompute;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
@@ -75,7 +77,7 @@ public class SyncMpSceneJob {
 			JSONObject scene = remoteSceneService.getById(localScene.getMpSceneId(),
 					localScene.getUserId());
 
-			LocalScene.SceneStatusEnum statusEnum = SceneStatusCompute.compute(scene);
+			SceneStatusEnum statusEnum = SceneStatusCompute.compute(scene);
 			if (!statusEnum.isClose()) {
 				return;
 			}
@@ -99,13 +101,13 @@ public class SyncMpSceneJob {
 	}
 
 	private Boolean isOj(int businessCode) {
-		return businessCode == LocalScene.BusinessCode.LESSON.getCode().intValue()
-				|| businessCode == LocalScene.BusinessCode.PRACTICE.getCode().intValue()
-				|| businessCode == LocalScene.BusinessCode.LESSON_PRACTICE.getCode().intValue();
+		return businessCode == BusinessCode.LESSON.getCode().intValue()
+				|| businessCode == BusinessCode.PRACTICE.getCode().intValue()
+				|| businessCode == BusinessCode.LESSON_PRACTICE.getCode().intValue();
 	}
 
 	private Boolean isClassroom(int businessCode) {
-		return businessCode == LocalScene.BusinessCode.CLASSROOM.getCode().intValue();
+		return businessCode == BusinessCode.CLASSROOM.getCode().intValue();
 	}
 
 	private void deleteClassScene(LocalScene localScene) {

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.cr.redvsblue.service.context.RbSceneData;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -120,7 +122,7 @@ public class RbSceneServiceImpl implements RbSceneService {
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					// 更新表数据
 					localScene.setMpSceneId(sceneId);
-					localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+					localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 					localScene.setStartTime(new Date());
 					room.setLocalSceneId(localScene.getResourceId());
 
@@ -142,12 +144,12 @@ public class RbSceneServiceImpl implements RbSceneService {
 	private LocalScene createLocalScene(RbRoom room, String topoId) {
 		LocalScene localScene = new LocalScene();
 
-		localScene.setBusinessCode(LocalScene.BusinessCode.RED_VS_BLUE.getCode());
+		localScene.setBusinessCode(BusinessCode.RED_VS_BLUE.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(room.getResourceId());
 		localScene.setTopoId(topoId);
 		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setStartTime(new Date());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.TEAM.getCode());

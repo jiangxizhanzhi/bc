@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.cr.teamtrain.service.context.TeamSceneData;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,7 +94,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		}
 
 		// 3、构建本地scene对象
-		LocalScene localScene = createLocalScene(LocalScene.BusinessCode.TEAM_TRAINING.getCode(),
+		LocalScene localScene = createLocalScene(BusinessCode.TEAM_TRAINING.getCode(),
 				room, room.getCopyedTopoId());
 
 		// 4、启动mp场景
@@ -106,7 +108,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 				protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					// 更新表数据
 					localScene.setMpSceneId(sceneId);
-					localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+					localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 					localScene.setStartTime(new Date());
 					room.setLocalSceneId(localScene.getResourceId());
 
@@ -391,7 +393,7 @@ public class TeamSceneServiceImpl implements TeamSceneService {
 		localScene.setBusinessInstanceId(teamRoom.getResourceId());
 		localScene.setTopoId(topoId);
 		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setStartTime(new Date());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.TEAM.getCode());

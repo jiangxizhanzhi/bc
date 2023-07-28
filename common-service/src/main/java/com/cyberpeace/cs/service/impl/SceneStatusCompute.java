@@ -2,7 +2,7 @@ package com.cyberpeace.cs.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.constant.JsonKeyConstant;
-import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 
 public class SceneStatusCompute {
 
@@ -11,12 +11,12 @@ public class SceneStatusCompute {
 	 * @param scene
 	 * @return
 	 */
-	public static LocalScene.SceneStatusEnum compute(JSONObject scene) {
-		LocalScene.SceneStatusEnum[] constants = LocalScene.SceneStatusEnum.class
+	public static SceneStatusEnum compute(JSONObject scene) {
+		SceneStatusEnum[] constants = SceneStatusEnum.class
 				.getEnumConstants();
 
 		if (null == scene || scene.isEmpty()) {
-			return LocalScene.SceneStatusEnum.INIT;
+			return SceneStatusEnum.INIT;
 		}
 
 		// 数据解析
@@ -26,14 +26,14 @@ public class SceneStatusCompute {
 		Integer sceneEventStatus = sceneData.getInteger(JsonKeyConstant.SCENE_EVENT_STATUS);
 
 		// 循环判断
-		for (LocalScene.SceneStatusEnum constant : constants) {
+		for (SceneStatusEnum constant : constants) {
 			if (!constant.isCurrent(sceneEvent, sceneEventStatus)) {
 				continue;
 			}
 			return constant;
 		}
 
-		return LocalScene.SceneStatusEnum.INIT;
+		return SceneStatusEnum.INIT;
 	}
 
 }

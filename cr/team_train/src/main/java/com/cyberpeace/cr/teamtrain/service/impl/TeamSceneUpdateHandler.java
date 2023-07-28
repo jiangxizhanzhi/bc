@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.cyberpeace.cr.teamtrain.service.TeamCommonDeviceService;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
  * 团队场景动态更新
@@ -36,7 +36,7 @@ public class TeamSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
 	@Override
 	protected Integer getCode() {
-		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
+		return BusinessCode.TEAM_TRAINING.getCode();
 	}
 
 	@Override

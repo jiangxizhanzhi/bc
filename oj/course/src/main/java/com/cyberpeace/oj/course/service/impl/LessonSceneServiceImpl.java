@@ -2,6 +2,8 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,7 +182,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		OjLocalScene ojLocalScene = nodeOperationCheck(resourceId, roomId,  authContext);
 
-		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+		if (status.intValue() == SceneStatusEnum.PAUSE.getCode().intValue()) {
 
 			// 场景暂停
 			localSceneService.pauseScene(ojLocalScene.getLocalSceneId());
@@ -198,7 +200,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	 */
 	private void clearAssistance(OjLocalScene ojLocalScene) {
 
-		if (ojLocalScene.getBusinessType().intValue() != LocalScene.BusinessCode.CLASSROOM.getCode()
+		if (ojLocalScene.getBusinessType().intValue() != BusinessCode.CLASSROOM.getCode()
 				.intValue()) {
 			return;
 		}
@@ -292,7 +294,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 	 */
 	public OjLocalScene initLessonOjLocalScene(CourseLesson courseLesson, AuthContext authContext) {
 		OjLocalScene ojLocalScene = OjLocalScene.builder().businessId(courseLesson.getResourceId())
-				.businessType(LocalScene.BusinessCode.LESSON.getCode())
+				.businessType(BusinessCode.LESSON.getCode())
 				.resourceId(IDGeneratorUtil.getID()).fromWeb(authContext.getIsWeb())
 				.shared(courseLesson.getSceneShareMode().intValue() == SceneShare.SHARED.getCode()
 						.intValue())
@@ -314,7 +316,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 		// 设置场景基本信息
 		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setSceneName(courseLesson.getName());
-		localScene.setBusinessCode(LocalScene.BusinessCode.LESSON.getCode());
+		localScene.setBusinessCode(BusinessCode.LESSON.getCode());
 		localScene.setTopoId(courseLesson.getTopoId());
 		localScene.setSceneTtl(courseLesson.getDestroyDelay() * CommonConstant.SIXTY);
 		localScene.setUserId(authContext.getUserId());
@@ -323,7 +325,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 						: SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 
 		// 设置初始化信息
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.AUTO.getCode());
 
 		// 设置关联ojlocalscene信息
@@ -338,7 +340,7 @@ public class LessonSceneServiceImpl implements LessonSceneService {
 
 		// 设置大场景数据 部分课程为资源导入 无法设置reference_type
 		JSONObject topoData = remoteTopoService.getTopoById(courseLesson.getTopoId());
-		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.LESSON.getCode());
+		topoData.put(JsonKeyConstant.REFERENCE_TYPE, BusinessCode.LESSON.getCode());
 		localSceneMeta.setTopoData(topoData);
 		localScene.setMeta(JsonUtil.toJsonString(localSceneMeta));
 

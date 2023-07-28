@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,8 +194,8 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		String businessId = template.getResourceId() + '_' + userId;
 
 		localScene.setTopoId(template.getTopoId());
-		localScene.setBusinessCode(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+		localScene.setBusinessCode(BusinessCode.SINGLE_TRAINING.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(businessId);
 		localScene.setResourceId(IDGeneratorUtil.getID());

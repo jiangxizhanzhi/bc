@@ -1,4 +1,4 @@
-package com.cyberpeace.cs.constant;
+package com.cyberpeace.common.enums;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import lombok.Getter;

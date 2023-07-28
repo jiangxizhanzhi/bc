@@ -18,8 +18,10 @@ import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.dao.mapper.AttachmentMapper;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.AttachmentService;
@@ -47,7 +49,6 @@ import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import com.cyberpeace.oj.ojbase.service.ResourceCollectionService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.controller.req.OperationUpdateReq;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
@@ -177,7 +178,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		practiceOperation.setBuiltin(CommonConstant.FALSE);
 		if (practiceOperation.getDynamicEnv() && null != ojSceneConfig) {
 			String topoId = localSceneService.saveTopo(ojSceneConfig,
-					LocalScene.BusinessCode.PRACTICE.getCode());
+					BusinessCode.PRACTICE.getCode());
 			practiceOperation.setTopoId(topoId);
 		}
 
@@ -811,7 +812,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 	public Boolean pauseScene(String resourceId, Integer status, AuthContext authContext) {
 
 		LocalScene localScene = sceneNodeCheck(resourceId, authContext);
-		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+		if (status.intValue() == SceneStatusEnum.PAUSE.getCode().intValue()) {
 
 			remoteLogService.addOjLog(UserInfoContext.getUserContext(),
 					OperationModule.CAPTURE_FLAG, OperationType.PAUSE, LogContent.EXERCISE.getMsg(),
@@ -1118,7 +1119,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 场景
 		if (dumpLoadBo.getDynamicEnv()) {
 			String topoId = localSceneService.saveTopo(dumpLoadBo.getTopoConfig(),
-					LocalScene.BusinessCode.PRACTICE.getCode());
+					BusinessCode.PRACTICE.getCode());
 			operation.setTopoId(topoId);
 		}
 
@@ -1200,7 +1201,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 		// 初始化场景数据
 		InitOjSceneContext initOjSceneContext = InitOjSceneContext.builder()
 				.businessId(operation.getResourceId())
-				.businessType(LocalScene.BusinessCode.PRACTICE.getCode())
+				.businessType(BusinessCode.PRACTICE.getCode())
 				.dynamicFlag(operation.getDynamicFlag()).flags(operation.getAnswer())
 				.sharedType(operation.getSceneShareMode()).fromWeb(authContext.getIsWeb())
 				.userId(authContext.getUserId()).build();
@@ -1220,8 +1221,8 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 			AuthContext authContext) {
 
 		LocalScene localScene = new LocalScene();
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
-		localScene.setBusinessCode(LocalScene.BusinessCode.PRACTICE.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
+		localScene.setBusinessCode(BusinessCode.PRACTICE.getCode());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 		localScene.setDestroyMode(LocalScene.DestroyMode.AUTO.getCode());
 		localScene.setResourceId(IDGeneratorUtil.getID());
@@ -1239,7 +1240,7 @@ public class PracticeOperationServiceImpl extends ServiceImpl<PracticeOperationM
 
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
-		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.PRACTICE.getCode());
+		topoData.put(JsonKeyConstant.REFERENCE_TYPE, BusinessCode.PRACTICE.getCode());
 		sceneMeta.setTopoData(topoData);
 
 		// 动态环境flag设置

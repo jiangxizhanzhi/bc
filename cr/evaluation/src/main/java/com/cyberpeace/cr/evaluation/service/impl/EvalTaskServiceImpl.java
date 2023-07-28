@@ -21,8 +21,10 @@ import com.cyberpeace.cr.evaluation.service.EvalTaskService;
 import com.cyberpeace.cr.evaluation.service.EvalTaskStepService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskOpsContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTaskStepConfig;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -147,7 +149,7 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 		// 启动中台场景
 		String sceneId = localSceneService.startScene(localScene);
 		localScene.setMpSceneId(sceneId);
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 		Date startTime = new Date();
 		localScene.setStartTime(startTime);
 		evalTask.setStartTime(startTime);
@@ -184,12 +186,12 @@ public class EvalTaskServiceImpl extends ServiceImpl<EvalTaskMapper, EvalTask> i
 	private LocalScene createLocalScene(EvalTask evalTask) {
 
 		LocalScene localScene = new LocalScene();
-		localScene.setBusinessCode(LocalScene.BusinessCode.RANGE_EVALUATION.getCode());
+		localScene.setBusinessCode(BusinessCode.RANGE_EVALUATION.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		localScene.setBusinessInstanceId(evalTask.getResourceId());
 		localScene.setTopoId(evalTask.getCopyedTopoId());
 		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.SINGLE.getCode());
 		localScene.setSceneName(evalTask.getTemplateName());

@@ -2,11 +2,11 @@ package com.cyberpeace.cr.crbase.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.cr.crbase.service.BusinessTemplateService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.AuthMessageListener;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class BusinessTemplateEventListener extends AuthMessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.COMPREHENSIVE_TRAINING.getCode();
+		return BusinessCode.COMPREHENSIVE_TRAINING.getCode();
 	}
 
 	@Override

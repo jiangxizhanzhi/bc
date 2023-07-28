@@ -2,7 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
-import com.cyberpeace.cr.singletrain.service.bo.SingleRoomData;
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,6 @@ import com.cyberpeace.cr.singletrain.dao.entity.SingleRoom;
 import com.cyberpeace.cr.singletrain.dao.entity.SingleTemplate;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleRoomMapper;
 import com.cyberpeace.cr.singletrain.dao.mapper.SingleTemplateMapper;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;
 
 @Service
@@ -37,8 +36,8 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	SingleTemplateMapper singleTemplateMapper;
 
 	@Override
-	public LocalScene.BusinessCode getCode() {
-		return LocalScene.BusinessCode.SINGLE_TRAINING;
+	public BusinessCode getCode() {
+		return BusinessCode.SINGLE_TRAINING;
 	}
 
 	@Override
@@ -64,8 +63,8 @@ public class SingleTrainStatistics extends CrEventStatistics {
 			BusinessTemplate businessTemplate = businessTemplateMapper
 					.selectById(room.getBusinessTemplateId());
 			TrainingData data = BeanUtils.copy(businessTemplate, TrainingData.class);
-			data.setAppId(LocalScene.BusinessCode.SINGLE_TRAINING.getCode());
-			data.setAppName(LocalScene.BusinessCode.SINGLE_TRAINING.getDesc());
+			data.setAppId(BusinessCode.SINGLE_TRAINING.getCode());
+			data.setAppName(BusinessCode.SINGLE_TRAINING.getDesc());
 			data.setRoleGroup(CrCommonConstants.STUDENT_ROLE);
 			//StartTime存在说明已开始，不存在是未开始（不会查到）；EndTime存在说明已完成；
 			data.setState(room.getStartTime()==null ? 0 : 1);

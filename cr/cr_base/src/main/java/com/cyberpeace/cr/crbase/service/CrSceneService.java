@@ -8,7 +8,7 @@ import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.scene.ElementFlowListContext;
 import com.cyberpeace.cr.crbase.service.context.scene.FlowInfoContext;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.service.context.IdNameType;
 import com.cyberpeace.common.context.scene.ElementFlow;
 import com.cyberpeace.integratation.model.scene.FlowInfo;
@@ -25,7 +25,7 @@ public interface CrSceneService {
 	 * @param topoId 拓扑id
 	 * @return 拓扑id
 	 */
-	String saveTopo(SceneConfigData sceneConfigData, LocalScene.BusinessCode businessCode,
+	String saveTopo(SceneConfigData sceneConfigData, BusinessCode businessCode,
 			String topoId);
 
 	/** 获取流量文件路径

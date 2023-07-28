@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,6 @@ import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.service.TeamRoomService;
 import com.cyberpeace.cr.teamtrain.service.TeamSceneService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.cs.service.impl.MessageListener;
 
@@ -44,7 +44,7 @@ public class TeamSceneEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.TEAM_TRAINING.getCode();
+		return BusinessCode.TEAM_TRAINING.getCode();
 	}
 
 	@Override

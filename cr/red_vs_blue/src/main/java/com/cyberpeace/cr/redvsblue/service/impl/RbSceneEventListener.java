@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,6 @@ import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
 import com.cyberpeace.cr.redvsblue.service.RbSceneService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.context.WsSceneReportBO;
 import com.cyberpeace.cs.service.impl.MessageListener;
 
@@ -44,7 +44,7 @@ public class RbSceneEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.RED_VS_BLUE.getCode();
+		return BusinessCode.RED_VS_BLUE.getCode();
 	}
 
 	@Override

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cyberpeace.common.constant.PatternConstant;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.mdparser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 import com.cyberpeace.cs.service.context.RoleBo;
 

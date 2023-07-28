@@ -3,7 +3,7 @@ package com.cyberpeace.cr.crbase.service.context.paraser;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.mdparser.MdContentParser;
 import com.cyberpeace.common.util.LocalStringUtil;
 
 /**

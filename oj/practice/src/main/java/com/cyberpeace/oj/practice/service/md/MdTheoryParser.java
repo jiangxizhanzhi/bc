@@ -20,7 +20,7 @@ import com.cyberpeace.common.mdparser.annotations.MdHeadLine;
 import com.cyberpeace.common.mdparser.convert.MdConvert;
 import com.cyberpeace.common.mdparser.convert.MdConvertEnum;
 import com.cyberpeace.common.mdparser.convert.NoConvert;
-import com.cyberpeace.common.mdparser.parser.MdContentParser;
+import com.cyberpeace.common.mdparser.MdContentParser;
 import com.cyberpeace.common.util.*;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.google.common.collect.Maps;

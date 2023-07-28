@@ -55,6 +55,7 @@ import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.*;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;

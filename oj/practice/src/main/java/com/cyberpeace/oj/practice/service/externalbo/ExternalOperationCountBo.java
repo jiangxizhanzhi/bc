@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

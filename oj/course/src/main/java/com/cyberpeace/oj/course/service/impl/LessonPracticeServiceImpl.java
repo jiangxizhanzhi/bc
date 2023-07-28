@@ -31,7 +31,7 @@ import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.ojbase.service.context.InitOjSceneContext;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 

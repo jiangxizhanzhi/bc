@@ -2,6 +2,7 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

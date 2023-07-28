@@ -1,7 +1,7 @@
 package com.cyberpeace.oj.practice.service.bo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

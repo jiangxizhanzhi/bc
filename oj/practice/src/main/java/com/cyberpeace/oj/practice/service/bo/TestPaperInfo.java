@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.practice.service.bo;
 
-import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import lombok.Data;
 
 import java.util.List;

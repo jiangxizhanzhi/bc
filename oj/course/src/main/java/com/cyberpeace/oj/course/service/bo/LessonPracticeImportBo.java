@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheoryRef;
 import com.cyberpeace.oj.practice.service.bo.PaperPracticeContext;

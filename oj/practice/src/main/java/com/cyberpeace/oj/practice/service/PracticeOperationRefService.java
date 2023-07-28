@@ -5,7 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeOperationRef;
 import com.cyberpeace.oj.practice.service.bo.OperationLessonBo;
 

@@ -11,6 +11,8 @@ import com.cyberpeace.common.util.*;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.context.TheoryListQuery;
 import com.cyberpeace.oj.practice.dao.entity.*;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;
 import com.cyberpeace.oj.practice.service.bo.*;

@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.practice.dao.mapper;
 
-import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
+import com.cyberpeace.oj.practice.entity.PracticeBase;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

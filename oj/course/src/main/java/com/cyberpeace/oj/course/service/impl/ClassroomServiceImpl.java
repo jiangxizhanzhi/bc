@@ -48,7 +48,7 @@ import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.ojbase.service.NoteService;
 import com.cyberpeace.oj.ojbase.service.bo.NoteBo;
 import com.cyberpeace.oj.ojbase.service.bo.UserNoteScoreBo;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;

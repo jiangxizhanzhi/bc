@@ -13,7 +13,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

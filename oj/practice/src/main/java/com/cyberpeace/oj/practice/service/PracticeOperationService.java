@@ -11,8 +11,7 @@ import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.res.CategoryProgressRes;
 import com.cyberpeace.oj.practice.controller.res.OperationRecordRes;
 import com.cyberpeace.oj.practice.controller.res.ProgressStatisticsRes;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.*;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 

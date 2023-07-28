@@ -2,13 +2,13 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cyberpeace.common.constant.JsonKeyConstant;
 import com.cyberpeace.common.model.ws.WebSocketConnectionContext;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cs.service.impl.ChatWebSocketHandler;
 import com.google.common.collect.Lists;
@@ -24,7 +24,7 @@ public class RbChatHandlerImpl extends ChatWebSocketHandler {
 
 	@Override
 	public Integer declareMessageType() {
-		return BusinessTemplate.BusinessType.RED_VS_BLUE.getCode();
+		return BusinessType.RED_VS_BLUE.getCode();
 	}
 
 	@Override

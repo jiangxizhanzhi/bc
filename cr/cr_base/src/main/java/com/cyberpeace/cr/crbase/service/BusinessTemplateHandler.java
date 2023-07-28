@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.cyberpeace.common.enums.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +21,15 @@ import com.google.common.collect.Maps;
 @Slf4j
 public class BusinessTemplateHandler {
 
-	private static Map<BusinessTemplate.BusinessType, BusinessTemplateHandler> register = Maps
+	private static Map<BusinessType, BusinessTemplateHandler> register = Maps
 			.newHashMap();
 
-	public BusinessTemplate.BusinessType setBusinessType() {
+	public BusinessType setBusinessType() {
 		return null;
 	}
 
 	public BusinessTemplateHandler getHandler(Integer type) {
-		BusinessTemplate.BusinessType businessType = getBusinessType(type);
+		BusinessType businessType = getBusinessType(type);
 		return register.get(businessType);
 	}
 
@@ -38,7 +39,7 @@ public class BusinessTemplateHandler {
 	}
 
 	public String saveBusiness(BasicTemplate basicTemplate, String businessId) {
-		BusinessTemplate.BusinessType businessType = getBusinessType(
+		BusinessType businessType = getBusinessType(
 				basicTemplate.getBaseInfo().getType());
 
 		BusinessTemplateHandler realHandler = register.get(businessType);
@@ -55,10 +56,10 @@ public class BusinessTemplateHandler {
 
 	}
 
-	private BusinessTemplate.BusinessType getBusinessType(Integer businessType) {
+	private BusinessType getBusinessType(Integer businessType) {
 		// 校验外部传入的类型在BusinessTemplate.BusinessType声明的范围内
-		BusinessTemplate.BusinessType enumByCode = EnumUtils.getEnumByCode(businessType,
-				BusinessTemplate.BusinessType.class);
+		BusinessType enumByCode = EnumUtils.getEnumByCode(businessType,
+				BusinessType.class);
 		if (enumByCode == null) {
 			throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);
 		}

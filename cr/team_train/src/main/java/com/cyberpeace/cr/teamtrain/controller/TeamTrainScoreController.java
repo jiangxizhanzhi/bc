@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.enums.TeamRoleGroup;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -32,7 +33,7 @@ import com.cyberpeace.cr.crbase.controller.rsp.MissionDynamicRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.MissionEvaluationRsp;
 import com.cyberpeace.cr.crbase.service.context.score.StudentScoreRsp;
 import com.cyberpeace.cr.crbase.controller.rsp.TrainingRecordMissionRsp;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.RadarLabel;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
@@ -277,7 +278,7 @@ public class TeamTrainScoreController {
 	@RequiresPermissions(MenuConstant.WEB_CR_TEAM_TRAIN)
 	public BaseRsp<MissionReport> getTrainingMissionReport(
 			@ApiParam(name = "resource_id", value = "团队训练id", required = true) String resource_id) {
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
+		RoleQuery roleQuery = new RoleQuery(resource_id, TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		MissionReport missionReport = crScoreController.getTrainingMissionReport(resource_id,
@@ -325,7 +326,7 @@ public class TeamTrainScoreController {
 			// return new BaseRsp<>(new TrainingReport());
 		}
 
-		RoleQuery roleQuery = new RoleQuery(resource_id, CrRole.TeamRoleGroup.STUDENT);
+		RoleQuery roleQuery = new RoleQuery(resource_id, TeamRoleGroup.STUDENT);
 		List<CrRole> crRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		List<UserReport> userReportList = crScoreController.getTrainingReport(resource_id,

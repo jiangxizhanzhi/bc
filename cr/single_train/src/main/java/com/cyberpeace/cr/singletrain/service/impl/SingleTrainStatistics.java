@@ -3,6 +3,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 import java.util.List;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 	@Override
 	public TrainingCount getTrainingCount(String userId) {
 		Integer completed = trainRecordMapper.countFinishedByUserIdAndType(userId,
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				BusinessType.TRAINING_SINGLE.getCode());
 		Integer uncompleted = singleRoomMapper.countUnfinishedByUserId(userId);
 		TrainingCount count = new TrainingCount();
 		count.setCompleted(completed);
@@ -57,7 +58,7 @@ public class SingleTrainStatistics extends CrEventStatistics {
 
 		List<TrainingData> dataList = Lists.newArrayList();
 		List<SingleRoom> rooms = singleRoomMapper.selectAllByUserId(userId,
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				BusinessType.TRAINING_SINGLE.getCode());
 
 		for (SingleRoom room : rooms) {
 			BusinessTemplate businessTemplate = businessTemplateMapper

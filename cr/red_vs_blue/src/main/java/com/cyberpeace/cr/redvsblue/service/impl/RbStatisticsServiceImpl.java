@@ -6,23 +6,17 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cyberpeace.common.model.ListRsp;
 import com.cyberpeace.common.model.user.UserInfo;
-import com.cyberpeace.common.util.PageUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskMapper;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingPersonalStatistics;
-import com.cyberpeace.cr.redvsblue.controller.req.RbStatisticsDetailReq;
 import com.cyberpeace.cr.redvsblue.service.RbStatisticsService;
 import com.cyberpeace.cr.redvsblue.service.bo.RbOrganizationStatisticsBo;
 import com.cyberpeace.cr.redvsblue.service.bo.RbPersonalStatisticsBo;
-import com.cyberpeace.cr.redvsblue.service.bo.RbStatisticsDetailBo;
 import com.cyberpeace.integratation.service.RemoteOrganizationService;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.google.common.collect.Lists;
@@ -83,7 +77,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
 
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
+                statusList, BusinessType.RED_VS_BLUE.getCode(), null
         );
 
         if (null != personalStatistics) {
@@ -137,7 +131,7 @@ public class RbStatisticsServiceImpl implements RbStatisticsService {
         statusList.add(CrTask.TaskStatus.FAIL.getCode());
 
         List<TrainingPersonalStatistics> personalStatistics = crTaskMapper.selectAllPersonalStatistics(
-                statusList, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode(), null
+                statusList, BusinessType.RED_VS_BLUE.getCode(), null
         );
 
         if (null != personalStatistics) {

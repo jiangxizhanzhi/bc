@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,8 @@ public class RbBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	private MissionTemplateService missionTemplateService;
 
 	@Override
-	public BusinessTemplate.BusinessType setBusinessType() {
-		return BusinessTemplate.BusinessType.RED_VS_BLUE;
+	public BusinessType setBusinessType() {
+		return BusinessType.RED_VS_BLUE;
 	}
 
 	@Override

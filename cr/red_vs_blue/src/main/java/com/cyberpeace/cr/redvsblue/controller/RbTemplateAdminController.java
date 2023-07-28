@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.Logical;
@@ -38,7 +39,7 @@ import com.cyberpeace.cr.crbase.service.CrCommonService;
 import com.cyberpeace.cr.crbase.service.MissionTemplateService;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfig;
 import com.cyberpeace.cr.crbase.service.context.role.CrRoleConfigRb;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNode;
+import com.cyberpeace.common.context.role.CrRoleNode;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.redvsblue.controller.req.RbTemplateAddReq;
@@ -98,7 +99,7 @@ public class RbTemplateAdminController {
 	public BaseRsp<Object> create(@RequestBody @Validated RbTemplateAddReq addReq) {
 
 		// set type
-		addReq.getBaseInfo().setType(BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		addReq.getBaseInfo().setType(BusinessType.RED_VS_BLUE.getCode());
 		// create team template
 		RbTemplate rbTemplate = reqToRbTemplate(addReq, new RbTemplate());
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {

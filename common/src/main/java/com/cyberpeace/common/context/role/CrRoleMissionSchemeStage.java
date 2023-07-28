@@ -1,4 +1,4 @@
-package com.cyberpeace.cr.crbase.service.context.role;
+package com.cyberpeace.common.context.role;
 
 import java.io.Serializable;
 import java.util.List;

@@ -7,8 +7,13 @@ import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.common.enums.SceneStatusEnum;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +43,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.constant.CrCommonConstants;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.*;
 import com.cyberpeace.cr.crbase.service.context.evaluation.EvaluationListReq;
@@ -154,8 +159,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				int index = 0;
 				RoleListContext teacherRole = new RoleListContext();
 				// 教员
-				teacherRole.setName(CrRole.TeamRoleGroup.TEACHER.getDesc());
-				teacherRole.setRoleGroup(CrRole.TeamRoleGroup.TEACHER);
+				teacherRole.setName(TeamRoleGroup.TEACHER.getDesc());
+				teacherRole.setRoleGroup(TeamRoleGroup.TEACHER);
 				originRoles.add(0, teacherRole);
 
 				for (RoleListContext originRole : originRoles) {
@@ -169,14 +174,14 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 					}
 					crRole.setUserIdList(users.get(index).getUsers());
 					crRole.setRoomId(teamRoom.getResourceId());
-					crRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+					crRole.setBusinessType(BusinessType.TRAINING_TEAM.getCode());
 					List<MissionStageScheme> copyMission = getNewRoomScheme(
 							JsonUtil.toJsonString(originRole.getMissionsScheme()),
 							teamRoom.getResourceId());
 					crRole.setMissionStageSchemes(copyMission);
 					// 学员
 					if (crRole.getRoleGroup() == null) {
-						crRole.setRoleGroup(CrRole.TeamRoleGroup.STUDENT);
+						crRole.setRoleGroup(TeamRoleGroup.STUDENT);
 					}
 					CrRoleNodesData nodesData = new CrRoleNodesData();
 					nodesData.setAssetNodes(originRole.getAssetNodes());
@@ -349,7 +354,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				if (teamRoom.isOpening()) {
 					trainRecordService.saveRecord(teamRoom.getName(), businessTemplateId, roomId,
 							teamRoom.getCreateUserId(),
-							BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+							BusinessType.TRAINING_TEAM.getCode());
 				} else if (teamRoom.isEnded()) {
 					trainRecordService.updateEndTimeByRoomId(roomId, new Date());
 				}
@@ -458,7 +463,7 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 	@Override
 	public List<CrRole> getStudentsRoles(String roomId) {
 		return crRoleService.getRolesByRoomAndGroups(roomId,
-				Lists.newArrayList(CrRole.TeamRoleGroup.STUDENT.getCode()));
+				Lists.newArrayList(TeamRoleGroup.STUDENT.getCode()));
 	}
 
 	@Override
@@ -562,8 +567,8 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 
 		// 群组封装
 		List<DashboardGroup> groups = Lists.newArrayList();
-		DashboardGroup teamGroup = new DashboardGroup(CrRole.RbRoleGroup.TEAM_GROUP.getMsg(),
-				CrRole.RbRoleGroup.TEAM.getCode(),
+		DashboardGroup teamGroup = new DashboardGroup(RbRoleGroup.TEAM_GROUP.getMsg(),
+				RbRoleGroup.TEAM.getCode(),
 				confirmAvatarFile(CrCommonConstants.TEAM_GROUP_AVATAR, CrCommonConstants.TEAM_GROUP_JAR_AVATAR));
 		teamGroup.setMembers(teamMembers);
 		teamGroup.setId(roomId);
@@ -769,17 +774,17 @@ public class TeamRoomServiceImpl extends ServiceImpl<TeamRoomMapper, TeamRoom> i
 				.avatar(userInfo.getAvatarUrl())
 				.username(userInfo.getName());
 		if(role.isTeamTeacher()) {
-			dashboardUser.role(CrRole.TeamRoleGroup.TEACHER.getMsg());
+			dashboardUser.role(TeamRoleGroup.TEACHER.getMsg());
 		}
 		if(role.isTeamStudent()) {
-			dashboardUser.role(CrRole.TeamRoleGroup.STUDENT.getMsg());
+			dashboardUser.role(TeamRoleGroup.STUDENT.getMsg());
 		}
 		return dashboardUser;
 	}
 
 	@Override
 	public void checkTeacherPermission(String roomId, String userId) {
-		permissionCheck(roomId, userId, CrRole.TeamRoleGroup.TEACHER.getCode());
+		permissionCheck(roomId, userId, TeamRoleGroup.TEACHER.getCode());
 
 	}
 

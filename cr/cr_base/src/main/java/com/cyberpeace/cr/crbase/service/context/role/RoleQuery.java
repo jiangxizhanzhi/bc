@@ -1,7 +1,6 @@
 package com.cyberpeace.cr.crbase.service.context.role;
 
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-
+import com.cyberpeace.common.enums.RoleGroup;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,7 @@ public class RoleQuery {
 		this.roleGroup = roleGroup;
 	}
 
-	public RoleQuery(String roomId, CrRole.RoleGroup roleGroup){
+	public RoleQuery(String roomId, RoleGroup roleGroup){
 		this(roomId, roleGroup.getCode());
 	}
 }

@@ -1,13 +1,14 @@
-package com.cyberpeace.cr.crbase.service.context.role;
+package com.cyberpeace.common.context.role;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+
 
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;

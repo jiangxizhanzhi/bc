@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +19,6 @@ import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.CrTaskSubmit;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
 import com.cyberpeace.cr.crbase.dao.mapper.CrTaskSubmitMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -74,7 +73,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 
 	@Override
 	public List<RoleScore> getRoleScoreInfo(String roomId) {
-		RoleQuery roleQuery = new RoleQuery(roomId, CrRole.RbRoleGroup.RED);
+		RoleQuery roleQuery = new RoleQuery(roomId, RbRoleGroup.RED);
 		List<CrRole> crRedRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		List<String> redRoles = Lists.newArrayList();
@@ -82,7 +81,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			redRoles.add(crRole.getResourceId());
 		}
 
-		roleQuery = new RoleQuery(roomId, CrRole.RbRoleGroup.BLUE);
+		roleQuery = new RoleQuery(roomId, RbRoleGroup.BLUE);
 		List<CrRole> crBlueRoles = crRoleService.selectCrRoleByRoomId(roleQuery);
 
 		List<String> blueRoles = Lists.newArrayList();
@@ -117,8 +116,8 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 			}
 		}
 
-		RoleScore redRoleScore = new RoleScore(CrRole.RbRoleGroup.RED, redScore, redFinishedTaskCount, redTaskCount);
-		RoleScore blueRoleScore = new RoleScore(CrRole.RbRoleGroup.BLUE, blueScore, blueFinishedTaskCount,
+		RoleScore redRoleScore = new RoleScore(RbRoleGroup.RED, redScore, redFinishedTaskCount, redTaskCount);
+		RoleScore blueRoleScore = new RoleScore(RbRoleGroup.BLUE, blueScore, blueFinishedTaskCount,
 				blueTaskCount);
 
 		List<RoleScore> roleScores = Lists.newArrayList();
@@ -324,7 +323,7 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		return timeData.calculateCountByTime(taskTimes);
 	}
 
-	private List<Integer> getScoreProgress(TimeData timeData, String roomId, CrRole.RbRoleGroup roleGroup){
+	private List<Integer> getScoreProgress(TimeData timeData, String roomId, RbRoleGroup roleGroup){
 		RoleUserIds roleUserIds = getRoleInfo(new RoleQuery(roomId, roleGroup));
 		return getScoreProgress(timeData, roomId, roleUserIds);
 	}
@@ -344,12 +343,12 @@ public class RbRoomScoreServiceImpl extends ServiceImpl<RbRoomMapper, RbRoom> im
 		json.put("total_score", 0);
 		json.put("x_data", timeData.getXData());
 
-		List<Integer> yRedData = getScoreProgress(timeData, roomId,	CrRole.RbRoleGroup.RED);
+		List<Integer> yRedData = getScoreProgress(timeData, roomId,	RbRoleGroup.RED);
 
 		json.put("red_total_score", timeData.getAccumulatedValue());
 		json.put("y_red_score", yRedData);
 
-		List<Integer> yBlueData = getScoreProgress(timeData, roomId, CrRole.RbRoleGroup.BLUE);
+		List<Integer> yBlueData = getScoreProgress(timeData, roomId, RbRoleGroup.BLUE);
 
 		json.put("blue_total_score", timeData.getAccumulatedValue());
 		json.put("y_blue_score", yBlueData);

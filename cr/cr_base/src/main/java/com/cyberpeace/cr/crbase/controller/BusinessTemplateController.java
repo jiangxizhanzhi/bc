@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -182,13 +183,13 @@ public class BusinessTemplateController {
 				OperationModule module = null;
 				String msg = "";
 
-				if (Objects.equals(businessType, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode())) {
+				if (Objects.equals(businessType, BusinessType.TRAINING_SINGLE.getCode())) {
 					module = OperationModule.SINGLE_TRAIN;
 					msg = LogContent.SINGLE_TRAIN_TEMPLATE.getMsg();
-				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode())) {
+				} else if (Objects.equals(businessType, BusinessType.TRAINING_TEAM.getCode())) {
 					module = OperationModule.TEAM_TRAIN;
 					msg = LogContent.TEAM_TRAIN_TEMPLATE.getMsg();
-				} else if (Objects.equals(businessType, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode())) {
+				} else if (Objects.equals(businessType, BusinessType.RED_VS_BLUE.getCode())) {
 					module = OperationModule.RED_VS_BLUE;
 					msg = LogContent.RB_ROOM_TEMPLATE.getMsg();
 				}

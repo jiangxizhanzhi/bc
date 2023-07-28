@@ -6,14 +6,12 @@ import com.cyberpeace.common.model.BaseRsp;
 import com.cyberpeace.common.model.ListRsp;
 
 import com.cyberpeace.cr.crbase.controller.req.TrainStatisticsDetailReq;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.cr.crbase.service.TrainStatisticsService;
 import com.cyberpeace.cr.crbase.service.context.statistics.StatisticsDetail;
-import com.cyberpeace.cr.teamtrain.controller.req.TeamTrainStatisticsDetailReq;
 import com.cyberpeace.cr.teamtrain.service.TeamTrainStatisticsService;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamOrganizationStatisticsBo;
 import com.cyberpeace.cr.teamtrain.service.bo.TeamPersonalStatisticsBo;
-import com.cyberpeace.cr.teamtrain.service.bo.TeamStatisticsDetailBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +59,7 @@ public class TeamTrainStatisticsController {
     public BaseRsp<ListRsp<StatisticsDetail>> getAllDetail(TrainStatisticsDetailReq detailReq) {
         Page page = detailReq.toPageParam();
 //        ListRsp<TeamStatisticsDetailBo> rsp = TeamTrainStatistics.getAllStatisticsDetail(detailReq, page);
-        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+        ListRsp<StatisticsDetail> rsp = trainStatisticsService.getAllStatisticsDetail(detailReq, page, BusinessType.TRAINING_TEAM.getCode());
         return new BaseRsp<>(rsp);
     }
 

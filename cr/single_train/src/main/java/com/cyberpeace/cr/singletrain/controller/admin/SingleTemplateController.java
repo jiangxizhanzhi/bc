@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.controller.admin;
 
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
+import com.cyberpeace.common.enums.BusinessType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -76,7 +77,7 @@ public class SingleTemplateController {
 		requestData.setBaseInfo(baseInfo);
 
 		// set type
-		requestData.getBaseInfo().setType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		requestData.getBaseInfo().setType(BusinessType.TRAINING_SINGLE.getCode());
 		// create single template
 		SingleTemplate singleTemplate = reqToSingleTemplate(requestData, new SingleTemplate());
 		// save

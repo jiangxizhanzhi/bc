@@ -8,8 +8,8 @@ import com.cyberpeace.common.util.BeanUtils;
 import org.apache.commons.compress.utils.Lists;
 
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleNodesData;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.context.role.CrRoleNodesData;
 import com.cyberpeace.cr.crbase.service.context.role.RoleUpdateConfig;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.google.common.collect.Maps;

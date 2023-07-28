@@ -1,12 +1,6 @@
 package com.cyberpeace.cr.crbase.dao.entity;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -17,9 +11,6 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.constant.BaseI18n;
 import lombok.Data;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Length;
-
-import io.swagger.annotations.ApiModelProperty;
 
 @TableName(value = "cr_notice")
 @Data
@@ -64,7 +55,7 @@ public class CrNotice extends BaseTable {
         return false;
     }
 
-    public enum RoleGroup implements GenericEnum, CrRole.RoleGroup, BaseI18n {
+    public enum RoleGroup implements GenericEnum, com.cyberpeace.common.enums.RoleGroup, BaseI18n {
 
         /***/
         TEACHER(1, "全部", "all"),

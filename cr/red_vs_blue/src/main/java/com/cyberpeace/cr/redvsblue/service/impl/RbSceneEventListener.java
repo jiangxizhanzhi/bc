@@ -3,6 +3,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import java.util.List;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,7 @@ import com.cyberpeace.common.component.MyWebSocketHandler;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.ws.WebSocketMessageContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cr.crbase.dao.entity.BusinessTemplate;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.impl.CrEventListenerHelper;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
@@ -64,7 +64,7 @@ public class RbSceneEventListener extends MessageListener {
 	public Boolean onSceneElement(String data, String businessId, MqContext context) {
 		// get roles
 		List<CrRole> roles = crRoleService.getRolesByRoom(businessId,
-				BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+				BusinessType.RED_VS_BLUE.getCode());
 		// parse message
 		WsSceneReportBO wsSceneReportBO = JsonUtil.toJsonObject(data, WsSceneReportBO.class);
 		JSONObject jsonData = wsSceneReportBO.getData().getData();

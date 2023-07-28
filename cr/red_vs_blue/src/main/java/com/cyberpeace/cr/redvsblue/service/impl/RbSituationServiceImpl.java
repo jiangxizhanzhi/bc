@@ -3,7 +3,8 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.role.RoleQuery;
 import com.cyberpeace.cr.redvsblue.entity.RbRoom;
@@ -79,7 +80,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 		}
 		RoleQuery roleQuery = new RoleQuery();
 		roleQuery.setRoomId(room.getResourceId());
-		roleQuery.setRoleGroup(CrRole.RbRoleGroup.RED.getCode());
+		roleQuery.setRoleGroup(RbRoleGroup.RED.getCode());
 		List<CrRole> redRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole redRole : redRoleList) {
 			List<JSONObject> visibleNodes = JSONObject.parseObject(redRole.getNodes())
@@ -94,7 +95,7 @@ public class RbSituationServiceImpl implements RbSituationService {
 				}
 			}
 		}
-		roleQuery.setRoleGroup(CrRole.RbRoleGroup.BLUE.getCode());
+		roleQuery.setRoleGroup(RbRoleGroup.BLUE.getCode());
 		List<CrRole> blueRoleList = crRoleService.selectCrRoleByRoomId(roleQuery);
 		for (CrRole blueRole : blueRoleList) {
 			List<JSONObject> visibleNodes = JSONObject.parseObject(blueRole.getNodes())

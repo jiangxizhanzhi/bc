@@ -4,6 +4,14 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.context.MissionStageScheme;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleSimple;
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
+import com.cyberpeace.common.enums.RoleGroup;
+import com.cyberpeace.common.enums.TeamRoleGroup;
+import com.cyberpeace.cr.crbase.dao.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +29,6 @@ import com.cyberpeace.common.util.BeanUtils;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
-import com.cyberpeace.cr.crbase.dao.entity.CrTask;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.dao.entity.UserIdRole;
 import com.cyberpeace.cr.crbase.dao.mapper.CrRoleMapper;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrTaskService;
@@ -69,7 +73,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	}
 
 	@Override
-	public CrRoleContext<MissionContext> getRoles(String roomId, CrRole.RoleGroup roleGroup) {
+	public CrRoleContext<MissionContext> getRoles(String roomId, RoleGroup roleGroup) {
 		CrRoleContext<MissionContext> crRoleContext = new CrRoleContext();
 		RoleQuery roleQuery = new RoleQuery(roomId, roleGroup);
 
@@ -412,7 +416,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public List<CrRole> selectRbStudentsRoleByRoomId(String roomId) {
 		List<CrRole> crRoleList = Lists.newArrayList();
 
-		for (CrRole.RbRoleGroup roleCode : CrRole.RbRoleGroup.studentRoleGroups()) {
+		for (RbRoleGroup roleCode : RbRoleGroup.studentRoleGroups()) {
 			RoleQuery roleQuery = new RoleQuery(roomId, roleCode);
 			List<CrRole> crRoles = selectCrRoleByRoomId(roleQuery);
 			crRoleList.addAll(crRoles);
@@ -478,7 +482,7 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 
 	@Override
 	public List<CrRole> selectRbStudentsRoleByRoomIdAndRoleGroup(String roomId, int roleGroup) {
-		if (!CrRole.RbRoleGroup.isRvbStudentRole(roleGroup)) {
+		if (!RbRoleGroup.isRvbStudentRole(roleGroup)) {
 			log.error("role does not exist！roleId=[{}]", roleGroup);
 			throw new BusinessException(CrBusinessErrorCode.ROLE_NOT_EXIST_ERROR);
 		}
@@ -584,33 +588,33 @@ public class CrRoleServiceImpl extends ServiceImpl<CrRoleMapper, CrRole> impleme
 	public void combineRoleConst(DashboardInfo dashboardInfo) {
 		List<DashboardRole> roleConst = new ArrayList<DashboardRole>() {{
 			DashboardRole red = new DashboardRole();
-			red.setRoleType(CrRole.RbRoleGroup.RED.getEnglish());
-			red.setRole(CrRole.RbRoleGroup.RED.getMsg());
-			red.setRoleCode(CrRole.RbRoleGroup.RED.getCode());
+			red.setRoleType(RbRoleGroup.RED.getEnglish());
+			red.setRole(RbRoleGroup.RED.getMsg());
+			red.setRoleCode(RbRoleGroup.RED.getCode());
 			add(red);
 
 			DashboardRole blue = new DashboardRole();
-			blue.setRoleType(CrRole.RbRoleGroup.BLUE.getEnglish());
-			blue.setRole(CrRole.RbRoleGroup.BLUE.getMsg());
-			blue.setRoleCode(CrRole.RbRoleGroup.BLUE.getCode());
+			blue.setRoleType(RbRoleGroup.BLUE.getEnglish());
+			blue.setRole(RbRoleGroup.BLUE.getMsg());
+			blue.setRoleCode(RbRoleGroup.BLUE.getCode());
 			add(blue);
 
 			DashboardRole white = new DashboardRole();
-			white.setRoleType(CrRole.RbRoleGroup.WHITE.getEnglish());
-			white.setRole(CrRole.RbRoleGroup.WHITE.getMsg());
-			white.setRoleCode(CrRole.RbRoleGroup.WHITE.getCode());
+			white.setRoleType(RbRoleGroup.WHITE.getEnglish());
+			white.setRole(RbRoleGroup.WHITE.getMsg());
+			white.setRoleCode(RbRoleGroup.WHITE.getCode());
 			add(white);
 
 			DashboardRole teamTeacher = new DashboardRole();
-			teamTeacher.setRoleType(CrRole.TeamRoleGroup.TEACHER.getEnglish());
-			teamTeacher.setRole(CrRole.TeamRoleGroup.TEACHER.getMsg());
-			teamTeacher.setRoleCode(CrRole.TeamRoleGroup.TEACHER.getCode());
+			teamTeacher.setRoleType(TeamRoleGroup.TEACHER.getEnglish());
+			teamTeacher.setRole(TeamRoleGroup.TEACHER.getMsg());
+			teamTeacher.setRoleCode(TeamRoleGroup.TEACHER.getCode());
 			add(teamTeacher);
 
 			DashboardRole teamStudent = new DashboardRole();
-			teamStudent.setRoleType(CrRole.TeamRoleGroup.STUDENT.getEnglish());
-			teamStudent.setRole(CrRole.TeamRoleGroup.STUDENT.getMsg());
-			teamStudent.setRoleCode(CrRole.TeamRoleGroup.STUDENT.getCode());
+			teamStudent.setRoleType(TeamRoleGroup.STUDENT.getEnglish());
+			teamStudent.setRole(TeamRoleGroup.STUDENT.getMsg());
+			teamStudent.setRoleCode(TeamRoleGroup.STUDENT.getCode());
 			add(teamStudent);
 		}};
 		dashboardInfo.setRoleConst(roleConst);

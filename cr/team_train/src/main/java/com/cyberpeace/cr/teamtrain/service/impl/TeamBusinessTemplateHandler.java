@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,8 +50,8 @@ public class TeamBusinessTemplateHandler extends BusinessTemplateHandler {
 	MissionTemplateService missionTemplateService;
 
 	@Override
-	public BusinessTemplate.BusinessType setBusinessType() {
-		return BusinessTemplate.BusinessType.TRAINING_TEAM;
+	public BusinessType setBusinessType() {
+		return BusinessType.TRAINING_TEAM;
 	}
 
 	@Override

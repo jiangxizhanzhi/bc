@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.cyberpeace.common.enums.RbRoleGroup;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -39,7 +40,7 @@ import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.controller.req.ListQuery;
 import com.cyberpeace.cr.crbase.controller.req.scene.SceneOpsReq;
 import com.cyberpeace.cr.crbase.dao.entity.CrConstantsConfig;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.service.CrConstantsService;
 import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.CrScoreService;
@@ -263,10 +264,10 @@ public class RbRoomController {
 
 		Map<String, List<TrainTaskReleaseInfoRsp>> res = new HashMap<>();
 		List<TrainTaskReleaseInfoRsp> redManuals = crRoleService.getTrainManual(resource_id,
-				CrRole.RbRoleGroup.RED.getCode());
+				RbRoleGroup.RED.getCode());
 		redManuals = mergeStageByCreateTime(redManuals);
 		List<TrainTaskReleaseInfoRsp> blueManuals = crRoleService.getTrainManual(resource_id,
-				CrRole.RbRoleGroup.BLUE.getCode());
+				RbRoleGroup.BLUE.getCode());
 		blueManuals = mergeStageByCreateTime(blueManuals);
 		res.put("red", redManuals);
 		res.put("blue", blueManuals);
@@ -462,7 +463,7 @@ public class RbRoomController {
 		ScoreTrendReq scoreTrendReq = initScoreTrendReq(management,
 				rbRoom.getStartTime(),rbRoom.getEndTime(), scoreCount, rbRoom.getReplaySceneId());
 		TrainReportContext trainReport = crScoreService.getTrainReport(resource_id, Lists
-				.newArrayList(CrRole.RbRoleGroup.RED.getCode(), CrRole.RbRoleGroup.BLUE.getCode()),
+				.newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()),
 				scoreTrendReq);
 		//训练未开始，训练时间显示的是创建训练填写的训练开始时间，训练时长是训练模板设置的推荐时长
 		//训练已开始，训练时间显示的启动训练时间，训练时长是当前时间-启动训练时间
@@ -562,11 +563,11 @@ public class RbRoomController {
 		roomBaseInfo.setDifficultyString(crConstantsService.geCnNameByTypeAndCode(CrConstantsConfig.ConstantsType.DIFFICULTY.getCode(),roomBaseInfo.getDifficulty()));
 		trainReport.setRoomBaseInfo(roomBaseInfo);
 		List<UserRole> admins = crRoleService.getUserRolesByRoomIdAndRoleGroups(
-				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.ADMIN.getCode()));
+				rbRoom.getResourceId(), Lists.newArrayList(RbRoleGroup.ADMIN.getCode()));
 		List<UserRole> directors = crRoleService.getUserRolesByRoomIdAndRoleGroups(
-				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.DIRECTOR.getCode()));
+				rbRoom.getResourceId(), Lists.newArrayList(RbRoleGroup.DIRECTOR.getCode()));
 		List<UserRole> referees = crRoleService.getUserRolesByRoomIdAndRoleGroups(
-				rbRoom.getResourceId(), Lists.newArrayList(CrRole.RbRoleGroup.REFEREE.getCode()));
+				rbRoom.getResourceId(), Lists.newArrayList(RbRoleGroup.REFEREE.getCode()));
 		trainReport.setAdminName(UserRole.getName(UserRole::getName, admins));
 		trainReport.setDirectorName(UserRole.getName(UserRole::getName, directors));
 		trainReport.setRefereesName(UserRole.getName(UserRole::getName, referees));

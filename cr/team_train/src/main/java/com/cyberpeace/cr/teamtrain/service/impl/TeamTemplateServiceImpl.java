@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -121,7 +122,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		businessTemplate.setName(baseInfo.getName());
 		businessTemplate.setDescription(baseInfo.getDescription());
 		businessTemplate.setDifficulty(baseInfo.getDifficult());
-		businessTemplate.setBusinessType(BusinessTemplate.BusinessType.TRAINING_TEAM.getCode());
+		businessTemplate.setBusinessType(BusinessType.TRAINING_TEAM.getCode());
 
 		return businessTemplate;
 	}

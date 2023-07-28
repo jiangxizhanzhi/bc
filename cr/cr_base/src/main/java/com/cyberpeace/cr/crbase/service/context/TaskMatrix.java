@@ -3,14 +3,11 @@ package com.cyberpeace.cr.crbase.service.context;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.constant.BaseI18n;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.cr.crbase.dao.entity.CrTask;
 import com.cyberpeace.cr.crbase.dao.entity.Mission;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleSimple;
-import com.google.common.collect.Lists;
+import com.cyberpeace.common.context.role.CrRoleSimple;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 

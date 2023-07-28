@@ -2,6 +2,7 @@ package com.cyberpeace.cr.singletrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -47,8 +48,8 @@ public class SingleBusinessTemplateHandlerImpl extends BusinessTemplateHandler {
 	private MissionTemplateService missionTemplateService;
 
 	@Override
-	public BusinessTemplate.BusinessType setBusinessType() {
-		return BusinessTemplate.BusinessType.TRAINING_SINGLE;
+	public BusinessType setBusinessType() {
+		return BusinessType.TRAINING_SINGLE;
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.context.mission;
 
 import java.util.List;
 
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import com.google.common.collect.Lists;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -41,8 +41,8 @@ public class RoleScore {
 
 	}
 
-	public RoleScore(CrRole.RbRoleGroup roleGroup, Integer score, Integer finishedTaskCount,
-					 Integer taskCount) {
+	public RoleScore(RbRoleGroup roleGroup, Integer score, Integer finishedTaskCount,
+                     Integer taskCount) {
 		this(roleGroup.getDesc(), roleGroup.getCode(), score, finishedTaskCount, taskCount);
 	}
 

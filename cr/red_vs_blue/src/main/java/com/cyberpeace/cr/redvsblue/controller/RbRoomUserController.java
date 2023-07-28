@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.cyberpeace.common.entity.CrRole;
+import com.cyberpeace.common.enums.BusinessType;
+import com.cyberpeace.common.enums.RbRoleGroup;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -383,7 +386,7 @@ public class RbRoomUserController {
 			throw new BusinessException(CrBusinessErrorCode.PLZ_REPLAY_AFTER_TRAINING_ENDS);
 		}
 		List<ScreenRecordUserRole> resList = screenService.getReplayUserTimeInfo(resource_id,
-				room.getReplaySceneId(), node_id,Lists.newArrayList(CrRole.RbRoleGroup.RED.getCode(),CrRole.RbRoleGroup.BLUE.getCode()));
+				room.getReplaySceneId(), node_id,Lists.newArrayList(RbRoleGroup.RED.getCode(), RbRoleGroup.BLUE.getCode()));
 
 		// 得到场景真实结束时间
 		Date actualEndTime = rbTimeManagementService.getActualEndTime(resource_id);
@@ -397,7 +400,7 @@ public class RbRoomUserController {
 	@PostMapping("/mark")
 	@RequiresPermissions(MenuConstant.WEB_CR_RED_VS_BLUE)
 	public BaseRsp createMark(@RequestBody @Valid MarkAddReq req) {
-		crCommonService.addMark(req, BusinessTemplate.BusinessType.RED_VS_BLUE.getCode());
+		crCommonService.addMark(req, BusinessType.RED_VS_BLUE.getCode());
 		return new BaseRsp();
 	}
 

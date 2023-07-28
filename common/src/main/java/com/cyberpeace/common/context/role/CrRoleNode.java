@@ -1,10 +1,9 @@
-package com.cyberpeace.cr.crbase.service.context.role;
+package com.cyberpeace.common.context.role;
 
 import java.io.Serializable;
 
 import com.cyberpeace.common.baseinterface.GenericEnum;
 import com.cyberpeace.constant.BaseI18n;
-import com.cyberpeace.cr.crbase.dao.entity.CrRole;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;

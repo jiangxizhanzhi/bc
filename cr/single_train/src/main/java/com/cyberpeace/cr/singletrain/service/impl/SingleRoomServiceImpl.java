@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.cyberpeace.common.entity.CrRole;
 import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.BusinessType;
 import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -36,14 +38,14 @@ import com.cyberpeace.cr.crbase.dao.entity.*;
 import com.cyberpeace.cr.crbase.service.*;
 import com.cyberpeace.cr.crbase.service.context.MissionContext;
 import com.cyberpeace.cr.crbase.service.context.MissionSchemeObject;
-import com.cyberpeace.cr.crbase.service.context.MissionStageScheme;
+import com.cyberpeace.common.context.MissionStageScheme;
 import com.cyberpeace.cr.crbase.service.context.SceneViewContext;
 import com.cyberpeace.cr.crbase.service.context.device.AssetPageReq;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualMissionBo;
 import com.cyberpeace.cr.crbase.service.context.manual.ManualStageBo;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineData;
 import com.cyberpeace.cr.crbase.service.context.mission.TimeLineEvent;
-import com.cyberpeace.cr.crbase.service.context.role.CrRoleMissionSchemeStage;
+import com.cyberpeace.common.context.role.CrRoleMissionSchemeStage;
 import com.cyberpeace.cr.crbase.service.context.score.RecordStatistics;
 import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.singletrain.controller.req.SingleTrainListReq;
@@ -149,7 +151,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		// setup single role
 		CrRole singleRole = new CrRole(CrRole.SINGLE_ROLE_GROUP_NAME,
 				CrRole.SINGLE_ROLE_GROUP_CODE);
-		singleRole.setBusinessType(BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+		singleRole.setBusinessType(BusinessType.TRAINING_SINGLE.getCode());
 		singleRole.setUserIdList(Lists.newArrayList(userId));
 
 		// 开启场景
@@ -175,7 +177,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 					trainRecordService.saveRecord(businessTemplate.getName(), businessTemplateId,
 							room.getResourceId(), userId,
-							BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+							BusinessType.TRAINING_SINGLE.getCode());
 				}
 			});
 		} catch (Exception e) {
@@ -295,7 +297,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 				localSceneService.removeById(singleRoom.getLocalSceneId());
 				singleRoomMapper.deleteById(singleRoom);
 				trainRecordService.updateEndDate(singleRoom.getResourceId(),
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+						BusinessType.TRAINING_SINGLE.getCode());
 			}
 		});
 		return true;
@@ -313,7 +315,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 		IPage<SingleRoomList> selectResult = singleRoomMapper.singleTrainSearch(
 				queryParams.toPageParam(), UserInfoContext.getUserContext().getUserId(),
 				queryParams.getPattern(), queryParams.getCategory(), queryParams.getDifficult(),
-				BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				BusinessType.TRAINING_SINGLE.getCode());
 		if (selectResult.getRecords().isEmpty()) {
 			return new ListRsp<>();
 		}
@@ -337,7 +339,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 
 		// 查询训练使用统计
 		List<SingleTrainStats> dateStats = singleRoomMapper.singleTrainStats(template_ids,
-				dateRange, BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode());
+				dateRange, BusinessType.TRAINING_SINGLE.getCode());
 		Map<String, List<Integer>> trainStats = dateStats.stream().collect(
 				Collectors.toMap(SingleTrainStats::getBusinessTemplateId, singleTrainStats -> {
 					List<SingleTrainStats> currentTrainHistory = dateStats.stream()
@@ -963,7 +965,7 @@ public class SingleRoomServiceImpl extends ServiceImpl<SingleRoomMapper, SingleR
 					extraRecord.put(SingleRoom.CrTrainRecordFields.SCORE, score);
 				}
 				trainRecordService.updateEndDate(businessTemplateId, userId,
-						BusinessTemplate.BusinessType.TRAINING_SINGLE.getCode(),
+						BusinessType.TRAINING_SINGLE.getCode(),
 						JsonUtil.toJsonString(extraRecord));
 
 				// 设置当前训练已完成

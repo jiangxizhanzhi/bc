@@ -1,7 +1,9 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.common.util.IDGeneratorUtil;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
@@ -158,7 +160,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		PracticeOperation operation = validateOperation(practiceId, courseLesson);
 
 		LocalScene localScene = sceneNodeCheck(courseLesson, operation, authContext);
-		if (status.intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode().intValue()) {
+		if (status.intValue() == SceneStatusEnum.PAUSE.getCode().intValue()) {
 			return localSceneService.pauseScene(localScene.getResourceId());
 		} else {
 			return localSceneService.unpauseScene(localScene.getResourceId());
@@ -249,7 +251,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 				.sharedType(operation.getSceneShareMode()).dynamicFlag(operation.getDynamicFlag())
 				.userId(authContext.getUserId()).fromWeb(authContext.getIsWeb())
 				.businessId(businessId)
-				.businessType(LocalScene.BusinessCode.LESSON_PRACTICE.getCode())
+				.businessType(BusinessCode.LESSON_PRACTICE.getCode())
 				.flags(operation.getAnswer()).build();
 
 		return ojLocalSceneService.initOjLocalScene(ojSceneContext);
@@ -267,11 +269,11 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 			OjLocalScene ojLocalScene, AuthContext authContext) {
 
 		LocalScene localScene = new LocalScene();
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setResourceId(IDGeneratorUtil.getID());
 		localScene.setBusinessInstanceId(ojLocalScene.getResourceId());
 		localScene.setDestroyMode(LocalScene.DestroyMode.AUTO.getCode());
-		localScene.setBusinessCode(LocalScene.BusinessCode.LESSON_PRACTICE.getCode());
+		localScene.setBusinessCode(BusinessCode.LESSON_PRACTICE.getCode());
 
 		localScene.setUserId(authContext.getUserId());
 		localScene.setSceneTtl(operation.getDestroyDelay() * 60);
@@ -285,7 +287,7 @@ public class LessonPracticeServiceImpl implements LessonPracticeSceneService {
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(operation.getTopoId());
 		topoData.put(JsonKeyConstant.REFERENCE_TYPE,
-				LocalScene.BusinessCode.LESSON_PRACTICE.getCode());
+				BusinessCode.LESSON_PRACTICE.getCode());
 
 		// 动态环境flag设置
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE

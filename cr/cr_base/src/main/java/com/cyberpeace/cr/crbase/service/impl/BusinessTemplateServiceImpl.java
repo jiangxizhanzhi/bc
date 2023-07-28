@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.cyberpeace.cr.crbase.service.context.scene.BaseSceneData;
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +46,6 @@ import com.cyberpeace.cr.crbase.service.context.template.BusinessTemplateSimple;
 import com.cyberpeace.cr.crbase.service.impl.bo.BaseInfo;
 import com.cyberpeace.cr.crbase.service.impl.bo.BasicTemplate;
 import com.cyberpeace.cr.crbase.service.impl.bo.SceneConfigData;
-import com.cyberpeace.cr.crbase.utils.CrCommonUtil;
 import com.cyberpeace.cr.crbase.utils.CrCommonValidator;
 import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.dao.entity.Attachment;
@@ -52,7 +53,6 @@ import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.entity.LocalSceneMeta;
 import com.cyberpeace.cs.service.AttachmentService;
 import com.cyberpeace.cs.service.LocalSceneService;
-import com.cyberpeace.cs.service.context.scene.SceneData;
 import com.cyberpeace.integratation.model.scene.SceneStartContext;
 import com.cyberpeace.integratation.model.scene.TopoDigest;
 import com.cyberpeace.integratation.service.RemoteTopoService;
@@ -125,7 +125,7 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 		topoJson.put("logo", topoData.getLogo());
 		topoJson.put("support_partial_start", topoData.getSupportPartialStart());
 
-		LocalScene.BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
+		BusinessCode businessCode = convertTypeToCode(baseInfo.getType());
 		String topoId = localSceneService.saveTopo(topoJson, businessCode.getCode());
 
 		// 保存基础模板
@@ -461,14 +461,14 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 
 		LocalScene localScene = new LocalScene();
 
-		localScene.setBusinessCode(LocalScene.BusinessCode.TEST_SCENE.getCode());
+		localScene.setBusinessCode(BusinessCode.TEST_SCENE.getCode());
 		localScene.setUserId(UserInfoContext.getUserContext().getUserId());
 		// 以模板id作为后台测试场景的 businessId，
 		// 发给mp的context中会以localScene的businessInstanceId作为透明上下文（passThrough）的businessId，用于ws消息推送
 		localScene.setBusinessInstanceId(template.getResourceId());
 		localScene.setTopoId(template.getTopoId());
 		localScene.setResourceId(IDGeneratorUtil.getID());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 		localScene.setDestroyMode(LocalScene.DestroyMode.MANUAL.getCode());
 		localScene.setStartTime(new Date());
 		localScene.setSceneAttr(SceneStartContext.SceneAttrEnum.NULL.getCode());
@@ -500,27 +500,27 @@ public class BusinessTemplateServiceImpl extends ServiceImpl<BusinessTemplateMap
 	}
 
 	@Override
-	public LocalScene.BusinessCode convertTypeToCode(Integer code) {
+	public BusinessCode convertTypeToCode(Integer code) {
 		BusinessTemplate.BusinessType type = EnumUtils.getEnumByCode(code,
 				BusinessTemplate.BusinessType.class);
 
 		if (type.equals(BusinessTemplate.BusinessType.TRAINING_SINGLE)) {
-			return LocalScene.BusinessCode.SINGLE_TRAINING;
+			return BusinessCode.SINGLE_TRAINING;
 		}
 		if (type.equals(BusinessTemplate.BusinessType.VULN_VALIDATE)) {
-			return LocalScene.BusinessCode.LIVE_VULN;
+			return BusinessCode.LIVE_VULN;
 		}
 		if (type.equals(BusinessTemplate.BusinessType.TRAINING_TEAM)) {
-			return LocalScene.BusinessCode.TEAM_TRAINING;
+			return BusinessCode.TEAM_TRAINING;
 		}
 		if (type.equals(BusinessTemplate.BusinessType.RED_VS_BLUE)) {
-			return LocalScene.BusinessCode.RED_VS_BLUE;
+			return BusinessCode.RED_VS_BLUE;
 		}
 		if (type.equals(BusinessTemplate.BusinessType.WEAPON_ASSESS)) {
-			return LocalScene.BusinessCode.WEAPON_TEST;
+			return BusinessCode.WEAPON_TEST;
 		}
 		if (type.equals(BusinessTemplate.BusinessType.SYSTEM_ASSESS)) {
-			return LocalScene.BusinessCode.SYSTEM_TEST;
+			return BusinessCode.SYSTEM_TEST;
 		}
 		log.error("template type not supported, code [{}]", code);
 		throw new BusinessException(CrBusinessErrorCode.TEMPLATE_TYPE_NOT_SUPPORTED);

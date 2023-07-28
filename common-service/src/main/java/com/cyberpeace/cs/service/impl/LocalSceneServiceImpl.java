@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.cyberpeace.common.constant.CommonConstant;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.integratation.model.mp.MpHostState;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -276,7 +277,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	}
 
 	private void ensureScenePaused(LocalScene localScene) {
-		if (!localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
+		if (!localScene.getSceneStatus().equals(SceneStatusEnum.PAUSE.getCode())) {
 			log.error("scene [{}] is not paused", localScene.getMpSceneId());
 			throw new BusinessException(ErrorCode.NOT_PAUSED);
 		}
@@ -448,7 +449,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 	public Boolean pauseScene(LocalScene localScene) {
 
 		// 1. 场景已暂停，返回true
-		if (localScene.getSceneStatus().equals(LocalScene.SceneStatusEnum.PAUSE.getCode())) {
+		if (localScene.getSceneStatus().equals(SceneStatusEnum.PAUSE.getCode())) {
 			return true;
 		}
 		// 2. 发送mp请求
@@ -459,7 +460,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return false;
 		}
 		// 3. 修改本地数据
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.PAUSE.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.PAUSE.getCode());
 		localScene.setPauseTime(new Date());
 		updateById(localScene);
 
@@ -479,7 +480,7 @@ public class LocalSceneServiceImpl extends ServiceImpl<LocalSceneMapper, LocalSc
 			return false;
 		}
 		// 3、修改本地数据
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 
 		if (localScene.getEndTime() != null) {
 			// 计算暂停时间

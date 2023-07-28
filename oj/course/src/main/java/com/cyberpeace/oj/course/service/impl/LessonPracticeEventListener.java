@@ -1,5 +1,6 @@
 package com.cyberpeace.oj.course.service.impl;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,6 @@ import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.cyberpeace.oj.ojbase.constant.Event;
 import com.cyberpeace.common.constant.JsonKeyConstant;
@@ -30,7 +30,7 @@ public class LessonPracticeEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.LESSON_PRACTICE.getCode();
+		return BusinessCode.LESSON_PRACTICE.getCode();
 	}
 
 	@Override

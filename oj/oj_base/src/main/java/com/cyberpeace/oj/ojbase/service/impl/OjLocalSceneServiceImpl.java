@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,8 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.AuthContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.util.*;
-import com.cyberpeace.cs.constant.SceneEvent;
-import com.cyberpeace.cs.constant.SceneEventStatus;
+import com.cyberpeace.common.enums.SceneEvent;
+import com.cyberpeace.common.enums.SceneEventStatus;
 import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.dao.mapper.LocalSceneMapper;
 import com.cyberpeace.cs.service.LocalSceneService;
@@ -280,7 +282,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			if (null == localScene.getStartTime()) {
 				// 更新数据
 				localScene.setStartTime(new Date());
-				localScene.setSceneStatus(LocalScene.SceneStatusEnum.START.getCode());
+				localScene.setSceneStatus(SceneStatusEnum.START.getCode());
 
 				// 场景存活时间为空则代表不设置场景结束时间 目前仅存在于课堂设置场景延时则无倒计时
 				if (null != localScene.getSceneTtl()
@@ -343,7 +345,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 		sceneData.put(JsonKeyConstant.STATUS, localScene.getSceneStatus());
 
 		// 设置场景共享类型
-		Integer share = localScene.getBusinessCode().intValue() == LocalScene.BusinessCode.CLASSROOM
+		Integer share = localScene.getBusinessCode().intValue() == BusinessCode.CLASSROOM
 				.getCode() ? SceneShare.GROUP.getCode()
 						: ojLocalScene.getShared() ? SceneShare.SHARED.getCode()
 								: SceneShare.PRIVATE.getCode();
@@ -355,7 +357,7 @@ public class OjLocalSceneServiceImpl extends ServiceImpl<OjLocalSceneMapper, OjL
 			return sceneData;
 		}
 
-		long remain = localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE
+		long remain = localScene.getSceneStatus().intValue() == SceneStatusEnum.PAUSE
 				.getCode().intValue() && null != localScene.getPauseTime()
 						? TimeUtil.getIntervalSeconds(localScene.getPauseTime(),
 								localScene.getEndTime())

@@ -3,6 +3,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,6 @@ import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
 import com.cyberpeace.cr.teamtrain.dao.entity.TeamRoom;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamRoomMapper;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -29,8 +29,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 	CrRoleMapper crRoleMapper;
 
 	@Override
-	public LocalScene.BusinessCode getCode() {
-		return LocalScene.BusinessCode.TEAM_TRAINING;
+	public BusinessCode getCode() {
+		return BusinessCode.TEAM_TRAINING;
 	}
 
 	@Override
@@ -63,8 +63,8 @@ public class TeamTrainStatistics extends CrEventStatistics {
 
 		for (TeamRoom room : rooms) {
 			TrainingData data = BeanUtils.copy(room, TrainingData.class);
-			data.setAppId(LocalScene.BusinessCode.TEAM_TRAINING.getCode());
-			data.setAppName(LocalScene.BusinessCode.TEAM_TRAINING.getDesc());
+			data.setAppId(BusinessCode.TEAM_TRAINING.getCode());
+			data.setAppName(BusinessCode.TEAM_TRAINING.getDesc());
 			// 计算持续时长
 			Integer durationTime = (int) ((room.getEndTime().getTime()
 					- room.getStartTime().getTime()) / (60 * 60 * 1000));

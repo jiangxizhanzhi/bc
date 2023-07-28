@@ -2,6 +2,7 @@ package com.cyberpeace.cr.teamtrain.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -30,7 +31,6 @@ import com.cyberpeace.cr.teamtrain.dao.entity.TeamTemplateData;
 import com.cyberpeace.cr.teamtrain.dao.mapper.TeamTemplateMapper;
 import com.cyberpeace.cr.teamtrain.service.TeamTemplateService;
 import com.cyberpeace.cr.teamtrain.service.context.TeamTrainTemplateContext;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 /**
@@ -80,7 +80,7 @@ public class TeamTemplateServiceImpl extends ServiceImpl<TeamTemplateMapper, Tea
 		JSONObject topoJson = new JSONObject();
 		topoJson.put("scene_config", topoData.getSceneConfig());
 		String topoId = localSceneService.saveTopo(topoJson,
-				LocalScene.BusinessCode.TEAM_TRAINING.getCode());
+				BusinessCode.TEAM_TRAINING.getCode());
 
 		// 保存基础模板
 		businessTemplate.setTopoId(topoId);

@@ -8,7 +8,7 @@ import com.cyberpeace.common.mdparser.convert.TrainTypeConvert;
 import com.cyberpeace.common.model.PageReqBase;
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.common.util.StreamApiUtils;
-import com.cyberpeace.cr.crbase.dao.entity.Mission;
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,6 @@ import com.cyberpeace.common.util.PageUtil;
 import com.cyberpeace.cr.crbase.service.CrBaseService;
 import com.cyberpeace.cr.crbase.service.CrEventStatistics;
 import com.cyberpeace.cr.crbase.service.context.statistics.*;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.google.common.collect.Maps;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CrBaseServiceImpl implements CrBaseService {
 
-	public static Map<LocalScene.BusinessCode, CrEventStatistics> register = Maps.newHashMap();
+	public static Map<BusinessCode, CrEventStatistics> register = Maps.newHashMap();
 
 	@Override
 	public TrainingStatisticsRsp getTrainingStatistics(String userId, PageReqBase pageReqBase) {
@@ -39,8 +38,8 @@ public class CrBaseServiceImpl implements CrBaseService {
 		List<TrainingCountRsp> incompleteList = Lists.newArrayList();
 		List<TrainingData> trainingDataList = Lists.newArrayList();
 		// 2. get training count
-		for (Map.Entry<LocalScene.BusinessCode, CrEventStatistics> entry : register.entrySet()) {
-			LocalScene.BusinessCode businessCode = entry.getKey();
+		for (Map.Entry<BusinessCode, CrEventStatistics> entry : register.entrySet()) {
+			BusinessCode businessCode = entry.getKey();
 			CrEventStatistics statistics = entry.getValue();
 
 			TrainingCount trainingCount = statistics.getTrainingCount(userId);
@@ -67,7 +66,7 @@ public class CrBaseServiceImpl implements CrBaseService {
 		}
 		//去掉已结束的单边训练类型统计
 		trainingDataList = StreamApiUtils.filter(trainingDataList,
-				s ->   !s.getAppId().equals(LocalScene.BusinessCode.SINGLE_TRAINING.getCode())  || !s.getState().equals(2) );
+				s ->   !s.getAppId().equals(BusinessCode.SINGLE_TRAINING.getCode())  || !s.getState().equals(2) );
 
 		// 5. sort
 		trainingDataList.sort(new TrainingComparator(page.getSort()));

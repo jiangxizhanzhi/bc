@@ -4,7 +4,7 @@ import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.cr.crbase.constant.CrBusinessErrorCode;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingCount;
 import com.cyberpeace.cr.crbase.service.context.statistics.TrainingData;
-import com.cyberpeace.cs.dao.entity.LocalScene;
+import com.cyberpeace.common.enums.BusinessCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class CrEventStatistics {
 		}
 	}
 
-	public LocalScene.BusinessCode getCode() {
+	public BusinessCode getCode() {
 		return null;
 	}
 

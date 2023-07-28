@@ -2,6 +2,7 @@ package com.cyberpeace.oj.course.service.impl;
 
 import com.cyberpeace.common.constant.ErrorCode;
 import com.cyberpeace.common.constant.JsonKeyConstant;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.oj.ojbase.constant.*;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.cyberpeace.common.exception.BusinessException;
 import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.service.OjLocalSceneService;
@@ -30,7 +30,7 @@ public class LessonEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.LESSON.getCode();
+		return BusinessCode.LESSON.getCode();
 	}
 
 	@Override

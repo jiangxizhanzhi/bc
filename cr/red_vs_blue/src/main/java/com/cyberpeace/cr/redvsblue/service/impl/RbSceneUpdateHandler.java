@@ -2,6 +2,7 @@ package com.cyberpeace.cr.redvsblue.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import com.cyberpeace.cr.crbase.service.CrRoleService;
 import com.cyberpeace.cr.crbase.service.context.scene.SceneUpdateReq;
 import com.cyberpeace.cr.redvsblue.service.RbCommonDeviceService;
 import com.cyberpeace.cr.redvsblue.service.RbRoomService;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 
 /**
  * 红蓝前台动态更新角色资产
@@ -36,7 +36,7 @@ public class RbSceneUpdateHandler extends BaseCrSceneUpdateHandler {
 
 	@Override
 	protected Integer getCode() {
-		return LocalScene.BusinessCode.RED_VS_BLUE.getCode();
+		return BusinessCode.RED_VS_BLUE.getCode();
 	}
 
 	@Override

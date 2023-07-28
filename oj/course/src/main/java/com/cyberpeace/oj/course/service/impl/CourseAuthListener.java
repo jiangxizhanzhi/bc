@@ -2,11 +2,11 @@ package com.cyberpeace.oj.course.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.oj.course.service.ClassroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.AuthMessageListener;
 import com.cyberpeace.oj.course.service.CourseService;
 
@@ -24,7 +24,7 @@ public class CourseAuthListener extends AuthMessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.COURSE_TRAINING.getCode();
+		return BusinessCode.COURSE_TRAINING.getCode();
 	}
 
 	@Override

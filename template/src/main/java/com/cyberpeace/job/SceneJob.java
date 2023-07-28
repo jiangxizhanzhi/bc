@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -109,7 +110,7 @@ public class SceneJob {
 		// 课堂场景数据查询
 		OjLocalScene ojLocalScene = ojLocalSceneMapper
 				.selectById(localScene.getBusinessInstanceId());
-		if (localScene.getBusinessCode().intValue() != LocalScene.BusinessCode.CLASSROOM.getCode()
+		if (localScene.getBusinessCode().intValue() != BusinessCode.CLASSROOM.getCode()
 				.intValue()) {
 			return;
 		}

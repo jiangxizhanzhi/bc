@@ -3,6 +3,8 @@ package com.cyberpeace.oj.course.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.cyberpeace.common.enums.BusinessCode;
+import com.cyberpeace.common.enums.SceneStatusEnum;
 import com.cyberpeace.oj.course.service.bo.StartSceneBo;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.service.PushMessageHandler;
@@ -388,7 +390,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 			throw new BusinessException(OjBusinessErrorCode.SCENE_NOT_RUNNING);
 		}
 
-		if (localScene.getSceneStatus().intValue() == LocalScene.SceneStatusEnum.PAUSE.getCode()) {
+		if (localScene.getSceneStatus().intValue() == SceneStatusEnum.PAUSE.getCode()) {
 			return localSceneService.unpauseScene(localScene);
 		} else {
 			return localSceneService.pauseScene(localScene);
@@ -413,10 +415,10 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		localScene.setDestroyMode(LocalScene.DestroyMode.AUTO.getCode());
 		localScene.setTopoId(groupInfo.getTopoId());
 
-		localScene.setBusinessCode(LocalScene.BusinessCode.CLASSROOM.getCode());
+		localScene.setBusinessCode(BusinessCode.CLASSROOM.getCode());
 		localScene.setSceneName(
 				lesson.getName() + CommonConstant.UNDER_LINE + groupInfo.getGroupNo().toString());
-		localScene.setSceneStatus(LocalScene.SceneStatusEnum.INIT.getCode());
+		localScene.setSceneStatus(SceneStatusEnum.INIT.getCode());
 
 		// 场景存活时间设置
 		if (null != groupInfo.getDestroyDelay()
@@ -428,7 +430,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 
 		// 设置场景类型
 		JSONObject topoData = remoteTopoService.getTopoById(lesson.getTopoId());
-		topoData.put(JsonKeyConstant.REFERENCE_TYPE, LocalScene.BusinessCode.CLASSROOM.getCode());
+		topoData.put(JsonKeyConstant.REFERENCE_TYPE, BusinessCode.CLASSROOM.getCode());
 
 		String appResourceId = lesson.getCourseId() + CommonConstant.LEFT_OBLIQUE_LINE
 				+ lesson.getResourceId();
@@ -456,7 +458,7 @@ public class ClassroomSceneServiceImpl implements ClassroomSceneService {
 		// 组内场景暂定均为前台启动(组内启动场景仅前台可以看到) 无用字段
 		ojLocalScene.setFromWeb(CommonConstant.TRUE);
 		ojLocalScene.setBusinessId(groupInfo.getResourceId());
-		ojLocalScene.setBusinessType(LocalScene.BusinessCode.CLASSROOM.getCode());
+		ojLocalScene.setBusinessType(BusinessCode.CLASSROOM.getCode());
 
 		// 无用字段 数据库字段尽量不为空
 		ojLocalScene.setFlags(JsonUtil.arrayToString(Lists.newArrayList()));

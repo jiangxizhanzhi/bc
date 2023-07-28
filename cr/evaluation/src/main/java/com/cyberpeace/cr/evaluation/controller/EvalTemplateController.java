@@ -1,5 +1,6 @@
 package com.cyberpeace.cr.evaluation.controller;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,7 +28,6 @@ import com.cyberpeace.cr.evaluation.dao.entity.EvalTemplate;
 import com.cyberpeace.cr.evaluation.service.EvalTemplateService;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateBaseInfoContext;
 import com.cyberpeace.cr.evaluation.service.context.EvalTemplateListQuery;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.LocalSceneService;
 
 import io.swagger.annotations.Api;
@@ -177,7 +177,7 @@ public class EvalTemplateController {
 
 		// 设置模板拓扑
 		evalTemplate.setTopoId(crSceneService.saveTopo(evaTemplateAddReq.getSceneConfigData(),
-				LocalScene.BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId()));
+				BusinessCode.RANGE_EVALUATION, evalTemplate.getTopoId()));
 
 		return evalTemplate;
 	}

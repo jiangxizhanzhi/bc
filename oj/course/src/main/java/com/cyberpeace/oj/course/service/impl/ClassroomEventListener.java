@@ -1,7 +1,8 @@
 package com.cyberpeace.oj.course.service.impl;
 
-import com.cyberpeace.cs.constant.SceneEvent;
-import com.cyberpeace.cs.constant.SceneEventStatus;
+import com.cyberpeace.common.enums.SceneEvent;
+import com.cyberpeace.common.enums.SceneEventStatus;
+import com.cyberpeace.common.enums.BusinessCode;
 import com.cyberpeace.oj.course.dao.entity.ClassroomGroupInfo;
 import com.cyberpeace.oj.course.dao.mapper.ClassroomGroupInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import com.cyberpeace.common.model.scene.MqContext;
 import com.cyberpeace.common.model.user.UserInfo;
 import com.cyberpeace.common.model.user.UserInfoContext;
 import com.cyberpeace.common.util.JsonUtil;
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.MessageListener;
 import com.cyberpeace.integratation.service.RemoteUserService;
 import com.cyberpeace.oj.course.service.ClassroomSceneService;
@@ -52,7 +52,7 @@ public class ClassroomEventListener extends MessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.CLASSROOM.getCode();
+		return BusinessCode.CLASSROOM.getCode();
 	}
 
 	@Override

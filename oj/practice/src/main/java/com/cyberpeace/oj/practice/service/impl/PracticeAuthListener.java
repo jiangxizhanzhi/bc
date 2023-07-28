@@ -2,10 +2,10 @@ package com.cyberpeace.oj.practice.service.impl;
 
 import java.util.List;
 
+import com.cyberpeace.common.enums.BusinessCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cyberpeace.cs.dao.entity.LocalScene;
 import com.cyberpeace.cs.service.impl.AuthMessageListener;
 import com.cyberpeace.oj.practice.service.PracticeSetService;
 
@@ -20,7 +20,7 @@ public class PracticeAuthListener extends AuthMessageListener {
 
 	@Override
 	public Integer declareMessageType() {
-		return LocalScene.BusinessCode.PRACTICE.getCode();
+		return BusinessCode.PRACTICE.getCode();
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.cyberpeace.oj.practice.service;
 
-import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
+import com.cyberpeace.oj.practice.entity.PracticeBase;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
 public interface PracticeEvaluateHandler {

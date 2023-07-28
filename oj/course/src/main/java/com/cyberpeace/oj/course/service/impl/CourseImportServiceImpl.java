@@ -1,20 +1,19 @@
 package com.cyberpeace.oj.course.service.impl;
 
 import java.io.File;
-import java.sql.Wrapper;
 import java.util.*;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cyberpeace.integratation.service.RemoteTopoService;
 import com.cyberpeace.oj.course.service.bo.LessonPracticeImportBo;
 import com.cyberpeace.oj.practice.dao.entity.*;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationRefMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeTheoryRefMapper;
+import com.cyberpeace.oj.practice.entity.Paper;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;

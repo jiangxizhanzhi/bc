@@ -1,8 +1,7 @@
 package com.cyberpeace.oj.practice.service;
 
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 
 import java.util.List;
 import java.util.Map;

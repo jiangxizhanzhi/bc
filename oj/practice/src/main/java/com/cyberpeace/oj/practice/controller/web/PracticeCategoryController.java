@@ -3,11 +3,8 @@ package com.cyberpeace.oj.practice.controller.web;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.common.util.BeanUtils;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
-import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
-import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryService;
 import org.apache.commons.collections.CollectionUtils;

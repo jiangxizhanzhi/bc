@@ -36,7 +36,7 @@ import com.cyberpeace.oj.course.service.CourseLearnStatisticsService;
 import com.cyberpeace.oj.course.service.LearnStatsService;
 import com.cyberpeace.oj.course.service.bo.*;
 import com.cyberpeace.oj.ojbase.dao.entity.Note;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import com.google.common.collect.Lists;
 
 import lombok.extern.slf4j.Slf4j;

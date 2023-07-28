@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cyberpeace.common.baseinterface.GenericEnum;
 
+import com.cyberpeace.oj.practice.entity.PracticeBase;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;

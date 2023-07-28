@@ -26,7 +26,7 @@ import com.cyberpeace.oj.ojbase.controller.req.SceneOperationReq;
 import com.cyberpeace.oj.ojbase.controller.req.SceneStatusReq;
 import com.cyberpeace.oj.ojbase.service.bo.TopoSceneDataBo;
 import com.cyberpeace.oj.practice.controller.req.*;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;
 import com.cyberpeace.oj.practice.service.PracticeCategoryService;
 import com.cyberpeace.oj.practice.service.PracticeOperationService;

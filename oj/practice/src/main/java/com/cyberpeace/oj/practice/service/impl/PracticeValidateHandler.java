@@ -1,11 +1,9 @@
 package com.cyberpeace.oj.practice.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cyberpeace.common.model.AuthTable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +26,7 @@ import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;

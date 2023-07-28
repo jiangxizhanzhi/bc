@@ -10,7 +10,7 @@ import com.cyberpeace.cs.constant.AttachmentPath;
 import com.cyberpeace.cs.service.UtilService;
 import com.cyberpeace.oj.ojbase.constant.OjBusinessErrorCode;
 import com.cyberpeace.oj.ojbase.constant.ResourceImportConstant;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeSetMapper;

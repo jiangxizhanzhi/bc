@@ -3,7 +3,7 @@ package com.cyberpeace.oj.practice.service.impl;
 import com.cyberpeace.common.constant.CommonConstant;
 import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.common.util.MathUtils;
-import com.cyberpeace.oj.practice.dao.entity.PracticeBase;
+import com.cyberpeace.oj.practice.entity.PracticeBase;
 import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateHandler;
 import com.cyberpeace.oj.practice.service.PracticeEvaluateService;

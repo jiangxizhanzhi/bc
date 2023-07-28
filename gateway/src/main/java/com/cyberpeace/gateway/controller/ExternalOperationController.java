@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.cyberpeace.oj.practice.dao.entity.PracticeTheory;
 import com.cyberpeace.oj.practice.service.bo.OperationListQueryBo;
 import com.cyberpeace.oj.practice.service.externalbo.ExternalOperationCountBo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ import com.cyberpeace.gateway.service.bo.ExternalPracticeSetBo;
 import com.cyberpeace.oj.practice.controller.req.external.PracticeRandomChoiceReq;
 import com.cyberpeace.oj.practice.dao.context.OperationListQuery;
 import com.cyberpeace.oj.practice.dao.entity.PracticeCategory;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.dao.entity.PracticeSet;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeCategoryMapper;
 import com.cyberpeace.oj.practice.dao.mapper.PracticeOperationMapper;

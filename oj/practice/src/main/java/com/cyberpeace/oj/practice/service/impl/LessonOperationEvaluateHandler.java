@@ -11,7 +11,7 @@ import com.cyberpeace.common.util.JsonUtil;
 import com.cyberpeace.oj.ojbase.constant.SceneShare;
 import com.cyberpeace.oj.ojbase.dao.entity.OjLocalScene;
 import com.cyberpeace.oj.ojbase.dao.mapper.OjLocalSceneMapper;
-import com.cyberpeace.oj.practice.dao.entity.PracticeOperation;
+import com.cyberpeace.oj.practice.entity.PracticeOperation;
 import com.cyberpeace.oj.practice.service.bo.EvaluateResult;
 
 @Service("lesson_operation")

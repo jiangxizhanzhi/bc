@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.cyberpeace.common.util.EnumUtils;
 import com.cyberpeace.integratation.service.RemoteTopoService;
-import com.cyberpeace.oj.practice.dao.entity.Paper;
+import com.cyberpeace.oj.practice.entity.Paper;
 import com.cyberpeace.oj.practice.dao.mapper.PaperMapper;
 import com.cyberpeace.oj.practice.service.PracticeOperationRefService;
 import com.cyberpeace.oj.practice.service.PracticeTheoryRefService;

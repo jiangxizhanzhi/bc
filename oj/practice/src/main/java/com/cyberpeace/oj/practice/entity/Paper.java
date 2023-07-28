@@ -1,4 +1,4 @@
-package com.cyberpeace.oj.practice.dao.entity;
+package com.cyberpeace.oj.practice.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
